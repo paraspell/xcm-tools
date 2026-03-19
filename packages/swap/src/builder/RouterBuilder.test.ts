@@ -21,8 +21,8 @@ export const transferParams: TTransferOptions = {
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000000000',
-  senderAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
-  recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
+  sender: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
+  recipient: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
   signer: {} as unknown as PolkadotSigner,
   slippagePct: '1',
 };
@@ -34,8 +34,8 @@ const {
   currencyFrom,
   currencyTo,
   amount,
-  senderAddress,
-  recipientAddress,
+  sender,
+  recipient,
   signer,
   slippagePct,
 } = transferParams;
@@ -64,8 +64,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .buildTransactions();
@@ -81,8 +81,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .build();
@@ -100,8 +100,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .onStatusChange(onStatusChange)
@@ -122,8 +122,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .evmSenderAddress(evmSenderAddress)
@@ -153,8 +153,8 @@ describe('Builder', () => {
       .currencyTo(currencyTo)
       .feeAsset(feeAsset)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .build();
@@ -177,8 +177,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .onStatusChange(onStatusChange)
@@ -215,8 +215,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .slippagePct(slippagePct)
       .getXcmFees();
 
@@ -228,8 +228,8 @@ describe('Builder', () => {
         currencyFrom,
         currencyTo,
         amount,
-        senderAddress,
-        recipientAddress,
+        sender,
+        recipient,
         slippagePct,
       },
       false,
@@ -245,8 +245,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .slippagePct(slippagePct)
       .getMinTransferableAmount();
 
@@ -259,8 +259,8 @@ describe('Builder', () => {
         currencyFrom,
         currencyTo,
         amount,
-        senderAddress,
-        recipientAddress,
+        sender,
+        recipient,
         slippagePct,
       },
       undefined,
@@ -277,8 +277,8 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .buildTransactions();
@@ -291,8 +291,8 @@ describe('Builder', () => {
         currencyFrom,
         currencyTo,
         amount,
-        senderAddress,
-        recipientAddress,
+        sender,
+        recipient,
         signer,
         slippagePct,
       },

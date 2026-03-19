@@ -27,7 +27,7 @@ import { handleTransactUsingSend } from '../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { BaseAssetsPallet, TSerializedExtrinsics, TTransferLocalOptions } from '../types'
-import { type TPolkadotXCMTransferOptions, type TSendInternalOptions } from '../types'
+import { type TPolkadotXCMTransferOptions, type TTransferInternalOptions } from '../types'
 import { getChain, handleExecuteTransfer, resolveDestChain } from '../utils'
 import Chain from './Chain'
 
@@ -188,8 +188,8 @@ describe('Parachain', () => {
         api,
         to: 'Astar',
         assetInfo: { symbol: 'DOT', amount: 100n },
-        address: 'destinationAddress'
-      } as TSendInternalOptions<unknown, unknown, unknown>
+        recipient: 'destinationAddress'
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       await expect(chain.transfer(options)).rejects.toThrow(
         'Sending from Acala is temporarily disabled'
@@ -214,8 +214,8 @@ describe('Parachain', () => {
         api,
         to: 'Astar',
         assetInfo: { symbol: 'DOT', amount: 100n },
-        address: 'destinationAddress'
-      } as TSendInternalOptions<unknown, unknown, unknown>
+        recipient: 'destinationAddress'
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       vi.mocked(resolveDestChain).mockReturnValue('Astar')
 
@@ -231,13 +231,13 @@ describe('Parachain', () => {
     const options = {
       api,
       to: 'Astar',
-      address: 'destinationAddress',
+      recipient: 'destinationAddress',
       assetInfo: {
         symbol: 'DOT',
         amount: 100n,
         location: RELAY_LOCATION
       }
-    } as TSendInternalOptions<unknown, unknown, unknown>
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     await expect(chain.transfer(options)).rejects.toThrow(TypeAndThenUnavailableError)
   })
@@ -262,8 +262,8 @@ describe('Parachain', () => {
         amount: 100n,
         location: { parents: 1, interior: 'Here' }
       },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     vi.mocked(resolveDestChain).mockReturnValue('AssetHubPolkadot')
 
@@ -279,11 +279,11 @@ describe('Parachain', () => {
       api,
       to: 'AssetHubPolkadot',
       assetInfo: { symbol: 'DOT', location: DOT_LOCATION, amount: 100n },
-      address: 'destinationAddress',
+      recipient: 'destinationAddress',
       transactOptions: {
         call: '0x01'
       }
-    } as TSendInternalOptions<unknown, unknown, unknown>
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(api, 'deserializeExtrinsics')
 
@@ -303,12 +303,12 @@ describe('Parachain', () => {
       api,
       to: 'Astar',
       assetInfo: { symbol: 'DOT', location: DOT_LOCATION, amount: 100n },
-      address: 'destinationAddress',
+      recipient: 'destinationAddress',
       transactOptions: {
         call: '0x01'
       },
       version: Version.V4
-    } as TSendInternalOptions<unknown, unknown, unknown>
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(api, 'deserializeExtrinsics')
 
@@ -336,8 +336,8 @@ describe('Parachain', () => {
       api,
       to: 'Astar',
       assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     await expect(chain.transfer(options)).rejects.toThrow(ScenarioNotSupportedError)
   })
@@ -356,8 +356,8 @@ describe('Parachain', () => {
       api,
       to: 'Astar',
       assetInfo: { symbol: 'DOT', amount: 100n, location: DOT_LOCATION },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(chain, 'transferPolkadotXCM')
 
@@ -380,8 +380,8 @@ describe('Parachain', () => {
           interior: { X1: { Parachain: 2000 } }
         }
       },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     const transferPolkadotXCMSpy = vi.spyOn(chain, 'transferPolkadotXCM')
 
@@ -419,11 +419,11 @@ describe('Parachain', () => {
           interior: { X1: [{ Parachain: 1000 }] }
         }
       },
-      address: 'destinationAddress',
-      senderAddress: '5FMockSender',
+      recipient: 'destinationAddress',
+      sender: '5FMockSender',
       version: Version.V4,
       paraIdTo: 2004
-    } as TSendInternalOptions<unknown, unknown, unknown>
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     const result = await chain.transfer(options)
 
@@ -445,8 +445,8 @@ describe('Parachain', () => {
       api,
       to: 'Astar',
       assetInfo: { symbol: 'DOT', amount: 100n },
-      address: 'destinationAddress'
-    } as TSendInternalOptions<unknown, unknown, unknown>
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
 
     await expect(chain.transfer(options)).rejects.toThrow(NoXCMSupportImplementedError)
   })
@@ -470,7 +470,7 @@ describe('Parachain', () => {
     const options = {
       api,
       assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      senderAddress: '0x456'
+      sender: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
@@ -498,8 +498,8 @@ describe('Parachain', () => {
     const options = {
       api,
       assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      senderAddress: '0x456',
-      address: DOT_LOCATION
+      sender: '0x456',
+      recipient: DOT_LOCATION
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(
       'Location address is not supported for this transfer type.'
@@ -511,9 +511,9 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-        senderAddress: '0x456',
-        address: DOT_LOCATION
-      } as TSendInternalOptions<unknown, unknown, unknown>
+        sender: '0x456',
+        recipient: DOT_LOCATION
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       await expect(chain.transferLocal(options)).rejects.toThrow(InvalidAddressError)
     })
@@ -522,14 +522,14 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', amount: 100n, decimals: 10 },
-        senderAddress: '0x456',
-        address: '0x123',
+        sender: '0x456',
+        recipient: '0x123',
         feeAsset: { symbol: 'USDT', decimals: 12, assetId: '1', isFeeAsset: true },
         to: 'Acala',
         currency: { symbol: 'DOT', amount: 100n },
         version: Version.V4,
         isAmountAll: false
-      } as TSendInternalOptions<unknown, unknown, unknown>
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       await expect(chain.transferLocal(options)).rejects.toThrow(UnsupportedOperationError)
     })
@@ -538,9 +538,9 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', isNative: true, location: {}, amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123'
-      } as TSendInternalOptions<unknown, unknown, unknown>
+        sender: '0x456',
+        recipient: '0x123'
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
@@ -555,9 +555,9 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '123', amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123'
-      } as TSendInternalOptions<unknown, unknown, unknown>
+        sender: '0x456',
+        recipient: '0x123'
+      } as TTransferInternalOptions<unknown, unknown, unknown>
 
       const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
 
@@ -572,8 +572,8 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123',
+        sender: '0x456',
+        recipient: '0x123',
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
@@ -585,7 +585,7 @@ describe('Parachain', () => {
         module: 'Balances',
         method: 'transfer_allow_death',
         params: {
-          dest: { Id: options.address },
+          dest: { Id: options.recipient },
           value: BigInt(options.assetInfo.amount)
         }
       })
@@ -597,8 +597,8 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123'
+        sender: '0x456',
+        recipient: '0x123'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
@@ -608,8 +608,8 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: undefined, amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123'
+        sender: '0x456',
+        recipient: '0x123'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
@@ -619,8 +619,8 @@ describe('Parachain', () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '10', location: {}, amount: 100n },
-        senderAddress: '0x456',
-        address: '0x123'
+        sender: '0x456',
+        recipient: '0x123'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
@@ -631,7 +631,7 @@ describe('Parachain', () => {
         module: 'Tokens',
         method: 'transfer',
         params: {
-          dest: { Id: options.address },
+          dest: { Id: options.recipient },
           currency_id: 10n,
           amount: BigInt(options.assetInfo.amount)
         }
@@ -753,7 +753,7 @@ describe('Parachain', () => {
     const options = {
       api,
       assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      senderAddress: '0x456'
+      sender: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(getBridgeStatus).mockResolvedValue('Halted')

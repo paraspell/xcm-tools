@@ -22,9 +22,9 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
   buildTx,
   origin,
   destination,
-  senderAddress,
+  sender,
   ahAddress,
-  address,
+  recipient,
   currency,
   feeAsset,
   version
@@ -47,7 +47,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
 
     const originBalance = await getAssetBalanceInternal({
       api,
-      address: senderAddress,
+      address: sender,
       chain: origin,
       asset: originAsset
     })
@@ -63,8 +63,8 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       buildTx,
       origin,
       destination,
-      senderAddress,
-      address,
+      sender,
+      recipient,
       currency,
       feeAsset,
       version,
@@ -73,7 +73,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
 
     const originBalanceFee = await getAssetBalanceInternal({
       api,
-      address: senderAddress,
+      address: sender,
       chain: origin,
       asset: originFeeAsset
     })
@@ -105,7 +105,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
             originChain: origin,
             currency,
             asset: hop.result.asset,
-            senderAddress,
+            sender,
             ahAddress
           })
           return {
@@ -127,7 +127,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       api,
       origin,
       destination,
-      address,
+      recipient,
       currency: {
         ...currency,
         amount

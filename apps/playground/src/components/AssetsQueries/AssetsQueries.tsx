@@ -12,14 +12,14 @@ import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
-import { fetchFromApi, resolveCustomCurrencyCore } from '../../utils';
+import { determineCurrencyCore, fetchFromApi } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { FormValues } from './AssetsQueriesForm';
+import type { FormValuesResolved } from './AssetsQueriesForm';
 import { AssetsQueriesForm } from './AssetsQueriesForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
@@ -51,17 +51,10 @@ export const AssetsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const {
-      useApi,
-      chain,
-      destination,
-      func,
-      address,
-      currency,
-      currencyType,
-      currencySymbolSpecifier,
-    } = formValues;
+  const getQueryResult = async (
+    formValues: FormValuesResolved,
+  ): Promise<unknown> => {
+    const { useApi, chain, destination, func, address, currency } = formValues;
 
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
@@ -71,11 +64,13 @@ export const AssetsQueries = () => {
       'EXISTENTIAL_DEPOSIT',
     ]);
 
-    const resolvedCurrency = resolveCustomCurrencyCore(
-      currency,
-      currencyType,
-      currencySymbolSpecifier,
-    );
+    const hasCurrency = currency.isCustomCurrency
+      ? currency.customCurrency.length > 0
+      : !!currency.currencyOptionId;
+
+    const resolvedCurrency = hasCurrency
+      ? determineCurrencyCore(currency)
+      : undefined;
 
     if (useApi) {
       const endpoint = getApiEndpoint(func, formValues.chain);
@@ -87,11 +82,7 @@ export const AssetsQueries = () => {
               chain,
               destination,
               address,
-              ...('symbol' in resolvedCurrency &&
-              typeof resolvedCurrency.symbol === 'string' &&
-              resolvedCurrency.symbol.length === 0
-                ? {}
-                : { currency: resolvedCurrency }),
+              ...(resolvedCurrency ? { currency: resolvedCurrency } : {}),
             }
           : {
               origin: chain,
@@ -106,7 +97,7 @@ export const AssetsQueries = () => {
     }
   };
 
-  const submit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValuesResolved) => {
     setLoading(true);
 
     try {
@@ -128,7 +119,7 @@ export const AssetsQueries = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValues) => void submit(formValues);
+  const onSubmit = (formValues: FormValuesResolved) => void submit(formValues);
 
   return (
     <Stack gap="xl">

@@ -55,7 +55,7 @@ describe('Centrifuge', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address'
+        recipient: 'address'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -66,7 +66,7 @@ describe('Centrifuge', () => {
         module: 'Tokens',
         method: 'transfer',
         params: {
-          dest: { Id: mockOptions.address },
+          dest: { Id: mockOptions.recipient },
           currency_id: { ForeignAsset: 1 },
           amount: BigInt(mockOptions.assetInfo.amount)
         }
@@ -77,7 +77,7 @@ describe('Centrifuge', () => {
       const mockOptions = {
         api: mockApi,
         assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
-        address: 'address',
+        recipient: 'address',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -90,7 +90,7 @@ describe('Centrifuge', () => {
         module: 'Tokens',
         method: 'transfer_all',
         params: {
-          dest: { Id: mockOptions.address },
+          dest: { Id: mockOptions.recipient },
           currency_id: { ForeignAsset: 1 },
           keep_alive: false
         }

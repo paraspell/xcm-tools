@@ -43,7 +43,7 @@ describe('approveToken', () => {
     } as unknown as WETH9
     const spy = vi.spyOn(WETH9__factory, 'connect').mockReturnValue(fakeContractInstance)
     const result = await approveToken(fakeSigner, amount, tokenSymbol)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol })
     expect(spy).toHaveBeenCalledWith(tokenAddress, fakeSigner)
     expect(fakeContractInstance.approve).toHaveBeenCalledWith(gatewayAddress, amount)
     expect(fakeWait).toHaveBeenCalled()

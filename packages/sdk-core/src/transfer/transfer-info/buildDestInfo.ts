@@ -10,7 +10,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner>({
   api,
   origin,
   destination,
-  address,
+  recipient,
   currency,
   originFee,
   isFeeAssetAh,
@@ -28,7 +28,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner>({
 
   const destBalance = await getAssetBalanceInternal({
     api: destApi,
-    address,
+    address: recipient,
     chain: destination,
     asset: destAsset
   })
@@ -96,7 +96,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner>({
 
   if (isDestFeeInNativeCurrency) {
     const destRecipientNativeBalance = await getBalanceInternal({
-      address: address,
+      address: recipient,
       chain: destination,
       api: destApi
     })

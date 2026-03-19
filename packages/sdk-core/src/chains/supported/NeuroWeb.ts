@@ -27,7 +27,7 @@ class NeuroWeb<TApi, TRes, TSigner>
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (isAmountAll) {
       return Promise.resolve(
@@ -35,7 +35,7 @@ class NeuroWeb<TApi, TRes, TSigner>
           module: 'Balances',
           method: 'transfer_all',
           params: {
-            dest: address,
+            dest: recipient,
             keep_alive: keepAlive
           }
         })
@@ -47,7 +47,7 @@ class NeuroWeb<TApi, TRes, TSigner>
         module: 'Balances',
         method: keepAlive ? 'transfer_keep_alive' : 'transfer_allow_death',
         params: {
-          dest: address,
+          dest: recipient,
           value: asset.amount
         }
       })
@@ -55,7 +55,7 @@ class NeuroWeb<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, balance, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -68,7 +68,7 @@ class NeuroWeb<TApi, TRes, TSigner>
       method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
-        target: address,
+        target: recipient,
         amount
       }
     })

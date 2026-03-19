@@ -145,8 +145,8 @@ describe('prepareExtrinsics', () => {
     const optionsWithAssetHub = {
       ...baseOptions,
       amount: 100n,
-      senderAddress: 'sender123',
-      recipientAddress: 'recipient456',
+      sender: 'sender123',
+      recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
         baseChain: 'AssetHubPolkadot',
@@ -177,8 +177,8 @@ describe('prepareExtrinsics', () => {
           ...optionsWithAssetHub.exchange.assetTo,
           amount: 500n,
         },
-        senderAddress: optionsWithAssetHub.senderAddress,
-        recipientAddress: optionsWithAssetHub.recipientAddress,
+        sender: optionsWithAssetHub.sender,
+        recipient: optionsWithAssetHub.recipient,
         calculateMinAmountOut: expect.any(Function),
       },
       undefined,
@@ -194,8 +194,8 @@ describe('prepareExtrinsics', () => {
     const optionsWithAssetHub = {
       ...baseOptions,
       amount: 100n,
-      senderAddress: 'sender123',
-      recipientAddress: 'recipient456',
+      sender: 'sender123',
+      recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
         baseChain: 'AssetHubPolkadot',
@@ -224,8 +224,8 @@ describe('prepareExtrinsics', () => {
     const optionsWithAssetHub = {
       ...baseOptions,
       amount: 100n,
-      senderAddress: 'sender123',
-      recipientAddress: 'recipient456',
+      sender: 'sender123',
+      recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
         baseChain: 'AssetHubPolkadot',

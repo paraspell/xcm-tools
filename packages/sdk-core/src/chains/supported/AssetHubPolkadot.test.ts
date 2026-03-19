@@ -60,9 +60,9 @@ describe('AssetHubPolkadot', () => {
     scenario: 'ParaToRelay',
     beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
-    address: 'address',
-    destination: 'Polkadot',
-    senderAddress: '0x1234567890abcdef'
+    sender: '0x1234567890abcdef',
+    recipient: 'address',
+    destination: 'Polkadot'
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
@@ -149,7 +149,7 @@ describe('AssetHubPolkadot', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 1000n },
-        address: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -161,7 +161,7 @@ describe('AssetHubPolkadot', () => {
         method: 'transfer',
         params: {
           id: 123,
-          target: { Id: mockInput.address },
+          target: { Id: mockInput.recipient },
           amount: BigInt(mockInput.assetInfo.amount)
         }
       })
@@ -171,7 +171,7 @@ describe('AssetHubPolkadot', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', assetId: '123', amount: 100n },
-        address: '0x1234567890abcdef',
+        recipient: '0x1234567890abcdef',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -185,7 +185,7 @@ describe('AssetHubPolkadot', () => {
         method: 'transfer_all',
         params: {
           id: 123,
-          dest: { Id: mockInput.address },
+          dest: { Id: mockInput.recipient },
           keep_alive: false
         }
       })
@@ -195,7 +195,7 @@ describe('AssetHubPolkadot', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 1000n, location: {} },
-        address: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef'
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
@@ -207,7 +207,7 @@ describe('AssetHubPolkadot', () => {
         method: 'transfer',
         params: {
           id: {},
-          target: { Id: mockInput.address },
+          target: { Id: mockInput.recipient },
           amount: BigInt(mockInput.assetInfo.amount)
         }
       })
@@ -217,7 +217,7 @@ describe('AssetHubPolkadot', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'USDC', amount: 100n, location: {} },
-        address: '0x1234567890abcdef',
+        recipient: '0x1234567890abcdef',
         isAmountAll: true,
         keepAlive: false
       } as TTransferLocalOptions<unknown, unknown, unknown>
@@ -231,7 +231,7 @@ describe('AssetHubPolkadot', () => {
         method: 'transfer_all',
         params: {
           id: {},
-          dest: { Id: mockInput.address },
+          dest: { Id: mockInput.recipient },
           keep_alive: false
         }
       })

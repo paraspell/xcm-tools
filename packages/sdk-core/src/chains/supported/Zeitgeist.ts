@@ -43,7 +43,7 @@ class Zeitgeist<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address } = options
+    const { api, assetInfo: asset, recipient } = options
 
     assertHasId(asset)
 
@@ -53,7 +53,7 @@ class Zeitgeist<TApi, TRes, TSigner>
       module: 'AssetManager',
       method: 'transfer',
       params: {
-        dest: { Id: address },
+        dest: { Id: recipient },
         currency_id: this.getCustomCurrencyId(asset),
         amount
       }

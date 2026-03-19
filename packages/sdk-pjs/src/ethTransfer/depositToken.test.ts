@@ -32,7 +32,7 @@ describe('depositToken', () => {
     } as unknown as WETH9
     const spy = vi.spyOn(WETH9__factory, 'connect').mockReturnValue(fakeContractInstance)
     const result = await depositToken(fakeSigner, amount, tokenSymbol)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol }, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Ethereum', { symbol: tokenSymbol })
     expect(spy).toHaveBeenCalledWith(tokenAddress, fakeSigner)
     expect(fakeContractInstance.deposit).toHaveBeenCalledWith({ value: amount })
     expect(fakeWait).toHaveBeenCalled()

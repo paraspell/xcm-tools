@@ -29,7 +29,7 @@ describe('prepareCommonExecuteXcm', () => {
 
   const baseOptions = {
     api: mockApi,
-    recipientAddress: '5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE',
+    recipient: '5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE',
     version: mockVersion,
     chain: 'Acala',
     destChain: 'Moonbeam',
@@ -63,7 +63,7 @@ describe('prepareCommonExecuteXcm', () => {
     expect(sortAssets).toHaveBeenCalledWith([mockAsset])
     expect(createBeneficiaryLocation).toHaveBeenCalledWith({
       api: mockApi,
-      address: baseOptions.recipientAddress,
+      address: baseOptions.recipient,
       version: mockVersion
     })
     expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)

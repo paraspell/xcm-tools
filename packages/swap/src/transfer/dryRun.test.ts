@@ -49,8 +49,8 @@ const createInitialOptions = () =>
     currencyFrom: { symbol: 'ACA' },
     currencyTo: { symbol: 'AUSD' },
     amount: '1000',
-    senderAddress: 'sender',
-    recipientAddress: 'recipient',
+    sender: 'sender',
+    recipient: 'recipient',
     slippagePct: '0.5',
     evmSenderAddress: '0xSender',
   }) as TBuildTransactionsOptions;
@@ -139,8 +139,7 @@ describe('dryRunRouter', () => {
     expect(dryRun).toHaveBeenCalledWith(
       expect.objectContaining({
         destination: 'Acala',
-        senderAddress: '0xSender',
-        address: 'recipient',
+        sender: '0xSender',
         currency: expect.objectContaining({ amount: 1000n }),
       }),
     );

@@ -2,7 +2,7 @@ import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
-import { assertAddressIsString, assertSenderAddress } from '../..'
+import { assertAddressIsString, assertSender } from '../..'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { createExecuteCall } from './createExecuteCall'
@@ -24,20 +24,20 @@ export const handleExecuteTransfer = async <TApi, TRes, TSigner>(
   const {
     api,
     chain,
-    senderAddress,
+    sender,
     paraIdTo,
     destChain,
     assetInfo,
     currency,
     feeCurrency,
-    address,
+    recipient,
     feeAssetInfo,
     version,
     transactOptions
   } = options
 
-  assertSenderAddress(senderAddress)
-  assertAddressIsString(address)
+  assertSender(sender)
+  assertAddressIsString(recipient)
 
   const checkAmount = (fee: bigint) => {
     if (assetInfo.amount <= fee) throw new AmountTooLowError()
@@ -53,13 +53,12 @@ export const handleExecuteTransfer = async <TApi, TRes, TSigner>(
     api,
     chain,
     destChain,
-    address,
     assetInfo,
     currency,
     feeAssetInfo,
     feeCurrency,
-    recipientAddress: address,
-    senderAddress,
+    sender,
+    recipient,
     version,
     paraIdTo,
     transactOptions
@@ -89,8 +88,7 @@ export const handleExecuteTransfer = async <TApi, TRes, TSigner>(
     tx: api.deserializeExtrinsics(call),
     origin: chain,
     destination: destChain,
-    senderAddress,
-    address,
+    sender,
     currency,
     version,
     feeAsset: feeCurrency,

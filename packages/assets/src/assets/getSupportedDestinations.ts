@@ -6,7 +6,7 @@ import type { TCurrencyCore } from '../types'
 import { findAssetInfoOnDest, findAssetInfoOrThrow } from './search'
 
 export const getSupportedDestinations = (origin: TChain, currency: TCurrencyCore): TChain[] => {
-  findAssetInfoOrThrow(origin, currency, null)
+  findAssetInfoOrThrow(origin, currency)
 
   return CHAINS.filter(destination => {
     if (destination === origin) return false

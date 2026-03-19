@@ -2,7 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
-import type { TApiOrUrl, TBuilderOptions, TSendOptionsWithSwap, TSwapOptions } from '../../types'
+import type {
+  TApiOrUrl,
+  TBuilderOptions,
+  TSwapOptions,
+  TTransferOptionsWithSwap
+} from '../../types'
 import * as assertions from '../assertions'
 import * as builder from '../builder'
 import { createRouterBuilder, executeWithRouter, normalizeExchange } from './swapUtils'
@@ -42,13 +47,13 @@ const createMockApi = (
   }) as unknown as IPolkadotApi<Api, Res, Signer>
 
 const createBaseOptions = (
-  overrides: Partial<TSendOptionsWithSwap<Api, Res, Signer>> = {}
-): TSendOptionsWithSwap<Api, Res, Signer> => ({
+  overrides: Partial<TTransferOptionsWithSwap<Api, Res, Signer>> = {}
+): TTransferOptionsWithSwap<Api, Res, Signer> => ({
   api: createMockApi(),
   from: 'Acala',
   to: 'Astar',
-  address: '5F3sa2TJbN...',
-  senderAddress: '5G7abc...',
+  recipient: '5F3sa2TJbN...',
+  sender: '5G7abc...',
   currency: { symbol: 'DOT', amount: '1000000000' },
   swapOptions: {
     currencyTo: { symbol: 'GLMR' },
@@ -69,7 +74,7 @@ describe('swapUtils', () => {
     it('should throw UnsupportedOperationError when transactOptions.call is set', async () => {
       const options = createBaseOptions({
         transactOptions: { call: '0x1234' }
-      } as Partial<TSendOptionsWithSwap<Api, Res, Signer>>)
+      } as Partial<TTransferOptionsWithSwap<Api, Res, Signer>>)
 
       await expect(createRouterBuilder(options)).rejects.toThrow(UnsupportedOperationError)
       await expect(createRouterBuilder(options)).rejects.toThrow(
@@ -92,8 +97,8 @@ describe('swapUtils', () => {
       await createRouterBuilder(options)
 
       expect(assertions.assertToIsString).toHaveBeenCalledWith(options.to)
-      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.address)
-      expect(assertions.assertSenderAddress).toHaveBeenCalledWith(options.senderAddress)
+      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.recipient)
+      expect(assertions.assertSender).toHaveBeenCalledWith(options.sender)
     })
 
     it('should throw UnsupportedOperationError when currency is an array', async () => {
@@ -101,7 +106,7 @@ describe('swapUtils', () => {
         currency: [
           { symbol: 'DOT', amount: '1000' },
           { symbol: 'GLMR', amount: '2000' }
-        ] as TSendOptionsWithSwap<Api, Res, Signer>['currency']
+        ] as TTransferOptionsWithSwap<Api, Res, Signer>['currency']
       })
 
       await expect(createRouterBuilder(options)).rejects.toThrow(UnsupportedOperationError)

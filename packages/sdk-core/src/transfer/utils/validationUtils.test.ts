@@ -20,7 +20,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination, TTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 import {
   validateAssetSpecifiers,
@@ -287,10 +287,10 @@ describe('validateTransact', () => {
     api: mockApi,
     from: 'Polkadot',
     to: 'Kusama',
-    senderAddress: 'addr1',
-    address: 'addr2',
+    sender: 'addr1',
+    recipient: 'addr2',
     transactOptions: { call: '0x123' }
-  } as TSendOptions<unknown, unknown, unknown>
+  } as TTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -345,7 +345,7 @@ describe('validateTransact', () => {
     ).toThrowError(UnsupportedOperationError)
   })
 
-  it('returns ValidationError if senderAddress does not match destination', () => {
+  it('returns ValidationError if sender does not match destination', () => {
     vi.mocked(isHex).mockReturnValue(true)
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(compareAddresses).mockReturnValue(false)
@@ -364,7 +364,7 @@ describe('validateTransact', () => {
 
     const result = validateTransact({
       ...baseOptions,
-      address: 'addr1'
+      recipient: 'addr1'
     })
 
     expect(result).toBeUndefined()

@@ -19,8 +19,8 @@ vi.mock('../../utils/fees')
 
 const mockBuild = vi.fn()
 const mockCurrency = vi.fn().mockReturnThis()
-const mockSenderAddress = vi.fn().mockReturnThis()
-const mockAddress = vi.fn().mockReturnThis()
+const mockSender = vi.fn().mockReturnThis()
+const mockRecipient = vi.fn().mockReturnThis()
 const mockTo = vi.fn().mockReturnThis()
 const mockFrom = vi.fn().mockReturnThis()
 
@@ -28,8 +28,8 @@ vi.mock('../../builder', () => ({
   Builder: vi.fn(() => ({
     from: mockFrom,
     to: mockTo,
-    address: mockAddress,
-    senderAddress: mockSenderAddress,
+    sender: mockSender,
+    recipient: mockRecipient,
     currency: mockCurrency,
     buildInternal: mockBuild
   }))
@@ -54,8 +54,8 @@ describe('getReverseTxFee', () => {
     api: mockApi,
     origin: 'ParachainA' as TSubstrateChain,
     destination: 'ParachainB' as TSubstrateChain,
-    senderAddress: 'senderAlice',
-    address: '0x1234567890123456789012345678901234567890',
+    sender: 'senderAlice',
+    recipient: '0x1234567890123456789012345678901234567890',
     currency: { symbol: 'DOT', amount: mockAmount }
   } as TGetReverseTxFeeOptions<unknown, unknown, unknown>
 
@@ -82,8 +82,8 @@ describe('getReverseTxFee', () => {
     expect(Builder).toHaveBeenCalledWith(mockApi)
     expect(mockFrom).toHaveBeenCalledWith(defaultOptions.destination)
     expect(mockTo).toHaveBeenCalledWith(defaultOptions.origin)
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.sender)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.sender)
     expect(mockCurrency).toHaveBeenCalledWith(expectedCurrencyArg)
     expect(mockBuild).toHaveBeenCalled()
   })
@@ -103,8 +103,8 @@ describe('getReverseTxFee', () => {
     expect(Builder).toHaveBeenCalledWith(mockApi)
     expect(mockFrom).toHaveBeenCalledWith(defaultOptions.destination)
     expect(mockTo).toHaveBeenCalledWith(defaultOptions.origin)
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.sender)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.sender)
     expect(mockCurrency).toHaveBeenCalledWith(expectedCurrencyArg)
     expect(mockBuild).toHaveBeenCalled()
   })
@@ -116,7 +116,7 @@ describe('getReverseTxFee', () => {
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.senderAddress)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.sender)
   })
 
   it('should call padFee with the raw fee and correct parameters', async () => {
@@ -164,9 +164,9 @@ describe('getReverseTxFee', () => {
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.senderAddress)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.sender)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.sender)
   })
 
   it('should use EVM address when destination chain is EVM', async () => {
@@ -177,9 +177,9 @@ describe('getReverseTxFee', () => {
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.sender)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.recipient)
   })
 
   it('should use correct addresses when both chains are EVM', async () => {
@@ -190,22 +190,22 @@ describe('getReverseTxFee', () => {
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.recipient)
   })
 
   it('should handle edge case where address is not EVM format', async () => {
     const optionsWithNonEvmAddress = {
       ...defaultOptions,
-      address: 'substrate-style-address'
+      recipient: 'substrate-style-address'
     }
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     await getReverseTxFee(optionsWithNonEvmAddress, currencyInput)
 
-    expect(mockAddress).toHaveBeenCalledWith(optionsWithNonEvmAddress.address)
-    expect(mockSenderAddress).toHaveBeenCalledWith(optionsWithNonEvmAddress.address)
+    expect(mockRecipient).toHaveBeenCalledWith(optionsWithNonEvmAddress.recipient)
+    expect(mockSender).toHaveBeenCalledWith(optionsWithNonEvmAddress.recipient)
   })
 
   it('should handle EVM to Substrate scenario correctly', async () => {
@@ -216,8 +216,8 @@ describe('getReverseTxFee', () => {
 
     await getReverseTxFee(defaultOptions, currencyInput)
 
-    expect(mockAddress).toHaveBeenCalledWith(defaultOptions.senderAddress)
-    expect(mockSenderAddress).toHaveBeenCalledWith(defaultOptions.address)
-    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.address)
+    expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.sender)
+    expect(mockSender).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.recipient)
   })
 })

@@ -36,7 +36,7 @@ describe('createBeneficiaryLocation', () => {
 
   describe('createBeneficiaryLocXTokens', () => {
     it('should return a ocation object for a location recipient address', () => {
-      const recipientAddress = { parents: Parents.ONE, interior: {} } as TLocation
+      const recipient = { parents: Parents.ONE, interior: {} } as TLocation
       const version = Version.V4
       vi.mocked(isTLocation).mockReturnValue(true)
 
@@ -44,16 +44,16 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: mockDest,
-        address: recipientAddress,
+        recipient,
         version
       })
 
-      expect(result).toEqual(recipientAddress)
-      expect(isTLocation).toHaveBeenCalledWith(recipientAddress)
+      expect(result).toEqual(recipient)
+      expect(isTLocation).toHaveBeenCalledWith(recipient)
     })
 
     it('should return a correct payload for ParaToRelay scenario', () => {
-      const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
+      const recipient = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
       vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
@@ -67,7 +67,7 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: 'Polkadot',
-        address: recipientAddress,
+        recipient,
         version: Version.V4
       })
 
@@ -77,7 +77,7 @@ describe('createBeneficiaryLocation', () => {
       })
 
       expect(resolveScenario).toHaveBeenCalledWith('Polkadot', 'Polkadot')
-      expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
+      expect(accountIdSpy).toHaveBeenCalledWith(recipient)
       expect(createX1Payload).toHaveBeenCalledWith(Version.V4, {
         AccountId32: { id: accIDMock }
       })
@@ -93,7 +93,7 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: mockDest,
-        address: ethAddress,
+        recipient: ethAddress,
         version: Version.V4,
         paraId: 1000
       })
@@ -110,7 +110,7 @@ describe('createBeneficiaryLocation', () => {
     })
 
     it('should return a correct payload for ParaToPara scenario with standard address', () => {
-      const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
+      const recipient = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
       vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
@@ -121,7 +121,7 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: mockDest,
-        address: recipientAddress,
+        recipient,
         version: Version.V4,
         paraId: 1000
       })
@@ -134,12 +134,12 @@ describe('createBeneficiaryLocation', () => {
       })
 
       expect(resolveScenario).toHaveBeenCalledWith(mockOrigin, mockDest)
-      expect(isAddress).toHaveBeenCalledWith(recipientAddress)
-      expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
+      expect(isAddress).toHaveBeenCalledWith(recipient)
+      expect(accountIdSpy).toHaveBeenCalledWith(recipient)
     })
 
     it('should return a fallback payload for an unknown scenario with standard address', () => {
-      const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
+      const recipient = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
       const accIDMock = '0x1234567890abcdef'
       vi.mocked(isTLocation).mockReturnValue(false)
       vi.mocked(isAddress).mockReturnValue(false)
@@ -153,7 +153,7 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: mockDest,
-        address: recipientAddress,
+        recipient,
         version: Version.V4
       })
 
@@ -163,7 +163,7 @@ describe('createBeneficiaryLocation', () => {
       })
 
       expect(resolveScenario).toHaveBeenCalledWith(mockOrigin, mockDest)
-      expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
+      expect(accountIdSpy).toHaveBeenCalledWith(recipient)
       expect(createX1Payload).toHaveBeenCalledWith(Version.V4, {
         AccountId32: { id: accIDMock }
       })
@@ -182,7 +182,7 @@ describe('createBeneficiaryLocation', () => {
         api: apiMock,
         origin: mockOrigin,
         destination: mockDest,
-        address: ethAddress,
+        recipient: ethAddress,
         version: Version.V4
       })
 

@@ -20,7 +20,7 @@ describe('executeRouterPlan', () => {
 
   const baseOptions = {
     signer: mockSigner,
-    senderAddress: mockSenderAddress,
+    sender: mockSenderAddress,
     evmSigner: mockEvmSigner,
     evmSenderAddress: mockEvmSenderAddress,
     onStatusChange: mockOnStatusChange,

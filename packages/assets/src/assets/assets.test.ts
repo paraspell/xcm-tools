@@ -12,7 +12,6 @@ import {
   getOtherAssets,
   getRelayChainSymbol,
   hasDryRunSupport,
-  hasSupportForAsset,
   hasXcmPaymentApiSupport
 } from './assets'
 
@@ -108,13 +107,6 @@ describe('getAssetDecimals', () => {
         expect(decimals).toBeGreaterThanOrEqual(0)
       })
     })
-  })
-})
-
-describe('hasSupportForAsset', () => {
-  it('should return true for .e suffixed asset', () => {
-    const hasSupport = hasSupportForAsset('AssetHubPolkadot', 'WETH.e')
-    expect(hasSupport).toBe(true)
   })
 })
 

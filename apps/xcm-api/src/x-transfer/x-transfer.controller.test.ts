@@ -1,11 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type {
+  TAssetInfo,
   TBridgeStatus,
   TDryRunResult,
   TExchangeChain,
-  TGetXcmFeeEstimateDetail,
-  TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
   TTransferInfo,
   TXcmFeeDetail,
@@ -18,7 +17,7 @@ import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
   SignAndSubmitDto,
-  XTransferDtoWSenderAddress,
+  XTransferDtoWSender,
 } from './dto/XTransferDto.js';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
@@ -44,11 +43,11 @@ describe('XTransferController', () => {
     service = module.get<XTransferService>(XTransferService);
   });
 
-  const bodyParams: XTransferDtoWSenderAddress = {
+  const bodyParams: XTransferDtoWSender = {
     from: 'Acala',
     to: 'Basilisk',
-    address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-    senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    sender: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
     currency: { symbol: 'DOT', amount: 100 },
   };
 
@@ -99,13 +98,13 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+            recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+            recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
         ],
@@ -183,43 +182,6 @@ describe('XTransferController', () => {
     });
   });
 
-  describe('getXcmFeeEstimate', () => {
-    it('should call service.getXcmFeeEstimate and returns its value', async () => {
-      const mockResult = {
-        origin: {},
-        destination: {},
-      } as TGetXcmFeeEstimateResult;
-      const spy = vi
-        .spyOn(service, 'getXcmFeeEstimate')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.getXcmFeeEstimate(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
-    });
-  });
-
-  describe('getOriginXcmFeeEstimate', () => {
-    it('should call service.getOriginXcmFeeEstimate and returns its value', async () => {
-      const mockResult = {} as TGetXcmFeeEstimateDetail;
-      const spy = vi
-        .spyOn(service, 'getOriginXcmFeeEstimate')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.getOriginXcmFeeEstimate(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
-    });
-  });
-
   describe('getTransferableAmount', () => {
     it('should call service.getTransferableAmount and returns its value', async () => {
       const mockResult = 1000n;
@@ -275,7 +237,7 @@ describe('XTransferController', () => {
     it('should call service.signAndSubmit and track analytics', async () => {
       const params: SignAndSubmitDto = {
         ...bodyParams,
-        senderAddress: '//Alice',
+        sender: '//Alice',
       };
 
       const mockResult = '0x1234567890abcdef';
@@ -366,6 +328,24 @@ describe('XTransferController', () => {
 
       expect(result).toEqual(mockResult);
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getExchangePairs', () => {
+    it('should call getExchangePairs service method with correct params and return result', () => {
+      const exchange = 'HydrationDex';
+      const mockResult = [[{}, {}]] as [TAssetInfo, TAssetInfo][];
+      const spy = vi
+        .spyOn(service, 'getExchangePairs')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getExchangePairs(
+        { exchange },
+        mockRequestObject,
+      );
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith(exchange);
     });
   });
 });

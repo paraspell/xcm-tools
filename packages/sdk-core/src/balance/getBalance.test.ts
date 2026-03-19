@@ -128,7 +128,7 @@ describe('getBalanceInternal', () => {
       currency: baseCurrency
     } as TGetBalanceOptions<unknown, unknown, unknown>)
 
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Astar', baseCurrency, null)
+    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Astar', baseCurrency)
     expect(chainGetBalance).toHaveBeenCalledWith(api, 'addr', baseAsset)
     expect(result).toBe(77n)
   })

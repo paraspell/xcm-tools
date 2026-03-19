@@ -35,7 +35,7 @@ describe('findNativeAssetInfo helpers', () => {
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).not.toHaveBeenCalled()
-      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: 'ETH' }, null)
+      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: 'ETH' })
       expect(res).toEqual(mockInfo)
     })
 
@@ -51,7 +51,7 @@ describe('findNativeAssetInfo helpers', () => {
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).toHaveBeenCalledWith('DOT')
-      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } }, null)
+      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } })
       expect(res).toEqual(mockInfo)
     })
   })
@@ -68,7 +68,7 @@ describe('findNativeAssetInfo helpers', () => {
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).toHaveBeenCalledWith('DOT')
-      expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } }, null)
+      expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } })
       expect(res).toEqual(mockInfo)
     })
   })

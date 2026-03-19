@@ -35,7 +35,7 @@ const abi = [
 export const transferMoonbeamLocal = async <TApi, TRes, TSigner>(
   client: ReturnType<typeof createPublicClient>,
   assetInfo: WithAmount<TAssetInfo>,
-  { signer, address }: TEvmBuilderOptions<TApi, TRes, TSigner>
+  { signer, recipient }: TEvmBuilderOptions<TApi, TRes, TSigner>
 ): Promise<string> => {
   assertHasId(assetInfo)
 
@@ -48,5 +48,5 @@ export const transferMoonbeamLocal = async <TApi, TRes, TSigner>(
     }
   })
 
-  return contract.write.transfer([address as `0x${string}`, assetInfo.amount])
+  return contract.write.transfer([recipient as `0x${string}`, assetInfo.amount])
 }

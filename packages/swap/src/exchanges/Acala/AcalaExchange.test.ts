@@ -154,7 +154,7 @@ describe('AcalaExchange', () => {
             assetFrom: { symbol: 'DOT' },
             assetTo: { symbol: 'ACA' },
             amount: -1n,
-            senderAddress: '5xxxx',
+            sender: '5xxxx',
             origin: {},
           } as TSwapOptions,
           0n,
@@ -168,7 +168,7 @@ describe('AcalaExchange', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'ACA' },
         amount: 1n,
-        senderAddress: 'some-address',
+        sender: 'some-address',
         origin: {},
       } as TSwapOptions;
 

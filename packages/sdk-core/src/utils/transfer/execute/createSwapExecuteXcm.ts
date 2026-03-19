@@ -41,7 +41,7 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
-  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) }, null)
+  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) })
 
   if (!needsMultiHop) {
     return [
@@ -98,8 +98,8 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
     assetInfoTo,
     feeAssetInfo,
     fees: { originFee, originReserveFee, destReserveFee },
-    senderAddress,
-    recipientAddress,
+    sender,
+    recipient,
     version,
     paraIdTo
   } = options
@@ -162,7 +162,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
       assetInfo: assetInfoFrom,
       feeAssetInfo: resolvedFeeAssetInfo,
       useJitWithdraw: isEthereumDest,
-      recipientAddress,
+      recipient,
       fees: {
         originFee: hasSeparateFeeAsset ? ethBridgeFee || originFee : originFee,
         reserveFee: originReserveFee
@@ -182,23 +182,23 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
   let exchangeToDestXcm: unknown[]
 
   if (isEthereumDest) {
-    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol }, null)
+    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol })
 
     const messageId = await generateMessageId(
       api,
-      senderAddress,
+      sender,
       getParaId(chain ?? exchangeChain),
       ethAsset.assetId!,
-      recipientAddress,
+      recipient,
       amountOut
     )
 
     const snowbridgeInstructions = createEthereumBridgeInstructions(
       {
         api,
-        address: recipientAddress,
+        sender,
+        recipient,
         assetInfo: assetInfoTo,
-        senderAddress,
         version
       },
       chain ?? exchangeChain,
@@ -219,7 +219,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
             useFeeAssetOnHops: hasSeparateFeeAsset,
             paraIdTo: getParaId(resolvedDestChain!),
             version,
-            recipientAddress,
+            recipient,
             fees: {
               originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
               reserveFee: destReserveFee
@@ -233,7 +233,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
       assetInfo: assetInfoTo,
       paraIdTo,
       version,
-      recipientAddress,
+      recipient,
       // Deal with this after feeAsset is supported
       fees: { originFee: 0n, reserveFee: destReserveFee },
       suffixXcm: [depositInstruction]
@@ -251,7 +251,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
         useFeeAssetOnHops: hasSeparateFeeAsset,
         paraIdTo: getParaId(exchangeChain),
         version,
-        recipientAddress,
+        recipient,
         fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
         suffixXcm: [...exchangeInstructions, ...exchangeToDestXcm]
       })

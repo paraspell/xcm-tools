@@ -31,7 +31,7 @@ describe('getTransferableAmount', () => {
 
   const baseOptions = {
     api: mockApi,
-    senderAddress: 'validAddress',
+    sender: 'validAddress',
     origin: 'Astar',
     destination: 'BifrostPolkadot',
     currency: { symbol: 'DOT', amount: 1000n },
@@ -65,7 +65,7 @@ describe('getTransferableAmount', () => {
       buildTx,
       origin: 'Astar',
       destination: 'Astar',
-      senderAddress: 'validAddress',
+      sender: 'validAddress',
       feeAsset: undefined,
       version: baseOptions.version,
       currency: { symbol: 'DOT', amount: 1000n },

@@ -51,7 +51,7 @@ export const getTxFromApi = async <T>(
   params: T,
   api: TApi,
   endpoint: string,
-  senderAddress: string,
+  sender: string,
   apiType: TApiType,
   method: string = 'GET',
   useBody = false,
@@ -59,7 +59,7 @@ export const getTxFromApi = async <T>(
   const txHash = await fetchFromApi<T, string>(
     {
       ...params,
-      senderAddress,
+      sender,
     },
     endpoint,
     method,

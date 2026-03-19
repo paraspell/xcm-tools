@@ -38,7 +38,7 @@ class Manta<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, balance, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, balance, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
@@ -51,7 +51,7 @@ class Manta<TApi, TRes, TSigner>
       method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: assetId,
-        target: { Id: address },
+        target: { Id: recipient },
         amount
       }
     })

@@ -10,7 +10,7 @@ const resolveId = (asset: TAssetInfo, chain: TSubstrateChain) => {
     const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
 
     const resolvedAsset = isEthAsset
-      ? findAssetInfoOrThrow(chain, { location: asset.location }, null)
+      ? findAssetInfoOrThrow(chain, { location: asset.location })
       : asset
 
     return getChain(chain).getCustomCurrencyId(resolvedAsset)

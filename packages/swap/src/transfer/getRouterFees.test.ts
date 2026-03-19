@@ -295,8 +295,8 @@ describe('getRouterFees', () => {
         buildTx: expect.any(Function),
         origin: 'Acala',
         destination: 'Moonbeam',
-        senderAddress: options.senderAddress,
-        address: options.senderAddress,
+        sender: options.sender,
+        recipient: options.sender,
         disableFallback: false,
         swapConfig: expect.objectContaining({
           exchangeChain: localOptions.exchange.baseChain,

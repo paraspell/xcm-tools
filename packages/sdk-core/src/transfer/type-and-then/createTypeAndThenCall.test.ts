@@ -65,7 +65,7 @@ describe('createTypeAndThenCall', () => {
     options: {
       api: mockApi,
       chain: mockChain,
-      address: 'dest-address',
+      recipient: 'dest-address',
       version: mockVersion,
       currency: { amount: 1000n },
       feeCurrency: undefined
@@ -237,12 +237,12 @@ describe('createTypeAndThenCall', () => {
     expect(spy).toHaveBeenCalledWith(mockSerializedCall)
   })
 
-  it('creates refund instruction when senderAddress provided', async () => {
+  it('creates refund instruction when sender provided', async () => {
     const contextWithSender = {
       ...mockContext,
       options: {
         ...mockContext.options,
-        senderAddress: 'refund-address'
+        sender: 'refund-address'
       }
     }
 

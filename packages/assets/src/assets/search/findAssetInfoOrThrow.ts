@@ -7,7 +7,7 @@ import { findAssetInfo } from './findAssetInfo'
 export const findAssetInfoOrThrow = (
   chain: TChain,
   currency: TCurrencyInput,
-  destination: TChain | null
+  destination?: TChain | null
 ): TAssetInfo => {
   const asset = findAssetInfo(chain, currency, destination)
 

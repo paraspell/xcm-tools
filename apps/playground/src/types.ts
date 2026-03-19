@@ -168,7 +168,7 @@ export type TFormValues = {
   to: TChain;
   currencies: TCurrencyEntry[];
   feeAsset: TCurrencyEntryBase;
-  address: string;
+  recipient: string;
   ahAddress: string;
   useApi: boolean;
   keepAlive: boolean;

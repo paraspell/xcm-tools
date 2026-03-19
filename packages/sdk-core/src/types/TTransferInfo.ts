@@ -56,7 +56,7 @@ export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
   originChain: TSubstrateChain
   currency: TCurrencyCore
   asset: TAssetInfo
-  senderAddress: string
+  sender: string
   ahAddress?: string
 }
 
@@ -64,7 +64,7 @@ export type TBuildDestInfoOptions<TApi, TRes, TSigner> = {
   api: IPolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TChain
-  address: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   originFee: bigint
   isFeeAssetAh: boolean
@@ -82,9 +82,9 @@ export type TGetTransferInfoOptionsBase<TRes> = {
   buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
+  sender: string
   ahAddress?: string
-  address: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   version: Version | undefined
   feeAsset?: TCurrencyCore

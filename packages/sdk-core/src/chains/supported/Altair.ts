@@ -30,9 +30,9 @@ class Altair<TApi, TRes, TSigner>
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    const { api, assetInfo: asset, address, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
-    const dest = { Id: address }
+    const dest = { Id: recipient }
     const currencyId = this.getCustomCurrencyId(asset)
 
     if (isAmountAll) {

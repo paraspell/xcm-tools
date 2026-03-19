@@ -1,7 +1,4 @@
-import {
-  claimAssets as claimAssetsImpl,
-  getBalance as getBalanceImpl,
-} from "@paraspell/sdk-core";
+import { getBalance as getBalanceImpl } from "@paraspell/sdk-core";
 
 import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { createDedotApiCall } from "./utils";
@@ -13,15 +10,6 @@ import { createDedotApiCall } from "./utils";
  */
 export const getBalance = createDedotApiCall(
   getBalanceImpl<TDedotApi, TDedotExtrinsic, TDedotSigner>,
-);
-
-/**
- * Claims assets from a parachain.
- *
- * @returns An extrinsic representing the claim transaction.
- */
-export const claimAssets = createDedotApiCall(
-  claimAssetsImpl<TDedotApi, TDedotExtrinsic, TDedotSigner>,
 );
 
 export {

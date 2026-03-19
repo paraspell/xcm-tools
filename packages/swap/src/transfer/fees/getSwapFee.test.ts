@@ -22,7 +22,7 @@ describe('getSwapFee', () => {
 
   const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
   const options = {
-    senderAddress: '0xSender',
+    sender: '0xSender',
     exchange: { apiPapi: 'apiInstance', assetFrom: dotAsset },
     amount: '100',
   } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
@@ -53,7 +53,7 @@ describe('getSwapFee', () => {
         buildTx: expect.any(Function),
         origin: 'TEST_CHAIN',
         destination: 'TEST_CHAIN',
-        senderAddress: '0xSender',
+        sender: '0xSender',
         disableFallback: false,
         currency: { location: dotAsset.location, amount: '100' },
       }),
