@@ -3,15 +3,15 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { BatchValidationError } from '../errors'
-import type { TBatchedSendOptions } from '../types'
+import type { TBatchedTransferOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
 import { createTransferOrSwap } from '../utils'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes, TSigner> {
-  transactionOptions: TBatchedSendOptions<TApi, TRes, TSigner>[] = []
+  transactionOptions: TBatchedTransferOptions<TApi, TRes, TSigner>[] = []
 
-  addTransaction(options: TBatchedSendOptions<TApi, TRes, TSigner>) {
+  addTransaction(options: TBatchedTransferOptions<TApi, TRes, TSigner>) {
     this.transactionOptions.push(options)
   }
 

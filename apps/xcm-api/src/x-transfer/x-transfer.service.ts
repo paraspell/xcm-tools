@@ -12,9 +12,9 @@ import {
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptionsWithSender,
-  TSendBaseOptionsWithSwap,
   TSubstrateChain,
+  TTransferBaseOptionsWithSender,
+  TTransferBaseOptionsWithSwap,
 } from '@paraspell/sdk';
 import { getExchangePairs } from '@paraspell/swap';
 
@@ -36,7 +36,7 @@ export class XTransferService {
     transfer: XTransferDtoWSender,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSwap<TPapiApi, TPapiTransaction, TPapiSigner>
+        TTransferBaseOptionsWithSwap<TPapiApi, TPapiTransaction, TPapiSigner>
       >,
     ) => Promise<T>,
   ): Promise<T> {
@@ -61,7 +61,7 @@ export class XTransferService {
     transfer: XTransferDtoWSender,
     executor: (
       finalBuilder: GeneralBuilder<
-        TSendBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
+        TTransferBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
       >,
     ) => Promise<T>,
   ): Promise<T> {

@@ -10,8 +10,8 @@ import { createTransfer } from '../../transfer'
 import type {
   TBuilderConfig,
   TCreateTxsOptions,
-  TSendBaseOptionsWithSender,
-  TSendOptions
+  TTransferBaseOptionsWithSender,
+  TTransferOptions
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { executeWithRouter } from '../swap'
@@ -128,7 +128,7 @@ describe('overrideTxAmount', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSender<unknown, unknown, unknown>
+      TTransferBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const out = await overrideTxAmount(options, builder, '50')
@@ -156,7 +156,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSender<unknown, unknown, unknown>
+      TTransferBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(baseOptions, builder, undefined)
@@ -178,7 +178,7 @@ describe('createTx', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptionsWithSender<unknown, unknown, unknown>
+      TTransferBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
     const res = await createTxOverrideAmount(options, builder, '200')
@@ -191,9 +191,9 @@ describe('createTx', () => {
   })
 })
 
-const makeSendOptions = (
-  overrides: Partial<TSendOptions<unknown, unknown, unknown>> = {}
-): TSendOptions<unknown, unknown, unknown> =>
+const makeTransferOptions = (
+  overrides: Partial<TTransferOptions<unknown, unknown, unknown>> = {}
+): TTransferOptions<unknown, unknown, unknown> =>
   ({
     api: {
       getApi: vi.fn(() => 'mockApi'),
@@ -206,7 +206,7 @@ const makeSendOptions = (
     currency: { symbol: 'DOT', amount: '100' },
     isAmountAll: false,
     ...overrides
-  }) as TSendOptions<unknown, unknown, unknown>
+  }) as TTransferOptions<unknown, unknown, unknown>
 
 describe('createTransferOrSwapAll', () => {
   beforeEach(() => {
@@ -217,7 +217,7 @@ describe('createTransferOrSwapAll', () => {
     const mockTx = { kind: 'transfer' }
     vi.mocked(createTransfer).mockResolvedValue(mockTx)
 
-    const options = makeSendOptions()
+    const options = makeTransferOptions()
     const result = await createTransferOrSwapAll(options)
 
     expect(result).toHaveLength(1)
@@ -246,7 +246,7 @@ describe('createTransferOrSwapAll', () => {
       exchange: undefined,
       slippage: 1
     }
-    const options = makeSendOptions({ swapOptions } as never)
+    const options = makeTransferOptions({ swapOptions } as never)
     const result = await createTransferOrSwapAll(options)
 
     expect(result).toEqual(swapTxs)
@@ -264,7 +264,7 @@ describe('createTransferOrSwap', () => {
     const mockTx = { kind: 'singleTx' }
     vi.mocked(createTransfer).mockResolvedValue(mockTx)
 
-    const options = makeSendOptions()
+    const options = makeTransferOptions()
     const result = await createTransferOrSwap(options)
 
     expect(result).toBe(mockTx)
@@ -285,7 +285,7 @@ describe('createTransferOrSwap', () => {
       exchange: undefined,
       slippage: 1
     }
-    const options = makeSendOptions({ swapOptions } as never)
+    const options = makeTransferOptions({ swapOptions } as never)
 
     await expect(createTransferOrSwap(options)).rejects.toThrow(UnsupportedOperationError)
     await expect(createTransferOrSwap(options)).rejects.toThrow(/Use .buildAll\(\) instead/)

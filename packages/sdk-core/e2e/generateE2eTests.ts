@@ -8,10 +8,10 @@ import {
   TSubstrateChain,
   PARACHAINS,
   TBuilderOptions,
-  TSendBaseOptionsWithSender,
+  TTransferBaseOptionsWithSender,
   getChain,
   isRelayChain,
-  TSendInternalOptions,
+  TTransferInternalOptions,
   RELAYCHAINS,
   isSystemChain,
   RuntimeApiUnavailableError,
@@ -49,7 +49,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   validateTransfer: (
-    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    builder: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
@@ -298,7 +298,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       // Skip temporarily disabled chains
       const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
       const isSendingDisabled = chainInstance?.isSendingTempDisabled(
-        {} as TSendInternalOptions<TApi, TRes, TSigner>
+        {} as TTransferInternalOptions<TApi, TRes, TSigner>
       )
       if (isSendingDisabled) return
 

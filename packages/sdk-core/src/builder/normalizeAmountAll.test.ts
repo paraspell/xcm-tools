@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
-import type { TSendBaseOptions } from '../types'
+import type { TTransferBaseOptions } from '../types'
 import { executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 import { normalizeAmountAll } from './normalizeAmountAll'
@@ -17,8 +17,8 @@ vi.mock('../utils/swap', async importOriginal => ({
 const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
-  overrides: Partial<TSendBaseOptions<unknown, unknown, unknown>> = {}
-): TSendBaseOptions<unknown, unknown, unknown> => ({
+  overrides: Partial<TTransferBaseOptions<unknown, unknown, unknown>> = {}
+): TTransferBaseOptions<unknown, unknown, unknown> => ({
   from: 'Acala',
   to: 'Hydration',
   recipient: 'address',
@@ -43,7 +43,7 @@ describe('normalizeAmountAll', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptions<unknown, unknown, unknown>
+      TTransferBaseOptions<unknown, unknown, unknown>
     >
 
     const options = createOptions()
@@ -77,7 +77,7 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown, unknown>
+            TTransferBaseOptions<unknown, unknown, unknown>
           >
       )
       .mockImplementationOnce(
@@ -85,7 +85,7 @@ describe('normalizeAmountAll', () => {
           ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown, unknown>
+            TTransferBaseOptions<unknown, unknown, unknown>
           >
       )
 
@@ -96,7 +96,7 @@ describe('normalizeAmountAll', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptions<unknown, unknown, unknown>
+      TTransferBaseOptions<unknown, unknown, unknown>
     >
 
     const options = createOptions({
@@ -162,7 +162,7 @@ describe('normalizeAmountAll', () => {
             unknown,
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown, unknown>
+            TTransferBaseOptions<unknown, unknown, unknown>
           >
       )
       .mockImplementationOnce(
@@ -171,7 +171,7 @@ describe('normalizeAmountAll', () => {
             unknown,
             unknown,
             unknown,
-            TSendBaseOptions<unknown, unknown, unknown>
+            TTransferBaseOptions<unknown, unknown, unknown>
           >
       )
 
@@ -182,7 +182,7 @@ describe('normalizeAmountAll', () => {
       unknown,
       unknown,
       unknown,
-      TSendBaseOptions<unknown, unknown, unknown>
+      TTransferBaseOptions<unknown, unknown, unknown>
     >
 
     const options = createOptions({
