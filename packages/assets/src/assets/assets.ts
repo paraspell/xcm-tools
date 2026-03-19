@@ -23,6 +23,8 @@ export const isChainEvm = (chain: TChain): boolean => assetsMap[chain].isEVM
 /**
  * Retrieves the asset ID for a given symbol on a specified chain.
  *
+ * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
+ *
  * @param chain - The chain to search for the asset.
  * @param symbol - The symbol of the asset.
  * @returns The asset ID if found; otherwise, null.
@@ -124,6 +126,8 @@ export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
 
 /**
  * Retrieves the number of decimals for an asset with the given symbol on a specified chain.
+ *
+ * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
  *
  * @param chain - The chain where the asset is located.
  * @param symbol - The symbol of the asset.
