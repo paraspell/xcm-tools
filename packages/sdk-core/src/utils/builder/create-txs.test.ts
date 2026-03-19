@@ -75,17 +75,15 @@ describe('computeOverridenAmount', () => {
     expect(out).toBe(1122n) // 999n + 123n
   })
 
-  it('treats non-config objects as not supporting abstractDecimals (falls back to parseUnits)', () => {
+  it('treats non-config objects as supporting abstractDecimals by default', () => {
     const options = { ...baseOptions, api: makeApi({}) }
     vi.mocked(isConfig).mockReturnValue(false)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 8 } as TAssetInfo)
-    vi.mocked(parseUnits).mockReturnValue(12345n)
 
     const out = computeOverridenAmount(options, '7')
-    expect(assertToIsString).toHaveBeenCalledWith('Hydration')
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
-    expect(parseUnits).toHaveBeenCalledWith('7', 8)
-    expect(out).toBe(12468n) // 12345n + 123n
+    expect(out).toBe(130) // 123 + 7
+    expect(assertToIsString).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(parseUnits).not.toHaveBeenCalled()
   })
 
   it('when relative=false with abstractDecimals=true, ignores existing amount and returns only the increase (number path)', () => {
