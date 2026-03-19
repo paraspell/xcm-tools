@@ -7,7 +7,7 @@ import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../
 export const createToExchangeBuilder = ({
   origin: { chain: from, assetFrom },
   exchange: { baseChain },
-  senderAddress,
+  sender,
   evmSenderAddress,
   amount,
   builderOptions,
@@ -19,8 +19,8 @@ export const createToExchangeBuilder = ({
       location: assetFrom.location,
       amount,
     })
-    .sender(isChainEvm(from) ? (evmSenderAddress as string) : senderAddress)
-    .recipient(senderAddress);
+    .sender(isChainEvm(from) ? (evmSenderAddress as string) : sender)
+    .recipient(sender);
 
 export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
   createToExchangeBuilder(options).build();
@@ -34,7 +34,7 @@ export const createFromExchangeBuilder = ({
   exchange: { apiPapi, baseChain, assetTo },
   destination: { chain, address },
   amount,
-  senderAddress,
+  sender,
   builderOptions,
 }: TBuildFromExchangeTxOptions) =>
   Builder({
@@ -50,7 +50,7 @@ export const createFromExchangeBuilder = ({
       location: assetTo.location,
       amount,
     })
-    .sender(senderAddress)
+    .sender(sender)
     .recipient(address);
 
 export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
@@ -61,18 +61,15 @@ export const getFromExchangeFee = <TDisableFallback extends boolean>(
   disableFallback: TDisableFallback,
 ) => createFromExchangeBuilder(options).getXcmFee({ disableFallback });
 
-export const determineFeeCalcAddress = (
-  senderAddress: string,
-  recipientAddress?: string,
-): string => {
-  if (!ethers.isAddress(senderAddress)) {
+export const determineFeeCalcAddress = (sender: string, recipient?: string): string => {
+  if (!ethers.isAddress(sender)) {
     // Use wallet address for fee calculation
-    return senderAddress;
+    return sender;
   }
 
-  if (recipientAddress && !ethers.isAddress(recipientAddress)) {
+  if (recipient && !ethers.isAddress(recipient)) {
     // Use recipient address for fee calculation
-    return recipientAddress;
+    return recipient;
   }
 
   // If both addresses are ethereum addresses, use fallback address for fee calculation

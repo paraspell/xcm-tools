@@ -26,7 +26,7 @@ class AssetHubExchange extends ExchangeChain {
     options: TSwapOptions,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
+    const { assetFrom, assetTo, amount, sender, slippagePct, origin, papiApi } = options;
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
@@ -47,7 +47,7 @@ class AssetHubExchange extends ExchangeChain {
       path: [transform(usedFromML), transform(usedToML)],
       amount_in: amountWithoutFee,
       amount_out_min: minAmountOut,
-      send_to: senderAddress,
+      send_to: sender,
       keep_alive: !!assetFrom.isNative,
     });
 
@@ -124,7 +124,7 @@ class AssetHubExchange extends ExchangeChain {
       const optionsHop2: TSwapOptions = {
         papiApi: options.papiApi,
         slippagePct: options.slippagePct,
-        senderAddress: options.senderAddress,
+        sender: options.sender,
         origin: undefined,
         assetFrom: nativeAsset,
         assetTo: assetTo,

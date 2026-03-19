@@ -14,7 +14,7 @@ import { calculateTxFeePjs, pow10n } from '../../../utils';
 import { getAssetInfo } from './utils';
 
 export const calculateFee = async (
-  { amount, slippagePct, feeCalcAddress, senderAddress }: TSwapOptions,
+  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
   currencyFromInfo: Asset,
@@ -46,7 +46,7 @@ export const calculateFee = async (
   const substrateTx = await txBuilderFactory
     .trade(trade)
     .withSlippage(Number(slippagePct))
-    .withBeneficiary(senderAddress)
+    .withBeneficiary(sender)
     .build();
 
   const tx = substrateTx.get();

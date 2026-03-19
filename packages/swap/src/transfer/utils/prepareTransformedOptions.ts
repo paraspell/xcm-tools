@@ -20,7 +20,7 @@ export const prepareTransformedOptions = async (
   dex: ExchangeChain;
   options: TTransformedOptions<TCommonRouterOptions>;
 }> => {
-  const { from, to, exchange, senderAddress, recipientAddress, amount } = options;
+  const { from, to, exchange, sender, recipient, amount } = options;
 
   const originApi = from ? await createChainClient(from, builderOptions) : undefined;
 
@@ -67,13 +67,13 @@ export const prepareTransformedOptions = async (
       feeAssetInfo: feeAssetFromExchange,
     },
     destination:
-      destinationSpecified && recipientAddress
+      destinationSpecified && recipient
         ? {
             chain: to,
-            address: recipientAddress,
+            address: recipient,
           }
         : undefined,
-    feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
+    feeCalcAddress: determineFeeCalcAddress(sender, recipient),
     builderOptions,
   };
 

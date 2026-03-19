@@ -11,7 +11,7 @@ export const getSwapFee = async <TDisableFallback extends boolean = false>(
   disableFallback?: TDisableFallback,
 ): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
   const {
-    senderAddress,
+    sender,
     exchange: { assetFrom },
     amount,
   } = options;
@@ -46,7 +46,7 @@ export const getSwapFee = async <TDisableFallback extends boolean = false>(
     buildTx,
     origin: exchange.chain,
     destination: exchange.chain,
-    sender: senderAddress,
+    sender,
     currency: {
       location: assetFrom.location,
       amount,

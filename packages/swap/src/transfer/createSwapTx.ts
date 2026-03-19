@@ -10,14 +10,14 @@ const FEE_ESTIMATION_UNITS = '100';
 export const calculateFromExchangeFee = async (
   options: TTransformedOptions<TBuildTransactionsOptions>,
 ) => {
-  const { exchange, destination, feeCalcAddress, senderAddress, builderOptions } = options;
+  const { exchange, destination, feeCalcAddress, sender, builderOptions } = options;
   if (!destination || destination.chain === exchange.baseChain) return 0n;
   const dummyAmount = parseUnits(FEE_ESTIMATION_UNITS, exchange.assetTo.decimals);
   const tx = await buildFromExchangeExtrinsic({
     exchange,
     destination,
     amount: dummyAmount,
-    senderAddress,
+    sender,
     builderOptions,
   });
   return tx.getEstimatedFees(feeCalcAddress);
