@@ -175,8 +175,8 @@ describe('prepareTransformedOptions', () => {
       currencyFrom: { symbol: 'ACA' },
       currencyTo: { symbol: 'ASTR' },
       exchange: 'AcalaDex',
-      senderAddress: 'senderAddr',
-      recipientAddress: 'recipientAddr',
+      sender: 'senderAddr',
+      recipient: 'recipientAddr',
     } as TTransferOptions;
 
     const mockDexChain = {

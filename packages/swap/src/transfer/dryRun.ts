@@ -46,18 +46,11 @@ const dryRunTransaction = async (
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
 ): Promise<TDryRunResult> => {
-  const {
-    exchange,
-    senderAddress,
-    evmSenderAddress,
-    destination,
-    currencyFrom,
-    currencyTo,
-    amount,
-  } = options;
+  const { exchange, sender, evmSenderAddress, destination, currencyFrom, currencyTo, amount } =
+    options;
   const { api, tx, chain } = transaction;
 
-  const senderAddressResolved = evmSenderAddress ?? senderAddress;
+  const senderResolved = evmSenderAddress ?? sender;
   const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
 
   return dryRun({
@@ -65,7 +58,7 @@ const dryRunTransaction = async (
     tx,
     origin: chain,
     destination: resolvedDest,
-    sender: senderAddressResolved,
+    sender: senderResolved,
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
       exchangeChain: exchange.baseChain,

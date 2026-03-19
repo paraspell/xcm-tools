@@ -13,8 +13,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
-        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('1')
         .buildTransactions();
 
@@ -47,8 +47,8 @@ describe.sequential('E2E tests', () => {
           },
         })
         .amount('5000000000')
-        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
-        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('1')
         .buildTransactions();
 
@@ -81,8 +81,8 @@ describe.sequential('E2E tests', () => {
         })
         .currencyTo({ symbol: 'DOT' })
         .amount('500000000000000')
-        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
-        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('1')
         .buildTransactions();
 
@@ -98,8 +98,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .senderAddress('23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3')
-        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .sender('23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3')
+        .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('1')
         .buildTransactions();
 
@@ -115,8 +115,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'BNC' })
         .amount('22000000000000')
-        .senderAddress('FPuDZQ6kmbc7roYZHce6hZAd3MGFGRRHxNTc9AysXgnhTjh')
-        .recipientAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .sender('FPuDZQ6kmbc7roYZHce6hZAd3MGFGRRHxNTc9AysXgnhTjh')
+        .recipient('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
         .slippagePct('1')
         .buildTransactions();
 
@@ -134,8 +134,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'BNC' })
         .currencyTo({ symbol: 'DOT' })
         .amount('100000000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -151,8 +151,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'KAR' })
         .amount('100000000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -170,8 +170,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'BNC' })
         .currencyTo({ symbol: 'ASTR' })
         .amount('38821036538894063687')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -187,8 +187,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ id: 1984 })
         .currencyTo({ symbol: 'DOT' })
         .amount('100000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -212,8 +212,8 @@ describe.sequential('E2E tests', () => {
         })
         .currencyTo({ id: 1984 })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -234,8 +234,8 @@ describe.sequential('E2E tests', () => {
         })
         .currencyTo({ id: 1984 })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -250,8 +250,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'PAS' })
         .currencyTo({ id: 1984 })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -265,8 +265,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ id: 6 })
         .currencyTo({ id: 10111 })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -283,8 +283,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'ACA' })
         .currencyTo({ symbol: 'DOT' })
         .amount('100000000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 
@@ -300,8 +300,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'ACA' })
         .currencyTo({ symbol: 'DOT' })
         .amount('100000000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .sender(MOCK_ADDRESS)
+        .recipient(MOCK_ADDRESS)
         .slippagePct('1')
         .buildTransactions();
 

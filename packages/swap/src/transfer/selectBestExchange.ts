@@ -27,7 +27,7 @@ export const selectBestExchange = async (
           assetFrom: assetFromExchange,
           assetTo,
         },
-        feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
+        feeCalcAddress: determineFeeCalcAddress(options.sender, options.recipient),
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 

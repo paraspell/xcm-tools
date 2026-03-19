@@ -29,7 +29,7 @@ class BifrostExchange extends ExchangeChain {
     options: TSwapOptions,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
+    const { assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
     const chainId = getParaId(this.chain);
 
@@ -77,7 +77,7 @@ class BifrostExchange extends ExchangeChain {
     const { extrinsic } = SwapRouter.swapCallParameters(trade, {
       api,
       allowedSlippage,
-      recipient: senderAddress,
+      recipient: sender,
       deadline,
     });
 

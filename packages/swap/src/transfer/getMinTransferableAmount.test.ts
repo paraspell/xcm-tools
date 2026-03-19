@@ -61,8 +61,8 @@ const createOptions = (
   currencyFrom: { symbol: 'HDX' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000',
-  senderAddress: 'sender',
-  recipientAddress: 'recipient',
+  sender: 'sender',
+  recipient: 'recipient',
   evmSenderAddress: undefined,
   slippagePct: '1',
   ...overrides,
@@ -78,7 +78,7 @@ const createTransformedOptions = (
     exchange: createExchangeInfo('HDX'),
     origin: undefined,
     destination: undefined,
-    feeCalcAddress: rest.senderAddress,
+    feeCalcAddress: rest.sender,
     builderOptions: undefined,
   };
 
@@ -122,7 +122,7 @@ describe('getMinTransferableAmount', () => {
     expect(createToExchangeBuilder).toHaveBeenCalledWith({
       origin: expect.objectContaining({ chain: 'Polkadot' }),
       exchange: expect.objectContaining({ baseChain: 'Hydration' }),
-      senderAddress: 'sender',
+      sender: 'sender',
       evmSenderAddress: undefined,
       amount: '1000',
       builderOptions: undefined,

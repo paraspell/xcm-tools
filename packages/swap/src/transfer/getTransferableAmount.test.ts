@@ -84,8 +84,8 @@ const createOptions = (
   currencyFrom: { symbol: 'DOT' },
   currencyTo: { symbol: 'ASTR' },
   amount: '1000',
-  senderAddress: 'sender',
-  recipientAddress: undefined,
+  sender: 'sender',
+  recipient: undefined,
   evmSenderAddress: undefined,
   slippagePct: '1',
   ...overrides,
@@ -101,7 +101,7 @@ const createTransformedOptions = (
     exchange: createExchangeInfo('HDX'),
     origin: undefined,
     destination: undefined,
-    feeCalcAddress: rest.senderAddress,
+    feeCalcAddress: rest.sender,
     builderOptions: undefined,
   };
 
@@ -144,7 +144,7 @@ describe('getTransferableAmount', () => {
     expect(createToExchangeBuilder).toHaveBeenCalledWith({
       origin: expect.objectContaining({ chain: 'Polkadot' }),
       exchange: expect.objectContaining({ baseChain: 'Hydration' }),
-      senderAddress: 'sender',
+      sender: 'sender',
       evmSenderAddress: undefined,
       amount: 1000n,
       builderOptions: undefined,
