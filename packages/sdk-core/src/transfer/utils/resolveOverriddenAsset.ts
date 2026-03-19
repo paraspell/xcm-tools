@@ -12,12 +12,12 @@ import {
 import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
 
 import { AMOUNT_ALL } from '../../constants'
-import type { TSendOptions } from '../../types'
+import type { TTransferOptions } from '../../types'
 import { abstractDecimals, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
 export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
-  options: TSendOptions<TApi, TRes, TSigner>,
+  options: TTransferOptions<TApi, TRes, TSigner>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
   resolvedFeeAsset: TAssetInfo | undefined

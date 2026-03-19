@@ -5,7 +5,7 @@ import type {
   TBuilderConfig,
   TBuilderOptions,
   TExchangeInput,
-  TSendOptionsWithSwap,
+  TTransferOptionsWithSwap,
   TUrl
 } from '../../types'
 import { assertAddressIsString, assertSender, assertToIsString } from '../assertions'
@@ -113,7 +113,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
 }
 
 export const executeWithRouter = async <TApi, TRes, TSigner, T>(
-  options: TSendOptionsWithSwap<TApi, TRes, TSigner>,
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>,
   executor: (builder: Awaited<ReturnType<typeof createRouterBuilder>>) => Promise<T>
 ) => {
   const routerBuilder = createRouterBuilder(options)

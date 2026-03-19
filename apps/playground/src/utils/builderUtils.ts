@@ -4,7 +4,7 @@ import type {
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptionsWithSender,
+  TTransferBaseOptionsWithSender,
 } from '@paraspell/sdk';
 import {
   Foreign,
@@ -150,7 +150,7 @@ export const determineFeeAsset = (
 
 export const addSwapToBuilder = <
   T extends Partial<
-    TSendBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
+    TTransferBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
   >,
 >(
   builder: GeneralBuilder<T>,

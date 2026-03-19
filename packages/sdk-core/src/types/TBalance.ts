@@ -3,7 +3,7 @@ import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TSendBaseOptionsWithSender } from './TTransfer'
+import type { TTransferBaseOptionsWithSender } from './TTransfer'
 import type { TTxFactory } from './TXcmFee'
 
 export type TGetBalanceCommonOptions = {
@@ -82,7 +82,12 @@ export type TGetTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
 export type TGetMinTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
     recipient: string
-    builder: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    builder: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>
+    >
   },
   TApi,
   TRes,

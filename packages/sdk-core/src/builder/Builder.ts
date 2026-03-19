@@ -30,14 +30,14 @@ import type {
   TDryRunResult,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
-  TSendBaseOptions,
-  TSendBaseOptionsWithSender,
-  TSendBaseOptionsWithSwap,
   TSender,
-  TSendOptions,
   TSwapOptions,
   TTransactionContext,
   TTransactOrigin,
+  TTransferBaseOptions,
+  TTransferBaseOptionsWithSender,
+  TTransferBaseOptionsWithSwap,
+  TTransferOptions,
   TTxFactory,
   TWeight
 } from '../types'
@@ -67,7 +67,7 @@ export class GeneralBuilder<
   TApi,
   TRes,
   TSigner,
-  T extends Partial<TSendBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
+  T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
     object
 > {
   readonly api: IPolkadotApi<TApi, TRes, TSigner>
@@ -263,7 +263,7 @@ export class GeneralBuilder<
    * @returns An instance of Builder
    */
   addToBatch(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }> {
     this.batchManager.addTransaction({
       api: this.api,
@@ -287,23 +287,25 @@ export class GeneralBuilder<
    * @returns A Extrinsic representing the batched transactions.
    */
   async buildBatch(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
     options?: TBatchOptions
   ) {
     return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
-  protected buildInternal<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  protected buildInternal<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
     return this.buildCommon<TOptions>(true)
   }
 
-  private async prepareNormalizedOptions<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async prepareNormalizedOptions<
+    TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>
+  >(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     options: TOptions
   ): Promise<{
-    normalizedOptions: TSendOptions<TApi, TRes, TSigner> & TOptions
+    normalizedOptions: TTransferOptions<TApi, TRes, TSigner> & TOptions
     buildTx: TTxFactory<TRes>
   }> {
     const { options: normalizedOptions, buildTx } = await normalizeAmountAll(
@@ -321,7 +323,7 @@ export class GeneralBuilder<
    * @returns A Promise that resolves to the transfer extrinsic.
    */
   async build(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TRes> {
     const { tx } = await this.buildCommon()
     return tx
@@ -333,7 +335,7 @@ export class GeneralBuilder<
    * @returns A Promise that resolves to the transfer extrinsic contexts
    */
   async buildAll(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TTransactionContext<TApi, TRes>[]> {
     const { txContexts } = await this.buildCommonAll()
     return txContexts
@@ -347,7 +349,7 @@ export class GeneralBuilder<
     }
   }
 
-  private async buildCommon<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async buildCommon<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     isCalledInternally = false
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
@@ -362,7 +364,7 @@ export class GeneralBuilder<
     return { tx, options: normalizedOptions }
   }
 
-  private async buildCommonAll<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async buildCommonAll<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     isCalledInternally = false
   ): Promise<TBuildAllInternalRes<TApi, TRes, TSigner, TOptions>> {
@@ -377,7 +379,7 @@ export class GeneralBuilder<
 
   private async maybePerformXcmFormatCheck(
     tx: TRes,
-    options: TSendBaseOptions<TApi, TRes, TSigner>,
+    options: TTransferBaseOptions<TApi, TRes, TSigner>,
     isCalledInternally: boolean
   ) {
     const { sender } = options
@@ -404,7 +406,7 @@ export class GeneralBuilder<
   }
 
   async dryRun(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ): Promise<TDryRunResult> {
     const { swapOptions } = this._options
 
@@ -419,7 +421,7 @@ export class GeneralBuilder<
   }
 
   async dryRunPreview(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     dryRunOptions?: TDryRunPreviewOptions
   ) {
     const { swapOptions } = this._options
@@ -433,7 +435,7 @@ export class GeneralBuilder<
     })
   }
 
-  protected createTxFactory<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  protected createTxFactory<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
   ): TTxFactory<TRes> {
     return (amount, relative) =>
@@ -446,7 +448,7 @@ export class GeneralBuilder<
    * @returns An origin and destination fee.
    */
   async getXcmFee<TDisableFallback extends boolean = false>(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ): Promise<TGetXcmFeeResult<TDisableFallback>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
@@ -485,7 +487,7 @@ export class GeneralBuilder<
    * @returns An origin fee.
    */
   async getOriginXcmFee(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
@@ -518,7 +520,7 @@ export class GeneralBuilder<
    * @returns The max transferable amount.
    */
   async getTransferableAmount(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -550,7 +552,7 @@ export class GeneralBuilder<
    * @returns The min transferable amount.
    */
   async getMinTransferableAmount(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -586,7 +588,7 @@ export class GeneralBuilder<
    * @returns The max transferable amount.
    */
   async verifyEdOnDestination(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -616,7 +618,7 @@ export class GeneralBuilder<
    * @returns The transfer info.
    */
   async getTransferInfo(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -658,7 +660,7 @@ export class GeneralBuilder<
    * @throws \{UnableToComputeError\} Thrown when the receivable amount cannot be determined.
    */
   async getReceivableAmount(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSender<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const {
       destination: {
@@ -674,7 +676,7 @@ export class GeneralBuilder<
   }
 
   async getBestAmountOut(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSwap<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSwap<TApi, TRes, TSigner>>
   ) {
     const { swapOptions } = this._options
 
@@ -688,7 +690,7 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TSendBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
     >
   ): Promise<string> {
     const { senderSource, swapOptions } = this._options

@@ -1,7 +1,7 @@
 import type {
   TCreateBaseSwapXcmOptions,
   TGetXcmFeeBaseOptions,
-  TSendOptions
+  TTransferOptions
 } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
@@ -31,7 +31,7 @@ describe('Transfer functions using PapiApi', () => {
 
   const options = {
     api: mockApi
-  } as Omit<TSendOptions<TPapiApi, TPapiTransaction, TPapiSigner>, 'api'> & {
+  } as Omit<TTransferOptions<TPapiApi, TPapiTransaction, TPapiSigner>, 'api'> & {
     api: TPapiApiOrUrl
   }
 

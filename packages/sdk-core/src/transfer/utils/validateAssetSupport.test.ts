@@ -9,7 +9,7 @@ import {
 import { isExternalChain, isTLocation, Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination, TTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import {
   validateAssetSupport,
@@ -50,7 +50,7 @@ describe('validateAssetSupport', () => {
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'BRIDGED' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = true
@@ -78,7 +78,7 @@ describe('validateAssetSupport', () => {
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'FOREIGN' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = true
@@ -111,7 +111,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -127,7 +127,7 @@ describe('validateAssetSupport', () => {
       from: 'BifrostPolkadot',
       to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -143,7 +143,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNSUPPORTED' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -164,7 +164,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'SUPPORTED' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -180,7 +180,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'ANY' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = false
     const isBridge = false
@@ -194,7 +194,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNKNOWN' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -210,7 +210,7 @@ describe('validateAssetSupport', () => {
       from: 'Acala',
       to: {} as TDestination,
       currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
@@ -224,7 +224,7 @@ describe('validateAssetSupport', () => {
       from: 'AssetHubPolkadot',
       to: 'Ethereum',
       currency: { symbol: 'DOT' }
-    } as TSendOptions<unknown, unknown, unknown>
+    } as TTransferOptions<unknown, unknown, unknown>
 
     const assetCheckEnabled = true
     const isBridge = false
