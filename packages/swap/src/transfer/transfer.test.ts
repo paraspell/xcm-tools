@@ -1,3 +1,4 @@
+import type { TSwapEvent } from '@paraspell/sdk';
 import { isChainEvm, MissingParameterError } from '@paraspell/sdk';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,7 +7,6 @@ import type ExchangeChain from '../exchanges/ExchangeChain';
 import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
-  TRouterEvent,
   TRouterPlan,
   TTransferOptions,
 } from '../types';
@@ -91,7 +91,7 @@ describe('transfer', () => {
   });
 
   it('should call onStatusChange with SELECTING_EXCHANGE if exchange is undefined', async () => {
-    const onStatusChange = vi.fn() as (info: TRouterEvent) => void;
+    const onStatusChange = vi.fn() as (info: TSwapEvent) => void;
     const options = {
       from: 'Polkadot',
       exchange: undefined,
@@ -108,7 +108,7 @@ describe('transfer', () => {
   });
 
   it('should not call onStatusChange with SELECTING_EXCHANGE if exchange is provided', async () => {
-    const onStatusChange = vi.fn() as (info: TRouterEvent) => void;
+    const onStatusChange = vi.fn() as (info: TSwapEvent) => void;
     const options = {
       from: 'Polkadot',
       to: 'Kusama',

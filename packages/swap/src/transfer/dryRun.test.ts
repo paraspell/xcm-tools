@@ -145,8 +145,8 @@ describe('dryRunRouter', () => {
     );
     expect(result.origin.isExchange).toBe(true);
     expect(result.destination?.isExchange).toBe(true);
-    expect(result.hops.find((hop) => hop.chain === 'Acala')?.isExchange).toBe(true);
-    expect(result.hops.find((hop) => hop.chain === 'Moonbeam')?.isExchange).toBeFalsy();
+    expect(result.hops.find((hop) => hop.chain === 'Acala')?.result.isExchange).toBe(true);
+    expect(result.hops.find((hop) => hop.chain === 'Moonbeam')?.result.isExchange).toBeFalsy();
   });
 
   it('propagates bypass options to the second transaction when the first dry run succeeds', async () => {
