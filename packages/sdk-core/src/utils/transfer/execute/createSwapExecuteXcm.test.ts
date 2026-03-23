@@ -74,7 +74,7 @@ describe('createSwapExecuteXcm', () => {
       assetInfoFrom: { amount: 2000n, location: {} } as any,
       assetInfoTo: { amount: 1500n, location: {} } as any,
       fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 0n, destReserveFee: 20n },
-      recipientAddress: 'addr1',
+      recipient: 'addr1',
       version: 3,
       paraIdTo: 42
     } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
@@ -125,7 +125,7 @@ describe('createSwapExecuteXcm', () => {
       assetInfoFrom: { amount: 2000n, location: {} } as any,
       assetInfoTo: { amount: 1500n, location: {} } as any,
       fees: { originFee: 0n, originReserveFee: 5n, exchangeFee: 10n, destReserveFee: 15n },
-      recipientAddress: 'addr2',
+      recipient: 'addr2',
       version: 2,
       paraIdTo: 77,
       calculateMinAmountOut

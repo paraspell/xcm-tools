@@ -80,7 +80,7 @@ export type TRouterFormValues = {
   currencyFrom: TCurrencyEntryBase;
   currencyTo: TCurrencyEntryBase;
   feeAsset: TCurrencyEntryBase;
-  recipientAddress: string;
+  recipient: string;
   amount: string;
   slippagePct: string;
   useApi: boolean;
@@ -158,7 +158,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       DEFAULT_CURRENCY_ENTRY_BASE,
     ),
     amount: parseAsString.withDefault('10'),
-    recipientAddress: parseAsWalletAddress.withDefault(
+    recipient: parseAsWalletAddress.withDefault(
       selectedAccount?.address ?? DEFAULT_ADDRESS,
     ),
     slippagePct: parseAsString.withDefault('1'),
@@ -170,7 +170,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     name: MAIN_FORM_NAME,
     initialValues: queryState,
     validate: {
-      recipientAddress: (value) =>
+      recipient: (value) =>
         isValidWalletAddress(value) ? null : 'Invalid address',
       currencyFrom: (value) => {
         if (value.isCustomCurrency) {
