@@ -256,7 +256,7 @@ export const setupBaseRouterBuilder = (
     currencyTo,
     feeAsset,
     amount,
-    recipientAddress,
+    recipient,
     slippagePct,
     evmInjectorAddress,
   }: TRouterFormValuesTransformed,
@@ -271,7 +271,7 @@ export const setupBaseRouterBuilder = (
     .feeAsset(feeAsset)
     .amount(amount)
     .senderAddress(sender)
-    .recipientAddress(recipientAddress)
+    .recipientAddress(recipient)
     .evmSenderAddress(evmInjectorAddress)
     .slippagePct(slippagePct);
 
