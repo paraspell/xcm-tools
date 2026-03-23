@@ -112,8 +112,11 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
       const transformedHops = executeResult.hops.map((hop) => {
         if (hop.chain === exchange.baseChain) {
           return {
-            ...hop,
-            isExchange: true,
+            chain: hop.chain,
+            result: {
+              ...hop.result,
+              isExchange: true,
+            },
           };
         }
         return hop;
@@ -183,7 +186,6 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
               fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),
               isExchange: true,
             },
-            isExchange: true,
           },
         ]
       : []),

@@ -10,6 +10,7 @@ import type {
   TPapiTransaction,
   TParachain,
   TSubstrateChain,
+  TSwapEvent,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
@@ -49,38 +50,7 @@ export type TMultiSwapResult = {
   amountOut: bigint;
 };
 
-/** @deprecated Use `TSwapEventType` instead. Will be removed in v13 */
-export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
-
-/**
- * @deprecated Use `TSwapEvent` instead. Will be removed in v13
- *
- * The transaction progress information.
- */
-export type TRouterEvent = {
-  /**
-   * Current execution phase type
-   */
-  type: TRouterEventType;
-  /**
-   * Full transaction plan for visualization
-   */
-  routerPlan?: TRouterPlan;
-  /**
-   * Current transaction's origin chain
-   */
-  chain?: TSubstrateChain;
-  /**
-   * Current transaction's destination chain
-   */
-  destinationChain?: TChain;
-  /**
-   * 0-based step index of current operation
-   */
-  currentStep?: number;
-};
-
-export type TStatusChangeCallback = (info: TRouterEvent) => void;
+export type TStatusChangeCallback = (info: TSwapEvent) => void;
 
 /**
  * The options for an XCM Router transfer.
@@ -219,9 +189,6 @@ export type TDexConfigStored = {
 } & TDexConfigBase;
 
 export type TAssetsRecord = Record<TExchangeChain, TDexConfigStored>;
-
-/** @deprecated Will be removed in v13 */
-export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
 type TBaseTransaction = {
   api: TPapiApi;

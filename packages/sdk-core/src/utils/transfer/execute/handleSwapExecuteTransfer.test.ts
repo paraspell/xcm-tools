@@ -54,7 +54,7 @@ const baseOptions = {
   },
   assetInfoTo: { location: {}, amount: 0n },
   sender: 'alice',
-  recipientAddress: 'bob',
+  recipient: 'bob',
   calculateMinAmountOut: vi.fn().mockResolvedValue(1500n)
 } as unknown as TCreateSwapXcmOptions<unknown, unknown, unknown>
 

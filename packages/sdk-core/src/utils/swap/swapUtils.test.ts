@@ -24,9 +24,9 @@ const mockBuilderInstance = {
   currencyFrom: vi.fn().mockReturnThis(),
   currencyTo: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
-  senderAddress: vi.fn().mockReturnThis(),
+  sender: vi.fn().mockReturnThis(),
   evmSenderAddress: vi.fn().mockReturnThis(),
-  recipientAddress: vi.fn().mockReturnThis(),
+  recipient: vi.fn().mockReturnThis(),
   slippagePct: vi.fn().mockReturnThis(),
   onStatusChange: vi.fn().mockReturnThis()
 }
@@ -132,9 +132,9 @@ describe('swapUtils', () => {
       })
       expect(mockBuilderInstance.currencyTo).toHaveBeenCalledWith({ symbol: 'GLMR' })
       expect(mockBuilderInstance.amount).toHaveBeenCalledWith('1000000000')
-      expect(mockBuilderInstance.senderAddress).toHaveBeenCalledWith('5G7abc...')
+      expect(mockBuilderInstance.sender).toHaveBeenCalledWith('5G7abc...')
       expect(mockBuilderInstance.evmSenderAddress).toHaveBeenCalledWith(undefined)
-      expect(mockBuilderInstance.recipientAddress).toHaveBeenCalledWith('5F3sa2TJbN...')
+      expect(mockBuilderInstance.sender).toHaveBeenCalledWith('5F3sa2TJbN...')
       expect(mockBuilderInstance.slippagePct).toHaveBeenCalledWith('1')
       expect(mockBuilderInstance.onStatusChange).not.toHaveBeenCalled()
       expect(result).toBe(mockBuilderInstance)

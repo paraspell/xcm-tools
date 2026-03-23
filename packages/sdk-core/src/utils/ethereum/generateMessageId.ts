@@ -7,7 +7,7 @@ export const generateMessageId = async <TApi, TRes, TSigner>(
   senderAddress: string,
   sourceParaId: number,
   tokenAddress: string,
-  recipientAddress: string,
+  recipient: string,
   amount: TAmount
 ) => {
   const accountNextId = await api.getFromRpc('system', 'accountNextIndex', senderAddress)
@@ -19,7 +19,7 @@ export const generateMessageId = async <TApi, TRes, TSigner>(
     ...api.hexToUint8a(sourceAccountHex),
     ...api.stringToUint8a(accountNextId),
     ...api.hexToUint8a(tokenAddress),
-    ...api.stringToUint8a(recipientAddress),
+    ...api.stringToUint8a(recipient),
     ...api.stringToUint8a(amount.toString())
   ])
 

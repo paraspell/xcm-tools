@@ -122,8 +122,7 @@ describe('getRouterFees', () => {
         hops: [
           {
             chain: 'AssetHubPolkadot',
-            isExchange: true,
-            result: { fee: 50n, asset: { symbol: 'DOT' } },
+            result: { fee: 50n, asset: { symbol: 'DOT' }, isExchange: true },
           },
           { chain: 'Hydration', result: { fee: 75n, asset: { symbol: 'HDX' } } },
         ],
@@ -202,7 +201,6 @@ describe('getRouterFees', () => {
               fee: (swapFee.fee ?? 0n) + (toDestFeeValue.origin.fee ?? 0n),
               isExchange: true,
             },
-            isExchange: true,
           },
           ...toDestFeeValue.hops,
         ],
@@ -247,7 +245,7 @@ describe('getRouterFees', () => {
     expect(result.destination.isExchange).toBeUndefined();
 
     expect(
-      result.hops.some((h) => h.chain === localOptions.exchange.baseChain && h.isExchange),
+      result.hops.some((h) => h.chain === localOptions.exchange.baseChain && h.result.isExchange),
     ).toBe(true);
   });
 
