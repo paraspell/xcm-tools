@@ -1,11 +1,14 @@
-import type { TAssetInfo } from '@paraspell/sdk';
-import { deepEqual } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk-core';
+import { deepEqual } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAssetByOriginAsset } from './getExchangeAssetByOriginAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  deepEqual: vi.fn(),
+}));
 
 vi.mock('./getExchangeConfig');
 

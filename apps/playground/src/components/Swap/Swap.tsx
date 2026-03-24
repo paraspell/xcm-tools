@@ -16,7 +16,7 @@ import { IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
-import { useEvmWallet, useRouterCurrencyOptions } from '../../hooks';
+import { useEvmWallet, useSwapCurrencyOptions } from '../../hooks';
 import type { TFormValues } from '../../types';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { CurrencySelection } from '../common/CurrencySelection';
@@ -77,7 +77,7 @@ export const Swap = ({ form }: Props) => {
   const { exchange, currencyTo } = swapOptions;
   const { currencyOptionId } = currencyTo;
 
-  const { currencyToOptions } = useRouterCurrencyOptions(
+  const { currencyToOptions } = useSwapCurrencyOptions(
     from,
     exchange,
     to,

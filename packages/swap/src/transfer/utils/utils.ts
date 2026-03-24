@@ -1,18 +1,18 @@
-import { Builder, isChainEvm } from '@paraspell/sdk';
+import { Builder, isChainEvm } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
 
-export const createToExchangeBuilder = ({
+export const createToExchangeBuilder = <TApi, TRes, TSigner>({
   origin: { chain: from, assetFrom },
   exchange: { baseChain },
   sender,
   evmSenderAddress,
   amount,
-  builderOptions,
-}: TBuildToExchangeTxOptions) =>
-  Builder(builderOptions)
+  api,
+}: TBuildToExchangeTxOptions<TApi, TRes, TSigner>) =>
+  Builder(api)
     .from(from)
     .to(baseChain)
     .currency({
@@ -22,28 +22,24 @@ export const createToExchangeBuilder = ({
     .sender(isChainEvm(from) ? (evmSenderAddress as string) : sender)
     .recipient(sender);
 
-export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
-  createToExchangeBuilder(options).build();
+export const buildToExchangeExtrinsic = <TApi, TRes, TSigner>(
+  options: TBuildToExchangeTxOptions<TApi, TRes, TSigner>,
+) => createToExchangeBuilder(options).build();
 
-export const getToExchangeFee = <TDisableFallback extends boolean>(
-  options: TBuildToExchangeTxOptions,
+export const getToExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TBuildToExchangeTxOptions<TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ) => createToExchangeBuilder(options).getXcmFee({ disableFallback });
 
-export const createFromExchangeBuilder = ({
-  exchange: { apiPapi, baseChain, assetTo },
+export const createFromExchangeBuilder = <TApi, TRes, TSigner>({
+  exchange: { baseChain, assetTo },
   destination: { chain, address },
   amount,
   sender,
-  builderOptions,
-}: TBuildFromExchangeTxOptions) =>
-  Builder({
-    ...builderOptions,
-    apiOverrides: {
-      ...builderOptions?.apiOverrides,
-      [baseChain]: apiPapi,
-    },
-  })
+  api,
+}: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>) => {
+  const apiForChain = api.clone();
+  return Builder(apiForChain)
     .from(baseChain)
     .to(chain)
     .currency({
@@ -52,12 +48,14 @@ export const createFromExchangeBuilder = ({
     })
     .sender(sender)
     .recipient(address);
+};
 
-export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
-  createFromExchangeBuilder(options).build();
+export const buildFromExchangeExtrinsic = <TApi, TRes, TSigner>(
+  options: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>,
+) => createFromExchangeBuilder(options).build();
 
-export const getFromExchangeFee = <TDisableFallback extends boolean>(
-  options: TBuildFromExchangeTxOptions,
+export const getFromExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ) => createFromExchangeBuilder(options).getXcmFee({ disableFallback });
 

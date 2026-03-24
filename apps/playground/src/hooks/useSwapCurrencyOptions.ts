@@ -1,6 +1,5 @@
-import type { TLocation } from '@paraspell/sdk';
+import type { TExchangeInput, TLocation } from '@paraspell/sdk';
 import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
-import type { TExchangeInput } from '@paraspell/swap';
 import { getExchangePairs } from '@paraspell/swap';
 import {
   getSupportedAssetsFrom,
@@ -22,7 +21,7 @@ const assetKeys = (asset: { location: TLocation }): string[] => {
   return keys;
 };
 
-export const useRouterCurrencyOptions = (
+export const useSwapCurrencyOptions = (
   from: TChain | undefined,
   exchangeChain: TExchangeInput,
   to: TChain | undefined,

@@ -34,7 +34,7 @@ describe('ExchangeChain', () => {
 
   it('should return correct multi swap result using swapCurrency', async () => {
     const mockApi = {} as ApiPromise;
-    const mockOptions = {} as TSwapOptions;
+    const mockOptions = {} as TSwapOptions<unknown>;
     const mockFee = 0n;
 
     const chain = new MockExchangeChain('Acala', 'AcalaDex');

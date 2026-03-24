@@ -1,3 +1,4 @@
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import type {
   TAmount,
   TAssetInfo,
@@ -6,18 +7,15 @@ import type {
   TExchangeChain,
   TExchangeInput,
   TLocation,
-  TPapiApi,
-  TPapiTransaction,
   TParachain,
+  TStatusChangeCallback,
   TSubstrateChain,
-  TSwapEvent,
-} from '@paraspell/sdk';
+  WithApi,
+} from '@paraspell/sdk-core';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
-import type { PolkadotSigner } from 'polkadot-api';
 
-import type { TRouterBuilderOptions } from './TRouterBuilder';
-
-export type TSwapOptions = {
+export type TSwapOptions<TApi> = {
   papiApi: TPapiApi;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
@@ -25,13 +23,13 @@ export type TSwapOptions = {
   slippagePct: string;
   sender: string;
   feeCalcAddress: string;
-  origin?: TOriginInfo;
+  origin?: TOriginInfo<TApi>;
   isForFeeEstimation?: boolean;
 };
 
-export type TGetAmountOutOptions = {
+export type TGetAmountOutOptions<TApi> = {
   papiApi: TPapiApi;
-  origin?: TOriginInfo;
+  origin?: TOriginInfo<TApi>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   amount: bigint;
@@ -50,12 +48,10 @@ export type TMultiSwapResult = {
   amountOut: bigint;
 };
 
-export type TStatusChangeCallback = (info: TSwapEvent) => void;
-
 /**
  * The options for an XCM Router transfer.
  */
-export type TTransferOptions = {
+export type TTransferBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain to transfer from.
    */
@@ -98,13 +94,13 @@ export type TTransferOptions = {
    */
   slippagePct: string;
   /**
-   * The Polkadot signer instance.
+   * The signer instance.
    */
-  signer: PolkadotSigner;
+  signer: TSigner;
   /**
-   * The Polkadot EVM signer instance.
+   * The EVM signer instance.
    */
-  evmSigner?: PolkadotSigner;
+  evmSigner?: TSigner;
 
   /**
    * The asset used to pay XCM fees.
@@ -114,11 +110,18 @@ export type TTransferOptions = {
   /**
    * The callback function to call when the transaction status changes.
    */
-  onStatusChange?: TStatusChangeCallback;
+  onStatusChange?: TStatusChangeCallback<TApi, TRes>;
 };
 
-export type TGetBestAmountOutOptions = Omit<
-  TTransferOptions,
+export type TTransferOptions<TApi, TRes, TSigner> = WithApi<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>;
+
+export type TGetBestAmountOutBaseOptions<TApi, TRes, TSigner> = Omit<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
   | 'onStatusChange'
   | 'signer'
   | 'evmSigner'
@@ -128,30 +131,48 @@ export type TGetBestAmountOutOptions = Omit<
   | 'evmSenderAddress'
 >;
 
+export type TGetBestAmountOutOptions<TApi, TRes, TSigner> = WithApi<
+  TGetBestAmountOutBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>;
+
 export type TGetBestAmountOutResult = {
   exchange: TExchangeChain;
   amountOut: bigint;
 };
 
-export type TBuildTransactionsOptions = Omit<
-  TTransferOptions,
+export type TBuildTransactionsBaseOptions<TApi, TRes, TSigner> = Omit<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
   'onStatusChange' | 'signer' | 'evmSigner'
 >;
 
-export type TCommonRouterOptions = TTransferOptions | TBuildTransactionsOptions;
+export type TBuildTransactionsOptions<TApi, TRes, TSigner> = WithApi<
+  TBuildTransactionsBaseOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>;
 
-export type TTransformedOptions<T> = Omit<T, 'exchange' | 'amount'> & TAdditionalTransferOptions;
+export type TCommonRouterOptions<TApi, TRes, TSigner> =
+  | TTransferOptions<TApi, TRes, TSigner>
+  | TBuildTransactionsOptions<TApi, TRes, TSigner>;
 
-export type TOriginInfo = {
-  api: TPapiApi;
+export type TTransformedOptions<T, TApi, TRes, TSigner> = Omit<T, 'exchange' | 'amount'> &
+  WithApi<TAdditionalTransferOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>;
+
+export type TOriginInfo<TApi> = {
+  api: TApi;
   chain: TSubstrateChain;
   assetFrom: TAssetInfo;
   feeAssetInfo?: TAssetInfo;
 };
 
-export type TExchangeInfo = {
-  api: TPjsApi;
+export type TExchangeInfo<TApi, TRes, TSigner> = {
+  apiPjs: TPjsApi;
   apiPapi: TPapiApi;
+  api: IPolkadotApi<TApi, TRes, TSigner>;
   baseChain: TParachain;
   exchangeChain: TExchangeChain;
   assetFrom: TAssetInfo;
@@ -164,13 +185,12 @@ export type TDestinationInfo = {
   address: string;
 };
 
-export type TAdditionalTransferOptions = {
+export type TAdditionalTransferOptions<TApi, TRes, TSigner> = {
   amount: bigint;
-  origin?: TOriginInfo;
-  exchange: TExchangeInfo;
+  origin?: TOriginInfo<TApi>;
+  exchange: TExchangeInfo<TApi, TRes, TSigner>;
   destination?: TDestinationInfo;
   feeCalcAddress: string;
-  builderOptions?: TRouterBuilderOptions;
 };
 
 export type TPairs = TLocation[][];
@@ -190,60 +210,64 @@ export type TDexConfigStored = {
 
 export type TAssetsRecord = Record<TExchangeChain, TDexConfigStored>;
 
-type TBaseTransaction = {
-  api: TPapiApi;
+type TBaseTransaction<TApi, TRes> = {
+  api: TApi;
   chain: TSubstrateChain;
   destinationChain?: TChain;
-  tx: TPapiTransaction;
+  tx: TRes;
 };
 
-export type TSwapTransaction = TBaseTransaction & {
+export type TSwapTransaction<TApi, TRes> = TBaseTransaction<TApi, TRes> & {
   type: 'SWAP';
   amountOut: bigint;
 };
-type TTransferTransaction = TBaseTransaction & {
+type TTransferTransaction<TApi, TRes> = TBaseTransaction<TApi, TRes> & {
   type: 'TRANSFER';
 };
 
-export type TSwapAndTransferTransaction = TBaseTransaction & {
+export type TSwapAndTransferTransaction<TApi, TRes> = TBaseTransaction<TApi, TRes> & {
   type: 'SWAP_AND_TRANSFER';
   amountOut: bigint;
 };
 
-export type TTransaction = TSwapTransaction | TSwapAndTransferTransaction | TTransferTransaction;
+export type TTransaction<TApi, TRes> =
+  | TSwapTransaction<TApi, TRes>
+  | TSwapAndTransferTransaction<TApi, TRes>
+  | TTransferTransaction<TApi, TRes>;
 
-export type TRouterPlan = TTransaction[];
+export type TRouterPlan<TApi, TRes> = TTransaction<TApi, TRes>[];
 
-export type TExecuteRouterPlanOptions = {
-  signer: PolkadotSigner;
+export type TExecuteRouterPlanOptions<TApi, TRes, TSigner> = {
+  signer: TSigner;
   sender: string;
   destination?: TChain;
-  evmSigner?: PolkadotSigner;
+  evmSigner?: TSigner;
   evmSenderAddress?: string;
-  onStatusChange?: TStatusChangeCallback;
+  onStatusChange?: TStatusChangeCallback<TApi, TRes>;
+  api: IPolkadotApi<TApi, TRes, TSigner>;
 };
 
-export type TPreparedExtrinsics = {
-  toExchangeTx?: TPapiTransaction;
-  swapTxs: TPapiTransaction[];
+export type TPreparedExtrinsics<TRes> = {
+  toExchangeTx?: TRes;
+  swapTxs: TRes[];
   isExecute?: boolean;
-  toDestTx?: TPapiTransaction;
+  toDestTx?: TRes;
   amountOut: bigint;
 };
 
-export type TBuildToExchangeTxOptions = {
-  origin: TOriginInfo;
-  exchange: TExchangeInfo;
+export type TBuildToExchangeTxOptions<TApi, TRes, TSigner> = {
+  origin: TOriginInfo<TApi>;
+  exchange: TExchangeInfo<TApi, TRes, TSigner>;
   sender: string;
   evmSenderAddress?: string;
   amount: bigint;
-  builderOptions?: TRouterBuilderOptions;
+  api: IPolkadotApi<TApi, TRes, TSigner>;
 };
 
-export type TBuildFromExchangeTxOptions = {
-  exchange: TExchangeInfo;
+export type TBuildFromExchangeTxOptions<TApi, TRes, TSigner> = {
+  exchange: TExchangeInfo<TApi, TRes, TSigner>;
   destination: TDestinationInfo;
   amount: bigint;
   sender: string;
-  builderOptions?: TRouterBuilderOptions;
+  api: IPolkadotApi<TApi, TRes, TSigner>;
 };

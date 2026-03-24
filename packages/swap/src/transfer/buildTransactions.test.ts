@@ -1,4 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -11,6 +12,9 @@ import type {
 } from '../types';
 import { buildTransactions } from './buildTransactions';
 import * as prepareExtrinsicsModule from './prepareExtrinsics';
+
+const mockCallBatchMethod = vi.fn().mockReturnValue('batchTx');
+const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 
 const originApi = {} as TPapiApi;
 const swapApi = {} as TPjsApi;
@@ -25,9 +29,12 @@ const swapApiPapi = {
   }),
 } as unknown as TPapiApi;
 
-vi.mock('./prepareExtrinsics', () => ({
-  prepareExtrinsics: vi.fn(),
-}));
+vi.mock('./prepareExtrinsics');
+
+const exchangeApi = {
+  getApi: vi.fn().mockReturnValue(swapApiPapi),
+  callBatchMethod: mockCallBatchMethod,
+} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 
 const baseOptions = {
   origin: {
@@ -37,14 +44,21 @@ const baseOptions = {
   },
   exchange: {
     baseChain: 'Acala',
-    api: swapApi,
+    apiPjs: swapApi,
     apiPapi: swapApiPapi,
+    api: exchangeApi,
   },
   destination: {
     address: 'someAddress',
     chain: 'Crust',
   },
-} as TTransformedOptions<TBuildTransactionsOptions>;
+  api: mockApi,
+} as TTransformedOptions<
+  TBuildTransactionsOptions<unknown, unknown, unknown>,
+  unknown,
+  unknown,
+  unknown
+>;
 
 describe('buildTransactions', () => {
   beforeEach(() => {
@@ -61,7 +75,7 @@ describe('buildTransactions', () => {
   test('returns only swap tx when origin & destination are the exchange chain', async () => {
     const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo<unknown>,
       exchange: { ...baseOptions.exchange, baseChain: 'Acala', exchangeChain: 'AcalaDex' },
       destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });

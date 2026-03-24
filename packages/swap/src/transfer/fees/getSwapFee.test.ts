@@ -1,5 +1,6 @@
-import type { TAssetInfo, TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
-import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
+import type { TPapiTransaction } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
+import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -7,8 +8,14 @@ import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types
 import { createSwapTx } from '../createSwapTx';
 import { getSwapFee } from './getSwapFee';
 
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+
 vi.mock('../createSwapTx');
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
+  ...(await importActual()),
+  applyDecimalAbstraction: vi.fn(),
+  getOriginXcmFee: vi.fn(),
+}));
 
 describe('getSwapFee', () => {
   const dotAsset: TAssetInfo = {
@@ -23,9 +30,15 @@ describe('getSwapFee', () => {
   const exchange = { chain: 'TEST_CHAIN' } as unknown as ExchangeChain;
   const options = {
     sender: '0xSender',
-    exchange: { apiPapi: 'apiInstance', assetFrom: dotAsset },
+    exchange: { apiPapi: 'apiInstance', api: 'apiInstance', assetFrom: dotAsset },
     amount: '100',
-  } as unknown as TTransformedOptions<TBuildTransactionsOptions>;
+    api: mockApi,
+  } as unknown as TTransformedOptions<
+    TBuildTransactionsOptions<unknown, unknown, unknown>,
+    unknown,
+    unknown,
+    unknown
+  >;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -49,7 +62,7 @@ describe('getSwapFee', () => {
 
     expect(getOriginXcmFee).toHaveBeenCalledWith(
       expect.objectContaining({
-        api: 'apiInstance',
+        api: mockApi,
         buildTx: expect.any(Function),
         origin: 'TEST_CHAIN',
         destination: 'TEST_CHAIN',
@@ -119,7 +132,7 @@ describe('getSwapFee', () => {
 
     expect(getOriginXcmFee).toHaveBeenCalledWith(
       expect.objectContaining({
-        api: 'apiInstance',
+        api: mockApi,
         buildTx: expect.any(Function),
       }),
     );
@@ -175,9 +188,15 @@ describe('getSwapFee', () => {
       ...options,
       exchange: {
         apiPapi: 'apiInstance',
+        api: 'apiInstance',
         assetFrom: dotAsset,
       },
-    } as unknown as TTransformedOptions<TBuildTransactionsOptions>);
+    } as unknown as TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >);
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');

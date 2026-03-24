@@ -17,7 +17,7 @@ type TRouterBuilderOptions = Omit<TBuilderConfig<TUrl>, 'xcmFormatCheck'>
 const isUrl = (value: unknown): value is string | string[] =>
   typeof value === 'string' || Array.isArray(value)
 
-const convertBuilderConfig = <TApi>(
+export const convertBuilderConfig = <TApi>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined
 ): TRouterBuilderOptions | undefined => {
   if (!config) return undefined
@@ -55,7 +55,7 @@ const convertBuilderConfig = <TApi>(
 }
 
 export const createRouterBuilder = <TApi, TRes, TSigner>(
-  options: TSendOptionsWithSwap<TApi, TRes, TSigner>
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>
 ) => {
   const { api } = options
 

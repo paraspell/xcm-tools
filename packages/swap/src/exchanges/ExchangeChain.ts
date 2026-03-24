@@ -1,5 +1,6 @@
-import type { TBuilderOptions, TExchangeChain, TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
+import type { TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
+import type { TBuilderOptions, TExchangeChain } from '@paraspell/sdk-core';
 import type { TParachain, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -29,15 +30,15 @@ abstract class ExchangeChain {
     return this._exchangeChain;
   }
 
-  abstract swapCurrency(
+  abstract swapCurrency<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult>;
 
-  async handleMultiSwap(
+  async handleMultiSwap<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult> {
     const singleSwapResult = await this.swapCurrency(api, options, toDestTransactionFee);
@@ -47,7 +48,10 @@ abstract class ExchangeChain {
     };
   }
 
-  abstract getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint>;
+  abstract getAmountOut<TApi>(
+    api: ApiPromise,
+    options: TGetAmountOutOptions<TApi>,
+  ): Promise<bigint>;
 
   abstract getDexConfig(api: ApiPromise): Promise<TDexConfigStored>;
 

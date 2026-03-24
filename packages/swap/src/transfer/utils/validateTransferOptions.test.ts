@@ -1,7 +1,7 @@
-import { MissingParameterError } from '@paraspell/sdk';
+import { MissingParameterError } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TTransferOptions } from '../../types';
+import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
 import { validateTransferOptions } from './validateTransferOptions';
 
@@ -19,7 +19,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: undefined,
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });
@@ -31,7 +31,7 @@ describe('validateTransferOptions', () => {
       recipient: undefined,
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });
@@ -43,7 +43,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: 'Astar',
       to: 'Polkadot',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     validateTransferOptions(mockOptions);
 
@@ -59,7 +59,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(
       'Evm injector address is not a valid Ethereum address',
@@ -74,7 +74,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).not.toThrow();
   });
@@ -87,7 +87,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(
       'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
@@ -101,7 +101,7 @@ describe('validateTransferOptions', () => {
       recipient: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).not.toThrow();
   });
@@ -113,7 +113,7 @@ describe('validateTransferOptions', () => {
       recipient: undefined,
       from: 'Moonbeam',
       to: undefined,
-    } as TTransferOptions;
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
   });

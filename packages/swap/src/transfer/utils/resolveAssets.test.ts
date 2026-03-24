@@ -3,15 +3,15 @@ import {
   findAssetInfoOrThrow,
   hasSupportForAsset,
   type TAssetInfo,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
-import type { TTransferOptions } from '../../types';
+import type { TTransferBaseOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
-vi.mock('@paraspell/sdk', async (importOriginal) => ({
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   findAssetInfo: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
@@ -45,7 +45,7 @@ describe('resolveAssets', () => {
     const options = {
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
@@ -66,7 +66,7 @@ describe('resolveAssets', () => {
       from: 'Astar',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo;
 
@@ -90,7 +90,7 @@ describe('resolveAssets', () => {
       from: 'Astar',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(findAssetInfo).mockReturnValueOnce(null);
     expect(() => resolveAssets(dex, options)).toThrow();
@@ -101,7 +101,7 @@ describe('resolveAssets', () => {
       from: 'Astar',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN' } as TAssetInfo;
     vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromOrigin);
@@ -114,7 +114,7 @@ describe('resolveAssets', () => {
     const options = {
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return null;
@@ -134,7 +134,7 @@ describe('resolveAssets', () => {
     const options = {
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return null;
@@ -158,7 +158,7 @@ describe('resolveAssets', () => {
       to: 'Acala',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
@@ -175,7 +175,7 @@ describe('resolveAssets', () => {
       to: 'Acala',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
@@ -198,7 +198,7 @@ describe('resolveAssets', () => {
       to: 'Acala',
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo;
 
@@ -225,7 +225,7 @@ describe('resolveAssets', () => {
       currencyFrom: { symbol: 'BTC' },
       currencyTo: { symbol: 'ETH' },
       feeAsset: { symbol: 'USDT' },
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;

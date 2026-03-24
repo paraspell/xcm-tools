@@ -17,6 +17,7 @@ import {
   MissingChainApiError,
   RELAY_LOCATION,
   RuntimeApiUnavailableError,
+  SubmitTransactionError,
   type TLocation,
   Version,
   wrapTxBypass
@@ -2115,6 +2116,109 @@ describe('PolkadotJsApi', () => {
 
       expect(sendSpy).toHaveBeenCalled()
       expect(result).toBe('0x1234567890abcdef')
+    })
+  })
+
+  describe('signAndSubmitFinalized', () => {
+    it('should resolve with txHash on finalized without dispatch error', async () => {
+      const mockTxHash = { toString: vi.fn().mockReturnValue('0xfinalized') }
+      const signAsyncMock = vi.fn().mockResolvedValue(undefined)
+      const sendMock = vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+        callback({
+          status: { isFinalized: true },
+          dispatchError: undefined,
+          txHash: mockTxHash
+        })
+        return Promise.resolve(vi.fn())
+      })
+      const mockTx = {
+        signAsync: signAsyncMock,
+        send: sendMock
+      } as unknown as Extrinsic
+
+      const result = await polkadotApi.signAndSubmitFinalized(mockTx, '//Alice')
+
+      expect(signAsyncMock).toHaveBeenCalled()
+      expect(sendMock).toHaveBeenCalled()
+      expect(result).toBe('0xfinalized')
+    })
+
+    it('should reject with SubmitTransactionError on module dispatch error', async () => {
+      ;(mockApiPromise as unknown as { registry: { findMetaError: Mock } }).registry.findMetaError =
+        vi.fn().mockReturnValue({
+          docs: ['Some error occurred'],
+          name: 'SomeError',
+          section: 'system'
+        })
+
+      const mockTx = {
+        signAsync: vi.fn().mockResolvedValue(undefined),
+        send: vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+          callback({
+            status: { isFinalized: true },
+            dispatchError: {
+              isModule: true,
+              asModule: { index: 1, error: 2 }
+            },
+            txHash: { toString: () => '0x123' }
+          })
+          return Promise.resolve(vi.fn())
+        })
+      } as unknown as Extrinsic
+
+      await expect(polkadotApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        SubmitTransactionError
+      )
+    })
+
+    it('should sign with signer when sender is a signer object', async () => {
+      const mockTxHash = { toString: vi.fn().mockReturnValue('0xsigner') }
+      const signAsyncMock = vi.fn().mockResolvedValue(undefined)
+      const sendMock = vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+        callback({
+          status: { isFinalized: true },
+          dispatchError: undefined,
+          txHash: mockTxHash
+        })
+        return Promise.resolve(vi.fn())
+      })
+      const mockTx = {
+        signAsync: signAsyncMock,
+        send: sendMock
+      } as unknown as Extrinsic
+
+      const mockSigner = { signPayload: vi.fn() }
+      const sender = {
+        address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+        signer: mockSigner
+      }
+
+      const result = await polkadotApi.signAndSubmitFinalized(mockTx, sender)
+
+      expect(signAsyncMock).toHaveBeenCalledWith(sender.address, { signer: mockSigner })
+      expect(sendMock).toHaveBeenCalled()
+      expect(result).toBe('0xsigner')
+    })
+
+    it('should reject with SubmitTransactionError on non-module dispatch error', async () => {
+      const mockTx = {
+        signAsync: vi.fn().mockResolvedValue(undefined),
+        send: vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+          callback({
+            status: { isFinalized: true },
+            dispatchError: {
+              isModule: false,
+              toString: () => 'BadOrigin'
+            },
+            txHash: { toString: () => '0x123' }
+          })
+          return Promise.resolve(vi.fn())
+        })
+      } as unknown as Extrinsic
+
+      await expect(polkadotApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        SubmitTransactionError
+      )
     })
   })
 })

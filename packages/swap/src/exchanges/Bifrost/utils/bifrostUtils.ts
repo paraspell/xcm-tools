@@ -18,7 +18,7 @@ import {
   type TokenList,
   WrappedTokenInfo,
 } from '@crypto-dex-sdk/token-lists';
-import { isSymbolMatch, RoutingResolutionError, type TChain } from '@paraspell/sdk';
+import { isSymbolMatch, RoutingResolutionError, type TChain } from '@paraspell/sdk-core';
 import { type ApiPromise } from '@polkadot/api';
 import { type QueryableStorageEntry } from '@polkadot/api/types';
 import { type OrmlTokensAccountData } from '@zenlink-types/bifrost/interfaces';

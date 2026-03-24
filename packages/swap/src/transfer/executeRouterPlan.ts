@@ -1,14 +1,14 @@
-import { isChainEvm } from '@paraspell/sdk';
-import type { PolkadotSigner } from 'polkadot-api';
+import { isChainEvm } from '@paraspell/sdk-core';
 
 import type { TExecuteRouterPlanOptions } from '../types';
 import { type TRouterPlan } from '../types';
-import { submitTransaction } from '../utils/submitTransaction';
 
-export const executeRouterPlan = async (
-  plan: TRouterPlan,
-  { signer, evmSigner, onStatusChange }: TExecuteRouterPlanOptions,
-): Promise<void> => {
+export const executeRouterPlan = async <TApi, TRes, TSigner>(
+  plan: TRouterPlan<TApi, TRes>,
+  { signer, evmSigner, onStatusChange, api }: TExecuteRouterPlanOptions<TApi, TRes, TSigner>,
+): Promise<string[]> => {
+  const txHashes: string[] = [];
+
   for (const [currentStep, { tx, type, chain, destinationChain }] of plan.entries()) {
     onStatusChange?.({
       chain,
@@ -21,9 +21,9 @@ export const executeRouterPlan = async (
     if (isChainEvm(chain)) {
       // Evm signer is guaranteed to be defined here
       // because of prior validation
-      await submitTransaction(tx, evmSigner as PolkadotSigner);
+      txHashes.push(await api.signAndSubmitFinalized(tx, evmSigner as TSigner));
     } else {
-      await submitTransaction(tx, signer);
+      txHashes.push(await api.signAndSubmitFinalized(tx, signer));
     }
   }
 
@@ -32,4 +32,6 @@ export const executeRouterPlan = async (
     currentStep: plan.length - 1,
     routerPlan: plan,
   });
+
+  return txHashes;
 };

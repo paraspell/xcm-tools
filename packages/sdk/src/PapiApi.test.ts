@@ -23,6 +23,7 @@ import {
   MissingChainApiError,
   Parents,
   RELAY_LOCATION,
+  SubmitTransactionError,
   type TLocation,
   type TSubstrateChain,
   Version,
@@ -2780,6 +2781,91 @@ describe('PapiApi', () => {
 
       expect(mockTx.signAndSubmit).toHaveBeenCalled()
       expect(result).toBe(mockTxHash)
+    })
+  })
+
+  describe('signAndSubmitFinalized', () => {
+    it('should resolve with txHash on finalized event', async () => {
+      const mockTxHash = '0xfinalized'
+      const mockSubscribe = vi
+        .fn()
+        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
+          next({ type: 'finalized', ok: true, txHash: mockTxHash })
+        })
+      const mockTx = {
+        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+      } as unknown as TPapiTransaction
+
+      const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
+
+      expect(mockTx.signSubmitAndWatch).toHaveBeenCalled()
+      expect(result).toBe(mockTxHash)
+    })
+
+    it('should resolve on txBestBlocksState with found', async () => {
+      const mockTxHash = '0xbestblock'
+      const mockSubscribe = vi
+        .fn()
+        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
+          next({ type: 'txBestBlocksState', found: true, ok: true, txHash: mockTxHash })
+        })
+      const mockTx = {
+        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+      } as unknown as TPapiTransaction
+
+      const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
+
+      expect(result).toBe(mockTxHash)
+    })
+
+    it('should reject with SubmitTransactionError on dispatch error', async () => {
+      const mockSubscribe = vi
+        .fn()
+        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
+          next({
+            type: 'finalized',
+            ok: false,
+            dispatchError: { value: { Module: { index: 1, error: 2 } } }
+          })
+        })
+      const mockTx = {
+        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+      } as unknown as TPapiTransaction
+
+      await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        SubmitTransactionError
+      )
+    })
+
+    it('should reject on subscription error', async () => {
+      const mockError = new Error('connection lost')
+      const mockSubscribe = vi
+        .fn()
+        .mockImplementation(({ error }: { error: (err: unknown) => void }) => {
+          error(mockError)
+        })
+      const mockTx = {
+        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+      } as unknown as TPapiTransaction
+
+      await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        'connection lost'
+      )
+    })
+
+    it('should wrap non-Error subscription errors in SubmitTransactionError', async () => {
+      const mockSubscribe = vi
+        .fn()
+        .mockImplementation(({ error }: { error: (err: unknown) => void }) => {
+          error('raw string error')
+        })
+      const mockTx = {
+        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+      } as unknown as TPapiTransaction
+
+      await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        SubmitTransactionError
+      )
     })
   })
 })

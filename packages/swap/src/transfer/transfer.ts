@@ -1,17 +1,16 @@
-import { isChainEvm, MissingParameterError } from '@paraspell/sdk';
+import { isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
 
-import type { TRouterBuilderOptions } from '../types';
-import { type TTransferOptions } from '../types';
+import type { TTransferOptions } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-export const transfer = async (
-  initialOptions: TTransferOptions,
-  builderOptions?: TRouterBuilderOptions,
-): Promise<void> => {
+export const transfer = async <TApi, TRes, TSigner>(
+  initialOptions: TTransferOptions<TApi, TRes, TSigner>,
+): Promise<string[]> => {
   const {
+    api,
     from,
     exchange: exchangeChain,
     signer,
@@ -44,16 +43,17 @@ export const transfer = async (
     });
   }
 
-  const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const { dex, options } = await prepareTransformedOptions(initialOptions);
 
   const routerPlan = await buildTransactions(dex, options);
 
-  await executeRouterPlan(routerPlan, {
+  return executeRouterPlan(routerPlan, {
     signer,
     sender,
     destination: options.destination?.chain,
     evmSigner,
     evmSenderAddress,
     onStatusChange,
+    api,
   });
 };

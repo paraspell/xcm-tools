@@ -1,12 +1,12 @@
 import type { TPapiApi } from '@paraspell/sdk';
+import { transform } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
   Parents,
   RoutingResolutionError,
   type TLocation,
-  transform,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -19,10 +19,14 @@ vi.mock('@paraspell/sdk', async () => {
   const original = await vi.importActual('@paraspell/sdk');
   return {
     ...original,
-    getNativeAssetSymbol: vi.fn(),
     transform: vi.fn(),
   };
 });
+
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  getNativeAssetSymbol: vi.fn(),
+}));
 
 vi.mock('./utils');
 vi.mock('../../assets');
@@ -34,7 +38,7 @@ describe('AssetHubExchange', () => {
   const dummyTx = { dummy: true };
   const assetFromML: TLocation = { parents: 0, interior: { X1: [{ PalletInstance: 1 }] } };
   const assetToML: TLocation = { parents: 0, interior: { X1: [{ GeneralIndex: 2 }] } };
-  let baseSwapOptions: TSwapOptions;
+  let baseSwapOptions: TSwapOptions<unknown>;
   const swapMock = vi.fn(() => dummyTx);
 
   beforeEach(() => {
@@ -59,7 +63,7 @@ describe('AssetHubExchange', () => {
       sender: 'sender',
       slippagePct: '5',
       origin: undefined,
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     vi.mocked(transform).mockImplementation((ml) => ml);
@@ -82,7 +86,7 @@ describe('AssetHubExchange', () => {
         assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
         assetTo: { symbol: 'NATIVE', decimals: 10, location: assetToML },
         amount: 1000n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       await expect(instance.swapCurrency(api, opts, 50000n)).rejects.toThrow(AmountTooLowError);
     });
 
@@ -91,7 +95,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetTo: { symbol: 'NATIVE', location: assetToML },
         origin: {},
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const firstQuote = {
         amountOut: 2000n,
         usedFromML: assetFromML,
@@ -117,7 +121,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetTo: { symbol: 'NON_NATIVE', location: assetToML },
         origin: undefined,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const firstQuote = {
         amountOut: 2000n,
         usedFromML: assetFromML,
@@ -192,7 +196,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions,
+          } as TSwapOptions<unknown>,
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);
@@ -206,7 +210,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetNative,
             assetTo: assetNative,
-          } as TSwapOptions,
+          } as TSwapOptions<unknown>,
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);
@@ -226,7 +230,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetNative,
           assetTo: assetB,
-        } as TSwapOptions,
+        } as TSwapOptions<unknown>,
         0n,
       );
 
@@ -248,7 +252,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetNative,
-        } as TSwapOptions,
+        } as TSwapOptions<unknown>,
         0n,
       );
 
@@ -270,7 +274,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetB,
-        } as TSwapOptions,
+        } as TSwapOptions<unknown>,
         0n,
       );
 
@@ -290,7 +294,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions,
+          } as TSwapOptions<unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -309,7 +313,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions,
+          } as TSwapOptions<unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -344,7 +348,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
         'Native asset not found for this exchange chain.',
       );
@@ -355,7 +359,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetNative,
         assetTo: assetNative,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
         'Cannot swap native asset to itself.',
       );
@@ -367,7 +371,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const firstQuote = {
         amountOut: 2000n,
@@ -394,7 +398,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetNative,
         origin: undefined,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const firstQuote = {
         amountOut: 2000n,
@@ -421,7 +425,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const firstQuote = {
         amountOut: 2000n,
@@ -447,7 +451,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const hop1Quote = {
         amountOut: 1000n,
@@ -491,7 +495,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const hop1Quote = {
         amountOut: 1000n,
@@ -533,7 +537,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const hop1Quote = {
         amountOut: 0n,
@@ -553,7 +557,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const hop1Quote = {
         amountOut: 1000n,

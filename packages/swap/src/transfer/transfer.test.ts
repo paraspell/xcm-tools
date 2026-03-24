@@ -1,5 +1,5 @@
-import type { TSwapEvent } from '@paraspell/sdk';
-import { isChainEvm, MissingParameterError } from '@paraspell/sdk';
+import type { IPolkadotApi, TSwapEvent } from '@paraspell/sdk-core';
+import { isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,20 +8,20 @@ import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
   TRouterPlan,
-  TTransferOptions,
+  TTransferBaseOptions,
 } from '../types';
+
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
 import { transfer } from './transfer';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   isChainEvm: vi.fn(),
 }));
-
-vi.mock('@paraspell/sdk-pjs');
 
 vi.mock('./utils/validateTransferOptions');
 vi.mock('./utils');
@@ -31,6 +31,7 @@ vi.mock('./executeRouterPlan');
 describe('transfer', () => {
   const mockOriginApi = {} as unknown as TPjsApi;
   const mockSwapApi = {} as unknown as TPjsApi;
+  const mockExchangeApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -46,28 +47,30 @@ describe('transfer', () => {
           assetFrom: { symbol: 'ACA' },
         },
         exchange: {
-          api: mockSwapApi,
+          api: mockExchangeApi,
         },
-      } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
+        api: mockApi,
+      } as TBuildTransactionsOptions<unknown, unknown, unknown> &
+        TAdditionalTransferOptions<unknown, unknown, unknown>,
       dex: {
         chain: 'Acala',
         createApiInstance: vi.fn().mockResolvedValue(mockSwapApi),
       } as unknown as ExchangeChain,
     });
-    vi.mocked(buildTransactions).mockResolvedValue([] as TRouterPlan);
-    vi.mocked(executeRouterPlan).mockResolvedValue(undefined);
+    vi.mocked(buildTransactions).mockResolvedValue([] as TRouterPlan<unknown, unknown>);
+    vi.mocked(executeRouterPlan).mockResolvedValue(['0x']);
   });
 
   it('should call validateTransferOptions with the initial options', async () => {
     const initialOptions = {
       from: 'Polkadot',
       to: 'Kusama',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await transfer(initialOptions);
+    await transfer({ ...initialOptions, api: mockApi });
 
     expect(validateTransferOptions).toHaveBeenCalledTimes(1);
-    expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
+    expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
 
   it('should throw an error if evmSigner is provided without evmSenderAddress', async () => {
@@ -75,9 +78,9 @@ describe('transfer', () => {
       evmSigner: {},
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await expect(transfer(options)).rejects.toThrow(MissingParameterError);
+    await expect(transfer({ ...options, api: mockApi })).rejects.toThrow(MissingParameterError);
   });
 
   it('should throw an error if evmSenderAddress is provided without evmSigner', async () => {
@@ -85,21 +88,21 @@ describe('transfer', () => {
       evmSenderAddress: '0x123',
       from: 'Polkadot',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await expect(transfer(options)).rejects.toThrow(MissingParameterError);
+    await expect(transfer({ ...options, api: mockApi })).rejects.toThrow(MissingParameterError);
   });
 
   it('should call onStatusChange with SELECTING_EXCHANGE if exchange is undefined', async () => {
-    const onStatusChange = vi.fn() as (info: TSwapEvent) => void;
+    const onStatusChange = vi.fn() as (info: TSwapEvent<unknown, unknown>) => void;
     const options = {
       from: 'Polkadot',
       exchange: undefined,
       to: 'Kusama',
       onStatusChange,
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await transfer(options);
+    await transfer({ ...options, api: mockApi });
 
     expect(onStatusChange).toHaveBeenCalledTimes(1);
     expect(onStatusChange).toHaveBeenCalledWith({
@@ -108,15 +111,15 @@ describe('transfer', () => {
   });
 
   it('should not call onStatusChange with SELECTING_EXCHANGE if exchange is provided', async () => {
-    const onStatusChange = vi.fn() as (info: TSwapEvent) => void;
+    const onStatusChange = vi.fn() as (info: TSwapEvent<unknown, unknown>) => void;
     const options = {
       from: 'Polkadot',
       to: 'Kusama',
       exchange: 'AcalaDex',
       onStatusChange,
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await transfer(options);
+    await transfer({ ...options, api: mockApi });
 
     expect(onStatusChange).not.toHaveBeenCalledWith({
       type: 'SELECTING_EXCHANGE',
@@ -127,9 +130,9 @@ describe('transfer', () => {
     const options = {
       from: 'Polkadot',
       to: 'Kusama',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await transfer(options);
+    await transfer({ ...options, api: mockApi });
 
     expect(prepareTransformedOptions).toHaveBeenCalledTimes(1);
     expect(buildTransactions).toHaveBeenCalledTimes(1);
@@ -140,11 +143,11 @@ describe('transfer', () => {
     const options = {
       from: 'Moonbeam',
       to: 'Astar',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
     vi.mocked(isChainEvm).mockReturnValue(true);
 
-    await expect(transfer(options)).rejects.toThrow(
+    await expect(transfer({ ...options, api: mockApi })).rejects.toThrow(
       'EVM signer must be provided for EVM origin chains.',
     );
   });
@@ -153,8 +156,8 @@ describe('transfer', () => {
     const options = {
       from: 'Polkadot',
       to: 'Kusama',
-    } as TTransferOptions;
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
 
-    await transfer(options);
+    await transfer({ ...options, api: mockApi });
   });
 });

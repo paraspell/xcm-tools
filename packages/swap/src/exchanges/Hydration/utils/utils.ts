@@ -1,5 +1,5 @@
 import { type Asset, type TradeRouter } from '@galacticcouncil/sdk';
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk-core';
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,

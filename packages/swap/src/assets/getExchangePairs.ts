@@ -1,10 +1,13 @@
-import type { TAssetInfo, TExchangeChain, TExchangeInput, TLocation } from '@paraspell/sdk';
+import type { TExchangeInput } from '@paraspell/sdk-core';
 import {
   deepEqual,
   EXCHANGE_CHAINS,
   normalizeExchange,
   reverseTransformLocation,
-} from '@paraspell/sdk';
+  type TAssetInfo,
+  type TExchangeChain,
+  type TLocation,
+} from '@paraspell/sdk-core';
 
 import { getExchangeConfig } from './getExchangeConfig';
 
