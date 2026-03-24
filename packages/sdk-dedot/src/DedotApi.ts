@@ -890,6 +890,15 @@ class DedotApi implements IPolkadotApi<
     const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
     return await tx.signAndSend(account);
   }
+
+  async signAndSubmitFinalized(
+    tx: TDedotExtrinsic,
+    sender: TSender<TDedotSigner>,
+  ): Promise<string> {
+    const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
+    const result = await tx.signAndSend(account).untilFinalized();
+    return result.txHash;
+  }
 }
 
 export default DedotApi;

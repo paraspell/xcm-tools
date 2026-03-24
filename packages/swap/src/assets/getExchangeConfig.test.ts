@@ -1,5 +1,5 @@
-import type { TAssetInfo, TLocation } from '@paraspell/sdk';
-import { findAssetInfoOrThrow } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk-core';
+import { findAssetInfoOrThrow } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAssets, getExchangeConfig } from './getExchangeConfig';
@@ -24,7 +24,7 @@ vi.mock('../exchanges/ExchangeChainFactory', () => ({
   },
 }));
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfoOrThrow: vi.fn(),
 }));

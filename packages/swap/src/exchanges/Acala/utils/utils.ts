@@ -1,6 +1,6 @@
 import { options } from '@acala-network/api';
-import type { TParachain } from '@paraspell/sdk';
-import { getChainProviders } from '@paraspell/sdk';
+import type { TParachain } from '@paraspell/sdk-core';
+import { getChainProviders } from '@paraspell/sdk-core';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 export const createAcalaClient = async (chain: TParachain): Promise<ApiPromise> => {

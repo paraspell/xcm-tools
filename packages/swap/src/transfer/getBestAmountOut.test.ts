@@ -1,4 +1,5 @@
 import type { TAssetInfo } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -11,6 +12,12 @@ import { resolveAssets } from './utils/resolveAssets';
 vi.mock('../exchanges/ExchangeChainFactory');
 vi.mock('./selectBestExchangeAmountOut');
 vi.mock('./utils/resolveAssets');
+
+const mockApi = { getConfig: () => undefined } as unknown as IPolkadotApi<
+  unknown,
+  unknown,
+  unknown
+>;
 
 describe('getBestAmountOut', () => {
   beforeEach(() => {
@@ -25,7 +32,7 @@ describe('getBestAmountOut', () => {
       currencyTo: 'ETH',
       from: undefined,
       to: undefined,
-    } as unknown as TGetBestAmountOutOptions;
+    } as unknown as TGetBestAmountOutOptions<unknown, unknown, unknown>;
 
     const fakeDex = {
       exchangeChain: 'EXCHANGE_A_CHAIN',
@@ -49,11 +56,11 @@ describe('getBestAmountOut', () => {
     const createApiSpy = vi.spyOn(fakeDex, 'createApiInstance');
     const getAmountOutSpy = vi.spyOn(fakeDex, 'getAmountOut');
 
-    const result = await getBestAmountOut(options);
+    const result = await getBestAmountOut({ ...options, api: mockApi });
 
     expect(createExchangeInstance).toHaveBeenCalledWith('EXCHANGE_A');
     expect(selectBestExchangeAmountOut).not.toHaveBeenCalled();
-    expect(resolveAssets).toHaveBeenCalledWith(fakeDex, options);
+    expect(resolveAssets).toHaveBeenCalledWith(fakeDex, { ...options, api: mockApi });
     expect(createApiSpy).toHaveBeenCalled();
     expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance', {
       assetFrom: fakeAssets.assetFromExchange,
@@ -71,11 +78,11 @@ describe('getBestAmountOut', () => {
     const options = {
       exchange: undefined,
       amount: 50,
-      currencyFrom: 'USD',
-      currencyTo: 'EUR',
+      currencyFrom: { symbol: 'USD' },
+      currencyTo: { symbol: 'EUR' },
       from: undefined,
       to: undefined,
-    } as unknown as TGetBestAmountOutOptions;
+    } as TGetBestAmountOutOptions<unknown, unknown, unknown>;
 
     const fakeDex = {
       exchangeChain: 'EXCHANGE_CHAIN_B',
@@ -99,11 +106,14 @@ describe('getBestAmountOut', () => {
     const createApiSpy = vi.spyOn(fakeDex, 'createApiInstance');
     const getAmountOutSpy = vi.spyOn(fakeDex, 'getAmountOut');
 
-    const result = await getBestAmountOut(options);
+    const result = await getBestAmountOut({ ...options, api: mockApi });
 
-    expect(selectBestExchangeAmountOut).toHaveBeenCalledWith(options, undefined, undefined);
+    expect(selectBestExchangeAmountOut).toHaveBeenCalledWith(
+      { ...options, api: mockApi },
+      undefined,
+    );
     expect(createExchangeInstance).not.toHaveBeenCalled();
-    expect(resolveAssets).toHaveBeenCalledWith(fakeDex, options);
+    expect(resolveAssets).toHaveBeenCalledWith(fakeDex, { ...options, api: mockApi });
     expect(createApiSpy).toHaveBeenCalled();
     expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance_b', {
       assetFrom: fakeAssets.assetFromExchange,

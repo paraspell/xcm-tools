@@ -1,15 +1,14 @@
-import type { TGetXcmFeeResult } from '@paraspell/sdk';
+import type { TGetXcmFeeResult } from '@paraspell/sdk-core';
 
-import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../../types';
+import type { TBuildTransactionsOptions } from '../../types';
 import { getRouterFees } from '../getRouterFees';
 import { prepareTransformedOptions, validateTransferOptions } from '../utils';
 
-export const getXcmFees = async <TDisableFallback extends boolean>(
-  initialOptions: TBuildTransactionsOptions,
+export const getXcmFees = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
-  builderOptions?: TRouterBuilderOptions,
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   validateTransferOptions(initialOptions);
-  const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions, true);
+  const { options, dex } = await prepareTransformedOptions(initialOptions, true);
   return getRouterFees(dex, options, disableFallback);
 };

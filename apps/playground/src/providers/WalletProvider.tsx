@@ -79,11 +79,9 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       .withOptions({ shallow: false }),
   );
   const location = useLocation();
-  const isRouter = location.pathname === PageRoute.XCM_ROUTER.toString();
-  const selectedApiType = isRouter ? 'PAPI' : queryApiType;
 
   const [apiType, setApiType] = useState<TApiType>(
-    selectedApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
+    queryApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
   );
 
   const [extensions, setExtensions] = useState<string[]>([]);

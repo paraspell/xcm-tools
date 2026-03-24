@@ -1,9 +1,9 @@
-import { getAssets, localizeLocation, type TAssetInfo, type TLocation } from '@paraspell/sdk';
+import { getAssets, localizeLocation, type TAssetInfo, type TLocation } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getDexConfig } from './getDexConfig';
 
-vi.mock('@paraspell/sdk', async (importOriginal) => ({
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   getAssets: vi.fn(),
   localizeLocation: vi.fn(),

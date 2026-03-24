@@ -1,11 +1,11 @@
+import { transform } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
   padValueBy,
   Parents,
   RoutingResolutionError,
-  transform,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 
 import { getExchangeAsset } from '../../assets';
@@ -21,9 +21,9 @@ import ExchangeChain from '../ExchangeChain';
 import { getDexConfig, getQuotedAmount } from './utils';
 
 class AssetHubExchange extends ExchangeChain {
-  async swapCurrency(
+  async swapCurrency<TApi>(
     _api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, sender, slippagePct, origin, papiApi } = options;
@@ -78,9 +78,9 @@ class AssetHubExchange extends ExchangeChain {
     };
   }
 
-  async handleMultiSwap(
+  async handleMultiSwap<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult> {
     const { assetFrom, assetTo } = options;
@@ -109,7 +109,7 @@ class AssetHubExchange extends ExchangeChain {
       };
     } else {
       // Multi-hop: AssetA -> Native -> AssetB
-      const optionsHop1: TSwapOptions = { ...options, assetTo: nativeAsset };
+      const optionsHop1: TSwapOptions<TApi> = { ...options, assetTo: nativeAsset };
       const resultHop1 = await this.swapCurrency(api, optionsHop1, 0n);
 
       if (resultHop1.amountOut <= 0n) {
@@ -121,7 +121,7 @@ class AssetHubExchange extends ExchangeChain {
       const hop1Received = resultHop1.amountOut;
       const assumedInputForHop2 = padValueBy(hop1Received, -2);
 
-      const optionsHop2: TSwapOptions = {
+      const optionsHop2: TSwapOptions<TApi> = {
         papiApi: options.papiApi,
         slippagePct: options.slippagePct,
         sender: options.sender,
@@ -147,7 +147,7 @@ class AssetHubExchange extends ExchangeChain {
     }
   }
 
-  async getAmountOut(_api: ApiPromise, options: TGetAmountOutOptions) {
+  async getAmountOut<TApi>(_api: ApiPromise, options: TGetAmountOutOptions<TApi>) {
     const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
     const nativeAsset = getExchangeAsset(this.exchangeChain, {

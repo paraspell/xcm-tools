@@ -45,7 +45,7 @@ import {
 import {
   useCurrencyOptions,
   useFeeCurrencyOptions,
-  useRouterCurrencyOptions,
+  useSwapCurrencyOptions,
   useWallet,
 } from '../../hooks';
 import {
@@ -182,7 +182,7 @@ export const XcmTransferForm: FC<Props> = ({
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
 
-  const { currencyToMap: swapCurrencyToMap } = useRouterCurrencyOptions(
+  const { currencyToMap: swapCurrencyToMap } = useSwapCurrencyOptions(
     from,
     form.values.swapOptions.exchange,
     to,

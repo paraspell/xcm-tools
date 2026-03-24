@@ -1,41 +1,43 @@
+import type { WithApi } from '@paraspell/sdk-core';
 import {
   applyDecimalAbstraction,
   EXCHANGE_CHAINS,
   findAssetInfo,
   getRelayChainOf,
   hasSupportForAsset,
+  isConfig,
   RoutingResolutionError,
   type TAssetInfo,
   type TChain,
   UnsupportedOperationError,
-} from '@paraspell/sdk';
-import type { PolkadotClient } from 'polkadot-api';
+} from '@paraspell/sdk-core';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import Logger from '../Logger/Logger';
-import type {
-  TCommonRouterOptions,
-  TGetBestAmountOutOptions,
-  TRouterBuilderOptions,
-} from '../types';
+import type { TCommonRouterOptions, TGetBestAmountOutOptions } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 
 export const selectBestExchangeCommon = async <
-  T extends TCommonRouterOptions | TGetBestAmountOutOptions,
+  TApi,
+  TRes,
+  TSigner,
+  T extends
+    | TCommonRouterOptions<TApi, TRes, TSigner>
+    | TGetBestAmountOutOptions<TApi, TRes, TSigner>,
 >(
-  options: T,
-  originApi: PolkadotClient | undefined,
+  options: WithApi<T, TApi, TRes, TSigner>,
+  originApi: TApi | undefined,
   computeAmountOut: (
     dex: ExchangeChain,
     assetFromExchange: TAssetInfo,
     assetTo: TAssetInfo,
-    options: T,
+    options: WithApi<T, TApi, TRes, TSigner>,
+    parsedAmount: string,
   ) => Promise<bigint>,
-  builderOptions?: TRouterBuilderOptions,
 ): Promise<ExchangeChain> => {
-  const { from, exchange, to, currencyFrom, currencyTo } = options;
+  const { api, from, exchange, to, currencyFrom, currencyTo } = options;
 
   const assetFromOrigin = from ? findAssetInfo(from, currencyFrom) : undefined;
 
@@ -94,29 +96,27 @@ export const selectBestExchangeCommon = async <
 
     Logger.log(`Checking ${exchangeChain}...`);
 
-    const res = await canBuildToExchangeTx(
-      options,
-      dex.chain,
-      originApi,
-      assetFromOrigin,
-      builderOptions,
-    );
+    const res = await canBuildToExchangeTx(options, dex.chain, originApi, assetFromOrigin);
     if (!res.success) {
       errors.set(dex.chain, res.error);
       continue;
     }
 
+    const apiConfig = api.getConfig();
     const parsedAmount = applyDecimalAbstraction(
       options.amount,
       assetFromExchange?.decimals,
-      !!builderOptions?.abstractDecimals,
+      !(isConfig(apiConfig) && apiConfig.abstractDecimals === false),
     ).toString();
 
     try {
-      const amountOut = await computeAmountOut(dex, assetFromExchange, assetTo, {
-        ...options,
-        amount: parsedAmount,
-      });
+      const amountOut = await computeAmountOut(
+        dex,
+        assetFromExchange,
+        assetTo,
+        options,
+        parsedAmount,
+      );
       if (amountOut > maxAmountOut) {
         bestExchange = dex;
         maxAmountOut = amountOut;

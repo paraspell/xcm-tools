@@ -1,4 +1,4 @@
-import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk-core';
 import {
   EXCHANGE_CHAINS,
   getAssets,
@@ -7,7 +7,7 @@ import {
   isSystemAsset,
   normalizeExchange,
   type TChain,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { getExchangeAssets } from './getExchangeConfig';
 

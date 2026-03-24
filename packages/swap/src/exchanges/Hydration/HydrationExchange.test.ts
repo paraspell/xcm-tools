@@ -7,7 +7,7 @@ import {
   getNativeAssetSymbol,
   InvalidCurrencyError,
   UnableToComputeError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -22,14 +22,12 @@ vi.mock('@galacticcouncil/sdk', async (importActual) => ({
   createSdkContext: vi.fn(),
 }));
 
-vi.mock('@paraspell/sdk', async (importActual) => {
-  return {
-    ...(await importActual()),
-    getAssets: vi.fn(),
-    getAssetDecimals: vi.fn(),
-    getNativeAssetSymbol: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  getAssets: vi.fn(),
+  getAssetDecimals: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
+}));
 
 vi.mock('./utils');
 
@@ -100,7 +98,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
@@ -141,7 +139,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
@@ -160,7 +158,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const toDestTransactionFee = 10n;
 
       await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
@@ -177,7 +175,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'NON_EXISTENT' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const toDestTransactionFee = 10n;
 
@@ -213,7 +211,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'HDX' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const toDestTransactionFee = 10n;
 
       const result = await chain.swapCurrency(api, options, toDestTransactionFee);
@@ -236,7 +234,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const toDestTransactionFee = 10n;
 
@@ -270,7 +268,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
       const toDestTransactionFee = 10n;
 
       const tradeSpy = vi.spyOn(mockTxBuilderFactory, 'trade');
@@ -310,7 +308,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       const toDestTransactionFee = 99999n;
 
@@ -367,7 +365,7 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'HDX' },
         amount: 100n,
         origin: {},
-      } as TGetAmountOutOptions;
+      } as TGetAmountOutOptions<unknown>;
 
       const amountOut = await chain.getAmountOut(api, options);
 

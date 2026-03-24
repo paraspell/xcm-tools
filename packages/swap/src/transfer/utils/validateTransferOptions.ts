@@ -1,10 +1,12 @@
-import { InvalidAddressError, isChainEvm, MissingParameterError } from '@paraspell/sdk';
+import { InvalidAddressError, isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 
 import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
 
-export const validateTransferOptions = (options: TBuildTransactionsOptions) => {
+export const validateTransferOptions = <TApi, TRes, TSigner>(
+  options: TBuildTransactionsOptions<TApi, TRes, TSigner>,
+) => {
   const { from, exchange, evmSenderAddress, sender, recipient, to } = options;
 
   if (exchange === undefined && from === undefined) {

@@ -1,11 +1,13 @@
+import { BatchMode } from '@paraspell/sdk-core';
+
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterPlan, TTransformedOptions } from '../types';
 import { prepareExtrinsics } from './prepareExtrinsics';
 
-export const buildTransactions = async (
+export const buildTransactions = async <TApi, TRes, TSigner>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
-): Promise<TRouterPlan> => {
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+): Promise<TRouterPlan<TApi, TRes>> => {
   const { origin, exchange, destination } = options;
 
   const { toExchangeTx, swapTxs, toDestTx, amountOut, isExecute } = await prepareExtrinsics(
@@ -13,7 +15,7 @@ export const buildTransactions = async (
     options,
   );
 
-  const transactions: TRouterPlan = [];
+  const transactions: TRouterPlan<TApi, TRes> = [];
 
   if (origin && toExchangeTx) {
     transactions.push({
@@ -26,12 +28,10 @@ export const buildTransactions = async (
   }
 
   if (toDestTx) {
-    const batchedTx = exchange.apiPapi.getUnsafeApi().tx.Utility.batch_all({
-      calls: [...swapTxs.map((tx) => tx.decodedCall), toDestTx.decodedCall],
-    });
+    const batchedTx = exchange.api.callBatchMethod([...swapTxs, toDestTx], BatchMode.BATCH_ALL);
 
     transactions.push({
-      api: exchange.apiPapi,
+      api: exchange.api.getApi(),
       chain: dex.chain,
       destinationChain: destination?.chain,
       tx: batchedTx,
@@ -41,19 +41,17 @@ export const buildTransactions = async (
   } else {
     if (swapTxs.length === 1) {
       transactions.push({
-        api: isExecute ? (origin?.api ?? exchange.apiPapi) : exchange.apiPapi,
+        api: isExecute ? (origin?.api ?? exchange.api.getApi()) : exchange.api.getApi(),
         chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
         tx: swapTxs[0],
         amountOut,
         type: 'SWAP',
       });
     } else {
-      const batchedSwapTx = exchange.apiPapi.getUnsafeApi().tx.Utility.batch_all({
-        calls: swapTxs.map((tx) => tx.decodedCall),
-      });
+      const batchedSwapTx = exchange.api.callBatchMethod(swapTxs, BatchMode.BATCH_ALL);
 
       transactions.push({
-        api: exchange.apiPapi,
+        api: exchange.api.getApi(),
         chain: dex.chain,
         tx: batchedSwapTx,
         amountOut,

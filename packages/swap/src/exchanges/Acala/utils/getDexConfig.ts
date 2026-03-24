@@ -1,13 +1,13 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import type { TAssetInfo, TParachain } from '@paraspell/sdk';
+import type { TAssetInfo, TParachain } from '@paraspell/sdk-core';
 import {
   findAssetInfoById,
   getNativeAssets,
   getOtherAssets,
   RoutingResolutionError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
 

@@ -193,6 +193,25 @@ describe('findAssetOnDest', () => {
     expect(findAssetInfo).not.toHaveBeenCalled()
   })
 
+  it('should find asset by symbol on Snowbridge destination when origin asset is a system asset', () => {
+    const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
+
+    const systemAsset: TAssetInfo = {
+      symbol: mockAssetSymbol,
+      assetId: '1',
+      decimals: 10,
+      location: { parents: 1, interior: { Here: null } }
+    }
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(systemAsset)
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockDestinationAsset)
+
+    const result = findAssetInfoOnDest('AssetHubPolkadot', 'Ethereum', currencyInput)
+
+    expect(findAssetInfo).toHaveBeenCalledWith('Ethereum', { symbol: mockAssetSymbol })
+    expect(result).toEqual(mockDestinationAsset)
+  })
+
   it('should use provided origin asset instead of resolving when available', () => {
     const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
 

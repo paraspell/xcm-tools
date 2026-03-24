@@ -1,16 +1,17 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/sdk';
-import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk';
+import type { TAssetInfo, WithAmount } from '@paraspell/sdk-core';
+import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TPreparedExtrinsics, TTransformedOptions } from '../types';
 import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
-export const prepareExtrinsics = async (
+export const prepareExtrinsics = async <TApi, TRes, TSigner>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
-): Promise<TPreparedExtrinsics> => {
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+): Promise<TPreparedExtrinsics<TRes>> => {
   const {
+    api,
     origin,
     exchange,
     destination,
@@ -19,43 +20,40 @@ export const prepareExtrinsics = async (
     evmSenderAddress,
     sender,
     recipient,
-    builderOptions,
   } = options;
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
-      const amountOut = await dex.getAmountOut(exchange.api, {
+      const amountOut = await dex.getAmountOut(exchange.apiPjs, {
         ...options,
         papiApi: exchange.apiPapi,
         assetFrom: exchange.assetFrom,
         assetTo: exchange.assetTo,
       });
 
-      const tx = await handleSwapExecuteTransfer(
-        {
-          chain: origin?.chain,
-          exchangeChain: exchange.baseChain,
-          destChain: destination?.chain,
-          assetInfoFrom: {
-            ...(origin?.assetFrom ?? exchange.assetFrom),
-            amount: BigInt(amount),
-          } as WithAmount<TAssetInfo>,
-          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-          sender: evmSenderAddress ?? sender,
-          recipient: recipient ?? sender,
-          currencyTo,
-          feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
-          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-            dex.getAmountOut(exchange.api, {
-              ...options,
-              amount: amountIn,
-              papiApi: options.exchange.apiPapi,
-              assetFrom: options.exchange.assetFrom,
-              assetTo: assetTo ?? options.exchange.assetTo,
-            }),
-        },
-        builderOptions,
-      );
+      const tx = await handleSwapExecuteTransfer({
+        api,
+        chain: origin?.chain,
+        exchangeChain: exchange.baseChain,
+        destChain: destination?.chain,
+        assetInfoFrom: {
+          ...(origin?.assetFrom ?? exchange.assetFrom),
+          amount: BigInt(amount),
+        } as WithAmount<TAssetInfo>,
+        assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+        sender: evmSenderAddress ?? sender,
+        recipient: recipient ?? sender,
+        currencyTo,
+        feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
+        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
+          dex.getAmountOut(exchange.apiPjs, {
+            ...options,
+            amount: amountIn,
+            papiApi: options.exchange.apiPapi,
+            assetFrom: options.exchange.assetFrom,
+            assetTo: assetTo ?? options.exchange.assetTo,
+          }),
+      });
 
       return { swapTxs: [tx], isExecute: true, amountOut };
     } catch (error) {
@@ -89,7 +87,7 @@ export const prepareExtrinsics = async (
           destination,
           amount: amountOut,
           sender,
-          builderOptions,
+          api,
         })
       : undefined;
 

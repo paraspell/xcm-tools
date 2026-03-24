@@ -33,7 +33,8 @@ import {
   createTransferOrSwap,
   createTransferOrSwapAll,
   executeWithRouter,
-  isConfig
+  isConfig,
+  isSenderSigner
 } from '../utils'
 import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
@@ -1370,6 +1371,53 @@ describe('Builder', () => {
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
       expect(submitSpy).toHaveBeenCalledWith(mockExtrinsic, derivationPath)
       expect(result).toBe(mockTxHash)
+    })
+  })
+
+  describe('signAndSubmitAll', () => {
+    beforeEach(() => {
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
+    })
+
+    it('should return array with single tx hash for non-swap transfer', async () => {
+      const derivationPath = '//Alice'
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .sender(derivationPath)
+        .recipient(ADDRESS)
+        .signAndSubmitAll()
+
+      expect(assertSenderSource).toHaveBeenCalledWith(derivationPath)
+      expect(result).toEqual(['0x1234567890abcdef'])
+    })
+
+    it('should return tx hashes array from executeWithRouter for swap', async () => {
+      const mockTxHashes = ['0xabc', '0xdef']
+      vi.mocked(isSenderSigner).mockReturnValue(true)
+      vi.mocked(executeWithRouter).mockResolvedValue(mockTxHashes)
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .sender('//Alice')
+        .recipient(ADDRESS)
+        .swap(SWAP_OPTIONS)
+        .signAndSubmitAll()
+
+      expect(executeWithRouter).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          swapOptions: expect.objectContaining({
+            currencyTo: { symbol: 'GLMR' }
+          })
+        }),
+        expect.any(Function)
+      )
+      expect(result).toEqual(mockTxHashes)
     })
   })
 

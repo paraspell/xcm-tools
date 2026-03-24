@@ -1,7 +1,7 @@
-import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk';
+import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
+import type { TBuildTransactionsOptions } from '../types';
 import type { TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
@@ -10,9 +10,9 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const computeExchangeMinAmount = async (
+const computeExchangeMinAmount = async <TApi, TRes, TSigner>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ): Promise<bigint> => {
   const { exchange } = options;
 
@@ -33,15 +33,14 @@ const computeExchangeMinAmount = async (
   return existentialDeposit + swapFee + 1n;
 };
 
-export const getMinTransferableAmount = async (
-  initialOptions: TBuildTransactionsOptions,
-  builderOptions?: TRouterBuilderOptions,
+export const getMinTransferableAmount = async <TApi, TRes, TSigner>(
+  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner>,
 ): Promise<bigint> => {
   validateTransferOptions(initialOptions);
 
-  const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const { dex, options } = await prepareTransformedOptions(initialOptions);
 
-  const { origin, exchange, sender, evmSenderAddress, amount } = options;
+  const { origin, exchange, sender, evmSenderAddress, amount, api } = options;
 
   if (origin) {
     const builder = createToExchangeBuilder({
@@ -50,7 +49,7 @@ export const getMinTransferableAmount = async (
       sender,
       evmSenderAddress,
       amount,
-      builderOptions,
+      api,
     });
 
     return builder.getMinTransferableAmount();

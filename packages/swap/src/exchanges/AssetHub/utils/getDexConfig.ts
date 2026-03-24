@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk';
+import { getAssets, localizeLocation, type TParachain } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfigStored } from '../../../types';

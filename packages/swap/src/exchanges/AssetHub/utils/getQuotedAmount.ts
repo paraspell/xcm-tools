@@ -2,13 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { TPapiApi, TParachain } from '@paraspell/sdk';
-import {
-  localizeLocation,
-  RoutingResolutionError,
-  type TLocation,
-  transform,
-} from '@paraspell/sdk';
+import type { TPapiApi } from '@paraspell/sdk';
+import { transform } from '@paraspell/sdk';
+import type { TParachain } from '@paraspell/sdk-core';
+import { localizeLocation, RoutingResolutionError, type TLocation } from '@paraspell/sdk-core';
 
 export const getQuotedAmount = async (
   api: TPapiApi,

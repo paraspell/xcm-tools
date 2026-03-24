@@ -2,15 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Pair, Trade } from '@crypto-dex-sdk/amm';
-import type { TAssetInfo } from '@paraspell/sdk';
-import { getAssets } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk-core';
+import { getAssets } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getBestTrade, getFilteredPairs } from './bifrostUtils';
 import { getDexConfig } from './getDexConfig';
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
-  ...(await importActual()),
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
   getParaId: vi.fn().mockReturnValue(2001),
   getAssets: vi.fn(),
 }));
