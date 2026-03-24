@@ -1,8 +1,11 @@
 import type { TAssetInfo } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TGetBestAmountOutOptions } from '../types';
+
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
@@ -15,7 +18,8 @@ describe('selectBestExchangeAmountOut', () => {
     currencyFrom: { symbol: 'AAA' },
     currencyTo: { symbol: 'BBB' },
     amount: 10,
-  } as unknown as TGetBestAmountOutOptions;
+    api: mockApi,
+  } as unknown as TGetBestAmountOutOptions<unknown, unknown, unknown>;
 
   it('should compute the amount out using the dex callback and return the best exchange', async () => {
     const fakeDex = {
@@ -33,6 +37,7 @@ describe('selectBestExchangeAmountOut', () => {
           'assetFrom' as unknown as TAssetInfo,
           'assetTo' as unknown as TAssetInfo,
           options,
+          String(options.amount),
         );
         expect(result).toBe(300n);
         return fakeDex;

@@ -1,5 +1,6 @@
-import type { TAssetInfo } from '@paraspell/sdk';
-import { handleSwapExecuteTransfer, type TPapiApi, type TPapiTransaction } from '@paraspell/sdk';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
+import { handleSwapExecuteTransfer } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -16,13 +17,15 @@ import * as utils from './utils';
 vi.mock('./utils');
 vi.mock('./createSwapTx');
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-core');
   return {
     ...actual,
     handleSwapExecuteTransfer: vi.fn(),
   };
 });
+
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 
 const originApi = {} as TPapiApi;
 const dexChain = { chain: 'Acala' } as ExchangeChain;
@@ -39,7 +42,13 @@ const baseOptions = {
     address: 'dest',
     chain: 'Crust',
   },
-} as unknown as TTransformedOptions<TBuildTransactionsOptions>;
+  api: mockApi,
+} as unknown as TTransformedOptions<
+  TBuildTransactionsOptions<unknown, unknown, unknown>,
+  unknown,
+  unknown,
+  unknown
+>;
 
 describe('prepareExtrinsics', () => {
   beforeEach(() => {
@@ -54,7 +63,7 @@ describe('prepareExtrinsics', () => {
   test('returns only swap extrinsic when origin & destination match exchange', async () => {
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo<unknown>,
       destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });
 
@@ -99,7 +108,7 @@ describe('prepareExtrinsics', () => {
 
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
-      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo,
+      origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo<unknown>,
     });
 
     expect(res).toEqual({
@@ -153,8 +162,14 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
+        api: {} as IPolkadotApi<unknown, unknown, unknown>,
       },
-    } as TTransformedOptions<TBuildTransactionsOptions>;
+    } as TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >;
 
     const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 
@@ -164,25 +179,25 @@ describe('prepareExtrinsics', () => {
       isExecute: true,
     });
 
-    expect(handleSwapExecuteTransfer).toHaveBeenCalledWith(
-      {
-        chain: optionsWithAssetHub.origin?.chain,
-        exchangeChain: optionsWithAssetHub.exchange.baseChain,
-        destChain: optionsWithAssetHub.destination?.chain,
-        assetInfoFrom: {
-          ...optionsWithAssetHub.exchange.assetFrom,
-          amount: BigInt(optionsWithAssetHub.amount),
-        },
-        assetInfoTo: {
-          ...optionsWithAssetHub.exchange.assetTo,
-          amount: 500n,
-        },
-        sender: optionsWithAssetHub.sender,
-        recipient: optionsWithAssetHub.recipient,
-        calculateMinAmountOut: expect.any(Function),
+    expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({
+      api: mockApi,
+      chain: optionsWithAssetHub.origin?.chain,
+      exchangeChain: optionsWithAssetHub.exchange.baseChain,
+      destChain: optionsWithAssetHub.destination?.chain,
+      assetInfoFrom: {
+        ...optionsWithAssetHub.exchange.assetFrom,
+        amount: BigInt(optionsWithAssetHub.amount),
       },
-      undefined,
-    );
+      assetInfoTo: {
+        ...optionsWithAssetHub.exchange.assetTo,
+        amount: 500n,
+      },
+      currencyTo: undefined,
+      feeAssetInfo: undefined,
+      sender: optionsWithAssetHub.sender,
+      recipient: optionsWithAssetHub.recipient,
+      calculateMinAmountOut: expect.any(Function),
+    });
   });
 
   test('throws error when handleSwapExecuteTransfer fails with non-DryRunFailedError', async () => {
@@ -202,8 +217,14 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
+        api: {} as IPolkadotApi<unknown, unknown, unknown>,
       },
-    } as TTransformedOptions<TBuildTransactionsOptions>;
+    } as TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >;
 
     const customError = new Error('Network error');
     vi.mocked(handleSwapExecuteTransfer).mockRejectedValue(customError);
@@ -214,7 +235,7 @@ describe('prepareExtrinsics', () => {
   });
 
   test('falls back to default swap execution and tests calculateMinAmountOut function', async () => {
-    const { DryRunFailedError } = await import('@paraspell/sdk');
+    const { DryRunFailedError } = await import('@paraspell/sdk-core');
 
     const assetHubDexChain = {
       chain: 'AssetHubPolkadot',
@@ -232,8 +253,14 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
+        api: {} as IPolkadotApi<unknown, unknown, unknown>,
       },
-    } as TTransformedOptions<TBuildTransactionsOptions>;
+    } as TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >;
 
     let capturedCalculateMinAmountOut:
       | ((amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>)

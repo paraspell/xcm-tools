@@ -703,19 +703,49 @@ export class GeneralBuilder<
         )
       }
 
-      await executeWithRouter({ ...this._options, swapOptions, api: this.api }, builder =>
+      const txHashes = (await executeWithRouter(
+        { ...this._options, swapOptions, api: this.api },
         // We need to cast this sender because RouterBuilder expects a PAPI signer but this part of sdk-core is generic
         // Will be removed in the future when we gradually move parts of swap package to sdk-core
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        builder.signer(senderSource as any).build()
-      )
+        builder => builder.signer(senderSource as any).build()
+      )) as unknown as string[]
 
-      // TODO: Needs addressing in v13
-      return ''
+      return txHashes[0]
     }
 
     const { tx } = await this.buildInternal()
     return this.api.signAndSubmit(tx, senderSource)
+  }
+
+  async signAndSubmitAll(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+    >
+  ): Promise<string[]> {
+    const { senderSource, swapOptions } = this._options
+    assertSenderSource(senderSource)
+
+    if (swapOptions) {
+      if (!isSenderSigner(senderSource)) {
+        throw new UnsupportedOperationError(
+          'Swap operations do not support local accounts yet. Please provider a signer'
+        )
+      }
+
+      return executeWithRouter(
+        { ...this._options, swapOptions, api: this.api },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+        builder => builder.signer(senderSource as any).build()
+      ) as unknown as string[]
+    }
+
+    const { tx } = await this.buildInternal()
+    const txHash = await this.api.signAndSubmit(tx, senderSource)
+    return [txHash]
   }
 
   /**

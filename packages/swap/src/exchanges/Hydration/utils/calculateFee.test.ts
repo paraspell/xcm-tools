@@ -1,7 +1,7 @@
 import type { Asset, TxBuilderFactory } from '@galacticcouncil/sdk';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk';
+import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -34,14 +34,11 @@ vi.mock('./utils', async () => {
   };
 });
 
-vi.mock('@paraspell/sdk', async () => {
-  const original = await vi.importActual('@paraspell/sdk');
-  return {
-    ...original,
-    getAssetDecimals: vi.fn(),
-    getNativeAssetSymbol: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  getAssetDecimals: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
+}));
 
 describe('calculateFee', () => {
   let mockTxBuilderFactory: TxBuilderFactory;
@@ -98,7 +95,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
@@ -124,7 +121,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'FOO' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'BAR' } as Asset;
@@ -170,7 +167,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'BSX' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
@@ -194,7 +191,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     const currencyFromInfo = { id: '9999', symbol: 'HDX' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
@@ -232,7 +229,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
     const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
 

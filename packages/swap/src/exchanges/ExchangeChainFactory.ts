@@ -1,4 +1,4 @@
-import type { TExchangeChain } from '@paraspell/sdk';
+import type { TExchangeChain } from '@paraspell/sdk-core';
 
 import AcalaExchange from './Acala/AcalaExchange';
 import AssetHubExchange from './AssetHub/AssetHubExchange';

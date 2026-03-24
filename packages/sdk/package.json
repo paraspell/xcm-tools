@@ -34,7 +34,8 @@
     "test:watch": "vitest",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
-    "test:e2e:chopsticks": "vitest run --config ./vitest.config.chopsticks.e2e.ts"
+    "test:e2e:chopsticks": "vitest run --config ./vitest.config.chopsticks.e2e.ts",
+    "test:e2e:swap": "vitest run --config ./vitest.config.swap.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",

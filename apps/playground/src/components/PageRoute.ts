@@ -8,7 +8,6 @@ export const PageRoute = {
     PALLETS: '/xcm-sdk/pallets',
     ASSET_CLAIM: '/xcm-sdk/asset-claim',
   },
-  XCM_ROUTER: '/xcm-router',
   XCM_ANALYSER: '/xcm-analyser',
   NOT_FOUND: '*',
 };

@@ -73,4 +73,5 @@ export interface IPolkadotApi<TApi, TRes, TSigner> {
   deriveAddress(path: string): string
   deriveAddress(sender: TSender<TSigner>): string
   signAndSubmit(tx: TRes, sender: TSender<TSigner>): Promise<string>
+  signAndSubmitFinalized(tx: TRes, sender: TSender<TSigner>): Promise<string>
 }

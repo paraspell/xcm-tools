@@ -1,5 +1,5 @@
-import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk';
-import { findAssetInfoOrThrow } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk-core';
+import { findAssetInfoOrThrow } from '@paraspell/sdk-core';
 
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import { record } from '../exchanges/ExchangeChainFactory';

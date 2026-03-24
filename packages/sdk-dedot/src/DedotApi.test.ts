@@ -1200,4 +1200,35 @@ describe("DedotApi", () => {
       expect(mockApiRaw.disconnect).not.toHaveBeenCalled();
     });
   });
+
+  describe("signAndSubmitFinalized", () => {
+    it("should resolve with txHash on finalized", async () => {
+      const mockTxHash = "0xfinalized";
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({ txHash: mockTxHash }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      const signAndSendSpy = vi.spyOn(mockTx, "signAndSend");
+      const result = await dedotApi.signAndSubmitFinalized(mockTx, "//Alice");
+
+      expect(signAndSendSpy).toHaveBeenCalled();
+      expect(result).toBe(mockTxHash);
+    });
+
+    it("should propagate errors from untilFinalized", async () => {
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi
+            .fn()
+            .mockRejectedValue(new Error("finalization failed")),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      await expect(
+        dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
+      ).rejects.toThrow("finalization failed");
+    });
+  });
 });

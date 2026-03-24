@@ -8,12 +8,12 @@ import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
 import { calculateTxFeePjs } from '../../../utils';
 
-export const calculateAcalaSwapFee = async (
+export const calculateAcalaSwapFee = async <TApi>(
   dex: AggregateDex,
   wallet: Wallet,
   tokenFrom: Token,
   tokenTo: Token,
-  { amount, feeCalcAddress }: TSwapOptions,
+  { amount, feeCalcAddress }: TSwapOptions<TApi>,
 ): Promise<bigint> => {
   const normalNumberAmount = formatUnits(amount, tokenFrom.decimals);
 

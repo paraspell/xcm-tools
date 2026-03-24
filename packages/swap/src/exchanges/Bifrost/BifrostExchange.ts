@@ -8,7 +8,7 @@ import {
   padValueBy,
   parseUnits,
   RoutingResolutionError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
@@ -24,9 +24,9 @@ import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils'
 import { getDexConfig } from './utils/getDexConfig';
 
 class BifrostExchange extends ExchangeChain {
-  async swapCurrency(
+  async swapCurrency<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
@@ -106,7 +106,7 @@ class BifrostExchange extends ExchangeChain {
     };
   }
 
-  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
+  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>): Promise<bigint> {
     const { assetFrom, assetTo, amount, origin } = options;
 
     const chainId = getParaId(this.chain);

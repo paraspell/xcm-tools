@@ -1149,6 +1149,9 @@ importers:
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../sdk
+      '@paraspell/sdk-core':
+        specifier: workspace:*
+        version: link:../sdk-core
       '@paraspell/sdk-pjs':
         specifier: workspace:*
         version: link:../sdk-pjs

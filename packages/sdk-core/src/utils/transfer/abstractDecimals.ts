@@ -11,7 +11,7 @@ export const abstractDecimals = <TApi, TRes, TSigner>(
   api: IPolkadotApi<TApi, TRes, TSigner>
 ): bigint => {
   const config = api.getConfig()
-  const abstractDecimals = isConfig(config) && !config.abstractDecimals ? false : true
+  const abstractDecimals = !(isConfig(config) && config.abstractDecimals === false)
 
   return applyDecimalAbstraction(amount, decimals, abstractDecimals)
 }

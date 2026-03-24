@@ -223,7 +223,7 @@ describe('Hydration', () => {
       const input = {
         ...mockInput,
         api: mockApi,
-        senderAddress: '0xPolkadotSender',
+        sender: '0xPolkadotSender',
         assetInfo: {
           symbol: 'USDC',
           assetId: '123',

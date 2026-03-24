@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInput, TExchangeChain } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput, TExchangeChain } from '@paraspell/sdk-core';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -8,7 +8,7 @@ import {
   isSymbolSpecifier,
   RoutingResolutionError,
   UnsupportedOperationError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { getExchangeAssets } from './getExchangeConfig';
 

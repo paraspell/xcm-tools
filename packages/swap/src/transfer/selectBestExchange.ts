@@ -1,27 +1,31 @@
-import type { PolkadotClient } from 'polkadot-api';
-
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TCommonRouterOptions, TRouterBuilderOptions, TTransformedOptions } from '../types';
+import type { TCommonRouterOptions, TTransformedOptions } from '../types';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 import { determineFeeCalcAddress } from './utils';
 
-export const selectBestExchange = async (
-  options: TCommonRouterOptions,
-  originApi: PolkadotClient | undefined,
-  builderOptions?: TRouterBuilderOptions,
+export const selectBestExchange = async <TApi, TRes, TSigner>(
+  options: TCommonRouterOptions<TApi, TRes, TSigner>,
+  originApi: TApi | undefined,
   isForFeeEstimation?: boolean,
-): Promise<ExchangeChain> =>
-  selectBestExchangeCommon(
+): Promise<ExchangeChain> => {
+  const { api } = options;
+  return selectBestExchangeCommon(
     options,
     originApi,
-    async (dex, assetFromExchange, assetTo, options) => {
-      const modifiedOptions: TTransformedOptions<TCommonRouterOptions> = {
+    async (dex, assetFromExchange, assetTo, options, parsedAmount) => {
+      const modifiedOptions: TTransformedOptions<
+        TCommonRouterOptions<TApi, TRes, TSigner>,
+        TApi,
+        TRes,
+        TSigner
+      > = {
         ...options,
-        amount: BigInt(options.amount),
+        amount: BigInt(parsedAmount),
         exchange: {
-          api: await dex.createApiInstance(),
+          apiPjs: await dex.createApiInstance(),
           apiPapi: await dex.createApiInstancePapi(),
+          api: await api.createApiForChain(dex.chain),
           baseChain: dex.chain,
           exchangeChain: dex.exchangeChain,
           assetFrom: assetFromExchange,
@@ -32,7 +36,7 @@ export const selectBestExchange = async (
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
       const { amountOut } = await dex.handleMultiSwap(
-        modifiedOptions.exchange.api,
+        modifiedOptions.exchange.apiPjs,
         {
           ...modifiedOptions,
           papiApi: modifiedOptions.exchange.apiPapi,
@@ -44,5 +48,5 @@ export const selectBestExchange = async (
       );
       return amountOut;
     },
-    builderOptions,
   );
+};

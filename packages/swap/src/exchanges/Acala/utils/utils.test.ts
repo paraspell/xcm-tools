@@ -1,6 +1,6 @@
 import { options } from '@acala-network/api';
-import type { TParachain } from '@paraspell/sdk';
-import { getChainProviders } from '@paraspell/sdk';
+import type { TParachain } from '@paraspell/sdk-core';
+import { getChainProviders } from '@paraspell/sdk-core';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { ApiOptions } from '@polkadot/api/types';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -21,7 +21,7 @@ vi.mock('@polkadot/api', () => ({
 }));
 
 vi.mock('@acala-network/api');
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core');
 
 describe('createAcalaClient', () => {
   const mockChain = 'acala' as TParachain;

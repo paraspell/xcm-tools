@@ -1,5 +1,5 @@
-import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk';
-import { deepEqual } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk-core';
+import { deepEqual } from '@paraspell/sdk-core';
 
 import { getExchangeAssets } from './getExchangeConfig';
 

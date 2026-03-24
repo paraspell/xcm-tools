@@ -1,4 +1,4 @@
-import type { TAssetInfo, TLocation } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangePairs } from './getExchangePairs';
@@ -21,7 +21,7 @@ const assetB: TAssetInfo = {
   location: locB,
 };
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),

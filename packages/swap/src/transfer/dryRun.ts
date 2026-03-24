@@ -1,9 +1,14 @@
-import type { TBypassOptions, TChain, TCurrencyCore, TDryRunResult } from '@paraspell/sdk';
-import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
+import type {
+  TBypassOptions,
+  TChain,
+  TCurrencyCore,
+  TDryRunResult,
+  WithApi,
+} from '@paraspell/sdk-core';
+import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk-core';
 
 import type {
   TBuildTransactionsOptions,
-  TRouterBuilderOptions,
   TRouterPlan,
   TTransaction,
   TTransformedOptions,
@@ -11,9 +16,9 @@ import type {
 import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
-const assignIsExchange = (
+const assignIsExchange = <TApi, TRes, TSigner>(
   result: TDryRunResult,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ) => {
   const { origin, exchange, destination } = options;
 
@@ -40,15 +45,15 @@ const assignIsExchange = (
   return result;
 };
 
-const dryRunTransaction = async (
-  options: TTransformedOptions<TBuildTransactionsOptions>,
-  transaction: TTransaction,
+const dryRunTransaction = async <TApi, TRes, TSigner>(
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  transaction: TTransaction<TApi, TRes>,
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
 ): Promise<TDryRunResult> => {
-  const { exchange, sender, evmSenderAddress, destination, currencyFrom, currencyTo, amount } =
+  const { api, exchange, sender, evmSenderAddress, destination, currencyFrom, currencyTo, amount } =
     options;
-  const { api, tx, chain } = transaction;
+  const { tx, chain } = transaction;
 
   const senderResolved = evmSenderAddress ?? sender;
   const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
@@ -71,8 +76,8 @@ const dryRunTransaction = async (
   });
 };
 
-const mergeDryRunResults = (
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+const mergeDryRunResults = <TApi, TRes, TSigner>(
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   originResult: TDryRunResult,
   exchangeResult: TDryRunResult,
 ): TDryRunResult => {
@@ -94,9 +99,9 @@ const mergeDryRunResults = (
   };
 };
 
-const dryRun2Transactions = async (
-  options: TTransformedOptions<TBuildTransactionsOptions>,
-  transactions: TRouterPlan,
+const dryRun2Transactions = async <TApi, TRes, TSigner>(
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  transactions: TRouterPlan<TApi, TRes>,
 ): Promise<TDryRunResult> => {
   const { exchange } = options;
 
@@ -118,9 +123,9 @@ const dryRun2Transactions = async (
   return mergeDryRunResults(options, firstRes, secondRes);
 };
 
-const dryRunTransactions = (
-  transactions: TRouterPlan,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+const dryRunTransactions = <TApi, TRes, TSigner>(
+  transactions: TRouterPlan<TApi, TRes>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ) => {
   if (transactions.length === 1) {
     return dryRunTransaction(options, transactions[0]);
@@ -133,12 +138,11 @@ const dryRunTransactions = (
   throw new UnsupportedOperationError('Router dry run supports up to two transactions per flow.');
 };
 
-export const dryRunRouter = async (
-  initialOptions: TBuildTransactionsOptions,
-  builderOptions?: TRouterBuilderOptions,
+export const dryRunRouter = async <TApi, TRes, TSigner>(
+  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ): Promise<TDryRunResult> => {
   validateTransferOptions(initialOptions);
-  const { options, dex } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const { options, dex } = await prepareTransformedOptions(initialOptions);
   const routerPlan = await buildTransactions(dex, options);
 
   const result = await dryRunTransactions(routerPlan, options);

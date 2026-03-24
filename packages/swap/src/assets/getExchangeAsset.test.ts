@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInput } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput } from '@paraspell/sdk-core';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -8,13 +8,14 @@ import {
   getOtherAssets,
   isOverrideLocationSpecifier,
   isSymbolSpecifier,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { getExchangeAsset } from './getExchangeAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
   getOtherAssets: vi.fn(),
   getNativeAssets: vi.fn(),
   findAssetInfoBySymbol: vi.fn(),

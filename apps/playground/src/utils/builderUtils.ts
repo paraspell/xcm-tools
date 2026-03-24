@@ -18,12 +18,9 @@ import {
   type TUrl,
   type WithComplexAmount,
 } from '@paraspell/sdk';
-import type { TRouterBuilderOptions } from '@paraspell/swap';
-import { RouterBuilder } from '@paraspell/swap';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import type { TRouterFormValuesTransformed } from '../components/XcmRouter/XcmRouterForm';
 import type {
   TAdvancedOptions,
   TCurrencyEntryBase,
@@ -244,36 +241,4 @@ export const setupBaseBuilder = (
   }
 
   return finalBuilder;
-};
-
-export const setupBaseRouterBuilder = (
-  options: TRouterBuilderOptions,
-  {
-    from,
-    exchange,
-    to,
-    currencyFrom,
-    currencyTo,
-    feeAsset,
-    amount,
-    recipient,
-    slippagePct,
-    evmInjectorAddress,
-  }: TRouterFormValuesTransformed,
-  sender: string,
-) => {
-  const builder = RouterBuilder(options)
-    .from(from)
-    .exchange(exchange)
-    .to(to)
-    .currencyFrom(currencyFrom)
-    .currencyTo(currencyTo)
-    .feeAsset(feeAsset)
-    .amount(amount)
-    .senderAddress(sender)
-    .recipientAddress(recipient)
-    .evmSenderAddress(evmInjectorAddress)
-    .slippagePct(slippagePct);
-
-  return builder;
 };

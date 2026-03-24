@@ -1,8 +1,13 @@
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
+
+const createApiForChainSpy = vi.fn().mockResolvedValue({ getApi: vi.fn().mockReturnValue({}) });
+const mockApi = {
+  createApiForChain: createApiForChainSpy,
+} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchange } from './selectBestExchange';
@@ -23,16 +28,21 @@ const dummyDex = (): ExchangeChain =>
 const fee = 10n;
 
 describe('selectBestExchange', () => {
-  let baseOptions: TBuildTransactionsOptions;
+  let baseOptions: TBuildTransactionsOptions<unknown, unknown, unknown>;
 
   beforeEach(() => {
     vi.resetAllMocks();
+
+    createApiForChainSpy.mockResolvedValue({
+      getApi: vi.fn().mockReturnValue({}),
+    } as never);
 
     baseOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: '18446744073709551619' },
       currencyTo: { symbol: 'HDX' },
       exchange: 'AcalaDex',
+      api: mockApi,
     };
 
     // fee helper always returns the same deterministic value
@@ -53,6 +63,7 @@ describe('selectBestExchange', () => {
           baseOptions.currencyFrom as TAssetInfo,
           baseOptions.currencyTo as TAssetInfo,
           _options,
+          '0',
         );
 
         return dex;
@@ -69,7 +80,6 @@ describe('selectBestExchange', () => {
       baseOptions,
       originApi,
       expect.any(Function),
-      undefined,
     );
 
     expect(result).toBe(dex);
@@ -80,11 +90,14 @@ describe('selectBestExchange', () => {
   });
 
   it('propagates errors from selectBestExchangeCommon (e.g. unsupported asset)', async () => {
-    const failingOptions: TBuildTransactionsOptions = {
+    const failingOptions: TBuildTransactionsOptions<unknown, unknown, unknown> & {
+      api: IPolkadotApi<unknown, unknown, unknown>;
+    } = {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: 'xyz' },
       currencyTo: { id: '1000099' },
       exchange: 'AcalaDex',
+      api: mockApi,
     };
 
     const err = new Error(

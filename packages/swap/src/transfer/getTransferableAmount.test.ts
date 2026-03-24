@@ -1,11 +1,10 @@
+import type { TPapiApi } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import {
   getBalance,
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
-  type TAssetInfo,
-  type TPapiApi,
-  type TXcmFeeDetail,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { TPjsApi, TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -13,6 +12,7 @@ import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
 import type {
   TAdditionalTransferOptions,
+  TBuildTransactionsBaseOptions,
   TExchangeInfo,
   TOriginInfo,
   TTransformedOptions,
@@ -25,10 +25,17 @@ import {
   validateTransferOptions,
 } from './utils';
 
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
+  ...(await importActual()),
+  getBalance: vi.fn(),
+  getExistentialDepositOrThrow: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
+}));
 
 vi.mock('./utils');
 vi.mock('./fees');
+
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 
 const sdkAsset: TAssetInfo = {
   symbol: 'DOT',
@@ -52,9 +59,13 @@ const routerAsset: TAssetInfo = {
   },
 };
 
-const createExchangeInfo = (assetFromSymbol: string, assetToSymbol?: string): TExchangeInfo => ({
-  api: {} as TPjsApi,
+const createExchangeInfo = (
+  assetFromSymbol: string,
+  assetToSymbol?: string,
+): TExchangeInfo<unknown, unknown, unknown> => ({
+  apiPjs: {} as TPjsApi,
   apiPapi: {} as TPapiApi,
+  api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
   baseChain: 'Hydration',
   exchangeChain: 'HydrationDex',
   assetFrom: {
@@ -69,15 +80,15 @@ const createExchangeInfo = (assetFromSymbol: string, assetToSymbol?: string): TE
     : routerAsset,
 });
 
-const createOriginInfo = (chain: TSubstrateChain): TOriginInfo => ({
+const createOriginInfo = (chain: TSubstrateChain): TOriginInfo<unknown> => ({
   api: {} as TPapiApi,
   chain,
   assetFrom: sdkAsset,
 });
 
 const createOptions = (
-  overrides: Partial<TBuildTransactionsOptions> = {},
-): TBuildTransactionsOptions => ({
+  overrides: Partial<TBuildTransactionsBaseOptions<unknown, unknown, unknown>> = {},
+): TBuildTransactionsBaseOptions<unknown, unknown, unknown> => ({
   from: 'Polkadot',
   exchange: 'HydrationDex',
   to: undefined,
@@ -92,8 +103,16 @@ const createOptions = (
 });
 
 const createTransformedOptions = (
-  overrides: Partial<TTransformedOptions<TBuildTransactionsOptions>> = {},
-): TBuildTransactionsOptions & TAdditionalTransferOptions => {
+  overrides: Partial<
+    TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >
+  > = {},
+): TBuildTransactionsOptions<unknown, unknown, unknown> &
+  TAdditionalTransferOptions<unknown, unknown, unknown> => {
   const { exchange: _ignored, ...rest } = createOptions();
 
   const base = {
@@ -102,13 +121,14 @@ const createTransformedOptions = (
     origin: undefined,
     destination: undefined,
     feeCalcAddress: rest.sender,
-    builderOptions: undefined,
+    api: mockApi,
   };
 
   return {
     ...base,
     ...overrides,
-  } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions;
+  } as unknown as TBuildTransactionsOptions<unknown, unknown, unknown> &
+    TAdditionalTransferOptions<unknown, unknown, unknown>;
 };
 
 const createExchangeChainStub = (): ExchangeChain =>
@@ -137,7 +157,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(createToExchangeBuilder).mockReturnValue(builderMock as never);
 
     const initialOptions = createOptions();
-    const result = await getTransferableAmount(initialOptions);
+    const result = await getTransferableAmount({ ...initialOptions, api: mockApi });
 
     expect(result).toBe(123n);
     expect(builderMock.getTransferableAmount).toHaveBeenCalledTimes(1);
@@ -147,11 +167,11 @@ describe('getTransferableAmount', () => {
       sender: 'sender',
       evmSenderAddress: undefined,
       amount: 1000n,
-      builderOptions: undefined,
+      api: mockApi,
     });
     expect(getBalance).not.toHaveBeenCalled();
     expect(getSwapFee).not.toHaveBeenCalled();
-    expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
+    expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
 
   it('computes transferable amount locally when already on exchange chain', async () => {
@@ -176,7 +196,10 @@ describe('getTransferableAmount', () => {
     };
     vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
 
-    const result = await getTransferableAmount(createOptions({ from: undefined }));
+    const result = await getTransferableAmount({
+      ...createOptions({ from: undefined }),
+      api: mockApi,
+    });
 
     expect(result).toBe(1600n);
     expect(getBalance).toHaveBeenCalledWith({
@@ -202,7 +225,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
-    const result = await getTransferableAmount(createOptions());
+    const result = await getTransferableAmount({ ...createOptions(), api: mockApi });
 
     expect(result).toBe(900n);
     expect(getSwapFee).not.toHaveBeenCalled();

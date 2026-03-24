@@ -1,5 +1,5 @@
-import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk';
-import { EXCHANGE_CHAINS, isAssetEqual } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk-core';
+import { EXCHANGE_CHAINS, isAssetEqual } from '@paraspell/sdk-core';
 
 import { getExchangeConfig } from './getExchangeConfig';
 import { getExchangePairs } from './getExchangePairs';
