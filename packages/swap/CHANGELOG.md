@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.9.2](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.1...swap-v12.9.2) (2026-03-25)
+
+
+### Bug Fixes
+
+* Re-enable execute for Hydration chain ✨ ([f7fe395](https://github.com/paraspell/xcm-tools/commit/f7fe395d39447c85973868f9a22a248c6ce1aecd))
+* **swap:** Create extension registry 🔧 ([335a678](https://github.com/paraspell/xcm-tools/commit/335a67873effef8a82f90e4a8f90bae2c730d1b9))
+
 ## [12.9.1](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.0...swap-v12.9.1) (2026-03-17)
 
 
