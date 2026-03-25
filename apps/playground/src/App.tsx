@@ -20,6 +20,8 @@ import { theme } from './theme/themeConfig';
 
 hljs.registerLanguage('ts', tsLang);
 
+import '@paraspell/swap';
+
 const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
 export const App = () => (

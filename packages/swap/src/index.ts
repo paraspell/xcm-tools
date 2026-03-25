@@ -2,8 +2,6 @@ import { registerSwapExtension } from '@paraspell/sdk';
 
 import { RouterBuilder } from './builder/RouterBuilder';
 
-// @ts-expect-error - The RouterBuilder types do not match because of private field losing type after build.
-// Will be removed after next release
 registerSwapExtension({ RouterBuilder });
 
 export {
