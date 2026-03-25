@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.3](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.2...swap-v12.9.3) (2026-03-25)
+
+
+### Bug Fixes
+
+* **swap:** Register swap extension in playground 🔧 ([6b45d52](https://github.com/paraspell/xcm-tools/commit/6b45d52069875fba8412c2b7e677426a91bc644c))
+
 ## [12.9.2](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.1...swap-v12.9.2) (2026-03-25)
 
 
