@@ -47,18 +47,31 @@ npm install | pnpm add | yarn add @paraspell/sdk
 
 ### Install Swap extension
 
-If you plan to do Swap XCMs you can install Swap package which allows you to do cross-chain swaps on popular Polkadot, Kusama, Paseo, Westend exchanges. Only available in PAPI version of SDK.
+If you plan to [do Swap XCMs](https://paraspell.github.io/docs/sdk/xcmPallet.html#swap) you can install Swap package which allows you to do cross-chain swaps on popular Polkadot, Kusama, Paseo, Westend exchanges. Only available in PAPI version of SDK.
 
 > [!IMPORTANT]
-> - ⚠️  **WebAssembly (Wasm) must be enabled in your project** because of the Hydration SDK (One of the exchanges implemented in XCM Router). Wasm can be enabled either through the web application configuration or through the appropriate plugin. Additionally, Hydration requires the use of the **augment package** (see: https://github.com/galacticcouncil/sdk/issues/114).
+> - ⚠️  **WebAssembly (Wasm) must be enabled in your project** because of the Hydration SDK (One of the exchanges implemented in XCM Router). Wasm can be enabled either through the web application configuration or through the appropriate plugin. 
 >
-> - ⚠️  **XCM Router has been migrated to the PAPI library.** If you used XCM Router prior to migration, replace the legacy Polkadot.js (PJS) injector with the PAPI signer and install the newly required peer dependency. Follow the setup guide for more information.
+> - ⚠️ Additionally, Hydration requires the use of the **augment package** (see: https://github.com/galacticcouncil/sdk/issues/114).
 
 ```bash
-npm install | pnpm add | yarn add @paraspell/swap
+npm install | pnpm add | yarn add @paraspell/swap @galacticcouncil/api-augment
 ```
 
-### Importing package to your project
+### Setup Swap extension
+
+Add the `@paraspell/swap` import to your application's root component (Usually `App.tsx`). This ensures the extension is registered before using Builder.
+
+```ts
+// Import swap extension here
+import '@paraspell/swap';
+
+export default function App() {
+  return {/* Your app here */};
+}
+```
+
+### Importing SDK functionality
 
 Named import:
 ```ts
@@ -78,7 +91,7 @@ import * as paraspell from '@paraspell/sdk'
 > - Transact is here! Find out more: https://paraspell.github.io/docs/sdk/xcmPallet.html#transact
 > 
 > **Latest news:**
-> - Swap is here! Find out more: https://paraspell.github.io/docs/sdk/xcmPallet.html#swap
+> - Swap is here! Find out more: https://paraspell.github.io/docs/sdk/getting-started.html#install-swap-extension
 
 ### Sending XCM
 For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
