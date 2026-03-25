@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.2](https://github.com/paraspell/xcm-tools/compare/sdk-v12.9.1...sdk-v12.9.2) (2026-03-25)
+
+
+### Documentation
+
+* Add swap setup ([f5bf61b](https://github.com/paraspell/xcm-tools/commit/f5bf61b9b258e1a5bb0bd6a2887e9ed121b59377))
+
 ## [12.9.1](https://github.com/paraspell/xcm-tools/compare/sdk-v12.9.0...sdk-v12.9.1) (2026-03-17)
 
 
