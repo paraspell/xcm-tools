@@ -1,7 +1,5 @@
-import type * as SwapModule from '@paraspell/swap'
-
 import { DEFAULT_SWAP_SLIPPAGE } from '../../constants'
-import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
+import { UnsupportedOperationError } from '../../errors'
 import type {
   TApiOrUrl,
   TBuilderConfig,
@@ -12,6 +10,7 @@ import type {
 } from '../../types'
 import { assertAddressIsString, assertSenderAddress, assertToIsString } from '../assertions'
 import { isConfig } from '../builder'
+import { getSwapExtensionOrThrow } from './swapRegistry'
 
 type TRouterBuilderOptions = Omit<TBuilderConfig<TUrl>, 'xcmFormatCheck'>
 
@@ -55,21 +54,7 @@ const convertBuilderConfig = <TApi>(
   }
 }
 
-const importSwapModuleOrThrow = async () => {
-  const MODULE_NAME = '@paraspell/swap'
-
-  try {
-    // We separate the types from the actual import to avoid issues
-    // with webpack during build
-    return (await import(MODULE_NAME)) as typeof SwapModule
-  } catch {
-    throw new ExtensionNotInstalledError(
-      `The swap package is required to use swaps. Please install ${MODULE_NAME}.`
-    )
-  }
-}
-
-export const createRouterBuilder = async <TApi, TRes, TSigner>(
+export const createRouterBuilder = <TApi, TRes, TSigner>(
   options: TSendOptionsWithSwap<TApi, TRes, TSigner>
 ) => {
   const { api } = options
@@ -82,7 +67,7 @@ export const createRouterBuilder = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
   }
 
-  const { RouterBuilder } = await importSwapModuleOrThrow()
+  const { RouterBuilder } = getSwapExtensionOrThrow()
 
   const {
     from,
@@ -131,7 +116,7 @@ export const executeWithRouter = async <TApi, TRes, TSigner, T>(
   options: TSendOptionsWithSwap<TApi, TRes, TSigner>,
   executor: (builder: Awaited<ReturnType<typeof createRouterBuilder>>) => Promise<T>
 ) => {
-  const routerBuilder = await createRouterBuilder(options)
+  const routerBuilder = createRouterBuilder(options)
   return executor(routerBuilder)
 }
 
