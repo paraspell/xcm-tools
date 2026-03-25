@@ -309,6 +309,10 @@ export const XcmTransferForm: FC<Props> = ({
 
   const isLocalTransfer = from === to;
 
+  const onFeeAssetClear = () => {
+    form.setFieldValue('feeAsset', DEFAULT_CURRENCY_ENTRY_BASE);
+  };
+
   if (!isVisible) {
     return null;
   }
@@ -440,6 +444,7 @@ export const XcmTransferForm: FC<Props> = ({
             currencyOptions={feeCurrencyOptions}
             disabled={feeAssetDisabled}
             required={false}
+            onClear={onFeeAssetClear}
           />
 
           <TextInput

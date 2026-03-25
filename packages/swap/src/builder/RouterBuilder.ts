@@ -34,8 +34,8 @@ import type {
  * @deprecated Use `@paraspell/sdk` with the "swap" extension installed instead.
  */
 export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
-  protected readonly _options: T;
-  private readonly _builderOptions?: TRouterBuilderOptions;
+  readonly _options: T;
+  readonly _builderOptions?: TRouterBuilderOptions;
 
   constructor(builderOptions?: TRouterBuilderOptions, options?: T) {
     this._builderOptions = builderOptions;
