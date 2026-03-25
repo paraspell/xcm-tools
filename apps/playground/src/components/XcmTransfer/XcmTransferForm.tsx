@@ -301,7 +301,9 @@ export const XcmTransferForm: FC<Props> = ({
   const colorScheme = useComputedColorScheme();
 
   const feeAssetDisabled =
-    form.values.currencies.length <= 1 && from !== 'AssetHubPolkadot';
+    form.values.currencies.length <= 1 &&
+    from !== 'AssetHubPolkadot' &&
+    from !== 'Hydration';
 
   const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
 

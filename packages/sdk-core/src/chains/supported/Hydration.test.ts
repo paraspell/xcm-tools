@@ -4,9 +4,14 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
-import { getChain } from '../../utils'
+import type {
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics,
+  TTransferLocalOptions
+} from '../../types'
+import { getChain, handleExecuteTransfer } from '../../utils'
 import { getParaId } from '../config'
 import type Hydration from './Hydration'
 
@@ -182,6 +187,62 @@ describe('Hydration', () => {
           overriddenAsset: expect.arrayContaining([expect.anything(), expect.anything()])
         })
       )
+    })
+
+    it('should throw InvalidCurrencyError when feeAsset and overriddenAsset are both set', async () => {
+      const input = {
+        ...mockInput,
+        api: mockApi,
+        assetInfo: {
+          symbol: 'USDC',
+          assetId: '123',
+          amount: 1000n,
+          location: DOT_LOCATION
+        },
+        feeAssetInfo: {
+          symbol: 'USDT',
+          assetId: '456',
+          location: DOT_LOCATION
+        },
+        overriddenAsset: { parents: 1, interior: 'Here' },
+        destination: 'Hydration'
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+      await expect(hydration.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
+    })
+
+    it('should call handleExecuteTransfer for non-native asset/feeAsset', async () => {
+      const mockTx = {} as TSerializedExtrinsics
+
+      const mockApi = {
+        deserializeExtrinsics: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+
+      vi.mocked(handleExecuteTransfer).mockResolvedValue(mockTx)
+
+      const input = {
+        ...mockInput,
+        api: mockApi,
+        senderAddress: '0xPolkadotSender',
+        assetInfo: {
+          symbol: 'USDC',
+          assetId: '123',
+          amount: 1000n,
+          location: DOT_LOCATION
+        },
+        feeAssetInfo: {
+          symbol: 'USDT',
+          assetId: '456',
+          location: DOT_LOCATION
+        },
+        destination: 'Hydration'
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
+      await hydration.transferPolkadotXCM(input)
+
+      expect(spy).toHaveBeenCalledWith(mockTx)
     })
   })
 
