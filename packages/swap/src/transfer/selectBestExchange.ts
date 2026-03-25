@@ -31,7 +31,7 @@ export const selectBestExchange = async (
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
-      const { amountOut } = await dex.swapCurrency(
+      const { amountOut } = await dex.handleMultiSwap(
         modifiedOptions.exchange.api,
         {
           ...modifiedOptions,
