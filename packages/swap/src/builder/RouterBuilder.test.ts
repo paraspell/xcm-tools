@@ -286,7 +286,7 @@ describe('Builder', () => {
     expect(buildApiTransactionsSpy).toHaveBeenCalledWith(
       {
         from,
-        exchange,
+        exchange: exchange[0],
         to,
         currencyFrom,
         currencyTo,

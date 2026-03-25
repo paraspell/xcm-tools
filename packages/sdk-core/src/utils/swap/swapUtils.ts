@@ -121,4 +121,10 @@ export const executeWithRouter = async <TApi, TRes, TSigner, T>(
 }
 
 export const normalizeExchange = (exchange: TExchangeInput): TExchangeInput =>
-  Array.isArray(exchange) && exchange.length === 0 ? undefined : exchange
+  Array.isArray(exchange)
+    ? exchange.length === 0
+      ? undefined
+      : exchange.length === 1
+        ? exchange[0]
+        : exchange
+    : exchange
