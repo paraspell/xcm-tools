@@ -1,6 +1,11 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetInfoOrThrow,
+  getNativeAssetSymbol,
+  InvalidCurrencyError,
+  isSymbolMatch
+} from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 
@@ -10,7 +15,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, createAsset } from '../../utils'
+import { assertHasId, createAsset, handleExecuteTransfer } from '../../utils'
 import Chain from '../Chain'
 import { getParaId } from '../config'
 
@@ -30,10 +35,23 @@ class Hydration<TApi, TRes, TSigner>
   async transferPolkadotXCM(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { destination, assetInfo: asset } = input
+    const { destination, assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
 
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
+    }
+
+    if (feeAsset) {
+      if (overriddenAsset) {
+        throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')
+      }
+
+      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
+      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
+
+      if (!isNativeAsset || !isNativeFeeAsset) {
+        return api.deserializeExtrinsics(await handleExecuteTransfer(input))
+      }
     }
 
     const isMoonbeamWhAsset =

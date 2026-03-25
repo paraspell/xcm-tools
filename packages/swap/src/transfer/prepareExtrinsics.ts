@@ -22,7 +22,7 @@ export const prepareExtrinsics = async (
     builderOptions,
   } = options;
 
-  if ((origin || destination) && dex.chain.includes('AssetHub')) {
+  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
       const amountOut = await dex.getAmountOut(exchange.api, {
         ...options,

@@ -31,7 +31,7 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
     builderOptions,
   } = options;
 
-  if ((origin || destination) && dex.chain.includes('AssetHub')) {
+  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
       const buildTx = async (overrideAmount?: string) => {
         const amt =
