@@ -7,7 +7,11 @@ import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
-vi.mock('@paraspell/sdk');
+vi.mock('@paraspell/sdk', async (importActual) => ({
+  ...(await importActual()),
+  getAssets: vi.fn(),
+  isAssetEqual: vi.fn(),
+}));
 
 vi.mock('../exchanges/ExchangeChainFactory');
 vi.mock('./getExchangeConfig');

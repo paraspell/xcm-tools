@@ -193,7 +193,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           : 'Currency to selection is required';
       },
       exchange: (value, values) => {
-        if (value === undefined && !values.from) {
+        if ((value === undefined || value.length === 0) && !values.from) {
           return 'Origin must be set to use Auto select';
         }
         return null;

@@ -1,5 +1,5 @@
 import type { TAssetInfo, TChain, TExchangeInput } from '@paraspell/sdk';
-import { EXCHANGE_CHAINS, getAssets, isAssetEqual } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS, getAssets, isAssetEqual, normalizeExchange } from '@paraspell/sdk';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
@@ -13,8 +13,9 @@ import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
  */
 export const getSupportedFeeAssets = (
   from: TChain | undefined,
-  exchange: TExchangeInput,
+  exchangeInput: TExchangeInput,
 ): TAssetInfo[] => {
+  const exchange = normalizeExchange(exchangeInput);
   const supportedAssets = getSupportedAssetsFrom(from, exchange);
 
   const chains = from
