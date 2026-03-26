@@ -24,7 +24,7 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications. It allows to retrieve asset data from compatible Parachains. Users can retrieve details like `asset decimals`, `registered assets on particular Parachain`, `check if the asset is registered on Parachain` and more.
+This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications. It allows retrieving asset data from compatible Parachains. Users can retrieve details like `asset decimals`, `registered assets on particular Parachain`, `check if the asset is registered on Parachain`, and more.
 
 ## Implementation
 
@@ -36,7 +36,7 @@ npm install | pnpm add | yarn add @paraspell/assets
 
 ### Import functionality
 
-To use this functionality you first have to import it in the following way.
+To use this functionality, you first have to import it in the following way.
 
 ```ts
 import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, TParachain, TRelaychain, TSubstrateChain, TExternalChain, TChain, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
@@ -44,7 +44,7 @@ import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsOb
 
 
 ### Query assets object
-This function returns `assets object` from `assets.json` for `particular Parachain` including information about `native` and `foreign` assets. Function uses [TChain](https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types) types.
+This function returns `assets object` from `assets.json` for `particular Parachain`, including information about `native` and `foreign` assets. Function uses [TChain](https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types) types.
 
 ```ts
 getAssetsObject(TChain)
