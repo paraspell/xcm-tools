@@ -1,5 +1,13 @@
 # Changelog
 
+## [12.9.4](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.3...swap-v12.9.4) (2026-03-26)
+
+
+### Bug Fixes
+
+* **swap:** Fix pool error when using automatic exchange 🛠️ ([f9ae778](https://github.com/paraspell/xcm-tools/commit/f9ae7780baed66e2bdf87bc22fc1d031b7b1515b))
+* **swap:** Handle empty exchange array correctly 🔧 ([b95ce73](https://github.com/paraspell/xcm-tools/commit/b95ce734e33175c69c3f47e4786def51cc6f079a))
+
 ## [12.9.3](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.2...swap-v12.9.3) (2026-03-25)
 
 
