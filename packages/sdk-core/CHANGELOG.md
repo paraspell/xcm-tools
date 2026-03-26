@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.3...sdk-core-v12.9.4) (2026-03-26)
+
+
+### Bug Fixes
+
+* **swap:** Fix pool error when using automatic exchange 🛠️ ([f9ae778](https://github.com/paraspell/xcm-tools/commit/f9ae7780baed66e2bdf87bc22fc1d031b7b1515b))
+
 ## [12.9.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.2...sdk-core-v12.9.3) (2026-03-25)
 
 
