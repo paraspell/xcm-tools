@@ -5,6 +5,7 @@ import {
   isAssetEqual,
   isExternalChain,
   isSystemAsset,
+  normalizeExchange,
   type TChain,
 } from '@paraspell/sdk';
 
@@ -19,9 +20,10 @@ import { getExchangeAssets } from './getExchangeConfig';
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsTo = (
-  exchange: TExchangeInput,
+  exchangeInput: TExchangeInput,
   to: TChain | undefined,
 ): TAssetInfo[] => {
+  const exchange = normalizeExchange(exchangeInput);
   if (exchange === undefined) {
     const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
       getExchangeAssets(exchangeChain),

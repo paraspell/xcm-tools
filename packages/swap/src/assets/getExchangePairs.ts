@@ -1,5 +1,10 @@
 import type { TAssetInfo, TExchangeChain, TExchangeInput, TLocation } from '@paraspell/sdk';
-import { deepEqual, EXCHANGE_CHAINS, reverseTransformLocation } from '@paraspell/sdk';
+import {
+  deepEqual,
+  EXCHANGE_CHAINS,
+  normalizeExchange,
+  reverseTransformLocation,
+} from '@paraspell/sdk';
 
 import { getExchangeConfig } from './getExchangeConfig';
 
@@ -19,8 +24,14 @@ const resolvePairAsset = (
   return found;
 };
 
-const asArray = (ex: TExchangeInput) =>
-  ex === undefined ? EXCHANGE_CHAINS : Array.isArray(ex) ? ex : [ex];
+const asArray = (ex: TExchangeInput) => {
+  const normalized = normalizeExchange(ex);
+  return normalized === undefined
+    ? EXCHANGE_CHAINS
+    : Array.isArray(normalized)
+      ? normalized
+      : [normalized];
+};
 
 export const getExchangePairs = (exchange: TExchangeInput): [TAssetInfo, TAssetInfo][] =>
   asArray(exchange).flatMap((ex) => {
