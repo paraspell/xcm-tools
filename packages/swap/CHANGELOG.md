@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.5](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.4...swap-v12.9.5) (2026-03-26)
+
+
+### Miscellaneous Chores
+
+* **swap:** Synchronize main versions
+
 ## [12.9.4](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.3...swap-v12.9.4) (2026-03-26)
 
 

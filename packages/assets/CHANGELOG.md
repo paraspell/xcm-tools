@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.5](https://github.com/paraspell/xcm-tools/compare/assets-v12.9.4...assets-v12.9.5) (2026-03-26)
+
+
+### Documentation
+
+* Update assets readme ([ae38211](https://github.com/paraspell/xcm-tools/commit/ae38211b29b6618d711d06f0e92f40522ba93ad3))
+
 ## [12.9.4](https://github.com/paraspell/xcm-tools/compare/assets-v12.9.3...assets-v12.9.4) (2026-03-26)
 
 
