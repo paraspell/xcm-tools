@@ -11,9 +11,8 @@ export const getSwapFee = async <TApi, TRes, TSigner, TDisableFallback extends b
   disableFallback?: TDisableFallback,
 ): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
   const {
-    api,
     sender,
-    exchange: { assetFrom },
+    exchange: { assetFrom, api },
     amount,
   } = options;
   let txs: unknown[];

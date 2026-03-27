@@ -25,7 +25,6 @@ export default [
         enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
         bundleName: 'sdk-common',
         uploadToken: process.env.CODECOV_TOKEN,
-        debug: true,
         uploadOverrides: {
           sha: process.env.GH_COMMIT_SHA
         }

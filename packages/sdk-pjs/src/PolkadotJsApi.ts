@@ -249,7 +249,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PolkadotJsApi()
+    const api = new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
@@ -318,8 +318,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       )
     }
 
+    const findFailingEventInResult = (resultHuman: any) =>
+      resultHuman?.Ok?.emittedEvents?.find(
+        (event: any) =>
+          (event.section === 'utility' || event.section === 'Utility') &&
+          event.method === 'DispatchedAs' &&
+          event.data?.result?.Err
+      )
+
     const getExecutionSuccessFromResult = (resultHuman: any): boolean => {
-      return Boolean(resultHuman?.Ok && resultHuman.Ok.executionResult?.Ok)
+      const errorInEvents = findFailingEventInResult(resultHuman)
+      return Boolean(resultHuman?.Ok && resultHuman.Ok.executionResult?.Ok && !errorInEvents)
     }
 
     const extractFailureReasonFromResult = (resultHuman: any, resultJson: any): TDryRunError => {
@@ -344,6 +353,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       if (execErrJson?.other) {
         return { failureReason: String(execErrJson.other) }
       }
+      const erroredEvent = findFailingEventInResult(resultHuman)
+      if (erroredEvent) {
+        const err = erroredEvent.data?.result?.Err
+        if (err?.Module) {
+          return resolveModuleError(chain, err.Module as TModuleError)
+        }
+        if (err) {
+          return { failureReason: typeof err === 'string' ? err : JSON.stringify(err) }
+        }
+      }
+
       return { failureReason: JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error') }
     }
 

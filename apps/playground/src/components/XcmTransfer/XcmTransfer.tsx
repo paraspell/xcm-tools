@@ -463,7 +463,9 @@ export const XcmTransfer = () => {
 
           await submitApiTransactions({
             transactions,
-            signer: signer as PolkadotSigner,
+            apiType,
+            signer,
+            senderAddress: sender,
             evmSigner: formValues.swapOptions.evmSigner,
             onStatusChange:
               transactions.length > 1 ? onStatusChange : undefined,
@@ -507,7 +509,9 @@ export const XcmTransfer = () => {
 
           await submitSdkTransactions({
             txContexts,
-            signer: signer as PolkadotSigner,
+            apiType,
+            signer,
+            senderAddress: sender,
             evmSigner: formValues.swapOptions.evmSigner,
             onStatusChange: txContexts.length > 1 ? onStatusChange : undefined,
           });

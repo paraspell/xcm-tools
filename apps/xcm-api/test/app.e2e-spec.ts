@@ -1272,7 +1272,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          address: 'InvalidWalletAddress',
+          recipient: 'InvalidWalletAddress',
         })
         .expect(400);
     });

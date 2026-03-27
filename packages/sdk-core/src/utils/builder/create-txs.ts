@@ -71,14 +71,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
   const { api, from, swapOptions } = options
 
   if (swapOptions) {
-    const transactions = await executeWithRouter({ ...options, swapOptions }, builder =>
-      builder.buildTransactions()
-    )
-
-    // We use this cast because XCM Router is PAPI only,
-    // but this code is in sdk-core package which is generic
-    // Not ideal but .swap() method is only available for PAPI SDK anyway
-    return transactions as unknown as TTransactionContext<TApi, TRes>[]
+    return executeWithRouter({ ...options, swapOptions }, builder => builder.build())
   }
 
   return [{ type: 'TRANSFER', api: api.getApi(), chain: from, tx: await createTransfer(options) }]

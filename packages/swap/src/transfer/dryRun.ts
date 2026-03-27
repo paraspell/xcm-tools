@@ -59,7 +59,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
   const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
 
   return dryRun({
-    api,
+    api: api.clone(),
     tx,
     origin: chain,
     destination: resolvedDest,

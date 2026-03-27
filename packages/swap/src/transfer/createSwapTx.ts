@@ -9,7 +9,7 @@ const FEE_ESTIMATION_UNITS = '100';
 export const calculateFromExchangeFee = async <TApi, TRes, TSigner>(
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ) => {
-  const { api, exchange, destination, feeCalcAddress, sender } = options;
+  const { exchange, destination, feeCalcAddress, sender, api } = options;
   if (!destination || destination.chain === exchange.baseChain) return 0n;
   const dummyAmount = parseUnits(FEE_ESTIMATION_UNITS, exchange.assetTo.decimals);
   const tx = await buildFromExchangeExtrinsic({
@@ -19,7 +19,7 @@ export const calculateFromExchangeFee = async <TApi, TRes, TSigner>(
     sender,
     api,
   });
-  const { partialFee } = await api.getPaymentInfo(tx, feeCalcAddress);
+  const { partialFee } = await exchange.api.getPaymentInfo(tx, feeCalcAddress);
   return partialFee;
 };
 
@@ -28,7 +28,6 @@ export const createSwapTx = async <TApi, TRes, TSigner>(
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   isForFeeEstimation = false,
 ) => {
-  const { api } = options;
   const toDestTxFee = await calculateFromExchangeFee(options);
 
   const swapResult = await exchange.handleMultiSwap(
@@ -43,7 +42,9 @@ export const createSwapTx = async <TApi, TRes, TSigner>(
     toDestTxFee,
   );
 
-  const txs = await Promise.all(swapResult.txs.map((tx) => convertTxToTarget(tx, api)));
+  const txs = await Promise.all(
+    swapResult.txs.map((tx) => convertTxToTarget(tx, options.exchange.api)),
+  );
 
   return { txs, amountOut: swapResult.amountOut };
 };

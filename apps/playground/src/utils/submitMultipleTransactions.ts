@@ -1,52 +1,73 @@
-import type {
-  TPapiApi,
-  TPapiTransaction,
-  TTransactionContext,
-} from '@paraspell/sdk';
-import type { PolkadotSigner } from 'polkadot-api';
-import { Binary, createClient } from 'polkadot-api';
-import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
-import { getWsProvider } from 'polkadot-api/ws-provider';
+import type { TApiType, TTransactionContext } from '@paraspell/sdk';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
+import type { DedotClient } from 'dedot';
+import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import { Binary } from 'polkadot-api';
 
 import type { TApiTransaction, TProgressSwapEvent } from '../types';
-import { submitTransactionPapi } from './submitTransaction';
+import type { TApi, TTransaction } from './importSdk';
+import { importSdk } from './importSdk';
+import { submitTx } from './submitTransaction';
 
 const selectSigner = (
   type: string,
   index: number,
-  signer: PolkadotSigner,
-  evmSigner?: PolkadotSigner,
-): PolkadotSigner =>
+  signer: PolkadotSigner | Signer,
+  evmSigner?: PolkadotSigner | Signer,
+): PolkadotSigner | Signer =>
   type === 'TRANSFER' && index === 0 ? signer : (evmSigner ?? signer);
+
+const txFromHex = async (
+  apiType: TApiType,
+  api: TApi,
+  hex: string,
+): Promise<TTransaction> => {
+  if (apiType === 'DEDOT') {
+    return (api as DedotClient).toTx(hex as `0x${string}`);
+  } else if (apiType === 'PJS') {
+    return (api as ApiPromise).tx(hex);
+  } else {
+    const callData = Binary.fromHex(hex);
+    return (api as PolkadotClient)
+      .getUnsafeApi()
+      .txFromCallData(callData) as Promise<TTransaction>;
+  }
+};
 
 export const submitApiTransactions = async ({
   transactions,
+  apiType,
   signer,
+  senderAddress,
   evmSigner,
   onStatusChange,
 }: {
   transactions: TApiTransaction[];
-  signer: PolkadotSigner;
-  evmSigner?: PolkadotSigner;
+  apiType: TApiType;
+  signer: PolkadotSigner | Signer;
+  senderAddress: string;
+  evmSigner?: PolkadotSigner | Signer;
   onStatusChange?: (status: TProgressSwapEvent) => void;
 }) => {
-  for (const [
-    index,
-    { type, wsProviders, tx: txHex },
-  ] of transactions.entries()) {
+  const { createChainClient } = await importSdk(apiType);
+
+  for (const [index, { type, chain, tx: txHex }] of transactions.entries()) {
     onStatusChange?.({
       type,
       currentStep: index,
       routerPlan: transactions,
     });
 
-    const client = createClient(
-      withPolkadotSdkCompat(getWsProvider(wsProviders)),
-    );
+    const api = await createChainClient(chain);
+    const tx = await txFromHex(apiType, api, txHex);
 
-    await submitTransactionPapi(
-      await client.getUnsafeApi().txFromCallData(Binary.fromHex(txHex)),
+    await submitTx(
+      apiType,
+      api,
+      tx,
       selectSigner(type, index, signer, evmSigner),
+      senderAddress,
     );
   }
 
@@ -59,13 +80,17 @@ export const submitApiTransactions = async ({
 
 export const submitSdkTransactions = async ({
   txContexts,
+  apiType,
   signer,
+  senderAddress,
   evmSigner,
   onStatusChange,
 }: {
-  txContexts: TTransactionContext<TPapiApi, TPapiTransaction>[];
-  signer: PolkadotSigner;
-  evmSigner?: PolkadotSigner;
+  txContexts: TTransactionContext<TApi, TTransaction>[];
+  apiType: TApiType;
+  signer: PolkadotSigner | Signer;
+  senderAddress: string;
+  evmSigner?: PolkadotSigner | Signer;
   onStatusChange?: (status: TProgressSwapEvent) => void;
 }) => {
   for (const [index, txContext] of txContexts.entries()) {
@@ -75,9 +100,12 @@ export const submitSdkTransactions = async ({
       routerPlan: txContexts,
     });
 
-    await submitTransactionPapi(
+    await submitTx(
+      apiType,
+      txContext.api,
       txContext.tx,
       selectSigner(txContext.type, index, signer, evmSigner),
+      senderAddress,
     );
   }
 

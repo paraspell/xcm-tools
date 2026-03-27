@@ -319,7 +319,7 @@ class DedotApi implements IPolkadotApi<
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new DedotApi();
+    const api = new DedotApi(isConfig(this._config) ? this._config : undefined);
     await api.init(chain);
     return api;
   }
@@ -405,12 +405,24 @@ class DedotApi implements IPolkadotApi<
       );
     };
 
+    const findFailingEventInResult = (res: any) =>
+      res?.value?.emittedEvents?.find(
+        (event: any) =>
+          event.pallet === "Utility" &&
+          event.palletEvent?.name === "DispatchedAs" &&
+          event.palletEvent?.data?.result?.isErr === true,
+      );
+
     const getExecutionSuccessFromResult = (result: any): boolean => {
+      const errorInEvents = findFailingEventInResult(result);
       if (result?.isOk) {
         const execResult = result?.value?.executionResult;
-        if (execResult?.isOk) return true;
+        if (execResult?.isOk) return !errorInEvents;
       }
-      return Boolean(result?.isOk && result.value.executionResult?.isOk);
+      return (
+        Boolean(result?.isOk && result.value.executionResult?.isOk) &&
+        !errorInEvents
+      );
     };
 
     const extractFailureReasonFromResult = (result: any): TDryRunError => {
@@ -430,6 +442,19 @@ class DedotApi implements IPolkadotApi<
           return { failureReason: execErr.error };
         }
         return { failureReason: JSON.stringify(execErr.error) };
+      }
+
+      const erroredEvent = findFailingEventInResult(result);
+      if (erroredEvent) {
+        const eventResult = erroredEvent.palletEvent.data.result;
+        const err = eventResult?.err ?? eventResult?.value;
+        if (err?.type) {
+          const subErr = err.value;
+          if (subErr) {
+            return resolveModuleError(chain, subErr as TModuleError);
+          }
+          return { failureReason: err.type };
+        }
       }
 
       return { failureReason: JSON.stringify(result ?? "Unknown error") };
@@ -738,11 +763,13 @@ class DedotApi implements IPolkadotApi<
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {
-    const result = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm);
+    const result = await this.api.call.xcmPaymentApi.queryXcmWeight(
+      !xcm.type ? transform(xcm) : xcm,
+    );
     const okValue = result?.value;
     return {
-      refTime: BigInt(okValue?.refTime ?? okValue?.ref_time ?? 0),
-      proofSize: BigInt(okValue?.proofSize ?? okValue?.proof_size ?? 0),
+      refTime: BigInt(okValue?.refTime ?? 0),
+      proofSize: BigInt(okValue?.proofSize ?? 0),
     };
   }
 

@@ -154,17 +154,19 @@ export const addSwapToBuilder = <
   transformedCurrencyTo: TCurrencyEntryBaseTransformed,
   swapOptions: TSwapOptions,
   signer: PolkadotSigner | Signer,
+  sender: string,
 ) => {
   const { exchange, slippage, evmSigner, evmInjectorAddress } = swapOptions;
 
-  // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
-  return builder.sender(signer as PolkadotSigner).swap({
-    currencyTo: determineCurrencyCore(transformedCurrencyTo),
-    exchange,
-    slippage: Number(slippage),
-    evmSigner,
-    evmSenderAddress: evmInjectorAddress || undefined,
-  });
+  return builder
+    .sender({ ...signer, address: sender } as unknown as PolkadotSigner)
+    .swap({
+      currencyTo: determineCurrencyCore(transformedCurrencyTo),
+      exchange,
+      slippage: Number(slippage),
+      evmSigner,
+      evmSenderAddress: evmInjectorAddress || undefined,
+    });
 };
 
 export const setupBaseBuilder = (
@@ -237,6 +239,7 @@ export const setupBaseBuilder = (
       formValues.transformedCurrencyTo,
       formValues.swapOptions,
       signer,
+      sender,
     );
   }
 

@@ -12,7 +12,7 @@ export const createToExchangeBuilder = <TApi, TRes, TSigner>({
   amount,
   api,
 }: TBuildToExchangeTxOptions<TApi, TRes, TSigner>) =>
-  Builder(api)
+  Builder(api.clone())
     .from(from)
     .to(baseChain)
     .currency({

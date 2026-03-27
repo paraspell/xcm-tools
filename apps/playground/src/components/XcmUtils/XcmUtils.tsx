@@ -294,11 +294,13 @@ export const XcmUtils = () => {
                 'Swap configuration is required for getBestAmountOut.',
               );
             }
+
             const swapBuilder = addSwapToBuilder(
               finalBuilder,
               formValues.transformedCurrencyTo,
               formValues.swapOptions,
               signer,
+              selectedAccountAddress,
             );
             result = await swapBuilder.getBestAmountOut();
             break;
