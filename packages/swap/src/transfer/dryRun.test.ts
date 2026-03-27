@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } from '../types';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = { clone: () => mockApi } as unknown as IPolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { dryRunRouter } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';

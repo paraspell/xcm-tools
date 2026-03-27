@@ -319,7 +319,7 @@ class DedotApi implements IPolkadotApi<
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new DedotApi();
+    const api = new DedotApi(isConfig(this._config) ? this._config : undefined);
     await api.init(chain);
     return api;
   }

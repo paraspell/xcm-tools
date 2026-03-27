@@ -326,7 +326,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PapiApi()
+    const api = new PapiApi(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }

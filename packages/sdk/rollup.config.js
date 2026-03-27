@@ -13,7 +13,7 @@ export default [
     external: ['ms'],
     output: [{ file: './dist/index.mjs', format: 'es' }],
     plugins: [
-      typescript(),
+      typescript({ exclude: ['e2e/**'] }),
       json(),
       babel({
         extensions: ['.ts'],
@@ -25,7 +25,6 @@ export default [
         enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
         bundleName: 'sdk',
         uploadToken: process.env.CODECOV_TOKEN,
-        debug: true,
         uploadOverrides: {
           sha: process.env.GH_COMMIT_SHA
         }

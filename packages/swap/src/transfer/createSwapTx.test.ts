@@ -11,9 +11,10 @@ import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, convertTxToTarget } from './utils';
 
 const getPaymentInfoSpy = vi.fn().mockResolvedValue({ partialFee: 10n });
-const mockApi = {
+const mockExchangeApi = {
   getPaymentInfo: getPaymentInfoSpy,
 } as unknown as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('./utils');
 vi.mock('../utils');
@@ -43,6 +44,7 @@ describe('createSwapTx', () => {
       feeCalcAddress: 'someFeeCalcAddress',
       exchange: {
         apiPjs: swapApi,
+        api: mockExchangeApi,
         assetTo: { decimals: 10 },
       },
       origin: {

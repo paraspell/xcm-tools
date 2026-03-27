@@ -249,7 +249,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PolkadotJsApi()
+    const api = new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
