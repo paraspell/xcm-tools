@@ -7077,6 +7077,29 @@
         "alias": "PEPE2"
       },
       {
+        "assetId": "50000470",
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000470
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDt2"
+      },
+      {
         "assetId": "201",
         "symbol": "WUD",
         "decimals": 6,
@@ -7120,7 +7143,8 @@
           }
         },
         "existentialDeposit": "10000",
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "USDt1"
       },
       {
         "assetId": "50000028",
@@ -7995,7 +8019,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "alias": "XRT2"
       },
       {
         "symbol": "WBTC",
@@ -8217,6 +8242,22 @@
         "existentialDeposit": "1000000000",
         "isFeeAsset": true,
         "alias": "NEURO2"
+      },
+      {
+        "symbol": "XRT",
+        "decimals": 9,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3388
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000",
+        "alias": "XRT1"
       },
       {
         "symbol": "LINK",
@@ -16473,6 +16514,28 @@
           }
         },
         "existentialDeposit": "100"
+      },
+      {
+        "assetId": "50000688",
+        "symbol": "WUD",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000688
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "27",
