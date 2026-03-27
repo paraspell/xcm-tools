@@ -1,8 +1,12 @@
-import type { TCurrencyCore } from '@paraspell/sdk';
-import { getBalance, getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk';
+import type { TCurrencyCore, WithApi } from '@paraspell/sdk-core';
+import {
+  getBalance,
+  getExistentialDepositOrThrow,
+  getNativeAssetSymbol,
+} from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TBuildTransactionsOptions, TRouterBuilderOptions } from '../types';
+import type { TBuildTransactionsOptions } from '../types';
 import type { TTransformedOptions } from '../types/TRouter';
 import { getSwapFee } from './fees';
 import {
@@ -11,20 +15,20 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const computeLocalTransferableAmount = async (
+const computeLocalTransferableAmount = async <TApi, TRes, TSigner>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ): Promise<bigint> => {
-  const { exchange, senderAddress } = options;
+  const { exchange, sender } = options;
 
   const currency: TCurrencyCore = {
     location: exchange.assetFrom.location,
   };
 
   const balance = await getBalance({
-    api: exchange.apiPapi,
+    api: exchange.api,
     chain: exchange.baseChain,
-    address: senderAddress,
+    address: sender,
     currency,
   });
 
@@ -42,13 +46,12 @@ const computeLocalTransferableAmount = async (
   return transferable > 0n ? transferable : 0n;
 };
 
-export const getTransferableAmount = async (
-  initialOptions: TBuildTransactionsOptions,
-  builderOptions?: TRouterBuilderOptions,
+export const getTransferableAmount = async <TApi, TRes, TSigner>(
+  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ): Promise<bigint> => {
   validateTransferOptions(initialOptions);
 
-  const { dex, options } = await prepareTransformedOptions(initialOptions, builderOptions);
+  const { dex, options } = await prepareTransformedOptions(initialOptions);
   const transformedOptions = options;
 
   if (
@@ -58,10 +61,10 @@ export const getTransferableAmount = async (
     const builder = createToExchangeBuilder({
       origin: transformedOptions.origin,
       exchange: transformedOptions.exchange,
-      senderAddress: transformedOptions.senderAddress,
+      sender: transformedOptions.sender,
       evmSenderAddress: transformedOptions.evmSenderAddress,
       amount: transformedOptions.amount,
-      builderOptions,
+      api: transformedOptions.api,
     });
 
     return builder.getTransferableAmount();

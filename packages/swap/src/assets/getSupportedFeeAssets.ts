@@ -1,5 +1,12 @@
-import type { TAssetInfo, TChain, TExchangeInput } from '@paraspell/sdk';
-import { EXCHANGE_CHAINS, getAssets, isAssetEqual, normalizeExchange } from '@paraspell/sdk';
+import {
+  EXCHANGE_CHAINS,
+  getAssets,
+  isAssetEqual,
+  normalizeExchange,
+  type TAssetInfo,
+  type TChain,
+  type TExchangeInput,
+} from '@paraspell/sdk-core';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
@@ -20,12 +27,7 @@ export const getSupportedFeeAssets = (
 
   const chains = from
     ? [from]
-    : (exchange === undefined
-        ? [...EXCHANGE_CHAINS]
-        : Array.isArray(exchange)
-          ? exchange
-          : [exchange]
-      )
+    : (exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange])
         .map((ex) => createExchangeInstance(ex).chain)
         .filter((chain, i, arr) => arr.indexOf(chain) === i);
 

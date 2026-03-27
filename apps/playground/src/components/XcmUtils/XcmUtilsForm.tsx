@@ -50,7 +50,7 @@ import {
 import {
   useCurrencyOptions,
   useFeeCurrencyOptions,
-  useRouterCurrencyOptions,
+  useSwapCurrencyOptions,
   useWallet,
 } from '../../hooks';
 import {
@@ -107,7 +107,7 @@ export const XcmUtilsForm: FC<Props> = ({
       feeAsset: parseAsJson(FeeAssetSchema).withDefault(
         DEFAULT_CURRENCY_ENTRY_BASE,
       ),
-      address: parseAsWalletAddress.withDefault(
+      recipient: parseAsWalletAddress.withDefault(
         selectedAccount?.address ?? DEFAULT_ADDRESS,
       ),
       ahAddress: parseAsString.withDefault(''),
@@ -132,7 +132,7 @@ export const XcmUtilsForm: FC<Props> = ({
       };
     },
     validate: {
-      address: (value, values) =>
+      recipient: (value, values) =>
         validateTransferAddress(value, values, selectedAccount?.address),
       currencies: {
         currencyOptionId: (value, values, path) => {
@@ -187,7 +187,7 @@ export const XcmUtilsForm: FC<Props> = ({
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
 
-  const { currencyToMap: swapCurrencyToMap } = useRouterCurrencyOptions(
+  const { currencyToMap: swapCurrencyToMap } = useSwapCurrencyOptions(
     from,
     form.values.swapOptions.exchange,
     to,

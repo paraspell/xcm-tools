@@ -319,7 +319,7 @@ class DedotApi implements IPolkadotApi<
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new DedotApi();
+    const api = new DedotApi(isConfig(this._config) ? this._config : undefined);
     await api.init(chain);
     return api;
   }
@@ -353,7 +353,7 @@ class DedotApi implements IPolkadotApi<
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId }, null),
+      asset: findAssetInfoOrThrow(chain, { id: assetId }),
     };
   }
 
@@ -889,6 +889,15 @@ class DedotApi implements IPolkadotApi<
   ): Promise<string> {
     const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
     return await tx.signAndSend(account);
+  }
+
+  async signAndSubmitFinalized(
+    tx: TDedotExtrinsic,
+    sender: TSender<TDedotSigner>,
+  ): Promise<string> {
+    const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
+    const result = await tx.signAndSend(account).untilFinalized();
+    return result.txHash;
   }
 }
 

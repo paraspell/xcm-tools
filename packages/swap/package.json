@@ -26,7 +26,6 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts"
   },
@@ -50,6 +49,7 @@
     "@crypto-dex-sdk/token-lists": "^0.1.4",
     "@galacticcouncil/sdk": "^10.7.0",
     "@paraspell/sdk": "workspace:*",
+    "@paraspell/sdk-core": "workspace:*",
     "@paraspell/sdk-pjs": "workspace:*",
     "@polkadot/api": "^16.5.4",
     "@polkadot/api-base": "^16.5.4",

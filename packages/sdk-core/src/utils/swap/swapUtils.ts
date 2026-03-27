@@ -5,21 +5,19 @@ import type {
   TBuilderConfig,
   TBuilderOptions,
   TExchangeInput,
-  TSendOptionsWithSwap,
+  TTransferOptionsWithSwap,
   TUrl
 } from '../../types'
-import { assertAddressIsString, assertSenderAddress, assertToIsString } from '../assertions'
+import { assertAddressIsString, assertSender, assertToIsString } from '../assertions'
 import { isConfig } from '../builder'
 import { getSwapExtensionOrThrow } from './swapRegistry'
-
-type TRouterBuilderOptions = Omit<TBuilderConfig<TUrl>, 'xcmFormatCheck'>
 
 const isUrl = (value: unknown): value is string | string[] =>
   typeof value === 'string' || Array.isArray(value)
 
-const convertBuilderConfig = <TApi>(
+export const convertBuilderConfig = <TApi>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined
-): TRouterBuilderOptions | undefined => {
+): TBuilderConfig<TUrl> | undefined => {
   if (!config) return undefined
 
   if (isConfig(config)) {
@@ -55,16 +53,12 @@ const convertBuilderConfig = <TApi>(
 }
 
 export const createRouterBuilder = <TApi, TRes, TSigner>(
-  options: TSendOptionsWithSwap<TApi, TRes, TSigner>
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>
 ) => {
   const { api } = options
 
   if (options.transactOptions?.call) {
     throw new UnsupportedOperationError('Cannot use transact options together with swap options.')
-  }
-
-  if (api.getType() !== 'PAPI') {
-    throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
   }
 
   const { RouterBuilder } = getSwapExtensionOrThrow()
@@ -74,47 +68,40 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     to,
     currency,
     swapOptions: { currencyTo, evmSenderAddress, exchange, slippage, onStatusChange },
-    senderAddress,
-    address
+    sender,
+    recipient: address
   } = options
 
   assertToIsString(to)
   assertAddressIsString(address)
-  assertSenderAddress(senderAddress)
+  assertSender(sender)
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
   }
 
-  const config = api.getConfig()
-
-  const routerConfig = convertBuilderConfig(config)
-
-  let builder = RouterBuilder(routerConfig)
+  let builder = RouterBuilder(api)
     .from(from)
     .exchange(exchange)
     .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)
     .amount(currency.amount)
-    .senderAddress(senderAddress)
+    .sender(sender)
     .evmSenderAddress(evmSenderAddress)
-    .recipientAddress(address)
+    .recipient(address)
     .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())
 
   if (onStatusChange) {
-    // We cast because router types are bind to specific PAPI types
-    // Will be resolved when we make RouterBuilder generic
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-    builder = builder.onStatusChange(onStatusChange as any)
+    builder = builder.onStatusChange(onStatusChange)
   }
 
   return builder
 }
 
 export const executeWithRouter = async <TApi, TRes, TSigner, T>(
-  options: TSendOptionsWithSwap<TApi, TRes, TSigner>,
-  executor: (builder: Awaited<ReturnType<typeof createRouterBuilder>>) => Promise<T>
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>,
+  executor: (builder: ReturnType<typeof createRouterBuilder<TApi, TRes, TSigner>>) => Promise<T>
 ) => {
   const routerBuilder = createRouterBuilder(options)
   return executor(routerBuilder)

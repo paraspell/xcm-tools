@@ -1,10 +1,10 @@
-import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk';
+import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { validateDestinationAddress } from './validateDestinationAddress';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-core', () => ({
   isChainEvm: vi.fn(),
   InvalidAddressError: class InvalidAddressError extends Error {},
 }));

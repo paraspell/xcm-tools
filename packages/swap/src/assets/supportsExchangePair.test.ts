@@ -1,4 +1,4 @@
-import type { TAssetInfo, TLocation } from '@paraspell/sdk';
+import type { TAssetInfo, TLocation } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { supportsExchangePair } from './supportsExchangePair';
@@ -12,7 +12,7 @@ const assetA_alt: TAssetInfo = { symbol: 'abc', assetId: '1', location: mlA, dec
 const assetB: TAssetInfo = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
 const assetC: TAssetInfo = { symbol: 'ZZZ', assetId: '9', decimals: 12, location: mlc };
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   EXCHANGE_CHAINS: ['AcalaDex', 'BifrostPolkadotDex'],
 }));

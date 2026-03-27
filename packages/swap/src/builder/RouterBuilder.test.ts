@@ -1,4 +1,5 @@
 import type { TExchangeInput } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -9,20 +10,22 @@ import {
   getXcmFees,
   transfer,
 } from '../transfer';
-import type { TTransferOptions } from '../types';
+import type { TTransferBaseOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
 vi.mock('../transfer');
 
-export const transferParams: TTransferOptions = {
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+
+export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
   from: 'Astar',
   exchange: 'HydrationDex',
   to: 'Moonbeam',
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000000000',
-  senderAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
-  recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
+  sender: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
+  recipient: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
   signer: {} as unknown as PolkadotSigner,
   slippagePct: '1',
 };
@@ -34,8 +37,8 @@ const {
   currencyFrom,
   currencyTo,
   amount,
-  senderAddress,
-  recipientAddress,
+  sender,
+  recipient,
   signer,
   slippagePct,
 } = transferParams;
@@ -48,7 +51,7 @@ describe('Builder', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    transferSpy = vi.mocked(transfer).mockResolvedValue(undefined);
+    transferSpy = vi.mocked(transfer).mockResolvedValue(['0x']);
     buildApiTransactionsSpy = vi.mocked(buildApiTransactions).mockResolvedValue([]);
     getBestAmountOutSpy = vi
       .mocked(getBestAmountOut)
@@ -57,57 +60,57 @@ describe('Builder', () => {
   });
 
   it('should construct transactions using RouterBuilder', async () => {
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
-      .signer(signer)
-      .slippagePct(slippagePct)
-      .buildTransactions();
-
-    expect(buildApiTransactionsSpy).toHaveBeenCalledWith(transferParams, undefined);
-  });
-
-  it('should construct a transfer using RouterBuilder', async () => {
-    await RouterBuilder()
-      .from(from)
-      .exchange(exchange)
-      .to(to)
-      .currencyFrom(currencyFrom)
-      .currencyTo(currencyTo)
-      .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .build();
 
-    expect(transferSpy).toHaveBeenCalledWith(transferParams, undefined);
+    expect(buildApiTransactionsSpy).toHaveBeenCalledWith({ ...transferParams, api: mockApi });
+  });
+
+  it('should construct a transfer using RouterBuilder', async () => {
+    await RouterBuilder(mockApi)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .sender(sender)
+      .recipient(recipient)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .signAndSubmit();
+
+    expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, api: mockApi });
   });
 
   it('should construct a transfer using RouterBuilder with onStatusChange', async () => {
     const onStatusChange = vi.fn();
 
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .onStatusChange(onStatusChange)
-      .build();
+      .signAndSubmit();
 
-    expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, onStatusChange }, undefined);
+    expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, onStatusChange, api: mockApi });
   });
 
   it('should construct a transfer using RouterBuilder with evmSenderAddress and evmSigner', async () => {
@@ -115,37 +118,35 @@ describe('Builder', () => {
     const evmSenderAddress = '0x1234567890';
     const evmSigner = {} as PolkadotSigner;
 
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .evmSenderAddress(evmSenderAddress)
       .evmSigner(evmSigner)
       .onStatusChange(onStatusChange)
-      .build();
+      .signAndSubmit();
 
-    expect(transferSpy).toHaveBeenCalledWith(
-      {
-        ...transferParams,
-        onStatusChange,
-        evmSenderAddress,
-        evmSigner,
-      },
-      undefined,
-    );
+    expect(transferSpy).toHaveBeenCalledWith({
+      ...transferParams,
+      onStatusChange,
+      evmSenderAddress,
+      evmSigner,
+      api: mockApi,
+    });
   });
 
   it('should construct a transfer using RouterBuilder with feeAsset', async () => {
     const feeAsset = { symbol: 'DOT' };
 
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -153,49 +154,45 @@ describe('Builder', () => {
       .currencyTo(currencyTo)
       .feeAsset(feeAsset)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
-      .build();
+      .signAndSubmit();
 
-    expect(transferSpy).toHaveBeenCalledWith(
-      {
-        ...transferParams,
-        feeAsset,
-      },
-      undefined,
-    );
+    expect(transferSpy).toHaveBeenCalledWith({
+      ...transferParams,
+      feeAsset,
+      api: mockApi,
+    });
   });
 
   it('should construct a transfer using RouterBuilder with automatic selection', async () => {
     const onStatusChange = vi.fn();
 
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
       .onStatusChange(onStatusChange)
-      .build();
+      .signAndSubmit();
 
-    expect(transferSpy).toHaveBeenCalledWith(
-      {
-        ...transferParams,
-        onStatusChange,
-        exchange: undefined,
-      },
-      undefined,
-    );
+    expect(transferSpy).toHaveBeenCalledWith({
+      ...transferParams,
+      onStatusChange,
+      exchange: undefined,
+      api: mockApi,
+    });
   });
 
   it('should get best amount out', async () => {
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -208,15 +205,15 @@ describe('Builder', () => {
   });
 
   it('should get xcm fees', async () => {
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .slippagePct(slippagePct)
       .getXcmFees();
 
@@ -228,75 +225,71 @@ describe('Builder', () => {
         currencyFrom,
         currencyTo,
         amount,
-        senderAddress,
-        recipientAddress,
+        sender,
+        recipient,
         slippagePct,
+        api: mockApi,
       },
       false,
-      undefined,
     );
   });
 
   it('should get min transferable amount', async () => {
-    const result = await RouterBuilder()
+    const result = await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .slippagePct(slippagePct)
       .getMinTransferableAmount();
 
     expect(result).toBe(123n);
-    expect(getMinTransferableAmountSpy).toHaveBeenCalledWith(
-      {
-        from,
-        exchange,
-        to,
-        currencyFrom,
-        currencyTo,
-        amount,
-        senderAddress,
-        recipientAddress,
-        slippagePct,
-      },
-      undefined,
-    );
+    expect(getMinTransferableAmountSpy).toHaveBeenCalledWith({
+      from,
+      exchange,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      sender,
+      recipient,
+      slippagePct,
+      api: mockApi,
+    });
   });
 
   it('should construct transactions using RouterBuilder with single element exchange array', async () => {
     const exchange: TExchangeInput = ['HydrationDex'];
 
-    await RouterBuilder()
+    await RouterBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .senderAddress(senderAddress)
-      .recipientAddress(recipientAddress)
+      .sender(sender)
+      .recipient(recipient)
       .signer(signer)
       .slippagePct(slippagePct)
-      .buildTransactions();
+      .build();
 
-    expect(buildApiTransactionsSpy).toHaveBeenCalledWith(
-      {
-        from,
-        exchange: exchange[0],
-        to,
-        currencyFrom,
-        currencyTo,
-        amount,
-        senderAddress,
-        recipientAddress,
-        signer,
-        slippagePct,
-      },
-      undefined,
-    );
+    expect(buildApiTransactionsSpy).toHaveBeenCalledWith({
+      api: mockApi,
+      from,
+      exchange: exchange[0],
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      sender,
+      recipient,
+      signer,
+      slippagePct,
+    });
   });
 });

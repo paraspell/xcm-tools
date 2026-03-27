@@ -1,33 +1,32 @@
 import {
   applyDecimalAbstraction,
-  createChainClient,
+  convertBuilderConfig,
   UnsupportedOperationError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { supportsExchangePair } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
-import type { TCommonRouterOptions, TRouterBuilderOptions, TTransformedOptions } from '../../types';
+import type { TCommonRouterOptions, TTransformedOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { resolveAssets } from './resolveAssets';
 import { determineFeeCalcAddress } from './utils';
 
-export const prepareTransformedOptions = async (
-  options: TCommonRouterOptions,
-  builderOptions?: TRouterBuilderOptions,
+export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
+  options: TCommonRouterOptions<TApi, TRes, TSigner>,
   isForFeeEstimation = false,
 ): Promise<{
   dex: ExchangeChain;
-  options: TTransformedOptions<TCommonRouterOptions>;
+  options: TTransformedOptions<TCommonRouterOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>;
 }> => {
-  const { from, to, exchange, senderAddress, recipientAddress, amount } = options;
+  const { api, from, to, exchange, sender, recipient, amount } = options;
 
-  const originApi = from ? await createChainClient(from, builderOptions) : undefined;
+  const originApi = from ? await api.createApiForChain(from) : undefined;
 
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
       ? createExchangeInstance(exchange)
-      : await selectBestExchange(options, originApi, builderOptions, isForFeeEstimation);
+      : await selectBestExchange(options, originApi?.getApi(), isForFeeEstimation);
 
   const { assetFromOrigin, assetFromExchange, assetTo, feeAssetFromOrigin, feeAssetFromExchange } =
     resolveAssets(dex, options);
@@ -41,25 +40,31 @@ export const prepareTransformedOptions = async (
   const originSpecified = from && originApi && from !== dex.chain;
   const destinationSpecified = to && to !== dex.chain;
 
+  const exchangeApi = await api.createApiForChain(dex.chain);
+
+  const config = api.getConfig();
+  const exchangeConfig = convertBuilderConfig<TApi>(config);
+
   const transformed = {
     ...options,
     amount: applyDecimalAbstraction(
       amount,
       assetFromOrigin?.decimals ?? assetFromExchange.decimals,
-      !!builderOptions?.abstractDecimals,
+      exchangeConfig?.abstractDecimals !== false,
     ),
     origin:
-      originSpecified && assetFromOrigin
+      originSpecified && assetFromOrigin && originApi
         ? {
-            api: originApi,
+            api: originApi.getApi(),
             chain: from,
             assetFrom: assetFromOrigin,
             feeAssetInfo: feeAssetFromOrigin,
           }
         : undefined,
     exchange: {
-      api: await dex.createApiInstance(builderOptions),
-      apiPapi: await dex.createApiInstancePapi(builderOptions),
+      apiPjs: await dex.createApiInstance(exchangeConfig),
+      apiPapi: await dex.createApiInstancePapi(exchangeConfig),
+      api: exchangeApi,
       baseChain: dex.chain,
       exchangeChain: dex.exchangeChain,
       assetFrom: assetFromExchange,
@@ -67,14 +72,13 @@ export const prepareTransformedOptions = async (
       feeAssetInfo: feeAssetFromExchange,
     },
     destination:
-      destinationSpecified && recipientAddress
+      destinationSpecified && recipient
         ? {
             chain: to,
-            address: recipientAddress,
+            address: recipient,
           }
         : undefined,
-    feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
-    builderOptions,
+    feeCalcAddress: determineFeeCalcAddress(sender, recipient),
   };
 
   return {

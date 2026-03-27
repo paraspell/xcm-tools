@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TTxFactory, TTypeAndThenCallContext, TXcmFeeDetail } from '../../types'
-import { assertAddressIsString, assertSenderAddress, padValueBy } from '../../utils'
+import { assertAddressIsString, assertSender, padValueBy } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 import { computeAllFees, FEE_PADDING } from './computeFees'
 
@@ -32,8 +32,8 @@ describe('computeAllFees', () => {
     },
     isRelayAsset: false,
     options: {
-      senderAddress: 'sender',
-      address: 'dest',
+      sender: 'sender',
+      recipient: 'dest',
       version: Version.V5,
       currency: { amount: '1', location: RELAY_LOCATION },
       feeCurrency: undefined
@@ -45,7 +45,7 @@ describe('computeAllFees', () => {
 
     buildTx = vi.fn(() => Promise.resolve('tx'))
 
-    vi.mocked(assertSenderAddress).mockImplementation(() => {})
+    vi.mocked(assertSender).mockImplementation(() => {})
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     vi.mocked(isAssetEqual).mockReturnValue(true)
@@ -59,7 +59,7 @@ describe('computeAllFees', () => {
 
     expect(result).toEqual(null)
 
-    expect(assertSenderAddress).toHaveBeenCalled()
+    expect(assertSender).toHaveBeenCalled()
     expect(assertAddressIsString).toHaveBeenCalled()
     expect(getXcmFeeInternal).not.toHaveBeenCalled()
     expect(padValueBy).not.toHaveBeenCalled()
@@ -91,8 +91,8 @@ describe('computeAllFees', () => {
         buildTx,
         origin: context.origin.chain,
         destination: context.dest.chain,
-        senderAddress: context.options.senderAddress,
-        address: context.options.address,
+        sender: context.options.sender,
+        recipient: context.options.recipient,
         currency: context.options.currency,
         feeAsset: context.options.feeCurrency,
         disableFallback: false,

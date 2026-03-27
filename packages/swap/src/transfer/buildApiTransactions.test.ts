@@ -1,3 +1,4 @@
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -7,24 +8,16 @@ import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
-  createChainClient: vi.fn(),
-}));
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 
-vi.mock('./utils/validateTransferOptions', () => ({
-  validateTransferOptions: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-pjs');
 
-vi.mock('./utils', () => ({
-  prepareTransformedOptions: vi.fn(),
-}));
-
-vi.mock('./buildTransactions', () => ({
-  buildTransactions: vi.fn(),
-}));
+vi.mock('./utils/validateTransferOptions');
+vi.mock('./utils');
+vi.mock('./buildTransactions');
 
 describe('buildApiTransactions', () => {
-  const mockTransactions = [{ tx: 'test' }] as unknown as TRouterPlan;
+  const mockTransactions = [{ tx: 'test' }] as unknown as TRouterPlan<unknown, unknown>;
 
   const initialOptions = {
     to: 'BifrostPolkadot',
@@ -45,7 +38,9 @@ describe('buildApiTransactions', () => {
           assetFrom: { symbol: 'ACA' },
         },
         exchange: {},
-      } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
+        api: mockApi,
+      } as unknown as TBuildTransactionsOptions<unknown, unknown, unknown> &
+        TAdditionalTransferOptions<unknown, unknown, unknown>,
       dex: {
         chain: 'Acala',
       } as unknown as ExchangeChain,
@@ -55,10 +50,15 @@ describe('buildApiTransactions', () => {
   });
 
   test('should create API instances, build transactions, and disconnect', async () => {
-    const result = await buildApiTransactions(initialOptions as TBuildTransactionsOptions);
+    const result = await buildApiTransactions({
+      ...initialOptions,
+      api: mockApi,
+    } as TBuildTransactionsOptions<unknown, unknown, unknown> & {
+      api: IPolkadotApi<unknown, unknown, unknown>;
+    });
 
-    expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
-    expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions, undefined);
+    expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
+    expect(prepareTransformedOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(buildTransactions).toHaveBeenCalledOnce();
     expect(result).toEqual(mockTransactions);
   });
@@ -67,8 +67,12 @@ describe('buildApiTransactions', () => {
     const mockError = new Error('Build transactions failed');
     vi.mocked(buildTransactions).mockRejectedValueOnce(mockError);
 
-    await expect(buildApiTransactions(initialOptions as TBuildTransactionsOptions)).rejects.toThrow(
-      mockError,
-    );
+    await expect(
+      buildApiTransactions({ ...initialOptions, api: mockApi } as TBuildTransactionsOptions<
+        unknown,
+        unknown,
+        unknown
+      >),
+    ).rejects.toThrow(mockError);
   });
 });

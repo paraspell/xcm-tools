@@ -1,14 +1,14 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
+import { getBalance } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   formatUnits,
-  getBalance,
   getNativeAssetSymbol,
   padValueBy,
   parseUnits,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
@@ -25,13 +25,12 @@ import ExchangeChain from '../ExchangeChain';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
 class AcalaExchange extends ExchangeChain {
-  async swapCurrency(
+  async swapCurrency<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { papiApi, assetFrom, assetTo, amount, senderAddress, origin, isForFeeEstimation } =
-      options;
+    const { papiApi, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
@@ -55,7 +54,7 @@ class AcalaExchange extends ExchangeChain {
 
     const balance = await getBalance({
       api: papiApi,
-      address: senderAddress,
+      address: sender,
       chain: this.chain,
     });
 
@@ -112,7 +111,7 @@ class AcalaExchange extends ExchangeChain {
     return { tx, amountOut };
   }
 
-  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions) {
+  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>) {
     const { assetFrom, assetTo, amount, origin } = options;
 
     const wallet = new Wallet(api);

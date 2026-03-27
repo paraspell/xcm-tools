@@ -54,7 +54,7 @@ describe('buildHopInfo', () => {
       originChain: 'Polkadot' as TSubstrateChain,
       currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
       asset: { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo,
-      senderAddress: 'senderAlice',
+      sender: 'senderAlice',
       ahAddress: 'ahBobForEvm'
     }
 

@@ -100,21 +100,21 @@ describe('findAssetInfo', () => {
     vi.mocked(getNativeAssets).mockReturnValue([ztgAsset])
     vi.mocked(getOtherAssets).mockReturnValue([])
 
-    const result = findAssetInfo('Polkadot', { id: '2' }, null)
+    const result = findAssetInfo('Polkadot', { id: '2' })
 
     expect(result).toBe(ztgAsset)
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
     vi.mocked(getOtherAssets).mockReturnValue([ksmAsset])
-    const asset = findAssetInfo('AssetHubKusama', { symbol: Foreign('KSM') }, null)
+    const asset = findAssetInfo('AssetHubKusama', { symbol: Foreign('KSM') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
     vi.mocked(getOtherAssets).mockReturnValue([ztgAsset])
-    const asset = findAssetInfo('Moonbeam', { symbol: 'xcZTG' }, null)
+    const asset = findAssetInfo('Moonbeam', { symbol: 'xcZTG' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -126,7 +126,7 @@ describe('findAssetInfo', () => {
         symbol: 'xcZTG'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcZTG') }, null)
+    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcZTG') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -138,7 +138,7 @@ describe('findAssetInfo', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: 'xcWETH.e' }, null)
+    const asset = findAssetInfo('Moonbeam', { symbol: 'xcWETH.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -150,28 +150,28 @@ describe('findAssetInfo', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcWETH.e') }, null)
+    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcWETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
     vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' }, null)
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
     vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH.e') }, null)
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
     vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
-    const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') }, null)
+    const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -192,7 +192,7 @@ describe('findAssetInfo', () => {
 
   it('should find asset without .e to match e', () => {
     vi.mocked(getOtherAssets).mockReturnValue([ztgAsset])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('ZTG.e') }, null)
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('ZTG.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -206,7 +206,7 @@ describe('findAssetInfo', () => {
 
   it('should find weth with suffix on Ethereum', () => {
     vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
-    const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') }, null)
+    const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -236,7 +236,7 @@ describe('findAssetInfo', () => {
         assetId: '2'
       }
     ])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'ZTG.e' }, null)
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'ZTG.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -254,7 +254,7 @@ describe('findAssetInfo', () => {
         symbol: 'WTH.e'
       }
     ])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' }, null)
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -276,7 +276,7 @@ describe('findAssetInfo', () => {
         isNative: true
       }
     ])
-    expect(() => findAssetInfo('Astar', { symbol: 'xcDOT' }, null)).toThrow()
+    expect(() => findAssetInfo('Astar', { symbol: 'xcDOT' })).toThrow()
   })
 
   it('Should throw error when duplicate dot asset on Hydration', () => {
@@ -290,7 +290,7 @@ describe('findAssetInfo', () => {
         assetId: '2'
       }
     ])
-    expect(() => findAssetInfo('Hydration', { symbol: 'DOT' }, null)).toThrow()
+    expect(() => findAssetInfo('Hydration', { symbol: 'DOT' })).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
@@ -304,7 +304,7 @@ describe('findAssetInfo', () => {
         assetId: '2'
       }
     ])
-    expect(() => findAssetInfo('Hydration', { symbol: 'xcDOT' }, null)).toThrow()
+    expect(() => findAssetInfo('Hydration', { symbol: 'xcDOT' })).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
@@ -320,7 +320,7 @@ describe('findAssetInfo', () => {
         symbol: 'xcGLMR'
       }
     ])
-    expect(() => findAssetInfo('Hydration', { symbol: 'GLMR' }, null)).toThrow()
+    expect(() => findAssetInfo('Hydration', { symbol: 'GLMR' })).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
@@ -336,7 +336,7 @@ describe('findAssetInfo', () => {
         symbol: 'xcDOT'
       }
     ])
-    expect(() => findAssetInfo('Hydration', { symbol: Foreign('DOT') }, null)).toThrow()
+    expect(() => findAssetInfo('Hydration', { symbol: Foreign('DOT') })).toThrow()
   })
 
   it('should find asset with xc prefix on Acala', () => {
@@ -347,7 +347,7 @@ describe('findAssetInfo', () => {
         symbol: 'xcDOT'
       }
     ])
-    const asset = findAssetInfo('Acala', { symbol: Foreign('DOT') }, null)
+    const asset = findAssetInfo('Acala', { symbol: Foreign('DOT') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -366,7 +366,7 @@ describe('findAssetInfo', () => {
         isNative: true
       }
     ])
-    const asset = findAssetInfo('Acala', { symbol: Native('DOT') }, null)
+    const asset = findAssetInfo('Acala', { symbol: Native('DOT') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('decimals')
   })
@@ -384,7 +384,7 @@ describe('findAssetInfo', () => {
         alias: 'DOT2'
       }
     ])
-    const asset = findAssetInfo('Acala', { symbol: ForeignAbstract('DOT1') }, null)
+    const asset = findAssetInfo('Acala', { symbol: ForeignAbstract('DOT1') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -408,7 +408,7 @@ describe('findAssetInfo', () => {
         isNative: true
       }
     ])
-    expect(() => findAssetInfo('Acala', { symbol: Foreign('DOT') }, null)).toThrow()
+    expect(() => findAssetInfo('Acala', { symbol: Foreign('DOT') })).toThrow()
   })
 
   it('should find asset with lowercase matching', () => {
@@ -419,7 +419,7 @@ describe('findAssetInfo', () => {
         alias: 'glmr2'
       }
     ])
-    const asset = findAssetInfo('Acala', { symbol: 'Glmr' }, null)
+    const asset = findAssetInfo('Acala', { symbol: 'Glmr' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -427,7 +427,7 @@ describe('findAssetInfo', () => {
   it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
     vi.mocked(getOtherAssets).mockReturnValue([])
     vi.mocked(getNativeAssets).mockReturnValue([])
-    const asset = findAssetInfo('Acala', { symbol: 'dot' }, null)
+    const asset = findAssetInfo('Acala', { symbol: 'dot' })
     expect(asset).toBeNull()
   })
 

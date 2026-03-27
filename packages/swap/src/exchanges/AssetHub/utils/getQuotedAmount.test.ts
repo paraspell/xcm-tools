@@ -1,5 +1,6 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import { localizeLocation, type TLocation, transform } from '@paraspell/sdk';
+import { transform } from '@paraspell/sdk';
+import { localizeLocation, type TLocation } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getQuotedAmount } from './getQuotedAmount';
@@ -9,9 +10,13 @@ vi.mock('@paraspell/sdk', async (importActual) => {
   return {
     ...actual,
     transform: vi.fn(),
-    localizeLocation: vi.fn(),
   };
 });
+
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  localizeLocation: vi.fn(),
+}));
 
 describe('getQuotedAmount', () => {
   let api: TPapiApi;

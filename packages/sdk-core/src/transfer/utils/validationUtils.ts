@@ -16,7 +16,7 @@ import {
 import { isHex } from 'viem'
 
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination, TTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
@@ -109,10 +109,10 @@ export const validateTransact = <TApi, TRes, TSigner>({
   api,
   from,
   to,
-  senderAddress,
-  address,
+  sender,
+  recipient: address,
   transactOptions
-}: TSendOptions<TApi, TRes, TSigner>) => {
+}: TTransferOptions<TApi, TRes, TSigner>) => {
   const call = transactOptions?.call
 
   if (!call) return
@@ -131,11 +131,7 @@ export const validateTransact = <TApi, TRes, TSigner>({
     )
   }
 
-  if (
-    typeof address === 'string' &&
-    senderAddress &&
-    !compareAddresses(api, address, senderAddress)
-  ) {
+  if (typeof address === 'string' && sender && !compareAddresses(api, address, sender)) {
     return new ValidationError(
       'Sender address must match the destination address for transact to work.'
     )

@@ -1,17 +1,18 @@
-import type { TXcmFeeDetail } from '@paraspell/sdk';
-import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk';
+import type { TXcmFeeDetail } from '@paraspell/sdk-core';
+import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 
-export const getSwapFee = async <TDisableFallback extends boolean = false>(
+export const getSwapFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean = false>(
   exchange: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   disableFallback?: TDisableFallback,
 ): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
   const {
-    senderAddress,
+    api,
+    sender,
     exchange: { assetFrom },
     amount,
   } = options;
@@ -42,11 +43,11 @@ export const getSwapFee = async <TDisableFallback extends boolean = false>(
   };
 
   const result = await getOriginXcmFee({
-    api: options.exchange.apiPapi,
+    api,
     buildTx,
     origin: exchange.chain,
     destination: exchange.chain,
-    senderAddress: senderAddress,
+    sender,
     currency: {
       location: assetFrom.location,
       amount,

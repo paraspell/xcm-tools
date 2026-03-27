@@ -1,5 +1,5 @@
-import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk';
-import { findAssetInfoOrThrow } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk-core';
+import { findAssetInfoOrThrow } from '@paraspell/sdk-core';
 
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import { record } from '../exchanges/ExchangeChainFactory';
@@ -11,7 +11,7 @@ export const getExchangeConfig = (exchange: TExchangeChain): TDexConfig => {
   const stored = assetsMap[exchange];
   const chain = record[exchange].chain;
 
-  const assets = stored.assets.map((location) => findAssetInfoOrThrow(chain, { location }, null));
+  const assets = stored.assets.map((location) => findAssetInfoOrThrow(chain, { location }));
 
   return {
     isOmni: stored.isOmni,

@@ -37,5 +37,5 @@ export const importSdk = async (apiType: TApiType) => {
     options?: TBuilderConfig<TUrl>,
   ) => Promise<TApi>;
 
-  return { Builder, createChainClient };
+  return { ...Sdk, Builder, createChainClient };
 };

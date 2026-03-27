@@ -1,10 +1,13 @@
-import type { TAssetInfo, TPapiApi, TPapiTransaction, TParachain } from '@paraspell/sdk';
-import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo, TParachain } from '@paraspell/sdk-core';
+import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TGetBestAmountOutOptions } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { buildToExchangeExtrinsic } from './utils';
+
+const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('./utils');
 vi.mock('../consts', () => ({
@@ -24,7 +27,8 @@ describe('canBuildToExchangeTx', () => {
   const defaultOptions = {
     from: 'Polkadot' as TParachain,
     amount: '10000000000',
-  } as TGetBestAmountOutOptions;
+    api: mockApi,
+  } as TGetBestAmountOutOptions<unknown, unknown, unknown>;
   const exchangeChain: TParachain = 'AssetHubPolkadot';
 
   beforeEach(() => {
@@ -45,7 +49,7 @@ describe('canBuildToExchangeTx', () => {
     expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
     expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
       amount: BigInt(defaultOptions.amount),
-      senderAddress: 'fallback_address',
+      sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,
@@ -53,6 +57,7 @@ describe('canBuildToExchangeTx', () => {
         assetFrom: mockAssetFromOrigin,
       },
       exchange: { baseChain: exchangeChain },
+      api: mockApi,
     });
   });
 
@@ -166,7 +171,8 @@ describe('canBuildToExchangeTx', () => {
       currencyFrom: { symbol: 'GLMR' },
       currencyTo: { symbol: 'DOT' },
       to: 'Polkadot' as TParachain,
-    } as TGetBestAmountOutOptions;
+      api: mockApi,
+    } as TGetBestAmountOutOptions<unknown, unknown, unknown>;
 
     const result = await canBuildToExchangeTx(
       getBestAmountOutOptions,
@@ -179,7 +185,7 @@ describe('canBuildToExchangeTx', () => {
     expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
     expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
       amount: BigInt(getBestAmountOutOptions.amount),
-      senderAddress: 'fallback_address',
+      sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',
       origin: {
         api: mockOriginApi,
@@ -187,6 +193,7 @@ describe('canBuildToExchangeTx', () => {
         assetFrom: mockAssetFromOrigin,
       },
       exchange: { baseChain: exchangeChain },
+      api: mockApi,
     });
   });
 });

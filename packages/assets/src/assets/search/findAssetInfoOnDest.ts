@@ -54,11 +54,11 @@ export const findAssetInfoOnDest = (
   }
 
   if (isSb && isSystemAsset(resolvedOriginAsset)) {
-    const match = findAssetInfo(destination, { symbol: resolvedOriginAsset.symbol }, null)
+    const match = findAssetInfo(destination, { symbol: resolvedOriginAsset.symbol })
     if (match) return match
   }
 
-  return findAssetInfo(destination, { location: resolvedOriginAsset.location }, null)
+  return findAssetInfo(destination, { location: resolvedOriginAsset.location })
 }
 
 export const findAssetOnDestOrThrow = (

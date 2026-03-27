@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
-import type { TAssetInfo } from '@paraspell/sdk';
-import { getAssets, getParaId, isSymbolMatch, type TParachain } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk-core';
+import { getAssets, getParaId, isSymbolMatch, type TParachain } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfigStored, TPairs } from '../../../types';

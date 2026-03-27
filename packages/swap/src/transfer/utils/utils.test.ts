@@ -2,6 +2,7 @@
 
 import type { TAssetInfo, TPapiApi, TPapiTransaction, TSubstrateChain } from '@paraspell/sdk';
 import { createChainClient } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,13 @@ import type {
   TBuildToExchangeTxOptions,
   TExchangeInfo,
 } from '../../types';
+
+const mockApi = { clone: vi.fn().mockReturnValue({}) } as unknown as IPolkadotApi<
+  unknown,
+  unknown,
+  unknown
+>;
+const mockExchangeApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,
@@ -24,8 +32,8 @@ const builderMock = {
   to: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
-  address: vi.fn().mockReturnThis(),
-  senderAddress: vi.fn().mockReturnThis(),
+  sender: vi.fn().mockReturnThis(),
+  recipient: vi.fn().mockReturnThis(),
   build: vi.fn().mockReturnValue({
     signAsync: vi.fn().mockResolvedValue('signedTx'),
     send: vi.fn().mockResolvedValue('sentTx'),
@@ -38,6 +46,13 @@ vi.mock('@paraspell/sdk', async () => {
   return {
     ...actual,
     createChainClient: vi.fn().mockResolvedValue(undefined),
+  };
+});
+
+vi.mock('@paraspell/sdk-core', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-core');
+  return {
+    ...actual,
     Builder: vi.fn().mockImplementation(() => builderMock),
   };
 });
@@ -81,7 +96,7 @@ describe('transfer utils', () => {
 
   describe('buildToExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot origin', () => {
-      const options: TBuildToExchangeTxOptions = {
+      const options: TBuildToExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
         amount: BigInt(transferParams.amount),
         origin: {
@@ -91,7 +106,8 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseChain: 'Acala',
-        } as TExchangeInfo,
+        } as TExchangeInfo<unknown, unknown, unknown>,
+        api: mockApi,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -100,7 +116,7 @@ describe('transfer utils', () => {
 
     it('builds correct Extrinsic for non-Polkadot/Kusama origin', () => {
       const from: TSubstrateChain = 'Astar';
-      const options: TBuildToExchangeTxOptions = {
+      const options: TBuildToExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
         amount: BigInt(transferParams.amount),
         origin: {
@@ -110,7 +126,8 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseChain: 'Acala',
-        } as TExchangeInfo,
+        } as TExchangeInfo<unknown, unknown, unknown>,
+        api: mockApi,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -120,9 +137,9 @@ describe('transfer utils', () => {
     it('handles custom amount and senderAddress correctly', () => {
       const customAmount = 999999999999999n;
       const customSenderAddress = '5D...CustomAddress';
-      const options: TBuildToExchangeTxOptions = {
+      const options: TBuildToExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
-        senderAddress: customSenderAddress,
+        sender: customSenderAddress,
         origin: {
           api: parachainPapiApi,
           chain: 'Acala',
@@ -130,8 +147,9 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseChain: 'Acala',
-        } as TExchangeInfo,
+        } as TExchangeInfo<unknown, unknown, unknown>,
         amount: customAmount,
+        api: mockApi,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -144,11 +162,11 @@ describe('transfer utils', () => {
         },
         amount: customAmount,
       });
-      expect(builderMock.address).toHaveBeenCalledWith(customSenderAddress);
+      expect(builderMock.recipient).toHaveBeenCalledWith(customSenderAddress);
     });
 
     it('should still build when currencyFrom is missing and from is not Ethereum', () => {
-      const options: TBuildToExchangeTxOptions = {
+      const options: TBuildToExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
         amount: BigInt(transferParams.amount),
         origin: {
@@ -158,7 +176,8 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseChain: 'Acala',
-        } as TExchangeInfo,
+        } as TExchangeInfo<unknown, unknown, unknown>,
+        api: mockApi,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -175,7 +194,7 @@ describe('transfer utils', () => {
 
   describe('buildFromExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot destination', () => {
-      const options: TBuildFromExchangeTxOptions = {
+      const options: TBuildFromExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
         amount: BigInt(transferParams.amount),
         destination: {
@@ -183,20 +202,22 @@ describe('transfer utils', () => {
           address: 'MOCK_ADDRESS',
         },
         exchange: {
-          api: parachainApi,
+          apiPjs: parachainApi,
           apiPapi: parachainPapiApi,
+          api: mockExchangeApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
           assetFrom: astrAsset,
           assetTo: glmrAsset,
         },
+        api: mockApi,
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama destination', () => {
-      const options: TBuildFromExchangeTxOptions = {
+      const options: TBuildFromExchangeTxOptions<unknown, unknown, unknown> = {
         ...transferParams,
         amount: BigInt(transferParams.amount),
         destination: {
@@ -205,12 +226,14 @@ describe('transfer utils', () => {
         },
         exchange: {
           apiPapi: parachainPapiApi,
-          api: parachainApi,
+          apiPjs: parachainApi,
+          api: mockExchangeApi,
           baseChain: 'Acala',
           exchangeChain: 'AcalaDex',
           assetFrom: astrAsset,
           assetTo: glmrAsset,
         },
+        api: mockApi,
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
@@ -224,7 +247,8 @@ describe('transfer utils', () => {
           ...transferParams,
           amount: BigInt(transferParams.amount),
           origin: { api: parachainPapiApi, chain: 'Acala', assetFrom: astrAsset },
-          exchange: { baseChain: 'Acala' } as TExchangeInfo,
+          exchange: { baseChain: 'Acala' } as TExchangeInfo<unknown, unknown, unknown>,
+          api: mockApi,
         },
         true,
       );
@@ -242,13 +266,15 @@ describe('transfer utils', () => {
           amount: BigInt(transferParams.amount),
           destination: { chain: 'Polkadot', address: 'MOCK_ADDRESS' },
           exchange: {
-            api: parachainApi,
+            apiPjs: parachainApi,
             apiPapi: parachainPapiApi,
+            api: mockExchangeApi,
             baseChain: 'Acala',
             exchangeChain: 'AcalaDex',
             assetFrom: astrAsset,
             assetTo: glmrAsset,
           },
+          api: mockApi,
         },
         false,
       );

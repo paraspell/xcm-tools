@@ -5,7 +5,7 @@ import { normalizeLocation } from '@paraspell/assets'
 import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type { TSendOptions } from '../types'
+import type { TTransferOptions } from '../types'
 import {
   abstractDecimals,
   getChain,
@@ -26,17 +26,17 @@ import {
 } from './utils'
 
 export const resolveTransferParams = <TApi, TRes, TSigner>(
-  options: TSendOptions<TApi, TRes, TSigner>
+  options: TTransferOptions<TApi, TRes, TSigner>
 ) => {
   const {
     api,
     from: origin,
     currency,
     feeAsset,
-    address,
+    recipient: address,
     to: destination,
     version,
-    senderAddress
+    sender
   } = options
 
   validateCurrency(currency, feeAsset)
@@ -44,7 +44,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
   validateTransact(options)
 
   validateDestinationAddress(address, destination, api)
-  if (senderAddress) validateAddress(api, senderAddress, origin, false)
+  if (sender) validateAddress(api, sender, origin, false)
 
   const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
 
@@ -115,17 +115,17 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
 }
 
 export const createTransfer = async <TApi, TRes, TSigner>(
-  options: TSendOptions<TApi, TRes, TSigner>
+  options: TTransferOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const {
     api,
     from: origin,
     currency,
     feeAsset,
-    address,
+    recipient,
     to: destination,
     paraIdTo,
-    senderAddress,
+    sender,
     ahAddress,
     pallet,
     method,
@@ -145,12 +145,12 @@ export const createTransfer = async <TApi, TRes, TSigner>(
     currency,
     feeAsset: resolvedFeeAsset,
     feeCurrency: feeAsset,
-    address,
+    recipient,
     to: destination,
     paraIdTo,
     overriddenAsset,
     version: resolvedVersion,
-    senderAddress,
+    sender,
     ahAddress,
     pallet,
     method,

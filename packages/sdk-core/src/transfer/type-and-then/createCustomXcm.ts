@@ -4,7 +4,7 @@ import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { assertSenderAddress, createAsset, normalizeAmount } from '../../utils'
+import { assertSender, createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import type { createRefundInstruction } from './utils'
@@ -37,7 +37,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
 ) => {
   const { origin, dest, reserve, isSubBridge, isSnowbridge, isRelayAsset, assetInfo, options } =
     context
-  const { destination, version, address, senderAddress, paraIdTo } = options
+  const { destination, version, sender, recipient, paraIdTo } = options
   const { hopFees, destFee } = fees
 
   const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
@@ -67,7 +67,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
       },
       beneficiary: createBeneficiaryLocation({
         api: isSubBridge ? dest.api : origin.api,
-        address,
+        address: recipient,
         version
       })
     }
@@ -145,13 +145,13 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
   }
 
   if (isSnowbridge) {
-    assertSenderAddress(senderAddress)
+    assertSender(sender)
     const messageId = await generateMessageId(
       origin.api,
-      senderAddress,
+      sender,
       getParaId(origin.chain),
       JSON.stringify(assetInfo.location),
-      JSON.stringify(address),
+      JSON.stringify(recipient),
       assetInfo.amount
     )
     return [

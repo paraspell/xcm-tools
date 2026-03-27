@@ -47,6 +47,7 @@ import {
   RELAY_LOCATION,
   resolveChainApi,
   RuntimeApiUnavailableError,
+  SubmitTransactionError,
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
@@ -248,7 +249,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PolkadotJsApi()
+    const api = new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
@@ -273,7 +274,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId }, null)
+      asset: findAssetInfoOrThrow(chain, { id: assetId })
     }
   }
 
@@ -785,6 +786,34 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       : await tx.signAndSend(createKeyringPair(sender))
 
     return hash.toHex()
+  }
+
+  async signAndSubmitFinalized(tx: Extrinsic, sender: TSender<TPjsSigner>): Promise<string> {
+    if (isSenderSigner(sender)) {
+      await tx.signAsync(sender.address, { signer: sender.signer })
+    } else {
+      await tx.signAsync(createKeyringPair(sender))
+    }
+
+    return new Promise((resolve, reject) => {
+      tx.send(({ status, dispatchError, txHash }) => {
+        if (status.isFinalized) {
+          if (dispatchError !== undefined) {
+            if (dispatchError.isModule) {
+              const decoded = this.api.registry.findMetaError(dispatchError.asModule)
+              const { docs, name, section } = decoded
+              reject(new SubmitTransactionError(`${section}.${name}: ${docs.join(' ')}`))
+            } else {
+              reject(new SubmitTransactionError(dispatchError.toString()))
+            }
+          } else {
+            resolve(txHash.toString())
+          }
+        }
+      }).catch(error => {
+        reject(error instanceof Error ? error : new SubmitTransactionError(String(error)))
+      })
+    })
   }
 }
 

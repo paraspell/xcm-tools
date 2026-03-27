@@ -91,11 +91,11 @@ describe('handleTransactUsingSend', () => {
         options.transactOptions,
         options.version,
         options.destChain,
-        options.address
+        options.recipient
       )
       expect(createBeneficiaryLocation).toHaveBeenCalledWith({
         api,
-        address: options.address,
+        address: options.recipient,
         version: options.version
       })
 

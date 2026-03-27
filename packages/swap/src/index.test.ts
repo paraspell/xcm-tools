@@ -11,33 +11,10 @@ import {
 import * as RouterBuilder from './builder/RouterBuilder';
 import * as Consts from './consts';
 import * as indexExports from './index';
-import * as BuildApiTransactions from './transfer/buildApiTransactions';
-import * as BuildTransactions from './transfer/buildTransactions';
-import * as Transfer from './transfer/transfer';
 import * as Types from './types';
 
 describe('Index re-exports', () => {
   const moduleExports = indexExports as Record<string, unknown>;
-
-  it('should re-export everything from transfer/transfer', () => {
-    (Object.keys(Transfer) as Array<keyof typeof Transfer>).forEach((key) => {
-      expect(moduleExports[key]).toBe(Transfer[key]);
-    });
-  });
-
-  it('should re-export everything from transfer/buildTransactions', () => {
-    (Object.keys(BuildTransactions) as Array<keyof typeof BuildTransactions>).forEach((key) => {
-      expect(moduleExports[key]).toBe(BuildTransactions[key]);
-    });
-  });
-
-  it('should re-export everything from transfer/buildApiTransactions', () => {
-    (Object.keys(BuildApiTransactions) as Array<keyof typeof BuildApiTransactions>).forEach(
-      (key) => {
-        expect(moduleExports[key]).toBe(BuildApiTransactions[key]);
-      },
-    );
-  });
 
   it('should re-export everything from types', () => {
     (Object.keys(Types) as Array<keyof typeof Types>).forEach((key) => {

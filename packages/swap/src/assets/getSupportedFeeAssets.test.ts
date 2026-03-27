@@ -1,12 +1,12 @@
-import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk';
-import { getAssets, isAssetEqual } from '@paraspell/sdk';
+import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
+import { getAssets, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 import { getSupportedFeeAssets } from './getSupportedFeeAssets';
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   getAssets: vi.fn(),
   isAssetEqual: vi.fn(),

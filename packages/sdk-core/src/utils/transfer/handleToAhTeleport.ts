@@ -6,7 +6,7 @@ import { MAX_WEIGHT } from '../../constants'
 import { InvalidAddressError } from '../../errors'
 import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { assertSenderAddress, assertToIsString } from '../assertions'
+import { assertSender, assertToIsString } from '../assertions'
 import { padValueBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 
@@ -15,23 +15,22 @@ export const handleToAhTeleport = async <TApi, TRes, TSigner>(
   input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
   defaultTx: TRes
 ): Promise<TRes> => {
-  const { api, destination, address, senderAddress, assetInfo: asset, currency, version } = input
+  const { api, destination, sender, recipient, assetInfo: asset, currency, version } = input
 
   assertToIsString(destination, 'Location destination is not supported for AH teleport.')
 
-  if (isTLocation(address)) {
+  if (isTLocation(recipient)) {
     throw new InvalidAddressError('Location address is not supported for this scenario')
   }
 
-  assertSenderAddress(senderAddress)
+  assertSender(sender)
 
   const dryRunResult = await dryRunInternal({
     api,
     tx: defaultTx,
     origin,
     destination,
-    senderAddress: senderAddress,
-    address,
+    sender,
     currency,
     version
   })
@@ -56,8 +55,8 @@ export const handleToAhTeleport = async <TApi, TRes, TSigner>(
     tx: dummyTx,
     origin,
     destination,
-    senderAddress: senderAddress,
-    address,
+    sender,
+    recipient,
     version,
     currency: currency as WithAmount<TCurrencyCore>,
     disableFallback: false,

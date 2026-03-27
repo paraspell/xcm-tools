@@ -4,7 +4,7 @@ import type {
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSendBaseOptionsWithSenderAddress,
+  TTransferBaseOptionsWithSender,
 } from '@paraspell/sdk';
 import {
   Foreign,
@@ -18,12 +18,9 @@ import {
   type TUrl,
   type WithComplexAmount,
 } from '@paraspell/sdk';
-import type { TRouterBuilderOptions } from '@paraspell/swap';
-import { RouterBuilder } from '@paraspell/swap';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import type { TRouterFormValuesTransformed } from '../components/XcmRouter/XcmRouterForm';
 import type {
   TAdvancedOptions,
   TCurrencyEntryBase,
@@ -150,7 +147,7 @@ export const determineFeeAsset = (
 
 export const addSwapToBuilder = <
   T extends Partial<
-    TSendBaseOptionsWithSenderAddress<TPapiApi, TPapiTransaction, TPapiSigner>
+    TTransferBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
   >,
 >(
   builder: GeneralBuilder<T>,
@@ -161,7 +158,7 @@ export const addSwapToBuilder = <
   const { exchange, slippage, evmSigner, evmInjectorAddress } = swapOptions;
 
   // Swap operation is only supported for PAPI, we can safely cast to PAPI signer
-  return builder.senderAddress(signer as PolkadotSigner).swap({
+  return builder.sender(signer as PolkadotSigner).swap({
     currencyTo: determineCurrencyCore(transformedCurrencyTo),
     exchange,
     slippage: Number(slippage),
@@ -173,13 +170,13 @@ export const addSwapToBuilder = <
 export const setupBaseBuilder = (
   builder: GeneralBuilder,
   formValues: TFormValuesTransformed,
-  senderAddress: string,
+  sender: string,
   signer: PolkadotSigner | Signer,
 ) => {
   const {
     from,
     to,
-    address,
+    recipient,
     ahAddress,
     xcmVersion,
     keepAlive,
@@ -203,8 +200,8 @@ export const setupBaseBuilder = (
         : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
     )
     .feeAsset(determineFeeAsset(transformedFeeAsset))
-    .address(address)
-    .senderAddress(senderAddress)
+    .sender(sender)
+    .recipient(recipient)
     .ahAddress(ahAddress);
 
   if (xcmVersion) {
@@ -244,36 +241,4 @@ export const setupBaseBuilder = (
   }
 
   return finalBuilder;
-};
-
-export const setupBaseRouterBuilder = (
-  options: TRouterBuilderOptions,
-  {
-    from,
-    exchange,
-    to,
-    currencyFrom,
-    currencyTo,
-    feeAsset,
-    amount,
-    recipientAddress,
-    slippagePct,
-    evmInjectorAddress,
-  }: TRouterFormValuesTransformed,
-  senderAddress: string,
-) => {
-  const builder = RouterBuilder(options)
-    .from(from)
-    .exchange(exchange)
-    .to(to)
-    .currencyFrom(currencyFrom)
-    .currencyTo(currencyTo)
-    .feeAsset(feeAsset)
-    .amount(amount)
-    .senderAddress(senderAddress)
-    .recipientAddress(recipientAddress)
-    .evmSenderAddress(evmInjectorAddress)
-    .slippagePct(slippagePct);
-
-  return builder;
 };

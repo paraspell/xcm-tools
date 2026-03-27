@@ -1,5 +1,5 @@
-import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk';
-import { EXCHANGE_CHAINS, getAssets, isExternalChain, isSystemAsset } from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk-core';
+import { EXCHANGE_CHAINS, getAssets, isExternalChain, isSystemAsset } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -7,7 +7,7 @@ import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   getAssets: vi.fn(),
   isExternalChain: vi.fn(),

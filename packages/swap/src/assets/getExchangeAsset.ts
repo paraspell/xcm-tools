@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInput, TExchangeChain } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyInput, TExchangeChain } from '@paraspell/sdk-core';
 import {
   findAssetInfoById,
   findAssetInfoByLoc,
@@ -8,7 +8,7 @@ import {
   isSymbolSpecifier,
   RoutingResolutionError,
   UnsupportedOperationError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { getExchangeAssets } from './getExchangeConfig';
 
@@ -43,7 +43,7 @@ export const getExchangeAsset = (
       }
     }
 
-    asset = findAssetInfoBySymbol(null, otherAssets, nativeAssets, currency.symbol);
+    asset = findAssetInfoBySymbol(otherAssets, nativeAssets, currency.symbol);
   } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
     asset = findAssetInfoByLoc(assets, currency.location);
   } else if ('id' in currency) {

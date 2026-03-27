@@ -26,8 +26,7 @@ import { showErrorNotification } from '../utils/notifications';
 import { WalletContext } from './WalletContext';
 
 const formActions = createFormActions<{
-  address: string;
-  recipientAddress: string;
+  recipient: string;
 }>(MAIN_FORM_NAME);
 
 export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
@@ -80,11 +79,9 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       .withOptions({ shallow: false }),
   );
   const location = useLocation();
-  const isRouter = location.pathname === PageRoute.XCM_ROUTER.toString();
-  const selectedApiType = isRouter ? 'PAPI' : queryApiType;
 
   const [apiType, setApiType] = useState<TApiType>(
-    selectedApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
+    queryApiType || getApiTypeFromLocalStorage() || DEFAULT_API_TYPE,
   );
 
   const [extensions, setExtensions] = useState<string[]>([]);
@@ -280,10 +277,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
 
   const onAccountSelect = (account: TWalletAccount) => {
     setSelectedAccount(account);
-    // TODO: Will be unified in v13 when xcm-router recipientAddress
-    // is renamed to address
-    formActions.setFieldValue('address', account.address);
-    formActions.setFieldValue('recipientAddress', account.address);
+    formActions.setFieldValue('recipient', account.address);
     closeAccountsModal();
   };
 

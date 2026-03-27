@@ -81,7 +81,7 @@ export const XcmUtils = () => {
 
     const body = {
       ...formValues,
-      senderAddress: selectedAccountAddress,
+      sender: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
       feeAsset: determineFeeAsset(transformedFeeAsset),
@@ -190,7 +190,7 @@ export const XcmUtils = () => {
 
     const body = {
       ...formValues,
-      senderAddress: selectedAccountAddress,
+      sender: selectedAccountAddress,
       currency:
         currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
       feeAsset: determineFeeAsset(transformedFeeAsset),

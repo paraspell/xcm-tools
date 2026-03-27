@@ -40,8 +40,7 @@ export const ApiTypeSelector: FC<Props> = ({
     },
     {
       value: 'PJS',
-      disabled:
-        fullyDisabled || location.pathname === PageRoute.XCM_ROUTER.toString(),
+      disabled: fullyDisabled,
       label: (
         <Center style={{ gap: 8 }} data-testid="label-pjs-api">
           <PolkadotJsLogo />
@@ -51,8 +50,7 @@ export const ApiTypeSelector: FC<Props> = ({
     },
     {
       value: 'DEDOT',
-      disabled:
-        fullyDisabled || location.pathname === PageRoute.XCM_ROUTER.toString(),
+      disabled: fullyDisabled,
       label: (
         <Center style={{ gap: 8 }} data-testid="label-dedot-api">
           <DedotLogo />

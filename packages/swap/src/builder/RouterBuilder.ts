@@ -1,4 +1,5 @@
 import type {
+  IPolkadotApi,
   TAmount,
   TChain,
   TCurrencyInput,
@@ -6,10 +7,10 @@ import type {
   TExchangeInput,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
+  TStatusChangeCallback,
   TSubstrateChain,
-} from '@paraspell/sdk';
-import { normalizeExchange } from '@paraspell/sdk';
-import type { PolkadotSigner } from 'polkadot-api';
+} from '@paraspell/sdk-core';
+import { normalizeExchange } from '@paraspell/sdk-core';
 
 import {
   buildApiTransactions,
@@ -21,24 +22,23 @@ import {
   transfer,
 } from '../transfer';
 import type {
-  TBuildTransactionsOptions,
-  TGetBestAmountOutOptions,
-  TRouterBuilderOptions,
-  TStatusChangeCallback,
-  TTransferOptions,
+  TBuildTransactionsBaseOptions,
+  TGetBestAmountOutBaseOptions,
+  TTransferBaseOptions,
 } from '../types';
 
-/**
- * Builder class for constructing and executing cross-chain transfers using the XCM Router.
- *
- * @deprecated Use `@paraspell/sdk` with the "swap" extension installed instead.
- */
-export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
+export class RouterBuilderCore<
+  TApi,
+  TRes,
+  TSigner,
+  T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner>> = object,
+> {
+  readonly _api: IPolkadotApi<TApi, TRes, TSigner>;
   readonly _options: T;
-  readonly _builderOptions?: TRouterBuilderOptions;
+  readonly _builderOptions?: TTransferBaseOptions<TApi, TRes, TSigner>;
 
-  constructor(builderOptions?: TRouterBuilderOptions, options?: T) {
-    this._builderOptions = builderOptions;
+  constructor(api: IPolkadotApi<TApi, TRes, TSigner>, options?: T) {
+    this._api = api;
     this._options = options ?? ({} as T);
   }
 
@@ -50,8 +50,11 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    */
   from(
     chain: TSubstrateChain | undefined,
-  ): RouterBuilderCore<T & { from: TSubstrateChain | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, from: chain });
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { from: TSubstrateChain | undefined }> {
+    return new RouterBuilderCore(this._api, {
+      ...this._options,
+      from: chain,
+    });
   }
 
   /**
@@ -60,8 +63,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param chain - The exchange chain, or `undefined` to auto-select.
    * @returns The current builder instance.
    */
-  exchange(chain: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  exchange(
+    chain: TExchangeInput,
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { exchange: TExchangeInput }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
       exchange: normalizeExchange(chain),
     });
@@ -73,8 +78,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param chain - The destination chain.
    * @returns The current builder instance.
    */
-  to(chain: TChain | undefined): RouterBuilderCore<T & { to: TChain | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, to: chain });
+  to(
+    chain: TChain | undefined,
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { to: TChain | undefined }> {
+    return new RouterBuilderCore(this._api, { ...this._options, to: chain });
   }
 
   /**
@@ -83,8 +90,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param currencyFrom - The currency to send.
    * @returns The current builder instance.
    */
-  currencyFrom(currency: TCurrencyInput): RouterBuilderCore<T & { currencyFrom: TCurrencyInput }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  currencyFrom(
+    currency: TCurrencyInput,
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { currencyFrom: TCurrencyInput }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
       currencyFrom: currency,
     });
@@ -96,8 +105,13 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param currencyTo - The currency to receive.
    * @returns The current builder instance.
    */
-  currencyTo(currency: TCurrencyInput): RouterBuilderCore<T & { currencyTo: TCurrencyInput }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, currencyTo: currency });
+  currencyTo(
+    currency: TCurrencyInput,
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { currencyTo: TCurrencyInput }> {
+    return new RouterBuilderCore(this._api, {
+      ...this._options,
+      currencyTo: currency,
+    });
   }
 
   /**
@@ -108,8 +122,11 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    */
   feeAsset(
     currency: TCurrencyInput | undefined,
-  ): RouterBuilderCore<T & { feeAsset: TCurrencyInput | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, feeAsset: currency });
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { feeAsset: TCurrencyInput | undefined }> {
+    return new RouterBuilderCore(this._api, {
+      ...this._options,
+      feeAsset: currency,
+    });
   }
 
   /**
@@ -118,8 +135,8 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param amount - The amount to transfer.
    * @returns The current builder instance.
    */
-  amount(amount: TAmount): RouterBuilderCore<T & { amount: TAmount }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  amount(amount: TAmount): RouterBuilderCore<TApi, TRes, TSigner, T & { amount: TAmount }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
       amount: amount.toString(),
     });
@@ -128,15 +145,15 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
   /**
    * Specifies the recipient address on the destination chain.
    *
-   * @param recipientAddress - The recipient address.
+   * @param recipient - The recipient address.
    * @returns The current builder instance.
    */
-  recipientAddress(
+  recipient(
     address: string | undefined,
-  ): RouterBuilderCore<T & { recipientAddress: string | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { recipient: string | undefined }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
-      recipientAddress: address,
+      recipient: address,
     });
   }
 
@@ -146,21 +163,21 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param senderAddress - The sender address.
    * @returns The current builder instance.
    */
-  senderAddress(address: string): RouterBuilderCore<T & { senderAddress: string }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  sender(address: string): RouterBuilderCore<TApi, TRes, TSigner, T & { sender: string }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
-      senderAddress: address,
+      sender: address,
     });
   }
 
   /**
-   * Specifies the Polkadot signer for the transaction.
+   * Specifies the signer for the transaction.
    *
-   * @param signer - The Polkadot signer instance.
+   * @param signer - The signer instance.
    * @returns The current builder instance.
    */
-  signer(signer: PolkadotSigner): RouterBuilderCore<T & { signer: PolkadotSigner }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, signer });
+  signer(signer: TSigner): RouterBuilderCore<TApi, TRes, TSigner, T & { signer: TSigner }> {
+    return new RouterBuilderCore(this._api, { ...this._options, signer });
   }
 
   /**
@@ -171,8 +188,8 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    */
   evmSenderAddress(
     address: string | undefined,
-  ): RouterBuilderCore<T & { evmSenderAddress: string | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, {
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { evmSenderAddress: string | undefined }> {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
       evmSenderAddress: address,
     });
@@ -185,9 +202,12 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   evmSigner(
-    signer: PolkadotSigner | undefined,
-  ): RouterBuilderCore<T & { evmSigner: PolkadotSigner | undefined }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, evmSigner: signer });
+    signer: TSigner | undefined,
+  ): RouterBuilderCore<TApi, TRes, TSigner, T & { evmSigner: TSigner | undefined }> {
+    return new RouterBuilderCore(this._api, {
+      ...this._options,
+      evmSigner: signer,
+    });
   }
 
   /**
@@ -196,8 +216,11 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param slippagePct - The slippage percentage.
    * @returns The current builder instance.
    */
-  slippagePct(pct: string): RouterBuilderCore<T & { slippagePct: string }> {
-    return new RouterBuilderCore(this._builderOptions, { ...this._options, slippagePct: pct });
+  slippagePct(pct: string): RouterBuilderCore<TApi, TRes, TSigner, T & { slippagePct: string }> {
+    return new RouterBuilderCore(this._api, {
+      ...this._options,
+      slippagePct: pct,
+    });
   }
 
   /**
@@ -207,9 +230,14 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The current builder instance.
    */
   onStatusChange(
-    callback: TStatusChangeCallback,
-  ): RouterBuilderCore<T & { onStatusChange: TStatusChangeCallback }> {
-    return new RouterBuilderCore(this._builderOptions, {
+    callback: TStatusChangeCallback<TApi, TRes>,
+  ): RouterBuilderCore<
+    TApi,
+    TRes,
+    TSigner,
+    T & { onStatusChange: TStatusChangeCallback<TApi, TRes> }
+  > {
+    return new RouterBuilderCore(this._api, {
       ...this._options,
       onStatusChange: callback,
     });
@@ -221,72 +249,83 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @returns The XCM fee result.
    */
   async getXcmFees<TDisableFallback extends boolean = false>(
-    this: RouterBuilderCore<TBuildTransactionsOptions>,
+    this: RouterBuilderCore<
+      TApi,
+      TRes,
+      TSigner,
+      TBuildTransactionsBaseOptions<TApi, TRes, TSigner>
+    >,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback },
   ): Promise<TGetXcmFeeResult<TDisableFallback>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback;
-    return getXcmFees(this._options, disableFallback, this._builderOptions);
+    return getXcmFees({ ...this._options, api: this._api }, disableFallback);
   }
 
-  async getTransferableAmount(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<bigint> {
-    return getTransferableAmount(this._options, this._builderOptions);
+  async getTransferableAmount(
+    this: RouterBuilderCore<
+      TApi,
+      TRes,
+      TSigner,
+      TBuildTransactionsBaseOptions<TApi, TRes, TSigner>
+    >,
+  ): Promise<bigint> {
+    return getTransferableAmount({ ...this._options, api: this._api });
   }
 
   async getMinTransferableAmount(
-    this: RouterBuilderCore<TBuildTransactionsOptions>,
+    this: RouterBuilderCore<
+      TApi,
+      TRes,
+      TSigner,
+      TBuildTransactionsBaseOptions<TApi, TRes, TSigner>
+    >,
   ): Promise<bigint> {
-    return getMinTransferableAmount(this._options, this._builderOptions);
+    return getMinTransferableAmount({ ...this._options, api: this._api });
   }
 
   /**
    * Executes the transfer with the provided parameters.
    *
+   * @returns An array of finalized transaction hashes (hex) in execution order.
    * @throws Error if required parameters are missing.
    */
-  build(this: RouterBuilderCore<TTransferOptions>): Promise<void> {
-    return transfer(this._options, this._builderOptions);
+  signAndSubmit(
+    this: RouterBuilderCore<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
+  ): Promise<string[]> {
+    return transfer({ ...this._options, api: this._api });
   }
 
   /**
    * Builds the transactions for the transfer with the provided parameters.
    */
-  buildTransactions(this: RouterBuilderCore<TBuildTransactionsOptions>) {
-    return buildApiTransactions(this._options, this._builderOptions);
+  build(
+    this: RouterBuilderCore<
+      TApi,
+      TRes,
+      TSigner,
+      TBuildTransactionsBaseOptions<TApi, TRes, TSigner>
+    >,
+  ) {
+    return buildApiTransactions({ ...this._options, api: this._api });
   }
 
-  dryRun(this: RouterBuilderCore<TBuildTransactionsOptions>): Promise<TDryRunResult> {
-    return dryRunRouter(this._options, this._builderOptions);
+  dryRun(
+    this: RouterBuilderCore<
+      TApi,
+      TRes,
+      TSigner,
+      TBuildTransactionsBaseOptions<TApi, TRes, TSigner>
+    >,
+  ): Promise<TDryRunResult> {
+    return dryRunRouter({ ...this._options, api: this._api });
   }
 
-  getBestAmountOut(this: RouterBuilderCore<TGetBestAmountOutOptions>) {
-    return getBestAmountOut(this._options, this._builderOptions);
+  getBestAmountOut(
+    this: RouterBuilderCore<TApi, TRes, TSigner, TGetBestAmountOutBaseOptions<TApi, TRes, TSigner>>,
+  ) {
+    return getBestAmountOut({ ...this._options, api: this._api });
   }
 }
 
-/**
- * Creates a new `RouterBuilder` instance for constructing and executing cross-chain transfers using the XCM Router.
- *
- * @deprecated Use `@paraspell/sdk` with the "swap" extension installed instead.
- *
- * **Example usage:**
- * ```typescript
- * await RouterBuilder(options)
- *   .from('Polkadot')
- *   .exchange('HydrationDex')
- *   .to('Astar')
- *   .currencyFrom({ symbol: 'DOT' })
- *   .currencyTo({ symbol: 'ASTR' })
- *   .amount(1000000n)
- *   .slippagePct('1')
- *   .senderAddress('sender_address')
- *   .recipientAddress('recipient_address')
- *   .signer(yourSigner)
- *   .onStatusChange((status) => {
- *     console.log(status);
- *   })
- *   .build();
- * ```
- *
- * @returns A new `RouterBuilder`.
- */
-export const RouterBuilder = (options?: TRouterBuilderOptions) => new RouterBuilderCore(options);
+export const RouterBuilder = <TApi, TRes, TSigner>(api: IPolkadotApi<TApi, TRes, TSigner>) =>
+  new RouterBuilderCore(api);

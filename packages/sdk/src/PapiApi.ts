@@ -57,6 +57,7 @@ import {
   replaceBigInt,
   resolveChainApi,
   RuntimeApiUnavailableError,
+  SubmitTransactionError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { withLegacy } from '@polkadot-api/legacy-provider'
@@ -325,7 +326,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PapiApi()
+    const api = new PapiApi(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
@@ -347,7 +348,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     if (assetId === undefined)
       return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
 
-    return { isCustomAsset: true, asset: findAssetInfoOrThrow(chain, { id: assetId }, null) }
+    return { isCustomAsset: true, asset: findAssetInfoOrThrow(chain, { id: assetId }) }
   }
 
   async getDryRunCall(
@@ -925,6 +926,29 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
     const { txHash } = await tx.signAndSubmit(signer)
     return txHash
+  }
+
+  async signAndSubmitFinalized(
+    tx: TPapiTransaction,
+    sender: TSender<TPapiSigner>
+  ): Promise<string> {
+    const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
+    return new Promise((resolve, reject) => {
+      tx.signSubmitAndWatch(signer).subscribe({
+        next: event => {
+          if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
+            if (!event.ok) {
+              reject(new SubmitTransactionError(JSON.stringify(event.dispatchError.value)))
+            } else {
+              resolve(event.txHash)
+            }
+          }
+        },
+        error: error => {
+          reject(error instanceof Error ? error : new SubmitTransactionError(String(error)))
+        }
+      })
+    })
   }
 }
 

@@ -1,5 +1,5 @@
-import type { TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk';
-import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
+import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -9,7 +9,13 @@ import Logger from '../Logger/Logger';
 import type { TCommonRouterOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-vi.mock('@paraspell/sdk', async (importActual) => ({
+const mockApi = { getConfig: () => undefined } as unknown as IPolkadotApi<
+  unknown,
+  unknown,
+  unknown
+>;
+
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfo: vi.fn(),
   hasSupportForAsset: vi.fn(),
@@ -33,7 +39,8 @@ const baseOptions = {
   to: 'destDex',
   currencyFrom: { symbol: 'AAA' },
   currencyTo: { symbol: 'BBB' },
-} as unknown as TCommonRouterOptions;
+  api: mockApi,
+} as unknown as TCommonRouterOptions<unknown, unknown, unknown>;
 
 describe('selectBestExchangeCommon', () => {
   const asset1: TAssetInfo = {
@@ -149,13 +156,13 @@ describe('selectBestExchangeCommon', () => {
       ...baseOptions,
       from: undefined,
       exchange: ['AcalaDex'],
-    } as unknown as TCommonRouterOptions;
+    } as TCommonRouterOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
+    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(100n);
@@ -175,14 +182,14 @@ describe('selectBestExchangeCommon', () => {
       ...baseOptions,
       from: 'Acala',
       exchange: ['AcalaDex'],
-    } as unknown as TCommonRouterOptions;
+    } as TCommonRouterOptions<unknown, unknown, unknown>;
 
     vi.mocked(findAssetInfo).mockReturnValue(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as unknown as ExchangeChain;
+    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(100n);

@@ -1,78 +1,73 @@
-import { Builder, isChainEvm } from '@paraspell/sdk';
+import { Builder, isChainEvm } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
 
-export const createToExchangeBuilder = ({
+export const createToExchangeBuilder = <TApi, TRes, TSigner>({
   origin: { chain: from, assetFrom },
   exchange: { baseChain },
-  senderAddress,
+  sender,
   evmSenderAddress,
   amount,
-  builderOptions,
-}: TBuildToExchangeTxOptions) =>
-  Builder(builderOptions)
+  api,
+}: TBuildToExchangeTxOptions<TApi, TRes, TSigner>) =>
+  Builder(api.clone())
     .from(from)
     .to(baseChain)
     .currency({
       location: assetFrom.location,
       amount,
     })
-    .address(senderAddress)
-    .senderAddress(isChainEvm(from) ? (evmSenderAddress as string) : senderAddress);
+    .sender(isChainEvm(from) ? (evmSenderAddress as string) : sender)
+    .recipient(sender);
 
-export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
-  createToExchangeBuilder(options).build();
+export const buildToExchangeExtrinsic = <TApi, TRes, TSigner>(
+  options: TBuildToExchangeTxOptions<TApi, TRes, TSigner>,
+) => createToExchangeBuilder(options).build();
 
-export const getToExchangeFee = <TDisableFallback extends boolean>(
-  options: TBuildToExchangeTxOptions,
+export const getToExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TBuildToExchangeTxOptions<TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ) => createToExchangeBuilder(options).getXcmFee({ disableFallback });
 
-export const createFromExchangeBuilder = ({
-  exchange: { apiPapi, baseChain, assetTo },
+export const createFromExchangeBuilder = <TApi, TRes, TSigner>({
+  exchange: { baseChain, assetTo },
   destination: { chain, address },
   amount,
-  senderAddress,
-  builderOptions,
-}: TBuildFromExchangeTxOptions) =>
-  Builder({
-    ...builderOptions,
-    apiOverrides: {
-      ...builderOptions?.apiOverrides,
-      [baseChain]: apiPapi,
-    },
-  })
+  sender,
+  api,
+}: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>) => {
+  const apiForChain = api.clone();
+  return Builder(apiForChain)
     .from(baseChain)
     .to(chain)
     .currency({
       location: assetTo.location,
       amount,
     })
-    .address(address)
-    .senderAddress(senderAddress);
+    .sender(sender)
+    .recipient(address);
+};
 
-export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
-  createFromExchangeBuilder(options).build();
+export const buildFromExchangeExtrinsic = <TApi, TRes, TSigner>(
+  options: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>,
+) => createFromExchangeBuilder(options).build();
 
-export const getFromExchangeFee = <TDisableFallback extends boolean>(
-  options: TBuildFromExchangeTxOptions,
+export const getFromExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ) => createFromExchangeBuilder(options).getXcmFee({ disableFallback });
 
-export const determineFeeCalcAddress = (
-  senderAddress: string,
-  recipientAddress?: string,
-): string => {
-  if (!ethers.isAddress(senderAddress)) {
+export const determineFeeCalcAddress = (sender: string, recipient?: string): string => {
+  if (!ethers.isAddress(sender)) {
     // Use wallet address for fee calculation
-    return senderAddress;
+    return sender;
   }
 
-  if (recipientAddress && !ethers.isAddress(recipientAddress)) {
+  if (recipient && !ethers.isAddress(recipient)) {
     // Use recipient address for fee calculation
-    return recipientAddress;
+    return recipient;
   }
 
   // If both addresses are ethereum addresses, use fallback address for fee calculation

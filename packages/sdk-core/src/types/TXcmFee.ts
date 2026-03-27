@@ -26,8 +26,8 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   /**
    * The sender address
    */
-  senderAddress: string
-  address: string
+  sender: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   version?: Version
   feeAsset?: TCurrencyInput
@@ -54,16 +54,6 @@ export type TGetXcmFeeInternalOptions<
   useRootOrigin: boolean
 }
 
-export type TGetXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
-  'disableFallback' | 'useRootOrigin' | 'buildTx' | 'version'
->
-
-export type TGetOriginXcmFeeEstimateOptions<TApi, TRes, TSigner> = Omit<
-  TGetXcmFeeInternalOptions<TApi, TRes, TSigner>,
-  'disableFallback' | 'address' | 'useRootOrigin' | 'buildTx' | 'version'
->
-
 export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
@@ -72,7 +62,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
+  sender: string
   currency: WithAmount<TCurrencyCore>
   version?: Version
   feeAsset?: TCurrencyInput
@@ -98,8 +88,8 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   prevChain: TSubstrateChain
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
-  address: string
+  sender: string
+  recipient: string
   currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
   tx: TRes
@@ -183,15 +173,11 @@ export type TDestXcmFeeDetail<TDisableFallback extends boolean> =
 export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
   chain: TChain
   result: TConditionalXcmFeeDetail<TDisableFallback>
-  /** @deprecated - Use `result.isExchange` instead. Will be removed in v13. */
-  isExchange?: boolean
 }
 
 export type TXcmFeeHopInfo = {
   chain: TChain
   result: TXcmFeeDetail
-  /** @deprecated - Use `result.isExchange` instead. Will be removed in v13. */
-  isExchange?: boolean
 }
 
 export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
@@ -200,17 +186,6 @@ export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
   hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]
-}
-
-export type TGetXcmFeeEstimateDetail = {
-  fee: bigint
-  asset: TAssetInfo
-  sufficient?: boolean
-}
-
-export type TGetXcmFeeEstimateResult = {
-  origin: TGetXcmFeeEstimateDetail
-  destination: TGetXcmFeeEstimateDetail
 }
 
 export type TPaymentInfo = {

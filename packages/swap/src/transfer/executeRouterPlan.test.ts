@@ -1,15 +1,23 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import { getBalance, isChainEvm } from '@paraspell/sdk';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
+import { isChainEvm } from '@paraspell/sdk-core';
+import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { TRouterPlan } from '../types';
-import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 
-vi.mock('@paraspell/sdk');
+const mockSignAndSubmitFinalized = vi.fn();
+const mockApi = { signAndSubmitFinalized: mockSignAndSubmitFinalized } as unknown as IPolkadotApi<
+  unknown,
+  unknown,
+  unknown
+>;
 
-vi.mock('../utils/submitTransaction');
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
+  ...(await importActual()),
+  isChainEvm: vi.fn(),
+}));
 
 describe('executeRouterPlan', () => {
   const mockSigner = {} as PolkadotSigner;
@@ -20,10 +28,11 @@ describe('executeRouterPlan', () => {
 
   const baseOptions = {
     signer: mockSigner,
-    senderAddress: mockSenderAddress,
+    sender: mockSenderAddress,
     evmSigner: mockEvmSigner,
     evmSenderAddress: mockEvmSenderAddress,
     onStatusChange: mockOnStatusChange,
+    api: mockApi,
   };
 
   const mockPlan = [
@@ -40,13 +49,11 @@ describe('executeRouterPlan', () => {
       type: 'SWAP',
       chain: 'Unique',
     },
-  ] as TRouterPlan;
+  ] as TRouterPlan<unknown, unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Unique');
-    vi.mocked(submitTransaction).mockResolvedValue({} as TxFinalizedPayload);
-    vi.mocked(getBalance).mockResolvedValue(10000000000n);
   });
 
   test('should execute plan with both EVM and non-EVM transactions', async () => {
@@ -71,9 +78,9 @@ describe('executeRouterPlan', () => {
       routerPlan: mockPlan,
     });
 
-    expect(submitTransaction).toHaveBeenCalledTimes(2);
-    expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockSigner);
-    expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockEvmSigner);
+    expect(mockSignAndSubmitFinalized).toHaveBeenCalledTimes(2);
+    expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(1, 'tx1', mockSigner);
+    expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(2, 'tx2', mockEvmSigner);
   });
 
   test('should handle empty plan gracefully', async () => {
@@ -83,7 +90,7 @@ describe('executeRouterPlan', () => {
       routerPlan: [],
       currentStep: -1,
     });
-    expect(submitTransaction).not.toHaveBeenCalled();
+    expect(mockSignAndSubmitFinalized).not.toHaveBeenCalled();
   });
 
   test('should work without onStatusChange callback', async () => {
@@ -92,20 +99,20 @@ describe('executeRouterPlan', () => {
       destination: 'Moonbeam',
       onStatusChange: undefined,
     });
-    expect(submitTransaction).toHaveBeenCalledTimes(2);
+    expect(mockSignAndSubmitFinalized).toHaveBeenCalledTimes(2);
   });
 
   test('should handle mixed chain types correctly', async () => {
     const mixedPlan = [
       { ...mockPlan[0], chain: 'Ethereum' },
       { ...mockPlan[1], chain: 'Polkadot' },
-    ] as TRouterPlan;
+    ] as TRouterPlan<unknown, unknown>;
 
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Ethereum');
 
     await executeRouterPlan(mixedPlan, { ...baseOptions, destination: 'Moonbeam' });
 
-    expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockEvmSigner);
-    expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockSigner);
+    expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(1, 'tx1', mockEvmSigner);
+    expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(2, 'tx2', mockSigner);
   });
 });

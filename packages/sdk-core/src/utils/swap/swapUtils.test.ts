@@ -2,12 +2,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
-import type { TApiOrUrl, TBuilderOptions, TSendOptionsWithSwap, TSwapOptions } from '../../types'
+import type {
+  TApiOrUrl,
+  TBuilderOptions,
+  TSwapOptions,
+  TTransferOptionsWithSwap
+} from '../../types'
 import * as assertions from '../assertions'
 import * as builder from '../builder'
 import type { TSwapExtension } from './swapRegistry'
 import { registerSwapExtension } from './swapRegistry'
-import { createRouterBuilder, executeWithRouter, normalizeExchange } from './swapUtils'
+import {
+  convertBuilderConfig,
+  createRouterBuilder,
+  executeWithRouter,
+  normalizeExchange
+} from './swapUtils'
 
 vi.mock('../assertions')
 vi.mock('../builder')
@@ -19,9 +29,9 @@ const mockBuilderInstance = {
   currencyFrom: vi.fn().mockReturnThis(),
   currencyTo: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
-  senderAddress: vi.fn().mockReturnThis(),
+  sender: vi.fn().mockReturnThis(),
   evmSenderAddress: vi.fn().mockReturnThis(),
-  recipientAddress: vi.fn().mockReturnThis(),
+  recipient: vi.fn().mockReturnThis(),
   slippagePct: vi.fn().mockReturnThis(),
   onStatusChange: vi.fn().mockReturnThis()
 }
@@ -44,13 +54,13 @@ const createMockApi = (
   }) as unknown as IPolkadotApi<Api, Res, Signer>
 
 const createBaseOptions = (
-  overrides: Partial<TSendOptionsWithSwap<Api, Res, Signer>> = {}
-): TSendOptionsWithSwap<Api, Res, Signer> => ({
+  overrides: Partial<TTransferOptionsWithSwap<Api, Res, Signer>> = {}
+): TTransferOptionsWithSwap<Api, Res, Signer> => ({
   api: createMockApi(),
   from: 'Acala',
   to: 'Astar',
-  address: '5F3sa2TJbN...',
-  senderAddress: '5G7abc...',
+  recipient: '5F3sa2TJbN...',
+  sender: '5G7abc...',
   currency: { symbol: 'DOT', amount: '1000000000' },
   swapOptions: {
     currencyTo: { symbol: 'GLMR' },
@@ -72,20 +82,11 @@ describe('swapUtils', () => {
     it('should throw UnsupportedOperationError when transactOptions.call is set', () => {
       const options = createBaseOptions({
         transactOptions: { call: '0x1234' }
-      } as Partial<TSendOptionsWithSwap<Api, Res, Signer>>)
+      } as Partial<TTransferOptionsWithSwap<Api, Res, Signer>>)
 
       expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
       expect(() => createRouterBuilder(options)).toThrow(
         'Cannot use transact options together with swap options.'
-      )
-    })
-
-    it('should throw UnsupportedOperationError when api type is not PAPI', () => {
-      const options = createBaseOptions({ api: createMockApi('PJS') })
-
-      expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
-      expect(() => createRouterBuilder(options)).toThrow(
-        'Swaps are only supported when using PAPI SDK.'
       )
     })
 
@@ -95,8 +96,8 @@ describe('swapUtils', () => {
       createRouterBuilder(options)
 
       expect(assertions.assertToIsString).toHaveBeenCalledWith(options.to)
-      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.address)
-      expect(assertions.assertSenderAddress).toHaveBeenCalledWith(options.senderAddress)
+      expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.recipient)
+      expect(assertions.assertSender).toHaveBeenCalledWith(options.sender)
     })
 
     it('should throw UnsupportedOperationError when currency is an array', () => {
@@ -104,7 +105,7 @@ describe('swapUtils', () => {
         currency: [
           { symbol: 'DOT', amount: '1000' },
           { symbol: 'GLMR', amount: '2000' }
-        ] as TSendOptionsWithSwap<Api, Res, Signer>['currency']
+        ] as TTransferOptionsWithSwap<Api, Res, Signer>['currency']
       })
 
       expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
@@ -127,9 +128,9 @@ describe('swapUtils', () => {
       })
       expect(mockBuilderInstance.currencyTo).toHaveBeenCalledWith({ symbol: 'GLMR' })
       expect(mockBuilderInstance.amount).toHaveBeenCalledWith('1000000000')
-      expect(mockBuilderInstance.senderAddress).toHaveBeenCalledWith('5G7abc...')
+      expect(mockBuilderInstance.sender).toHaveBeenCalledWith('5G7abc...')
       expect(mockBuilderInstance.evmSenderAddress).toHaveBeenCalledWith(undefined)
-      expect(mockBuilderInstance.recipientAddress).toHaveBeenCalledWith('5F3sa2TJbN...')
+      expect(mockBuilderInstance.recipient).toHaveBeenCalledWith('5F3sa2TJbN...')
       expect(mockBuilderInstance.slippagePct).toHaveBeenCalledWith('1')
       expect(mockBuilderInstance.onStatusChange).not.toHaveBeenCalled()
       expect(result).toBe(mockBuilderInstance)
@@ -167,98 +168,77 @@ describe('swapUtils', () => {
       expect(mockBuilderInstance.slippagePct).toHaveBeenCalledWith('2')
     })
 
-    describe('convertBuilderConfig', () => {
-      it('should pass undefined config to RouterBuilder when api config is undefined', () => {
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', undefined)
-        })
+    it('should pass api to RouterBuilder', () => {
+      const api = createMockApi('PAPI')
+      const options = createBaseOptions({ api })
 
-        createRouterBuilder(options)
+      createRouterBuilder(options)
 
-        expect(MockRouterBuilder).toHaveBeenCalledWith(undefined)
-      })
+      expect(MockRouterBuilder).toHaveBeenCalledWith(api)
+    })
+  })
 
-      it('should strip xcmFormatCheck and pass rest when config is a plain config object', () => {
-        vi.mocked(builder.isConfig).mockReturnValue(true)
+  describe('convertBuilderConfig', () => {
+    it('should return undefined when config is undefined', () => {
+      expect(convertBuilderConfig(undefined)).toBeUndefined()
+    })
 
-        const config = { development: true, xcmFormatCheck: true }
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', config)
-        })
+    it('should strip xcmFormatCheck and pass rest when config is a plain config object', () => {
+      vi.mocked(builder.isConfig).mockReturnValue(true)
 
-        createRouterBuilder(options)
+      const config = { development: true, xcmFormatCheck: true }
+      const result = convertBuilderConfig(config)
 
-        expect(MockRouterBuilder).toHaveBeenCalledWith(
-          expect.objectContaining({ development: true })
-        )
-        // xcmFormatCheck is stripped via Omit at the type level; the spread passes it through at runtime
-        // but the function does not explicitly remove it — the type prevents downstream usage
-      })
+      expect(result).toEqual(expect.objectContaining({ development: true }))
+    })
 
-      it('should pass config with filtered string apiOverrides', () => {
-        vi.mocked(builder.isConfig).mockReturnValue(true)
+    it('should pass config with filtered string apiOverrides', () => {
+      vi.mocked(builder.isConfig).mockReturnValue(true)
 
-        const config = {
-          development: false,
+      const config = {
+        development: false,
+        apiOverrides: { Acala: 'wss://acala.example.com' }
+      }
+      const result = convertBuilderConfig(config)
+
+      expect(result).toEqual(
+        expect.objectContaining({
           apiOverrides: { Acala: 'wss://acala.example.com' }
-        }
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', config)
         })
+      )
+    })
 
-        createRouterBuilder(options)
+    it('should throw when apiOverrides contain non-string object values', () => {
+      vi.mocked(builder.isConfig).mockReturnValue(true)
 
-        expect(MockRouterBuilder).toHaveBeenCalledWith(
-          expect.objectContaining({
-            apiOverrides: { Acala: 'wss://acala.example.com' }
-          })
-        )
-      })
+      const config = {
+        apiOverrides: { Acala: { someClient: true } }
+      }
 
-      it('should throw when apiOverrides contain non-string object values', () => {
-        vi.mocked(builder.isConfig).mockReturnValue(true)
+      expect(() => convertBuilderConfig(config)).toThrow(UnsupportedOperationError)
+      expect(() => convertBuilderConfig(config)).toThrow(
+        'Swap module does not support API client override with non-string values'
+      )
+    })
 
-        const config = {
-          apiOverrides: { Acala: { someClient: true } }
-        }
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', config)
-        })
+    it('should throw when config is not a config object and not a WS URL', () => {
+      vi.mocked(builder.isConfig).mockReturnValue(false)
 
-        expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
-        expect(() => createRouterBuilder(options)).toThrow(
-          'Swap module does not support API client override with non-string values'
-        )
-      })
+      const config = 42
 
-      it('should throw when config is not a config object and not a WS URL', () => {
-        vi.mocked(builder.isConfig).mockReturnValue(false)
+      expect(() => convertBuilderConfig(config)).toThrow(UnsupportedOperationError)
+      expect(() => convertBuilderConfig(config)).toThrow(
+        'Swap module does not support API client override'
+      )
+    })
 
-        const config = 42
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', config)
-        })
+    it('should return rest without apiOverrides when apiOverrides is undefined in config', () => {
+      vi.mocked(builder.isConfig).mockReturnValue(true)
 
-        expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
-        expect(() => createRouterBuilder(options)).toThrow(
-          'Swap module does not support API client override'
-        )
-      })
+      const config = { development: true }
+      const result = convertBuilderConfig(config)
 
-      it('should return rest without apiOverrides when apiOverrides is undefined in config', () => {
-        vi.mocked(builder.isConfig).mockReturnValue(true)
-
-        const config = { development: true }
-        const options = createBaseOptions({
-          api: createMockApi('PAPI', config)
-        })
-
-        createRouterBuilder(options)
-
-        expect(MockRouterBuilder).toHaveBeenCalledWith(
-          expect.objectContaining({ development: true })
-        )
-      })
+      expect(result).toEqual(expect.objectContaining({ development: true }))
     })
 
     it('should throw ExtensionNotInstalledError when swap extension is not registered', async () => {

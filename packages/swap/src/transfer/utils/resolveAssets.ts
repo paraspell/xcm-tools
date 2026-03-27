@@ -3,13 +3,13 @@ import {
   findAssetInfoOrThrow,
   hasSupportForAsset,
   RoutingResolutionError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
-import type { TTransferOptions } from '../../types';
+import type { TTransferBaseOptions } from '../../types';
 
-export const resolveAssets = (
+export const resolveAssets = <TApi, TRes, TSigner>(
   dex: ExchangeChain,
   {
     from,
@@ -17,7 +17,10 @@ export const resolveAssets = (
     currencyFrom,
     currencyTo,
     feeAsset,
-  }: Pick<TTransferOptions, 'from' | 'to' | 'currencyFrom' | 'currencyTo' | 'feeAsset'>,
+  }: Pick<
+    TTransferBaseOptions<TApi, TRes, TSigner>,
+    'from' | 'to' | 'currencyFrom' | 'currencyTo' | 'feeAsset'
+  >,
 ) => {
   const originSpecified = from && from !== dex.chain;
   const destinationSpecified = to && to !== dex.chain;
@@ -38,7 +41,7 @@ export const resolveAssets = (
       : getExchangeAsset(dex.exchangeChain, currencyFrom);
 
   if (!assetFromExchange) {
-    if (!originSpecified && findAssetInfo(dex.chain, currencyFrom, null)) {
+    if (!originSpecified && findAssetInfo(dex.chain, currencyFrom)) {
       throw new RoutingResolutionError(
         `Currency from ${JSON.stringify(currencyFrom)} exists in ${dex.chain} but is not swappable on ${dex.exchangeChain}.`,
       );

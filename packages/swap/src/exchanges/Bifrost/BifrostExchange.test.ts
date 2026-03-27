@@ -1,7 +1,8 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import { AmountTooLowError, getBalance, getParaId } from '@paraspell/sdk';
+import { getBalance } from '@paraspell/sdk';
+import { AmountTooLowError, getParaId } from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,10 +15,14 @@ vi.mock('@paraspell/sdk', async () => {
   const actualModule = await vi.importActual('@paraspell/sdk');
   return {
     ...actualModule,
-    getParaId: vi.fn(),
     getBalance: vi.fn(),
   };
 });
+
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
+  getParaId: vi.fn(),
+}));
 
 vi.mock('./utils');
 
@@ -78,9 +83,9 @@ describe('BifrostExchange', () => {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
-      senderAddress: '5xxxxxx',
+      sender: '5xxxxxx',
       slippagePct: '0.5',
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
     const mockToDestTransactionFee = 1000n;
 
     beforeEach(() => {
@@ -205,7 +210,7 @@ describe('BifrostExchange', () => {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);

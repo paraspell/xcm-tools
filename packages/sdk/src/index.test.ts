@@ -12,7 +12,6 @@ describe('Index Exports', () => {
           'getParaEthTransferFees',
           'assets',
           'getBalance',
-          'claimAssets',
           'Builder',
           'GeneralBuilder',
           'EvmBuilder',
@@ -45,7 +44,6 @@ describe('Index Exports', () => {
 
   it('should export asset related functions', () => {
     expect(moduleExports.getBalance).toBeDefined()
-    expect(moduleExports.claimAssets).toBeDefined()
   })
 
   it('should export builder classes', () => {

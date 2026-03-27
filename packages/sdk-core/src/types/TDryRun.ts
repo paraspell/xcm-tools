@@ -20,8 +20,7 @@ export type TDryRunBaseOptions<TRes> = {
   tx: TRes
   origin: TSubstrateChain
   destination: TChain
-  senderAddress: string
-  address: string
+  sender: string
   currency: TCurrencyInputWithAmount
   version?: Version
   feeAsset?: TCurrencyInput
@@ -52,7 +51,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    */
   destination: TDestination
   /**
-   * The address to dry-run with (senderAddress)
+   * The address to dry-run with
    */
   address: string
   /**
@@ -139,8 +138,6 @@ export type TDryRunChainResult = TDryRunChainSuccess | TDryRunChainFailure
 export type THopInfo = {
   chain: TChain
   result: TDryRunChainResult
-  /** @deprecated Use `result.isExchange` instead. Will be removed in v13. */
-  isExchange?: boolean
 }
 
 export type TChainEndpoint = 'origin' | 'destination' | TChain

@@ -1,17 +1,19 @@
-import type { TAssetInfo, TDryRunResult } from '@paraspell/sdk';
-import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk';
+import type { IPolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core';
+import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } from '../types';
+
+const mockApi = { clone: () => mockApi } as unknown as IPolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { dryRunRouter } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-core', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-core');
   return {
     ...actual,
     dryRun: vi.fn(),
@@ -49,39 +51,52 @@ const createInitialOptions = () =>
     currencyFrom: { symbol: 'ACA' },
     currencyTo: { symbol: 'AUSD' },
     amount: '1000',
-    senderAddress: 'sender',
-    recipientAddress: 'recipient',
+    sender: 'sender',
+    recipient: 'recipient',
     slippagePct: '0.5',
     evmSenderAddress: '0xSender',
-  }) as TBuildTransactionsOptions;
+  }) as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
 const createOptions = (
-  overrides: Partial<TTransformedOptions<TBuildTransactionsOptions>> = {},
-): TTransformedOptions<TBuildTransactionsOptions> => ({
+  overrides: Partial<
+    TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >
+  > = {},
+): TTransformedOptions<
+  TBuildTransactionsOptions<unknown, unknown, unknown>,
+  unknown,
+  unknown,
+  unknown
+> => ({
   ...createInitialOptions(),
   feeCalcAddress: 'sender',
-  builderOptions: undefined,
   origin: undefined,
   destination: undefined,
   exchange: {
     baseChain: 'Acala',
     exchangeChain: 'AcalaDex',
-    api: {} as ApiPromise,
+    apiPjs: {} as ApiPromise,
     apiPapi: {} as PolkadotClient,
+    api: {} as IPolkadotApi<unknown, unknown, unknown>,
     assetFrom: acaAsset,
     assetTo: ausdAsset,
   },
   amount: 1000n,
+  api: mockApi,
   ...overrides,
 });
 
-const createTransaction = (chain: string): TTransaction =>
+const createTransaction = (chain: string): TTransaction<unknown, unknown> =>
   ({
     api: {} as PolkadotClient,
     chain,
     tx: {},
     type: 'TRANSFER',
-  }) as TTransaction;
+  }) as TTransaction<unknown, unknown>;
 
 const createDryRunResult = (overrides: Partial<TDryRunResult> = {}): TDryRunResult =>
   ({
@@ -92,7 +107,12 @@ const createDryRunResult = (overrides: Partial<TDryRunResult> = {}): TDryRunResu
   }) as TDryRunResult;
 
 const resolvePrepareOptions = (
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<unknown, unknown, unknown>,
+    unknown,
+    unknown,
+    unknown
+  >,
   dexChain: string,
 ) =>
   vi.mocked(prepareTransformedOptions).mockResolvedValue({
@@ -112,14 +132,15 @@ describe('dryRunRouter', () => {
       exchange: {
         baseChain: 'Acala',
         exchangeChain: 'AcalaDex',
-        api: {} as ApiPromise,
+        apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
+        api: {} as IPolkadotApi<unknown, unknown, unknown>,
         assetFrom: acaAsset,
         assetTo: ausdAsset,
       },
     });
 
-    const routerPlan: [TTransaction] = [createTransaction('Acala')];
+    const routerPlan: [TTransaction<unknown, unknown>] = [createTransaction('Acala')];
     const dryRunResult = createDryRunResult({
       hops: [
         { chain: 'Acala', result: {} },
@@ -132,22 +153,21 @@ describe('dryRunRouter', () => {
     vi.mocked(dryRun).mockResolvedValue(dryRunResult);
 
     const initialOptions = createInitialOptions();
-    const result = await dryRunRouter(initialOptions);
+    const result = await dryRunRouter({ ...initialOptions, api: mockApi });
 
-    expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
+    expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(dryRun).toHaveBeenCalledTimes(1);
     expect(dryRun).toHaveBeenCalledWith(
       expect.objectContaining({
         destination: 'Acala',
-        senderAddress: '0xSender',
-        address: 'recipient',
+        sender: '0xSender',
         currency: expect.objectContaining({ amount: 1000n }),
       }),
     );
     expect(result.origin.isExchange).toBe(true);
     expect(result.destination?.isExchange).toBe(true);
-    expect(result.hops.find((hop) => hop.chain === 'Acala')?.isExchange).toBe(true);
-    expect(result.hops.find((hop) => hop.chain === 'Moonbeam')?.isExchange).toBeFalsy();
+    expect(result.hops.find((hop) => hop.chain === 'Acala')?.result.isExchange).toBe(true);
+    expect(result.hops.find((hop) => hop.chain === 'Moonbeam')?.result.isExchange).toBeFalsy();
   });
 
   it('propagates bypass options to the second transaction when the first dry run succeeds', async () => {
@@ -168,8 +188,9 @@ describe('dryRunRouter', () => {
       exchange: {
         baseChain: 'Hydration',
         exchangeChain: 'HydrationDex',
-        api: {} as ApiPromise,
+        apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
+        api: {} as IPolkadotApi<unknown, unknown, unknown>,
         assetFrom: ausdAsset,
         assetTo: acaAsset,
       },
@@ -200,7 +221,7 @@ describe('dryRunRouter', () => {
       .mockReturnValueOnce({ failureReason: undefined })
       .mockReturnValueOnce({ failureReason: undefined });
 
-    await dryRunRouter(createInitialOptions());
+    await dryRunRouter({ ...createInitialOptions(), api: mockApi });
 
     expect(dryRun).toHaveBeenCalledTimes(2);
 
@@ -226,7 +247,7 @@ describe('dryRunRouter', () => {
       createTransaction('Astar'),
     ]);
 
-    await expect(dryRunRouter(createInitialOptions())).rejects.toBeInstanceOf(
+    await expect(dryRunRouter({ ...createInitialOptions(), api: mockApi })).rejects.toBeInstanceOf(
       UnsupportedOperationError,
     );
 

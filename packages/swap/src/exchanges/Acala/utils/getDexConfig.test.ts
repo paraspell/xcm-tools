@@ -42,7 +42,8 @@ vi.mock('@acala-network/sdk-swap', () => {
   return { AcalaDex: AcalaDexMock, AggregateDex: AggregateDexMock };
 });
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
   findAssetInfoById: vi.fn(() => ({
     symbol: 'DOT',
     assetId: '1',
@@ -66,7 +67,6 @@ vi.mock('@paraspell/sdk', () => ({
       location: { parents: 1, interior: 'Here' },
     },
   ]),
-  RoutingResolutionError: class extends Error {},
 }));
 
 vi.mock('rxjs', () => {

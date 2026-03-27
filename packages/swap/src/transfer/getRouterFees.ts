@@ -1,23 +1,24 @@
-import type { TAssetInfo, TCurrencyCore, TGetXcmFeeResult, WithAmount } from '@paraspell/sdk';
+import type { TAssetInfo, TCurrencyCore, TGetXcmFeeResult, WithAmount } from '@paraspell/sdk-core';
 import {
   applyDecimalAbstraction,
   DryRunFailedError,
   getXcmFee,
   handleSwapExecuteTransfer,
   RoutingResolutionError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { getSwapFee } from './fees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
-export const getRouterFees = async <TDisableFallback extends boolean>(
+export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ): Promise<TGetXcmFeeResult> => {
   const {
+    api,
     origin,
     exchange,
     currencyFrom,
@@ -25,10 +26,9 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
     feeAsset,
     destination,
     amount,
-    recipientAddress,
+    sender,
+    recipient,
     evmSenderAddress,
-    senderAddress,
-    builderOptions,
   } = options;
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
@@ -38,7 +38,7 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
           overrideAmount !== undefined
             ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true)
             : amount;
-        const amountOut = await dex.getAmountOut(exchange.api, {
+        const amountOut = await dex.getAmountOut(exchange.apiPjs, {
           ...options,
           amount: amt,
           papiApi: exchange.apiPapi,
@@ -46,37 +46,35 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
           assetTo: exchange.assetTo,
         });
 
-        const tx = await handleSwapExecuteTransfer(
-          {
-            chain: origin?.chain,
-            exchangeChain: exchange.baseChain,
-            destChain: destination?.chain,
-            assetInfoFrom: {
-              ...(origin?.assetFrom ?? exchange.assetFrom),
-              amount: BigInt(amt),
-            } as WithAmount<TAssetInfo>,
-            assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
-            currencyTo,
-            feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
-            senderAddress: evmSenderAddress ?? senderAddress,
-            recipientAddress: recipientAddress ?? senderAddress,
-            calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-              dex.getAmountOut(exchange.api, {
-                ...options,
-                amount: amountIn,
-                papiApi: options.exchange.apiPapi,
-                assetFrom: options.exchange.assetFrom,
-                assetTo: assetTo ?? options.exchange.assetTo,
-                slippagePct: '1',
-              }),
-          },
-          builderOptions,
-        );
+        const tx = await handleSwapExecuteTransfer({
+          api,
+          chain: origin?.chain,
+          exchangeChain: exchange.baseChain,
+          destChain: destination?.chain,
+          assetInfoFrom: {
+            ...(origin?.assetFrom ?? exchange.assetFrom),
+            amount: BigInt(amt),
+          } as WithAmount<TAssetInfo>,
+          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+          currencyTo,
+          feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
+          sender: evmSenderAddress ?? sender,
+          recipient: recipient ?? sender,
+          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
+            dex.getAmountOut(exchange.apiPjs, {
+              ...options,
+              amount: amountIn,
+              papiApi: options.exchange.apiPapi,
+              assetFrom: options.exchange.assetFrom,
+              assetTo: assetTo ?? options.exchange.assetTo,
+              slippagePct: '1',
+            }),
+        });
 
         return tx;
       };
 
-      const mainAmountOut = await dex.getAmountOut(exchange.api, {
+      const mainAmountOut = await dex.getAmountOut(exchange.apiPjs, {
         ...options,
         amount,
         papiApi: exchange.apiPapi,
@@ -84,24 +82,22 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
         assetTo: exchange.assetTo,
       });
 
-      const executeResult = await getXcmFee(
-        {
-          buildTx,
-          origin: origin?.chain ?? exchange.baseChain,
-          destination: destination?.chain ?? exchange.baseChain,
-          senderAddress: evmSenderAddress ?? senderAddress,
-          address: recipientAddress ?? senderAddress,
-          currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
-          feeAsset,
-          disableFallback,
-          swapConfig: {
-            currencyTo: currencyTo as TCurrencyCore,
-            exchangeChain: exchange.baseChain,
-            amountOut: mainAmountOut,
-          },
+      const executeResult = await getXcmFee({
+        api,
+        buildTx,
+        origin: origin?.chain ?? exchange.baseChain,
+        destination: destination?.chain ?? exchange.baseChain,
+        sender: evmSenderAddress ?? sender,
+        recipient: recipient ?? sender,
+        currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
+        feeAsset,
+        disableFallback,
+        swapConfig: {
+          currencyTo: currencyTo as TCurrencyCore,
+          exchangeChain: exchange.baseChain,
+          amountOut: mainAmountOut,
         },
-        builderOptions,
-      );
+      });
 
       if (executeResult.failureReason === 'NoDeal' && exchange.exchangeChain === 'HydrationDex') {
         throw new RoutingResolutionError(
@@ -112,8 +108,11 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
       const transformedHops = executeResult.hops.map((hop) => {
         if (hop.chain === exchange.baseChain) {
           return {
-            ...hop,
-            isExchange: true,
+            chain: hop.chain,
+            result: {
+              ...hop.result,
+              isExchange: true,
+            },
           };
         }
         return hop;
@@ -162,8 +161,8 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
             exchange,
             destination,
             amount: amountOut,
-            senderAddress,
-            builderOptions,
+            sender,
+            api,
           },
           disableFallback,
         )
@@ -183,7 +182,6 @@ export const getRouterFees = async <TDisableFallback extends boolean>(
               fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),
               isExchange: true,
             },
-            isExchange: true,
           },
         ]
       : []),

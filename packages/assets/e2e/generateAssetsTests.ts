@@ -1,13 +1,10 @@
 import {
-  getAssetDecimals,
-  getAssetId,
   getAssets,
   getAssetsObject,
   getNativeAssets,
   getNativeAssetSymbol,
   getOtherAssets,
   getRelayChainSymbol,
-  hasSupportForAsset,
   isChainEvm
 } from '../src'
 import { CHAINS, isExternalChain, TChain } from '@paraspell/sdk-common'
@@ -59,29 +56,12 @@ export const generateAssetsTests = () => {
             expect(asset).toHaveProperty('existentialDeposit')
           })
         })
-
-        it('should support its native asset via hasSupportForAsset', () => {
-          const nativeSymbol = assetsObj.nativeAssetSymbol
-          if (nativeSymbol && chain !== 'BifrostPaseo') {
-            expect(hasSupportForAsset(chain, nativeSymbol)).toBe(true)
-          }
-        })
       })
 
       describe('isChainEvm', () => {
         it('should return boolean value', () => {
           const value = isChainEvm(chain)
           expect(value).toBeTypeOf('boolean')
-        })
-      })
-
-      describe('getAssetId', () => {
-        it('should return string value for every foreign asset', () => {
-          const assets = getOtherAssets(chain)
-          assets.forEach(asset => {
-            const assetId = getAssetId(chain, asset.symbol)
-            if (assetId !== null) expect(assetId).toBeTypeOf('string')
-          })
         })
       })
 
@@ -160,41 +140,6 @@ export const generateAssetsTests = () => {
               }
             })
           }
-        })
-
-        describe('hasSupportForAsset', () => {
-          it('should return boolean value', () => {
-            const symbol = getNativeAssetSymbol(chain)
-            const value = hasSupportForAsset(chain, symbol)
-            expect(value).toBeTypeOf('boolean')
-          })
-
-          it('should return true for native asset', () => {
-            const symbol = getNativeAssetSymbol(chain)
-            const value = hasSupportForAsset(chain, symbol)
-            if (chain !== 'BifrostPaseo') {
-              expect(value).toBe(true)
-            }
-          })
-
-          it('should return true for non-native asset', () => {
-            const otherAssets = getOtherAssets(chain)
-            otherAssets.forEach(asset => {
-              const value = hasSupportForAsset(chain, asset.symbol)
-              expect(value).toBe(true)
-            })
-          })
-        })
-
-        describe('getAssetDecimals', () => {
-          it('should return valid decimals for all available assets', () => {
-            const assets = getAssets(chain)
-            assets.forEach(asset => {
-              const decimals = getAssetDecimals(chain, asset.symbol)
-              expect(decimals).toBeTypeOf('number')
-              expect(decimals).toBeGreaterThanOrEqual(0)
-            })
-          })
         })
 
         describe('hasDryRunSupport', () => {

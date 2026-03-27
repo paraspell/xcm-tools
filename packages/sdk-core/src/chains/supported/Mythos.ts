@@ -12,7 +12,7 @@ import {
   type TSerializedExtrinsics
 } from '../../types'
 import { createVersionedDestination } from '../../utils'
-import { assertAddressIsString, assertHasId, assertSenderAddress } from '../../utils/assertions'
+import { assertAddressIsString, assertHasId, assertSender } from '../../utils/assertions'
 import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
@@ -26,20 +26,20 @@ export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   version: Version
 ): Promise<TSerializedExtrinsics> => {
-  const { api, assetInfo: asset, senderAddress, address } = options
+  const { api, assetInfo: asset, sender, recipient } = options
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol }, null)
+  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
 
   assertHasId(ethAsset)
-  assertAddressIsString(address)
-  assertSenderAddress(senderAddress)
+  assertAddressIsString(recipient)
+  assertSender(sender)
 
   const messageId = await generateMessageId(
     api,
-    senderAddress,
+    sender,
     getParaId(chain),
     ethAsset.assetId,
-    address,
+    recipient,
     asset.amount
   )
 

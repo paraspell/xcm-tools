@@ -1,21 +1,27 @@
-import type { TPapiApi } from '@paraspell/sdk';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { Binary } from 'polkadot-api';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 
-export const convertTxToPapi = async (tx: Extrinsic, papiApi: TPapiApi) => {
-  const pjsHex = tx.toHex();
+import type { TExtrinsic } from '../../types';
+import { isPjsExtrinsic } from '../../utils';
 
-  const stripHeaderBytes = (hex: string, byteCount: number) => '0x' + hex.slice(2 + byteCount * 2);
+const stripHeaderBytes = (hex: string, byteCount: number) => '0x' + hex.slice(2 + byteCount * 2);
 
-  const tryTxFromCallData = (hex: string) =>
-    papiApi.getUnsafeApi().txFromCallData(Binary.fromHex(hex));
+export const convertTxToTarget = async <TApi, TRes, TSigner>(
+  tx: TExtrinsic,
+  api: IPolkadotApi<TApi, TRes, TSigner>,
+): Promise<TRes> => {
+  const isPjsTx = isPjsExtrinsic(tx);
 
-  try {
-    const hex2 = stripHeaderBytes(pjsHex, 2);
-    return await tryTxFromCallData(hex2);
-  } catch (_err) {
-    const hex3 = stripHeaderBytes(pjsHex, 3);
-    // let any further error bubble up
-    return await tryTxFromCallData(hex3);
+  const hex = isPjsTx ? tx.toHex() : (await tx.getEncodedData()).asHex();
+
+  if (isPjsTx && api.getType() === 'PAPI') {
+    try {
+      const hex2 = stripHeaderBytes(hex, 2);
+      return await api.txFromHex(hex2);
+    } catch (_err) {
+      const hex3 = stripHeaderBytes(hex, 3);
+      return await api.txFromHex(hex3);
+    }
   }
+
+  return api.txFromHex(hex);
 };

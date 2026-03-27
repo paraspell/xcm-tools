@@ -1,4 +1,4 @@
-import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk';
+import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 
 export const validateDestinationAddress = (address: string, destination: TChain) => {

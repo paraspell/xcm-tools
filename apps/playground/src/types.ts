@@ -91,14 +91,6 @@ export type TSubmitType =
 
 export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
 
-export type TRouterSubmitType =
-  | 'default'
-  | 'getBestAmountOut'
-  | 'getXcmFee'
-  | 'getMinTransferableAmount'
-  | 'getTransferableAmount'
-  | 'dryRun';
-
 export type TEndpoint = {
   url: string;
 };
@@ -168,7 +160,7 @@ export type TFormValues = {
   to: TChain;
   currencies: TCurrencyEntry[];
   feeAsset: TCurrencyEntryBase;
-  address: string;
+  recipient: string;
   ahAddress: string;
   useApi: boolean;
   keepAlive: boolean;

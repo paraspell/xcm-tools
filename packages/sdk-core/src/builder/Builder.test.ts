@@ -12,18 +12,14 @@ import {
   claimAssets,
   getMinTransferableAmount,
   getOriginXcmFee,
-  getOriginXcmFeeEstimate,
   getTransferableAmount,
   getTransferableAmountInternal,
   getTransferInfo,
   getXcmFee,
-  getXcmFeeEstimate,
   verifyEdOnDestination
 } from '../transfer'
 import type {
   TDryRunResult,
-  TGetXcmFeeEstimateDetail,
-  TGetXcmFeeEstimateResult,
   TGetXcmFeeResult,
   TTransactionContext,
   TTransferInfo,
@@ -32,12 +28,13 @@ import type {
 import {
   assertAddressIsString,
   assertSender,
-  assertSenderAddress,
+  assertSenderSource,
   assertToIsString,
   createTransferOrSwap,
   createTransferOrSwapAll,
   executeWithRouter,
-  isConfig
+  isConfig,
+  isSenderSigner
 } from '../utils'
 import { buildDryRun } from './buildDryRun'
 import { Builder } from './Builder'
@@ -96,14 +93,14 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
-      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(CURRENCY).recipient(ADDRESS).build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2
         })
       )
@@ -119,7 +116,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(derivationPath)
+        .recipient(derivationPath)
         .build()
 
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
@@ -128,7 +125,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: resolvedAddress,
+          recipient: resolvedAddress,
           to: CHAIN_2
         })
       )
@@ -139,7 +136,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -147,7 +144,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2
         })
       )
@@ -159,7 +156,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -167,7 +164,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2,
           paraIdTo: PARA_ID_TO
         })
@@ -180,7 +177,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .ahAddress(ASSET_HUB_ADDRESS)
         .build()
 
@@ -189,7 +186,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           ahAddress: ASSET_HUB_ADDRESS,
           to: CHAIN_2,
           paraIdTo: PARA_ID_TO
@@ -206,7 +203,7 @@ describe('Builder', () => {
           id: ASSET_ID,
           amount: AMOUNT
         })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -217,7 +214,7 @@ describe('Builder', () => {
             id: ASSET_ID,
             amount: AMOUNT
           },
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2,
           paraIdTo: PARA_ID_TO
         })
@@ -231,7 +228,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2, PARA_ID_TO)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .xcmVersion(version)
         .build()
 
@@ -240,7 +237,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2,
           paraIdTo: PARA_ID_TO,
           version
@@ -253,7 +250,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency({ id: CURRENCY_ID, amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -261,7 +258,7 @@ describe('Builder', () => {
           api: mockApi,
           from: CHAIN,
           currency: { id: CURRENCY_ID, amount: AMOUNT },
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2
         })
       )
@@ -273,14 +270,14 @@ describe('Builder', () => {
         { symbol: 'USDT', amount: 10000 }
       ]
 
-      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).recipient(ADDRESS).build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
           currency,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2
         })
       )
@@ -326,14 +323,14 @@ describe('Builder', () => {
         }
       ]
 
-      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).address(ADDRESS).build()
+      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).recipient(ADDRESS).build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,
           currency,
-          address: ADDRESS,
+          recipient: ADDRESS,
           to: CHAIN_2
         })
       )
@@ -346,7 +343,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -358,7 +355,7 @@ describe('Builder', () => {
             symbol: currency,
             amount: AMOUNT
           },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
     })
@@ -368,7 +365,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -380,7 +377,7 @@ describe('Builder', () => {
             symbol: getRelayChainSymbol(CHAIN),
             amount: AMOUNT
           },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
       expect(tx).toEqual(mockExtrinsic)
@@ -393,7 +390,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -405,7 +402,7 @@ describe('Builder', () => {
             symbol: currency,
             amount: AMOUNT
           },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
     })
@@ -425,7 +422,7 @@ describe('Builder', () => {
         .to('Polkadot')
         .currency(currency)
         .feeAsset(feeAsset)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -435,7 +432,7 @@ describe('Builder', () => {
           to: 'Polkadot',
           currency,
           feeAsset,
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
     })
@@ -448,7 +445,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .xcmVersion(version)
         .build()
 
@@ -461,7 +458,7 @@ describe('Builder', () => {
             symbol: currency,
             amount: AMOUNT
           },
-          address: ADDRESS,
+          recipient: ADDRESS,
           version
         })
       )
@@ -483,7 +480,7 @@ describe('Builder', () => {
         .to('Polkadot')
         .currency(currency)
         .feeAsset(feeAsset)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .xcmVersion(version)
         .build()
 
@@ -494,7 +491,7 @@ describe('Builder', () => {
           to: 'Polkadot',
           currency,
           feeAsset,
-          address: ADDRESS,
+          recipient: ADDRESS,
           version
         })
       )
@@ -505,7 +502,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledTimes(1)
@@ -516,12 +513,12 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .buildBatch()
 
@@ -534,7 +531,7 @@ describe('Builder', () => {
             symbol: getRelayChainSymbol(CHAIN),
             amount: AMOUNT
           },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
 
@@ -546,7 +543,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .buildBatch()
 
@@ -556,7 +553,7 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
     })
@@ -566,12 +563,12 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .buildBatch()
 
@@ -581,7 +578,7 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
 
@@ -594,12 +591,12 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency(CURRENCY)
-          .address(ADDRESS)
+          .recipient(ADDRESS)
           .addToBatch()
           .from(CHAIN)
           .to(CHAIN_2)
           .currency(CURRENCY)
-          .address(ADDRESS)
+          .recipient(ADDRESS)
           .build()
       ).rejects.toThrow(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
@@ -611,7 +608,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -620,7 +617,7 @@ describe('Builder', () => {
           from: 'Polkadot',
           to: CHAIN,
           currency: { symbol: 'DOT', amount: AMOUNT },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
     })
@@ -630,7 +627,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledWith(
@@ -639,7 +636,7 @@ describe('Builder', () => {
           from: 'Polkadot',
           to: CHAIN,
           currency: { symbol: 'DOT', amount: AMOUNT },
-          address: ADDRESS,
+          recipient: ADDRESS,
           paraIdTo: PARA_ID_TO
         })
       )
@@ -652,7 +649,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .xcmVersion(version)
         .build()
 
@@ -662,7 +659,7 @@ describe('Builder', () => {
           from: 'Polkadot',
           to: CHAIN,
           currency: { symbol: 'DOT', amount: AMOUNT },
-          address: ADDRESS,
+          recipient: ADDRESS,
           paraIdTo: PARA_ID_TO,
           version
         })
@@ -676,7 +673,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .xcmVersion(version)
         .build()
 
@@ -686,7 +683,7 @@ describe('Builder', () => {
           from: 'Polkadot',
           to: CHAIN,
           currency: { symbol: 'DOT', amount: AMOUNT },
-          address: ADDRESS,
+          recipient: ADDRESS,
           paraIdTo: PARA_ID_TO,
           version
         })
@@ -698,7 +695,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .build()
 
       expect(createTransferOrSwap).toHaveBeenCalledTimes(1)
@@ -709,12 +706,12 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .from('Polkadot')
         .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .addToBatch()
         .buildBatch()
 
@@ -724,7 +721,7 @@ describe('Builder', () => {
           from: 'Polkadot',
           to: CHAIN_2,
           currency: { symbol: 'DOT', amount: AMOUNT },
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
 
@@ -739,7 +736,7 @@ describe('Builder', () => {
         .from('Polkadot')
         .to(CHAIN_2)
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
 
       const tx = await builder.build()
       expect(tx).toBeDefined()
@@ -823,8 +820,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
         .dryRun()
 
       expect(result).toEqual({
@@ -865,8 +862,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
         .dryRunPreview({ mintFeeAssets: true })
 
       expect(result).toEqual(mockDryRunResult)
@@ -894,8 +891,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
         .swap(SWAP_OPTIONS)
         .dryRun()
 
@@ -921,8 +918,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .getXcmFee()
 
       expect(result).toEqual({})
@@ -939,8 +936,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
         .swap(SWAP_OPTIONS)
         .getXcmFee()
 
@@ -965,55 +962,12 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .getOriginXcmFee()
 
       expect(result).toEqual({})
       expect(getOriginXcmFee).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
-      expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    })
-
-    it('should fetch XCM fee estimate', async () => {
-      vi.mocked(getXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateResult)
-
-      const SENDER = 'sender-address'
-
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-      const result = await Builder(mockApi)
-        .from(CHAIN)
-        .to(CHAIN_2)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
-        .getXcmFeeEstimate()
-
-      expect(result).toEqual({})
-      expect(getXcmFeeEstimate).toHaveBeenCalledTimes(1)
-      expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
-      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    })
-
-    it('should fetch origin XCM fee estimate', async () => {
-      vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({} as TGetXcmFeeEstimateDetail)
-
-      const SENDER = 'sender-address'
-
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-      const result = await Builder(mockApi)
-        .from(CHAIN)
-        .to(CHAIN_2)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
-        .getOriginXcmFeeEstimate()
-
-      expect(result).toEqual({})
-      expect(getOriginXcmFeeEstimate).toHaveBeenCalledTimes(1)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
       expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
@@ -1029,8 +983,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .getTransferableAmount()
 
       expect(result).toEqual(amount)
@@ -1048,8 +1002,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .getMinTransferableAmount()
 
       expect(result).toEqual(amount)
@@ -1067,8 +1021,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .verifyEdOnDestination()
 
       expect(result).toEqual(mockResult)
@@ -1086,8 +1040,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .getTransferInfo()
 
       expect(result).toEqual({})
@@ -1101,8 +1055,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER_ADDRESS)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
 
       const receivedAmount = 123n
 
@@ -1135,8 +1089,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .getXcmFee()
 
         expect(result).toBe(feeResult)
@@ -1160,8 +1114,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .getOriginXcmFee()
 
         expect(result).toBe(feeDetail)
@@ -1177,56 +1131,6 @@ describe('Builder', () => {
         )
       })
 
-      it('normalizes the amount for getXcmFeeEstimate', async () => {
-        const feeEstimate = {} as TGetXcmFeeEstimateResult
-        vi.mocked(getXcmFeeEstimate).mockResolvedValue(feeEstimate)
-
-        const result = await Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getXcmFeeEstimate()
-
-        expect(result).toBe(feeEstimate)
-        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: MIN_AMOUNT })
-          })
-        )
-        expect(getXcmFeeEstimate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
-          })
-        )
-      })
-
-      it('normalizes the amount for getOriginXcmFeeEstimate', async () => {
-        const originFeeEstimate = {} as TGetXcmFeeEstimateDetail
-        vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue(originFeeEstimate)
-
-        const result = await Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
-          .getOriginXcmFeeEstimate()
-
-        expect(result).toBe(originFeeEstimate)
-        expect(getTransferableAmountInternal).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: MIN_AMOUNT })
-          })
-        )
-        expect(getOriginXcmFeeEstimate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            currency: expect.objectContaining({ amount: NORMALIZED_AMOUNT })
-          })
-        )
-      })
-
       it('normalizes the amount for getTransferableAmount', async () => {
         const transferableAmount = 321n
         vi.mocked(getTransferableAmount).mockResolvedValue(transferableAmount)
@@ -1235,8 +1139,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .getTransferableAmount()
 
         expect(result).toBe(transferableAmount)
@@ -1260,8 +1164,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .getMinTransferableAmount()
 
         expect(result).toBe(minTransferable)
@@ -1284,8 +1188,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .verifyEdOnDestination()
 
         expect(getTransferableAmountInternal).toHaveBeenCalledWith(
@@ -1308,8 +1212,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency({ ...CURRENCY, amount: AMOUNT_ALL })
-          .address(ADDRESS)
-          .senderAddress(SENDER_ADDRESS)
+          .recipient(ADDRESS)
+          .sender(SENDER_ADDRESS)
           .getTransferInfo()
 
         expect(result).toBe(transferInfo)
@@ -1352,8 +1256,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         ['buildInternal']()
 
       expect(buildDryRun).not.toHaveBeenCalled()
@@ -1366,8 +1270,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .build()
 
       expect(spy).toHaveBeenCalled()
@@ -1384,8 +1288,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .build()
 
       expect(buildDryRun).toHaveBeenCalledTimes(1)
@@ -1396,14 +1300,14 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS,
-          senderAddress: SENDER
+          recipient: ADDRESS,
+          sender: SENDER
         }),
         {
           sentAssetMintMode: 'bypass'
         }
       )
-      expect(assertSenderAddress).toHaveBeenCalledWith(SENDER)
+      expect(assertSender).toHaveBeenCalledWith(SENDER)
     })
 
     it('should throw DryRunFailedError when dryRun reports a failure', async () => {
@@ -1422,8 +1326,8 @@ describe('Builder', () => {
           .from(CHAIN)
           .to(CHAIN_2)
           .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress(SENDER)
+          .recipient(ADDRESS)
+          .sender(SENDER)
           .build()
       ).rejects.toBeInstanceOf(DryRunFailedError)
     })
@@ -1435,8 +1339,8 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(SENDER)
+        .recipient(ADDRESS)
+        .sender(SENDER)
         .build()
 
       expect(buildDryRun).not.toHaveBeenCalled()
@@ -1448,7 +1352,7 @@ describe('Builder', () => {
       vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
     })
 
-    it('should sign and submit transaction when senderAddress is a derivation path', async () => {
+    it('should sign and submit transaction when sender is a derivation path', async () => {
       const derivationPath = '//Alice'
       const mockTxHash = '0x1234567890abcdef'
 
@@ -1459,14 +1363,61 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
-        .senderAddress(derivationPath)
+        .sender(derivationPath)
+        .recipient(ADDRESS)
         .signAndSubmit()
 
-      expect(assertSender).toHaveBeenCalledWith(derivationPath)
+      expect(assertSenderSource).toHaveBeenCalledWith(derivationPath)
       expect(deriveSpy).toHaveBeenCalledWith(derivationPath)
       expect(submitSpy).toHaveBeenCalledWith(mockExtrinsic, derivationPath)
       expect(result).toBe(mockTxHash)
+    })
+  })
+
+  describe('signAndSubmitAll', () => {
+    beforeEach(() => {
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
+    })
+
+    it('should return array with single tx hash for non-swap transfer', async () => {
+      const derivationPath = '//Alice'
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .sender(derivationPath)
+        .recipient(ADDRESS)
+        .signAndSubmitAll()
+
+      expect(assertSenderSource).toHaveBeenCalledWith(derivationPath)
+      expect(result).toEqual(['0x1234567890abcdef'])
+    })
+
+    it('should return tx hashes array from executeWithRouter for swap', async () => {
+      const mockTxHashes = ['0xabc', '0xdef']
+      vi.mocked(isSenderSigner).mockReturnValue(true)
+      vi.mocked(executeWithRouter).mockResolvedValue(mockTxHashes)
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .sender('//Alice')
+        .recipient(ADDRESS)
+        .swap(SWAP_OPTIONS)
+        .signAndSubmitAll()
+
+      expect(executeWithRouter).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          swapOptions: expect.objectContaining({
+            currencyTo: { symbol: 'GLMR' }
+          })
+        }),
+        expect.any(Function)
+      )
+      expect(result).toEqual(mockTxHashes)
     })
   })
 
@@ -1482,7 +1433,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .transact('0x123')
         .build()
 
@@ -1495,7 +1446,7 @@ describe('Builder', () => {
             symbol: currency,
             amount: AMOUNT
           },
-          address: ADDRESS,
+          recipient: ADDRESS,
           transactOptions: {
             call: '0x123'
           }
@@ -1516,7 +1467,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .buildAll()
 
       expect(createTransferOrSwapAll).toHaveBeenCalledWith(
@@ -1525,7 +1476,7 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS
+          recipient: ADDRESS
         })
       )
       expect(result).toEqual(mockTxContexts)
@@ -1540,7 +1491,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .swap(SWAP_OPTIONS)
         .build()
 
@@ -1550,7 +1501,7 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           swapOptions: SWAP_OPTIONS
         })
       )
@@ -1566,7 +1517,7 @@ describe('Builder', () => {
         .from(CHAIN)
         .to(CHAIN_2)
         .currency(CURRENCY)
-        .address(ADDRESS)
+        .recipient(ADDRESS)
         .swap(SWAP_OPTIONS)
         .getBestAmountOut()
 
@@ -1576,7 +1527,7 @@ describe('Builder', () => {
           from: CHAIN,
           to: CHAIN_2,
           currency: CURRENCY,
-          address: ADDRESS,
+          recipient: ADDRESS,
           swapOptions: SWAP_OPTIONS
         }),
         expect.any(Function)

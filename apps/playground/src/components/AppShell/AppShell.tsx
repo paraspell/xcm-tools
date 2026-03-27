@@ -24,12 +24,11 @@ import {
   IconLayoutSidebarRightCollapseFilled,
   IconMoon,
   IconNotes,
-  IconRoute,
   IconWorldWww,
   IconZoomCode,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 
 import { NAVIGATION_ITEMS } from '../../constants';
 import { useWallet } from '../../hooks';
@@ -39,7 +38,6 @@ import {
   EvmTransferPage,
   PalletsQueriesPage,
   XcmAnalyserPage,
-  XcmRouterPage,
   XcmTransferPage,
 } from '../../routes';
 import { XcmUtilsPage } from '../../routes/XcmUtilsPage';
@@ -62,7 +60,6 @@ export const AppShell = () => {
     connectWallet,
     changeAccount,
     handleApiSwitch,
-    apiType,
     isLoadingExtensions,
     isInitialized,
   } = useWallet();
@@ -125,17 +122,6 @@ export const AppShell = () => {
       window.removeEventListener('scroll', () => {});
     };
   }, []);
-
-  const location = useLocation();
-
-  useEffect(() => {
-    if (
-      location.pathname === PageRoute.XCM_ROUTER.toString() &&
-      apiType !== 'PAPI'
-    ) {
-      handleApiSwitch('PAPI');
-    }
-  }, [location.pathname, apiType]);
 
   const theme = useMantineTheme();
 
@@ -259,13 +245,6 @@ export const AppShell = () => {
           />
 
           <LinksGroup
-            label="XCM Router"
-            icon={IconRoute}
-            url={PageRoute.XCM_ROUTER}
-            collapsed={isSidebarCollapsed}
-          />
-
-          <LinksGroup
             label="XCM Analyser"
             icon={IconZoomCode}
             url={PageRoute.XCM_ANALYSER}
@@ -369,7 +348,6 @@ export const AppShell = () => {
             path={PageRoute.XCM_SDK.ASSET_CLAIM}
             Component={AssetClaimPage}
           />
-          <Route path={PageRoute.XCM_ROUTER} Component={XcmRouterPage} />
           <Route path={PageRoute.XCM_ANALYSER} Component={XcmAnalyserPage} />
         </Routes>
       </MantineAppShell.Main>

@@ -1,4 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
+import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -7,7 +8,13 @@ import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { isPjsExtrinsic } from '../utils';
 import { createSwapTx } from './createSwapTx';
-import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
+import { buildFromExchangeExtrinsic, convertTxToTarget } from './utils';
+
+const getPaymentInfoSpy = vi.fn().mockResolvedValue({ partialFee: 10n });
+const mockExchangeApi = {
+  getPaymentInfo: getPaymentInfoSpy,
+} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('./utils');
 vi.mock('../utils');
@@ -15,7 +22,12 @@ vi.mock('../utils');
 describe('createSwapTx', () => {
   const swapApi = {} as ApiPromise;
   let exchangeChain: ExchangeChain;
-  let options: TTransformedOptions<TBuildTransactionsOptions>;
+  let options: TTransformedOptions<
+    TBuildTransactionsOptions<unknown, unknown, unknown>,
+    unknown,
+    unknown,
+    unknown
+  >;
   let dummyExtrinsic: Extrinsic;
   let dummyTxPapi: TPapiTransaction;
 
@@ -31,7 +43,8 @@ describe('createSwapTx', () => {
       amount: 1000n,
       feeCalcAddress: 'someFeeCalcAddress',
       exchange: {
-        api: swapApi,
+        apiPjs: swapApi,
+        api: mockExchangeApi,
         assetTo: { decimals: 10 },
       },
       origin: {
@@ -41,7 +54,13 @@ describe('createSwapTx', () => {
       destination: {
         chain: 'Astar',
       },
-    } as TTransformedOptions<TBuildTransactionsOptions>;
+      api: mockApi,
+    } as TTransformedOptions<
+      TBuildTransactionsOptions<unknown, unknown, unknown>,
+      unknown,
+      unknown,
+      unknown
+    >;
 
     dummyExtrinsic = { method: { toHex: () => '0x123' } } as unknown as Extrinsic;
     dummyTxPapi = {
@@ -52,12 +71,13 @@ describe('createSwapTx', () => {
     } as unknown as TPapiTransaction;
 
     vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyTxPapi);
+    getPaymentInfoSpy.mockResolvedValue({ partialFee: 10n, weight: 0n });
     vi.spyOn(exchangeChain, 'handleMultiSwap').mockResolvedValue({
       amountOut: 900n,
       txs: [dummyExtrinsic],
     });
 
-    vi.mocked(convertTxToPapi).mockResolvedValue(dummyTxPapi);
+    vi.mocked(convertTxToTarget).mockResolvedValue(dummyTxPapi);
     vi.mocked(isPjsExtrinsic).mockReturnValue(true);
   });
 
@@ -74,8 +94,8 @@ describe('createSwapTx', () => {
       }),
     );
 
-    expect(dummyTxPapi.getEstimatedFees).toHaveBeenCalledTimes(1);
-    expect(dummyTxPapi.getEstimatedFees).toHaveBeenNthCalledWith(1, 'someFeeCalcAddress');
+    expect(getPaymentInfoSpy).toHaveBeenCalledTimes(1);
+    expect(getPaymentInfoSpy).toHaveBeenNthCalledWith(1, dummyTxPapi, 'someFeeCalcAddress');
 
     expect(spy).toHaveBeenCalledOnce();
     expect(spy).toHaveBeenCalledWith(

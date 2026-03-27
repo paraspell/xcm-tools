@@ -1,5 +1,5 @@
 import { BigNumber, createSdkContext } from '@galacticcouncil/sdk';
-import type { TAssetInfo } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
   formatUnits,
@@ -9,7 +9,7 @@ import {
   InvalidCurrencyError,
   padValueBy,
   UnableToComputeError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { parseUnits } from 'ethers-v6';
 
@@ -26,12 +26,12 @@ import ExchangeChain from '../ExchangeChain';
 import { calculateFee, getAssetInfo } from './utils';
 
 class HydrationExchange extends ExchangeChain {
-  async swapCurrency(
+  async swapCurrency<TApi>(
     api: ApiPromise,
-    options: TSwapOptions,
+    options: TSwapOptions<TApi>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult> {
-    const { origin, assetFrom, assetTo, senderAddress, slippagePct, amount } = options;
+    const { origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
     const {
       api: { router: tradeRouter },
@@ -75,7 +75,7 @@ class HydrationExchange extends ExchangeChain {
     const substrateTx = await txBuilderFactory
       .trade(trade)
       .withSlippage(Number(slippagePct))
-      .withBeneficiary(senderAddress)
+      .withBeneficiary(sender)
       .build();
 
     const tx = substrateTx.get();
@@ -129,7 +129,7 @@ class HydrationExchange extends ExchangeChain {
     return { tx, amountOut: amountOutModified };
   }
 
-  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
+  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>): Promise<bigint> {
     const { assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 
     const {

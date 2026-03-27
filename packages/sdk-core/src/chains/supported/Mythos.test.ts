@@ -126,8 +126,8 @@ describe('Mythos', () => {
       },
       scenario: 'ParaToPara',
       destination: 'Ethereum',
-      senderAddress: '0x1234567890123456789012345678901234567890',
-      address: '0x0987654321098765432109876543210987654321'
+      sender: '0x1234567890123456789012345678901234567890',
+      recipient: '0x0987654321098765432109876543210987654321'
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     beforeEach(() => {
@@ -152,10 +152,10 @@ describe('Mythos', () => {
 
       expect(generateMessageId).toHaveBeenCalledWith(
         mockApi,
-        mockEthereumInput.senderAddress,
+        mockEthereumInput.sender,
         expect.any(Number),
         ethAsset.assetId,
-        mockEthereumInput.address,
+        mockEthereumInput.recipient,
         100n
       )
       expect(spy).toHaveBeenCalled()
@@ -202,8 +202,8 @@ describe('createTypeAndThenTransfer', () => {
       location: { parents: 0, interior: 'Here' }
     },
     currency: { symbol: 'MYTH' },
-    senderAddress: '0x1234567890123456789012345678901234567890',
-    address: '0x0987654321098765432109876543210987654321',
+    sender: '0x1234567890123456789012345678901234567890',
+    recipient: '0x0987654321098765432109876543210987654321',
     destination: 'Ethereum'
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
@@ -250,10 +250,10 @@ describe('createTypeAndThenTransfer', () => {
 
     expect(generateMessageId).toHaveBeenCalledWith(
       mockApi,
-      mockOptions.senderAddress,
+      mockOptions.sender,
       expect.any(Number), // paraId
       ethAsset.assetId,
-      mockOptions.address,
+      mockOptions.recipient,
       mockOptions.assetInfo.amount
     )
     expect(createCustomXcmOnDest).toHaveBeenCalledWith(

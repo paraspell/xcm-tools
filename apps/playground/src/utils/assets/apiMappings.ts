@@ -3,7 +3,6 @@ import type { TAssetsQuery } from '../../types';
 export const getApiEndpoint = (func: TAssetsQuery, chain: string): string => {
   const endpoints: Record<TAssetsQuery, string> = {
     ASSETS_OBJECT: `/assets/${chain}`,
-    ASSET_ID: `/assets/${chain}/id`,
     ASSET_LOCATION: `/assets/${chain}/location`,
     ASSET_RESERVE_CHAIN: `/assets/${chain}/reserve-chain`,
     ASSET_INFO: `/assets/${chain}/asset-info`,
@@ -13,8 +12,6 @@ export const getApiEndpoint = (func: TAssetsQuery, chain: string): string => {
     SUPPORTED_ASSETS: `/supported-assets`,
     FEE_ASSETS: `/assets/${chain}/fee-assets`,
     ALL_SYMBOLS: `/assets/${chain}/all-symbols`,
-    DECIMALS: `/assets/${chain}/decimals`,
-    HAS_SUPPORT: `/assets/${chain}/has-support`,
     SUPPORTED_DESTINATIONS: `/supported-destinations`,
     PARA_ID: `/chains/${chain}/para-id`,
     CONVERT_SS58: `/convert-ss58`,

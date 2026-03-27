@@ -49,7 +49,7 @@ describe('getOriginXcmFeeInternal', () => {
     tx: mockTx,
     origin: 'Moonbeam',
     destination: 'Acala',
-    senderAddress: 'addr',
+    sender: 'addr',
     version: Version.V5,
     currency: mockCurrency,
     disableFallback: false

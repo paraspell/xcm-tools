@@ -5,7 +5,7 @@ import {
   padValueBy,
   type TChain,
   UnableToComputeError,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-core';
 
 import { FEE_BUFFER_PCT } from '../../../consts';
 import Logger from '../../../Logger/Logger';
@@ -13,8 +13,8 @@ import type { TSwapOptions } from '../../../types';
 import { calculateTxFeePjs, pow10n } from '../../../utils';
 import { getAssetInfo } from './utils';
 
-export const calculateFee = async (
-  { amount, slippagePct, feeCalcAddress, senderAddress }: TSwapOptions,
+export const calculateFee = async <TApi>(
+  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi>,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
   currencyFromInfo: Asset,
@@ -46,7 +46,7 @@ export const calculateFee = async (
   const substrateTx = await txBuilderFactory
     .trade(trade)
     .withSlippage(Number(slippagePct))
-    .withBeneficiary(senderAddress)
+    .withBeneficiary(sender)
     .build();
 
   const tx = substrateTx.get();

@@ -14,11 +14,9 @@ import {
 import {
   getMinTransferableAmount,
   getOriginXcmFee,
-  getOriginXcmFeeEstimate,
   getTransferableAmount,
   getTransferInfo,
   getXcmFee,
-  getXcmFeeEstimate,
   verifyEdOnDestination
 } from '../transfer'
 import type {
@@ -32,21 +30,21 @@ import type {
   TDryRunResult,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
-  TSendBaseOptions,
-  TSendBaseOptionsWithSenderAddress,
-  TSendBaseOptionsWithSwap,
   TSender,
-  TSendOptions,
   TSwapOptions,
   TTransactionContext,
   TTransactOrigin,
+  TTransferBaseOptions,
+  TTransferBaseOptionsWithSender,
+  TTransferBaseOptionsWithSwap,
+  TTransferOptions,
   TTxFactory,
   TWeight
 } from '../types'
 import {
   assertAddressIsString,
   assertSender,
-  assertSenderAddress,
+  assertSenderSource,
   assertSwapSupport,
   assertToIsString,
   createTransferOrSwap,
@@ -69,7 +67,7 @@ export class GeneralBuilder<
   TApi,
   TRes,
   TSigner,
-  T extends Partial<TSendBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
+  T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
     object
 > {
   readonly api: IPolkadotApi<TApi, TRes, TSigner>
@@ -139,34 +137,32 @@ export class GeneralBuilder<
   /**
    * Sets the recipient address.
    *
-   * @param address - The destination address.
+   * @param address - The recipient address on the destination chain.
    * @returns An instance of Builder
    */
-  address(address: TAddress): GeneralBuilder<TApi, TRes, TSigner, T & { address: TAddress }> {
+  recipient(address: TAddress): GeneralBuilder<TApi, TRes, TSigner, T & { recipient: TAddress }> {
     const isPath = typeof address === 'string' && address.startsWith('//')
     const resolvedAddress = isPath ? this.api.deriveAddress(address) : address
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      address: resolvedAddress
+      recipient: resolvedAddress
     })
   }
 
   /**
    * Sets the sender address.
    *
-   * @param address - The sender address.
-   * @returns
+   * @param sender - The sender address or signer.
+   * @returns An instance of Builder
    */
-  senderAddress(
-    sender: TSender<TSigner>
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { senderAddress: string }> {
+  sender(sender: TSender<TSigner>): GeneralBuilder<TApi, TRes, TSigner, T & { sender: string }> {
     const isPath = typeof sender === 'string' && sender.startsWith('//')
     const isPathOrSigner = isPath || isSenderSigner(sender)
     const address = isPathOrSigner ? this.api.deriveAddress(sender) : sender
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      senderAddress: address,
-      sender: isPathOrSigner ? sender : undefined
+      sender: address,
+      senderSource: isPathOrSigner ? sender : undefined
     })
   }
 
@@ -267,7 +263,7 @@ export class GeneralBuilder<
    * @returns An instance of Builder
    */
   addToBatch(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }> {
     this.batchManager.addTransaction({
       api: this.api,
@@ -291,23 +287,25 @@ export class GeneralBuilder<
    * @returns A Extrinsic representing the batched transactions.
    */
   async buildBatch(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
     options?: TBatchOptions
   ) {
     return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
-  protected buildInternal<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  protected buildInternal<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
     return this.buildCommon<TOptions>(true)
   }
 
-  private async prepareNormalizedOptions<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async prepareNormalizedOptions<
+    TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>
+  >(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     options: TOptions
   ): Promise<{
-    normalizedOptions: TSendOptions<TApi, TRes, TSigner> & TOptions
+    normalizedOptions: TTransferOptions<TApi, TRes, TSigner> & TOptions
     buildTx: TTxFactory<TRes>
   }> {
     const { options: normalizedOptions, buildTx } = await normalizeAmountAll(
@@ -325,7 +323,7 @@ export class GeneralBuilder<
    * @returns A Promise that resolves to the transfer extrinsic.
    */
   async build(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TRes> {
     const { tx } = await this.buildCommon()
     return tx
@@ -337,7 +335,7 @@ export class GeneralBuilder<
    * @returns A Promise that resolves to the transfer extrinsic contexts
    */
   async buildAll(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TTransactionContext<TApi, TRes>[]> {
     const { txContexts } = await this.buildCommonAll()
     return txContexts
@@ -351,7 +349,7 @@ export class GeneralBuilder<
     }
   }
 
-  private async buildCommon<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async buildCommon<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     isCalledInternally = false
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
@@ -366,7 +364,7 @@ export class GeneralBuilder<
     return { tx, options: normalizedOptions }
   }
 
-  private async buildCommonAll<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  private async buildCommonAll<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
     isCalledInternally = false
   ): Promise<TBuildAllInternalRes<TApi, TRes, TSigner, TOptions>> {
@@ -381,20 +379,20 @@ export class GeneralBuilder<
 
   private async maybePerformXcmFormatCheck(
     tx: TRes,
-    options: TSendBaseOptions<TApi, TRes, TSigner>,
+    options: TTransferBaseOptions<TApi, TRes, TSigner>,
     isCalledInternally: boolean
   ) {
-    const { senderAddress } = options
+    const { sender } = options
 
     const config = this.api.getConfig()
     if (isConfig(config) && config.xcmFormatCheck && !isCalledInternally) {
-      assertSenderAddress(senderAddress)
+      assertSender(sender)
       const dryRunResult = await buildDryRun(
         this.api,
         tx,
         {
           ...options,
-          senderAddress
+          sender
         },
         {
           sentAssetMintMode: 'bypass'
@@ -408,12 +406,7 @@ export class GeneralBuilder<
   }
 
   async dryRun(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ): Promise<TDryRunResult> {
     const { swapOptions } = this._options
 
@@ -428,12 +421,7 @@ export class GeneralBuilder<
   }
 
   async dryRunPreview(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     dryRunOptions?: TDryRunPreviewOptions
   ) {
     const { swapOptions } = this._options
@@ -447,7 +435,7 @@ export class GeneralBuilder<
     })
   }
 
-  protected createTxFactory<TOptions extends TSendBaseOptions<TApi, TRes, TSigner>>(
+  protected createTxFactory<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
   ): TTxFactory<TRes> {
     return (amount, relative) =>
@@ -460,23 +448,18 @@ export class GeneralBuilder<
    * @returns An origin and destination fee.
    */
   async getXcmFee<TDisableFallback extends boolean = false>(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ): Promise<TGetXcmFeeResult<TDisableFallback>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
 
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, senderAddress, address, currency, feeAsset, version, swapOptions } =
+    const { api, from, to, sender, recipient, currency, feeAsset, version, swapOptions } =
       normalizedOptions
 
     assertToIsString(to)
-    assertAddressIsString(address)
+    assertAddressIsString(recipient)
 
     if (swapOptions) {
       return executeWithRouter({ ...normalizedOptions, swapOptions }, builder =>
@@ -489,8 +472,8 @@ export class GeneralBuilder<
       buildTx,
       origin: from,
       destination: to,
-      senderAddress,
-      address,
+      sender,
+      recipient,
       version,
       currency: currency as WithAmount<TCurrencyCore>,
       feeAsset,
@@ -504,18 +487,12 @@ export class GeneralBuilder<
    * @returns An origin fee.
    */
   async getOriginXcmFee(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >,
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, senderAddress, currency, feeAsset, version, swapOptions } =
-      normalizedOptions
+    const { api, from, to, sender, currency, feeAsset, version, swapOptions } = normalizedOptions
 
     assertToIsString(to)
     assertSwapSupport(swapOptions)
@@ -526,97 +503,11 @@ export class GeneralBuilder<
         buildTx,
         origin: from,
         destination: to,
-        senderAddress,
+        sender,
         version,
         currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
-      })
-    } finally {
-      await this.api.disconnect()
-    }
-  }
-
-  /**
-   * Estimates the origin and destination XCM fee using the `paymentInfo` function.
-   *
-   * @deprecated This function is deprecated and will be removed in a future version.
-   * Please use `builder.getXcmFee()` instead, where `builder` is an instance of `Builder()`.
-   * Will be removed in v13.
-   * For more details, see the documentation:
-   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
-   *
-   * @returns An origin and destination fee estimate.
-   */
-  async getXcmFeeEstimate(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
-  ) {
-    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
-
-    const { api, from, to, address, senderAddress, currency, swapOptions } = normalizedOptions
-
-    assertToIsString(to)
-    assertAddressIsString(address)
-    assertSwapSupport(swapOptions)
-
-    const tx = await buildTx()
-
-    try {
-      return await getXcmFeeEstimate({
-        api,
-        tx,
-        origin: from,
-        destination: to,
-        address,
-        senderAddress,
-        currency: currency as WithAmount<TCurrencyCore>
-      })
-    } finally {
-      await this.api.disconnect()
-    }
-  }
-
-  /**
-   * Estimates the origin XCM fee using paymentInfo function.
-   *
-   * @deprecated This function is deprecated and will be removed in a future version.
-   * Please use `builder.getOriginXcmFee()` instead, where `builder` is an instance of `Builder()`.
-   * Will be removed in v13.
-   * For more details, see the documentation:
-   * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
-   *
-   * @returns An origin fee estimate.
-   */
-  async getOriginXcmFeeEstimate(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
-  ) {
-    const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
-
-    const { api, from, to, senderAddress, currency, swapOptions } = normalizedOptions
-
-    assertToIsString(to)
-    assertSwapSupport(swapOptions)
-
-    const tx = await buildTx()
-
-    try {
-      return await getOriginXcmFeeEstimate({
-        api,
-        tx,
-        origin: from,
-        destination: to,
-        currency: currency as WithAmount<TCurrencyCore>,
-        senderAddress
       })
     } finally {
       await this.api.disconnect()
@@ -629,17 +520,11 @@ export class GeneralBuilder<
    * @returns The max transferable amount.
    */
   async getTransferableAmount(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, senderAddress, currency, feeAsset, version, swapOptions } =
-      normalizedOptions
+    const { api, from, to, sender, currency, feeAsset, version, swapOptions } = normalizedOptions
 
     assertToIsString(to)
 
@@ -654,7 +539,7 @@ export class GeneralBuilder<
       buildTx,
       origin: from,
       destination: to,
-      senderAddress,
+      sender,
       feeAsset,
       version,
       currency: currency as WithAmount<TCurrencyCore>
@@ -667,20 +552,15 @@ export class GeneralBuilder<
    * @returns The min transferable amount.
    */
   async getMinTransferableAmount(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, senderAddress, address, currency, feeAsset, version, swapOptions } =
+    const { api, from, to, sender, recipient, currency, feeAsset, version, swapOptions } =
       normalizedOptions
 
     assertToIsString(to)
-    assertAddressIsString(address)
+    assertAddressIsString(recipient)
 
     if (swapOptions) {
       return executeWithRouter({ ...normalizedOptions, swapOptions }, builder =>
@@ -693,8 +573,8 @@ export class GeneralBuilder<
       buildTx,
       origin: from,
       destination: to,
-      senderAddress,
-      address,
+      sender,
+      recipient,
       feeAsset,
       version,
       currency: currency as WithAmount<TCurrencyCore>,
@@ -708,20 +588,15 @@ export class GeneralBuilder<
    * @returns The max transferable amount.
    */
   async verifyEdOnDestination(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, address, currency, senderAddress, feeAsset, version, swapOptions } =
+    const { api, from, to, sender, recipient, currency, feeAsset, version, swapOptions } =
       normalizedOptions
 
     assertToIsString(to)
-    assertAddressIsString(address)
+    assertAddressIsString(recipient)
     assertSwapSupport(swapOptions)
 
     return verifyEdOnDestination({
@@ -729,9 +604,9 @@ export class GeneralBuilder<
       buildTx,
       origin: from,
       destination: to,
-      address,
+      sender,
+      recipient,
       version,
-      senderAddress,
       feeAsset,
       currency: currency as WithAmount<TCurrencyCore>
     })
@@ -743,12 +618,7 @@ export class GeneralBuilder<
    * @returns The transfer info.
    */
   async getTransferInfo(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -756,17 +626,17 @@ export class GeneralBuilder<
       api,
       from,
       to,
-      address,
+      recipient,
       currency,
       ahAddress,
-      senderAddress,
+      sender,
       feeAsset,
       version,
       swapOptions
     } = normalizedOptions
 
     assertToIsString(to)
-    assertAddressIsString(address)
+    assertAddressIsString(recipient)
     assertSwapSupport(swapOptions)
 
     return getTransferInfo({
@@ -774,8 +644,8 @@ export class GeneralBuilder<
       buildTx,
       origin: from,
       destination: to,
-      address,
-      senderAddress,
+      sender,
+      recipient,
       ahAddress,
       version,
       currency: currency as WithAmount<TCurrencyCore>,
@@ -790,12 +660,7 @@ export class GeneralBuilder<
    * @throws \{UnableToComputeError\} Thrown when the receivable amount cannot be determined.
    */
   async getReceivableAmount(
-    this: GeneralBuilder<
-      TApi,
-      TRes,
-      TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner>
-    >
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>
   ) {
     const {
       destination: {
@@ -811,7 +676,7 @@ export class GeneralBuilder<
   }
 
   async getBestAmountOut(
-    this: GeneralBuilder<TApi, TRes, TSigner, TSendBaseOptionsWithSwap<TApi, TRes, TSigner>>
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSwap<TApi, TRes, TSigner>>
   ) {
     const { swapOptions } = this._options
 
@@ -825,32 +690,57 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TSendBaseOptionsWithSenderAddress<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
     >
   ): Promise<string> {
-    const { sender, swapOptions } = this._options
-    assertSender(sender)
+    const { senderSource, swapOptions } = this._options
+    assertSenderSource(senderSource)
 
     if (swapOptions) {
-      if (!isSenderSigner(sender)) {
+      if (!isSenderSigner(senderSource)) {
         throw new UnsupportedOperationError(
           'Swap operations do not support local accounts yet. Please provider a signer'
         )
       }
 
-      await executeWithRouter({ ...this._options, swapOptions, api: this.api }, builder =>
-        // We need to cast this sender because RouterBuilder expects a PAPI signer but this part of sdk-core is generic
-        // Will be removed in the future when we gradually move parts of swap package to sdk-core
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        builder.signer(sender as any).build()
+      const txHashes = await executeWithRouter(
+        { ...this._options, swapOptions, api: this.api },
+        builder => builder.signer(senderSource).signAndSubmit()
       )
 
-      // TODO: Needs addressing in v13
-      return ''
+      return txHashes[0]
     }
 
     const { tx } = await this.buildInternal()
-    return this.api.signAndSubmit(tx, sender)
+    return this.api.signAndSubmit(tx, senderSource)
+  }
+
+  async signAndSubmitAll(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+    >
+  ): Promise<string[]> {
+    const { senderSource, swapOptions } = this._options
+    assertSenderSource(senderSource)
+
+    if (swapOptions) {
+      if (!isSenderSigner(senderSource)) {
+        throw new UnsupportedOperationError(
+          'Swap operations do not support local accounts yet. Please provider a signer'
+        )
+      }
+
+      return executeWithRouter({ ...this._options, swapOptions, api: this.api }, builder =>
+        builder.signer(senderSource).signAndSubmit()
+      )
+    }
+
+    const { tx } = await this.buildInternal()
+    const txHash = await this.api.signAndSubmit(tx, senderSource)
+    return [txHash]
   }
 
   /**

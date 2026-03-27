@@ -58,7 +58,7 @@ describe('createCustomXcm', () => {
     options: {
       destination: 'Acala',
       version: mockVersion,
-      address: mockAddress
+      recipient: mockAddress
     }
   } as TTypeAndThenCallContext<unknown, unknown, unknown>
 

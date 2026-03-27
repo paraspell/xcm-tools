@@ -17,7 +17,7 @@ import {
   createBuilderOptions,
   getTxFromApi,
   importSdk,
-  resolveSenderAddress,
+  resolveSender,
   submitTx,
 } from '../../utils';
 import {
@@ -72,7 +72,7 @@ export const AssetClaim = () => {
       localAccount,
     } = formValues;
 
-    const senderAddress = resolveSenderAddress(localAccount, selectedAccount);
+    const sender = resolveSender(localAccount, selectedAccount);
 
     setLoading(true);
     let notifId = showLoadingNotification(
@@ -102,7 +102,7 @@ export const AssetClaim = () => {
           {
             from,
             address: formValues.address,
-            senderAddress,
+            sender,
             currency: {
               location,
               amount,
@@ -111,7 +111,7 @@ export const AssetClaim = () => {
           },
           api,
           '/asset-claim',
-          senderAddress,
+          sender,
           apiType,
           'POST',
           true,
@@ -135,8 +135,8 @@ export const AssetClaim = () => {
               amount,
             },
           ])
-          .address(address)
-          .senderAddress(senderAddress);
+          .sender(sender)
+          .address(address);
 
         if (localAccount) hash = await assetClaimBuilder.signAndSubmit();
         else tx = await assetClaimBuilder.build();
@@ -145,7 +145,7 @@ export const AssetClaim = () => {
       }
 
       if (tx) {
-        await submitTx(apiType, api, tx, signer, senderAddress, () => {
+        await submitTx(apiType, api, tx, signer, sender, () => {
           notifId = showLoadingNotification(
             'Processing',
             'Transaction is being processed',

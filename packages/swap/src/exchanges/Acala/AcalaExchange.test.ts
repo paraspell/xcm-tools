@@ -1,4 +1,5 @@
-import { AmountTooLowError, getBalance, getNativeAssetSymbol } from '@paraspell/sdk';
+import { getBalance } from '@paraspell/sdk';
+import { AmountTooLowError, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,9 +12,13 @@ vi.mock('@paraspell/sdk', async () => {
   return {
     ...original,
     getBalance: vi.fn(),
-    getNativeAssetSymbol: vi.fn(),
   };
 });
+
+vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
+  ...(await importOriginal()),
+  getNativeAssetSymbol: vi.fn(),
+}));
 
 vi.mock('@acala-network/sdk-core', () => ({
   FixedPointNumber: vi.fn(
@@ -141,7 +146,7 @@ describe('AcalaExchange', () => {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
       vi.mocked(getBalance).mockResolvedValueOnce(1_000_000n);
@@ -154,9 +159,9 @@ describe('AcalaExchange', () => {
             assetFrom: { symbol: 'DOT' },
             assetTo: { symbol: 'ACA' },
             amount: -1n,
-            senderAddress: '5xxxx',
+            sender: '5xxxx',
             origin: {},
-          } as TSwapOptions,
+          } as TSwapOptions<unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -168,9 +173,9 @@ describe('AcalaExchange', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'ACA' },
         amount: 1n,
-        senderAddress: 'some-address',
+        sender: 'some-address',
         origin: {},
-      } as TSwapOptions;
+      } as TSwapOptions<unknown>;
 
       vi.mocked(getBalance).mockResolvedValueOnce(0n);
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(1n);
@@ -202,7 +207,7 @@ describe('AcalaExchange', () => {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions;
+    } as TSwapOptions<unknown>;
 
     it('should return the amountOut with fee deducted', async () => {
       const result = await chain.getAmountOut(mockApi, baseSwapOptions);
