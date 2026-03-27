@@ -237,7 +237,7 @@ describe('createTransferOrSwapAll', () => {
       { type: 'TRANSFER', api: 'api2', chain: 'Hydration', tx: 'tx2' }
     ]
     vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
-      const fakeBuilder = { buildTransactions: vi.fn().mockResolvedValue(swapTxs) }
+      const fakeBuilder = { build: vi.fn().mockResolvedValue(swapTxs) }
       return executor(fakeBuilder as never)
     })
 
@@ -276,7 +276,7 @@ describe('createTransferOrSwap', () => {
       { type: 'TRANSFER', api: 'a2', chain: 'Hydration', tx: 'tx2' }
     ]
     vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
-      const fakeBuilder = { buildTransactions: vi.fn().mockResolvedValue(multiTxs) }
+      const fakeBuilder = { build: vi.fn().mockResolvedValue(multiTxs) }
       return executor(fakeBuilder as never)
     })
 

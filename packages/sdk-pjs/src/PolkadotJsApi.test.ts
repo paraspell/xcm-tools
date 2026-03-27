@@ -1755,6 +1755,41 @@ describe('PolkadotJsApi', () => {
       getXcmPaymentApiFeeSpy.mockRestore()
     })
 
+    it('returns failure when Utility.DispatchedAs event has Err despite executionResult Ok', async () => {
+      const resp = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Ok: true },
+            emittedEvents: [
+              {
+                section: 'utility',
+                method: 'DispatchedAs',
+                data: { result: { Err: { Module: { index: 51, error: '0x02000000' } } } }
+              }
+            ]
+          }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: { executionResult: { ok: {} }, forwardedXcms: [] }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(dotAsset)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { ...dotAsset, amount: 100n },
+        version: Version.V5
+      })
+
+      expect(result.success).toBe(false)
+      expect(result).toHaveProperty('failureReason', 'ModuleError')
+    })
+
     it('should throw error for unsupported chain', async () => {
       const mockTransaction = {} as unknown as Extrinsic
 

@@ -12,14 +12,12 @@ import { assertAddressIsString, assertSender, assertToIsString } from '../assert
 import { isConfig } from '../builder'
 import { getSwapExtensionOrThrow } from './swapRegistry'
 
-type TRouterBuilderOptions = Omit<TBuilderConfig<TUrl>, 'xcmFormatCheck'>
-
 const isUrl = (value: unknown): value is string | string[] =>
   typeof value === 'string' || Array.isArray(value)
 
 export const convertBuilderConfig = <TApi>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined
-): TRouterBuilderOptions | undefined => {
+): TBuilderConfig<TUrl> | undefined => {
   if (!config) return undefined
 
   if (isConfig(config)) {
@@ -63,10 +61,6 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Cannot use transact options together with swap options.')
   }
 
-  if (api.getType() !== 'PAPI') {
-    throw new UnsupportedOperationError('Swaps are only supported when using PAPI SDK.')
-  }
-
   const { RouterBuilder } = getSwapExtensionOrThrow()
 
   const {
@@ -86,27 +80,20 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
   }
 
-  const config = api.getConfig()
-
-  const routerConfig = convertBuilderConfig(config)
-
-  let builder = RouterBuilder(routerConfig)
+  let builder = RouterBuilder(api)
     .from(from)
     .exchange(exchange)
     .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)
     .amount(currency.amount)
-    .senderAddress(sender)
+    .sender(sender)
     .evmSenderAddress(evmSenderAddress)
-    .recipientAddress(address)
+    .recipient(address)
     .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())
 
   if (onStatusChange) {
-    // We cast because router types are bind to specific PAPI types
-    // Will be resolved when we make RouterBuilder generic
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-    builder = builder.onStatusChange(onStatusChange as any)
+    builder = builder.onStatusChange(onStatusChange)
   }
 
   return builder
@@ -114,7 +101,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
 
 export const executeWithRouter = async <TApi, TRes, TSigner, T>(
   options: TTransferOptionsWithSwap<TApi, TRes, TSigner>,
-  executor: (builder: Awaited<ReturnType<typeof createRouterBuilder>>) => Promise<T>
+  executor: (builder: ReturnType<typeof createRouterBuilder<TApi, TRes, TSigner>>) => Promise<T>
 ) => {
   const routerBuilder = createRouterBuilder(options)
   return executor(routerBuilder)

@@ -401,6 +401,7 @@ export const XcmUtilsForm: FC<Props> = ({
                 <Group>
                   <Stack gap="xs" flex={1}>
                     <CurrencySelection
+                      key={from + to + index}
                       form={form}
                       fieldPath={`currencies.${index}`}
                       fieldValue={currencies[index]}

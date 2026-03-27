@@ -122,7 +122,7 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: {
-            jit_withdraw: value.jit_withdraw ?? false,
+            jitWithdraw: value.jit_withdraw ?? false,
           },
         };
       } else if (key === "PayFees") {

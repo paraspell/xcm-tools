@@ -703,13 +703,10 @@ export class GeneralBuilder<
         )
       }
 
-      const txHashes = (await executeWithRouter(
+      const txHashes = await executeWithRouter(
         { ...this._options, swapOptions, api: this.api },
-        // We need to cast this sender because RouterBuilder expects a PAPI signer but this part of sdk-core is generic
-        // Will be removed in the future when we gradually move parts of swap package to sdk-core
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        builder => builder.signer(senderSource as any).build()
-      )) as unknown as string[]
+        builder => builder.signer(senderSource).signAndSubmit()
+      )
 
       return txHashes[0]
     }
@@ -736,11 +733,9 @@ export class GeneralBuilder<
         )
       }
 
-      return executeWithRouter(
-        { ...this._options, swapOptions, api: this.api },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        builder => builder.signer(senderSource as any).build()
-      ) as unknown as string[]
+      return executeWithRouter({ ...this._options, swapOptions, api: this.api }, builder =>
+        builder.signer(senderSource).signAndSubmit()
+      )
     }
 
     const { tx } = await this.buildInternal()
