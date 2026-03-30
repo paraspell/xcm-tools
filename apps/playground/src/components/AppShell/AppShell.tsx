@@ -33,7 +33,6 @@ import { Navigate, Route, Routes } from 'react-router';
 import { NAVIGATION_ITEMS } from '../../constants';
 import { useWallet } from '../../hooks';
 import {
-  AssetClaimPage,
   AssetsQueriesPage,
   EvmTransferPage,
   PalletsQueriesPage,
@@ -343,10 +342,6 @@ export const AppShell = () => {
           <Route
             path={PageRoute.XCM_SDK.PALLETS}
             Component={PalletsQueriesPage}
-          />
-          <Route
-            path={PageRoute.XCM_SDK.ASSET_CLAIM}
-            Component={AssetClaimPage}
           />
           <Route path={PageRoute.XCM_ANALYSER} Component={XcmAnalyserPage} />
         </Routes>

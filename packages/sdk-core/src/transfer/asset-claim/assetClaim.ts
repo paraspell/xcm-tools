@@ -7,6 +7,9 @@ import { getChainVersion, validateAddress } from '../../utils'
 import { buildClaimAssetsParams } from './buildClaimAssetsParams'
 import { resolveAssets } from './resolveAssets'
 
+/**
+ * @deprecated Asset claim functionality is deprecated and will be removed in v14.
+ */
 export const claimAssets = async <TApi, TRes, TSigner>(
   options: TAssetClaimOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {

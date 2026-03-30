@@ -113,6 +113,7 @@ export class GeneralBuilder<
   /**
    * Initiates the process to claim assets from a specified chain.
    *
+   * @deprecated Asset claim functionality is deprecated and will be removed in v14.
    * @param chain - The chain from which to claim assets.
    * @returns An instance of Builder
    */
