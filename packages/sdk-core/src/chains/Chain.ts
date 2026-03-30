@@ -13,7 +13,7 @@ import {
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
-import { getOtherAssetsPallets } from '@paraspell/pallets'
+import { getOtherAssetsPallets, hasPallet } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import {
@@ -174,7 +174,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
 
     const supportsTypeThen = await api.hasMethod(
-      isRelayChain(this.chain) ? 'XcmPallet' : 'PolkadotXcm',
+      hasPallet(this.chain, 'XcmPallet') ? 'XcmPallet' : 'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 

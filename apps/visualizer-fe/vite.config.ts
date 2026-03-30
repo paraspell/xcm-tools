@@ -7,10 +7,5 @@ export default defineConfig({
   plugins: [react(), svgr(), wasm()],
   build: {
     target: 'esnext'
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: 'esnext'
-    }
   }
 });

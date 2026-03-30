@@ -270,29 +270,6 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
-  "Altair": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 20
-      },
-      {
-        "name": "Tokens",
-        "index": 97
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 121
-      },
-      {
-        "name": "XTokens",
-        "index": 124
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Tokens", "OrmlTokens"]
-  },
   "Basilisk": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -565,21 +542,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "AssetManager"]
   },
-  "Nodle": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 2
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 35
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "NeuroWeb": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -751,6 +713,21 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
+  "RobonomicsPolkadot": {
+    "defaultPallet": "XcmPallet",
+    "supportedPallets": [
+      {
+        "name": "Balances",
+        "index": 31
+      },
+      {
+        "name": "XcmPallet",
+        "index": 71
+      }
+    ],
+    "nativeAssets": "Balances",
+    "otherAssets": []
+  },
   "PeoplePolkadot": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -759,12 +736,16 @@
         "index": 10
       },
       {
+        "name": "Assets",
+        "index": 12
+      },
+      {
         "name": "PolkadotXcm",
         "index": 31
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": []
+    "otherAssets": ["Assets"]
   },
   "PeopleKusama": {
     "defaultPallet": "PolkadotXcm",
@@ -1289,9 +1270,13 @@
       {
         "name": "Assets",
         "index": 50
+      },
+      {
+        "name": "ForeignAssets",
+        "index": 101
       }
     ],
     "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
+    "otherAssets": ["Assets", "ForeignAssets"]
   }
 }

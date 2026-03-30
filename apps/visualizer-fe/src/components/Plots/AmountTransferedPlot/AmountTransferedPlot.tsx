@@ -126,62 +126,65 @@ export const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(
           active: isTooltipActive,
           content: ({ label, payload }) => {
             if (!payload || payload.length === 0) return null;
-            const extendedPayload = (payload as Payload[]).reduce<Payload[]>((acc, item) => {
-              if (item.name === t('charts.amounts.median')) {
-                acc.push(item);
-                return acc;
-              }
-              const total =
-                item.name === t('charts.common.total')
-                  ? {
-                      ...item,
-                      name: item.name,
-                      value: item.value,
-                      color: item.color,
-                      parachain: item.name
-                    }
-                  : {
-                      ...item,
-                      name: `${item.name} ${t('charts.common.total')}`,
-                      dataKey: item.name,
-                      payload: {
-                        category: `${item.name} ${t('charts.common.total')}`,
-                        [`${item.name} ${t('charts.common.total')}`]: item.value
-                      },
-                      value: 0,
-                      color: item.color,
-                      parachain: item.name
-                    };
-              const success = {
-                ...item,
-                name: `${item.name} ${t('status.success')}`,
-                dataKey: `${item.name} Success`,
-                payload: {
-                  category: `${item.name} ${t('status.success')}`,
-                  [`${item.name} ${t('status.success')}`]:
-                    item.payload[`${item.name} ${t('status.success')}`]
-                },
-                value: 0,
-                color: 'green',
-                parachain: item.name
-              };
-              const failed = {
-                ...item,
-                name: `${item.name} ${t('status.failed')}`,
-                dataKey: `${item.name} Failed`,
-                payload: {
-                  category: `${item.name} ${t('status.failed')}`,
-                  [`${item.name} ${t('status.failed')}`]:
-                    item.payload[`${item.name} ${t('status.failed')}`]
-                },
-                value: 0,
-                color: 'red',
-                parachain: item.name
-              };
+            const extendedPayload = (payload as unknown as Payload[]).reduce<Payload[]>(
+              (acc, item) => {
+                if (item.name === t('charts.amounts.median')) {
+                  acc.push(item);
+                  return acc;
+                }
+                const total =
+                  item.name === t('charts.common.total')
+                    ? {
+                        ...item,
+                        name: item.name,
+                        value: item.value,
+                        color: item.color,
+                        parachain: item.name
+                      }
+                    : {
+                        ...item,
+                        name: `${item.name} ${t('charts.common.total')}`,
+                        dataKey: item.name,
+                        payload: {
+                          category: `${item.name} ${t('charts.common.total')}`,
+                          [`${item.name} ${t('charts.common.total')}`]: item.value
+                        },
+                        value: 0,
+                        color: item.color,
+                        parachain: item.name
+                      };
+                const success = {
+                  ...item,
+                  name: `${item.name} ${t('status.success')}`,
+                  dataKey: `${item.name} Success`,
+                  payload: {
+                    category: `${item.name} ${t('status.success')}`,
+                    [`${item.name} ${t('status.success')}`]:
+                      item.payload[`${item.name} ${t('status.success')}`]
+                  },
+                  value: 0,
+                  color: 'green',
+                  parachain: item.name
+                };
+                const failed = {
+                  ...item,
+                  name: `${item.name} ${t('status.failed')}`,
+                  dataKey: `${item.name} Failed`,
+                  payload: {
+                    category: `${item.name} ${t('status.failed')}`,
+                    [`${item.name} ${t('status.failed')}`]:
+                      item.payload[`${item.name} ${t('status.failed')}`]
+                  },
+                  value: 0,
+                  color: 'red',
+                  parachain: item.name
+                };
 
-              acc.push(total, success, failed);
-              return acc;
-            }, []);
+                acc.push(total, success, failed);
+                return acc;
+              },
+              []
+            );
 
             return (
               <CustomChartTooltip

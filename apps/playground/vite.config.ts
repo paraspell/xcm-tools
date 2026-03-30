@@ -10,11 +10,6 @@ export default defineConfig({
   build: {
     target: 'esnext',
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: 'esnext',
-    },
-  },
   define: {
     'import.meta.env.VITE_XCM_SDK_VERSION': JSON.stringify(
       packageJsonSdk.version,

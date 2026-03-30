@@ -13,8 +13,6 @@ import {
 } from '@paraspell/sdk-common'
 import { getChain } from '../src'
 
-const supportsOnlyNativeAsset: TChain[] = ['Nodle']
-
 const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Pendulum']
 
 export const doesNotSupportParaToRelay: TChain[] = [
@@ -37,7 +35,6 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
   const scenarios = []
   const allAssets = getAssets(originChain)
 
-  const isNativeOnly = supportsOnlyNativeAsset.includes(originChain)
   const isAssetIdRequired = assetIdRequired.includes(originChain)
 
   for (const destChain of CHAINS) {
@@ -46,7 +43,6 @@ export const generateTransferScenarios = (originChain: TSubstrateChain, includeA
 
     // Loop through assets to find the first compatible one
     for (const asset of allAssets) {
-      if (isNativeOnly && asset.symbol !== getNativeAssetSymbol(originChain)) continue
       if (isAssetIdRequired && asset.isNative) continue
 
       if (findAssetInfo(destChain, { location: asset.location }, null)) {

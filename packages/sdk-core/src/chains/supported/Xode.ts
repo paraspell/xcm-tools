@@ -13,7 +13,7 @@ class Xode<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor() {
-    super('Xode', 'xode', 'Polkadot', Version.V4)
+    super('Xode', 'xode', 'Polkadot', Version.V5)
   }
 
   transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {

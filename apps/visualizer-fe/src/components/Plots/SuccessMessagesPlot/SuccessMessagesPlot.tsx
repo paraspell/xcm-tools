@@ -62,7 +62,7 @@ export const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }
           return (
             <CustomChartTooltip
               label={rawLabel as ReactNode}
-              payload={payload ?? []}
+              payload={[...(payload ?? [])]}
               series={series}
               valueFormatter={formatNumber}
               withTotal

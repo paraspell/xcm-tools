@@ -11,7 +11,7 @@ export default defineConfig({
         'src/main.ts',
         'src/**/*.module.ts',
         'src/**/*.test.ts',
-        'src/types/types.ts',
+        'src/generated/**',
       ],
     },
   },

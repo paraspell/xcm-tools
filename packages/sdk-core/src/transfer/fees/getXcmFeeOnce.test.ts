@@ -669,7 +669,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
       if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
-      if (chain === 'Altair') return { symbol: 'CUSTOM' } as TAssetInfo
+      if (chain === 'Centrifuge') return { symbol: 'CUSTOM' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')

@@ -29,8 +29,6 @@ export type TMantaAsset = {
 
 export type TNativeTokenAsset = 'NativeToken'
 
-export type TNodleAsset = 'NodleNative'
-
 export type TZeitgeistAsset = 'Ztg'
 
 export type TOtherReserveAsset = {

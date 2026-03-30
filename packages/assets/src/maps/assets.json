@@ -7077,6 +7077,29 @@
         "alias": "PEPE2"
       },
       {
+        "assetId": "50000470",
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000470
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDt2"
+      },
+      {
         "assetId": "201",
         "symbol": "WUD",
         "decimals": 6,
@@ -7120,7 +7143,8 @@
           }
         },
         "existentialDeposit": "10000",
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "USDt1"
       },
       {
         "assetId": "50000028",
@@ -7995,7 +8019,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "alias": "XRT2"
       },
       {
         "symbol": "WBTC",
@@ -8219,6 +8244,22 @@
         "alias": "NEURO2"
       },
       {
+        "symbol": "XRT",
+        "decimals": 9,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3388
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000",
+        "alias": "XRT1"
+      },
+      {
         "symbol": "LINK",
         "decimals": 18,
         "location": {
@@ -8300,88 +8341,6 @@
         },
         "existentialDeposit": "1000000000",
         "isFeeAsset": true
-      }
-    ]
-  },
-  "Altair": {
-    "relaychainSymbol": "KSM",
-    "nativeAssetSymbol": "AIR",
-    "isEVM": false,
-    "ss58Prefix": 136,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "AIR",
-        "isNative": true,
-        "decimals": 18,
-        "existentialDeposit": "1000000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 2088
-              }
-            ]
-          }
-        }
-      },
-      {
-        "assetId": "3",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "1",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000"
-      },
-      {
-        "assetId": "2",
-        "symbol": "aUSD",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
       }
     ]
   },
@@ -10891,6 +10850,32 @@
       }
     ]
   },
+  "RobonomicsPolkadot": {
+    "relaychainSymbol": "DOT",
+    "nativeAssetSymbol": "XRT",
+    "isEVM": false,
+    "ss58Prefix": 32,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
+    "assets": [
+      {
+        "symbol": "XRT",
+        "isNative": true,
+        "decimals": 9,
+        "existentialDeposit": "1000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3388
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
   "PeopleKusama": {
     "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
@@ -13376,35 +13361,6 @@
                   "length": 21,
                   "data": "0x027d52316b1132c26626670fbf52aa7f5ce6f9b3880000000000000000000000"
                 }
-              }
-            ]
-          }
-        }
-      }
-    ]
-  },
-  "Nodle": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "NODL",
-    "isEVM": false,
-    "ss58Prefix": 37,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "NODL",
-        "isNative": true,
-        "decimals": 11,
-        "existentialDeposit": "10000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2026
-              },
-              {
-                "PalletInstance": 2
               }
             ]
           }
@@ -16473,6 +16429,28 @@
           }
         },
         "existentialDeposit": "100"
+      },
+      {
+        "assetId": "50000688",
+        "symbol": "WUD",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000688
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "27",

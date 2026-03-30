@@ -1,6 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
-import { isRelayChain, isTrustedChain } from '@paraspell/sdk-common'
+import { getXcmPallet, type TPallet } from '@paraspell/pallets'
+import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
@@ -52,7 +52,7 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner>(
     feeAsset ??
     createAsset(version, assetInfo.amount, localizeLocation(origin.chain, feeAssetLocation))
 
-  const module = (pallet as TPallet) ?? (isRelayChain(origin.chain) ? 'XcmPallet' : 'PolkadotXcm')
+  const module = (pallet as TPallet) ?? getXcmPallet(origin.chain)
   const methodName = method ?? 'transfer_assets_using_type_and_then'
 
   return {

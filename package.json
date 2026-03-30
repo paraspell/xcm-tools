@@ -5,29 +5,34 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^25.4.0",
-    "eslint": "^10.0.3",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-tsdoc": "^0.5.2",
     "globals": "^17.4.0",
-    "netlify-cli": "^24.0.1",
+    "netlify-cli": "^24.8.1",
     "prettier": "^3.8.1",
-    "turbo": "^2.8.15",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0",
-    "vitest": "^4.0.18"
+    "turbo": "^2.9.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "vitest": "^4.1.2"
   },
   "engines": {
     "node": ">=24"
   },
   "resolutions": {
-    "@polkadot/types-codec": "16.5.4",
-    "@polkadot/api": "16.5.4",
-    "@polkadot/types": "16.5.4",
+    "@polkadot/types-codec": "16.5.6",
+    "@polkadot/api": "16.5.6",
+    "@polkadot/types": "16.5.6",
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "5.9.3"
+    }
   },
   "scripts": {
     "compile": "turbo run compile",
@@ -49,5 +54,5 @@
     "run:updateRouterAssets": "pnpm --filter swap updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "pnpm@10.33.0"
 }

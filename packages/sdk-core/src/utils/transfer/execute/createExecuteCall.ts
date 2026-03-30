@@ -1,4 +1,5 @@
-import { isRelayChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { getXcmPallet } from '@paraspell/pallets'
+import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { TSerializedExtrinsics, TWeight, TXcmVersioned } from '../../../types'
 
@@ -9,7 +10,7 @@ export const createExecuteCall = (
   maxWeight: TWeight
 ): TSerializedExtrinsics => {
   return {
-    module: isRelayChain(chain) ? 'XcmPallet' : 'PolkadotXcm',
+    module: getXcmPallet(chain),
     method: 'execute',
     params: {
       message: xcm,

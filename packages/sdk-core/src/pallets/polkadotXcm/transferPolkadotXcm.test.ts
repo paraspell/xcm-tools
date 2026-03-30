@@ -1,4 +1,5 @@
 import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
+import { getXcmPallet } from '@paraspell/pallets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -6,6 +7,8 @@ import type { IPolkadotApi } from '../../api'
 import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
 import { createDestination } from '../../utils'
 import { transferPolkadotXcm } from './transferPolkadotXcm'
+
+vi.mock('@paraspell/pallets')
 
 vi.mock('../../utils/location')
 
@@ -39,6 +42,7 @@ const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
 
 describe('transferPolkadotXcm', () => {
   beforeEach(() => {
+    vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
     vi.mocked(createDestination).mockReturnValue(mockLocation)
   })
 

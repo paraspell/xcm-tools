@@ -136,7 +136,6 @@ const fetchNativeAssets = async (
   const paraId = getParaId(chain)
 
   const CUSTOM_NATIVE_JUNCTIONS: Partial<Record<TSubstrateChain, TJunction>> = {
-    Nodle: { PalletInstance: 2 },
     Crab: { PalletInstance: 5 },
     Darwinia: { PalletInstance: 5 },
     Zeitgeist: {
@@ -286,7 +285,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchBifrostForeignAssets(api, query)
   }
 
-  if (chain === 'Centrifuge' || chain === 'Altair') {
+  if (chain === 'Centrifuge') {
     otherAssets = await fetchCentrifugeAssets(api, query)
   }
 
