@@ -9,6 +9,8 @@ import { assertSenderSource, isSenderSigner } from '../utils'
 
 /**
  * Builder class for constructing asset claim transactions.
+ *
+ * @deprecated Asset claim functionality is deprecated and will be removed in v14.
  */
 export class AssetClaimBuilder<
   TApi,

@@ -1,11 +1,9 @@
-import type { TSubstrateChain } from '@paraspell/sdk';
 import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconCurrencyEthereum,
   IconPackages,
   IconSend,
-  IconWallet,
 } from '@tabler/icons-react';
 
 import { PageRoute } from '../components/PageRoute';
@@ -42,11 +40,6 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     label: 'Pallets',
     url: PageRoute.XCM_SDK.PALLETS,
     Icon: IconBoxAlignBottomRight,
-  },
-  {
-    label: 'Asset Claim',
-    url: PageRoute.XCM_SDK.ASSET_CLAIM,
-    Icon: IconWallet,
   },
 ];
 
@@ -145,10 +138,3 @@ export const EVM_ORIGIN_CHAINS = [
   'Moonriver',
   'Darwinia',
 ] as const;
-
-export const ASSET_CLAIM_CHAINS: TSubstrateChain[] = [
-  'Polkadot',
-  'Kusama',
-  'AssetHubPolkadot',
-  'AssetHubKusama',
-];

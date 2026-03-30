@@ -27,6 +27,9 @@ export class AssetClaimController {
 
   @Post('asset-claim')
   @UsePipes(new ZodValidationPipe(AssetClaimSchema))
+  /**
+   * @deprecated Asset claim endpoint is deprecated and will be removed in v14.
+   */
   claimAssets(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
     this.trackAnalytics(EventName.CLAIM_ASSETS, req, bodyParams);
     return this.xTransferService.claimAssets(bodyParams);

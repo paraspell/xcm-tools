@@ -4,6 +4,7 @@ import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 import type { WithApi } from './TApi'
 import { type TAddress } from './TTransfer'
 
+/** @deprecated Asset claim functionality is deprecated and will be removed in v14. */
 export type TAssetClaimOptionsBase = {
   chain: TSubstrateChain
   currency:

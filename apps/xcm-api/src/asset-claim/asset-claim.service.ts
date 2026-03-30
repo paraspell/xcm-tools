@@ -16,6 +16,9 @@ import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 @Injectable()
 export class AssetClaimService {
+  /**
+   * @deprecated Asset claim functionality is deprecated and will be removed in v14.
+   */
   async claimAssets({ from, currency, address, options }: AssetClaimDto) {
     const fromChain = from as TSubstrateChain | undefined;
 
