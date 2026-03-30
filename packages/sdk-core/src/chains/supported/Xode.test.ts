@@ -26,7 +26,7 @@ describe('Xode', () => {
     expect(chain.chain).toBe('Xode')
     expect(chain.info).toBe('xode')
     expect(chain.ecosystem).toBe('Polkadot')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 
   it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {

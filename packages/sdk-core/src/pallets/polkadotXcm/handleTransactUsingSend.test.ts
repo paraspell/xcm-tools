@@ -1,4 +1,5 @@
-import { isRelayChain, Version } from '@paraspell/sdk-common'
+import { getXcmPallet } from '@paraspell/pallets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -9,10 +10,7 @@ import { createPayFees } from './createPayFees'
 import { createTransactInstructions } from './createTransact'
 import { handleTransactUsingSend } from './handleTransactUsingSend'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isRelayChain: vi.fn()
-}))
+vi.mock('@paraspell/pallets')
 
 vi.mock('../../utils')
 
@@ -30,6 +28,7 @@ describe('handleTransactUsingSend', () => {
   beforeEach(() => {
     api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
     vi.clearAllMocks()
+    vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
     vi.mocked(addXcmVersionHeader).mockImplementation(obj => obj)
     vi.mocked(createBeneficiaryLocation).mockReturnValue({
       parents: 0,
@@ -123,43 +122,17 @@ describe('handleTransactUsingSend', () => {
     })
   })
 
-  describe('Module selection', () => {
-    it('should use XcmPallet module when chain is relay chain', async () => {
-      vi.mocked(isRelayChain).mockReturnValue(true)
-
-      const options = createMockOptions({
-        chain: 'Polkadot'
-      })
-
-      const result = await handleTransactUsingSend(options)
-
-      expect(isRelayChain).toHaveBeenCalledWith('Polkadot')
-      expect(result.module).toBe('XcmPallet')
-    })
-
-    it('should use PolkadotXcm module when chain is parachain', async () => {
-      vi.mocked(isRelayChain).mockReturnValue(false)
-
-      const options = createMockOptions({
-        chain: 'Acala'
-      })
-
-      const result = await handleTransactUsingSend(options)
-
-      expect(isRelayChain).toHaveBeenCalledWith('Acala')
-      expect(result.module).toBe('PolkadotXcm')
-    })
-  })
-
   describe('Return value structure', () => {
     it('should return correct extrinsic structure', async () => {
       const options = createMockOptions()
 
       const result = await handleTransactUsingSend(options)
 
+      expect(getXcmPallet).toHaveBeenCalledWith(options.chain)
       expect(result).toHaveProperty('module')
       expect(result).toHaveProperty('method')
       expect(result).toHaveProperty('params')
+      expect(result.module).toBe('PolkadotXcm')
       expect(result.method).toBe('send')
       expect(result.params).toHaveProperty('dest')
       expect(result.params).toHaveProperty('message')

@@ -5,6 +5,7 @@ import { SUBSTRATE_CHAINS } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { ASSETS_PALLETS, PALLETS } from '../constants'
+import { XcmPalletNotFoundError } from '../errors'
 import { type TPallet } from '../types'
 import {
   getDefaultPallet,
@@ -12,7 +13,9 @@ import {
   getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
-  getSupportedPalletsDetails
+  getSupportedPalletsDetails,
+  getXcmPallet,
+  hasPallet
 } from '.'
 
 describe('getDefaultPallet', () => {
@@ -110,5 +113,44 @@ describe('getOtherAssetsPallets', () => {
     const otherAssetsPallets: TPallet[] = ['Currencies', 'Tokens']
     const pallets = getOtherAssetsPallets(chain)
     expect(pallets).toEqual(otherAssetsPallets)
+  })
+})
+
+describe('XcmPalletNotFoundError', () => {
+  it('should create error with correct message and name', () => {
+    const error = new XcmPalletNotFoundError('Acala')
+    expect(error.message).toBe('No XCM pallet found on chain Acala')
+    expect(error.name).toBe('XcmPalletNotFoundError')
+    expect(error).toBeInstanceOf(Error)
+  })
+})
+
+describe('getXcmPallet', () => {
+  it('should return XcmPallet for Polkadot', () => {
+    const pallet = getXcmPallet('Polkadot')
+    expect(pallet).toEqual('XcmPallet')
+  })
+
+  it('should return PolkadotXcm for Acala', () => {
+    const pallet = getXcmPallet('Acala')
+    expect(pallet).toEqual('PolkadotXcm')
+  })
+
+  it('should return a valid XCM pallet for all chains that have one', () => {
+    SUBSTRATE_CHAINS.forEach(chain => {
+      if (hasPallet(chain, 'XcmPallet') || hasPallet(chain, 'PolkadotXcm')) {
+        const pallet = getXcmPallet(chain)
+        expect(['XcmPallet', 'PolkadotXcm']).toContain(pallet)
+      }
+    })
+  })
+
+  it('should throw XcmPalletNotFoundError when no XCM pallet exists', () => {
+    const chainsWithoutXcm = SUBSTRATE_CHAINS.filter(
+      chain => !hasPallet(chain, 'XcmPallet') && !hasPallet(chain, 'PolkadotXcm')
+    )
+    chainsWithoutXcm.forEach(chain => {
+      expect(() => getXcmPallet(chain)).toThrow(XcmPalletNotFoundError)
+    })
   })
 })

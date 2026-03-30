@@ -33,10 +33,6 @@
         "endpoint": "wss://polkadot-asset-hub-rpc.polkadot.io"
       },
       {
-        "name": "Permanence DAO EU",
-        "endpoint": "wss://asset-hub-polkadot.rpc.permanence.io"
-      },
-      {
         "name": "RadiumBlock",
         "endpoint": "wss://statemint.public.curie.radiumblock.co/ws"
       }
@@ -174,6 +170,10 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://bridgehub-polkadot.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "Spectrum",
+        "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/mgX--uWlEtmNKw/polkadotbridgehub/mainnet/"
       }
     ]
   },
@@ -341,6 +341,10 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-coretime-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://coretime-polkadot.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -417,17 +421,6 @@
       }
     ]
   },
-  "Nodle": {
-    "name": "Nodle",
-    "info": "nodle",
-    "paraId": 2026,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://nodle-parachain.api.onfinality.io/public-ws"
-      }
-    ]
-  },
   "NeuroWeb": {
     "name": "NeuroWeb",
     "info": "neuroweb",
@@ -500,6 +493,10 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-people-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://people-polkadot.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -528,12 +525,16 @@
     "paraId": 3417,
     "providers": [
       {
-        "name": "XodeCommunity",
-        "endpoint": "wss://polkadot-rpcnode.xode.net"
+        "name": "RakSonCebu",
+        "endpoint": "wss://rakson-ceb-rpc.xode.net"
       },
       {
-        "name": "Zeeve",
-        "endpoint": "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc"
+        "name": "RakSonKorea",
+        "endpoint": "wss://rakson-rpc.xode.net"
+      },
+      {
+        "name": "XodeCommunity",
+        "endpoint": "wss://polkadot-rpcnode.xode.net"
       }
     ]
   },
@@ -612,6 +613,10 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://bridgehub-kusama.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "Spectrum",
+        "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/balkpUVauqyv8g/kusamabridgehub/mainnet/"
       }
     ]
   },
@@ -742,17 +747,6 @@
       }
     ]
   },
-  "Altair": {
-    "name": "Altair",
-    "info": "altair",
-    "paraId": 2088,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://altair.api.onfinality.io/public-ws"
-      }
-    ]
-  },
   "Basilisk": {
     "name": "Basilisk",
     "info": "basilisk",
@@ -839,6 +833,17 @@
       }
     ]
   },
+  "RobonomicsPolkadot": {
+    "name": "Robonomics",
+    "info": "robonomics",
+    "paraId": 3388,
+    "providers": [
+      {
+        "name": "Airalab",
+        "endpoint": "wss://polkadot.rpc.robonomics.network/"
+      }
+    ]
+  },
   "PeopleKusama": {
     "name": "People",
     "info": "kusamaPeople",
@@ -871,6 +876,10 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-people-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://people-kusama.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -1212,7 +1221,7 @@
         "endpoint": "wss://polkadot.public.curie.radiumblock.co/ws"
       },
       {
-        "name": "Simply Staking",
+        "name": "Spectrum",
         "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/LjwBJpV3dIKyWQ/polkadot/mainnet/"
       },
       {
@@ -1265,6 +1274,10 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://kusama.public.curie.radiumblock.co/ws"
+      },
+      {
+        "name": "Spectrum",
+        "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/QXq7QZ6Q60NDzA/kusama/mainnet/"
       },
       {
         "name": "Stakeworld",

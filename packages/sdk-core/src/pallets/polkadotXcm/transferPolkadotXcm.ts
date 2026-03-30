@@ -1,6 +1,6 @@
 // Contains basic structure of polkadotXCM call
 
-import type { TPallet } from '@paraspell/pallets'
+import { getXcmPallet, type TPallet } from '@paraspell/pallets'
 import { isTLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
@@ -49,7 +49,7 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner>(
       : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 
   const call: TSerializedExtrinsics = {
-    module: (pallet as TPallet) ?? 'PolkadotXcm',
+    module: (pallet as TPallet) ?? getXcmPallet(chain),
     method: methodOverride ?? method,
     params: {
       dest: addXcmVersionHeader(destLocation, version),

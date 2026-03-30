@@ -1,4 +1,4 @@
-import { isRelayChain } from '@paraspell/sdk-common'
+import { getXcmPallet } from '@paraspell/pallets'
 
 import { UnsupportedOperationError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
@@ -68,7 +68,7 @@ export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
   ]
 
   return {
-    module: isRelayChain(chain) ? 'XcmPallet' : 'PolkadotXcm',
+    module: getXcmPallet(chain),
     method: 'send',
     params: {
       dest: addXcmVersionHeader(dest, version),

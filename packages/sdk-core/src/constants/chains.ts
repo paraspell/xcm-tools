@@ -1,7 +1,6 @@
 import Acala from '../chains/supported/Acala'
 import Ajuna from '../chains/supported/Ajuna'
 import AjunaPaseo from '../chains/supported/AjunaPaseo'
-import Altair from '../chains/supported/Altair'
 import AssetHubKusama from '../chains/supported/AssetHubKusama'
 import AssetHubPaseo from '../chains/supported/AssetHubPaseo'
 import AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
@@ -46,7 +45,6 @@ import Moonriver from '../chains/supported/Moonriver'
 import Mythos from '../chains/supported/Mythos'
 import NeuroWeb from '../chains/supported/NeuroWeb'
 import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
-import Nodle from '../chains/supported/Nodle'
 import Paseo from '../chains/supported/Paseo'
 import Peaq from '../chains/supported/Peaq'
 import Pendulum from '../chains/supported/Pendulum'
@@ -57,6 +55,7 @@ import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Polkadot from '../chains/supported/Polkadot'
 import Quartz from '../chains/supported/Quartz'
+import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
 import Westend from '../chains/supported/Westend'
@@ -85,8 +84,8 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Moonbeam: new Moonbeam<TApi, TRes, TSigner>(),
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes, TSigner>(),
   PeoplePolkadot: new PeoplePolkadot<TApi, TRes, TSigner>(),
+  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes, TSigner>(),
   Manta: new Manta<TApi, TRes, TSigner>(),
-  Nodle: new Nodle<TApi, TRes, TSigner>(),
   NeuroWeb: new NeuroWeb<TApi, TRes, TSigner>(),
   Pendulum: new Pendulum<TApi, TRes, TSigner>(),
   Collectives: new Collectives<TApi, TRes, TSigner>(),
@@ -100,7 +99,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   BridgeHubKusama: new BridgeHubKusama<TApi, TRes, TSigner>(),
   CoretimeKusama: new CoretimeKusama<TApi, TRes, TSigner>(),
   Encointer: new Encointer<TApi, TRes, TSigner>(),
-  Altair: new Altair<TApi, TRes, TSigner>(),
   Basilisk: new Basilisk<TApi, TRes, TSigner>(),
   BifrostKusama: new BifrostKusama<TApi, TRes, TSigner>(),
   CrustShadow: new CrustShadow<TApi, TRes, TSigner>(),

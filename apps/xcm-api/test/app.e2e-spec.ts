@@ -226,7 +226,7 @@ describe('XCM API (e2e)', () => {
         .post(`/assets/AssetHubPolkadot/location`)
         .send({
           currency: {
-            symbol: 'USDt',
+            symbol: 'BILL',
           },
         })
         .expect(201));

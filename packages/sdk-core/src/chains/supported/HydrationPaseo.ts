@@ -4,7 +4,7 @@ import Hydration from './Hydration'
 
 class HydrationPaseo<TApi, TRes, TSigner> extends Hydration<TApi, TRes, TSigner> {
   constructor() {
-    super('HydrationPaseo', 'rococoHydraDX', 'Paseo', Version.V4)
+    super('HydrationPaseo', 'rococoHydraDX', 'Paseo', Version.V5)
   }
 }
 

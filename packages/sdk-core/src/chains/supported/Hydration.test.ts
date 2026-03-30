@@ -52,7 +52,7 @@ describe('Hydration', () => {
     expect(hydration.chain).toBe('Hydration')
     expect(hydration.info).toBe('hydradx')
     expect(hydration.ecosystem).toBe('Polkadot')
-    expect(hydration.version).toBe(Version.V4)
+    expect(hydration.version).toBe(Version.V5)
   })
 
   describe('transferPolkadotXCM', () => {

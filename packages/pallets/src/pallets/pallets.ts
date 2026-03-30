@@ -2,6 +2,7 @@
 
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import { XcmPalletNotFoundError } from '../errors'
 import * as palletsMapJson from '../maps/pallets.json' with { type: 'json' }
 import type { TAssetsPallet, TPalletDetails } from '../types'
 import { type TPallet, type TPalletJsonMap } from '../types'
@@ -36,3 +37,21 @@ export const getNativeAssetsPallet = (chain: TSubstrateChain): TAssetsPallet =>
 
 export const getOtherAssetsPallets = (chain: TSubstrateChain): TAssetsPallet[] =>
   palletsMap[chain].otherAssets
+
+export const hasPallet = (chain: TSubstrateChain, pallet: TPallet): boolean =>
+  palletsMap[chain].supportedPallets.some(p => p.name === pallet)
+
+/**
+ * Retrieves the XCM pallet for a specified chain.
+ *
+ * @param chain - The chain for which to get the XCM pallet.
+ * @returns The XCM pallet found on the chain (XcmPallet or PolkadotXcm).
+ * @throws {@link XcmPalletNotFoundError} If no XCM pallet is found on the chain.
+ */
+export const getXcmPallet = (chain: TSubstrateChain): TPallet => {
+  const candidates: TPallet[] = ['XcmPallet', 'PolkadotXcm']
+  for (const pallet of candidates) {
+    if (hasPallet(chain, pallet)) return pallet
+  }
+  throw new XcmPalletNotFoundError(chain)
+}

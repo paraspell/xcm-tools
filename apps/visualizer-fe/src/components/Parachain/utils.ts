@@ -17,7 +17,6 @@ import mantaPng from '../../logos/manta.png';
 import moonbeamPng from '../../logos/moonbeam.png';
 import mythosPng from '../../logos/mythos.png';
 import neuroWebPng from '../../logos/neuroWeb.png';
-import nodlePng from '../../logos/nodle.png';
 import pendulumPng from '../../logos/pendulum.png';
 import uniquePng from '../../logos/unique.png';
 import zeitgeistPng from '../../logos/zeitgeist.png';
@@ -55,8 +54,6 @@ export const getChainLogo = (chain: TSubstrateChain) => {
       return neuroWebPng;
     case 'Crust':
       return crustPng;
-    case 'Nodle':
-      return nodlePng;
     case 'Darwinia':
       return darwiniaPng;
     case 'Ajuna':

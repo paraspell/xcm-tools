@@ -16,6 +16,6 @@ describe('HydrationPaseo', () => {
     expect(chain.chain).toBe('HydrationPaseo')
     expect(chain.info).toBe('rococoHydraDX')
     expect(chain.ecosystem).toBe('Paseo')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 })

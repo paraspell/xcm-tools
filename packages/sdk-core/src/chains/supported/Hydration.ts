@@ -27,7 +27,7 @@ class Hydration<TApi, TRes, TSigner>
     chain: TParachain = 'Hydration',
     info: string = 'hydradx',
     ecosystem: TRelaychain = 'Polkadot',
-    version: Version = Version.V4
+    version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
   }
