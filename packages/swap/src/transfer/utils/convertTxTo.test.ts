@@ -1,13 +1,13 @@
 import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { isPjsExtrinsic } from '../../utils';
-import { convertTxToTarget } from './convertTxToPapi';
+import { convertTxToTarget } from './convertTx';
 
 vi.mock('../../utils');
 
-const makeTx = (hex: string) =>
-  ({ toHex: vi.fn(() => hex) }) as unknown as import('@paraspell/sdk-pjs').Extrinsic;
+const makeTx = (hex: string) => ({ toHex: vi.fn(() => hex) }) as unknown as Extrinsic;
 
 const makeApi = (txFromHexFn: ReturnType<typeof vi.fn>) =>
   ({

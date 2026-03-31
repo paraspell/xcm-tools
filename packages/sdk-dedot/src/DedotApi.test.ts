@@ -321,8 +321,8 @@ describe("DedotApi", () => {
 
       const result = await dedotApi.queryState(serialized);
       expect(mockApiRaw.query.system.account).toHaveBeenCalledWith([
-        "addr",
-        "extra",
+        { val: "transformed" },
+        { val: "transformed" },
       ]);
       expect(result).toEqual({ data: "result" });
     });
