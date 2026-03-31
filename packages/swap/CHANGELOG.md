@@ -1,5 +1,17 @@
 # Changelog
 
+## [12.9.6](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.5...swap-v12.9.6) (2026-03-31)
+
+
+### Bug Fixes
+
+* **swap:** Add temporary swap types bypass 🔧 ([1468736](https://github.com/paraspell/xcm-tools/commit/14687362256f26410e8f744b64b8e4c679425f26))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+
 ## [12.9.5](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.4...swap-v12.9.5) (2026-03-26)
 
 
