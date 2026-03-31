@@ -59,6 +59,7 @@ import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-cryp
 
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
 import { computeOriginFee, createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
+import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
 const clientPool = createClientCache<TPjsApi>(
   MAX_CLIENTS,
@@ -148,7 +149,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   txFromHex(hex: string): Promise<Extrinsic> {
-    return Promise.resolve(this.api.tx(hex))
+    return Promise.resolve(txFromHexUtil(this.api, hex))
   }
 
   async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {

@@ -205,7 +205,7 @@ class DedotApi implements IPolkadotApi<
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
     return this.api.query[module][method](
-      params.length > 1 ? params : params[0],
+      params.length > 1 ? params.map(transform) : params[0],
     );
   }
 

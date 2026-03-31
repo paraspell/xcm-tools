@@ -32,6 +32,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi } from './types'
 import { computeOriginFee } from './utils'
+import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
@@ -59,6 +60,10 @@ vi.mock('./utils', async importOriginal => ({
     address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
   }),
   computeOriginFee: vi.fn()
+}))
+
+vi.mock('./utils/txFromHex', () => ({
+  txFromHex: vi.fn().mockReturnValue('mocked_tx_from_hex')
 }))
 
 describe('PolkadotJsApi', () => {
@@ -433,18 +438,11 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('txFromHex', () => {
-    it('should return the hex representation of the extrinsic', async () => {
+    it('should delegate to txFromHex utility', async () => {
       const hex = '0xdeadbeef'
-      const mockTransaction = {} as unknown as Extrinsic
-      const mockPromise = {
-        tx: vi.fn().mockReturnValue(mockTransaction),
-        query: {},
-        call: {}
-      } as unknown as TPjsApi
-      const pjsApi = new PolkadotJsApi(mockPromise)
-      await pjsApi.init(mockChain)
-      const result = await pjsApi.txFromHex(hex)
-      expect(result).toBe(mockTransaction)
+      const result = await polkadotApi.txFromHex(hex)
+      expect(txFromHexUtil).toHaveBeenCalledWith(polkadotApi.getApi(), hex)
+      expect(result).toBe('mocked_tx_from_hex')
     })
   })
 
