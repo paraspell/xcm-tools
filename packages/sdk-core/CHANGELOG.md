@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.6...sdk-core-v12.9.7) (2026-03-31)
+
+
+### Build System
+
+* **sdk-core:** Bump swap pkg to v12.9.6 📦 ([0a3a08f](https://github.com/paraspell/xcm-tools/commit/0a3a08fbe9ba58a84f27e57fe52f534d0b9cadb1))
+
 ## [12.9.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.5...sdk-core-v12.9.6) (2026-03-31)
 
 
