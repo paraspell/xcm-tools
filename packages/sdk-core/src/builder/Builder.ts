@@ -418,8 +418,10 @@ export class GeneralBuilder<
     const { swapOptions } = this._options
 
     if (swapOptions) {
-      return executeWithRouter({ ...this._options, api: this.api, swapOptions }, builder =>
-        builder.dryRun()
+      return executeWithRouter(
+        { ...this._options, api: this.api, swapOptions },
+        // Temporarily use type cast till the swap pkg dep is released and updated
+        builder => builder.dryRun() as Promise<TDryRunResult>
       )
     }
 
@@ -479,8 +481,10 @@ export class GeneralBuilder<
     assertAddressIsString(address)
 
     if (swapOptions) {
-      return executeWithRouter({ ...normalizedOptions, swapOptions }, builder =>
-        builder.getXcmFees(options)
+      // Temporarily use type cast till the swap pkg dep is released and updated
+      return executeWithRouter(
+        { ...normalizedOptions, swapOptions },
+        builder => builder.getXcmFees(options) as Promise<TGetXcmFeeResult<TDisableFallback>>
       )
     }
 
