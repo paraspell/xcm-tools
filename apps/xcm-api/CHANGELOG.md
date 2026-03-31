@@ -1,5 +1,12 @@
 # Changelog
 
+## [12.9.6](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.9.5...xcm-api-v12.9.6) (2026-03-31)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+
 ## [12.9.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.9.4...xcm-api-v12.9.5) (2026-03-26)
 
 
