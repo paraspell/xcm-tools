@@ -2,9 +2,7 @@ import { registerSwapExtension } from '@paraspell/sdk';
 
 import { RouterBuilder } from './builder/RouterBuilder';
 
-// Temporarily use type cast till the swap pkg dep is released and updated
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-registerSwapExtension({ RouterBuilder } as unknown as any);
+registerSwapExtension({ RouterBuilder });
 
 export {
   getExchangeAssets,

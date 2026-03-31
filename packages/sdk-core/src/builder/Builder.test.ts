@@ -888,7 +888,11 @@ describe('Builder', () => {
         hops: []
       }
 
-      vi.mocked(executeWithRouter).mockResolvedValue(mockDryRunResult)
+      const dryRunSpy = vi.fn().mockResolvedValue(mockDryRunResult)
+
+      vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) =>
+        executor({ dryRun: dryRunSpy } as unknown as Parameters<typeof executor>[0])
+      )
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -907,6 +911,7 @@ describe('Builder', () => {
         }),
         expect.any(Function)
       )
+      expect(dryRunSpy).toHaveBeenCalledOnce()
       expect(buildDryRun).not.toHaveBeenCalled()
     })
   })
@@ -933,7 +938,11 @@ describe('Builder', () => {
 
     it('should fetch XCM fee with swapOptions via executeWithRouter', async () => {
       const mockFeeResult = {} as TGetXcmFeeResult
-      vi.mocked(executeWithRouter).mockResolvedValue(mockFeeResult)
+      const getXcmFeesSpy = vi.fn().mockResolvedValue(mockFeeResult)
+
+      vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) =>
+        executor({ getXcmFees: getXcmFeesSpy } as unknown as Parameters<typeof executor>[0])
+      )
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -951,6 +960,7 @@ describe('Builder', () => {
         }),
         expect.any(Function)
       )
+      expect(getXcmFeesSpy).toHaveBeenCalledOnce()
       expect(getXcmFee).not.toHaveBeenCalled()
     })
 

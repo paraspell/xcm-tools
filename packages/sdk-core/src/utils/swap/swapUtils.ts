@@ -91,13 +91,9 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
   const routerConfig = convertBuilderConfig(config)
 
   let builder = RouterBuilder(routerConfig)
-    // Temporarily use type cast till the swap pkg dep is released and updated
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-    .from(from as unknown as any)
+    .from(from)
     .exchange(exchange)
-    // Temporarily use type cast till the swap pkg dep is released and updated
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-    .to(to as unknown as any)
+    .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)
     .amount(currency.amount)
