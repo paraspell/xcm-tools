@@ -1,4 +1,4 @@
-import type { TTransferOptions } from '@paraspell/sdk-core'
+import type { TApiOrUrl, TTransferOptions } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
 import { getBridgeStatus, getParaEthTransferFees, transferEthToPolkadot } from './transfer'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
+import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 
 vi.mock('./PolkadotJsApi')
 
@@ -26,7 +26,7 @@ describe('Transfer function using PolkadotJsAPI', () => {
   const options = {
     api: mockApi
   } as unknown as Omit<TTransferOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'> & {
-    api: TPjsApiOrUrl
+    api: TApiOrUrl<TPjsApi>
   }
 
   let pjsApiInitSpy: MockInstance

@@ -1,6 +1,6 @@
 import type {
   TAssetInfo,
-  TBuilderOptions,
+  TChain,
   TChainAssetsInfo,
   TDestination,
   TDryRunCallBaseOptions,
@@ -28,12 +28,7 @@ import type { Mock } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import DedotApi from "./DedotApi";
-import type {
-  TDedotApi,
-  TDedotApiOrUrl,
-  TDedotExtrinsic,
-  TDedotSigner,
-} from "./types";
+import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { computeOriginFee } from "./utils/computeOriginFee";
 import { transform } from "./XcmTransformer";
 
@@ -223,24 +218,8 @@ describe("DedotApi", () => {
     vi.restoreAllMocks();
   });
 
-  describe("getType", () => {
-    it("should return DEDOT", () => {
-      expect(dedotApi.getType()).toBe("DEDOT");
-    });
-  });
-
-  describe("getConfig / getApi", () => {
-    it("returns the config passed to the constructor", () => {
-      const config: TBuilderOptions<TDedotApiOrUrl> = {
-        development: true,
-      };
-      const api = new DedotApi(config);
-      expect(api.getConfig()).toEqual({ development: true });
-    });
-
-    it("returns the underlying api instance", () => {
-      expect(dedotApi.getApi()).toBe(mockApi);
-    });
+  it("should return DEDOT api type", () => {
+    expect(dedotApi.type).toBe("DEDOT");
   });
 
   describe("accountToHex", () => {
@@ -540,17 +519,6 @@ describe("DedotApi", () => {
     it("returns address from keyring pair for string sender", () => {
       const result = dedotApi.deriveAddress("//Alice");
       expect(result).toBe("5MockAddress");
-    });
-  });
-
-  describe("setDisconnectAllowed / getDisconnectAllowed", () => {
-    it("defaults to true", () => {
-      expect(dedotApi.getDisconnectAllowed()).toBe(true);
-    });
-
-    it("can be set to false", () => {
-      dedotApi.setDisconnectAllowed(false);
-      expect(dedotApi.getDisconnectAllowed()).toBe(false);
     });
   });
 
@@ -1052,7 +1020,7 @@ describe("DedotApi", () => {
 
     beforeEach(() => {
       vi.mocked(localizeLocation).mockImplementation(
-        (_: TSubstrateChain, loc: TLocation) => loc,
+        (_: TChain, loc: TLocation) => loc,
       );
       vi.spyOn(dedotApi, "getDeliveryFee").mockResolvedValue(0n);
     });
@@ -1083,7 +1051,7 @@ describe("DedotApi", () => {
     beforeEach(() => {
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(baseAsset);
       vi.mocked(localizeLocation).mockImplementation(
-        (_: TSubstrateChain, loc: TLocation) => loc,
+        (_: TChain, loc: TLocation) => loc,
       );
       vi.mocked(isAssetXcEqual).mockReturnValue(true);
     });
@@ -1195,7 +1163,7 @@ describe("DedotApi", () => {
     });
 
     it("does nothing when disconnectAllowed is false and force is false", async () => {
-      dedotApi.setDisconnectAllowed(false);
+      dedotApi.disconnectAllowed = false;
       await dedotApi.disconnect(false);
       expect(mockApiRaw.disconnect).not.toHaveBeenCalled();
     });

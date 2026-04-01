@@ -6,7 +6,7 @@ import {
 } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type {
   HopProcessParams,
   TGetXcmFeeInternalOptions,
@@ -43,7 +43,7 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown, u
       clone: vi.fn().mockImplementation(() => createOptions(overrides).api),
       init: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() })
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>,
+    } as unknown as PolkadotApi<unknown, unknown, unknown>,
     builder: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
@@ -856,7 +856,7 @@ describe('getXcmFeeOnce', () => {
   it('handles API disconnect and clone operations', async () => {
     const mockCloneApi = {
       init: vi.fn().mockResolvedValue(undefined),
-      setDisconnectAllowed: vi.fn(),
+      disconnectAllowed: true,
       disconnect: vi.fn().mockResolvedValue(undefined)
     }
 
@@ -864,7 +864,7 @@ describe('getXcmFeeOnce', () => {
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn().mockReturnValue(mockCloneApi)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'GLMR' } as TAssetInfo)
@@ -888,8 +888,7 @@ describe('getXcmFeeOnce', () => {
 
     expect(cloneSpy).toHaveBeenCalled()
     expect(mockCloneApi.init).toHaveBeenCalled()
-    expect(mockCloneApi.setDisconnectAllowed).toHaveBeenCalledWith(false)
-    expect(mockCloneApi.setDisconnectAllowed).toHaveBeenCalledWith(true)
+    expect(mockCloneApi.disconnectAllowed).toBe(true)
     expect(mockCloneApi.disconnect).toHaveBeenCalled()
   })
 
@@ -904,7 +903,7 @@ describe('getXcmFeeOnce', () => {
       setDisconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn().mockReturnValue(mockCloneApi)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {

@@ -1,7 +1,7 @@
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 
 export const getBridgeStatus = async <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ) => {
   await api.init('BridgeHubPolkadot')
   try {

@@ -2,7 +2,7 @@ import type { TAsset } from '@paraspell/assets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
 import { createBeneficiaryLocation } from '../../location'
@@ -17,7 +17,7 @@ vi.mock('./createAssetsFilter')
 vi.mock('./prepareExecuteContext')
 
 describe('prepareCommonExecuteXcm', () => {
-  const mockApi = { api: 'mock' } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = { api: 'mock' } as unknown as PolkadotApi<unknown, unknown, unknown>
   const mockAsset = { id: {}, fun: { Fungible: 1000n } } as TAsset
   const mockFeeAsset = { id: {}, fun: { Fungible: 100n } } as TAsset
   const mockVersion = Version.V3

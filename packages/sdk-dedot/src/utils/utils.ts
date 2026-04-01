@@ -1,21 +1,17 @@
 import type {
-  IPolkadotApi,
+  PolkadotApi,
+  TApiOrUrl,
   TBuilderOptions,
   TSubstrateChain,
 } from "@paraspell/sdk-core";
 import { createChainClient as createChainClientInternal } from "@paraspell/sdk-core";
 
 import DedotApi from "../DedotApi";
-import type {
-  TDedotApi,
-  TDedotApiOrUrl,
-  TDedotExtrinsic,
-  TDedotSigner,
-} from "../types";
+import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "../types";
 
 export const createChainClient = (
   chain: TSubstrateChain,
-  builderOptions?: TBuilderOptions<TDedotApiOrUrl>,
+  builderOptions?: TBuilderOptions<TApiOrUrl<TDedotApi>>,
 ) => {
   const dedotApi = new DedotApi(builderOptions);
   return createChainClientInternal<TDedotApi, TDedotExtrinsic, TDedotSigner>(
@@ -30,20 +26,20 @@ export const createDedotApiCall = <
 >(
   apiCall: (
     options: TArgs & {
-      api: IPolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>;
+      api: PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>;
     },
   ) => Promise<TResult>,
 ) => {
   return async (
-    options: TArgs & { api?: TDedotApiOrUrl },
+    options: TArgs & { api?: TApiOrUrl<TDedotApi> },
   ): Promise<TResult> => {
     const dedotApi = new DedotApi(options.api);
 
     const optionsWithApi = {
       ...options,
-      api: dedotApi as IPolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>,
+      api: dedotApi as PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>,
     } as TArgs & {
-      api: IPolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>;
+      api: PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner>;
     };
 
     return apiCall(optionsWithApi);

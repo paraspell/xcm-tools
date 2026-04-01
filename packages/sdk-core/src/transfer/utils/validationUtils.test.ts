@@ -18,7 +18,7 @@ import { isHex } from 'viem'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
 import type { TDestination, TTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
@@ -281,7 +281,7 @@ describe('validateAssetSpecifiers', () => {
 })
 
 describe('validateTransact', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,

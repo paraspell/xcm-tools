@@ -3,7 +3,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
 import { UnsupportedOperationError } from '../../errors'
 import { createTransfer } from '../../transfer'
@@ -32,10 +32,10 @@ vi.mock('../unit')
 vi.mock('../../transfer')
 vi.mock('../swap')
 
-const makeApi = (cfg: TBuilderConfig<unknown>) =>
+const makeApi = (config: TBuilderConfig<unknown>) =>
   ({
-    getConfig: vi.fn(() => cfg)
-  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
+    config
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
   api: makeApi({}),
@@ -196,8 +196,8 @@ const makeTransferOptions = (
 ): TTransferOptions<unknown, unknown, unknown> =>
   ({
     api: {
-      getApi: vi.fn(() => 'mockApi'),
-      getConfig: vi.fn(() => ({}))
+      api: 'mockApi',
+      config: {}
     },
     from: 'Acala',
     to: 'Hydration',

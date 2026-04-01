@@ -45,7 +45,10 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.PR_TOKEN }}
-          commit-message: "ci: Update assets map 📋"
+          commit-message: |
+            ci(assets): Update SDK assets 📋
+
+            ci(swap): Update swap assets 📋
           title: "Update assets map 📋"
           body: "This PR updates the assets map"
           branch: ci/assets-map

@@ -1,4 +1,5 @@
 import type {
+  TApiOrUrl,
   TCreateBaseSwapXcmOptions,
   TGetXcmFeeBaseOptions,
   TTransferOptions
@@ -14,7 +15,7 @@ import {
   getXcmFee,
   handleSwapExecuteTransfer
 } from './transfer'
-import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 
 vi.mock('@paraspell/sdk-core', async importActual => ({
   ...(await importActual()),
@@ -32,7 +33,7 @@ describe('Transfer functions using PapiApi', () => {
   const options = {
     api: mockApi
   } as Omit<TTransferOptions<TPapiApi, TPapiTransaction, TPapiSigner>, 'api'> & {
-    api: TPapiApiOrUrl
+    api: TApiOrUrl<TPapiApi>
   }
 
   let papiApiInitSpy: MockInstance

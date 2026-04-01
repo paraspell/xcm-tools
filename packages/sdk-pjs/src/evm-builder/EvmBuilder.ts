@@ -1,5 +1,6 @@
+import type {
+  PolkadotApi} from '@paraspell/sdk-core';
 import {
-  type IPolkadotApi,
   type TChain,
   type TCurrencyInputWithAmount,
   type TEvmChainFrom,
@@ -130,6 +131,6 @@ export class EvmBuilderCore<
  * @returns An instance of EvmBuilder class
  */
 export const EvmBuilder = <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   provider?: AbstractProvider
 ) => new EvmBuilderCore({ api, provider })

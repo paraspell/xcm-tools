@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -39,7 +39,7 @@ describe('RobonomicsPolkadot', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    const mockApi = { deserializeExtrinsics: vi.fn() } as unknown as IPolkadotApi<
+    const mockApi = { deserializeExtrinsics: vi.fn() } as unknown as PolkadotApi<
       unknown,
       unknown,
       unknown

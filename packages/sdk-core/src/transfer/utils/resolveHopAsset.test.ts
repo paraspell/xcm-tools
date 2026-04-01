@@ -7,7 +7,7 @@ import {
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TResolveHopParams, TSwapConfig } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { resolveHopAsset } from './resolveHopAsset'
@@ -27,7 +27,7 @@ vi.mock('../../utils')
 describe('resolveHopAsset', () => {
   const mockApi = {
     getTypeThenAssetCount: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'asset'> = {
     api: mockApi,

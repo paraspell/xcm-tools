@@ -1,3 +1,4 @@
+import type { TApiOrUrl } from '@paraspell/sdk-core'
 import {
   dryRun as dryRunImpl,
   dryRunOrigin as dryRunOriginImpl,
@@ -8,7 +9,7 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '@paraspell/sdk-core'
 
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions, TPjsSigner } from './types'
+import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
 export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic, TPjsSigner>)
@@ -24,7 +25,7 @@ export const transferEthToPolkadot = (
     api: new PolkadotJsApi()
   })
 
-export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
+export const getParaEthTransferFees = async (api?: TApiOrUrl<TPjsApi>) => {
   const pjsApi = new PolkadotJsApi(api)
   await pjsApi.init('AssetHubPolkadot', DRY_RUN_CLIENT_TIMEOUT_MS)
   return getEthFeesImpl(pjsApi)
@@ -33,7 +34,7 @@ export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
 /**
  * Gets the Ethereum bridge status.
  */
-export const getBridgeStatus = async (api?: TPjsApiOrUrl) => {
+export const getBridgeStatus = async (api?: TApiOrUrl<TPjsApi>) => {
   const pjsApi = new PolkadotJsApi(api)
   return getBridgeStatusImpl(pjsApi)
 }

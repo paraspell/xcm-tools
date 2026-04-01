@@ -3,7 +3,7 @@ import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { UnableToComputeError } from '../../errors'
 import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
@@ -20,8 +20,8 @@ vi.mock('../../balance')
 vi.mock('../../pallets/assets/balance')
 
 describe('buildDestInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown, unknown>
-  let mockClonedApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockApi: PolkadotApi<unknown, unknown, unknown>
+  let mockClonedApi: PolkadotApi<unknown, unknown, unknown>
   let baseOptions: TBuildDestInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_ED = '1000000000'
@@ -44,11 +44,11 @@ describe('buildDestInfo', () => {
     mockClonedApi = {
       init: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
       clone: vi.fn().mockReturnValue(mockClonedApi)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(glmrAsset)
 

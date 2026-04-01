@@ -3,7 +3,7 @@ import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getParaEthTransferFees } from '../../transfer'
@@ -114,7 +114,7 @@ describe('Mythos', () => {
       init: vi.fn(),
       quoteAhPrice: vi.fn(),
       deserializeExtrinsics: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const mockEthereumInput = {
       api: mockApi,
@@ -191,7 +191,7 @@ describe('Mythos', () => {
 })
 
 describe('createTypeAndThenTransfer', () => {
-  const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockOptions = {
     api: mockApi,

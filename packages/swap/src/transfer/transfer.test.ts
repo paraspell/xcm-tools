@@ -1,4 +1,4 @@
-import type { IPolkadotApi, TSwapEvent } from '@paraspell/sdk-core';
+import type { PolkadotApi, TSwapEvent } from '@paraspell/sdk-core';
 import { isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -11,7 +11,7 @@ import type {
   TTransferBaseOptions,
 } from '../types';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
 import { transfer } from './transfer';
@@ -31,7 +31,7 @@ vi.mock('./executeRouterPlan');
 describe('transfer', () => {
   const mockOriginApi = {} as unknown as TPjsApi;
   const mockSwapApi = {} as unknown as TPjsApi;
-  const mockExchangeApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+  const mockExchangeApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();

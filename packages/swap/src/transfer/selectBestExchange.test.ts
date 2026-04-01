@@ -1,4 +1,4 @@
-import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -7,7 +7,7 @@ import type { TBuildTransactionsOptions } from '../types';
 const createApiForChainSpy = vi.fn().mockResolvedValue({ getApi: vi.fn().mockReturnValue({}) });
 const mockApi = {
   createApiForChain: createApiForChainSpy,
-} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchange } from './selectBestExchange';
@@ -91,7 +91,7 @@ describe('selectBestExchange', () => {
 
   it('propagates errors from selectBestExchangeCommon (e.g. unsupported asset)', async () => {
     const failingOptions: TBuildTransactionsOptions<unknown, unknown, unknown> & {
-      api: IPolkadotApi<unknown, unknown, unknown>;
+      api: PolkadotApi<unknown, unknown, unknown>;
     } = {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: 'xyz' },

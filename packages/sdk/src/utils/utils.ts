@@ -2,29 +2,32 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { IPolkadotApi, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
+import type { PolkadotApi, TApiOrUrl, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
 
 import PapiApi from '../PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from '../types'
+import type { TPapiApi, TPapiSigner, TPapiTransaction } from '../types'
 
-export const createChainClient = (chain: TSubstrateChain, api?: TBuilderOptions<TPapiApiOrUrl>) => {
+export const createChainClient = (
+  chain: TSubstrateChain,
+  api?: TBuilderOptions<TApiOrUrl<TPapiApi>>
+) => {
   const papiApi = new PapiApi(api)
   return createChainClientInternal<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi, chain)
 }
 
 export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult>(
   apiCall: (
-    options: TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
+    options: TArgs & { api: PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
   ) => Promise<TResult>
 ) => {
-  return async (options: TArgs & { api?: TPapiApiOrUrl }): Promise<TResult> => {
+  return async (options: TArgs & { api?: TApiOrUrl<TPapiApi> }): Promise<TResult> => {
     const papiApi = new PapiApi(options.api)
 
     const optionsWithApi = {
       ...options,
-      api: papiApi as IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner>
-    } as TArgs & { api: IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
+      api: papiApi as PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner>
+    } as TArgs & { api: PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
 
     return apiCall(optionsWithApi)
   }

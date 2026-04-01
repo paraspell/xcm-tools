@@ -1,4 +1,4 @@
-import type { IPolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
 import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,11 +9,7 @@ import Logger from '../Logger/Logger';
 import type { TCommonRouterOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-const mockApi = { getConfig: () => undefined } as unknown as IPolkadotApi<
-  unknown,
-  unknown,
-  unknown
->;
+const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),

@@ -1,5 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import type { IPolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import {
   getBalance,
   getExistentialDepositOrThrow,
@@ -35,7 +35,7 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
 vi.mock('./utils');
 vi.mock('./fees');
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 const sdkAsset: TAssetInfo = {
   symbol: 'DOT',
@@ -65,7 +65,7 @@ const createExchangeInfo = (
 ): TExchangeInfo<unknown, unknown, unknown> => ({
   apiPjs: {} as TPjsApi,
   apiPapi: {} as TPapiApi,
-  api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
+  api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
   baseChain: 'Hydration',
   exchangeChain: 'HydrationDex',
   assetFrom: {

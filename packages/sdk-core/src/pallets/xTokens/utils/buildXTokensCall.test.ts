@@ -4,7 +4,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import { DEFAULT_FEE } from '../../../constants'
 import { type TXTokensCurrencySelection, type TXTokensTransferOptions } from '../../../types'
 import { createBeneficiaryLocXTokens } from '../../../utils'
@@ -24,7 +24,7 @@ vi.mock('../../../utils')
 describe('buildXTokensCall', () => {
   const version = Version.V4
   const mockDestLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
   const baseInput = {
     api: mockApi,

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import type { TBridgeStatus } from '../types'
 import { getBridgeStatus } from './getBridgeStatus'
 
@@ -9,7 +9,7 @@ describe('getBridgeStatus', () => {
     init: vi.fn(),
     getBridgeStatus: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   it('returns the bridge status', async () => {
     const mockResult: TBridgeStatus = 'Normal'

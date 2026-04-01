@@ -2,7 +2,7 @@ import type { TAsset, TAssetWithFee } from '@paraspell/assets'
 import { isTrustedChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
@@ -18,7 +18,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 }))
 
 describe('buildTypeAndThenCall', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const mockVersion = Version.V5
   const mockDestination: TLocation = {
     parents: 1,

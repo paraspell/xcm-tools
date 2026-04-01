@@ -5,7 +5,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { MIN_AMOUNT } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -92,7 +92,7 @@ class Acala<TApi, TRes, TSigner>
   }
 
   getBalance(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

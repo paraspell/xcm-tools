@@ -8,7 +8,7 @@ import {
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import type { TGetTransferableAmountOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
@@ -24,7 +24,7 @@ describe('getTransferableAmount', () => {
   const mockApi = {
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}) as unknown)
@@ -127,7 +127,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
 
-    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
     await getTransferableAmount(baseOptions)
@@ -145,7 +145,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 
-    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
     await expect(getTransferableAmount(baseOptions)).rejects.toThrow()

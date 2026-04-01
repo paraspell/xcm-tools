@@ -1,8 +1,13 @@
 // Unit tests for transfer utils
 
-import type { TAssetInfo, TPapiApi, TPapiTransaction, TSubstrateChain } from '@paraspell/sdk';
+import type {
+  PolkadotApi,
+  TAssetInfo,
+  TPapiApi,
+  TPapiTransaction,
+  TSubstrateChain,
+} from '@paraspell/sdk';
 import { createChainClient } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
 import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -14,12 +19,12 @@ import type {
   TExchangeInfo,
 } from '../../types';
 
-const mockApi = { clone: vi.fn().mockReturnValue({}) } as unknown as IPolkadotApi<
+const mockApi = { clone: vi.fn().mockReturnValue({}) } as unknown as PolkadotApi<
   unknown,
   unknown,
   unknown
 >;
-const mockExchangeApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+const mockExchangeApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,

@@ -2,7 +2,7 @@ import type { TAsset } from '@paraspell/assets'
 import { isRelayChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TAssetClaimOptions } from '../../types'
 import { validateAddress } from '../../utils'
 import { claimAssets } from './assetClaim'
@@ -23,7 +23,7 @@ describe('claimAssets', () => {
     deserializeExtrinsics: vi.fn(),
     disconnect: vi.fn(),
     getApi: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockChain = 'Acala'
 

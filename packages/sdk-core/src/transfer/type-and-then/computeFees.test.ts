@@ -2,7 +2,7 @@ import { hasDryRunSupport, isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TTxFactory, TTypeAndThenCallContext, TXcmFeeDetail } from '../../types'
 import { assertAddressIsString, assertSender, padValueBy } from '../../utils'
@@ -17,7 +17,7 @@ vi.mock('../fees')
 describe('computeAllFees', () => {
   let buildTx: TTxFactory<unknown>
 
-  const api = {} as IPolkadotApi<unknown, unknown, unknown>
+  const api = {} as PolkadotApi<unknown, unknown, unknown>
 
   const context = {
     origin: { api, chain: 'Polkadot' },

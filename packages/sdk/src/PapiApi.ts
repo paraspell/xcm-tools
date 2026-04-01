@@ -9,10 +9,7 @@
 import { blake2b } from '@noble/hashes/blake2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import type {
-  IPolkadotApi,
-  TApiType,
   TAssetInfo,
-  TBuilderOptions,
   TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
@@ -53,6 +50,7 @@ import {
   MAX_CLIENTS,
   padValueBy,
   Parents,
+  PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
   resolveChainApi,
@@ -69,7 +67,7 @@ import { isAddress, isHex } from 'viem'
 import { LEGACY_CHAINS } from './consts'
 import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
-import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 import { computeOriginFee, createDevSigner, deriveAddress, findFailingEvent } from './utils'
 
 const clientPool = createClientCache<TPapiApi>(
@@ -114,43 +112,20 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
 }
 
-class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
-  private _config?: TBuilderOptions<TPapiApiOrUrl>
-  private api: TPapiApi
-  private _ttlMs = DEFAULT_TTL_MS
-  private initialized = false
-  private disconnectAllowed = true
-  private _chain: TSubstrateChain
-
-  constructor(config?: TBuilderOptions<TPapiApiOrUrl>) {
-    this._config = config
-  }
-
-  getType(): TApiType {
-    return 'PAPI'
-  }
-
-  getConfig() {
-    return this._config
-  }
-
-  getApi() {
-    return this.api
-  }
+class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
+  public readonly type = 'PAPI'
 
   async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || isExternalChain(chain)) {
+    if (this._chain !== undefined || isExternalChain(chain)) {
       return
     }
 
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    this.api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
+    this._api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
       this.createApiInstance(wsUrl, c)
     )
-
-    this.initialized = true
   }
 
   createApiInstance(wsUrl: TUrl, chain: TSubstrateChain) {
@@ -886,16 +861,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     return outboundOperatingMode.type
   }
 
-  setDisconnectAllowed(allowed: boolean) {
-    this.disconnectAllowed = allowed
-  }
-
-  getDisconnectAllowed() {
-    return this.disconnectAllowed
-  }
-
   disconnect(force = false) {
-    if (!this.initialized) return Promise.resolve()
+    if (!this._chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
     const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config

@@ -3,7 +3,7 @@ import { getAssetsObject } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import { getChainConfig } from '../../../chains/config'
 import type { TChainConfig } from '../../../types'
 import { getDestinationLocation } from './getDestinationLocation'
@@ -14,7 +14,7 @@ vi.mock('../../../chains/config')
 describe('getDestinationLocation', () => {
   const mockApi = {
     accountToHex: vi.fn().mockReturnValue('abc123')
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   let mockDestination: TParachain
 

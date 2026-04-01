@@ -2,7 +2,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError } from '../../errors'
 import type { TTypeAndThenCallContext } from '../../types'
@@ -45,7 +45,7 @@ describe('createCustomXcm', () => {
     { BuyExecution: unknown }
   > => typeof step === 'object' && step !== null && 'BuyExecution' in step
 
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const mockAddress = '0x123'
   const mockVersion = Version.V5
 
@@ -167,7 +167,7 @@ describe('createCustomXcm', () => {
     })
 
     it('uses destination api for beneficiary when bridge between AssetHubPolkadot and AssetHubKusama is in use', async () => {
-      const destApi = {} as IPolkadotApi<unknown, unknown, unknown>
+      const destApi = {} as PolkadotApi<unknown, unknown, unknown>
 
       await createCustomXcm(
         {

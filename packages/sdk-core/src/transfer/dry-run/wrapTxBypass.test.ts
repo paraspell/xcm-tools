@@ -5,7 +5,7 @@ import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import { getPalletInstance } from '../../pallets'
 import { parseUnits } from '../../utils/unit'
@@ -55,7 +55,7 @@ const mkApi = () => {
     deserializeExtrinsics,
     callDispatchAsMethod,
     callBatchMethod
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 }
 
 const version = Version.V5

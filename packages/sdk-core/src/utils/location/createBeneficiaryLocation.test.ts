@@ -3,7 +3,7 @@ import { isTLocation, Parents, Version } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { resolveScenario } from '../transfer/resolveScenario'
 import { createBeneficiaryLocation, createBeneficiaryLocXTokens } from './createBeneficiaryLocation'
 import { createX1Payload } from './createX1Payload'
@@ -22,7 +22,7 @@ vi.mock('@paraspell/sdk-common', async () => {
 })
 
 describe('createBeneficiaryLocation', () => {
-  let apiMock: IPolkadotApi<unknown, unknown, unknown>
+  let apiMock: PolkadotApi<unknown, unknown, unknown>
 
   const mockOrigin = 'Polkadot'
   const mockDest = 'Acala'
@@ -30,7 +30,7 @@ describe('createBeneficiaryLocation', () => {
   beforeEach(() => {
     apiMock = {
       accountToHex: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
     vi.clearAllMocks()
   })
 

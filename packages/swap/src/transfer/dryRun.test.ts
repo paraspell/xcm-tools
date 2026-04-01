@@ -1,4 +1,4 @@
-import type { IPolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core';
 import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } from '../types';
 
-const mockApi = { clone: () => mockApi } as unknown as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = { clone: () => mockApi } as unknown as PolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { dryRunRouter } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
@@ -81,7 +81,7 @@ const createOptions = (
     exchangeChain: 'AcalaDex',
     apiPjs: {} as ApiPromise,
     apiPapi: {} as PolkadotClient,
-    api: {} as IPolkadotApi<unknown, unknown, unknown>,
+    api: {} as PolkadotApi<unknown, unknown, unknown>,
     assetFrom: acaAsset,
     assetTo: ausdAsset,
   },
@@ -134,7 +134,7 @@ describe('dryRunRouter', () => {
         exchangeChain: 'AcalaDex',
         apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
-        api: {} as IPolkadotApi<unknown, unknown, unknown>,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: acaAsset,
         assetTo: ausdAsset,
       },
@@ -190,7 +190,7 @@ describe('dryRunRouter', () => {
         exchangeChain: 'HydrationDex',
         apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
-        api: {} as IPolkadotApi<unknown, unknown, unknown>,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: ausdAsset,
         assetTo: acaAsset,
       },

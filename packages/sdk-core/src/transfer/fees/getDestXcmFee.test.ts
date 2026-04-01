@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TDryRunChainResult, TGetFeeForDestChainOptions } from '../../types'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
@@ -15,7 +15,7 @@ vi.mock('./isSufficient')
 const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
-  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getDestXcmFee', () => {
   const unitAsset: TAssetInfo = {

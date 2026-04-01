@@ -2,7 +2,6 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "module": "nodenext",
-    "strict": true,
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,13 +10,13 @@
     "target": "es2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "rootDir": "./src"
   }
 }

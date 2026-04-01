@@ -12,7 +12,7 @@ import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import { BYPASS_MINT_AMOUNT } from '../../constants'
 import { getPalletInstance } from '../../pallets'
@@ -34,7 +34,7 @@ const createMintTxs = <TApi, TRes, TSigner>(
   asset: WithAmount<TAssetInfo>,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ): Promise<TSetBalanceRes> => {
   const nativePallet = getNativeAssetsPallet(chain)
   const otherPallets = getOtherAssetsPallets(chain)
@@ -54,7 +54,7 @@ const createRequiredMintTxs = <TApi, TRes, TSigner>(
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ) => {
   const amount = parseUnits(amountHuman, asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
@@ -66,7 +66,7 @@ const createOptionalMintTxs = <TApi, TRes, TSigner>(
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ) => {
   const asset = findAssetInfo(chain, currency)
   if (!asset) return null
@@ -75,7 +75,7 @@ const createOptionalMintTxs = <TApi, TRes, TSigner>(
 }
 
 const resultToExtrinsics = <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   address: string,
   { assetStatusTx, balanceTx }: TSetBalanceRes
 ): TRes[] => {

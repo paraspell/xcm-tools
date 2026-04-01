@@ -2,7 +2,7 @@ import { getXcmPallet } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { UnsupportedOperationError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader, createBeneficiaryLocation, createDestination } from '../../utils'
@@ -23,10 +23,10 @@ vi.mock('./createTransact', () => ({
 }))
 
 describe('handleTransactUsingSend', () => {
-  let api: IPolkadotApi<unknown, unknown, unknown>
+  let api: PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
+    api = {} as unknown as PolkadotApi<unknown, unknown, unknown>
     vi.clearAllMocks()
     vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
     vi.mocked(addXcmVersionHeader).mockImplementation(obj => obj)

@@ -9,7 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Version } from '../..'
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import type { GeneralBuilder } from '../../builder'
 import { AmountTooLowError } from '../../errors'
@@ -37,12 +37,12 @@ describe('getMinTransferableAmountInternal', () => {
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}) as unknown)
 
-  const destApi = { init: vi.fn() } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockBuilder = {
     currency: vi.fn().mockReturnThis(),

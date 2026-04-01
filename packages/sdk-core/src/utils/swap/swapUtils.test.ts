@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
 import type {
   TApiOrUrl,
@@ -47,11 +47,11 @@ type Signer = unknown
 const createMockApi = (
   type: 'PAPI' | 'PJS' = 'PAPI',
   config?: TBuilderOptions<TApiOrUrl<Api>>
-): IPolkadotApi<Api, Res, Signer> =>
+): PolkadotApi<Api, Res, Signer> =>
   ({
     getType: vi.fn(() => type),
     getConfig: vi.fn(() => config)
-  }) as unknown as IPolkadotApi<Api, Res, Signer>
+  }) as unknown as PolkadotApi<Api, Res, Signer>
 
 const createBaseOptions = (
   overrides: Partial<TTransferOptionsWithSwap<Api, Res, Signer>> = {}

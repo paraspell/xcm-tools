@@ -38,7 +38,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
     : undefined
 
   await api.init(origin)
-  api.setDisconnectAllowed(false)
+  api.disconnectAllowed = false
 
   try {
     const originAsset = findAssetInfoOrThrow(origin, currency, destination)
@@ -164,7 +164,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       destination: destinationInfo
     }
   } finally {
-    api.setDisconnectAllowed(true)
+    api.disconnectAllowed = true
     await api.disconnect()
   }
 }

@@ -7,7 +7,7 @@ import {
 } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { HopProcessParams, HopTraversalResult, TDryRunOptions } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
@@ -44,10 +44,10 @@ const createFakeApi = (originDryRun: unknown) =>
       getApi: vi.fn().mockReturnValue({}),
       getDryRunXcm: vi.fn()
     }))
-  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
-  api: IPolkadotApi<unknown, unknown, unknown>,
+  api: PolkadotApi<unknown, unknown, unknown>,
   overrides?: Partial<TDryRunOptions<unknown, unknown, unknown>>
 ) =>
   ({
@@ -142,7 +142,7 @@ describe('dryRunInternal', () => {
 
       const mockHopApi = {
         getDryRunXcm: getDryRunXcmSpy
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       const hopResult = await capturedProcessHop({
         api: mockHopApi,
@@ -389,7 +389,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown, unknown>
+        } as unknown as PolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -438,7 +438,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown, unknown>
+        } as unknown as PolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -493,7 +493,7 @@ describe('dryRunInternal', () => {
             success: false,
             failureReason: 'Hop simulation failed'
           })
-        } as unknown as IPolkadotApi<unknown, unknown, unknown>
+        } as unknown as PolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
@@ -685,7 +685,7 @@ describe('dryRunInternal', () => {
             success: true,
             fee: 2_000n
           })
-        } as unknown as IPolkadotApi<unknown, unknown, unknown>
+        } as unknown as PolkadotApi<unknown, unknown, unknown>
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,

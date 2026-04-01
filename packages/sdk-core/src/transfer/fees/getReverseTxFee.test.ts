@@ -3,7 +3,7 @@ import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions, TPaymentInfo } from '../../types'
 import { padFee } from '../../utils/fees'
@@ -39,7 +39,7 @@ vi.mock('./padFee')
 
 const mockApi = {
   getPaymentInfo: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getReverseTxFee', () => {
   const mockTxObject = { type: 'mockTransaction' }

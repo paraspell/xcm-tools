@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
@@ -35,7 +35,7 @@ describe('Unique', () => {
 
   it('should throw an error when trying to create a local foreign asset transfer', () => {
     const input = {
-      api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
+      api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
       assetInfo: {
         symbol: 'GLMR',
         assetId: '123'

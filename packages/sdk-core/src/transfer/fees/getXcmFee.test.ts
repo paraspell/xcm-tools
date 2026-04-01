@@ -1,7 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { AmountTooLowError } from '../../errors'
 import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
@@ -14,7 +14,7 @@ vi.mock('./getBypassResult')
 describe('getXcmFee', () => {
   const mockApi = {
     disconnect: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const realTx = { kind: 'real' } as const
 

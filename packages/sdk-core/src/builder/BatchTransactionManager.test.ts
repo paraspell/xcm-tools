@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import type { TBatchedTransferOptions, TTransferBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
@@ -13,7 +13,7 @@ const mockApi = {
   init: vi.fn(),
   getApi: vi.fn(),
   callBatchMethod: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const createBuilder = () =>
   ({

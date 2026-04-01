@@ -9,7 +9,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TDryRunChainResult, TGetOriginXcmFeeInternalOptions } from '../../types'
 import { padFee } from '../../utils/fees'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
@@ -42,7 +42,7 @@ describe('getOriginXcmFeeInternal', () => {
     getPaymentInfo: vi.fn(),
     getDryRunCall: vi.fn(),
     init: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const baseOptions: TGetOriginXcmFeeInternalOptions<unknown, unknown, unknown> = {
     api,

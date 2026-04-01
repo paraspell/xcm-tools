@@ -4,7 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getMoonbeamErc20Balance } from '../../balance'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -48,7 +48,7 @@ class Moonbeam<TApi, TRes, TSigner>
   }
 
   getBalanceForeign<TApi, TRes, TSigner>(
-    _api: IPolkadotApi<TApi, TRes, TSigner>,
+    _api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

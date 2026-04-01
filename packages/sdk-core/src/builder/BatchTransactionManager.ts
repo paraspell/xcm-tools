@@ -1,6 +1,6 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { BatchValidationError } from '../errors'
 import type { TBatchedTransferOptions } from '../types'
@@ -20,7 +20,7 @@ class BatchTransactionManager<TApi, TRes, TSigner> {
   }
 
   async buildBatch(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     from: TSubstrateChain,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {

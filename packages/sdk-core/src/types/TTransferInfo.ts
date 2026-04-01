@@ -1,7 +1,7 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
 import type { TTxFactory, TXcmFeeDetail } from './TXcmFee'
@@ -50,7 +50,7 @@ export type TTransferInfo = {
 }
 
 export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   chain: TSubstrateChain
   fee: bigint
   originChain: TSubstrateChain
@@ -61,7 +61,7 @@ export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
 }
 
 export type TBuildDestInfoOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TChain
   recipient: string

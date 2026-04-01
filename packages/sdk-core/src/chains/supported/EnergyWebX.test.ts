@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
@@ -58,7 +58,7 @@ describe('EnergyWebX', () => {
   it('should query balance foreign with asset location and address', async () => {
     const queryState = vi.fn().mockResolvedValue({ balance: 321n })
 
-    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    const api = { queryState } as unknown as PolkadotApi<unknown, unknown, unknown>
     const asset = { location: { parents: 0, interior: 'Here' } } as TAssetInfo
     const address = '5FbalanceAddr'
 

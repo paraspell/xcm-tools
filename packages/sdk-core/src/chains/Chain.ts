@@ -28,7 +28,7 @@ import {
   type TParachain
 } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { getAssetBalanceInternal } from '../balance'
 import { DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
@@ -600,7 +600,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   getBalanceNative(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
@@ -613,7 +613,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   async getBalanceForeign<TApi, TRes, TSigner>(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ) {
@@ -638,7 +638,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     throw lastError
   }
 
-  getBalance(api: IPolkadotApi<TApi, TRes, TSigner>, address: string, asset: TAssetInfo) {
+  getBalance(api: PolkadotApi<TApi, TRes, TSigner>, address: string, asset: TAssetInfo) {
     const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
     if (isNativeAsset) return this.getBalanceNative(api, address, asset)
     return this.getBalanceForeign(api, address, asset)

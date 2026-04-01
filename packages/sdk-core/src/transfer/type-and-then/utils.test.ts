@@ -1,7 +1,7 @@
 import type { TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { createBeneficiaryLocation } from '../../utils'
 import { createRefundInstruction } from './utils'
 
@@ -10,7 +10,7 @@ vi.mock('../../utils', () => ({
 }))
 
 describe('createRefundInstruction', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const mockSender = '0x123'
   const mockVersion = 'V3' as Version
   const mockBeneficiaryLocation = {} as TLocation

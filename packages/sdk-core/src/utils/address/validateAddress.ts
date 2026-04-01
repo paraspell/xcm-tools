@@ -2,12 +2,12 @@ import { isChainEvm } from '@paraspell/assets'
 import { isTLocation, type TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
 import type { TAddress } from '../../types'
 
 export const validateAddress = <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   address: TAddress,
   chain: TChain,
   isDestination = true

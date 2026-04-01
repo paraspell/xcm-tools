@@ -1,6 +1,6 @@
 import type { Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { claimAssets } from '../transfer'
 import type { TBuilderInternalOptions, TSender } from '../types'
 import { type TAddress } from '../types'
@@ -18,10 +18,10 @@ export class AssetClaimBuilder<
   TSigner,
   T extends Partial<TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>> = object
 > {
-  readonly api: IPolkadotApi<TApi, TRes, TSigner>
+  readonly api: PolkadotApi<TApi, TRes, TSigner>
   readonly _options: T
 
-  constructor(api: IPolkadotApi<TApi, TRes, TSigner>, options?: T) {
+  constructor(api: PolkadotApi<TApi, TRes, TSigner>, options?: T) {
     this.api = api
     this._options = options ?? ({} as T)
   }
@@ -106,7 +106,7 @@ export class AssetClaimBuilder<
    * @returns The API instance.
    */
   getApi() {
-    return this.api.getApi()
+    return this.api.api
   }
 
   /**

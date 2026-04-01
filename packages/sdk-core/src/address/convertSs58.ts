@@ -4,7 +4,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
 import { isAddress } from 'viem'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { InvalidAddressError } from '../errors'
 
 // Inspired by Talisman Society’s SS58 encoder:
@@ -59,7 +59,7 @@ export const encodeSs58 = (payload: Uint8Array, network: number): string => {
 }
 
 export const convertSs58 = <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   address: string,
   chain: TSubstrateChain
 ) => {

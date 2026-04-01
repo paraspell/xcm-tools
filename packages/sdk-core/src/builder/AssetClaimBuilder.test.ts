@@ -1,7 +1,7 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { InvalidAddressError } from '../errors'
 import { claimAssets } from '../transfer'
 import * as utils from '../utils'
@@ -17,7 +17,7 @@ describe('AssetClaimBuilder', () => {
   const mockApi = {
     deriveAddress: vi.fn().mockReturnValue('5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'),
     signAndSubmit: vi.fn().mockResolvedValue('0x1234567890abcdef')
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockExtrinsic = {
     module: 'PolkadotXcm',

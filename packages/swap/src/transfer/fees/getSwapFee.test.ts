@@ -1,5 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,7 +8,7 @@ import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types
 import { createSwapTx } from '../createSwapTx';
 import { getSwapFee } from './getSwapFee';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('../createSwapTx');
 vi.mock('@paraspell/sdk-core', async (importActual) => ({

@@ -7,7 +7,7 @@ import {
 import { isSubstrateBridge, Parents, type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TTransferOptions } from '../types'
@@ -41,7 +41,7 @@ vi.mock('@paraspell/assets')
 vi.mock('./utils')
 
 describe('send', () => {
-  let apiMock: IPolkadotApi<unknown, unknown, unknown>
+  let apiMock: PolkadotApi<unknown, unknown, unknown>
   let originChainMock: AssetHubPolkadot<unknown, unknown, unknown>
 
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe('send', () => {
       deserializeExtrinsics: vi.fn(),
       getApiOrUrl: vi.fn(),
       getConfig: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     originChainMock = {
       transfer: vi.fn().mockResolvedValue('transferResult'),

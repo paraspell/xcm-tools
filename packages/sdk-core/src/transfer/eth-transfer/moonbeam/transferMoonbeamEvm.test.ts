@@ -8,7 +8,7 @@ import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import type { TEvmBuilderOptions } from '../../../types'
 import { abstractDecimals, formatAssetIdToERC20 } from '../../../utils'
 import abi from './abi.json' with { type: 'json' }
@@ -31,7 +31,7 @@ vi.mock('../../../utils')
 const mockApi = {
   init: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('transferMoonbeamEvm', () => {
   const mockViemContract = {

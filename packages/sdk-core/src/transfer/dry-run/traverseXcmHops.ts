@@ -5,7 +5,7 @@
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import { isExternalChain, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { RoutingResolutionError } from '../../errors'
@@ -48,7 +48,7 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
     Array.isArray(forwardedXcms) &&
     forwardedXcms.length > 0 &&
     forwardedXcms[1].length > 0 &&
-    ('disconnect' in (api.getApi() as object)
+    ('disconnect' in (api.api as object)
       ? Object.values(forwardedXcms[1][0]).length
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
@@ -123,7 +123,7 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
 }
 
 export const addEthereumBridgeFees = async <TApi, TRes, TSigner, TResult extends { fee?: bigint }>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   bridgeHubResult: TResult | undefined,
   destination: TChain,
   assetHubChain: TSubstrateChain

@@ -1,4 +1,4 @@
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,9 +11,9 @@ const makeTx = (hex: string) => ({ toHex: vi.fn(() => hex) }) as unknown as Extr
 
 const makeApi = (txFromHexFn: ReturnType<typeof vi.fn>) =>
   ({
-    getType: () => 'PAPI',
+    type: 'PAPI',
     txFromHex: txFromHexFn,
-  }) as unknown as IPolkadotApi<unknown, unknown, unknown>;
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 describe('convertTxToTarget', () => {
   const RAW = '0xAABBCCDDEEFF';

@@ -4,7 +4,7 @@ import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
 import type { TCreateSwapXcmOptions } from '../../../types'
@@ -41,7 +41,7 @@ const mockApi = {
   init: vi.fn(),
   getXcmWeight: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
   api: mockApi,

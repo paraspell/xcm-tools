@@ -4,7 +4,7 @@ import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import {
   BatchValidationError,
   DryRunFailedError,
@@ -70,11 +70,11 @@ export class GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
     object
 > {
-  readonly api: IPolkadotApi<TApi, TRes, TSigner>
+  readonly api: PolkadotApi<TApi, TRes, TSigner>
   readonly _options: T
 
   constructor(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     readonly batchManager: BatchTransactionManager<TApi, TRes, TSigner>,
     options?: T
   ) {
@@ -385,7 +385,7 @@ export class GeneralBuilder<
   ) {
     const { sender } = options
 
-    const config = this.api.getConfig()
+    const { config } = this.api
     if (isConfig(config) && config.xcmFormatCheck && !isCalledInternally) {
       assertSender(sender)
       const dryRunResult = await buildDryRun(
@@ -750,7 +750,7 @@ export class GeneralBuilder<
    * @returns The API instance.
    */
   getApi() {
-    return this.api.getApi()
+    return this.api.api
   }
 
   /**
@@ -769,5 +769,5 @@ export class GeneralBuilder<
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = <TApi, TRes, TSigner>(api: IPolkadotApi<TApi, TRes, TSigner>) =>
+export const Builder = <TApi, TRes, TSigner>(api: PolkadotApi<TApi, TRes, TSigner>) =>
   new GeneralBuilder(api, new BatchTransactionManager())

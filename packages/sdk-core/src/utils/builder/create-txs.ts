@@ -24,7 +24,7 @@ export const computeOverridenAmount = <TApi, TRes, TSigner>(
 
   const amount = (options.currency as WithComplexAmount<TCurrencyCore>).amount
 
-  const config = api.getConfig()
+  const { config } = api
   if (!(isConfig(config) && config.abstractDecimals === false) && typeof amount !== 'bigint') {
     const base = relative ? Number(amount) : 0
     return Number(increaseAmount) + base
@@ -74,7 +74,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
     return executeWithRouter({ ...options, swapOptions }, builder => builder.build())
   }
 
-  return [{ type: 'TRANSFER', api: api.getApi(), chain: from, tx: await createTransfer(options) }]
+  return [{ type: 'TRANSFER', api: api.api, chain: from, tx: await createTransfer(options) }]
 }
 
 export const createTransferOrSwap = async <TApi, TRes, TSigner>(

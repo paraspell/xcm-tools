@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/sdk-core';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { createChainClient, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -15,11 +15,11 @@ import { selectBestExchange } from '../selectBestExchange';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import { determineFeeCalcAddress } from './utils';
 
-const mockApiForChain = { getApi: vi.fn().mockReturnValue({}) };
+const mockApiForChain = { api: {} };
 const mockApi = {
   createApiForChain: vi.fn().mockResolvedValue(mockApiForChain),
-  getConfig: vi.fn().mockReturnValue(undefined),
-} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+  config: undefined,
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('../../exchanges/ExchangeChainFactory');
 vi.mock('../selectBestExchange');

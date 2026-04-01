@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -14,7 +14,7 @@ import { buildTransactions } from './buildTransactions';
 import * as prepareExtrinsicsModule from './prepareExtrinsics';
 
 const mockCallBatchMethod = vi.fn().mockReturnValue('batchTx');
-const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 const originApi = {} as TPapiApi;
 const swapApi = {} as TPjsApi;
@@ -32,9 +32,9 @@ const swapApiPapi = {
 vi.mock('./prepareExtrinsics');
 
 const exchangeApi = {
-  getApi: vi.fn().mockReturnValue(swapApiPapi),
+  api: swapApiPapi,
   callBatchMethod: mockCallBatchMethod,
-} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 const baseOptions = {
   origin: {
