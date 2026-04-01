@@ -31,7 +31,7 @@ const assignIsExchange = <TApi, TRes, TSigner>(
   }
 
   result.hops = result.hops.map((hop) => {
-    const isExchange = hop.chain === exchange.baseChain;
+    const isExchange = hop.chain === exchange.chain;
     return {
       ...hop,
       result: {
@@ -56,7 +56,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
   const { tx, chain } = transaction;
 
   const senderResolved = evmSenderAddress ?? sender;
-  const resolvedDest = destChain ?? destination?.chain ?? exchange.baseChain;
+  const resolvedDest = destChain ?? destination?.chain ?? exchange.chain;
 
   return dryRun({
     api: api.clone(),
@@ -66,7 +66,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
     sender: senderResolved,
     swapConfig: {
       currencyTo: currencyTo as TCurrencyCore,
-      exchangeChain: exchange.baseChain,
+      exchangeChain: exchange.chain,
     },
     currency: {
       ...currencyFrom,
@@ -88,7 +88,7 @@ const mergeDryRunResults = <TApi, TRes, TSigner>(
     destination: destination ? exchangeResult.destination : exchangeResult.origin,
     hops: [
       ...originResult.hops,
-      ...(destination ? [{ chain: exchange.baseChain, result: exchangeResult.origin }] : []),
+      ...(destination ? [{ chain: exchange.chain, result: exchangeResult.origin }] : []),
       ...exchangeResult.hops,
     ],
   };
@@ -107,7 +107,7 @@ const dryRun2Transactions = async <TApi, TRes, TSigner>(
 
   const [firstTx, secondTx] = transactions;
 
-  const firstRes = await dryRunTransaction(options, firstTx, exchange.baseChain);
+  const firstRes = await dryRunTransaction(options, firstTx, exchange.chain);
 
   const { failureReason } = getFailureInfo(firstRes);
 

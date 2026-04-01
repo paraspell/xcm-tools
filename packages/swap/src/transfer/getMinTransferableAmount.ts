@@ -16,11 +16,11 @@ const computeExchangeMinAmount = async <TApi, TRes, TSigner>(
 ): Promise<bigint> => {
   const { exchange } = options;
 
-  const existentialDeposit = getExistentialDepositOrThrow(exchange.baseChain, {
+  const existentialDeposit = getExistentialDepositOrThrow(exchange.chain, {
     location: exchange.assetFrom.location,
   });
 
-  const nativeSymbol = getNativeAssetSymbol(exchange.baseChain);
+  const nativeSymbol = getNativeAssetSymbol(exchange.chain);
   const isNativeAsset = exchange.assetFrom.symbol === nativeSymbol;
 
   if (!isNativeAsset) {

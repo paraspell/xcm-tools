@@ -1,5 +1,5 @@
 {
-  "AssetHubPolkadotDex": {
+  "AssetHubPolkadot": {
     "isOmni": true,
     "assets": [
       {
@@ -415,7 +415,7 @@
     ],
     "pairs": []
   },
-  "AssetHubKusamaDex": {
+  "AssetHubKusama": {
     "isOmni": true,
     "assets": [
       {
@@ -581,7 +581,7 @@
     ],
     "pairs": []
   },
-  "AssetHubPaseoDex": {
+  "AssetHubPaseo": {
     "isOmni": true,
     "assets": [
       {
@@ -712,7 +712,7 @@
     ],
     "pairs": []
   },
-  "AssetHubWestendDex": {
+  "AssetHubWestend": {
     "isOmni": true,
     "assets": [
       {
@@ -812,7 +812,7 @@
     ],
     "pairs": []
   },
-  "HydrationDex": {
+  "Hydration": {
     "isOmni": true,
     "assets": [
       {
@@ -1863,7 +1863,7 @@
     ],
     "pairs": []
   },
-  "KaruraDex": {
+  "Karura": {
     "isOmni": false,
     "assets": [
       {
@@ -4221,7 +4221,7 @@
       ]
     ]
   },
-  "AcalaDex": {
+  "Acala": {
     "isOmni": false,
     "assets": [
       {
@@ -5786,7 +5786,7 @@
       ]
     ]
   },
-  "BifrostKusamaDex": {
+  "BifrostKusama": {
     "isOmni": false,
     "assets": [
       {
@@ -6335,7 +6335,7 @@
       ]
     ]
   },
-  "BifrostPolkadotDex": {
+  "BifrostPolkadot": {
     "isOmni": false,
     "assets": [
       {

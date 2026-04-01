@@ -26,7 +26,7 @@ class MockExchangeChain extends ExchangeChain {
 describe('ExchangeChain', () => {
   it('should create an Api instance correctly', async () => {
     const mockChain: TChain = 'BifrostPolkadot';
-    const exchangeChain = new BifrostExchange(mockChain, 'BifrostPolkadotDex');
+    const exchangeChain = new BifrostExchange(mockChain);
     const apiInstance = await exchangeChain.createApiInstance();
     expect(createChainClient).toHaveBeenCalledWith(mockChain, undefined);
     expect(apiInstance).toBe('mockApiPromise');
@@ -37,7 +37,7 @@ describe('ExchangeChain', () => {
     const mockOptions = {} as TSwapOptions<unknown>;
     const mockFee = 0n;
 
-    const chain = new MockExchangeChain('Acala', 'AcalaDex');
+    const chain = new MockExchangeChain('Acala');
 
     const result = await chain.handleMultiSwap(mockApi, mockOptions, mockFee);
 

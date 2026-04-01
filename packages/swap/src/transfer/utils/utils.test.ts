@@ -110,7 +110,7 @@ describe('transfer utils', () => {
           assetFrom: astrAsset,
         },
         exchange: {
-          baseChain: 'Acala',
+          chain: 'Acala',
         } as TExchangeInfo<unknown, unknown, unknown>,
         api: mockApi,
       };
@@ -130,7 +130,7 @@ describe('transfer utils', () => {
           assetFrom: astrAsset,
         },
         exchange: {
-          baseChain: 'Acala',
+          chain: 'Acala',
         } as TExchangeInfo<unknown, unknown, unknown>,
         api: mockApi,
       };
@@ -151,7 +151,7 @@ describe('transfer utils', () => {
           assetFrom: astrAsset,
         },
         exchange: {
-          baseChain: 'Acala',
+          chain: 'Acala',
         } as TExchangeInfo<unknown, unknown, unknown>,
         amount: customAmount,
         api: mockApi,
@@ -180,7 +180,7 @@ describe('transfer utils', () => {
           assetFrom: astrAsset,
         },
         exchange: {
-          baseChain: 'Acala',
+          chain: 'Acala',
         } as TExchangeInfo<unknown, unknown, unknown>,
         api: mockApi,
       };
@@ -210,8 +210,7 @@ describe('transfer utils', () => {
           apiPjs: parachainApi,
           apiPapi: parachainPapiApi,
           api: mockExchangeApi,
-          baseChain: 'Acala',
-          exchangeChain: 'AcalaDex',
+          chain: 'Acala',
           assetFrom: astrAsset,
           assetTo: glmrAsset,
         },
@@ -233,8 +232,7 @@ describe('transfer utils', () => {
           apiPapi: parachainPapiApi,
           apiPjs: parachainApi,
           api: mockExchangeApi,
-          baseChain: 'Acala',
-          exchangeChain: 'AcalaDex',
+          chain: 'Acala',
           assetFrom: astrAsset,
           assetTo: glmrAsset,
         },
@@ -252,7 +250,7 @@ describe('transfer utils', () => {
           ...transferParams,
           amount: BigInt(transferParams.amount),
           origin: { api: parachainPapiApi, chain: 'Acala', assetFrom: astrAsset },
-          exchange: { baseChain: 'Acala' } as TExchangeInfo<unknown, unknown, unknown>,
+          exchange: { chain: 'Acala' } as TExchangeInfo<unknown, unknown, unknown>,
           api: mockApi,
         },
         true,
@@ -274,8 +272,7 @@ describe('transfer utils', () => {
             apiPjs: parachainApi,
             apiPapi: parachainPapiApi,
             api: mockExchangeApi,
-            baseChain: 'Acala',
-            exchangeChain: 'AcalaDex',
+            chain: 'Acala',
             assetFrom: astrAsset,
             assetTo: glmrAsset,
           },

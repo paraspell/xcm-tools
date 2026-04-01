@@ -113,7 +113,7 @@ describe('AcalaExchange', () => {
   let chain: AcalaExchange;
 
   beforeEach(() => {
-    chain = new AcalaExchange('Acala', 'AcalaDex');
+    chain = new AcalaExchange('Acala');
     vi.mocked(getBalance).mockResolvedValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA');
   });

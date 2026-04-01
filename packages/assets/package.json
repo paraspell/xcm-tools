@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/assets",
-  "version": "12.10.0-rc.0",
+  "version": "12.10.0-rc.2",
   "description": "Assets for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -52,6 +52,6 @@
     "rollup": "^4.60.1",
     "rollup-plugin-dts": "^6.4.1",
     "ts-node": "^10.9.2",
-    "viem": "2.47.1"
+    "viem": "^2.47.6"
   }
 }

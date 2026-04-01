@@ -74,7 +74,7 @@ describe('BifrostExchange', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    chain = new BifrostExchange('BifrostPolkadot', 'BifrostPolkadotDex');
+    chain = new BifrostExchange('BifrostPolkadot');
     vi.mocked(getBalance).mockResolvedValue(10000000000n);
   });
 

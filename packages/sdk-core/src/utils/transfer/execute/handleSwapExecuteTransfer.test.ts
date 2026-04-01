@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../../api'
 import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
 import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
-import type { TCreateSwapXcmOptions } from '../../../types'
+import type { TCreateSwapXcmOptions, TExchangeChain } from '../../../types'
 import { type TDryRunResult } from '../../../types'
 import { handleSwapExecuteTransfer } from './handleSwapExecuteTransfer'
 
@@ -130,7 +130,7 @@ describe('handleSwapExecuteTransfer', () => {
 
     const options = {
       ...baseOptions,
-      exchangeChain: 'B' as TParachain
+      exchangeChain: 'B' as TExchangeChain
     }
 
     await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(RoutingResolutionError)
@@ -236,8 +236,7 @@ describe('handleSwapExecuteTransfer', () => {
   it('handles case when origin chain is same as exchange chain', async () => {
     const optionsSameChain = {
       ...baseOptions,
-      chain: 'B' as TSubstrateChain,
-      exchangeChain: 'B' as TParachain
+      chain: 'B' as TExchangeChain
     }
 
     const mockDryRunSameChain = {

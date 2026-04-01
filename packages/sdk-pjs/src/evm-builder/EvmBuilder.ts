@@ -1,5 +1,4 @@
-import type {
-  PolkadotApi} from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core'
 import {
   type TChain,
   type TCurrencyInputWithAmount,

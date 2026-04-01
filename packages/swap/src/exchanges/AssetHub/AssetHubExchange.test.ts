@@ -43,7 +43,7 @@ describe('AssetHubExchange', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    instance = new AssetHubExchange('AssetHubPolkadot', 'AssetHubPolkadotDex');
+    instance = new AssetHubExchange('AssetHubPolkadot');
     api = {} as unknown as ApiPromise;
     papiApi = {
       getUnsafeApi: () => ({

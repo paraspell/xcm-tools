@@ -1,3 +1,4 @@
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, type TLocation } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../types'
@@ -54,15 +55,15 @@ export const ERR_LOCATION_DEST_NOT_SUPPORTED =
  * Supported exchange chains
  */
 export const EXCHANGE_CHAINS = [
-  'AssetHubPolkadotDex',
-  'AssetHubKusamaDex',
-  'AssetHubPaseoDex',
-  'AssetHubWestendDex',
-  'HydrationDex',
-  'KaruraDex',
-  'AcalaDex',
-  'BifrostKusamaDex',
-  'BifrostPolkadotDex'
-] as const
+  'AssetHubPolkadot',
+  'AssetHubKusama',
+  'AssetHubPaseo',
+  'AssetHubWestend',
+  'Hydration',
+  'Karura',
+  'Acala',
+  'BifrostKusama',
+  'BifrostPolkadot'
+] as const satisfies readonly TSubstrateChain[]
 
 export const DEFAULT_SWAP_SLIPPAGE = 1

@@ -7,12 +7,12 @@ import type {
   WithAmount
 } from '@paraspell/assets'
 import type { TAssetsPallet, TPallet } from '@paraspell/pallets'
-import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
-import type { TSwapOptions } from './TSwap'
+import type { TExchangeChain, TSwapOptions } from './TSwap'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
   api: PolkadotApi<TApi, TRes, TSigner>
@@ -284,7 +284,7 @@ export type TCreateTransferXcmOptions<TApi, TRes, TSigner> = WithApi<
 
 export type TCreateBaseSwapXcmOptions = {
   chain?: TSubstrateChain
-  exchangeChain: TParachain
+  exchangeChain: TExchangeChain
   destChain?: TChain
   assetInfoFrom: WithAmount<TAssetInfo>
   assetInfoTo: WithAmount<TAssetInfo>

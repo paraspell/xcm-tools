@@ -287,7 +287,7 @@ describe('XTransferController', () => {
 
   describe('getBestAmountOut', () => {
     it('should call service.getBestAmountOut and returns its value', async () => {
-      const exchange: TExchangeChain = 'HydrationDex';
+      const exchange: TExchangeChain = 'Hydration';
       const mockResult = { exchange, amountOut: 500n };
       const spy = vi
         .spyOn(service, 'getBestAmountOut')
@@ -333,7 +333,7 @@ describe('XTransferController', () => {
 
   describe('getExchangePairs', () => {
     it('should call getExchangePairs service method with correct params and return result', () => {
-      const exchange = 'HydrationDex';
+      const exchange = 'Hydration';
       const mockResult = [[{}, {}]] as [TAssetInfo, TAssetInfo][];
       const spy = vi
         .spyOn(service, 'getExchangePairs')

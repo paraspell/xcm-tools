@@ -258,3 +258,60 @@ describe('getMinTransferableAmountInternal', () => {
     expect(dryRunInternal).not.toHaveBeenCalled()
   })
 })
+
+describe('getMinTransferableAmount', () => {
+  it('sets disconnectAllowed to false, then restores to true and disconnects', async () => {
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A', decimals: 10 } as TAssetInfo)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+      symbol: 'A',
+      location: {}
+    } as TAssetInfo)
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(0n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(1n)
+    vi.mocked(abstractDecimals).mockReturnValue(100n)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: undefined,
+      hops: [],
+      destination: undefined
+    } as unknown as TGetXcmFeeResult)
+    vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
+
+    const disconnectAllowedValues: boolean[] = []
+    const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
+    const mockApi = {
+      get disconnectAllowed() {
+        return disconnectAllowedValues[disconnectAllowedValues.length - 1] ?? true
+      },
+      set disconnectAllowed(val: boolean) {
+        disconnectAllowedValues.push(val)
+      },
+      clone: vi.fn(() => destApi),
+      disconnect: vi.fn()
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+    const mockBuilder = {
+      currency: vi.fn().mockReturnThis(),
+      buildInternal: vi.fn().mockResolvedValue({})
+    }
+
+    const result = await mod.getMinTransferableAmount({
+      api: mockApi,
+      origin: 'Acala',
+      sender: 'SENDER',
+      recipient: 'DEST',
+      destination: 'Astar',
+      currency: { symbol: 'A', amount: 1n },
+      builder: mockBuilder,
+      version: Version.V5,
+      buildTx: vi.fn()
+    } as unknown as TGetMinTransferableAmountOptions<unknown, unknown, unknown>)
+
+    expect(result).toBe(1n)
+    expect(disconnectAllowedValues).toEqual([false, true])
+    expect(disconnectSpy).toHaveBeenCalled()
+  })
+})

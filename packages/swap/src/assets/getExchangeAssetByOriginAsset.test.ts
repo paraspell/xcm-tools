@@ -35,7 +35,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([routerAssetA]);
     vi.mocked(deepEqual).mockReturnValue(false);
 
-    const result = getExchangeAssetByOriginAsset('AcalaDex', originAsset);
+    const result = getExchangeAssetByOriginAsset('Acala', originAsset);
 
     expect(result).toBeUndefined();
   });
@@ -46,7 +46,7 @@ describe('getExchangeAssetByOriginAsset', () => {
       (a, b) => a === routerAssetB.location && b === originAsset.location,
     );
 
-    const result = getExchangeAssetByOriginAsset('AcalaDex', originAsset);
+    const result = getExchangeAssetByOriginAsset('Acala', originAsset);
 
     expect(result).toBe(routerAssetB);
   });
@@ -61,7 +61,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([routerAssetB, routerAssetC]);
     vi.mocked(deepEqual).mockReturnValue(true);
 
-    const result = getExchangeAssetByOriginAsset('AcalaDex', originAsset);
+    const result = getExchangeAssetByOriginAsset('Acala', originAsset);
 
     expect(result).toBe(routerAssetB);
   });

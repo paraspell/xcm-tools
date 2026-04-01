@@ -27,15 +27,15 @@ const computeLocalTransferableAmount = async <TApi, TRes, TSigner>(
 
   const balance = await getBalance({
     api: exchange.api,
-    chain: exchange.baseChain,
+    chain: exchange.chain,
     address: sender,
     currency,
   });
 
-  const existentialDeposit = getExistentialDepositOrThrow(exchange.baseChain, currency);
+  const existentialDeposit = getExistentialDepositOrThrow(exchange.chain, currency);
 
   let swapFee = 0n;
-  const nativeSymbol = getNativeAssetSymbol(exchange.baseChain);
+  const nativeSymbol = getNativeAssetSymbol(exchange.chain);
 
   if (exchange.assetFrom.symbol === nativeSymbol) {
     const { result } = await getSwapFee(dex, options);
@@ -56,7 +56,7 @@ export const getTransferableAmount = async <TApi, TRes, TSigner>(
 
   if (
     transformedOptions.origin &&
-    transformedOptions.origin.chain !== transformedOptions.exchange.baseChain
+    transformedOptions.origin.chain !== transformedOptions.exchange.chain
   ) {
     const builder = createToExchangeBuilder({
       origin: transformedOptions.origin,

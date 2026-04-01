@@ -105,7 +105,7 @@ const builderMock = {
   getReceivableAmount: vi.fn().mockResolvedValue(amountResult),
   getBestAmountOut: vi
     .fn()
-    .mockResolvedValue({ exchange: 'HydrationDex', amountOut: 500n }),
+    .mockResolvedValue({ exchange: 'Hydration', amountOut: 500n }),
   signAndSubmit: vi.fn().mockResolvedValue(txHash),
   disconnect: vi.fn(),
 };
@@ -394,7 +394,7 @@ describe('XTransferService', () => {
     it('should succeed when swapOptions are provided', async () => {
       const swapOptions = {
         currencyTo: { symbol: 'GLMR' },
-        exchange: 'HydrationDex' as const,
+        exchange: 'Hydration' as const,
         slippage: 1,
       };
       const options: XTransferDto = {
@@ -569,7 +569,7 @@ describe('XTransferService', () => {
           currencyTo: { symbol: 'GLMR' },
         },
       });
-      expect(res).toEqual({ exchange: 'HydrationDex', amountOut: 500n });
+      expect(res).toEqual({ exchange: 'Hydration', amountOut: 500n });
       expect(builderMock.getBestAmountOut).toHaveBeenCalled();
     });
   });
@@ -1001,7 +1001,7 @@ describe('XTransferService', () => {
 
   describe('getExchangePairs', () => {
     it('should return exchange pairs', () => {
-      const pairs = service.getExchangePairs('AcalaDex');
+      const pairs = service.getExchangePairs('Acala');
       expect(pairs).toEqual([[{}, {}]]);
     });
   });

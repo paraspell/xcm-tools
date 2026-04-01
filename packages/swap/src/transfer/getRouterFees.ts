@@ -49,7 +49,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
         const tx = await handleSwapExecuteTransfer({
           api,
           chain: origin?.chain,
-          exchangeChain: exchange.baseChain,
+          exchangeChain: exchange.chain,
           destChain: destination?.chain,
           assetInfoFrom: {
             ...(origin?.assetFrom ?? exchange.assetFrom),
@@ -85,8 +85,8 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
       const executeResult = await getXcmFee({
         api,
         buildTx,
-        origin: origin?.chain ?? exchange.baseChain,
-        destination: destination?.chain ?? exchange.baseChain,
+        origin: origin?.chain ?? exchange.chain,
+        destination: destination?.chain ?? exchange.chain,
         sender: evmSenderAddress ?? sender,
         recipient: recipient ?? sender,
         currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
@@ -94,19 +94,19 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
         disableFallback,
         swapConfig: {
           currencyTo: currencyTo as TCurrencyCore,
-          exchangeChain: exchange.baseChain,
+          exchangeChain: exchange.chain,
           amountOut: mainAmountOut,
         },
       });
 
-      if (executeResult.failureReason === 'NoDeal' && exchange.exchangeChain === 'HydrationDex') {
+      if (executeResult.failureReason === 'NoDeal' && exchange.chain === 'Hydration') {
         throw new RoutingResolutionError(
           'An error occured, either this route is not registered for swap on exchange chain, or the amount out was not able to be calculated.',
         );
       }
 
       const transformedHops = executeResult.hops.map((hop) => {
-        if (hop.chain === exchange.baseChain) {
+        if (hop.chain === exchange.chain) {
           return {
             chain: hop.chain,
             result: {
@@ -146,7 +146,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
 
   // 1. Get fees for origin -> exchange (optional)
   const sendingChain =
-    origin && origin.chain !== exchange.baseChain
+    origin && origin.chain !== exchange.chain
       ? await getToExchangeFee({ ...options, origin }, disableFallback)
       : undefined;
 
@@ -155,7 +155,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
 
   // 3. Get fees for exchange -> destination (optional)
   const receivingChain =
-    destination && destination.chain !== exchange.baseChain
+    destination && destination.chain !== exchange.chain
       ? await getFromExchangeFee(
           {
             exchange,
@@ -176,7 +176,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
     ...(sendingChain && receivingChain
       ? [
           {
-            chain: exchange.baseChain,
+            chain: exchange.chain,
             result: {
               ...swapChain,
               fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),

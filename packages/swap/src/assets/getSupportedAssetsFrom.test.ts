@@ -54,7 +54,7 @@ describe('getSupportedAssetsFrom', () => {
 
   it('should return assets from exchange that match chain assets', () => {
     const fromChain: TSubstrateChain = 'Acala';
-    const exchange: TExchangeChain = 'HydrationDex';
+    const exchange: TExchangeChain = 'Hydration';
 
     const exchangeChain = 'Hydration';
     vi.mocked(createExchangeInstance).mockReturnValue({
@@ -82,7 +82,7 @@ describe('getSupportedAssetsFrom', () => {
 
   it('should return exchange assets when from chain is same as exchange chain', () => {
     const fromChain: TSubstrateChain = 'Hydration';
-    const exchange: TExchangeChain = 'HydrationDex';
+    const exchange: TExchangeChain = 'Hydration';
 
     vi.mocked(createExchangeInstance).mockReturnValue({
       chain: fromChain,
@@ -98,7 +98,7 @@ describe('getSupportedAssetsFrom', () => {
   });
 
   it('should return exchange assets when from is undefined', () => {
-    const exchange: TExchangeChain = 'HydrationDex';
+    const exchange: TExchangeChain = 'Hydration';
 
     vi.mocked(createExchangeInstance).mockReturnValue({
       chain: 'Hydration',
@@ -114,7 +114,7 @@ describe('getSupportedAssetsFrom', () => {
 
   it('should match assets with different symbol cases after normalization', () => {
     const fromChain: TSubstrateChain = 'Acala';
-    const exchange: TExchangeChain = 'HydrationDex';
+    const exchange: TExchangeChain = 'Hydration';
 
     vi.mocked(createExchangeInstance).mockReturnValue({
       chain: 'Hydration',
@@ -132,7 +132,7 @@ describe('getSupportedAssetsFrom', () => {
 
   it('should return empty array when no assets match between chain and exchange', () => {
     const fromChain: TSubstrateChain = 'Acala';
-    const exchange: TExchangeChain = 'HydrationDex';
+    const exchange: TExchangeChain = 'Hydration';
 
     vi.mocked(createExchangeInstance).mockReturnValue({
       chain: 'Hydration',

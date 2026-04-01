@@ -56,7 +56,7 @@ describe('canBuildToExchangeTx', () => {
         chain: defaultOptions.from,
         assetFrom: mockAssetFromOrigin,
       },
-      exchange: { baseChain: exchangeChain },
+      exchange: { chain: exchangeChain },
       api: mockApi,
     });
   });
@@ -192,7 +192,7 @@ describe('canBuildToExchangeTx', () => {
         chain: getBestAmountOutOptions.from,
         assetFrom: mockAssetFromOrigin,
       },
-      exchange: { baseChain: exchangeChain },
+      exchange: { chain: exchangeChain },
       api: mockApi,
     });
   });

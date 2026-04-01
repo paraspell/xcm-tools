@@ -22,11 +22,11 @@ import type {
 } from '../types'
 
 export abstract class PolkadotApi<TApi, TRes, TSigner> {
-  protected _api?: TApi
-  protected _chain?: TSubstrateChain
-  protected _config?: TBuilderOptions<TApiOrUrl<TApi>>
-  protected _ttlMs = DEFAULT_TTL_MS
-  protected _disconnectAllowed = true
+  _api?: TApi
+  _chain?: TSubstrateChain
+  readonly _config?: TBuilderOptions<TApiOrUrl<TApi>>
+  _ttlMs = DEFAULT_TTL_MS
+  _disconnectAllowed = true
   public abstract readonly type: TApiType
 
   constructor(config?: TBuilderOptions<TApiOrUrl<TApi>>) {

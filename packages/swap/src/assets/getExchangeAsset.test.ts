@@ -31,7 +31,7 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
 vi.mock('./getExchangeConfig');
 
 describe('getExchangeAsset', () => {
-  const mockExchange = 'AcalaDex';
+  const mockExchange = 'Acala';
   const mockNativeAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,

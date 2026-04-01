@@ -29,6 +29,11 @@
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
   },
+  "pnpm": {
+    "overrides": {
+      "typescript": "6.0.2"
+    }
+  },
   "scripts": {
     "compile": "turbo run compile",
     "format:check": "turbo run format:check",

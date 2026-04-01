@@ -14,14 +14,14 @@ const assetC: TAssetInfo = { symbol: 'ZZZ', assetId: '9', decimals: 12, location
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  EXCHANGE_CHAINS: ['AcalaDex', 'BifrostPolkadotDex'],
+  EXCHANGE_CHAINS: ['Acala', 'BifrostPolkadot'],
 }));
 
 const mockConfigs = {
-  HydrationDex: { isOmni: true, pairs: [] },
-  AcalaDex: { isOmni: false, pairs: [[assetA, assetB]] },
-  BifrostPolkadotDex: { isOmni: false, pairs: [[assetA_alt, assetB]] },
-  AssetHubKusamaDex: { isOmni: false, pairs: [] },
+  Hydration: { isOmni: true, pairs: [] },
+  Acala: { isOmni: false, pairs: [[assetA, assetB]] },
+  BifrostPolkadot: { isOmni: false, pairs: [[assetA_alt, assetB]] },
+  AssetHubKusama: { isOmni: false, pairs: [] },
 };
 
 vi.mock('./getExchangeConfig', () => ({
@@ -34,21 +34,21 @@ vi.mock('./getExchangePairs', () => ({
 
 describe('supportsExchangePair', () => {
   it('always returns true for an omni exchange', () => {
-    expect(supportsExchangePair('HydrationDex', assetC, assetB)).toBe(true);
+    expect(supportsExchangePair('Hydration', assetC, assetB)).toBe(true);
   });
 
   it('recognises a supported pair on a normal exchange (symbol & assetId)', () => {
-    expect(supportsExchangePair('AcalaDex', assetA, assetB)).toBe(true);
-    expect(supportsExchangePair('AcalaDex', assetB, assetA)).toBe(true);
+    expect(supportsExchangePair('Acala', assetA, assetB)).toBe(true);
+    expect(supportsExchangePair('Acala', assetB, assetA)).toBe(true);
   });
 
   it('matches assets via location deep equality', () => {
     const alt = { symbol: 'DIFF', location: mlA, decimals: 12 };
-    expect(supportsExchangePair('AcalaDex', alt, assetB)).toBe(true);
+    expect(supportsExchangePair('Acala', alt, assetB)).toBe(true);
   });
 
   it('returns true when ANY exchange in the array supports the pair', () => {
-    expect(supportsExchangePair(['AssetHubKusamaDex', 'AcalaDex'], assetA, assetB)).toBe(true);
+    expect(supportsExchangePair(['AssetHubKusama', 'Acala'], assetA, assetB)).toBe(true);
   });
 
   it('falls back to EXCHANGE_CHAINS when exchange arg is undefined', () => {
@@ -56,6 +56,6 @@ describe('supportsExchangePair', () => {
   });
 
   it('returns false when no exchange lists the pair', () => {
-    expect(supportsExchangePair('AssetHubKusamaDex', assetA, assetB)).toBe(false);
+    expect(supportsExchangePair('AssetHubKusama', assetA, assetB)).toBe(false);
   });
 });

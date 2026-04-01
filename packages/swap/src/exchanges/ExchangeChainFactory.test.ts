@@ -11,9 +11,9 @@ import HydrationExchange from './Hydration/HydrationExchange';
 
 describe('createExchangeInstance', () => {
   const testCases: Array<{ chain: TExchangeChain; expectedClass: typeof ExchangeChain }> = [
-    { chain: 'HydrationDex', expectedClass: HydrationExchange },
-    { chain: 'AcalaDex', expectedClass: AcalaExchange },
-    { chain: 'BifrostPolkadotDex', expectedClass: BifrostExchange },
+    { chain: 'Hydration', expectedClass: HydrationExchange },
+    { chain: 'Acala', expectedClass: AcalaExchange },
+    { chain: 'BifrostPolkadot', expectedClass: BifrostExchange },
   ];
 
   testCases.forEach(({ chain, expectedClass }) => {

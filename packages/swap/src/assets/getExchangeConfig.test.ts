@@ -11,7 +11,7 @@ const { locA, locB } = vi.hoisted(() => {
 });
 
 vi.mock('../consts/assets.json', () => ({
-  HydrationDex: {
+  Hydration: {
     isOmni: true,
     assets: [locA, locB],
     pairs: [[locA, locB]],
@@ -20,7 +20,7 @@ vi.mock('../consts/assets.json', () => ({
 
 vi.mock('../exchanges/ExchangeChainFactory', () => ({
   record: {
-    HydrationDex: { chain: 'Hydration' },
+    Hydration: { chain: 'Hydration' },
   },
 }));
 
@@ -41,7 +41,7 @@ describe('exchange-config helpers', () => {
       throw new Error('not found');
     });
 
-    const cfg = getExchangeConfig('HydrationDex');
+    const cfg = getExchangeConfig('Hydration');
 
     expect(cfg).toEqual({
       isOmni: true,
@@ -59,7 +59,7 @@ describe('exchange-config helpers', () => {
       throw new Error('not found');
     });
 
-    const assets = getExchangeAssets('HydrationDex');
+    const assets = getExchangeAssets('Hydration');
 
     expect(assets).toEqual([assetA, assetB]);
     expect(Array.isArray(assets)).toBe(true);
