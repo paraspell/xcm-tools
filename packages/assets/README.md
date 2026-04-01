@@ -39,7 +39,7 @@ npm install | pnpm add | yarn add @paraspell/assets
 To use this functionality, you first have to import it in the following way.
 
 ```ts
-import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, TParachain, TRelaychain, TSubstrateChain, TExternalChain, TChain, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
+import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
 ```
 
 
@@ -125,46 +125,6 @@ Function to get specific TChain from Parachain id.
 
 ```ts
 getTChain(chainID: number, ecosystem: 'Polkadot' | 'Kusama' | 'Ethereum' | 'Paseo' | 'Westend') //When Ethereum ecosystem is selected please fill chainID as 1 to select Ethereum.
-```
-
-### Import chains as types
-There are 5 options for types you can choose based on your prefference
-
-```ts
-// Export all Parachains
-console.log(TParachain)
-
-// Export all Relay chains
-console.log(TRelaychain)
-
-// Export all Substrate chains (Parachains + Relays)
-console.log(TSubstrateChain)
-
-// Export chains outside Polkadot ecosystem (Ethereum)
-console.log(TExternalChain)
-
-// Export all chains implemented in ParaSpell
-console.log(TChain)
-```
-
-### Import chains as constant
-There are 5 options for constants you can choose based on your prefference
-
-```ts
-// Export all Parachains
-console.log(PARACHAINS)
-
-// Export all Relay chains
-console.log(RELAYCHAINS)
-
-// Export all Substrate chains (Parachains + Relays)
-console.log(SUBSTRATE_CHAINS)
-
-// Export chains outside Polkadot ecosystem (Ethereum)
-console.log(EXTERNAL_CHAINS)
-
-// Export all chains implemented in ParaSpell
-console.log(CHAINS)
 ```
 
 ### Convert id or symbol to location

@@ -106,7 +106,7 @@ const response = await fetch('http://localhost:3001/v1/x-transfers', {
     sender: 'sender', //Replace "sender" with sender wallet address (In AccountID32 or AccountKey20 Format)
     swapOptions: {
       currencyTo: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-      // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+      // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
       // slippage: 1, - Optional - 1 by default
       // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
     },
@@ -156,18 +156,6 @@ const response = await fetch('http://localhost:3001/v1/x-transfer-batch', {
   }),
 });
 
-//Construct asset claim call
-const response = await fetch('http://localhost:3001/v1/asset-claim', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    from: 'TChain', // Replace "TChain" with chain you wish to claim assets on
-    recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    currency: 'Asset location array', //Replace "Asset location array" with specific asset location array along with the amount (example in docs)
-  }),
-});
 ```
 
 ### Localhost testing setup

@@ -201,9 +201,9 @@ const builder = Builder(/*client | builder_config |ws_url | [ws_url, ws_url,..] 
       .sender(address | PAPI_SIGNER /*Only in PAPI SDK*/ | {address, PJS_SIGNER} /*Only in PJS SDK*/) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub/Hydration with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
       .swap({
           currencyTo: {id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/}
-          // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+          // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
           // slippage: 1, - Optional - 1 by default
-          // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+          // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
           // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
           // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
       })
@@ -228,9 +228,9 @@ const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_arr
         /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.
           .swap({
               currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
-              // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+              // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
               // slippage: 1, - Optional - 1 by default
-              // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+              // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
               // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
               // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
           })*/
@@ -283,23 +283,6 @@ const tx = await builder.buildBatch({
 await builder.disconnect()
 ```
 
-#### Asset claim:
-
-```ts
-//Claim XCM trapped assets from the selected chain
-const builder = Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .claimfrom(TSubstrateChain)
-      .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | [{currencySelection /*for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}, {currencySelection}, ..]
-)
-      .recipient(address | Location object)
-      /*.xcmVersion(Version.V3) Optional parameter, by default chain specific version. XCM Version ENUM if a different XCM version is needed (Supported V3 & V4 & V5). Requires importing Version enum.*/
-
-const tx = await builder.build()
-
-//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
-await builder.disconnect()
-```
-
 ### Localhost test setup
 
 ```ts
@@ -340,9 +323,9 @@ const fee = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array 
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.
             .swap({
                 currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
-                // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+                // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
                 // slippage: 1, - Optional - 1 by default
-                // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+                // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
                 // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
                 // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
             })*/
@@ -385,9 +368,9 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.
             .swap({
                 currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
-                // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+                // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
                 // slippage: 1, - Optional - 1 by default
-                // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+                // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
                 // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
                 // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
             })*/
@@ -405,9 +388,9 @@ const transferable = await Builder(/*chain api/builder_config/ws_url_string/ws_u
           /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.
             .swap({
                 currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
-                // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+                // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
                 // slippage: 1, - Optional - 1 by default
-                // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+                // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
                 // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
                 // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
             })*/
@@ -451,9 +434,9 @@ const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_arr
       .sender(SENDER_ADDRESS)
       .swap({
           currencyTo: CURRENCY_SPEC, 
-          // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+          // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
           // slippage: 1, - Optional - 1 by default
-          // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+          // evmSenderAddress: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
           // evmSigner: Signer, - Optional parameter when origin CHAIN is EVM based (Required with evmInjectorAddress)
           // onStatusChange: (event) => void - Optional parameter for callback events when sender address is supplied as signer
       })
@@ -564,6 +547,52 @@ getOtherAssetsPallets(chain: TChain)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)
+```
+
+### Import chains as types
+There are 6 options for types you can choose based on your prefference
+
+```ts
+// Import all exchange chains (Swap)
+import type { TExchangeChain } from "@paraspell/sdk"
+
+// Import all Parachains
+import type { TParachain } from "@paraspell/sdk"
+
+// Import all Relay chains
+import type { TRelaychain } from "@paraspell/sdk"
+
+// Import all Substrate chains (Parachains + Relays)
+import type { TSubstrateChain } from "@paraspell/sdk"
+
+// Import chains outside Polkadot ecosystem (Ethereum)
+import type { TExternalChain } from "@paraspell/sdk"
+
+// Import all chains implemented in ParaSpell
+import type { TChain } from "@paraspell/sdk"
+```
+
+### Import chains as constant
+There are 6 options for constants you can choose based on your prefference
+
+```ts
+// Print all exchange chains (Swap)
+console.log(EXCHANGE_CHAINS)
+
+// Print all Parachains
+console.log(PARACHAINS)
+
+// Print all Relay chains
+console.log(RELAYCHAINS)
+
+// Print all Substrate chains (Parachains + Relays)
+console.log(SUBSTRATE_CHAINS)
+
+// Print chains outside Polkadot ecosystem (Ethereum)
+console.log(EXTERNAL_CHAINS)
+
+// Print all chains implemented in ParaSpell
+console.log(CHAINS)
 ```
 
 ## 💻 Tests
