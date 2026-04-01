@@ -1,4 +1,4 @@
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -8,7 +8,7 @@ import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('@paraspell/sdk-pjs');
 
@@ -54,7 +54,7 @@ describe('buildApiTransactions', () => {
       ...initialOptions,
       api: mockApi,
     } as TBuildTransactionsOptions<unknown, unknown, unknown> & {
-      api: IPolkadotApi<unknown, unknown, unknown>;
+      api: PolkadotApi<unknown, unknown, unknown>;
     });
 
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });

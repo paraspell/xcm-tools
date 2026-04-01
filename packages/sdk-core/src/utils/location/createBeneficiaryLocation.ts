@@ -2,13 +2,13 @@ import type { TJunction, TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Parents } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TCreateBeneficiaryOptions, TCreateBeneficiaryXTokensOptions } from '../../types'
 import { resolveScenario } from '../transfer/resolveScenario'
 import { createX1Payload } from './createX1Payload'
 
 const createAccountPayload = <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   address: string
 ): TJunction =>
   isAddress(address)

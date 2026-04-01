@@ -1,5 +1,5 @@
 import type {
-  IPolkadotApi,
+  PolkadotApi,
   TChain,
   TCurrencyInputWithAmount,
   TEvmBuilderOptions
@@ -107,5 +107,5 @@ export class EvmBuilderCore<
  * @param provider - The Ethereum provider to use for the transfer.
  * @returns An instance of EvmBuilder class
  */
-export const EvmBuilder = <TApi, TRes, TSigner>(api: IPolkadotApi<TApi, TRes, TSigner>) =>
+export const EvmBuilder = <TApi, TRes, TSigner>(api: PolkadotApi<TApi, TRes, TSigner>) =>
   new EvmBuilderCore({ api })

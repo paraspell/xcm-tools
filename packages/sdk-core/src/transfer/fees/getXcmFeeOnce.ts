@@ -114,7 +114,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
 
     try {
       await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-      destApi.setDisconnectAllowed(false)
+      destApi.disconnectAllowed = false
 
       const destFeeRes = await getDestXcmFee({
         api: destApi,
@@ -169,7 +169,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
         failureReason
       } as TGetXcmFeeResult<TDisableFallback>
     } finally {
-      destApi.setDisconnectAllowed(true)
+      destApi.disconnectAllowed = true
       await destApi.disconnect()
     }
   }

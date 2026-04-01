@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi, TAssetInfo, TParachain } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TParachain } from '@paraspell/sdk-core';
 import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,7 +7,7 @@ import type { TGetBestAmountOutOptions } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { buildToExchangeExtrinsic } from './utils';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('./utils');
 vi.mock('../consts', () => ({

@@ -32,7 +32,7 @@ export const getBestAmountOut = async <TApi, TRes, TSigner>(
     }
   }
 
-  const config = api.getConfig();
+  const { config } = api;
   const exchangeConfig = convertBuilderConfig<TApi>(config);
   const pjsApi = await dex.createApiInstance(exchangeConfig);
   const papiApi = await dex.createApiInstancePapi(exchangeConfig);

@@ -1,5 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import type { IPolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { TPjsApi, TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -28,7 +28,7 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
   getNativeAssetSymbol: vi.fn(),
 }));
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 const createRouterAsset = (symbol: string, decimals = 12): TAssetInfo => ({
   symbol,

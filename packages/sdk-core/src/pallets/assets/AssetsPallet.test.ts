@@ -2,7 +2,7 @@ import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
 import { AssetsPallet } from './AssetsPallet'
 
@@ -90,7 +90,7 @@ describe('AssetsPallet.getBalance', () => {
       .mockRejectedValueOnce(new Error(message))
       .mockResolvedValueOnce({ balance: 123n })
 
-    const api = { queryState } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    const api = { queryState } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const balance = await pallet.getBalance(api, address, asset)
 

@@ -1,5 +1,5 @@
+import type { PolkadotApi } from '@paraspell/sdk-core'
 import {
-  type IPolkadotApi,
   type TCurrencyInputWithAmount,
   transferMoonbeamEvm,
   transferMoonbeamToEth,
@@ -15,7 +15,7 @@ vi.mock('@paraspell/sdk-core')
 const mockApi = {
   init: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('EvmBuilderClass', () => {
   let signer: WalletClient

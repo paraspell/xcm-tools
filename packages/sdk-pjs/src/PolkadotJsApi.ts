@@ -5,10 +5,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type {
-  TApiType,
   TAssetInfo,
   TBridgeStatus,
-  TBuilderOptions,
   TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
@@ -44,6 +42,7 @@ import {
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
+  PolkadotApi,
   RELAY_LOCATION,
   resolveChainApi,
   RuntimeApiUnavailableError,
@@ -51,13 +50,13 @@ import {
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { getAssetsObject, type IPolkadotApi, resolveModuleError } from '@paraspell/sdk-core'
+import { getAssetsObject, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
+import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 import { computeOriginFee, createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
 import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
@@ -79,42 +78,20 @@ const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
 
 const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
-class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
-  private _config?: TBuilderOptions<TPjsApiOrUrl>
-  private api: TPjsApi
-  private _ttlMs = DEFAULT_TTL_MS
-  private initialized = false
-  private disconnectAllowed = true
-  private _chain: TSubstrateChain
-
-  constructor(config?: TBuilderOptions<TPjsApiOrUrl>) {
-    this._config = config
-  }
-
-  getType(): TApiType {
-    return 'PJS'
-  }
-
-  getConfig() {
-    return this._config
-  }
-
-  getApi() {
-    return this.api
-  }
+class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
+  public readonly type = 'PJS'
 
   async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || isExternalChain(chain)) {
+    if (this._chain !== undefined || isExternalChain(chain)) {
       return
     }
 
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    this.api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
+    this._api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
       this.createApiInstance(wsUrl, c)
     )
-    this.initialized = true
   }
 
   createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
@@ -754,16 +731,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     return outboundOperatingMode.toPrimitive() as TBridgeStatus
   }
 
-  setDisconnectAllowed(allowed: boolean) {
-    this.disconnectAllowed = allowed
-  }
-
-  getDisconnectAllowed() {
-    return this.disconnectAllowed
-  }
-
   disconnect(force = false) {
-    if (!this.initialized) return Promise.resolve()
+    if (!this._chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
     const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config

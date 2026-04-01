@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { generateMessageId } from './generateMessageId'
 
 describe('generateMessageId', () => {
@@ -32,7 +32,7 @@ describe('generateMessageId', () => {
       stringToUint8a,
       hexToUint8a,
       blake2AsHex
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const getFromRpcSpy = vi.spyOn(api, 'getFromRpc')
     const accountToHexSpy = vi.spyOn(api, 'accountToHex')

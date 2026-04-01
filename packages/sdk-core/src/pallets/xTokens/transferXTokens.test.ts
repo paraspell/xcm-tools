@@ -1,7 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TXTokensTransferOptions } from '../../types'
 import { assertToIsString } from '../../utils'
 import { transferXTokens } from './transferXTokens'
@@ -23,7 +23,7 @@ vi.mock('./utils/buildXTokensCall', () => ({
 describe('transferXTokens', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,

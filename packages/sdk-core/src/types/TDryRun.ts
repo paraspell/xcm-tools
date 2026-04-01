@@ -7,7 +7,7 @@ import type {
 } from '@paraspell/assets'
 import type { TChain, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import type { WithApi } from './TApi'
 import type { TDestination, TWeight } from './TTransfer'
 
@@ -152,7 +152,7 @@ export type TDryRunResult = {
 }
 
 export type TResolveHopParams<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   tx: TRes
   originChain: TSubstrateChain
   currentChain: TSubstrateChain
@@ -166,7 +166,7 @@ export type TResolveHopParams<TApi, TRes, TSigner> = {
 // XCM hop traversal types
 
 export type HopProcessParams<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   currentChain: TSubstrateChain
   currentOrigin: TSubstrateChain
   currentAsset: TAssetInfo
@@ -177,7 +177,7 @@ export type HopProcessParams<TApi, TRes, TSigner> = {
 }
 
 export type HopTraversalConfig<TApi, TRes, TSigner, THopResult> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TChain
   currency: TCurrencyCore

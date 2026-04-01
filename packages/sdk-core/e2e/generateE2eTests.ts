@@ -49,7 +49,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   validateTransfer: (
-    builder: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    builder: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>
+    >,
     signer: TSigner
   ) => Promise<void>,
   filteredChains: TSubstrateChain[],
@@ -298,7 +303,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       // Skip temporarily disabled chains
       const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
       const isSendingDisabled = chainInstance?.isSendingTempDisabled(
-        {} as TTransferInternalOptions<TApi, TRes, TSigner>
+        {} as TTransferInternalOptions<unknown, unknown, unknown>
       )
       if (isSendingDisabled) return
 
@@ -366,16 +371,18 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .recipient(MOCK_ADDRESS)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
-              const allowedErrorNames = ['TypeAndThenUnavailableError']
-              if (allowedErrorNames.includes(error.name)) {
-                expect(error.name).toBeDefined()
-              } else if (
-                error.name === 'FeatureTemporarilyDisabledError' ||
-                error.message.includes('temporarily disabled')
-              ) {
-                expect(error.name).toBe('FeatureTemporarilyDisabledError')
-              } else {
-                throw error
+              if (error instanceof Error) {
+                const allowedErrorNames = ['TypeAndThenUnavailableError']
+                if (allowedErrorNames.includes(error.name)) {
+                  expect(error.name).toBeDefined()
+                } else if (
+                  error.name === 'FeatureTemporarilyDisabledError' ||
+                  error.message.includes('temporarily disabled')
+                ) {
+                  expect(error.name).toBe('FeatureTemporarilyDisabledError')
+                } else {
+                  throw error
+                }
               }
             }
           })

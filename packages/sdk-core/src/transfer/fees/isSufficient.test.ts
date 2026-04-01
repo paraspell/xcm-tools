@@ -7,7 +7,7 @@ import {
 } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 
@@ -17,7 +17,7 @@ vi.mock('../../pallets/assets/balance')
 vi.mock('../../balance')
 
 describe('isSufficientOrigin', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const origin = 'Acala'
   const destination = 'Astar'
   const sender = 'Alice'
@@ -191,7 +191,7 @@ describe('isSufficientOrigin', () => {
 })
 
 describe('isSufficientDestination', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const destination = 'Astar'
   const address = 'Bob'
   const amount = 100n

@@ -7,7 +7,7 @@ import {
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { UnableToComputeError } from '../../errors'
 import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
@@ -27,8 +27,8 @@ vi.mock('../../../errors', () => ({
 }))
 
 describe('buildHopInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown, unknown>
-  let mockHopApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockApi: PolkadotApi<unknown, unknown, unknown>
+  let mockHopApi: PolkadotApi<unknown, unknown, unknown>
   let baseOptions: BuildHopInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_HOP_FEE = 100000000n
@@ -39,13 +39,13 @@ describe('buildHopInfo', () => {
 
     mockHopApi = {
       init: vi.fn().mockResolvedValue(undefined),
-      setDisconnectAllowed: vi.fn(),
+      disconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
       clone: vi.fn().mockReturnValue(mockHopApi)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     baseOptions = {
       api: mockApi,
@@ -77,7 +77,7 @@ describe('buildHopInfo', () => {
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
     const initSpy = vi.spyOn(mockHopApi, 'init')
-    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
     const result = await buildHopInfo(options)
@@ -117,7 +117,7 @@ describe('buildHopInfo', () => {
     const options = { ...baseOptions, chain }
 
     const initSpy = vi.spyOn(mockHopApi, 'init')
-    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const setDisconnectAllowedSpy = vi.spyOn(mockHopApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
     const result = await buildHopInfo(options)
@@ -150,7 +150,7 @@ describe('buildHopInfo', () => {
     })
     const options = { ...baseOptions }
 
-    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
     await expect(buildHopInfo(options)).rejects.toThrow(UnableToComputeError)
@@ -185,7 +185,7 @@ describe('buildHopInfo', () => {
     })
     const options = { ...baseOptions }
 
-    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
 
     await expect(buildHopInfo(options)).rejects.toThrow('Network error')

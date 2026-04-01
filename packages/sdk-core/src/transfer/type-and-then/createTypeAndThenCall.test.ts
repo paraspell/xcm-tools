@@ -4,7 +4,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION, RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
@@ -28,7 +28,7 @@ vi.mock('../../utils')
 vi.mock('../getBridgeStatus')
 
 describe('createTypeAndThenCall', () => {
-  const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
   const mockChain: TSubstrateChain = 'Polkadot'
   const mockVersion = Version.V5
   const mockSerializedCall: TSerializedExtrinsics = {

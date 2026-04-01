@@ -5,7 +5,7 @@ import { InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Parents, Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -170,7 +170,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
   }
 
   getBalanceForeign<TApi, TRes, TSigner>(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

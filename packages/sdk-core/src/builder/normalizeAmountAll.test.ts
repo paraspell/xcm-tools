@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions } from '../types'
@@ -14,7 +14,7 @@ vi.mock('../utils/swap', async importOriginal => ({
   executeWithRouter: vi.fn()
 }))
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
 const createOptions = (
   overrides: Partial<TTransferBaseOptions<unknown, unknown, unknown>> = {}

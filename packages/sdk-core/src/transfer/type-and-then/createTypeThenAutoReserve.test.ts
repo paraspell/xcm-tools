@@ -1,7 +1,7 @@
 import { hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
 import { getRelayChainOf } from '../../utils/chain/getRelayChainOf'
 import { dryRunInternal } from '../dry-run'
@@ -15,7 +15,7 @@ vi.mock('../dry-run/dryRunInternal')
 
 const mkApi = () => {
   const deserializeExtrinsics = vi.fn((_s: TSerializedExtrinsics) => ({ tx: 'ok' }))
-  return { deserializeExtrinsics } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  return { deserializeExtrinsics } as unknown as PolkadotApi<unknown, unknown, unknown>
 }
 
 describe('createTypeThenAutoReserve', () => {

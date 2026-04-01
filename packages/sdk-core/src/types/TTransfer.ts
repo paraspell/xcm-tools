@@ -9,13 +9,13 @@ import type {
 import type { TAssetsPallet, TPallet } from '@paraspell/pallets'
 import type { TChain, TLocation, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
 import type { TSwapOptions } from './TSwap'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   chain: TSubstrateChain
   beneficiaryLocation: TLocation
   recipient: TAddress
@@ -38,7 +38,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes, TSigner> = {
 }
 
 export type TXTokensTransferOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   asset: WithAmount<TAssetInfo>
   recipient: TAddress
   scenario: TScenario
@@ -169,7 +169,7 @@ export type TTransferInternalOptions<TApi, TRes, TSigner> = Omit<
   TTransferBaseOptions<TApi, TRes, TSigner>,
   'from' | 'feeAsset' | 'version'
 > & {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   assetInfo: WithAmount<TAssetInfo>
   feeAsset?: TAssetInfo
   feeCurrency?: TCurrencyInput
@@ -230,13 +230,13 @@ export type TWeight<TWeightType = bigint> = {
 }
 
 export type TCreateBeneficiaryOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   address: TAddress
   version: Version
 }
 
 export type TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   origin: TSubstrateChain
   destination: TDestination
   recipient: TAddress
@@ -322,7 +322,7 @@ export type TCreateSwapXcmInternalOptions<TApi, TRes, TSigner> = WithApi<
 }
 
 export type TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   recipient: TAddress
   assetInfo: TAssetInfo
   sender: string

@@ -1,13 +1,13 @@
 import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { padValueBy } from './padFee'
 
 export const getMythosOriginFee = async <TApi, TRes, TSigner>(
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const ahApi = api.clone()
   await ahApi.init('AssetHubPolkadot')

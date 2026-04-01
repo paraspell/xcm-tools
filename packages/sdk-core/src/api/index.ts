@@ -1,4 +1,4 @@
 export * from './clientPool'
-export * from './IPolkadotApi'
+export * from './PolkadotApi'
 export * from './resolveChainApi'
 export * from './TimedCache'

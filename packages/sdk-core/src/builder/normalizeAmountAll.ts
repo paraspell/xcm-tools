@@ -1,6 +1,6 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions, TTransferOptions, TTxFactory } from '../types'
@@ -13,7 +13,7 @@ export const normalizeAmountAll = async <
   TSigner,
   TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>
 >(
-  api: IPolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner>,
   builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
   options: TOptions
 ): Promise<{

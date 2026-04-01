@@ -11,7 +11,7 @@ import {
 } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getAssetReserveChain, getRelayChainOf } from '../../utils'
@@ -136,7 +136,7 @@ describe('createTypeAndThenCallContext', () => {
   const mockApi = {
     clone: vi.fn().mockReturnValue(mockClonedApi),
     init: vi.fn().mockResolvedValue(undefined)
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockOptions = {
     api: mockApi,
@@ -205,7 +205,7 @@ describe('createTypeAndThenCallContext', () => {
   it('should use origin api for reserve when reserveChain equals origin chain', async () => {
     vi.mocked(getAssetReserveChain).mockReturnValue(mockChain)
 
-    const destApiClone = { init: vi.fn().mockResolvedValue(undefined) } as unknown as IPolkadotApi<
+    const destApiClone = { init: vi.fn().mockResolvedValue(undefined) } as unknown as PolkadotApi<
       unknown,
       unknown,
       unknown

@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TTransactOptions, TWeight } from '../../types'
 import { createTransactInstructions } from './createTransact'
 
@@ -11,7 +11,7 @@ describe('createTransactInstructions', () => {
     init: vi.fn(),
     txFromHex: vi.fn(),
     getPaymentInfo: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockWeight: TWeight = {
     refTime: 111n,

@@ -1,5 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,8 +13,9 @@ import { buildFromExchangeExtrinsic, convertTxToTarget } from './utils';
 const getPaymentInfoSpy = vi.fn().mockResolvedValue({ partialFee: 10n });
 const mockExchangeApi = {
   getPaymentInfo: getPaymentInfoSpy,
-} as unknown as IPolkadotApi<unknown, unknown, unknown>;
-const mockApi = {} as unknown as IPolkadotApi<unknown, unknown, unknown>;
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
+
+const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('./utils');
 vi.mock('../utils');

@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { getMythosOriginFee } from './getMythosOriginFee'
@@ -15,13 +15,13 @@ vi.mock('./padFee')
 describe('getMythosOriginFee', () => {
   const mockApi = {
     clone: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockClone = {
     init: vi.fn(),
     disconnect: vi.fn(),
     quoteAhPrice: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()

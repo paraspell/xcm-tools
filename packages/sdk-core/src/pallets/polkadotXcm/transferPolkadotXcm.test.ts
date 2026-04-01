@@ -3,7 +3,7 @@ import { getXcmPallet } from '@paraspell/pallets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
 import { createDestination } from '../../utils'
 import { transferPolkadotXcm } from './transferPolkadotXcm'
@@ -14,7 +14,7 @@ vi.mock('../../utils/location')
 
 const mockApi = {
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const mockLocation: TLocation = {
   parents: 0,

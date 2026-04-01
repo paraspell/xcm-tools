@@ -1,6 +1,6 @@
 import type { TAmount } from '@paraspell/assets'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { NumberFormatError } from '../../errors'
 import { isConfig } from '..'
 import { parseUnits } from '../unit'
@@ -8,9 +8,9 @@ import { parseUnits } from '../unit'
 export const abstractDecimals = <TApi, TRes, TSigner>(
   amount: TAmount,
   decimals: number | undefined,
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 ): bigint => {
-  const config = api.getConfig()
+  const { config } = api
   const abstractDecimals = !(isConfig(config) && config.abstractDecimals === false)
 
   return applyDecimalAbstraction(amount, decimals, abstractDecimals)

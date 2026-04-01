@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig } from '../../types'
@@ -20,7 +20,7 @@ vi.mock('../../constants', async importOriginal => ({
 }))
 
 describe('traverseXcmHops', () => {
-  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockApi: PolkadotApi<unknown, unknown, unknown>
 
   const baseConfig = {
     processHop: vi.fn(),
@@ -32,11 +32,11 @@ describe('traverseXcmHops', () => {
     vi.clearAllMocks()
 
     mockApi = {
-      getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() }),
+      api: { disconnect: vi.fn() },
       clone: vi.fn(),
       init: vi.fn(),
       disconnect: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -240,7 +240,7 @@ describe('traverseXcmHops', () => {
 })
 
 describe('addEthereumBridgeFees', () => {
-  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockApi: PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -248,7 +248,7 @@ describe('addEthereumBridgeFees', () => {
     mockApi = {
       clone: vi.fn(),
       init: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
 

@@ -12,7 +12,7 @@ import type {
   TSubstrateChain,
   WithApi,
 } from '@paraspell/sdk-core';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 
 export type TSwapOptions<TApi> = {
@@ -172,7 +172,7 @@ export type TOriginInfo<TApi> = {
 export type TExchangeInfo<TApi, TRes, TSigner> = {
   apiPjs: TPjsApi;
   apiPapi: TPapiApi;
-  api: IPolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner>;
   baseChain: TParachain;
   exchangeChain: TExchangeChain;
   assetFrom: TAssetInfo;
@@ -244,7 +244,7 @@ export type TExecuteRouterPlanOptions<TApi, TRes, TSigner> = {
   evmSigner?: TSigner;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback<TApi, TRes>;
-  api: IPolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner>;
 };
 
 export type TPreparedExtrinsics<TRes> = {
@@ -261,7 +261,7 @@ export type TBuildToExchangeTxOptions<TApi, TRes, TSigner> = {
   sender: string;
   evmSenderAddress?: string;
   amount: bigint;
-  api: IPolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner>;
 };
 
 export type TBuildFromExchangeTxOptions<TApi, TRes, TSigner> = {
@@ -269,5 +269,5 @@ export type TBuildFromExchangeTxOptions<TApi, TRes, TSigner> = {
   destination: TDestinationInfo;
   amount: bigint;
   sender: string;
-  api: IPolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner>;
 };

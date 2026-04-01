@@ -1,7 +1,7 @@
 import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TSetBalanceRes } from '../../types/TAssets'
 import { BaseAssetsPallet } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
@@ -57,7 +57,7 @@ export class AssetsPallet extends BaseAssetsPallet {
   }
 
   async getBalance<TApi, TRes, TSigner>(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

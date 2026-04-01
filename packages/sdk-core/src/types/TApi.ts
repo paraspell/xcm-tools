@@ -1,7 +1,7 @@
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 
 export type WithApi<TBase, TApi, TRes, TSigner> = TBase & {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
 }
 
 export type TUrl = string | string[]

@@ -1,7 +1,7 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils'
@@ -33,14 +33,14 @@ describe('NeuroWeb', () => {
   })
 
   describe('transferLocalNativeAsset', () => {
-    let mockApi: IPolkadotApi<unknown, unknown, unknown>
+    let mockApi: PolkadotApi<unknown, unknown, unknown>
     let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
       deserializeExtrinsics = vi.fn()
       mockApi = {
         deserializeExtrinsics
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
     })
 
     it('should call transfer_keep_alive when not sending entire balance', async () => {
@@ -89,14 +89,14 @@ describe('NeuroWeb', () => {
   })
 
   describe('transferLocalNonNativeAsset', () => {
-    let mockApi: IPolkadotApi<unknown, unknown, unknown>
+    let mockApi: PolkadotApi<unknown, unknown, unknown>
     let deserializeExtrinsics: ReturnType<typeof vi.fn>
 
     beforeEach(() => {
       deserializeExtrinsics = vi.fn()
       mockApi = {
         deserializeExtrinsics
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
     })
 
     it('should call Assets.transfer with asset amount when not sending entire balance', () => {

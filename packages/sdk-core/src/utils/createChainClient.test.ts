@@ -1,40 +1,37 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import { createChainClient } from './createChainClient'
 
 const mockApiInstance = {}
 
 const createMockApi = () => {
-  const init = vi.fn().mockResolvedValue(undefined)
-  const getApi = vi.fn().mockReturnValue(mockApiInstance)
+  const initMock = vi.fn().mockResolvedValue(undefined)
 
   const api = {
-    init,
-    getApi
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    init: initMock,
+    api: mockApiInstance
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
-  return { api, init, getApi }
+  return { api, initMock, apiMock: mockApiInstance }
 }
 
 describe('createChainClient', () => {
   it('initializes the provided api and returns the underlying instance', async () => {
-    const { api, init, getApi } = createMockApi()
+    const { api, initMock } = createMockApi()
 
     const result = await createChainClient(api, 'Polkadot')
 
-    expect(init).toHaveBeenCalledWith('Polkadot')
-    expect(getApi).toHaveBeenCalledTimes(1)
+    expect(initMock).toHaveBeenCalledWith('Polkadot')
     expect(result).toBe(mockApiInstance)
   })
 
   it('returns the api after awaiting initialization for another chain', async () => {
-    const { api, init, getApi } = createMockApi()
+    const { api, initMock } = createMockApi()
 
     const result = await createChainClient(api, 'Moonbeam')
 
-    expect(init).toHaveBeenCalledWith('Moonbeam')
-    expect(getApi).toHaveBeenCalledTimes(1)
+    expect(initMock).toHaveBeenCalledWith('Moonbeam')
     expect(result).toBe(mockApiInstance)
   })
 })

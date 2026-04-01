@@ -102,11 +102,11 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
-    const apiConfig = api.getConfig();
+    const { config } = api;
     const parsedAmount = applyDecimalAbstraction(
       options.amount,
       assetFromExchange?.decimals,
-      !(isConfig(apiConfig) && apiConfig.abstractDecimals === false),
+      !(isConfig(config) && config.abstractDecimals === false),
     ).toString();
 
     try {

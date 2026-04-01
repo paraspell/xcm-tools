@@ -1,11 +1,11 @@
 import type { TAssetInfo } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TGetBestAmountOutOptions } from '../types';
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 

@@ -1,7 +1,7 @@
-import type { TPapiApi, TPapiApiOrUrl } from '@paraspell/sdk';
+import type { TPapiApi } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
-import type { TBuilderOptions, TExchangeChain } from '@paraspell/sdk-core';
-import type { TParachain, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type { TApiOrUrl, TBuilderOptions, TExchangeChain } from '@paraspell/sdk-core';
+import type { TParachain, TPjsApi } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -55,11 +55,15 @@ abstract class ExchangeChain {
 
   abstract getDexConfig(api: ApiPromise): Promise<TDexConfigStored>;
 
-  async createApiInstance(builderOptions?: TBuilderOptions<TPjsApiOrUrl>): Promise<ApiPromise> {
+  async createApiInstance(
+    builderOptions?: TBuilderOptions<TApiOrUrl<TPjsApi>>,
+  ): Promise<ApiPromise> {
     return createChainClient(this.chain, builderOptions);
   }
 
-  async createApiInstancePapi(builderOptions?: TBuilderOptions<TPapiApiOrUrl>): Promise<TPapiApi> {
+  async createApiInstancePapi(
+    builderOptions?: TBuilderOptions<TApiOrUrl<TPapiApi>>,
+  ): Promise<TPapiApi> {
     return createChainClientPapi(this.chain, builderOptions);
   }
 }

@@ -4,7 +4,7 @@ import type { TParachain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../../api'
+import type { PolkadotApi } from '../../../api'
 import { getAssetBalanceInternal } from '../../../balance'
 import { getTChain } from '../../../chains/getTChain'
 import { MAX_WEIGHT } from '../../../constants'
@@ -33,7 +33,7 @@ describe('handleExecuteTransfer', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
     getXcmWeight: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockXcm = { [Version.V4]: {} } as Awaited<ReturnType<typeof createDirectExecuteXcm>>
 

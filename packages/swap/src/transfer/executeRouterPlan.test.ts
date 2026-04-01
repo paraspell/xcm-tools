@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { isChainEvm } from '@paraspell/sdk-core';
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -8,7 +8,7 @@ import type { TRouterPlan } from '../types';
 import { executeRouterPlan } from './executeRouterPlan';
 
 const mockSignAndSubmitFinalized = vi.fn();
-const mockApi = { signAndSubmitFinalized: mockSignAndSubmitFinalized } as unknown as IPolkadotApi<
+const mockApi = { signAndSubmitFinalized: mockSignAndSubmitFinalized } as unknown as PolkadotApi<
   unknown,
   unknown,
   unknown

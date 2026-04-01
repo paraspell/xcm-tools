@@ -2,7 +2,7 @@ import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { PolkadotApi } from '../../api/PolkadotApi'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TDryRunChainResult } from '../../types'
 import { validateAddress } from '../../utils'
@@ -15,7 +15,7 @@ describe('getDryRunOrigin', () => {
     init: vi.fn(),
     getDryRunCall: vi.fn(),
     disconnect: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   it('returns the dry run result', async () => {
     const address = '0x123'

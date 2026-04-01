@@ -8,7 +8,7 @@ import type { TPallet } from '@paraspell/pallets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
@@ -49,7 +49,7 @@ describe('AssetHubPolkadot', () => {
     }),
     createAccountId: vi.fn().mockReturnValue('0x0000000000000000'),
     clone: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockExtrinsic = {} as unknown
 

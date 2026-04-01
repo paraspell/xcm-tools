@@ -3,7 +3,7 @@ import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { MissingParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { createCustomXcmOnDest } from './createCustomXcmOnDest'
@@ -19,7 +19,7 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('createCustomXcmOnDest', () => {
-  const api = {} as unknown as IPolkadotApi<unknown, unknown, unknown>
+  const api = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockChain: TChain = 'Acala'
   const version = Version.V4

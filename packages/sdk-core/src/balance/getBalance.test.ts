@@ -2,7 +2,7 @@ import { findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/assets'
 import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { getPalletInstance } from '../pallets'
 import type { BaseAssetsPallet, TGetAssetBalanceOptions, TGetBalanceOptions } from '../types'
 import { getChain, validateAddress } from '../utils'
@@ -20,7 +20,7 @@ const createMockApi = () =>
   ({
     init: vi.fn().mockResolvedValue(undefined),
     disconnect: vi.fn().mockResolvedValue(undefined)
-  }) as unknown as IPolkadotApi<unknown, unknown, unknown>
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseCurrency = { symbol: 'UNIT' }
 const baseAsset = { assetId: 'UNIT' } as TAssetInfo

@@ -1,5 +1,5 @@
+import type { PolkadotApi } from '@paraspell/sdk-core'
 import {
-  type IPolkadotApi,
   type TCurrencyInputWithAmount,
   transferMoonbeamToEth,
   UnsupportedOperationError,
@@ -20,21 +20,20 @@ vi.mock('../ethTransfer', () => ({
   })
 }))
 
-vi.mock('@paraspell/sdk-core', () => ({
+vi.mock('@paraspell/sdk-core', async importActual => ({
+  ...(await importActual()),
   validateAddress: vi.fn().mockReturnValue(true),
   transferMoonbeamToEth: vi.fn(),
   transferMoonbeamEvm: vi.fn(),
   UnsupportedOperationError: class UnsupportedOperationError extends Error {}
 }))
 
-vi.mock('../utils', () => ({
-  isEthersSigner: vi.fn()
-}))
+vi.mock('../utils')
 
 const mockApi = {
   init: vi.fn(),
   deserializeExtrinsics: vi.fn()
-} as unknown as IPolkadotApi<unknown, unknown, unknown>
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('EvmBuilderClass', () => {
   let signer: Signer

@@ -1,11 +1,11 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import type { TPolkadotXCMTransferOptions } from './TTransfer'
 
 export type TChainWithApi<TApi, TRes, TSigner, T = TSubstrateChain> = {
-  api: IPolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner>
   chain: T
 }
 

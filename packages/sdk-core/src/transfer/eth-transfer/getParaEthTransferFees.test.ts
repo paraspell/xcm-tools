@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getParaEthTransferFees } from './getParaEthTransferFees'
 
 describe('getParaEthTransferFees', () => {
@@ -8,7 +8,7 @@ describe('getParaEthTransferFees', () => {
     const mockAhApi = {
       getFromRpc: vi.fn().mockResolvedValueOnce('0x00000000'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
     const [transferBridgeFee, transferAssethubExecutionFee] =
@@ -22,7 +22,7 @@ describe('getParaEthTransferFees', () => {
     const mockAhApi = {
       getFromRpc: vi.fn().mockResolvedValueOnce('0x01000000'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
     const [transferBridgeFee, transferAssethubExecutionFee] =
@@ -36,7 +36,7 @@ describe('getParaEthTransferFees', () => {
     const mockAhApi = {
       getFromRpc: vi.fn().mockResolvedValueOnce('0x'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
     const [transferBridgeFee, transferAssethubExecutionFee] =
@@ -50,7 +50,7 @@ describe('getParaEthTransferFees', () => {
     const mockAhApi = {
       getFromRpc: vi.fn().mockResolvedValueOnce('0x01000000'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
     const [transferBridgeFee, transferAssethubExecutionFee] = await getParaEthTransferFees(

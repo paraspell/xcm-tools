@@ -9,7 +9,7 @@ import { getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import type { chains } from '../constants'
 import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
@@ -133,7 +133,7 @@ describe('Parachain', () => {
     deserializeExtrinsics: vi.fn(),
     getFromRpc: vi.fn(),
     clone: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)

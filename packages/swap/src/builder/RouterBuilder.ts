@@ -1,5 +1,5 @@
 import type {
-  IPolkadotApi,
+  PolkadotApi,
   TAmount,
   TChain,
   TCurrencyInput,
@@ -33,11 +33,11 @@ export class RouterBuilderCore<
   TSigner,
   T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner>> = object,
 > {
-  readonly _api: IPolkadotApi<TApi, TRes, TSigner>;
+  readonly _api: PolkadotApi<TApi, TRes, TSigner>;
   readonly _options: T;
   readonly _builderOptions?: TTransferBaseOptions<TApi, TRes, TSigner>;
 
-  constructor(api: IPolkadotApi<TApi, TRes, TSigner>, options?: T) {
+  constructor(api: PolkadotApi<TApi, TRes, TSigner>, options?: T) {
     this._api = api;
     this._options = options ?? ({} as T);
   }
@@ -327,5 +327,5 @@ export class RouterBuilderCore<
   }
 }
 
-export const RouterBuilder = <TApi, TRes, TSigner>(api: IPolkadotApi<TApi, TRes, TSigner>) =>
+export const RouterBuilder = <TApi, TRes, TSigner>(api: PolkadotApi<TApi, TRes, TSigner>) =>
   new RouterBuilderCore(api);

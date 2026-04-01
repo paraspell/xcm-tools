@@ -1,4 +1,5 @@
 import type {
+  TApiOrUrl,
   TBuilderOptions,
   TCreateBaseSwapXcmOptions,
   TGetXcmFeeBaseOptions
@@ -14,7 +15,7 @@ import {
 } from '@paraspell/sdk-core'
 
 import PapiApi from './PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiSigner, TPapiTransaction } from './types'
+import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
 export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction, TPapiSigner>)
@@ -23,7 +24,7 @@ export const dryRunOrigin = createPapiApiCall(
   dryRunOriginImpl<TPapiApi, TPapiTransaction, TPapiSigner>
 )
 
-export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
+export const getParaEthTransferFees = async (ahApi?: TApiOrUrl<TPapiApi>) => {
   const papiApi = new PapiApi(ahApi)
   await papiApi.init('AssetHubPolkadot')
   return getEthFeesImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
@@ -32,7 +33,7 @@ export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
 /**
  * Gets the Ethereum bridge status.
  */
-export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
+export const getBridgeStatus = async (ahApi?: TApiOrUrl<TPapiApi>) => {
   const papiApi = new PapiApi(ahApi)
   return getBridgeStatusImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
 }
@@ -43,7 +44,7 @@ export const getOriginXcmFee = createPapiApiCall(
 
 export const getXcmFee = async <TDisableFallback extends boolean>(
   options: TGetXcmFeeBaseOptions<TPapiTransaction, TDisableFallback>,
-  builderOptions?: TBuilderOptions<TPapiApiOrUrl>
+  builderOptions?: TBuilderOptions<TApiOrUrl<TPapiApi>>
 ) => {
   const api = new PapiApi(builderOptions)
   return getXcmFeeImpl({
@@ -54,7 +55,7 @@ export const getXcmFee = async <TDisableFallback extends boolean>(
 
 export const handleSwapExecuteTransfer = (
   options: TCreateBaseSwapXcmOptions,
-  builderOptions?: TBuilderOptions<TPapiApiOrUrl>
+  builderOptions?: TBuilderOptions<TApiOrUrl<TPapiApi>>
 ) => {
   const api = new PapiApi(builderOptions)
   return handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction, TPapiSigner>({

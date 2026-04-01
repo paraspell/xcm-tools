@@ -1,4 +1,5 @@
 export * from './AmountTooLowError'
+export * from './ApiNotInitializedError'
 export * from './BatchValidationError'
 export * from './BridgeHaltedError'
 export * from './DryRunFailedError'

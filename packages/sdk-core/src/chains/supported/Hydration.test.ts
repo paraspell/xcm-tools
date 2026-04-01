@@ -3,7 +3,7 @@ import { findAssetInfoByLoc, findAssetInfoOrThrow, InvalidCurrencyError } from '
 import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -56,7 +56,7 @@ describe('Hydration', () => {
   })
 
   describe('transferPolkadotXCM', () => {
-    let mockApi: IPolkadotApi<unknown, unknown, unknown>
+    let mockApi: PolkadotApi<unknown, unknown, unknown>
     let mockInput: TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     beforeEach(() => {
@@ -72,7 +72,7 @@ describe('Hydration', () => {
         hexToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
         blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000'),
         clone: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       mockInput = {
         api: mockApi,
@@ -216,7 +216,7 @@ describe('Hydration', () => {
 
       const mockApi = {
         deserializeExtrinsics: vi.fn()
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       vi.mocked(handleExecuteTransfer).mockResolvedValue(mockTx)
 
@@ -248,7 +248,7 @@ describe('Hydration', () => {
 
   const mockApi = {
     deserializeExtrinsics: vi.fn()
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   describe('transferLocalNativeAsset', () => {
     it('should call api.deserializeExtrinsics with correct parameters', async () => {

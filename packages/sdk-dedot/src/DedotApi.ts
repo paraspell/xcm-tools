@@ -5,10 +5,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type {
-  TApiType,
   TAssetInfo,
   TBridgeStatus,
-  TBuilderOptions,
   TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
@@ -44,6 +42,7 @@ import {
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
+  PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
   resolveChainApi,
@@ -51,11 +50,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
-import {
-  getAssetsObject,
-  type IPolkadotApi,
-  resolveModuleError,
-} from "@paraspell/sdk-core";
+import { getAssetsObject, resolveModuleError } from "@paraspell/sdk-core";
 import { DedotClient, WsProvider } from "dedot";
 import {
   blake2AsHex,
@@ -66,12 +61,7 @@ import {
   u8aToHex,
 } from "dedot/utils";
 
-import type {
-  TDedotApi,
-  TDedotApiOrUrl,
-  TDedotExtrinsic,
-  TDedotSigner,
-} from "./types";
+import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { findCodecByType } from "./utils";
 import { computeOriginFee } from "./utils/computeOriginFee";
 import { createKeyringPair } from "./utils/signer";
@@ -123,46 +113,20 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   );
 };
 
-class DedotApi implements IPolkadotApi<
-  TDedotApi,
-  TDedotExtrinsic,
-  TDedotSigner
-> {
-  private _config?: TBuilderOptions<TDedotApiOrUrl>;
-  private api: TDedotApi;
-  private _ttlMs = DEFAULT_TTL_MS;
-  private initialized = false;
-  private disconnectAllowed = true;
-  private _chain: TSubstrateChain;
-
-  constructor(config?: TBuilderOptions<TDedotApiOrUrl>) {
-    this._config = config;
-  }
-
-  getType(): TApiType {
-    return "DEDOT";
-  }
-
-  getConfig() {
-    return this._config;
-  }
-
-  getApi() {
-    return this.api;
-  }
+class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
+  public readonly type = "DEDOT";
 
   async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized || isExternalChain(chain)) {
+    if (this._chain !== undefined || isExternalChain(chain)) {
       return;
     }
 
     this._ttlMs = clientTtlMs;
     this._chain = chain;
 
-    this.api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
+    this._api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
       this.createApiInstance(wsUrl, c),
     );
-    this.initialized = true;
   }
 
   createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
@@ -201,7 +165,7 @@ class DedotApi implements IPolkadotApi<
     return Promise.resolve(this.api.toTx(hex as `0x${string}`));
   }
 
-  async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
+  queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
     return this.api.query[module][method](
@@ -396,7 +360,7 @@ class DedotApi implements IPolkadotApi<
 
     let resolvedFeeAsset = await this.resolveFeeAsset(options);
 
-    const performDryRunCall = async (includeVersion: boolean) => {
+    const performDryRunCall = (includeVersion: boolean) => {
       const versionNum = Number(version.charAt(1));
       return this.api.call.dryRunApi.dryRunCall(
         basePayload,
@@ -861,16 +825,8 @@ class DedotApi implements IPolkadotApi<
     return outboundOperatingMode as TBridgeStatus;
   }
 
-  setDisconnectAllowed(allowed: boolean) {
-    this.disconnectAllowed = allowed;
-  }
-
-  getDisconnectAllowed() {
-    return this.disconnectAllowed;
-  }
-
   disconnect(force = false) {
-    if (!this.initialized) return Promise.resolve();
+    if (!this._chain) return Promise.resolve();
     if (!force && !this.disconnectAllowed) return Promise.resolve();
 
     const api = isConfig(this._config)

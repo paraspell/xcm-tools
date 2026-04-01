@@ -31,7 +31,7 @@ export const buildTransactions = async <TApi, TRes, TSigner>(
     const batchedTx = exchange.api.callBatchMethod([...swapTxs, toDestTx], BatchMode.BATCH_ALL);
 
     transactions.push({
-      api: exchange.api.getApi(),
+      api: exchange.api.api,
       chain: dex.chain,
       destinationChain: destination?.chain,
       tx: batchedTx,
@@ -41,7 +41,7 @@ export const buildTransactions = async <TApi, TRes, TSigner>(
   } else {
     if (swapTxs.length === 1) {
       transactions.push({
-        api: isExecute ? (origin?.api ?? exchange.api.getApi()) : exchange.api.getApi(),
+        api: isExecute ? (origin?.api ?? exchange.api.api) : exchange.api.api,
         chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
         tx: swapTxs[0],
         amountOut,
@@ -51,7 +51,7 @@ export const buildTransactions = async <TApi, TRes, TSigner>(
       const batchedSwapTx = exchange.api.callBatchMethod(swapTxs, BatchMode.BATCH_ALL);
 
       transactions.push({
-        api: exchange.api.getApi(),
+        api: exchange.api.api,
         chain: dex.chain,
         tx: batchedSwapTx,
         amountOut,

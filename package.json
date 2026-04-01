@@ -12,11 +12,11 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-tsdoc": "^0.5.2",
     "globals": "^17.4.0",
-    "netlify-cli": "^24.8.1",
+    "netlify-cli": "^24.9.0",
     "prettier": "^3.8.1",
-    "turbo": "^2.9.0",
-    "typescript": "5.9.3",
-    "typescript-eslint": "^8.57.2",
+    "turbo": "^2.9.3",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
     "vitest": "^4.1.2"
   },
   "engines": {
@@ -28,11 +28,6 @@
     "@polkadot/types": "16.5.6",
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "typescript": "5.9.3"
-    }
   },
   "scripts": {
     "compile": "turbo run compile",

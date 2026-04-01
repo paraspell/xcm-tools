@@ -5,7 +5,7 @@ import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/a
 import { type TChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { PolkadotApi } from '../api/PolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { DryRunFailedError } from '../errors'
 import {
@@ -64,9 +64,9 @@ describe('Builder', () => {
     setApi: vi.fn(),
     deserializeExtrinsics: vi.fn(),
     callBatchMethod: vi.fn(),
-    setDisconnectAllowed: vi.fn(),
+    disconnectAllowed: vi.fn(),
     disconnect: vi.fn(),
-    getConfig: vi.fn().mockReturnValue({ abstractDecimals: true }),
+    config: { abstractDecimals: true },
     signAndSubmit: vi.fn(),
     deriveAddress: vi.fn().mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'),
     clone: vi.fn().mockReturnValue({
@@ -74,7 +74,7 @@ describe('Builder', () => {
       setApi: vi.fn(),
       clone: vi.fn()
     })
-  } as unknown as IPolkadotApi<unknown, unknown, unknown>
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
   const mockExtrinsic = {
     method: 'transfer',
     args: []
@@ -729,7 +729,7 @@ describe('Builder', () => {
     })
 
     it('should disconnect the api after building', async () => {
-      const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+      const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
       const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
       const builder = Builder(mockApi)
@@ -784,7 +784,7 @@ describe('Builder', () => {
         args: []
       })
 
-      const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+      const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
       const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
       const builder = Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS)
@@ -1258,7 +1258,7 @@ describe('Builder', () => {
         },
         hops: []
       })
-      vi.spyOn(mockApi, 'getConfig').mockReturnValue({})
+      vi.spyOn(mockApi, 'config', 'get').mockReturnValue({})
     })
 
     it('should skip dryRun when called internally', async () => {
@@ -1274,7 +1274,7 @@ describe('Builder', () => {
     })
 
     it('should assert sender address before dryRun', async () => {
-      const spy = vi.spyOn(mockApi, 'getConfig')
+      const spy = vi.spyOn(mockApi, 'config', 'get')
 
       await Builder(mockApi)
         .from(CHAIN)
@@ -1289,7 +1289,7 @@ describe('Builder', () => {
 
     it('should run dryRun when called externally and config is valid', async () => {
       vi.mocked(isConfig).mockReturnValue(true)
-      vi.spyOn(mockApi, 'getConfig').mockReturnValue({
+      vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
         abstractDecimals: true,
         xcmFormatCheck: true
       })
@@ -1326,7 +1326,7 @@ describe('Builder', () => {
         failureReason: 'Bad XCM format',
         failureChain: CHAIN_2
       } as unknown as TDryRunResult)
-      vi.spyOn(mockApi, 'getConfig').mockReturnValue({
+      vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
         abstractDecimals: true,
         xcmFormatCheck: true
       })

@@ -1,5 +1,5 @@
 import type { TExchangeInput } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -15,7 +15,7 @@ import { RouterBuilder } from './RouterBuilder';
 
 vi.mock('../transfer');
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
   from: 'Astar',

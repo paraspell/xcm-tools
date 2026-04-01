@@ -1,6 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class ForeignAssetsPallet extends BaseAssetsPallet {
@@ -35,7 +35,7 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
   }
 
   async getBalance<TApi, TRes, TSigner>(
-    api: IPolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

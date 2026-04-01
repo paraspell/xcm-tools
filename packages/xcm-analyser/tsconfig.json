@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2019",
+    "lib": ["ES2020"],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "strict": true
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }

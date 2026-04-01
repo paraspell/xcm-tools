@@ -26,7 +26,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
       ? createExchangeInstance(exchange)
-      : await selectBestExchange(options, originApi?.getApi(), isForFeeEstimation);
+      : await selectBestExchange(options, originApi?.api, isForFeeEstimation);
 
   const { assetFromOrigin, assetFromExchange, assetTo, feeAssetFromOrigin, feeAssetFromExchange } =
     resolveAssets(dex, options);
@@ -42,7 +42,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
 
   const exchangeApi = await api.createApiForChain(dex.chain);
 
-  const config = api.getConfig();
+  const { config } = api;
   const exchangeConfig = convertBuilderConfig<TApi>(config);
 
   const transformed = {
@@ -55,7 +55,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
     origin:
       originSpecified && assetFromOrigin && originApi
         ? {
-            api: originApi.getApi(),
+            api: originApi.api,
             chain: from,
             assetFrom: assetFromOrigin,
             feeAssetInfo: feeAssetFromOrigin,

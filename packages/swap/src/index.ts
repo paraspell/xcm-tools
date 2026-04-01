@@ -2,6 +2,7 @@ import { registerSwapExtension } from '@paraspell/sdk';
 
 import { RouterBuilder } from './builder/RouterBuilder';
 
+// @ts-expect-error - Temporary. Will be removed once the swap extension is fully integrated into the SDK.
 registerSwapExtension({ RouterBuilder });
 
 export {

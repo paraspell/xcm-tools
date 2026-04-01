@@ -181,7 +181,7 @@ describe('PapiApi', () => {
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
 
-    accountCurrencyMapGetValue = papiApi.getApi().getUnsafeApi().query.MultiTransactionPayment
+    accountCurrencyMapGetValue = papiApi.api.getUnsafeApi().query.MultiTransactionPayment
       .AccountCurrencyMap.getValue as unknown as Mock
     accountCurrencyMapGetValue.mockClear()
   })
@@ -225,27 +225,11 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('getType', () => {
-    it('should return PAPI', () => {
-      expect(papiApi.getType()).toBe('PAPI')
-    })
-  })
-
-  it('should set config and get the api', async () => {
-    papiApi = new PapiApi(mockPolkadotClient)
-    expect(papiApi.getConfig()).toBe(mockPolkadotClient)
-    await papiApi.init(mockChain)
-    const api = papiApi.getApi()
-    expect(api).toBe(mockPolkadotClient)
+  it('should return PAPI api type', () => {
+    expect(papiApi.type).toBe('PAPI')
   })
 
   describe('init', () => {
-    it('should set api to _api when _api is defined', async () => {
-      papiApi = new PapiApi(mockPolkadotClient)
-      await papiApi.init('SomeChain' as TSubstrateChain)
-      expect(papiApi.getApi()).toBe(mockPolkadotClient)
-    })
-
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
       const createApiInstanceSpy = vi
@@ -255,7 +239,7 @@ describe('PapiApi', () => {
       await papiApi.init('Acala')
 
       expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
-      expect(papiApi.getApi()).toBe(mockPolkadotClient)
+      expect(papiApi.api).toBe(mockPolkadotClient)
 
       createApiInstanceSpy.mockRestore()
     })
@@ -268,7 +252,7 @@ describe('PapiApi', () => {
       await papiApi.init('Moonbeam')
 
       expect(createApiInstanceSpy).not.toHaveBeenCalled()
-      expect(papiApi.getApi()).toBe(mockPolkadotClient)
+      expect(papiApi.api).toBe(mockPolkadotClient)
       createApiInstanceSpy.mockRestore()
     })
 
@@ -288,7 +272,7 @@ describe('PapiApi', () => {
 
       await papiApi.init('Moonbeam')
 
-      expect(papiApi.getApi()).toBe(customClient)
+      expect(papiApi.api).toBe(customClient)
       expect(createApiInstanceSpy).not.toHaveBeenCalled()
       createApiInstanceSpy.mockRestore()
     })
@@ -314,7 +298,7 @@ describe('PapiApi', () => {
       await papiApi.init('Acala')
 
       expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
-      expect(papiApi.getApi()).toBe(mockPolkadotClient)
+      expect(papiApi.api).toBe(mockPolkadotClient)
       createApiInstanceSpy.mockRestore()
     })
   })
@@ -341,7 +325,7 @@ describe('PapiApi', () => {
       }
 
       const mockTxMethod = vi.fn().mockReturnValue(mockTransaction)
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.tx = {
         XcmPallet: {
@@ -361,7 +345,7 @@ describe('PapiApi', () => {
       const mockAddress = 'some_address'
       const mockDispatchMethod = vi.fn().mockReturnValue(mockTransaction)
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.tx.Utility = {
         dispatch_as: mockDispatchMethod
@@ -376,7 +360,7 @@ describe('PapiApi', () => {
 
   describe('hasMethod', () => {
     it('returns true when the pallet.method exists (encodes successfully)', async () => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const getEncodedData = vi.fn().mockResolvedValue('0xdead')
 
       unsafeApi.tx = {
@@ -394,7 +378,7 @@ describe('PapiApi', () => {
     it('returns false when the specific "Runtime entry … not found" error is thrown', async () => {
       const pallet: TPallet = 'PolkadotXcm'
       const method = 'missing_method'
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const getEncodedData = vi
         .fn()
         .mockRejectedValue(new Error(`Runtime entry Tx(${pallet}.${method}) not found`))
@@ -414,7 +398,7 @@ describe('PapiApi', () => {
     it('returns true when a different error is thrown', async () => {
       const pallet: TPallet = 'PolkadotXcm'
       const method = 'some'
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const getEncodedData = vi.fn().mockRejectedValue(new Error('Unexpected'))
 
       unsafeApi.tx = {
@@ -435,7 +419,7 @@ describe('PapiApi', () => {
       const calls = [mockTransaction, mockTransaction]
       const mode = BatchMode.BATCH_ALL
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.tx.Utility = {
         batch: vi.fn(),
         batch_all: vi.fn()
@@ -451,7 +435,7 @@ describe('PapiApi', () => {
       const calls = [mockTransaction, mockTransaction]
       const mode = BatchMode.BATCH
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.tx.Utility = {
         batch: vi.fn(),
         batch_all: vi.fn()
@@ -484,7 +468,7 @@ describe('PapiApi', () => {
         (x: string) => x as unknown as FixedSizeBinary<32>
       )
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.query.EVM.AccountStorages.getKey = vi.fn().mockResolvedValue(3000n)
 
@@ -576,7 +560,7 @@ describe('PapiApi', () => {
       const destroySpy = spyDestroy()
 
       papiApi = new PapiApi('ws://example:9944')
-      papiApi.setDisconnectAllowed(false)
+      papiApi.disconnectAllowed = false
       await papiApi.disconnect(false)
 
       expect(destroySpy).not.toHaveBeenCalled()
@@ -592,7 +576,7 @@ describe('PapiApi', () => {
     }
 
     beforeEach(() => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.XcmPaymentApi.query_delivery_fees = vi.fn().mockResolvedValue({
         value: { value: [{ fun: { value: 7n } }] }
       })
@@ -613,7 +597,7 @@ describe('PapiApi', () => {
     })
 
     it('adds delivery fee directly when asset is native', async () => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const forwardedXcm = [
         {
           /* msg */
@@ -726,7 +710,7 @@ describe('PapiApi', () => {
     })
 
     it('retries query_delivery_fees with a 3rd param when runtime-api throws undefined access error', async () => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       const forwardedXcm0 = { some: 'xcm0' }
       const forwardedXcm1 = { some: 'xcm1' }
@@ -765,7 +749,7 @@ describe('PapiApi', () => {
     })
 
     it('re-throws when query_delivery_fees fails with an unexpected error', async () => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       const forwardedXcm0 = { some: 'xcm0' }
       const forwardedXcm1 = { some: 'xcm1' }
@@ -795,7 +779,7 @@ describe('PapiApi', () => {
     }
 
     beforeEach(() => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
         .fn()
         .mockResolvedValue({ value: 100n })
@@ -826,7 +810,7 @@ describe('PapiApi', () => {
 
     it('uses BridgeHub fallback helper when exec fee asset is missing', async () => {
       const bridgeChain: TSubstrateChain = 'BridgeHubPolkadot'
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
         .fn()
@@ -857,7 +841,7 @@ describe('PapiApi', () => {
 
     it('returns zero when BridgeHub fallback is unavailable', async () => {
       const bridgeChain: TSubstrateChain = 'BridgeHubPolkadot'
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
         .fn()
@@ -906,7 +890,7 @@ describe('PapiApi', () => {
       const convertedFee = 999n
       const localizedLoc = { parents: 0, interior: { Here: null } }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
       queryFeeMock.mockResolvedValueOnce({ value: fallbackFee })
 
@@ -937,7 +921,7 @@ describe('PapiApi', () => {
     })
 
     it('returns undefined when fallback fee or conversion is unavailable', async () => {
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
       queryFeeMock.mockResolvedValueOnce({ value: undefined })
 
@@ -1118,7 +1102,7 @@ describe('PapiApi', () => {
     it('should return a transaction object from the hex string', async () => {
       const hexString = '0xdeadbeef'
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const spy = vi.spyOn(unsafeApi, 'txFromCallData')
 
       const result = await papiApi.txFromHex(hexString)
@@ -1143,7 +1127,7 @@ describe('PapiApi', () => {
       )
 
       dryRunApiCallMock = vi.fn()
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_call = dryRunApiCallMock
 
       vi.mocked(computeOriginFee).mockReturnValue(500n)
@@ -1272,7 +1256,7 @@ describe('PapiApi', () => {
         location: { parents: 1, interior: { Here: null } }
       } as unknown as TAssetInfo)
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       const successWithLocalXcm = {
         success: true,
         value: {
@@ -1905,7 +1889,7 @@ describe('PapiApi', () => {
     it('should return the weight for a given XCM payload', async () => {
       const mockXcmPayload = { some: 'xcm-payload' }
       const mockWeight = { ref_time: 100n, proof_size: 200n }
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
         success: true,
         value: mockWeight
@@ -1966,7 +1950,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2005,7 +1989,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2037,7 +2021,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2130,7 +2114,7 @@ describe('PapiApi', () => {
         return false
       })
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm(baseOptions)
@@ -2187,7 +2171,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2225,7 +2209,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2263,7 +2247,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2333,7 +2317,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2412,7 +2396,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       const result = await papiApi.getDryRunXcm({
@@ -2467,7 +2451,7 @@ describe('PapiApi', () => {
         }
       }
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
 
       expect(
@@ -2505,7 +2489,7 @@ describe('PapiApi', () => {
 
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
 
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
         success: true,
@@ -2681,7 +2665,7 @@ describe('PapiApi', () => {
       }
 
       const amountIn = 1000n
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens = vi
         .fn()
         .mockResolvedValue(undefined)

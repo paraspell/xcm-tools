@@ -1,5 +1,6 @@
 import type {
   GeneralBuilder as GeneralBuilderCore,
+  TApiOrUrl,
   TBuilderOptions,
   TTransferBaseOptions
 } from '@paraspell/sdk-core'
@@ -8,7 +9,7 @@ import type { AbstractProvider } from 'ethers'
 
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
+import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 
 /**
  * Creates a new Builder instance.
@@ -16,7 +17,7 @@ import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsSigner } from './types'
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = (api?: TBuilderOptions<TPjsApiOrUrl>) => {
+export const Builder = (api?: TBuilderOptions<TApiOrUrl<TPjsApi>>) => {
   const pjsApi = new PolkadotJsApi(api)
   return BuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi)
 }
@@ -25,7 +26,10 @@ export type GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TPjsApi, Extrinsic, TPjsSigner>> = object
 > = GeneralBuilderCore<TPjsApi, Extrinsic, TPjsSigner, T>
 
-export const EvmBuilder = (provider?: AbstractProvider, api?: TBuilderOptions<TPjsApiOrUrl>) => {
+export const EvmBuilder = (
+  provider?: AbstractProvider,
+  api?: TBuilderOptions<TApiOrUrl<TPjsApi>>
+) => {
   const pjsApi = new PolkadotJsApi(api)
   return EvmBuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi, provider)
 }

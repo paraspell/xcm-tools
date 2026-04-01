@@ -84,11 +84,11 @@ export const getTransferableAmount = async <TApi, TRes, TSigner>(
   options: TGetTransferableAmountOptions<TApi, TRes, TSigner>
 ): Promise<bigint> => {
   const { api } = options
-  api.setDisconnectAllowed(false)
+  api.disconnectAllowed = false
   try {
     return await getTransferableAmountInternal(options)
   } finally {
-    api.setDisconnectAllowed(true)
+    api.disconnectAllowed = true
     await api.disconnect()
   }
 }

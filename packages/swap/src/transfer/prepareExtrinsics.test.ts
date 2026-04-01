@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import type { IPolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
 import { handleSwapExecuteTransfer } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
@@ -25,7 +25,7 @@ vi.mock('@paraspell/sdk-core', async () => {
   };
 });
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 const originApi = {} as TPapiApi;
 const dexChain = { chain: 'Acala' } as ExchangeChain;
@@ -162,7 +162,7 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
-        api: {} as IPolkadotApi<unknown, unknown, unknown>,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
       },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,
@@ -217,7 +217,7 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
-        api: {} as IPolkadotApi<unknown, unknown, unknown>,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
       },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,
@@ -253,7 +253,7 @@ describe('prepareExtrinsics', () => {
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
-        api: {} as IPolkadotApi<unknown, unknown, unknown>,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
       },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,

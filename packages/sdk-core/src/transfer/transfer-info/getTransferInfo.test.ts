@@ -9,7 +9,7 @@ import {
 import { type TChain, type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { MissingParameterError } from '../../errors'
 import type {
@@ -46,7 +46,7 @@ vi.mock('./buildDestInfo')
 vi.mock('./buildHopInfo')
 
 describe('getTransferInfo', () => {
-  let mockApi: IPolkadotApi<unknown, unknown, unknown>
+  let mockApi: PolkadotApi<unknown, unknown, unknown>
   let mockTx: unknown
   let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown, unknown>, 'api' | 'tx'>
 
@@ -63,9 +63,9 @@ describe('getTransferInfo', () => {
 
     mockApi = {
       init: vi.fn().mockResolvedValue(undefined),
-      setDisconnectAllowed: vi.fn(),
+      disconnectAllowed: vi.fn(),
       disconnect: vi.fn().mockResolvedValue(undefined)
-    } as unknown as IPolkadotApi<unknown, unknown, unknown>
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
     mockTx = {}
 
     baseOptions = {
@@ -141,7 +141,7 @@ describe('getTransferInfo', () => {
     const options = { ...baseOptions, api: mockApi }
 
     const initSpy = vi.spyOn(mockApi, 'init')
-    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
     const result = await getTransferInfo(options)
@@ -397,7 +397,7 @@ describe('getTransferInfo', () => {
     })
     const options = { ...baseOptions, api: mockApi }
 
-    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
 
     await expect(getTransferInfo(options)).rejects.toThrow(

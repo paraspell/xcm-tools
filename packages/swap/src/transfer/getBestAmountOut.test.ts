@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/sdk';
-import type { IPolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -13,11 +13,7 @@ vi.mock('../exchanges/ExchangeChainFactory');
 vi.mock('./selectBestExchangeAmountOut');
 vi.mock('./utils/resolveAssets');
 
-const mockApi = { getConfig: () => undefined } as unknown as IPolkadotApi<
-  unknown,
-  unknown,
-  unknown
->;
+const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 describe('getBestAmountOut', () => {
   beforeEach(() => {

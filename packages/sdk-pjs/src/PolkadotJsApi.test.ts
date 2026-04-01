@@ -221,37 +221,11 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('getType', () => {
-    it('should return PJS', () => {
-      expect(polkadotApi.getType()).toBe('PJS')
-    })
-  })
-
-  it('should set and get the api', async () => {
-    const newApi = {
-      call: {},
-      tx: {},
-      query: {}
-    } as unknown as TPjsApi
-    const polkadotApi = new PolkadotJsApi(newApi)
-    expect(polkadotApi.getConfig()).toBe(newApi)
-    await polkadotApi.init('Acala')
-    const api = polkadotApi.getApi()
-    expect(api).toBe(newApi)
+  it('should return PJS api type', () => {
+    expect(polkadotApi.type).toBe('PJS')
   })
 
   describe('init', () => {
-    it('should set api to _api when _api is defined', async () => {
-      const mockApi = {
-        call: {},
-        tx: {},
-        query: {}
-      } as unknown as TPjsApi
-      const polkadotApi = new PolkadotJsApi(mockApi)
-      await polkadotApi.init('Acala')
-      expect(polkadotApi.getApi()).toBe(mockApi)
-    })
-
     it('should create api instance when _api is undefined', async () => {
       const polkadotApi = new PolkadotJsApi()
       const createApiInstanceSpy = vi
@@ -261,7 +235,7 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init('Acala')
 
       expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
-      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      expect(polkadotApi.api).toBe(mockApiPromise)
 
       createApiInstanceSpy.mockRestore()
     })
@@ -272,7 +246,7 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init('Moonbeam')
 
       expect(createApiInstanceSpy).not.toHaveBeenCalled()
-      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      expect(polkadotApi.api).toBe(mockApiPromise)
       createApiInstanceSpy.mockRestore()
     })
 
@@ -285,7 +259,7 @@ describe('PolkadotJsApi', () => {
       const createApiInstanceSpy = vi.spyOn(polkadotApi, 'createApiInstance')
       await polkadotApi.init('Moonbeam')
 
-      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      expect(polkadotApi.api).toBe(mockApiPromise)
       expect(createApiInstanceSpy).not.toHaveBeenCalled()
       createApiInstanceSpy.mockRestore()
     })
@@ -313,7 +287,7 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init('Acala')
 
       expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
-      expect(polkadotApi.getApi()).toBe(mockApiPromise)
+      expect(polkadotApi.api).toBe(mockApiPromise)
       createApiInstanceSpy.mockRestore()
     })
   })
@@ -441,7 +415,7 @@ describe('PolkadotJsApi', () => {
     it('should delegate to txFromHex utility', async () => {
       const hex = '0xdeadbeef'
       const result = await polkadotApi.txFromHex(hex)
-      expect(txFromHexUtil).toHaveBeenCalledWith(polkadotApi.getApi(), hex)
+      expect(txFromHexUtil).toHaveBeenCalledWith(polkadotApi.api, hex)
       expect(result).toBe('mocked_tx_from_hex')
     })
   })
@@ -976,7 +950,7 @@ describe('PolkadotJsApi', () => {
       const newApi = await polkadotApi.createApiForChain(chain)
 
       expect(newApi).toBeInstanceOf(PolkadotJsApi)
-      expect(newApi.getApi()).toBe(mockApiPromise)
+      expect(newApi.api).toBe(mockApiPromise)
 
       createApiInstanceSpy.mockRestore()
     })
@@ -1046,7 +1020,7 @@ describe('PolkadotJsApi', () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
       polkadotApi = new PolkadotJsApi('api')
-      polkadotApi.setDisconnectAllowed(false)
+      polkadotApi.disconnectAllowed = false
       await polkadotApi.disconnect(false)
 
       expect(mockDisconnect).not.toHaveBeenCalled()

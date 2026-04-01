@@ -1,6 +1,6 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
 import type {
-  IPolkadotApi,
+  PolkadotApi,
   TAssetInfo,
   TGetXcmFeeResult,
   TParachain,
@@ -37,7 +37,7 @@ vi.mock('@paraspell/sdk-core', async () => {
   };
 });
 
-const mockApi = {} as IPolkadotApi<unknown, unknown, unknown>;
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 describe('getRouterFees', () => {
   let dex: ExchangeChain;

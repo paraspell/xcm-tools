@@ -4,7 +4,7 @@ import { base58 } from '@scure/base'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api'
+import type { PolkadotApi } from '../api'
 import { blake2b256, blake2b512, convertSs58, deriveAccountId, encodeSs58 } from './convertSs58'
 
 vi.mock('viem')
@@ -80,14 +80,14 @@ describe('crypto helpers', () => {
     const pubkey = makeSeq(32)
     const chain: TSubstrateChain = 'AssetHubPolkadot'
 
-    let apiMock: IPolkadotApi<unknown, unknown, unknown>
+    let apiMock: PolkadotApi<unknown, unknown, unknown>
 
     beforeEach(() => {
       vi.resetAllMocks()
 
       apiMock = {
         accountToUint8a: vi.fn(() => pubkey)
-      } as unknown as IPolkadotApi<unknown, unknown, unknown>
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
     })
 
     it('EVM address on EVM chain - returns the address untouched', () => {

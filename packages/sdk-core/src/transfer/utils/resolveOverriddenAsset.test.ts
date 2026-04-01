@@ -14,7 +14,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api'
+import type { PolkadotApi } from '../../api'
 import type { TTransferOptions } from '../../types'
 import { abstractDecimals, createAsset } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
@@ -39,7 +39,7 @@ describe('resolveOverriddenAsset', () => {
   const mockDestination = {} as TLocation
 
   const defaultOptions = {
-    api: {} as unknown as IPolkadotApi<unknown, unknown, unknown>,
+    api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
     currency: { symbol: 'TEST', amount: '1000' },
     from: mockOrigin,
     to: mockDestination

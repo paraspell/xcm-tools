@@ -16,7 +16,7 @@ export const buildHopInfo = async <TApi, TRes, TSigner>({
 }: BuildHopInfoOptions<TApi, TRes, TSigner>) => {
   const hopApi = api.clone()
   await hopApi.init(chain)
-  hopApi.setDisconnectAllowed(false)
+  hopApi.disconnectAllowed = false
 
   try {
     const xcmFeeDetails = {
@@ -44,7 +44,7 @@ export const buildHopInfo = async <TApi, TRes, TSigner>({
       }
     }
   } finally {
-    hopApi.setDisconnectAllowed(true)
+    hopApi.disconnectAllowed = true
     await hopApi.disconnect()
   }
 }
