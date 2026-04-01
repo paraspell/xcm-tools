@@ -40,7 +40,7 @@ describe('HydrationExchange', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    chain = new HydrationExchange('Hydration', 'HydrationDex');
+    chain = new HydrationExchange('Hydration');
 
     const mockGet = vi.fn().mockReturnValue('mockExtrinsic' as unknown as Extrinsic);
     const mockBuild = vi.fn().mockResolvedValue({ get: mockGet });

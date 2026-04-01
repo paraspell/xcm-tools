@@ -151,14 +151,14 @@ describe('selectBestExchangeCommon', () => {
     const optionsWithoutFrom = {
       ...baseOptions,
       from: undefined,
-      exchange: ['AcalaDex'],
+      exchange: ['Acala'],
     } as TCommonRouterOptions<unknown, unknown, unknown>;
 
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as ExchangeChain;
+    const fakeDex = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(100n);
@@ -170,14 +170,14 @@ describe('selectBestExchangeCommon', () => {
     );
 
     expect(bestExchange).toBe(fakeDex);
-    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithoutFrom.currencyFrom);
+    expect(getExchangeAsset).toHaveBeenCalledWith('Acala', optionsWithoutFrom.currencyFrom);
   });
 
   it('uses getExchangeAsset when from equals dex.chain', async () => {
     const optionsWithSameChain = {
       ...baseOptions,
       from: 'Acala',
-      exchange: ['AcalaDex'],
+      exchange: ['Acala'],
     } as TCommonRouterOptions<unknown, unknown, unknown>;
 
     vi.mocked(findAssetInfo).mockReturnValue(asset1);
@@ -185,7 +185,7 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
     vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
-    const fakeDex = { chain: 'Acala', exchangeChain: 'AcalaDex' } as ExchangeChain;
+    const fakeDex = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
 
     const computeAmountOut = vi.fn().mockResolvedValue(100n);
@@ -197,6 +197,6 @@ describe('selectBestExchangeCommon', () => {
     );
 
     expect(bestExchange).toBe(fakeDex);
-    expect(getExchangeAsset).toHaveBeenCalledWith('AcalaDex', optionsWithSameChain.currencyFrom);
+    expect(getExchangeAsset).toHaveBeenCalledWith('Acala', optionsWithSameChain.currencyFrom);
   });
 });

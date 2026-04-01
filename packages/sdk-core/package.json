@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-core",
-  "version": "12.10.0-rc.0",
+  "version": "12.10.0-rc.2",
   "description": "SDK core for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
@@ -41,10 +41,10 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^2.0.0",
-    "viem": "2.47.1"
+    "viem": "^2.47.6"
   },
   "peerDependencies": {
-    "@paraspell/swap": "12.10.0-rc.0"
+    "@paraspell/swap": "12.10.0-rc.3"
   },
   "peerDependenciesMeta": {
     "@paraspell/swap": {

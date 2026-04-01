@@ -66,8 +66,7 @@ const createExchangeInfo = (
   apiPjs: {} as TPjsApi,
   apiPapi: {} as TPapiApi,
   api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
-  baseChain: 'Hydration',
-  exchangeChain: 'HydrationDex',
+  chain: 'Hydration',
   assetFrom: {
     ...routerAsset,
     symbol: assetFromSymbol,
@@ -90,7 +89,7 @@ const createOptions = (
   overrides: Partial<TBuildTransactionsBaseOptions<unknown, unknown, unknown>> = {},
 ): TBuildTransactionsBaseOptions<unknown, unknown, unknown> => ({
   from: 'Polkadot',
-  exchange: 'HydrationDex',
+  exchange: 'Hydration',
   to: undefined,
   currencyFrom: { symbol: 'DOT' },
   currencyTo: { symbol: 'ASTR' },
@@ -134,7 +133,6 @@ const createTransformedOptions = (
 const createExchangeChainStub = (): ExchangeChain =>
   ({
     chain: 'Hydration',
-    exchangeChain: 'HydrationDex',
   }) as ExchangeChain;
 
 describe('getTransferableAmount', () => {
@@ -163,7 +161,7 @@ describe('getTransferableAmount', () => {
     expect(builderMock.getTransferableAmount).toHaveBeenCalledTimes(1);
     expect(createToExchangeBuilder).toHaveBeenCalledWith({
       origin: expect.objectContaining({ chain: 'Polkadot' }),
-      exchange: expect.objectContaining({ baseChain: 'Hydration' }),
+      exchange: expect.objectContaining({ chain: 'Hydration' }),
       sender: 'sender',
       evmSenderAddress: undefined,
       amount: 1000n,

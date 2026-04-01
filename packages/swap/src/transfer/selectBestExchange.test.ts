@@ -19,7 +19,7 @@ vi.mock('./selectBestExchangeCommon');
 const dummyDex = (): ExchangeChain =>
   ({
     chain: 'Acala',
-    exchangeChain: 'AcalaDex',
+    exchangeChain: 'Acala',
     createApiInstance: vi.fn().mockResolvedValue({}),
     createApiInstancePapi: vi.fn().mockResolvedValue({}),
     handleMultiSwap: vi.fn().mockResolvedValue({ amountOut: '123' }),
@@ -41,7 +41,7 @@ describe('selectBestExchange', () => {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: '18446744073709551619' },
       currencyTo: { symbol: 'HDX' },
-      exchange: 'AcalaDex',
+      exchange: 'Acala',
       api: mockApi,
     };
 
@@ -96,7 +96,7 @@ describe('selectBestExchange', () => {
       ...MOCK_TRANSFER_OPTIONS,
       currencyFrom: { id: 'xyz' },
       currencyTo: { id: '1000099' },
-      exchange: 'AcalaDex',
+      exchange: 'Acala',
       api: mockApi,
     };
 

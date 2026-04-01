@@ -115,7 +115,7 @@ describe('transfer', () => {
     const options = {
       from: 'Polkadot',
       to: 'Kusama',
-      exchange: 'AcalaDex',
+      exchange: 'Acala',
       onStatusChange,
     } as TTransferBaseOptions<unknown, unknown, unknown>;
 

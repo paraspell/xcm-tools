@@ -38,7 +38,7 @@ export const getBestAmountOut = async <TApi, TRes, TSigner>(
   const papiApi = await dex.createApiInstancePapi(exchangeConfig);
 
   return {
-    exchange: dex.exchangeChain,
+    exchange: dex.chain,
     amountOut: await dex.getAmountOut(pjsApi, {
       papiApi,
       assetFrom,

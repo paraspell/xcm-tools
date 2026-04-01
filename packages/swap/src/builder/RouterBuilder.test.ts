@@ -19,7 +19,7 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
   from: 'Astar',
-  exchange: 'HydrationDex',
+  exchange: 'Hydration',
   to: 'Moonbeam',
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
@@ -32,7 +32,7 @@ export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
 
 const {
   from,
-  exchange = 'AcalaDex',
+  exchange = 'Acala',
   to,
   currencyFrom,
   currencyTo,
@@ -55,7 +55,7 @@ describe('Builder', () => {
     buildApiTransactionsSpy = vi.mocked(buildApiTransactions).mockResolvedValue([]);
     getBestAmountOutSpy = vi
       .mocked(getBestAmountOut)
-      .mockResolvedValue({ amountOut: 900000000n, exchange: 'AcalaDex' });
+      .mockResolvedValue({ amountOut: 900000000n, exchange: 'Acala' });
     getMinTransferableAmountSpy = vi.mocked(getMinTransferableAmount).mockResolvedValue(123n);
   });
 
@@ -263,7 +263,7 @@ describe('Builder', () => {
   });
 
   it('should construct transactions using RouterBuilder with single element exchange array', async () => {
-    const exchange: TExchangeInput = ['HydrationDex'];
+    const exchange: TExchangeInput = ['Hydration'];
 
     await RouterBuilder(mockApi)
       .from(from)

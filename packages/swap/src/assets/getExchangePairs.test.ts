@@ -23,7 +23,7 @@ const assetB: TAssetInfo = {
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  EXCHANGE_CHAINS: ['HydrationDex', 'AssetHubPolkadotDex'],
+  EXCHANGE_CHAINS: ['Hydration', 'AssetHubPolkadot'],
   deepEqual: (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b),
   reverseTransformLocation: vi.fn((loc: unknown) =>
     JSON.stringify(loc) === JSON.stringify(altLocation) ? locA : loc,
@@ -31,12 +31,12 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
 }));
 
 const mockConfigs = {
-  HydrationDex: {
+  Hydration: {
     isOmni: true,
     assets: [assetA, assetB],
     pairs: [],
   },
-  AssetHubPolkadotDex: {
+  AssetHubPolkadot: {
     isOmni: false,
     assets: [assetA, assetB],
     pairs: [[altLocation, locB]],
@@ -49,7 +49,7 @@ vi.mock('./getExchangeConfig', () => ({
 
 describe('getExchangePairs', () => {
   it('returns Cartesian pairs for an omnipool exchange', () => {
-    const pairs = getExchangePairs('HydrationDex');
+    const pairs = getExchangePairs('Hydration');
 
     expect(pairs).toHaveLength(1);
     expect(pairs[0][0]).toBe(assetA);
@@ -57,7 +57,7 @@ describe('getExchangePairs', () => {
   });
 
   it('resolves location keys using reverseTransform on Asset-Hub exchanges', () => {
-    const pairs = getExchangePairs('AssetHubPolkadotDex');
+    const pairs = getExchangePairs('AssetHubPolkadot');
 
     expect(pairs).toHaveLength(1);
     expect(pairs[0][0]).toBe(assetA);
@@ -65,7 +65,7 @@ describe('getExchangePairs', () => {
   });
 
   it('aggregates pairs when an array of exchanges is supplied', () => {
-    const pairs = getExchangePairs(['HydrationDex', 'AssetHubPolkadotDex']);
+    const pairs = getExchangePairs(['Hydration', 'AssetHubPolkadot']);
     expect(pairs).toHaveLength(2);
   });
 

@@ -1,7 +1,7 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
 import type { TApiOrUrl, TBuilderOptions, TExchangeChain } from '@paraspell/sdk-core';
-import type { TParachain, TPjsApi } from '@paraspell/sdk-pjs';
+import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
@@ -14,20 +14,14 @@ import type {
 } from '../types';
 
 abstract class ExchangeChain {
-  private readonly _chain: TParachain;
-  private readonly _exchangeChain: TExchangeChain;
+  private readonly _chain: TExchangeChain;
 
-  constructor(chain: TParachain, exchangeChain: TExchangeChain) {
+  constructor(chain: TExchangeChain) {
     this._chain = chain;
-    this._exchangeChain = exchangeChain;
   }
 
-  get chain(): TParachain {
+  get chain(): TExchangeChain {
     return this._chain;
-  }
-
-  get exchangeChain(): TExchangeChain {
-    return this._exchangeChain;
   }
 
   abstract swapCurrency<TApi>(

@@ -7,7 +7,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
   Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes, TSigner>,
 ) => {
   describe.sequential('Swap - e2e', () => {
-    describe('AcalaDex', () => {
+    describe('Acala', () => {
       it('should build a swap extrinsic without error for DOT to ACA on AcalaDex', async () => {
         const txs = await Builder()
           .from('Hydration')
@@ -15,7 +15,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'DOT', amount: 5 })
           .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
-          .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'AcalaDex' })
+          .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'Acala' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -48,7 +48,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
                 },
               },
             },
-            exchange: 'AcalaDex',
+            exchange: 'Acala',
           })
           .buildAll();
 
@@ -81,7 +81,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           })
           .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
-          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'AcalaDex' })
+          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'Acala' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -95,7 +95,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'DOT', amount: 500 })
           .sender('23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3')
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
-          .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'AcalaDex' })
+          .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'Acala' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -109,7 +109,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'KSM', amount: 2200 })
           .sender('FPuDZQ6kmbc7roYZHce6hZAd3MGFGRRHxNTc9AysXgnhTjh')
           .recipient('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
-          .swap({ currencyTo: { symbol: 'BNC' }, exchange: 'KaruraDex' })
+          .swap({ currencyTo: { symbol: 'BNC' }, exchange: 'Karura' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -125,7 +125,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'BNC', amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'BifrostPolkadotDex' })
+          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'BifrostPolkadot' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -139,7 +139,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'KSM', amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { symbol: 'KAR' }, exchange: 'BifrostKusamaDex' })
+          .swap({ currencyTo: { symbol: 'KAR' }, exchange: 'BifrostKusama' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -147,7 +147,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
       });
     });
 
-    describe('HydrationDex', () => {
+    describe('Hydration', () => {
       it('should build a swap extrinsic without error on Hydration - BNC to ASTR', async () => {
         const txs = await Builder()
           .from('Astar')
@@ -155,7 +155,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'BNC', amount: 300 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { symbol: 'ASTR' }, exchange: 'HydrationDex' })
+          .swap({ currencyTo: { symbol: 'ASTR' }, exchange: 'Hydration' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -169,7 +169,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ id: 1984, amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'HydrationDex' })
+          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'Hydration' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -193,7 +193,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubPolkadotDex' })
+          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubPolkadot' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -215,7 +215,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubKusamaDex' })
+          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubKusama' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -229,7 +229,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: 'PAS', amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubPaseoDex' })
+          .swap({ currencyTo: { id: 1984 }, exchange: 'AssetHubPaseo' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -243,7 +243,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ id: 6, amount: 300 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { id: 10111 }, exchange: 'AssetHubWestendDex' })
+          .swap({ currencyTo: { id: 10111 }, exchange: 'AssetHubWestend' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -275,7 +275,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .recipient(MOCK_ADDRESS)
           .swap({
             currencyTo: { symbol: 'DOT' },
-            exchange: ['AcalaDex', 'HydrationDex'],
+            exchange: ['Acala', 'Hydration'],
           })
           .buildAll();
 

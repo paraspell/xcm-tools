@@ -85,7 +85,7 @@ class AssetHubExchange extends ExchangeChain {
   ): Promise<TMultiSwapResult> {
     const { assetFrom, assetTo } = options;
 
-    const nativeAsset = getExchangeAsset(this.exchangeChain, {
+    const nativeAsset = getExchangeAsset(this.chain, {
       symbol: getNativeAssetSymbol(this.chain),
     });
 
@@ -150,7 +150,7 @@ class AssetHubExchange extends ExchangeChain {
   async getAmountOut<TApi>(_api: ApiPromise, options: TGetAmountOutOptions<TApi>) {
     const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
-    const nativeAsset = getExchangeAsset(this.exchangeChain, {
+    const nativeAsset = getExchangeAsset(this.chain, {
       symbol: getNativeAssetSymbol(this.chain),
     });
 

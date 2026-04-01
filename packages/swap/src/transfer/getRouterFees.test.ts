@@ -2,8 +2,8 @@ import type { TPapiTransaction } from '@paraspell/sdk';
 import type {
   PolkadotApi,
   TAssetInfo,
+  TExchangeChain,
   TGetXcmFeeResult,
-  TParachain,
   TXcmFeeDetail,
 } from '@paraspell/sdk-core';
 import {
@@ -41,7 +41,7 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 describe('getRouterFees', () => {
   let dex: ExchangeChain;
-  let baseChain: TParachain;
+  let exchangeChain: TExchangeChain;
   let options: TTransformedOptions<
     TBuildTransactionsOptions<unknown, unknown, unknown>,
     unknown,
@@ -72,17 +72,14 @@ describe('getRouterFees', () => {
 
   beforeEach(() => {
     dex = {
-      get chain() {
-        return 'SomeOtherDex';
-      },
+      chain: 'SomeOtherDex',
       getAmountOut: vi.fn().mockResolvedValue(5000n),
     } as unknown as ExchangeChain;
-    baseChain = 'AssetHubPolkadot' as TParachain;
+    exchangeChain = 'AssetHubPolkadot';
 
     options = {
       exchange: {
-        baseChain: baseChain,
-        exchangeChain: 'HydrationDex',
+        chain: exchangeChain,
         api: {},
         apiPapi: {},
         assetFrom: { symbol: 'DOT', decimals: 10 },
@@ -212,7 +209,7 @@ describe('getRouterFees', () => {
         hops: [
           ...toExchangeFeeValue.hops,
           {
-            chain: baseChain,
+            chain: exchangeChain,
             result: {
               ...swapFee,
               fee: (swapFee.fee ?? 0n) + (toDestFeeValue.origin.fee ?? 0n),
@@ -242,9 +239,7 @@ describe('getRouterFees', () => {
 
   it('uses execute transfer for AssetHub DEX with destination only (origin undefined)', async () => {
     const assetHubDex = {
-      get chain() {
-        return 'AssetHubPolkadot';
-      },
+      chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockResolvedValue(5000n),
     } as unknown as ExchangeChain;
 
@@ -267,7 +262,7 @@ describe('getRouterFees', () => {
     expect(result.destination.isExchange).toBeUndefined();
 
     expect(
-      result.hops.some((h) => h.chain === localOptions.exchange.baseChain && h.result.isExchange),
+      result.hops.some((h) => h.chain === localOptions.exchange.chain && h.result.isExchange),
     ).toBe(true);
   });
 
@@ -329,7 +324,7 @@ describe('getRouterFees', () => {
         recipient: options.sender,
         disableFallback: false,
         swapConfig: expect.objectContaining({
-          exchangeChain: localOptions.exchange.baseChain,
+          exchangeChain: localOptions.exchange.chain,
           amountOut: 5000n,
         }),
       }),
@@ -428,7 +423,7 @@ describe('getRouterFees', () => {
     );
   });
 
-  it('throws RoutingResolutionError when getXcmFee returns NoDeal on HydrationDex', async () => {
+  it('throws RoutingResolutionError when getXcmFee returns NoDeal on Hydration exchange', async () => {
     const dex = {
       chain: 'AssetHubPolkadot',
       getAmountOut: vi.fn().mockResolvedValue(1234n),
@@ -438,8 +433,7 @@ describe('getRouterFees', () => {
       origin: { chain: 'Moonbeam' },
       destination: { chain: 'Moonbeam' },
       exchange: {
-        baseChain: 'HydrationDex',
-        exchangeChain: 'HydrationDex',
+        chain: 'Hydration',
         apiPjs: {} as unknown,
         apiPapi: {} as unknown,
         api: {} as unknown,

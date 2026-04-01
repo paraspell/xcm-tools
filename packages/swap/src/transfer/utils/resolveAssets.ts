@@ -37,25 +37,25 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   const assetFromExchange =
     originSpecified && assetFromOrigin
-      ? getExchangeAssetByOriginAsset(dex.exchangeChain, assetFromOrigin)
-      : getExchangeAsset(dex.exchangeChain, currencyFrom);
+      ? getExchangeAssetByOriginAsset(dex.chain, assetFromOrigin)
+      : getExchangeAsset(dex.chain, currencyFrom);
 
   if (!assetFromExchange) {
     if (!originSpecified && findAssetInfo(dex.chain, currencyFrom)) {
       throw new RoutingResolutionError(
-        `Currency from ${JSON.stringify(currencyFrom)} exists in ${dex.chain} but is not swappable on ${dex.exchangeChain}.`,
+        `Currency from ${JSON.stringify(currencyFrom)} exists in ${dex.chain} but is not swappable on ${dex.chain}.`,
       );
     }
     throw new RoutingResolutionError(
-      `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.exchangeChain}.`,
+      `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.chain}.`,
     );
   }
 
-  const assetTo = getExchangeAsset(dex.exchangeChain, currencyTo);
+  const assetTo = getExchangeAsset(dex.chain, currencyTo);
 
   if (!assetTo) {
     throw new RoutingResolutionError(
-      `Currency to ${JSON.stringify(currencyTo)} not found in ${dex.exchangeChain}.`,
+      `Currency to ${JSON.stringify(currencyTo)} not found in ${dex.chain}.`,
     );
   }
 
@@ -76,8 +76,8 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   const feeAssetFromExchange = feeAsset
     ? feeAssetFromOrigin
-      ? getExchangeAssetByOriginAsset(dex.exchangeChain, feeAssetFromOrigin)
-      : (getExchangeAsset(dex.exchangeChain, feeAsset) ?? undefined)
+      ? getExchangeAssetByOriginAsset(dex.chain, feeAssetFromOrigin)
+      : (getExchangeAsset(dex.chain, feeAsset) ?? undefined)
     : undefined;
 
   const resolvedFeeAssetLocation = feeAssetFromOrigin?.location ?? feeAssetFromExchange?.location;

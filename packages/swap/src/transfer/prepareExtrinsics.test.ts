@@ -17,13 +17,10 @@ import * as utils from './utils';
 vi.mock('./utils');
 vi.mock('./createSwapTx');
 
-vi.mock('@paraspell/sdk-core', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-core');
-  return {
-    ...actual,
-    handleSwapExecuteTransfer: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-core', async (importActual) => ({
+  ...(await importActual()),
+  handleSwapExecuteTransfer: vi.fn(),
+}));
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -36,14 +33,14 @@ const baseOptions = {
     chain: 'BifrostPolkadot',
   },
   exchange: {
-    baseChain: 'Acala',
+    chain: 'Acala',
   },
   destination: {
     address: 'dest',
     chain: 'Crust',
   },
   api: mockApi,
-} as unknown as TTransformedOptions<
+} as TTransformedOptions<
   TBuildTransactionsOptions<unknown, unknown, unknown>,
   unknown,
   unknown,
@@ -158,7 +155,7 @@ describe('prepareExtrinsics', () => {
       recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseChain: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
@@ -182,7 +179,7 @@ describe('prepareExtrinsics', () => {
     expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({
       api: mockApi,
       chain: optionsWithAssetHub.origin?.chain,
-      exchangeChain: optionsWithAssetHub.exchange.baseChain,
+      exchangeChain: optionsWithAssetHub.exchange.chain,
       destChain: optionsWithAssetHub.destination?.chain,
       assetInfoFrom: {
         ...optionsWithAssetHub.exchange.assetFrom,
@@ -213,7 +210,7 @@ describe('prepareExtrinsics', () => {
       recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseChain: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,
@@ -249,7 +246,7 @@ describe('prepareExtrinsics', () => {
       recipient: 'recipient456',
       exchange: {
         ...baseOptions.exchange,
-        baseChain: 'AssetHubPolkadot',
+        chain: 'AssetHubPolkadot',
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'USDT' },
         apiPapi: {} as TPapiApi,

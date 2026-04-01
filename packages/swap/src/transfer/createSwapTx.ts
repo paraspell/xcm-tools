@@ -10,7 +10,7 @@ export const calculateFromExchangeFee = async <TApi, TRes, TSigner>(
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
 ) => {
   const { exchange, destination, feeCalcAddress, sender, api } = options;
-  if (!destination || destination.chain === exchange.baseChain) return 0n;
+  if (!destination || destination.chain === exchange.chain) return 0n;
   const dummyAmount = parseUnits(FEE_ESTIMATION_UNITS, exchange.assetTo.decimals);
   const tx = await buildFromExchangeExtrinsic({
     exchange,

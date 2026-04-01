@@ -5,21 +5,21 @@ import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
 
 export const createToExchangeBuilder = <TApi, TRes, TSigner>({
-  origin: { chain: from, assetFrom },
-  exchange: { baseChain },
+  origin,
+  exchange,
   sender,
   evmSenderAddress,
   amount,
   api,
 }: TBuildToExchangeTxOptions<TApi, TRes, TSigner>) =>
   Builder(api.clone())
-    .from(from)
-    .to(baseChain)
+    .from(origin.chain)
+    .to(exchange.chain)
     .currency({
-      location: assetFrom.location,
+      location: origin.assetFrom.location,
       amount,
     })
-    .sender(isChainEvm(from) ? (evmSenderAddress as string) : sender)
+    .sender(isChainEvm(origin.chain) ? (evmSenderAddress as string) : sender)
     .recipient(sender);
 
 export const buildToExchangeExtrinsic = <TApi, TRes, TSigner>(
@@ -32,22 +32,22 @@ export const getToExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends b
 ) => createToExchangeBuilder(options).getXcmFee({ disableFallback });
 
 export const createFromExchangeBuilder = <TApi, TRes, TSigner>({
-  exchange: { baseChain, assetTo },
-  destination: { chain, address },
+  exchange,
+  destination,
   amount,
   sender,
   api,
 }: TBuildFromExchangeTxOptions<TApi, TRes, TSigner>) => {
   const apiForChain = api.clone();
   return Builder(apiForChain)
-    .from(baseChain)
-    .to(chain)
+    .from(exchange.chain)
+    .to(destination.chain)
     .currency({
-      location: assetTo.location,
+      location: exchange.assetTo.location,
       amount,
     })
     .sender(sender)
-    .recipient(address);
+    .recipient(destination.address);
 };
 
 export const buildFromExchangeExtrinsic = <TApi, TRes, TSigner>(

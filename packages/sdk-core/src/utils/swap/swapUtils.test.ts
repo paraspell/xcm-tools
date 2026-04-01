@@ -278,18 +278,18 @@ describe('swapUtils', () => {
     })
 
     it('should return the same exchange in an array when exchange is a multi-element array', () => {
-      expect(normalizeExchange(['AcalaDex', 'AssetHubPolkadotDex'])).toEqual([
-        'AcalaDex',
-        'AssetHubPolkadotDex'
+      expect(normalizeExchange(['Acala', 'AssetHubPolkadot'])).toEqual([
+        'Acala',
+        'AssetHubPolkadot'
       ])
     })
 
     it('should return extracted value from array when exchange is a single-element array', () => {
-      expect(normalizeExchange(['AcalaDex'])).toEqual('AcalaDex')
+      expect(normalizeExchange(['Acala'])).toEqual('Acala')
     })
 
     it('should return the exchange as-is when it is not an array', () => {
-      expect(normalizeExchange('AcalaDex')).toEqual('AcalaDex')
+      expect(normalizeExchange('Acala')).toEqual('Acala')
     })
   })
 })

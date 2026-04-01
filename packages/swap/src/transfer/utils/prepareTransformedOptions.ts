@@ -31,7 +31,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
   const { assetFromOrigin, assetFromExchange, assetTo, feeAssetFromOrigin, feeAssetFromExchange } =
     resolveAssets(dex, options);
 
-  if (!supportsExchangePair(dex.exchangeChain, assetFromExchange, assetTo)) {
+  if (!supportsExchangePair(dex.chain, assetFromExchange, assetTo)) {
     throw new UnsupportedOperationError(
       `Exchange ${dex.chain} does not support the pair ${assetFromExchange.symbol} -> ${assetTo.symbol}`,
     );
@@ -65,8 +65,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
       apiPjs: await dex.createApiInstance(exchangeConfig),
       apiPapi: await dex.createApiInstancePapi(exchangeConfig),
       api: exchangeApi,
-      baseChain: dex.chain,
-      exchangeChain: dex.exchangeChain,
+      chain: dex.chain,
       assetFrom: assetFromExchange,
       assetTo,
       feeAssetInfo: feeAssetFromExchange,

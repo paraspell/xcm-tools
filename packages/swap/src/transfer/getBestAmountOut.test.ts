@@ -65,7 +65,7 @@ describe('getBestAmountOut', () => {
       papiApi: 'api_instance_papi',
     });
     expect(result).toEqual({
-      exchange: fakeDex.exchangeChain,
+      exchange: fakeDex.chain,
       amountOut: 200,
     });
   });
@@ -118,7 +118,7 @@ describe('getBestAmountOut', () => {
       papiApi: 'api_instance_papi_b',
     });
     expect(result).toEqual({
-      exchange: fakeDex.exchangeChain,
+      exchange: fakeDex.chain,
       amountOut: 75,
     });
   });

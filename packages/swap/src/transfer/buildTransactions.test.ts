@@ -43,7 +43,7 @@ const baseOptions = {
     assetFrom: { symbol: 'ACA' },
   },
   exchange: {
-    baseChain: 'Acala',
+    chain: 'Acala',
     apiPjs: swapApi,
     apiPapi: swapApiPapi,
     api: exchangeApi,
@@ -76,7 +76,7 @@ describe('buildTransactions', () => {
     const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
       origin: { ...baseOptions.origin, chain: 'Acala' } as TOriginInfo<unknown>,
-      exchange: { ...baseOptions.exchange, baseChain: 'Acala', exchangeChain: 'AcalaDex' },
+      exchange: { ...baseOptions.exchange, chain: 'Acala' },
       destination: { ...baseOptions.destination, chain: 'Acala' } as TDestinationInfo,
     });
 
@@ -130,7 +130,7 @@ describe('buildTransactions', () => {
     const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
       origin: undefined,
-      exchange: { ...baseOptions.exchange, baseChain: 'Acala' },
+      exchange: { ...baseOptions.exchange, chain: 'Acala' },
     });
 
     expect(res).toEqual([

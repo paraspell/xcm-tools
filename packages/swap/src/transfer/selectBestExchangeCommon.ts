@@ -71,14 +71,14 @@ export const selectBestExchangeCommon = async <
 
     const assetFromExchange =
       originSpecified && assetFromOrigin
-        ? getExchangeAssetByOriginAsset(dex.exchangeChain, assetFromOrigin)
-        : getExchangeAsset(dex.exchangeChain, currencyFrom);
+        ? getExchangeAssetByOriginAsset(dex.chain, assetFromOrigin)
+        : getExchangeAsset(dex.chain, currencyFrom);
 
     if (!assetFromExchange) {
       continue;
     }
 
-    const assetTo = getExchangeAsset(dex.exchangeChain, currencyTo, true);
+    const assetTo = getExchangeAsset(dex.chain, currencyTo, true);
 
     if (!assetTo) {
       continue;

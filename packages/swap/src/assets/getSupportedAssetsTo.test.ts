@@ -41,7 +41,7 @@ describe('getSupportedAssetsTo', () => {
   });
 
   it('should return exchange assets directly when "to" is undefined and exchange is not "Auto select"', () => {
-    const mockExchange: TExchangeChain = 'AcalaDex';
+    const mockExchange: TExchangeChain = 'Acala';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
@@ -54,7 +54,7 @@ describe('getSupportedAssetsTo', () => {
   });
 
   it('should filter exchange assets based on "to" assets when exchange is not "Auto select"', () => {
-    const mockExchange: TExchangeChain = 'AcalaDex';
+    const mockExchange: TExchangeChain = 'Acala';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
@@ -69,7 +69,7 @@ describe('getSupportedAssetsTo', () => {
   });
 
   it('should append system assets when destination chain is external', () => {
-    const mockExchange: TExchangeChain = 'AcalaDex';
+    const mockExchange: TExchangeChain = 'Acala';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
@@ -93,16 +93,16 @@ describe('getSupportedAssetsTo', () => {
     const chain2 = 'BifrostPolkadot';
 
     vi.mocked(createExchangeInstance).mockImplementation((exchange: TExchangeChain) => {
-      if (exchange === 'AcalaDex') return { chain: chain1 } as ExchangeChain;
-      if (exchange === 'BifrostPolkadotDex') return { chain: chain2 } as ExchangeChain;
+      if (exchange === 'Acala') return { chain: chain1 } as ExchangeChain;
+      if (exchange === 'BifrostPolkadot') return { chain: chain2 } as ExchangeChain;
       return {} as ExchangeChain;
     });
 
     const assets1 = [abcAsset];
     const assets2 = [defAsset];
     vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
-      if (exchange === 'AcalaDex') return assets1;
-      if (exchange === 'BifrostPolkadotDex') return assets2;
+      if (exchange === 'Acala') return assets1;
+      if (exchange === 'BifrostPolkadot') return assets2;
       return [];
     });
 
@@ -118,16 +118,16 @@ describe('getSupportedAssetsTo', () => {
     const chain2 = 'BifrostPolkadot';
 
     vi.mocked(createExchangeInstance).mockImplementation((exchange: TExchangeChain) => {
-      if (exchange === 'AcalaDex') return { chain: chain1 } as ExchangeChain;
-      if (exchange === 'BifrostPolkadotDex') return { chain: chain2 } as ExchangeChain;
+      if (exchange === 'Acala') return { chain: chain1 } as ExchangeChain;
+      if (exchange === 'BifrostPolkadot') return { chain: chain2 } as ExchangeChain;
       return {} as ExchangeChain;
     });
 
     const assets1 = [abcAsset];
     const assets2 = [defAsset];
     vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
-      if (exchange === 'AcalaDex') return assets1;
-      if (exchange === 'BifrostPolkadotDex') return assets2;
+      if (exchange === 'Acala') return assets1;
+      if (exchange === 'BifrostPolkadot') return assets2;
       return [];
     });
 
@@ -146,8 +146,8 @@ describe('getSupportedAssetsTo', () => {
     const assets1 = [abcAsset];
     const assets2 = [defAsset];
     vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
-      if (exchange === 'AcalaDex') return assets1;
-      if (exchange === 'BifrostPolkadotDex') return assets2;
+      if (exchange === 'Acala') return assets1;
+      if (exchange === 'BifrostPolkadot') return assets2;
       return [];
     });
 

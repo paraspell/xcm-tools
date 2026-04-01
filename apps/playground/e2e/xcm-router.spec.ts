@@ -11,28 +11,28 @@ import { createName } from './utils/selectorName';
 
 const exchanges = [
   {
-    exchange: 'HydrationDex',
+    exchange: 'Hydration',
     fromChain: 'Astar',
     toChain: 'BifrostPolkadot',
     fromCurrency: 'ASTR - Location',
     toCurrency: 'USDC - 22',
   },
   {
-    exchange: 'KaruraDex',
+    exchange: 'Karura',
     fromChain: 'AssetHubKusama',
     toChain: 'BifrostKusama',
     fromCurrency: 'KSM - Location',
     toCurrency: 'RMRK - 0',
   },
   {
-    exchange: 'AcalaDex',
+    exchange: 'Acala',
     fromChain: 'Astar',
     toChain: 'Unique',
     fromCurrency: 'aSEED - 18446744073709551617',
     toCurrency: 'DOT - Location',
   },
   {
-    exchange: 'BifrostPolkadotDex',
+    exchange: 'BifrostPolkadot',
     fromChain: 'Hydration',
     toChain: 'Acala',
     fromCurrency: 'vDOT - 15',

@@ -47,7 +47,7 @@ const createInitialOptions = () =>
   ({
     from: 'Acala',
     to: 'Acala',
-    exchange: 'AcalaDex',
+    exchange: 'Acala',
     currencyFrom: { symbol: 'ACA' },
     currencyTo: { symbol: 'AUSD' },
     amount: '1000',
@@ -77,8 +77,7 @@ const createOptions = (
   origin: undefined,
   destination: undefined,
   exchange: {
-    baseChain: 'Acala',
-    exchangeChain: 'AcalaDex',
+    chain: 'Acala',
     apiPjs: {} as ApiPromise,
     apiPapi: {} as PolkadotClient,
     api: {} as PolkadotApi<unknown, unknown, unknown>,
@@ -130,8 +129,7 @@ describe('dryRunRouter', () => {
       origin: undefined,
       destination: undefined,
       exchange: {
-        baseChain: 'Acala',
-        exchangeChain: 'AcalaDex',
+        chain: 'Acala',
         apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,
@@ -186,8 +184,7 @@ describe('dryRunRouter', () => {
         address: 'dest-address',
       },
       exchange: {
-        baseChain: 'Hydration',
-        exchangeChain: 'HydrationDex',
+        chain: 'Hydration',
         apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,

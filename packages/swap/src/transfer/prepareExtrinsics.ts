@@ -34,7 +34,7 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
       const tx = await handleSwapExecuteTransfer({
         api,
         chain: origin?.chain,
-        exchangeChain: exchange.baseChain,
+        exchangeChain: exchange.chain,
         destChain: destination?.chain,
         assetInfoFrom: {
           ...(origin?.assetFrom ?? exchange.assetFrom),
@@ -72,7 +72,7 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
 
   // 1. Create transfer origin -> exchange (optional)
   const toExchangeTx =
-    origin && origin.chain !== exchange.baseChain
+    origin && origin.chain !== exchange.chain
       ? await buildToExchangeExtrinsic({ ...options, origin })
       : undefined;
 
@@ -81,7 +81,7 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
 
   // 3. Create transfer exchange -> destination (optional)
   const toDestTx =
-    destination && destination.chain !== exchange.baseChain
+    destination && destination.chain !== exchange.chain
       ? await buildFromExchangeExtrinsic({
           exchange,
           destination,

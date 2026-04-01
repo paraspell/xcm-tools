@@ -5,7 +5,7 @@ export const MOCK_SLIIPPAGE = '1';
 
 export const MOCK_TRANSFER_OPTIONS: TBuildTransactionsBaseOptions<unknown, unknown, unknown> = {
   from: 'Astar',
-  exchange: 'HydrationDex',
+  exchange: 'Hydration',
   to: 'Interlay',
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },

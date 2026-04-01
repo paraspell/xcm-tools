@@ -7,7 +7,6 @@ import type {
   TExchangeChain,
   TExchangeInput,
   TLocation,
-  TParachain,
   TStatusChangeCallback,
   TSubstrateChain,
   WithApi,
@@ -173,8 +172,7 @@ export type TExchangeInfo<TApi, TRes, TSigner> = {
   apiPjs: TPjsApi;
   apiPapi: TPapiApi;
   api: PolkadotApi<TApi, TRes, TSigner>;
-  baseChain: TParachain;
-  exchangeChain: TExchangeChain;
+  chain: TExchangeChain;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   feeAssetInfo?: TAssetInfo;

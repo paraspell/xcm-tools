@@ -74,7 +74,9 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
     return executeWithRouter({ ...options, swapOptions }, builder => builder.build())
   }
 
-  return [{ type: 'TRANSFER', api: api.api, chain: from, tx: await createTransfer(options) }]
+  const tx = await createTransfer(options)
+
+  return [{ type: 'TRANSFER', api: api.api, chain: from, tx }]
 }
 
 export const createTransferOrSwap = async <TApi, TRes, TSigner>(

@@ -21,7 +21,7 @@ export const buildTransactions = async <TApi, TRes, TSigner>(
     transactions.push({
       api: origin.api,
       chain: origin.chain,
-      destinationChain: exchange.baseChain,
+      destinationChain: exchange.chain,
       tx: toExchangeTx,
       type: 'TRANSFER',
     });
