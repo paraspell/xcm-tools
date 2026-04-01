@@ -7,9 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api'
 import { blake2b256, blake2b512, convertSs58, deriveAccountId, encodeSs58 } from './convertSs58'
 
-vi.mock('viem', () => ({
-  isAddress: vi.fn()
-}))
+vi.mock('viem')
 
 vi.mock('@paraspell/assets', () => ({
   getAssetsObject: vi.fn(() => ({ ss58Prefix: 2 })),
