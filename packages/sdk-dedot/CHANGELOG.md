@@ -1,5 +1,49 @@
 # Changelog
 
+## [13.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v12.10.0...sdk-dedot-v13.0.0) (2026-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **swap:** Remove dex suffix to simplify code 🔧
+* **swap:** Make swap package generic ⚡️
+* **sdk-core:** Rename TSendOptions to TTransferOptions for clarity ✨
+* Remove deprecated fee estimate functions 🧹
+
+### Features
+
+* **assets:** Make findAssetInfo destination optional ✨ ([0617bc8](https://github.com/paraspell/xcm-tools/commit/0617bc8286eeb240cdbe6591b23824c3fb6ea082))
+* Remove deprecated fee estimate functions 🧹 ([3d2b422](https://github.com/paraspell/xcm-tools/commit/3d2b422ebac75afb64c86fce87555b7c211406ab))
+* **sdk-dedot:** Add support for Dedot 🪄✨ ([928c691](https://github.com/paraspell/xcm-tools/commit/928c691e92c413ddffc7bc3aa67496967939024c))
+* **swap:** Make swap package generic ⚡️ ([5f35a8e](https://github.com/paraspell/xcm-tools/commit/5f35a8e43d7874c839bcd7d062e96f5e44d62e3b))
+
+
+### Bug Fixes
+
+* **sdk-core:** Update code to use new generic router builder ✨ ([6c8d8d0](https://github.com/paraspell/xcm-tools/commit/6c8d8d0a4927fdd627ece58bd9a18a1b8a918c7e))
+* **sdk-pjs:** Fix PJS tx decoder 🔧 ([6ee82ef](https://github.com/paraspell/xcm-tools/commit/6ee82efc7c6a22cf77fbd18b0567e88fc9ecb740))
+* Update release versions to bump to v13 ([2a23119](https://github.com/paraspell/xcm-tools/commit/2a2311964761da578a7cba05732c80b65bef0ca1))
+
+
+### Documentation
+
+* Add dedot documentation ([9605794](https://github.com/paraspell/xcm-tools/commit/9605794a00943454c153eb852c05455c80a2a0ba))
+* Add v13 documentation ([f0b942a](https://github.com/paraspell/xcm-tools/commit/f0b942ad482ad40a4104787a9ad3a00a8f99b58e))
+* Remove asset claim ([7e07d06](https://github.com/paraspell/xcm-tools/commit/7e07d063d48e49d49eee2e911ae0c5a4333dcc63))
+* Remove dex suffix in swap ([7e07d06](https://github.com/paraspell/xcm-tools/commit/7e07d063d48e49d49eee2e911ae0c5a4333dcc63))
+
+
+### Code Refactoring
+
+* **sdk-core:** Rename TSendOptions to TTransferOptions for clarity ✨ ([384453e](https://github.com/paraspell/xcm-tools/commit/384453e8514377184c8c35337bc8940d7340c3a6))
+* **swap:** Remove dex suffix to simplify code 🔧 ([3974b18](https://github.com/paraspell/xcm-tools/commit/3974b18a479df51c27c51495db973410aabb60d2))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+* Update to TypeScript v6 📦 ([0ecad63](https://github.com/paraspell/xcm-tools/commit/0ecad63ab0c39484572232bd33f7fbc0f3409de2))
+
 ## [12.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v12.9.6...sdk-dedot-v12.9.7) (2026-03-31)
 
 
