@@ -50,7 +50,10 @@ export class XTransferService {
       return executor(
         finalBuilder.swap({
           ...swapOptions,
-          slippage: Number(swapOptions.slippage),
+          slippage:
+            swapOptions.slippage !== undefined
+              ? Number(swapOptions.slippage)
+              : undefined,
           exchange: swapOptions.exchange,
         }),
       );
@@ -181,7 +184,8 @@ export class XTransferService {
       const { exchange, ...rest } = swapOptions;
       finalBuilder = finalBuilder.swap({
         ...rest,
-        slippage: Number(rest.slippage),
+        slippage:
+          rest.slippage !== undefined ? Number(rest.slippage) : undefined,
         exchange,
       });
     }
