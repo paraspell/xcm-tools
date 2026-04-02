@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - 12.x
 
 name: release-please
 jobs:
@@ -68,40 +69,3 @@ jobs:
 
       - name: Publish packages
         run: pnpm publish -r --no-git-checks --access=public
-
-      - name: Publish Playground
-        run: pnpm exec netlify deploy --prod --site $PLAYGROUND_SITE_ID --filter @paraspell/playground
-        env:
-          PLAYGROUND_SITE_ID: ${{ secrets.PLAYGROUND_SITE_ID }}
-
-      - name: Publish Visualizer FE
-        run: pnpm exec netlify deploy --prod --site $VISUALIZER_SITE_ID --filter visualizer-fe
-        env:
-          VISUALIZER_SITE_ID: ${{ secrets.VISUALIZER_SITE_ID }}
-
-      - name: Publish ParaSpell Website
-        run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
-
-  deploy_xcm_api_and_visualizer_be:
-    needs: release-please
-    if: needs.release-please.outputs.sdk_core_released == 'true'
-    runs-on: self-hosted
-    steps:
-      - name: Pull latest changes
-        run: git pull
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build XCM API
-        run: pnpm --filter xcm-api... build
-
-      - name: Build Visualizer BE
-        run: pnpm --filter visualizer-be... build
-
-      - name: Restart PM2 process
-        run: |
-          pm2 reload xcm-api
-          pm2 reload visualizer-be
-        env:
-          PM2_HOME: /${{ secrets.USER }}/.pm2
