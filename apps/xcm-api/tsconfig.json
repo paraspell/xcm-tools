@@ -17,6 +17,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strictPropertyInitialization": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "rootDir": "./src"
   }
 }

@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { HealthCheckResult, HealthCheckStatus } from '@nestjs/terminus';
+import type { HealthCheckResult } from '@nestjs/terminus';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { HealthController } from './health.controller.js';
 import { HealthService } from './health.service.js';
 
@@ -43,22 +45,28 @@ describe('HealthController', () => {
         error: {},
         details: { database: { status: 'up' } },
       };
-      vi.mocked(healthService.checkDb).mockResolvedValue(mockDbResult);
+      const spy = vi
+        .spyOn(healthService, 'checkDb')
+        .mockResolvedValue(
+          mockDbResult as Awaited<ReturnType<HealthService['checkDb']>>,
+        );
 
       const result = await controller.checkDb();
 
-      expect(healthService.checkDb).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledOnce();
       expect(result).toEqual(mockDbResult);
     });
 
     it('should handle database check errors', async () => {
       const mockError = new Error('Database connection failed');
-      vi.mocked(healthService.checkDb).mockRejectedValue(mockError);
+      const spy = vi
+        .spyOn(healthService, 'checkDb')
+        .mockRejectedValue(mockError);
 
       await expect(controller.checkDb()).rejects.toThrow(
         'Database connection failed',
       );
-      expect(healthService.checkDb).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledOnce();
     });
   });
 });

@@ -44,7 +44,7 @@
     "viem": "^2.47.6"
   },
   "peerDependencies": {
-    "@paraspell/swap": "12.10.0-rc.3"
+    "@paraspell/swap": "13.0.0"
   },
   "peerDependenciesMeta": {
     "@paraspell/swap": {

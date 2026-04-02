@@ -1,11 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  HealthCheckService,
-  PrismaHealthIndicator,
-  HealthIndicatorStatus,
+import type {
   HealthCheckResult,
+  HealthIndicatorStatus,
 } from '@nestjs/terminus';
+import { HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { PrismaService } from '../prisma/prisma.service.js';
 import { HealthService } from './health.service.js';
 
@@ -51,24 +52,21 @@ describe('HealthService', () => {
         database: { status: 'up' as HealthIndicatorStatus },
       });
 
-      vi.mocked(prismaHealthIndicator.pingCheck).mockReturnValue(
-        mockPingCheckResult,
-      );
+      const spyPingCheck = vi
+        .spyOn(prismaHealthIndicator, 'pingCheck')
+        .mockReturnValue(mockPingCheckResult);
 
-      vi.mocked(healthCheckService.check).mockImplementation(async (checks) => {
-        await checks[0]();
-        return mockResult;
-      });
+      const spyHealthCheck = vi
+        .spyOn(healthCheckService, 'check')
+        .mockImplementation(async (checks) => {
+          await checks[0]();
+          return mockResult;
+        });
 
       const result = await service.checkDb();
 
-      expect(prismaHealthIndicator.pingCheck).toHaveBeenCalledWith(
-        'database',
-        prismaService,
-      );
-      expect(healthCheckService.check).toHaveBeenCalledWith([
-        expect.any(Function),
-      ]);
+      expect(spyPingCheck).toHaveBeenCalledWith('database', prismaService);
+      expect(spyHealthCheck).toHaveBeenCalledWith([expect.any(Function)]);
       expect(result).toEqual(mockResult);
     });
   });
