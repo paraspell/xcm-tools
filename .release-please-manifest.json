@@ -1,12 +1,12 @@
 {
   "packages/xcm-analyser": "3.0.5",
-  "packages/swap": "13.0.0",
-  "packages/sdk": "13.0.0",
-  "packages/sdk-core": "13.0.0",
-  "packages/sdk-pjs": "13.0.0",
-  "packages/sdk-dedot": "13.0.0",
-  "packages/sdk-common": "13.0.0",
-  "packages/assets": "13.0.0",
-  "packages/pallets": "13.0.0",
-  "apps/xcm-api": "13.0.0"
+  "packages/swap": "13.0.1",
+  "packages/sdk": "13.0.1",
+  "packages/sdk-core": "13.0.1",
+  "packages/sdk-pjs": "13.0.1",
+  "packages/sdk-dedot": "13.0.1",
+  "packages/sdk-common": "13.0.1",
+  "packages/assets": "13.0.1",
+  "packages/pallets": "13.0.1",
+  "apps/xcm-api": "13.0.1"
 }
