@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.0.0...xcm-api-v13.0.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* Update backends tsconfig files 🔧 ([610514e](https://github.com/paraspell/xcm-tools/commit/610514e3fec4caf06d54f613f0e69bb78cd4c727))
+
 ## [13.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v12.10.0...xcm-api-v13.0.0) (2026-04-02)
 
 
