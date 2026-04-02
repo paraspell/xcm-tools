@@ -1,7 +1,7 @@
 import type { MantineSize } from '@mantine/core';
-import { Center, SegmentedControl } from '@mantine/core';
+import { Box, Center, Group, SegmentedControl, Select } from '@mantine/core';
 import type { TApiType } from '@paraspell/sdk';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
 import { PageRoute } from '../PageRoute';
 import { DedotLogo } from './assets/DedotLogo';
@@ -21,8 +21,8 @@ export const ApiTypeSelector: FC<Props> = ({
   apiTypeInitialized,
   size,
 }) => {
-  const onChangeInternal = (value: string) => {
-    onChange(value as TApiType);
+  const onChangeInternal = (value: string | null) => {
+    if (value) onChange(value as TApiType);
   };
 
   const fullyDisabled = location.pathname === PageRoute.XCM_ANALYSER;
@@ -60,13 +60,61 @@ export const ApiTypeSelector: FC<Props> = ({
     },
   ];
 
+  const logos: Record<string, ReactNode> = {
+    PAPI: <PapiLogo />,
+    PJS: <PolkadotJsLogo />,
+    DEDOT: <DedotLogo />,
+  };
+
+  const selectData = [
+    {
+      value: 'PAPI',
+      label: 'PAPI',
+      disabled: fullyDisabled || !apiTypeInitialized,
+    },
+    { value: 'PJS', label: 'PJS', disabled: fullyDisabled },
+    { value: 'DEDOT', label: 'DEDOT', disabled: fullyDisabled },
+  ];
+
+  const renderSelectOption = ({
+    option,
+  }: {
+    option: { value: string; label: string };
+  }) => (
+    <Group gap={8} wrap="nowrap">
+      <Box w={16} style={{ flexShrink: 0 }}>
+        {logos[option.value]}
+      </Box>
+      <span>{option.label}</span>
+    </Group>
+  );
+
   return (
-    <SegmentedControl
-      size={size}
-      value={value}
-      onChange={onChangeInternal}
-      disabled={!apiTypeInitialized}
-      data={data}
-    />
+    <>
+      <Box visibleFrom="sm">
+        <SegmentedControl
+          size={size}
+          value={value}
+          onChange={onChangeInternal}
+          disabled={!apiTypeInitialized}
+          data={data}
+        />
+      </Box>
+      <Box hiddenFrom="sm">
+        <Select
+          value={value}
+          onChange={onChangeInternal}
+          disabled={!apiTypeInitialized}
+          data={selectData}
+          size="xs"
+          w={110}
+          allowDeselect={false}
+          leftSection={<Center w={16}>{logos[value]}</Center>}
+          leftSectionWidth={34}
+          leftSectionProps={{ style: { paddingLeft: 8 } }}
+          renderOption={renderSelectOption}
+        />
+      </Box>
+    </>
   );
 };
