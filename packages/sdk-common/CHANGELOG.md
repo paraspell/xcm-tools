@@ -1,5 +1,73 @@
 # Changelog
 
+## [13.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v12.10.0...sdk-common-v13.0.0) (2026-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **swap:** Remove dex suffix to simplify code 🔧
+* Migrate packages & visualizer-be to ESM only 🪄
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹
+* Rename `node` to `chain` 👨‍💻
+* Remove multi prefix 🪄
+
+### Features
+
+* Add dry run preview 🪄 ([101f25d](https://github.com/paraspell/xcm-tools/commit/101f25da6a4f4fcce9435a948ddeae7b0631cdc5))
+* Add IntegriteePolkadot parachain 🪄 ([843d4d6](https://github.com/paraspell/xcm-tools/commit/843d4d68f21e9aaf52a95a8040085f1d75023358))
+* Add support for Westend, Paseo snowbridge ↔ ([d3954d5](https://github.com/paraspell/xcm-tools/commit/d3954d539a1f5348c140e5e31d955d5e66dad055))
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+* Remove multi prefix 🪄 ([2577fd8](https://github.com/paraspell/xcm-tools/commit/2577fd868dca2a06cca452357dc84385910b9c19))
+* Rename `node` to `chain` 👨‍💻 ([ec1a66f](https://github.com/paraspell/xcm-tools/commit/ec1a66fc7d6ee3a68f2072516c2fbfd176dbaa14))
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹 ([24da004](https://github.com/paraspell/xcm-tools/commit/24da0048c6dc4684d2e2fc8d3dd67b188d8d0aac))
+* Switch system asset transfers to type and then 🛠️ ([f2c3dd5](https://github.com/paraspell/xcm-tools/commit/f2c3dd54d8e90b8f27415f0b8c8f6f3650218678))
+
+
+### Bug Fixes
+
+* Add logos that change based on mode ☀️🌑 ([fb3dedf](https://github.com/paraspell/xcm-tools/commit/fb3dedf4683453942c8d07e0744e15d78e71cdc0))
+* **assets:** Migrate to new Snowbridge asset registry 🪄 ([d36c1b7](https://github.com/paraspell/xcm-tools/commit/d36c1b753836f6cee00b45119e6644c135d442f9))
+* Override XCM Payment API on System chains ([aedb287](https://github.com/paraspell/xcm-tools/commit/aedb2874c72538e6ac41b07d48a8c96cea19a540))
+* Perform a monthly check ⚙️ ([e5fba54](https://github.com/paraspell/xcm-tools/commit/e5fba54c4b724b716c20f26ae92e7a0f8d9b0524))
+* Perform monthly maintenance check ([8854677](https://github.com/paraspell/xcm-tools/commit/88546775fbb5ab4b95ec1a1dde9f0c92d99a5bb5))
+* **sdk-core:** Migrate substrate bridge to type and then ➡️ ([9c5b7cd](https://github.com/paraspell/xcm-tools/commit/9c5b7cd4c42eb50f33391ec6c03a1fbd5e715cdd))
+* **sdk-core:** Temporarily disable Ajuna transfers 🔧 ([031912e](https://github.com/paraspell/xcm-tools/commit/031912e53025697712b6fc1dbee3aeb65b558431))
+* **sdk-core:** Update code to use new generic router builder ✨ ([6c8d8d0](https://github.com/paraspell/xcm-tools/commit/6c8d8d0a4927fdd627ece58bd9a18a1b8a918c7e))
+* **sdk-pjs:** Fix PJS tx decoder 🔧 ([6ee82ef](https://github.com/paraspell/xcm-tools/commit/6ee82efc7c6a22cf77fbd18b0567e88fc9ecb740))
+* Update LICENSES and Sponsor logos ([2e3a881](https://github.com/paraspell/xcm-tools/commit/2e3a881a3d843101bdaf93db945e0a2bb48a7cf3))
+* Update release versions to bump to v13 ([2a23119](https://github.com/paraspell/xcm-tools/commit/2a2311964761da578a7cba05732c80b65bef0ca1))
+
+
+### Documentation
+
+* Comprehensively refresh documentation ([a643836](https://github.com/paraspell/xcm-tools/commit/a643836916961d5765ffc240a3e200ddf8832f1b))
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+* Improve transfers to Ethereum ✨ ([303f0a2](https://github.com/paraspell/xcm-tools/commit/303f0a2c233bdeb3f8b571766c98576b4c1c1ae3))
+* **swap:** Remove dex suffix to simplify code 🔧 ([3974b18](https://github.com/paraspell/xcm-tools/commit/3974b18a479df51c27c51495db973410aabb60d2))
+
+
+### Tests
+
+* **sdk:** Add dry run bypass E2E tests 🧪 ([36fe5a9](https://github.com/paraspell/xcm-tools/commit/36fe5a9203542334525b34d22d0c8a698ff8cdf3))
+
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+* Perform a monthly check 🪄 ([0da5837](https://github.com/paraspell/xcm-tools/commit/0da5837c2b424274bf4dfa53afa6dfde5c7e6be6))
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+* Perform a monthly maintenance check ⚙️ ([65d72b0](https://github.com/paraspell/xcm-tools/commit/65d72b032251ba023ff5340fce8d737bb884968a))
+* Perform a monthly maintenance check 🔧 ([1d7a4c3](https://github.com/paraspell/xcm-tools/commit/1d7a4c37cbcf94438b29a1c6e2be2874fc49f7db))
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+* Update to TypeScript v6 📦 ([0ecad63](https://github.com/paraspell/xcm-tools/commit/0ecad63ab0c39484572232bd33f7fbc0f3409de2))
+
 ## [12.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-common-v12.9.6...sdk-common-v12.9.7) (2026-03-31)
 
 

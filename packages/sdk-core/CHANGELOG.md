@@ -1,5 +1,226 @@
 # Changelog
 
+## [13.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.10.0...sdk-core-v13.0.0) (2026-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **swap:** Remove dex suffix to simplify code 🔧
+* Deprecate asset claim & remove from playground 🧹
+* **swap:** Make swap package generic ⚡️
+* **swap:** Remove moved isExchange flag 🧹
+* **sdk-core:** Rename TSendOptions to TTransferOptions for clarity ✨
+* **sdk-core:** Turn abstract decimals on by default ⚙️
+* **sdk-core:** Rename senderAddress -> sender & address -> recipient ✨
+* Remove deprecated fee estimate functions 🧹
+* **sdk-core:** Merge assets into one array 🧹
+* Migrate packages & visualizer-be to ESM only 🪄
+* **sdk-core:** Remove foreign & native balance methods 🧹
+* Remove getOriginFeeDetails function & deprecate estimate funcs 🧹
+* **sdk-core:** Remove deprecated assetHub, bridgeHub objects 🧹
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹
+* Rename `node` to `chain` 👨‍💻
+* Remove multi prefix 🪄
+
+### Features
+
+* Add decimal abstraction feature ✨ ([604ab79](https://github.com/paraspell/xcm-tools/commit/604ab795c219f29b2276e5f0e7b644c26f4a281c))
+* Add dry run preview 🪄 ([101f25d](https://github.com/paraspell/xcm-tools/commit/101f25da6a4f4fcce9435a948ddeae7b0631cdc5))
+* Add full asset info to fee queries 🪄 ([0c56240](https://github.com/paraspell/xcm-tools/commit/0c562408361e1e3d4301799b4a5a140893385451))
+* Add IntegriteePolkadot parachain 🪄 ([843d4d6](https://github.com/paraspell/xcm-tools/commit/843d4d68f21e9aaf52a95a8040085f1d75023358))
+* Add support for local accounts 🪄 ([d92fc44](https://github.com/paraspell/xcm-tools/commit/d92fc440441bed3bcf913bbfcbed07c18a541b6c))
+* Add support for transact XCM instruction 🪄 ([a855e45](https://github.com/paraspell/xcm-tools/commit/a855e455a9d6cd846b55b315b2f41995a8a04637))
+* Add support for Westend, Paseo snowbridge ↔ ([d3954d5](https://github.com/paraspell/xcm-tools/commit/d3954d539a1f5348c140e5e31d955d5e66dad055))
+* Add xcm format check using dry-run 👨‍💻 ([0c80198](https://github.com/paraspell/xcm-tools/commit/0c801985aa489f7c233144a39385dc5d0a6f7e70))
+* Add Xode parachain 🪄 ([d051bef](https://github.com/paraspell/xcm-tools/commit/d051bef2eee54dcd4d7d40a7a5395cba0d068068))
+* **assets:** Make findAssetInfo destination optional ✨ ([0617bc8](https://github.com/paraspell/xcm-tools/commit/0617bc8286eeb240cdbe6591b23824c3fb6ea082))
+* Deprecate asset claim & remove from playground 🧹 ([2350291](https://github.com/paraspell/xcm-tools/commit/235029187bf3f625f590e90ca802f4a525b863ac))
+* Extend substrate bridge asset support 🪄 ([69ebb18](https://github.com/paraspell/xcm-tools/commit/69ebb182de979e89d2c37cbf6121eb84fe1d3f3e))
+* **pallets:** Add assets pallet info to pallets.json 🪄 ([66279f1](https://github.com/paraspell/xcm-tools/commit/66279f17765fccfc72b36d4ffd28b4789de88343))
+* **playground:** Add localhost section ✨ ([ba90e98](https://github.com/paraspell/xcm-tools/commit/ba90e98eb0bfb81f66a7a50b40d67e3ae05e7a15))
+* Remove Composable Finance chain 🧹 ([0475bbc](https://github.com/paraspell/xcm-tools/commit/0475bbc365050f36086526ffd006b038108aefc3))
+* Remove deprecated fee estimate functions 🧹 ([3d2b422](https://github.com/paraspell/xcm-tools/commit/3d2b422ebac75afb64c86fce87555b7c211406ab))
+* Remove getOriginFeeDetails function & deprecate estimate funcs 🧹 ([45ec791](https://github.com/paraspell/xcm-tools/commit/45ec791e4eccfe66e6874699514cd0dc41ed66ff))
+* Remove multi prefix 🪄 ([2577fd8](https://github.com/paraspell/xcm-tools/commit/2577fd868dca2a06cca452357dc84385910b9c19))
+* Rename `node` to `chain` 👨‍💻 ([ec1a66f](https://github.com/paraspell/xcm-tools/commit/ec1a66fc7d6ee3a68f2072516c2fbfd176dbaa14))
+* **sdk-core:** Add getReceivableAmount func to builder 🧱 ([6691a0d](https://github.com/paraspell/xcm-tools/commit/6691a0d294b9df3c4a05e8557ea45d36ff46c0a6))
+* **sdk-core:** Add keepAlive flag for local transfers 🪄 ([fcf32ac](https://github.com/paraspell/xcm-tools/commit/fcf32ac00baea19b6304d59a8593c1e0b6f55f17))
+* **sdk-core:** Add min transferable amount function 🪄 ([5bf88e1](https://github.com/paraspell/xcm-tools/commit/5bf88e146bd63ef8fc6610efbbffed6fd74fac00))
+* **sdk-core:** Add support for ALL amount for local transfers ✨ ([4d06874](https://github.com/paraspell/xcm-tools/commit/4d06874e7365cb55e9522e7b42433118992d7551))
+* **sdk-core:** Add support for external signer in builder 🪄 ([1f4ddea](https://github.com/paraspell/xcm-tools/commit/1f4ddea3558004451ac60e4f589ca98a48443a57))
+* **sdk-core:** Merge assets into one array 🧹 ([b7ce50b](https://github.com/paraspell/xcm-tools/commit/b7ce50bc3e29f7b6b0c23ab1aec6f3f714117ef6))
+* **sdk-core:** Remove deprecated assetHub, bridgeHub objects 🧹 ([a997907](https://github.com/paraspell/xcm-tools/commit/a997907f4356dc121d633f9bf183ce3d2b392fad))
+* **sdk-core:** Remove foreign & native balance methods 🧹 ([5b34577](https://github.com/paraspell/xcm-tools/commit/5b34577e361504a52dde974b356cd1ef1032c550))
+* **sdk-core:** Remove TNode type aliases & currency attribute 🧹 ([24da004](https://github.com/paraspell/xcm-tools/commit/24da0048c6dc4684d2e2fc8d3dd67b188d8d0aac))
+* **sdk-core:** Rename senderAddress -&gt; sender & address -&gt; recipient ✨ ([f31049f](https://github.com/paraspell/xcm-tools/commit/f31049f96d5a6c1fc8ce961b40c4354a778cc496))
+* **sdk-core:** Turn abstract decimals on by default ⚙️ ([db85912](https://github.com/paraspell/xcm-tools/commit/db85912f067e8d0fc55621043860bac62e88d21e))
+* **sdk-core:** Use dryRun root bypass to always show fees 🪄 ([76fee70](https://github.com/paraspell/xcm-tools/commit/76fee703be840203a97eac07d747221c273257ab))
+* **sdk-dedot:** Add support for Dedot 🪄✨ ([928c691](https://github.com/paraspell/xcm-tools/commit/928c691e92c413ddffc7bc3aa67496967939024c))
+* **sdk:** Add support for more specific dry run errors ✨ ([0cdb43d](https://github.com/paraspell/xcm-tools/commit/0cdb43d5ee9516cc509136abeba6638a845c44e2))
+* **swap:** Make swap package generic ⚡️ ([5f35a8e](https://github.com/paraspell/xcm-tools/commit/5f35a8e43d7874c839bcd7d062e96f5e44d62e3b))
+* **swap:** Remove moved isExchange flag 🧹 ([7c7df6f](https://github.com/paraspell/xcm-tools/commit/7c7df6fd16a887bb6003e9ed0516a509248e37ae))
+* Switch system asset transfers to type and then 🛠️ ([f2c3dd5](https://github.com/paraspell/xcm-tools/commit/f2c3dd54d8e90b8f27415f0b8c8f6f3650218678))
+* Update [@scure](https://github.com/scure) & [@noble](https://github.com/noble) libs to v2 📦 ([c9e65f1](https://github.com/paraspell/xcm-tools/commit/c9e65f18570f009c239b0cafc5321906225f3b27))
+* **xcm-router:** Add dryRun function to RouterBuilder 🪄 ([1f14dc9](https://github.com/paraspell/xcm-tools/commit/1f14dc94cb40edce7ade9faf157ddcf6cdbd5925))
+* **xcm-router:** Add feeAsset method to router builder ✨ ([489b040](https://github.com/paraspell/xcm-tools/commit/489b0405691e00b5306d8ec031cce1eac392d922))
+* **xcm-router:** Add support for apiOverrides ✨ ([12ac6b8](https://github.com/paraspell/xcm-tools/commit/12ac6b8cdea3479fc486535036bb68253eb09238))
+
+
+### Bug Fixes
+
+* Add delivery fees fetching ⚙️ ([e8a2193](https://github.com/paraspell/xcm-tools/commit/e8a2193734c998e8f9535da39b0ecb872d5a3d56))
+* Add dynamic bypass amount calculations ⚙️ ([21369d1](https://github.com/paraspell/xcm-tools/commit/21369d19870140327f08f74c83dc41dde6c0d23d))
+* Add logos that change based on mode ☀️🌑 ([fb3dedf](https://github.com/paraspell/xcm-tools/commit/fb3dedf4683453942c8d07e0744e15d78e71cdc0))
+* Add missing Moonbeam wh assets 🔧 ([25d5cbc](https://github.com/paraspell/xcm-tools/commit/25d5cbc6a4e3a99f6e30c73c777ef59e560f0139))
+* Allow for location Asset pallet queries ([0cc1ea0](https://github.com/paraspell/xcm-tools/commit/0cc1ea08c00aee3039fe6e73c17f833d9a3fe4fa))
+* **assets:** Add Hydration native asset ID ⚙️ ([0f23534](https://github.com/paraspell/xcm-tools/commit/0f23534a70f3e773022d02ce670708586d16e870))
+* **assets:** Fix asset search between ecosystems 🛠️ ([49ba9d5](https://github.com/paraspell/xcm-tools/commit/49ba9d59282c7c3152d574b28b847a7098961682))
+* **assets:** Fix incorrect decimals returned for AH chains 🔧 ([f5cd331](https://github.com/paraspell/xcm-tools/commit/f5cd3312fe078472a666e3b654cd05c6f7bc0ec0))
+* **assets:** Migrate to new Snowbridge asset registry 🪄 ([d36c1b7](https://github.com/paraspell/xcm-tools/commit/d36c1b753836f6cee00b45119e6644c135d442f9))
+* Fix compile errors 🛠️ ([3144f89](https://github.com/paraspell/xcm-tools/commit/3144f8926fb9d6d524275f97c69799e6992b1865))
+* Fix Ethereum native asset search for fee queries 🔧 ([c71e004](https://github.com/paraspell/xcm-tools/commit/c71e004ff77c4b036cd75a7914709a819be20134))
+* Fix playground errors & Update sdk-core peer deps 🔧 ([#1734](https://github.com/paraspell/xcm-tools/issues/1734)) ([c70077a](https://github.com/paraspell/xcm-tools/commit/c70077acbe5356005706f18881867dba237c08eb))
+* Fix reverse tx creation 🔧 ([778e210](https://github.com/paraspell/xcm-tools/commit/778e2102b46ffdcff62a0f45aba8b94414d8e101))
+* Fix type and then by removing refund instruction ([7d56d3f](https://github.com/paraspell/xcm-tools/commit/7d56d3fef8429d06f2124039034142722a173117))
+* Fix type then teleport to system chains 🔧 ([f0d9cf1](https://github.com/paraspell/xcm-tools/commit/f0d9cf1f574451ea706330b1a59438a319ae9839))
+* Override release please version to release as v13 ([ad87385](https://github.com/paraspell/xcm-tools/commit/ad87385574f7efb48c7cac0b2485d271add65c27))
+* Override XCM Payment API on System chains ([aedb287](https://github.com/paraspell/xcm-tools/commit/aedb2874c72538e6ac41b07d48a8c96cea19a540))
+* Perform a monthly check ⚙️ ([e5fba54](https://github.com/paraspell/xcm-tools/commit/e5fba54c4b724b716c20f26ae92e7a0f8d9b0524))
+* Perform monthly maintenance check ([8854677](https://github.com/paraspell/xcm-tools/commit/88546775fbb5ab4b95ec1a1dde9f0c92d99a5bb5))
+* Re-enable execute for Hydration chain ✨ ([f7fe395](https://github.com/paraspell/xcm-tools/commit/f7fe395d39447c85973868f9a22a248c6ce1aecd))
+* Re-enable mythos ([4d6027e](https://github.com/paraspell/xcm-tools/commit/4d6027e883745e451287b38d9487a2115602a66d))
+* Re-enable system chains ([833e82b](https://github.com/paraspell/xcm-tools/commit/833e82b7d8108b1aab3817dc05863ec3949ac378))
+* Refactor location localization & fix bifrost dex issues 🔧 ([0d83ded](https://github.com/paraspell/xcm-tools/commit/0d83ded64dae482ac84986475dd76e4a8f714e82))
+* **sdk-core:** Add amount all handling for fee functions ✨ ([ceead0e](https://github.com/paraspell/xcm-tools/commit/ceead0ef919080f18123f6289e1d3b2a7f33663c))
+* **sdk-core:** Add relay asset reserve auto-select ✨ ([a7fb4b4](https://github.com/paraspell/xcm-tools/commit/a7fb4b4bd6c18448a70a9fef75e951870c30ae51))
+* **sdk-core:** Add SDK level address validation 📕 ([57c6a2c](https://github.com/paraspell/xcm-tools/commit/57c6a2c9aaef9d0e152d6f4f1de1fe668237f9bc))
+* **sdk-core:** Add support for Moonbeam local transfers 🔧 ([be26f7e](https://github.com/paraspell/xcm-tools/commit/be26f7e8bdb4ba657bcf9ffeb50ec1981e8105b9))
+* **sdk-core:** Add xcm fee auto amount decrease ✨ ([1dd0b35](https://github.com/paraspell/xcm-tools/commit/1dd0b352e1a53afe858c245b223981e42bfcb8a1))
+* **sdk-core:** Always use AH as reserve in system asset transfers ⚙️ ([eae3708](https://github.com/paraspell/xcm-tools/commit/eae37087cc5656e1052eecf7ee46939ee5cca1af))
+* **sdk-core:** Apply conditional fees for specific type then scenarios 🛠️ ([c6e62cb](https://github.com/paraspell/xcm-tools/commit/c6e62cb5fc0a48c459fa85f065a5b113295d2250))
+* **sdk-core:** Display fee in MYTH on AH hop when Mythos -&gt; Ethereum 🔧 ([8042f13](https://github.com/paraspell/xcm-tools/commit/8042f1346a0a0506a354ea0e5630fae26d8cca3a))
+* **sdk-core:** Enable auto-reserve for RelayToPara scenarios ⚙️ ([501399a](https://github.com/paraspell/xcm-tools/commit/501399a83fa9d3dcb7cdddc0abccec899a733084))
+* **sdk-core:** Export validateDestination function ⬆️ ([97adbc9](https://github.com/paraspell/xcm-tools/commit/97adbc9a11067ad161a2a1f97dce90d71fb3c78b))
+* **sdk-core:** Fix Acala & Bifrost minting logic 🔧 ([0189bfa](https://github.com/paraspell/xcm-tools/commit/0189bfaa9c3b2c8447755e2b8220803f98338012))
+* **sdk-core:** Fix amount normalization ⚙️ ([433be1e](https://github.com/paraspell/xcm-tools/commit/433be1e04a324fcde959898039d4c1ee9158cf82))
+* **sdk-core:** Fix bridge system asset selection 🔧 ([3305d89](https://github.com/paraspell/xcm-tools/commit/3305d892146a662ef993bab65607074ac3008e2c))
+* **sdk-core:** Fix BridgeHub fees 💰 ([e9c4d87](https://github.com/paraspell/xcm-tools/commit/e9c4d87b750b5c1ce506e49ef78d35c09a29ad35))
+* **sdk-core:** Fix EnergyWebX XCM ✨ ([1f698f8](https://github.com/paraspell/xcm-tools/commit/1f698f85c0360d0d6dc46bf4e62accf0f2524718))
+* **sdk-core:** Fix execute small amount check edgecase ⚙️ ([585fdc8](https://github.com/paraspell/xcm-tools/commit/585fdc872a30793d6a2f9564605bec11afb490b8))
+* **sdk-core:** Fix incorrect feeAsset when relay asset is not attached 🔧 ([aefc3eb](https://github.com/paraspell/xcm-tools/commit/aefc3eb19869370bdd4a92819047ad59fc5fa789))
+* **sdk-core:** Fix incorrect type in PJS Assets pallet implementation 🔧 ([719aa05](https://github.com/paraspell/xcm-tools/commit/719aa0592bb05e68ca8bfd598fdbb7f6862962bf))
+* **sdk-core:** Fix min transferable amount incorrect result 🛠️ ([#1469](https://github.com/paraspell/xcm-tools/issues/1469)) ([a964629](https://github.com/paraspell/xcm-tools/commit/a964629012989c0e18b3e590e6dc723e20681f97))
+* **sdk-core:** Fix MYTH transfer scenarios 🔧 ([2441ca4](https://github.com/paraspell/xcm-tools/commit/2441ca4f093731a5b138c4c504f92665f804de99))
+* **sdk-core:** Fix NeuroWebPaseo minting & Update getXcmFee retry logic 🔧 ([fd0b0b8](https://github.com/paraspell/xcm-tools/commit/fd0b0b8437331568eeb35f6747f24d8f2187e3ce))
+* **sdk-core:** Fix origin fee asset handling in transfer info 🛠️ ([c1917f7](https://github.com/paraspell/xcm-tools/commit/c1917f74d35e2d68dbb7984b86a2b118c37608cc))
+* **sdk-core:** Fix override location logic for XTokens pallet 🔧 ([432ad6f](https://github.com/paraspell/xcm-tools/commit/432ad6fb64de87dd9acfa44256cb7c710962bcfa))
+* **sdk-core:** Fix router fee bypass ⚙️ ([955f450](https://github.com/paraspell/xcm-tools/commit/955f450bfc49257edf26a289a5c94fbed654da5c))
+* **sdk-core:** Fix sufficient param calculations ⚙️ ([81327c5](https://github.com/paraspell/xcm-tools/commit/81327c50765dd71574af00dc66159a210b1cf6d4))
+* **sdk-core:** Fix swap module loading 🔧 ([a826f68](https://github.com/paraspell/xcm-tools/commit/a826f68de96854ddcdd3058ff7d8263a255a5222))
+* **sdk-core:** Fix txs creation for bypass 🔧 ([bcfefc7](https://github.com/paraspell/xcm-tools/commit/bcfefc7764c2d25f5d4e51919591eb247d0dd0e2))
+* **sdk-core:** Fix use type and then condition 🔧 ([6b2fd37](https://github.com/paraspell/xcm-tools/commit/6b2fd375f250f433bf69e11827f52accd1cc3d93))
+* **sdk-core:** Fix wh assets minting on Moonbeam 🔧 ([3173743](https://github.com/paraspell/xcm-tools/commit/3173743f0c249d1f3cbfb358af0c1e4201ac819a))
+* **sdk-core:** Fix XCM v3 handling in execute call 🔧 ([b711ddb](https://github.com/paraspell/xcm-tools/commit/b711ddb73881f7c7e0a6afea3bfede81fa126944))
+* **sdk-core:** Fix xcm version resolving ⚙️ ([5951bc3](https://github.com/paraspell/xcm-tools/commit/5951bc31a89679a2c1fab7dcaffd293ce56b46e7))
+* **sdk-core:** Handle Hydration custom fee assets ⚙️ ([c7bfc88](https://github.com/paraspell/xcm-tools/commit/c7bfc88a0fcf1498ff843d779698823cc4917555))
+* **sdk-core:** Migrate substrate bridge to type and then ➡️ ([9c5b7cd](https://github.com/paraspell/xcm-tools/commit/9c5b7cd4c42eb50f33391ec6c03a1fbd5e715cdd))
+* **sdk-core:** Modify temporarily disabled scenarios 🔧 ([208aec5](https://github.com/paraspell/xcm-tools/commit/208aec52195097c1ada2e41ddd655511d03393b9))
+* **sdk-core:** Only use refund instruction if there is a hop 🔧 ([ecb42f2](https://github.com/paraspell/xcm-tools/commit/ecb42f264e8b4c368ab9cee9e67772b4fa9e5573))
+* **sdk-core:** Override bypass amount to fixed value 🔧 ([ae674fd](https://github.com/paraspell/xcm-tools/commit/ae674fd2d686a6f4156ae9da9feeaff83ab3baa3))
+* **sdk-core:** Patch transfer_assets to type_and_then 🔧 ([c6718fb](https://github.com/paraspell/xcm-tools/commit/c6718fbf8c963103205ec112b63f5805384b72db))
+* **sdk-core:** Prevent 0 amount in type then buy execution 🔧 ([7366f35](https://github.com/paraspell/xcm-tools/commit/7366f357398b3687ea5cf13911fd5461940e2952))
+* **sdk-core:** Refactor EnergyWebX fixes 🔧 ([d7ad29e](https://github.com/paraspell/xcm-tools/commit/d7ad29e64ce605aae1001159d141ad780eb8930b))
+* **sdk-core:** Remove dwellir endpint from Hydration chain 🔧 ([6222417](https://github.com/paraspell/xcm-tools/commit/62224173eb9b3c55b4cc969a1632798972bf15c2))
+* **sdk-core:** Take fee paying asset into consideration in some functions 🧹 ([17c390e](https://github.com/paraspell/xcm-tools/commit/17c390e9188dc257892b952918f2d6467ecef509))
+* **sdk-core:** Temporarily disable Ajuna transfers 🔧 ([031912e](https://github.com/paraspell/xcm-tools/commit/031912e53025697712b6fc1dbee3aeb65b558431))
+* **sdk-core:** Temporarily disable Manta cross-chain transfers 📴 ([09018b5](https://github.com/paraspell/xcm-tools/commit/09018b53128a4b02e5380635bd31646c9f54ab95))
+* **sdk-core:** Update code to use new generic router builder ✨ ([6c8d8d0](https://github.com/paraspell/xcm-tools/commit/6c8d8d0a4927fdd627ece58bd9a18a1b8a918c7e))
+* **sdk-core:** Update swap module logic 🛠️ ([6ce9f92](https://github.com/paraspell/xcm-tools/commit/6ce9f924901f3548b9e0f854dc018cbb07e7b7fa))
+* **sdk-core:** Update typeAndThen calls to use forwardedXcms for fee calculation ⚙️ ([5303a08](https://github.com/paraspell/xcm-tools/commit/5303a08d47863b03080f6b526548701d54a4d495))
+* **sdk-core:** Use correct error class in execute call 🔧 ([5826d99](https://github.com/paraspell/xcm-tools/commit/5826d991e6a64ada049b3efd0c621cbe8c8f77b5))
+* **sdk-core:** Use localReserve when origin is relaychain 🔧 ([89365f3](https://github.com/paraspell/xcm-tools/commit/89365f38870e4d82065e76efb10c70a72074d22b))
+* **sdk-core:** Use TypeAndThen for BILL asset 🔧 ([ad07a47](https://github.com/paraspell/xcm-tools/commit/ad07a47dc59d9298ddc2c364db87c5efd42d078e))
+* **sdk-pjs:** Add client pool ✨ ([332c13b](https://github.com/paraspell/xcm-tools/commit/332c13baaf481e4dddeb604b980e0afca2fc79d2))
+* **sdk-pjs:** Fix PJS tx decoder 🔧 ([6ee82ef](https://github.com/paraspell/xcm-tools/commit/6ee82efc7c6a22cf77fbd18b0567e88fc9ecb740))
+* **sdk:** Add PAPI support for legacy chains 🔧 ([5388409](https://github.com/paraspell/xcm-tools/commit/538840978eb132b36ba78e93c19927d553781d11))
+* **sdk:** Fix Astar execution fee estimation 🔧 ([4460583](https://github.com/paraspell/xcm-tools/commit/4460583c83d9575bd734e9957280b9fc0c19710a))
+* **sdk:** Fix e2e errors 🔧 ([4619da8](https://github.com/paraspell/xcm-tools/commit/4619da83cf5fdc7ea384b3d6b2decd1d8146f88c))
+* **swap:** Add support for exchange empty array ✨ ([#1750](https://github.com/paraspell/xcm-tools/issues/1750)) ([e071e79](https://github.com/paraspell/xcm-tools/commit/e071e7994aef9397db4e8fab89a90fb354b92275))
+* **swap:** Add temporary swap types bypass 🔧 ([1468736](https://github.com/paraspell/xcm-tools/commit/14687362256f26410e8f744b64b8e4c679425f26))
+* **swap:** Create extension registry 🔧 ([335a678](https://github.com/paraspell/xcm-tools/commit/335a67873effef8a82f90e4a8f90bae2c730d1b9))
+* **swap:** Fix pool error when using automatic exchange 🛠️ ([f9ae778](https://github.com/paraspell/xcm-tools/commit/f9ae7780baed66e2bdf87bc22fc1d031b7b1515b))
+* Temporarily disable Polkadot system chains during migration ([c3175ad](https://github.com/paraspell/xcm-tools/commit/c3175adcd6718c3e15ffc0e8d729609b56c1b69f))
+* Update Assets & Add e2e disabled chains filtering ✨ ([465bdac](https://github.com/paraspell/xcm-tools/commit/465bdaccaf2adff5531743786df98af01cefb359))
+* Update LICENSES and Sponsor logos ([2e3a881](https://github.com/paraspell/xcm-tools/commit/2e3a881a3d843101bdaf93db945e0a2bb48a7cf3))
+* Update release versions to bump to v13 ([2a23119](https://github.com/paraspell/xcm-tools/commit/2a2311964761da578a7cba05732c80b65bef0ca1))
+* Use XcmPaymentApi for AH if not execute & Fix transfer info calculations 🛠️ ([70e7434](https://github.com/paraspell/xcm-tools/commit/70e7434ef4a004522e563bca7db63c8e0ee8a7a4))
+* **xcm-router:** Add support for snowbridge transfer to execute swaps 🔧 ([04b9f07](https://github.com/paraspell/xcm-tools/commit/04b9f07595ce6bf2fca68bb099ef6df231ae1364))
+* **xcm-router:** Fix decimal slippage not working 🛠️ ([34361ae](https://github.com/paraspell/xcm-tools/commit/34361ae6d8d1183b4943592c8adb5f84732f7aa4))
+* **xcm-router:** Fix router getXcmFee edge case ⚙️ ([3c52c66](https://github.com/paraspell/xcm-tools/commit/3c52c66840226c367e6ef374c288040a2c08839a))
+
+
+### Reverts
+
+* **sdk-core:** Modify temporarily disabled scenarios 🔧 ([996f180](https://github.com/paraspell/xcm-tools/commit/996f1802be7a95c9f097d0213d00dc5443fc7868))
+* **sdk-core:** Temporarily disable Polkadot system chains during migration ([5aff3d5](https://github.com/paraspell/xcm-tools/commit/5aff3d589c232f80e03a6807c5ae30c6a5c8255e))
+
+
+### Documentation
+
+* Comprehensively refresh documentation ([a643836](https://github.com/paraspell/xcm-tools/commit/a643836916961d5765ffc240a3e200ddf8832f1b))
+
+
+### Code Refactoring
+
+* Fill missing locations & remove unnecessary assets 🔧 ([96255c8](https://github.com/paraspell/xcm-tools/commit/96255c844a6acfa3f6dc0bcb8b1ca5b97b11fa25))
+* Improve transfers to Ethereum ✨ ([303f0a2](https://github.com/paraspell/xcm-tools/commit/303f0a2c233bdeb3f8b571766c98576b4c1c1ae3))
+* Overhaul error classes ✨ ([eaa27ea](https://github.com/paraspell/xcm-tools/commit/eaa27ea8a16238874830452f80932d185b488dc4))
+* **sdk-core:** Extract fee asset resolution logic to common func 🧹 ([135f4f6](https://github.com/paraspell/xcm-tools/commit/135f4f671cc5ac61bed7bcb3315884a06fa905c4))
+* **sdk-core:** Fully refactor balance logic 🧹 ([028d65d](https://github.com/paraspell/xcm-tools/commit/028d65d975e93a614e10ed5a8e853cf5eab9fd7b))
+* **sdk-core:** Generalize relayToPara scenarios ⚙️ ([b565946](https://github.com/paraspell/xcm-tools/commit/b565946ec0241b6589e3271bee056f0af4a14ee4))
+* **sdk-core:** Migrate all transfers to tautat where available 🪄 ([23bc7f5](https://github.com/paraspell/xcm-tools/commit/23bc7f5d189f8e84deba11b6f2d0d78bff3f27c5))
+* **sdk-core:** Refactor duplicate destChain resolution & refactor relayToPara overrides 🧹 ([239593a](https://github.com/paraspell/xcm-tools/commit/239593a913b428ce8810332e988d9a36d00eaf19))
+* **sdk-core:** Refactor polkadot xcm asset creation 🔧 ([77203d6](https://github.com/paraspell/xcm-tools/commit/77203d6783b5d73275e35473c4fc52d44a28b501))
+* **sdk-core:** Refactor transferEthAssetViaAh to use shared typeAndThen function 🧹 ([2225b1f](https://github.com/paraspell/xcm-tools/commit/2225b1fae9c64431e14d04d3971f3680b5a12642))
+* **sdk-core:** Rename TSendOptions to TTransferOptions for clarity ✨ ([384453e](https://github.com/paraspell/xcm-tools/commit/384453e8514377184c8c35337bc8940d7340c3a6))
+* **sdk-core:** Validate destination asset support by location ✨ ([d3383ec](https://github.com/paraspell/xcm-tools/commit/d3383ecadc35b07b4e07ea0cfd7745a4e6defce2))
+* **swap:** Remove dex suffix to simplify code 🔧 ([3974b18](https://github.com/paraspell/xcm-tools/commit/3974b18a479df51c27c51495db973410aabb60d2))
+* **swap:** Store only location references in swap assets map 🔑 ([#1737](https://github.com/paraspell/xcm-tools/issues/1737)) ([c50c83b](https://github.com/paraspell/xcm-tools/commit/c50c83bb8293be87c66fa69d199c416befd601e2))
+* Update logic to account for non-null locations 🔧 ([5ce50cd](https://github.com/paraspell/xcm-tools/commit/5ce50cd4bb611483152bf412da6777bdc784b037))
+* Use dryRun bypass in every func ✨ ([5997993](https://github.com/paraspell/xcm-tools/commit/59979932ced5a3d91ee3873d2b470597eb87e7e8))
+* **xcm-router:** Use native bigint instead of bignumber.js 📦 ([e0d227e](https://github.com/paraspell/xcm-tools/commit/e0d227e3ad0d59578fccf494bd0598c6e2d39b51))
+* **xcm-router:** Use SDK dry-run & xcm-fee types ⚙️ ([9f0a273](https://github.com/paraspell/xcm-tools/commit/9f0a273c3f24063f5d71ff9f0a64157d5ce45e43))
+
+
+### Tests
+
+* **sdk-core:** Add missing balance unit tests 🧪 ([027a3d4](https://github.com/paraspell/xcm-tools/commit/027a3d4d04b5caedfa16e2928461ed20845c1d43))
+* **sdk-core:** Update e2e test case generation 🧪 ([f4c591e](https://github.com/paraspell/xcm-tools/commit/f4c591ee79ced97596e4669636afbc4c2fb090e5))
+* **sdk:** Add dry run bypass E2E tests 🧪 ([36fe5a9](https://github.com/paraspell/xcm-tools/commit/36fe5a9203542334525b34d22d0c8a698ff8cdf3))
+* **sdk:** Add e2e tests with Chopsticks 🧪 ([675f795](https://github.com/paraspell/xcm-tools/commit/675f795a69b94adcdd111dab720237867162d0d2))
+* **sdk:** Add more to Ethereum test cases 🧪 ([#1748](https://github.com/paraspell/xcm-tools/issues/1748)) ([32331fb](https://github.com/paraspell/xcm-tools/commit/32331fb85d7cc4e798529a82b701f36356440a2e))
+
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+* Perform a monthly check 🪄 ([0da5837](https://github.com/paraspell/xcm-tools/commit/0da5837c2b424274bf4dfa53afa6dfde5c7e6be6))
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+* Perform a monthly maintenance check ⚙️ ([65d72b0](https://github.com/paraspell/xcm-tools/commit/65d72b032251ba023ff5340fce8d737bb884968a))
+* Perform a monthly maintenance check 🔧 ([1d7a4c3](https://github.com/paraspell/xcm-tools/commit/1d7a4c37cbcf94438b29a1c6e2be2874fc49f7db))
+* Perform a monthly maintenance check 🧹 ([6a5d4ab](https://github.com/paraspell/xcm-tools/commit/6a5d4ab8838d70ed81582fb3e7abcc54a400ae77))
+* **sdk-core:** Bump swap pkg to v12.9.6 📦 ([0a3a08f](https://github.com/paraspell/xcm-tools/commit/0a3a08fbe9ba58a84f27e57fe52f534d0b9cadb1))
+* Update to TypeScript v6 📦 ([0ecad63](https://github.com/paraspell/xcm-tools/commit/0ecad63ab0c39484572232bd33f7fbc0f3409de2))
+* Update viem to v2.45.0 📦 ([124a73a](https://github.com/paraspell/xcm-tools/commit/124a73a1565082ed3eea6ac5af549e7c4aa9db68))
+
+
+### Continuous Integration
+
+* Fix codecov upload creating multiple jobs 🔧 ([00d0032](https://github.com/paraspell/xcm-tools/commit/00d0032ce3cfe93abe2f2e32ffa40613621f93c3))
+* Update lint check command ([edd03f1](https://github.com/paraspell/xcm-tools/commit/edd03f1066bae73bb50476554492ca728252b7dc))
+
 ## [12.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v12.9.6...sdk-core-v12.9.7) (2026-03-31)
 
 

@@ -1,5 +1,66 @@
 # Changelog
 
+## [13.0.0](https://github.com/paraspell/xcm-tools/compare/swap-v12.10.0...swap-v13.0.0) (2026-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **swap:** Remove dex suffix to simplify code 🔧
+* **swap:** Make swap package generic ⚡️
+* **swap:** Remove moved isExchange flag 🧹
+* **swap:** Remove deprecated xcm-router types 🧹
+* **swap:** Rename senderAddress -> sender & recipientAddress -> recipient ⚙️
+* **sdk-core:** Rename senderAddress -> sender & address -> recipient ✨
+
+### Features
+
+* **assets:** Make findAssetInfo destination optional ✨ ([0617bc8](https://github.com/paraspell/xcm-tools/commit/0617bc8286eeb240cdbe6591b23824c3fb6ea082))
+* **sdk-core:** Rename senderAddress -&gt; sender & address -&gt; recipient ✨ ([f31049f](https://github.com/paraspell/xcm-tools/commit/f31049f96d5a6c1fc8ce961b40c4354a778cc496))
+* **swap:** Make swap package generic ⚡️ ([5f35a8e](https://github.com/paraspell/xcm-tools/commit/5f35a8e43d7874c839bcd7d062e96f5e44d62e3b))
+* **swap:** Remove deprecated xcm-router types 🧹 ([60aa0c7](https://github.com/paraspell/xcm-tools/commit/60aa0c7bfffba084427cc7be3ed85e9d1ddb8e97))
+* **swap:** Remove moved isExchange flag 🧹 ([7c7df6f](https://github.com/paraspell/xcm-tools/commit/7c7df6fd16a887bb6003e9ed0516a509248e37ae))
+* **swap:** Rename senderAddress -&gt; sender & recipientAddress -&gt; recipient ⚙️ ([2645cee](https://github.com/paraspell/xcm-tools/commit/2645cee99d9691cf5cded61a7e8e285cfc366985))
+
+
+### Bug Fixes
+
+* Fix playground errors & Update sdk-core peer deps 🔧 ([#1734](https://github.com/paraspell/xcm-tools/issues/1734)) ([c70077a](https://github.com/paraspell/xcm-tools/commit/c70077acbe5356005706f18881867dba237c08eb))
+* Re-enable execute for Hydration chain ✨ ([f7fe395](https://github.com/paraspell/xcm-tools/commit/f7fe395d39447c85973868f9a22a248c6ce1aecd))
+* **sdk-core:** Update code to use new generic router builder ✨ ([6c8d8d0](https://github.com/paraspell/xcm-tools/commit/6c8d8d0a4927fdd627ece58bd9a18a1b8a918c7e))
+* **sdk-pjs:** Fix PJS tx decoder 🔧 ([6ee82ef](https://github.com/paraspell/xcm-tools/commit/6ee82efc7c6a22cf77fbd18b0567e88fc9ecb740))
+* **swap:** Add support for exchange empty array ✨ ([#1750](https://github.com/paraspell/xcm-tools/issues/1750)) ([e071e79](https://github.com/paraspell/xcm-tools/commit/e071e7994aef9397db4e8fab89a90fb354b92275))
+* **swap:** Add temporary swap types bypass 🔧 ([1468736](https://github.com/paraspell/xcm-tools/commit/14687362256f26410e8f744b64b8e4c679425f26))
+* **swap:** Create extension registry 🔧 ([335a678](https://github.com/paraspell/xcm-tools/commit/335a67873effef8a82f90e4a8f90bae2c730d1b9))
+* **swap:** Fix pool error when using automatic exchange 🛠️ ([f9ae778](https://github.com/paraspell/xcm-tools/commit/f9ae7780baed66e2bdf87bc22fc1d031b7b1515b))
+* **swap:** Handle empty exchange array correctly 🔧 ([b95ce73](https://github.com/paraspell/xcm-tools/commit/b95ce734e33175c69c3f47e4786def51cc6f079a))
+* **swap:** Register swap extension in playground 🔧 ([6b45d52](https://github.com/paraspell/xcm-tools/commit/6b45d52069875fba8412c2b7e677426a91bc644c))
+* **swap:** Remove unnecessary exports 🔧 ([b5882ef](https://github.com/paraspell/xcm-tools/commit/b5882ef94970a5399bafd340e7c206834ca976ea))
+* Update release versions to bump to v13 ([2a23119](https://github.com/paraspell/xcm-tools/commit/2a2311964761da578a7cba05732c80b65bef0ca1))
+
+
+### Documentation
+
+* Swap readme relocation ([#1733](https://github.com/paraspell/xcm-tools/issues/1733)) ([a93a69c](https://github.com/paraspell/xcm-tools/commit/a93a69cc6161a050694f4964816c4d3aa5fde7c2))
+
+
+### Code Refactoring
+
+* **swap:** Remove dex suffix to simplify code 🔧 ([3974b18](https://github.com/paraspell/xcm-tools/commit/3974b18a479df51c27c51495db973410aabb60d2))
+* **swap:** Store only location references in swap assets map 🔑 ([#1737](https://github.com/paraspell/xcm-tools/issues/1737)) ([c50c83b](https://github.com/paraspell/xcm-tools/commit/c50c83bb8293be87c66fa69d199c416befd601e2))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+* Rename xcm-router package to swap 📦 ([#1728](https://github.com/paraspell/xcm-tools/issues/1728)) ([97e41ed](https://github.com/paraspell/xcm-tools/commit/97e41edd9cc1f46d5a4756fc271b2d020b16ef18))
+* **sdk-core:** Bump swap pkg to v12.9.6 📦 ([0a3a08f](https://github.com/paraspell/xcm-tools/commit/0a3a08fbe9ba58a84f27e57fe52f534d0b9cadb1))
+* Update to TypeScript v6 📦 ([0ecad63](https://github.com/paraspell/xcm-tools/commit/0ecad63ab0c39484572232bd33f7fbc0f3409de2))
+
+
+### Continuous Integration
+
+* Update assets map 📋 ([#1744](https://github.com/paraspell/xcm-tools/issues/1744)) ([a880611](https://github.com/paraspell/xcm-tools/commit/a8806116a942785c93d0f1c886c51fe553fe188f))
+
 ## [12.9.7](https://github.com/paraspell/xcm-tools/compare/swap-v12.9.6...swap-v12.9.7) (2026-03-31)
 
 
