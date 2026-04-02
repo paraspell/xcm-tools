@@ -3,7 +3,7 @@ import { Controller, Get, Redirect } from '@nestjs/common';
 @Controller()
 export class AppController {
   @Get()
-  @Redirect('https://lightspell.xyz/', 301)
+  @Redirect('https://paraspell.xyz/', 301)
   root() {}
 
   @Get('sentry-test')

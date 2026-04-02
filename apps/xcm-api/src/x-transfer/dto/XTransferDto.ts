@@ -104,7 +104,7 @@ export const ExchangeSchema = z
 export const SwapOptionsSchema = z.object({
   currencyTo: CurrencyCoreSchema,
   exchange: ExchangeSchema,
-  slippage: z.number().or(z.string()),
+  slippage: z.number().or(z.string()).optional(),
   evmSenderAddress: z.string().min(1).optional(),
 });
 

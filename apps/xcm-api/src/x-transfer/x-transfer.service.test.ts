@@ -572,6 +572,19 @@ describe('XTransferService', () => {
       expect(res).toEqual({ exchange: 'Hydration', amountOut: 500n });
       expect(builderMock.getBestAmountOut).toHaveBeenCalled();
     });
+
+    it('delegates to builder.getBestAmountOut with undefined slippage', async () => {
+      const res = await service.getBestAmountOut({
+        ...xTransferDto,
+        swapOptions: {
+          currencyTo: { symbol: 'GLMR' },
+        },
+      });
+      expect(res).toEqual({ exchange: 'Hydration', amountOut: 500n });
+      expect(builderMock.swap).toHaveBeenCalledWith(
+        expect.objectContaining({ slippage: undefined }),
+      );
+    });
   });
 
   describe('generateBatchXcmCall', () => {
