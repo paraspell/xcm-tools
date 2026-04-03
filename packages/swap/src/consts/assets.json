@@ -1271,6 +1271,25 @@
       {
         "parents": 1,
         "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x3f9610a50630bc7d4530736942ee2bc9e00e8de8"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X2": [
             {
               "Parachain": 2034
