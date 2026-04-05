@@ -7,7 +7,7 @@ export const XcmApiCheckbox: FC<CheckboxProps> = (props) => (
     label={
       <>
         Use{' '}
-        <Anchor href="https://lightspell.xyz/" target="_blank" inherit>
+        <Anchor href="https://paraspell.xyz/" target="_blank" inherit>
           XCM API ⚡️
         </Anchor>
       </>
