@@ -27,7 +27,7 @@ describe('generateNewHigherLimitRequestHtml', () => {
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
     expect(result).toContain('New higher limit request for submitted:');
-    expect(result).toContain('Team LightSpell✨');
+    expect(result).toContain('Team ParaSpell✨');
   });
 
   it('should handle empty strings gracefully', () => {

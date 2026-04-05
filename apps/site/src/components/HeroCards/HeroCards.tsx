@@ -35,7 +35,7 @@ const codeForSdk = `
     `;
 
 const codeForLightSpell = `HTTP GET 
-api.lightspell.xyz/v5/chains/
+api.paraspell.xyz/v1/chains/
 Acala/para-id
 -> { 
   "paraId": 2000
@@ -127,7 +127,7 @@ export const HeroCards = () => {
         }}
       >
         <Title fw={800} order={2} c="black">
-          LightSpell<span style={{ paddingLeft: "6px" }}>⚡️</span>
+          XCM API<span style={{ paddingLeft: "6px" }}>⚡️</span>
         </Title>
         <Text fw={500} size="lg" mt="sm" c="black">
           Integrate XCM via a powerful, package-less API.

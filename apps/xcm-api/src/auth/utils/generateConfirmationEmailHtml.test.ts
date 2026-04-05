@@ -20,7 +20,7 @@ describe('generateConfirmationEmailHtml', () => {
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
     expect(result).toContain('Your request has been submitted successfully.');
-    expect(result).toContain('Team LightSpell✨');
+    expect(result).toContain('Team ParaSpell✨');
   });
 
   it('should handle empty strings gracefully', () => {

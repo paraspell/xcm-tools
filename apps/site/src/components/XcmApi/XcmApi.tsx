@@ -65,7 +65,7 @@ export const XcmApi = () => {
   return (
     <div className={classes.wrapper} id="xcm-api">
       <div className={classes.body}>
-        <Title className={classes.title}>XCM API - LightSpell ⚡️</Title>
+        <Title className={classes.title}>XCM API ⚡️</Title>
         <Text c="dimmed" maw={550}>
           Accelerate your cross-chain interactions with a powerful,
           developer-friendly API designed for seamless asset transfers between
