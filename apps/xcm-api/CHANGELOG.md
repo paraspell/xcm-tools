@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.0.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.0.1...xcm-api-v13.0.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **xcm-api:** Make slippage optional param ([aaf7d5d](https://github.com/paraspell/xcm-tools/commit/aaf7d5ded25b7fce188d9d1f66f26f32de7a3ba2))
+
+
+### Documentation
+
+* Remove lightspell naming ([31a5447](https://github.com/paraspell/xcm-tools/commit/31a54477ffad4ba4f278e253b15ae68ee1827b38))
+
 ## [13.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.0.0...xcm-api-v13.0.1) (2026-04-02)
 
 
