@@ -3347,6 +3347,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "4444",
+        "symbol": "HEURC",
+        "decimals": 18,
+        "existentialDeposit": "17241379310344828",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x49f925bf72718f4abbc57adef1b705931f928a2a"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "35",
         "symbol": "TRAC",
         "decimals": 18,
@@ -4038,6 +4061,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1044",
+        "symbol": "aEURC",
+        "decimals": 6,
+        "existentialDeposit": "17241",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xca30f9ff99394c55deda293df223e3740635c72e"
                 }
               }
             ]
