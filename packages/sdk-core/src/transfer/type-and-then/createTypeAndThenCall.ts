@@ -41,6 +41,16 @@ const buildAssets = <TApi, TRes, TSigner>(
   return sortAssets(assets)
 }
 
+export const resolveAssetCount = <TApi, TRes, TSigner>(
+  overriddenAsset: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>['overriddenAsset'],
+  isRelayAsset: boolean
+): number => {
+  if (overriddenAsset) {
+    return Array.isArray(overriddenAsset) ? overriddenAsset.length : 1
+  }
+  return isRelayAsset ? 1 : 2
+}
+
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
 
 const resolveSystemAssetAmount = <TApi, TRes, TSigner>(
@@ -60,9 +70,9 @@ export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
 ): Promise<TSerializedExtrinsics> => {
   const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
 
-  const { sender, version } = options
+  const { sender, version, overriddenAsset } = options
 
-  const assetCount = isRelayAsset ? 1 : 2
+  const assetCount = resolveAssetCount(overriddenAsset, isRelayAsset)
 
   const refundInstruction =
     sender && !isSubBridge ? createRefundInstruction(origin.api, sender, version, assetCount) : null
