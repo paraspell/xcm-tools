@@ -29,6 +29,11 @@ import { useCurrencyOptions, useWallet } from '../../hooks';
 import { parseAsWalletAddress } from '../../parsers';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
+import { SubmitWarningAlert } from '../common/SubmitWarningAlert';
+import {
+  TransferWarningModal,
+  useTransferWarning,
+} from '../common/TransferWarningModal';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { AmountTooltip } from '../Tooltip';
 
@@ -54,6 +59,9 @@ type Props = {
 
 export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
   const { apiType, selectedAccount } = useWallet();
+
+  const { warningOpened, warningOnClose, warningOnConfirm, guardTransfer } =
+    useTransferWarning();
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(EVM_ORIGIN_CHAINS).withDefault('Ethereum'),
@@ -131,7 +139,7 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
 
     const transformedValues = { ...values, currency: currency };
 
-    onSubmit(transformedValues, submitType);
+    guardTransfer(() => onSubmit(transformedValues, submitType));
   };
 
   const selectedCurrencySymbol =
@@ -159,6 +167,11 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
 
   return (
     <Paper p="xl" shadow="md">
+      <TransferWarningModal
+        opened={warningOpened}
+        onClose={warningOnClose}
+        onConfirm={warningOnConfirm}
+      />
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack>
           <Switch
@@ -248,6 +261,8 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
               </Group>
             </Stack>
           )}
+
+          <SubmitWarningAlert />
 
           <Button type="submit" loading={loading} data-testid="submit">
             Submit transaction

@@ -34,7 +34,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 import type { FC, FormEvent } from 'react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import {
   DEFAULT_ADDRESS,
@@ -70,6 +70,11 @@ import {
 import { AdvancedOptions } from '../AdvancedOptions';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { KeepAliveCheckbox } from '../common/KeepAliveCheckbox';
+import { SubmitWarningAlert } from '../common/SubmitWarningAlert';
+import {
+  TransferWarningModal,
+  useTransferWarning,
+} from '../common/TransferWarningModal';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { Swap } from '../Swap/Swap';
@@ -93,6 +98,9 @@ export const XcmTransferForm: FC<Props> = ({
 }) => {
   const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
     useWallet();
+
+  const { warningOpened, warningOnClose, warningOnConfirm, guardTransfer } =
+    useTransferWarning();
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Astar'),
@@ -188,53 +196,69 @@ export const XcmTransferForm: FC<Props> = ({
     to,
   );
 
+  const resolveAndSubmit = useCallback(
+    (values: TFormValues, submitType: TSubmitType) => {
+      // If MAX is selected for a local transfer, convert amount to 'ALL'
+      const normalizedValues = {
+        ...values,
+        currencies: values.currencies.map((c) =>
+          c.isMax ? { ...c, amount: 'ALL' } : c,
+        ),
+      };
+
+      // Transform each currency entry
+      const transformedCurrencies = normalizedValues.currencies.map((entry) =>
+        resolveCurrencyAsset(entry, currencyMap),
+      );
+
+      const transformedFeeAsset =
+        normalizedValues.feeAsset.currencyOptionId ||
+        normalizedValues.feeAsset.isCustomCurrency
+          ? resolveCurrencyAsset(normalizedValues.feeAsset, feeCurrencyMap)
+          : undefined;
+
+      const { currencyTo } = normalizedValues.swapOptions;
+      const transformedCurrencyTo =
+        currencyTo.currencyOptionId || currencyTo.isCustomCurrency
+          ? resolveCurrencyAsset(currencyTo, swapCurrencyToMap)
+          : undefined;
+
+      const transformedValues: TFormValuesTransformed = {
+        ...normalizedValues,
+        currencies: transformedCurrencies,
+        transformedFeeAsset,
+        transformedCurrencyTo,
+      };
+
+      if (
+        submitType === 'dryRun' ||
+        submitType === 'dryRunPreview' ||
+        submitType === 'delete'
+      ) {
+        onSubmit(transformedValues, submitType);
+        return;
+      }
+
+      onSubmit(transformedValues, initialValues ? 'update' : submitType);
+    },
+    [currencyMap, feeCurrencyMap, swapCurrencyToMap, initialValues, onSubmit],
+  );
+
   const onSubmitInternal = (
     values: TFormValues,
     _event: FormEvent<HTMLFormElement> | undefined,
     submitType: TSubmitType = 'default',
   ) => {
-    // If MAX is selected for a local transfer, convert amount to 'ALL'
-    const normalizedValues = {
-      ...values,
-      currencies: values.currencies.map((c) =>
-        c.isMax ? { ...c, amount: 'ALL' } : c,
-      ),
-    };
-
-    // Transform each currency entry
-    const transformedCurrencies = normalizedValues.currencies.map((entry) =>
-      resolveCurrencyAsset(entry, currencyMap),
-    );
-
-    const transformedFeeAsset =
-      normalizedValues.feeAsset.currencyOptionId ||
-      normalizedValues.feeAsset.isCustomCurrency
-        ? resolveCurrencyAsset(normalizedValues.feeAsset, feeCurrencyMap)
-        : undefined;
-
-    const { currencyTo } = normalizedValues.swapOptions;
-    const transformedCurrencyTo =
-      currencyTo.currencyOptionId || currencyTo.isCustomCurrency
-        ? resolveCurrencyAsset(currencyTo, swapCurrencyToMap)
-        : undefined;
-
-    const transformedValues: TFormValuesTransformed = {
-      ...normalizedValues,
-      currencies: transformedCurrencies,
-      transformedFeeAsset,
-      transformedCurrencyTo,
-    };
-
     if (
       submitType === 'dryRun' ||
       submitType === 'dryRunPreview' ||
       submitType === 'delete'
     ) {
-      onSubmit(transformedValues, submitType);
+      resolveAndSubmit(values, submitType);
       return;
     }
 
-    onSubmit(transformedValues, initialValues ? 'update' : submitType);
+    guardTransfer(() => resolveAndSubmit(values, submitType));
   };
 
   const onSubmitInternalDryRun = () => {
@@ -319,6 +343,11 @@ export const XcmTransferForm: FC<Props> = ({
 
   return (
     <Paper p="xl" shadow="md">
+      <TransferWarningModal
+        opened={warningOpened}
+        onClose={warningOnClose}
+        onConfirm={warningOnConfirm}
+      />
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack gap="lg">
           <ParachainSelect
@@ -484,6 +513,8 @@ export const XcmTransferForm: FC<Props> = ({
           </Group>
 
           <AdvancedOptions form={form} />
+
+          <SubmitWarningAlert />
 
           {selectedAccount ? (
             <Button.Group>

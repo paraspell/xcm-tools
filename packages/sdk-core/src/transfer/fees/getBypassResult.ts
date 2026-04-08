@@ -13,7 +13,7 @@ const FAILED_TO_TRANSACT_ASSET = 'FailedToTransactAsset'
 export const getBypassResultWithRetries = async <
   TApi,
   TRes,
-  TResult extends { failureReason?: string } | { dryRunError?: string }
+  TResult extends { failureReason?: string; failureSubReason?: string } | { dryRunError?: string }
 >(
   options: { buildTx: TTxFactory<TRes> } & TApi,
   internalFn: (opts: { tx: TRes; useRootOrigin: boolean } & TApi) => Promise<TResult>,
@@ -25,7 +25,8 @@ export const getBypassResultWithRetries = async <
     'failureReason' in res ? res.failureReason : 'dryRunError' in res ? res.dryRunError : undefined
 
   const isFailedToTransact = (res: TResult): boolean =>
-    'failureReason' in res && res.failureReason === FAILED_TO_TRANSACT_ASSET
+    ('failureReason' in res && res.failureReason === FAILED_TO_TRANSACT_ASSET) ||
+    ('failureSubReason' in res && res.failureSubReason === FAILED_TO_TRANSACT_ASSET)
 
   const isAmountTooLow = (e: unknown): e is AmountTooLowError => e instanceof AmountTooLowError
 
