@@ -1,5 +1,13 @@
 # Changelog
 
+## [13.1.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.0.1...swap-v13.1.0) (2026-04-08)
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([114dfb1](https://github.com/paraspell/xcm-tools/commit/114dfb1320051bbf4f8ca37f7231ac9532ab6b4c))
+* **swap:** Update swap assets 📋 ([114dfb1](https://github.com/paraspell/xcm-tools/commit/114dfb1320051bbf4f8ca37f7231ac9532ab6b4c))
+
 ## [13.0.1](https://github.com/paraspell/xcm-tools/compare/swap-v13.0.0...swap-v13.0.1) (2026-04-02)
 
 

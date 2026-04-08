@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.0.1...sdk-core-v13.1.0) (2026-04-08)
+
+
+### Features
+
+* **playground:** Add a warning alert & modal ⚠️ ([81970b6](https://github.com/paraspell/xcm-tools/commit/81970b631dd4b626ef2fc799015a8afc393c2020))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Moonbeam WH wrong asset count 🔧 ([20624f1](https://github.com/paraspell/xcm-tools/commit/20624f18365169574bbc35cc2fcb1d7cdb9a5227))
+
 ## [13.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.0.0...sdk-core-v13.0.1) (2026-04-02)
 
 
