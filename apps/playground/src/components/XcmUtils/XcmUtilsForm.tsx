@@ -486,8 +486,8 @@ export const XcmUtilsForm: FC<Props> = ({
             placeholder="Enter address"
             rightSection={<AddressTooltip />}
             required
-            data-testid="input-address"
-            {...form.getInputProps('address')}
+            data-testid="input-recipient"
+            {...form.getInputProps('recipient')}
           />
 
           {showAhAddress && (

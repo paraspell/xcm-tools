@@ -17,6 +17,7 @@ import type {
 import { abstractDecimals, getRelayChainOf, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
+import { inferFeeAsset } from '../utils/inferFeeAsset'
 import { resolveHopAsset } from '../utils/resolveHopAsset'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
@@ -155,7 +156,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
         hops: []
       }
 
-      const { failureChain, failureReason } = getFailureInfo(
+      const { failureChain, failureReason, failureSubReason } = getFailureInfo(
         {
           origin: result.origin,
           destination: result.destination
@@ -166,7 +167,8 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
       return {
         ...result,
         failureChain,
-        failureReason
+        failureReason,
+        failureSubReason
       } as TGetXcmFeeResult<TDisableFallback>
     } finally {
       destApi.disconnectAllowed = true
@@ -183,10 +185,11 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
       currentOrigin,
       currentAsset,
       forwardedXcms,
-      hasPassedExchange
+      hasPassedExchange,
+      isDestination
     } = params
 
-    const hopAsset = resolveHopAsset({
+    const resolvedHopAsset = resolveHopAsset({
       api,
       tx,
       originChain: origin,
@@ -197,6 +200,10 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
       swapConfig,
       hasPassedExchange
     })
+
+    const hopAsset = isDestination
+      ? (inferFeeAsset(origin, destination, asset) ?? resolvedHopAsset)
+      : resolvedHopAsset
 
     const hopResult = await getDestXcmFee({
       api: hopApi,
@@ -277,7 +284,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
       },
       sender,
       recipient,
-      asset,
+      asset: inferFeeAsset(origin, destination, asset) ?? asset,
       version: resolvedVersion,
       tx,
       originFee: originFee ?? 0n,
@@ -353,7 +360,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
     }))
   }
 
-  const { failureChain, failureReason } = getFailureInfo(
+  const { failureChain, failureReason, failureSubReason } = getFailureInfo(
     {
       origin: result.origin,
       destination: result.destination
@@ -364,6 +371,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
   return {
     ...result,
     failureChain,
-    failureReason
+    failureReason,
+    failureSubReason
   } as TGetXcmFeeResult<TDisableFallback>
 }

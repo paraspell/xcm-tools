@@ -138,3 +138,6 @@ export const EVM_ORIGIN_CHAINS = [
   'Moonriver',
   'Darwinia',
 ] as const;
+
+export const TRANSFER_WARNING_TEXT =
+  'This tool is intended for testing only, use at your own risk for non tested transfer scenarios. Always test with small amounts first.';

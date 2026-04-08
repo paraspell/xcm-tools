@@ -1,3 +1,4 @@
+export * from './inferFeeAsset'
 export * from './resolveAsset'
 export * from './resolveFeeAsset'
 export * from './resolveHopAsset'

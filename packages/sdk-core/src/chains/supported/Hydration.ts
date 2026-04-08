@@ -7,9 +7,10 @@ import {
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { hasJunction, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import { isMoonbeamWhAsset } from '../../transfer/utils/inferFeeAsset'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -17,7 +18,6 @@ import type {
 } from '../../types'
 import { assertHasId, createAsset, handleExecuteTransfer } from '../../utils'
 import Chain from '../Chain'
-import { getParaId } from '../config'
 
 class Hydration<TApi, TRes, TSigner>
   extends Chain<TApi, TRes, TSigner>
@@ -54,11 +54,7 @@ class Hydration<TApi, TRes, TSigner>
       }
     }
 
-    const isMoonbeamWhAsset =
-      hasJunction(asset.location, 'Parachain', getParaId('Moonbeam')) &&
-      hasJunction(asset.location, 'PalletInstance', 110)
-
-    if (isMoonbeamWhAsset && destination === 'Moonbeam') {
+    if (isMoonbeamWhAsset(asset.location) && destination === 'Moonbeam') {
       return this.transferMoonbeamWhAsset(input)
     }
 
@@ -70,12 +66,8 @@ class Hydration<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { assetInfo, version } = input
 
-    const glmr = findAssetInfoOrThrow(
-      this.chain,
-      { symbol: getNativeAssetSymbol('Moonbeam') },
-      null
-    )
-    const FEE_AMOUNT = 80000000000000000n // 0.08 GLMR
+    const glmr = findAssetInfoOrThrow(this.chain, { symbol: getNativeAssetSymbol('Moonbeam') })
+    const FEE_AMOUNT = 150000000000000000n // 0.15 GLMR
 
     return transferPolkadotXcm({
       ...input,
