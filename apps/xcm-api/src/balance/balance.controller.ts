@@ -1,7 +1,9 @@
 import { Body, Controller, Param, Post, Req, Request } from '@nestjs/common';
+import type { TChain } from '@paraspell/sdk';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { ChainSchema } from '../dto/ChainDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { BalanceService } from './balance.service.js';
 import { BalanceDto, BalanceDtoSchema } from './dto/BalanceForeignDto.js';
@@ -19,7 +21,8 @@ export class BalanceController {
 
   @Post(':chain')
   getBalance(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Body(new ZodValidationPipe(BalanceDtoSchema))
     params: BalanceDto,
     @Req() req: Request,
@@ -32,7 +35,8 @@ export class BalanceController {
 
   @Post(':chain/existential-deposit')
   getExistentialDeposit(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Body(new ZodValidationPipe(ExistentialDepositDtoSchema))
     params: ExistentialDepositDto,
     @Req() req: Request,

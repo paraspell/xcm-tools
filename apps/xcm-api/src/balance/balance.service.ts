@@ -1,26 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CHAINS,
-  getBalance,
-  getExistentialDeposit,
-  TChain,
-} from '@paraspell/sdk';
+import { getBalance, getExistentialDeposit, TChain } from '@paraspell/sdk';
 
-import { validateChain } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BalanceDto } from './dto/BalanceForeignDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 @Injectable()
 export class BalanceService {
-  async getBalance(chain: string, { address, currency }: BalanceDto) {
-    validateChain(chain, CHAINS);
-
+  async getBalance(chain: TChain, { address, currency }: BalanceDto) {
     try {
       const balance = await getBalance({
         address,
         currency,
-        chain: chain as TChain,
+        chain,
       });
       return balance === null ? 'null' : balance.toString();
     } catch (e) {
@@ -28,10 +20,9 @@ export class BalanceService {
     }
   }
 
-  getExistentialDeposit(chain: string, { currency }: ExistentialDepositDto) {
-    validateChain(chain, CHAINS);
+  getExistentialDeposit(chain: TChain, { currency }: ExistentialDepositDto) {
     try {
-      return getExistentialDeposit(chain as TChain, currency);
+      return getExistentialDeposit(chain, currency);
     } catch (e) {
       return handleXcmApiError(e);
     }

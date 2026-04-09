@@ -1,7 +1,10 @@
 import { Controller, Get, Param, Query, Req, Request } from '@nestjs/common';
+import type { TSubstrateChain } from '@paraspell/sdk';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { SubstrateChainSchema } from '../dto/ChainDto.js';
+import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { PalletIndexDto } from './dto/PalletIndexDto.js';
 import { PalletsService } from './pallets.service.js';
 
@@ -13,13 +16,21 @@ export class PalletsController {
   ) {}
 
   @Get(':chain/default')
-  getDefaultPallet(@Param('chain') chain: string, @Req() req: Request) {
+  getDefaultPallet(
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_DEFAULT_PALLET, req, { chain });
     return Promise.resolve(this.palletsService.getDefaultPallet(chain));
   }
 
   @Get(':chain/native-assets')
-  getNativeAssetsPallet(@Param('chain') chain: string, @Req() req: Request) {
+  getNativeAssetsPallet(
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_NATIVE_ASSETS_PALLET, req, {
       chain,
     });
@@ -27,7 +38,11 @@ export class PalletsController {
   }
 
   @Get(':chain/other-assets')
-  getOtherAssetsPallets(@Param('chain') chain: string, @Req() req: Request) {
+  getOtherAssetsPallets(
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_OTHER_ASSETS_PALLETS, req, {
       chain,
     });
@@ -35,7 +50,11 @@ export class PalletsController {
   }
 
   @Get(':chain')
-  getPallets(@Param('chain') chain: string, @Req() req: Request) {
+  getPallets(
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_SUPPORTED_PALLETS, req, {
       chain,
     });
@@ -44,7 +63,8 @@ export class PalletsController {
 
   @Get(':chain/index')
   getPalletIndex(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
     @Query() { pallet }: PalletIndexDto,
     @Req() req: Request,
   ) {

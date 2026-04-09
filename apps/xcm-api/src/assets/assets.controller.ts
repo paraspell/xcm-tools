@@ -8,9 +8,11 @@ import {
   Req,
   Request,
 } from '@nestjs/common';
+import type { TChain, TSubstrateChain } from '@paraspell/sdk';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { ChainSchema, SubstrateChainSchema } from '../dto/ChainDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { AssetsService } from './assets.service.js';
 import {
@@ -18,7 +20,10 @@ import {
   AssetLocationDtoSchema,
 } from './dto/AssetLocationDto.js';
 import { FindAssetDto, FindAssetDtoSchema } from './dto/FindAssetDto.js';
-import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
+import {
+  SupportedAssetsDto,
+  SupportedAssetsDtoSchema,
+} from './dto/SupportedAssetsDto.js';
 import {
   SupportedDestinationsDto,
   SupportedDestinationsSchema,
@@ -33,7 +38,11 @@ export class AssetsController {
   ) {}
 
   @Get('assets/:chain')
-  getAssetsObject(@Param('chain') chain: string, @Req() req: Request) {
+  getAssetsObject(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_ASSETS_OBJECT, req, {
       chain,
     });
@@ -42,7 +51,8 @@ export class AssetsController {
 
   @Get('assets/:chain/id')
   getAssetId(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
@@ -55,7 +65,8 @@ export class AssetsController {
 
   @Post('assets/:chain/location')
   getAssetLocation(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Body(new ZodValidationPipe(AssetLocationDtoSchema))
     params: AssetLocationDto,
     @Req() req: Request,
@@ -68,7 +79,8 @@ export class AssetsController {
 
   @Post('assets/:chain/reserve-chain')
   getAssetReserveChain(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(SubstrateChainSchema))
+    chain: TSubstrateChain,
     @Body(new ZodValidationPipe(AssetLocationDtoSchema))
     params: AssetLocationDto,
     @Req() req: Request,
@@ -81,7 +93,8 @@ export class AssetsController {
 
   @Post('assets/:chain/asset-info')
   getAssetInfo(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Body(new ZodValidationPipe(FindAssetDtoSchema))
     params: FindAssetDto,
     @Req() req: Request,
@@ -93,7 +106,11 @@ export class AssetsController {
   }
 
   @Get('assets/:chain/relay-chain-symbol')
-  getRelayChainSymbol(@Param('chain') chain: string, @Req() req: Request) {
+  getRelayChainSymbol(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_RELAYCHAIN_SYMBOL, req, {
       chain,
     });
@@ -101,7 +118,11 @@ export class AssetsController {
   }
 
   @Get('assets/:chain/native')
-  getNativeAssets(@Param('chain') chain: string, @Req() req: Request) {
+  getNativeAssets(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_NATIVE_ASSETS, req, {
       chain,
     });
@@ -109,7 +130,11 @@ export class AssetsController {
   }
 
   @Get('assets/:chain/other')
-  getOtherAssets(@Param('chain') chain: string, @Req() req: Request) {
+  getOtherAssets(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_OTHER_ASSETS, req, {
       chain,
     });
@@ -117,7 +142,11 @@ export class AssetsController {
   }
 
   @Get('assets/:chain/all-symbols')
-  getAllAssetsSymbol(@Param('chain') chain: string, @Req() req: Request) {
+  getAllAssetsSymbol(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_ALL_ASSETS_SYMBOLS, req, {
       chain,
     });
@@ -126,7 +155,8 @@ export class AssetsController {
 
   @Get('assets/:chain/decimals')
   getDecimals(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
@@ -139,7 +169,8 @@ export class AssetsController {
 
   @Get('assets/:chain/has-support')
   hasSupportForAsset(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Query() { symbol }: SymbolDto,
     @Req() req: Request,
   ) {
@@ -152,7 +183,8 @@ export class AssetsController {
 
   @Get('supported-assets')
   getSupportedAssets(
-    @Query() { origin, destination }: SupportedAssetsDto,
+    @Query(new ZodValidationPipe(SupportedAssetsDtoSchema))
+    { origin, destination }: SupportedAssetsDto,
     @Req() req: Request,
   ) {
     this.analyticsService.track(EventName.GET_SUPPORTED_ASSETS, req, {
@@ -163,7 +195,8 @@ export class AssetsController {
 
   @Post('assets/:chain/supported-destinations')
   getSupportedDestinations(
-    @Param('chain') chain: string,
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
     @Body(new ZodValidationPipe(SupportedDestinationsSchema))
     params: SupportedDestinationsDto,
     @Req() req: Request,
@@ -177,7 +210,11 @@ export class AssetsController {
   }
 
   @Get('assets/:chain/fee-assets')
-  getFeeAssets(@Param('chain') chain: string, @Req() req: Request) {
+  getFeeAssets(
+    @Param('chain', new ZodValidationPipe(ChainSchema))
+    chain: TChain,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GET_FEE_ASSETS, req, {
       chain,
     });

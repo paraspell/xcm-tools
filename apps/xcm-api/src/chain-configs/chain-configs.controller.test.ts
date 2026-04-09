@@ -40,7 +40,7 @@ describe('AssetsController', () => {
         .spyOn(service, 'getChainNames')
         .mockReturnValue(mockResult);
 
-      const result = controller.getChainNames(mockRequestObject);
+      const result = controller.getChains(mockRequestObject);
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalled();

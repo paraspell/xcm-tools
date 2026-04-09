@@ -133,7 +133,6 @@ describe('XTransferService', () => {
   const recipient = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const sender = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const currency = { symbol: 'DOT', amount: 100 };
-  const invalidChain = 'InvalidChain';
 
   const xTransferDto: XTransferDtoWSender = {
     from: 'Acala',
@@ -226,28 +225,6 @@ describe('XTransferService', () => {
       expect(builderMock.build).toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid from chain', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        from: invalidChain,
-      };
-
-      await expect(service.generateXcmCall(options)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException for invalid to chain', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        to: invalidChain,
-      };
-
-      await expect(service.generateXcmCall(options)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
     it('should throw IncompatibleChainsError for incompatible from and to chains', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
@@ -298,17 +275,6 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw on invalid wallet address', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        recipient: 'invalid-address',
-      };
-
-      await expect(service.generateXcmCall(options)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
     it('should specify xcm version if provided', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
@@ -319,30 +285,6 @@ describe('XTransferService', () => {
 
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
         paraspellSdk.Version.V3,
-      );
-    });
-
-    it('should throw BadRequestException when sender address is missing', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        from: 'Hydration',
-        to: 'Ethereum',
-        sender: undefined,
-      };
-
-      await expect(service.generateXcmCall(options)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException when pallet or method are not provided', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        pallet: 'Balances',
-      };
-
-      await expect(service.generateXcmCall(options)).rejects.toThrow(
-        BadRequestException,
       );
     });
 
@@ -727,64 +669,6 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid from chain', async () => {
-      const to: TChain = 'Basilisk';
-
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            from: invalidChain,
-            to,
-            recipient,
-            currency,
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException for invalid to chain', async () => {
-      const from: TChain = 'Acala';
-
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            from,
-            to: invalidChain,
-            recipient,
-            currency,
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException for invalid wallet address', async () => {
-      const from: TChain = 'Acala';
-      const to: TChain = 'Basilisk';
-
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            from,
-            to,
-            recipient: 'invalid-address',
-            currency,
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
     it('should throw BadRequestException for invalid currency', async () => {
       const from: TChain = 'Acala';
       const to: TChain = 'Basilisk';
@@ -852,52 +736,6 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException when toChain is an object', async () => {
-      const from: TChain = 'Acala';
-      const toChain = { some: 'object' }; // Invalid toChain
-
-      const batchDto = {
-        transfers: [
-          {
-            from,
-            to: toChain,
-            recipient,
-            currency,
-          },
-        ],
-      } as unknown as BatchXTransferDto;
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException for invalid transferToChain in transfers', async () => {
-      const from: TChain = 'Acala';
-      const invalidToChain = 'InvalidChain';
-
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            from,
-            to: 'Acala',
-            recipient,
-            currency,
-          },
-          {
-            from,
-            to: invalidToChain,
-            recipient,
-            currency,
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
     it('should generate batch XCM call for transfers with only fromChain (parachain to relaychain)', async () => {
       const from: TChain = 'Acala';
 
@@ -944,27 +782,6 @@ describe('XTransferService', () => {
       expect(result).toBe(txHashBatch);
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
         paraspellSdk.Version.V3,
-      );
-    });
-
-    it('should throw BadRequestException when pallet or method not provided', async () => {
-      const from: TChain = 'Acala';
-      const to: TChain = 'Basilisk';
-
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            from,
-            to,
-            recipient,
-            currency,
-            pallet: 'Balances',
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
       );
     });
 

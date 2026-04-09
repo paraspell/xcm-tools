@@ -1,24 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   Builder,
-  CHAINS,
   GeneralBuilder,
   getBridgeStatus,
   getChainProviders,
   getParaEthTransferFees,
-  isExternalChain,
-  SUBSTRATE_CHAINS,
-  TChain,
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
-  TSubstrateChain,
   TTransferBaseOptionsWithSender,
   TTransferBaseOptionsWithSwap,
 } from '@paraspell/sdk';
 import { getExchangePairs } from '@paraspell/swap';
 
-import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
@@ -80,8 +74,6 @@ export class XTransferService {
       finalBuilder: ReturnType<typeof this.buildXTransfer>,
     ) => Promise<T>,
   ): Promise<T> {
-    this.validateTransfer(transfer);
-
     const { options } = transfer;
 
     const hasOptions = options && Object.keys(options).length > 0;
@@ -95,39 +87,6 @@ export class XTransferService {
       return handleXcmApiError(e);
     } finally {
       await sdkBuilder.disconnect();
-    }
-  }
-
-  private validateTransfer(transfer: XTransferDto) {
-    const { from, to, sender, recipient, pallet, method } = transfer;
-
-    const fromChain = from as TSubstrateChain;
-    const toChain = to as TChain;
-
-    if (!SUBSTRATE_CHAINS.includes(fromChain)) {
-      throw new BadRequestException(
-        `Chain ${fromChain} is not valid. Check docs for valid chains.`,
-      );
-    }
-
-    if (typeof toChain === 'string' && !CHAINS.includes(toChain)) {
-      throw new BadRequestException(
-        `Chain ${toChain} is not valid. Check docs for valid chains.`,
-      );
-    }
-
-    if (typeof recipient === 'string' && !isValidWalletAddress(recipient)) {
-      throw new BadRequestException('Invalid wallet address.');
-    }
-
-    if (fromChain === 'Hydration' && isExternalChain(toChain) && !sender) {
-      throw new BadRequestException(
-        'Sender is required when transferring to Ethereum.',
-      );
-    }
-
-    if ((pallet && !method) || (!pallet && method)) {
-      throw new BadRequestException('Both pallet and method are required.');
     }
   }
 
@@ -152,8 +111,8 @@ export class XTransferService {
     } = transfer;
 
     let finalBuilder = builder
-      .from(from as TSubstrateChain)
-      .to(to as TChain)
+      .from(from)
+      .to(to)
       .currency(currency)
       .feeAsset(feeAsset)
       .recipient(recipient)
@@ -171,7 +130,7 @@ export class XTransferService {
       finalBuilder = finalBuilder.keepAlive(keepAlive);
     }
 
-    if (pallet && method) {
+    if (pallet || method) {
       finalBuilder = finalBuilder.customPallet(pallet, method);
     }
 
@@ -300,25 +259,12 @@ export class XTransferService {
       throw new BadRequestException('Transfers array cannot be empty.');
     }
 
-    const fromChain = transfers[0].from as TSubstrateChain;
-    const toChain = transfers[0].to as TChain;
+    const fromChain = transfers[0].from;
 
     const sameFrom = transfers.every((transfer) => transfer.from === fromChain);
     if (!sameFrom) {
       throw new BadRequestException(
         'All transactions in the batch must have the same origin.',
-      );
-    }
-
-    // Validate only the first fromChain because all transactions have the same origin
-    if (!SUBSTRATE_CHAINS.includes(fromChain)) {
-      throw new BadRequestException(
-        `Chain ${fromChain} is not valid. Check docs for valid chains.`,
-      );
-    }
-    if (!CHAINS.includes(toChain)) {
-      throw new BadRequestException(
-        `Chain ${toChain} is not valid. Check docs for valid chains.`,
       );
     }
 
@@ -329,13 +275,8 @@ export class XTransferService {
       hasOptions ? optionsWithoutMode : undefined,
     ) as ReturnType<typeof this.buildXTransfer>;
 
-    for (const transfer of transfers) {
-      this.validateTransfer(transfer);
-    }
-
     try {
       for (const transfer of transfers) {
-        this.validateTransfer(transfer);
         const finalBuilder = this.buildXTransfer(builder, transfer);
         builder = finalBuilder.addToBatch();
       }

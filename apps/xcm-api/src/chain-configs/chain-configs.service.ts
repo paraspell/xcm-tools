@@ -10,13 +10,10 @@ import {
   getTChain,
   hasDryRunSupport,
   RELAYCHAINS,
-  SUBSTRATE_CHAINS,
   TChain,
   TRelaychain,
   TSubstrateChain,
 } from '@paraspell/sdk';
-
-import { validateChain } from '../utils.js';
 
 @Injectable()
 export class ChainConfigsService {
@@ -24,9 +21,8 @@ export class ChainConfigsService {
     return CHAINS;
   }
 
-  getParaId(chain: string) {
-    validateChain(chain, CHAINS);
-    return getParaId(chain as TChain);
+  getParaId(chain: TChain) {
+    return getParaId(chain);
   }
 
   getChainByParaId(paraId: number, ecosystem: string | undefined) {
@@ -42,13 +38,11 @@ export class ChainConfigsService {
     return JSON.stringify(chain);
   }
 
-  getWsEndpoints(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return getChainProviders(chain as TSubstrateChain);
+  getWsEndpoints(chain: TSubstrateChain) {
+    return getChainProviders(chain);
   }
 
-  hasDryRunSupport(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return hasDryRunSupport(chain as TSubstrateChain);
+  hasDryRunSupport(chain: TSubstrateChain) {
+    return hasDryRunSupport(chain);
   }
 }

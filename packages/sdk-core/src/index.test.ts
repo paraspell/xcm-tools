@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import * as sdk from './index'
 
 describe('Module Exports', () => {
-  it('should export CHAIN_NAMES_DOT_KSM and other constants', () => {
+  it('should export constants', () => {
     expect(sdk.PARACHAINS).toBeDefined()
     expect(sdk.RELAYCHAINS).toBeDefined()
     expect(sdk.EXTERNAL_CHAINS).toBeDefined()
