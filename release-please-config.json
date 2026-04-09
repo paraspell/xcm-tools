@@ -45,6 +45,9 @@
     "packages/xcm-analyser": {},
     "apps/xcm-api": {
       "component": "xcm-api"
+    },
+    "apps/playground": {
+      "component": "playground"
     }
   },
   "group-pull-request-title-pattern": "chore${scope}: release main libraries",
@@ -61,7 +64,8 @@
         "assets",
         "pallets",
         "swap",
-        "xcm-api"
+        "xcm-api",
+        "playground"
       ]
     }
   ]

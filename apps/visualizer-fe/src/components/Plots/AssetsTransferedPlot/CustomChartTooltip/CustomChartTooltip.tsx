@@ -116,7 +116,7 @@ const generateExplorerLink = (
   return `${baseUrl}${timeDimension}${fromChain}${start}${end}&symbol=${symbol}`;
 };
 
-export const CustomChartTooltip = factory<ChartTooltipFactory>((_props) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>(_props => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,

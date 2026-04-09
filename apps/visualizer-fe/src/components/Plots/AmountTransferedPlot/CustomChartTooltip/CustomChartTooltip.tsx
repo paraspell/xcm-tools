@@ -139,7 +139,7 @@ const generateExplorerLink = (ecosystem: TRelaychain, from: number | undefined, 
   return `${baseUrl}&time_dimension=date${fromChain}${start}${end}`;
 };
 
-export const CustomChartTooltip = factory<ChartTooltipFactory>((_props) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>(_props => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
