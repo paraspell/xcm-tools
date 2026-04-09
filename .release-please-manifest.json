@@ -8,5 +8,6 @@
   "packages/sdk-common": "13.1.0",
   "packages/assets": "13.1.0",
   "packages/pallets": "13.1.0",
-  "apps/xcm-api": "13.1.0"
+  "apps/xcm-api": "13.1.0",
+  "apps/playground": "13.1.0"
 }
