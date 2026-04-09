@@ -213,7 +213,7 @@ export const AppShell = () => {
               }}
             >
               <ActionIcon
-                variant="light"
+                variant="subtle"
                 size="md"
                 visibleFrom="xs"
                 onClick={toggleDesktopMenu}
@@ -225,7 +225,11 @@ export const AppShell = () => {
                   <IconLayoutSidebarLeftCollapse size={16} />
                 )}
               </ActionIcon>
-              <ActionIcon variant="light" size="md" onClick={toggleColorScheme}>
+              <ActionIcon
+                variant="subtle"
+                size="md"
+                onClick={toggleColorScheme}
+              >
                 {computedColorScheme === 'dark' ? (
                   <IconBrightnessDown size={22} />
                 ) : (

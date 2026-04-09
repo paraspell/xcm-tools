@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { HttpLink } from '@apollo/client/link/http';
 import { ApolloProvider } from '@apollo/client/react';
-import { Box, MantineProvider } from '@mantine/core';
+import { Box, MantineProvider, v8CssVariablesResolver } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createNetworkStatusNotifier } from 'react-apollo-network-status';
 import { BrowserRouter } from 'react-router';
@@ -37,7 +37,10 @@ export const App = () => (
         <SelectedEcosystemProvider>
           <SelectedParachainProvider>
             <LiveDataProvider>
-              <MantineProvider forceColorScheme="light">
+              <MantineProvider
+                forceColorScheme="light"
+                cssVariablesResolver={v8CssVariablesResolver}
+              >
                 <Box pos="relative" h="100%">
                   <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
                   <Notifications />
