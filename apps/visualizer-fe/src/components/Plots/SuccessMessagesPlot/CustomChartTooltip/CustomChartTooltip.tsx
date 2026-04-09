@@ -68,7 +68,7 @@ const updateChartTooltipPayload = (payload: Record<string, any>[]): Record<strin
 };
 
 export const getFilteredChartTooltipPayload = (
-  payload: Record<string, any>[],
+  payload: readonly Record<string, any>[],
   segmentId?: string
 ) => {
   const duplicatesFilter = updateChartTooltipPayload(
@@ -138,7 +138,7 @@ const generateExplorerLink = (
   return `${baseUrl}${timeDimension}${fromChain}${start}${end}`;
 };
 
-export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>((_props) => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
@@ -157,6 +157,7 @@ export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => 
     valueFormatter,
     showColor,
     withTotal,
+    ref,
     ...others
   } = props;
 

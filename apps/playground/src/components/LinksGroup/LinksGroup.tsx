@@ -113,7 +113,7 @@ export const LinksGroup: FC<Props> = ({
           </Group>
         </UnstyledButton>
       </Tooltip>
-      {displayChildren ? <Collapse in={opened}>{items}</Collapse> : null}
+      {displayChildren ? <Collapse expanded={opened}>{items}</Collapse> : null}
     </>
   );
 };

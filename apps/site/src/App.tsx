@@ -6,7 +6,7 @@ import {
   CodeHighlightAdapterProvider,
   createHighlightJsAdapter,
 } from "@mantine/code-highlight";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, v8CssVariablesResolver } from "@mantine/core";
 import hljs from "highlight.js/lib/core";
 import tsLang from "highlight.js/lib/languages/typescript";
 import { BrowserRouter } from "react-router";
@@ -21,7 +21,11 @@ const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
 export const App = () => (
   <BrowserRouter>
-    <MantineProvider theme={theme} forceColorScheme="light">
+    <MantineProvider
+      theme={theme}
+      forceColorScheme="light"
+      cssVariablesResolver={v8CssVariablesResolver}
+    >
       <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
         <AppShell />
         <ScrollToAnchor />

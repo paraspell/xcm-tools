@@ -45,7 +45,7 @@ export const getSeriesLabels = (series: ChartSeries[] | undefined): ChartSeriesL
 };
 
 export const getFilteredChartTooltipPayload = (
-  payload: Record<string, any>[],
+  payload: readonly Record<string, any>[],
   segmentId?: string
 ) => {
   const duplicatesFilter = payload.filter(item => item.fill !== 'none' || !item.color);
@@ -116,7 +116,7 @@ const generateExplorerLink = (
   return `${baseUrl}${timeDimension}${fromChain}${start}${end}&symbol=${symbol}`;
 };
 
-export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => {
+export const CustomChartTooltip = factory<ChartTooltipFactory>((_props) => {
   const props = useProps('ChartTooltip', defaultProps, _props);
   const {
     classNames,
@@ -134,6 +134,7 @@ export const CustomChartTooltip = factory<ChartTooltipFactory>((_props, ref) => 
     series,
     valueFormatter,
     showColor,
+    ref,
     ...others
   } = props;
 

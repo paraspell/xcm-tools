@@ -65,23 +65,23 @@ importers:
   apps/playground:
     dependencies:
       '@mantine/code-highlight':
-        specifier: ^8.3.18
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/core':
-        specifier: ^8.3.18
-        version: 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/form':
-        specifier: ^8.3.18
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantine/hooks':
-        specifier: ^8.3.18
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantine/notifications':
-        specifier: ^8.3.18
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantinex/dev-icons':
         specifier: ^2.0.0
-        version: 2.0.0(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 2.0.0(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -102,7 +102,7 @@ importers:
         version: 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/apps-config':
         specifier: ^0.170.1
-        version: 0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(utf-8-validate@5.0.10)(yaml@2.8.3)
+        version: 0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(utf-8-validate@5.0.10)(yaml@2.8.3)
       '@polkadot/extension-dapp':
         specifier: ^0.62.6
         version: 0.62.6(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -120,7 +120,7 @@ importers:
         version: 14.0.3(@polkadot/util@14.0.3)
       '@tabler/icons-react':
         specifier: ^3.41.1
-        version: 3.41.1(react@19.2.4)
+        version: 3.41.1(react@19.2.5)
       axios:
         specifier: ^1.14.0
         version: 1.14.0
@@ -138,22 +138,22 @@ importers:
         version: 11.11.1
       nuqs:
         specifier: ^2.8.9
-        version: 2.8.9(react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        version: 2.8.9(react-router@7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       polkadot-api:
         specifier: ^1.23.3
         version: 1.23.3(@swc/core@1.15.21(@swc/helpers@0.5.20))(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3)
       react:
-        specifier: ^19.2.4
-        version: 19.2.4
+        specifier: ^19.2.5
+        version: 19.2.5
       react-confetti:
         specifier: ^6.4.0
-        version: 6.4.0(react@19.2.4)
+        version: 6.4.0(react@19.2.5)
       react-dom:
-        specifier: ^19.2.4
-        version: 19.2.4(react@19.2.4)
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
       react-router:
         specifier: ^7.13.2
-        version: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       viem:
         specifier: ^2.47.6
         version: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
@@ -207,23 +207,23 @@ importers:
   apps/site:
     dependencies:
       '@mantine/code-highlight':
-        specifier: ^8.3.18
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/core':
-        specifier: ^8.3.18
-        version: 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/form':
-        specifier: ^8.3.18
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantine/hooks':
-        specifier: ^8.3.18
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantinex/dev-icons':
         specifier: ^2.0.0
-        version: 2.0.0(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 2.0.0(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@tabler/icons-react':
         specifier: ^3.41.1
-        version: 3.41.1(react@19.2.4)
+        version: 3.41.1(react@19.2.5)
       '@tsparticles/engine':
         specifier: 3.8.1
         version: 3.8.1
@@ -232,7 +232,7 @@ importers:
         version: 3.2.0
       '@tsparticles/react':
         specifier: ^3.0.0
-        version: 3.0.0(@tsparticles/engine@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 3.0.0(@tsparticles/engine@3.8.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@tsparticles/slim':
         specifier: 3.8.1
         version: 3.8.1
@@ -240,14 +240,14 @@ importers:
         specifier: ^11.11.1
         version: 11.11.1
       react:
-        specifier: ^19.2.4
-        version: 19.2.4
+        specifier: ^19.2.5
+        version: 19.2.5
       react-dom:
-        specifier: ^19.2.4
-        version: 19.2.4(react@19.2.4)
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
       react-router:
         specifier: ^7.13.2
-        version: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
     devDependencies:
       '@types/react':
         specifier: ^19.2.14
@@ -287,7 +287,7 @@ importers:
         version: 11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/config':
         specifier: ^4.0.3
-        version: 4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@nestjs/core':
         specifier: ^11.1.17
         version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -314,7 +314,7 @@ importers:
         version: 7.6.0
       '@prisma/client':
         specifier: ^7.6.0
-        version: 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)
+        version: 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2)
       axios:
         specifier: ^1.14.0
         version: 1.14.0
@@ -357,7 +357,7 @@ importers:
         version: 4.1.2(vitest@4.1.2(@opentelemetry/api@1.9.1)(@types/node@25.5.0)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.8))(terser@5.46.1)(yaml@2.8.3)))
       prisma:
         specifier: ^7.6.0
-        version: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)
+        version: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2)
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -381,43 +381,43 @@ importers:
     dependencies:
       '@apollo/client':
         specifier: ^4.1.6
-        version: 4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))
+        version: 4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))
       '@mantine/charts':
-        specifier: ^8.3.15
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(redux@5.0.1))
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(redux@5.0.1))
       '@mantine/core':
-        specifier: ^8.3.15
-        version: 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/dates':
-        specifier: ^8.3.15
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(dayjs@1.11.20)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(dayjs@1.11.20)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@mantine/form':
-        specifier: ^8.3.15
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantine/hooks':
-        specifier: ^8.3.15
-        version: 8.3.18(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(react@19.2.5)
       '@mantine/notifications':
-        specifier: ^8.3.15
-        version: 8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^9.0.1
+        version: 9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
       '@polkadot/apps-config':
         specifier: ^0.170.1
-        version: 0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(utf-8-validate@5.0.10)(yaml@2.8.3)
+        version: 0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(utf-8-validate@5.0.10)(yaml@2.8.3)
       '@react-spring/web':
         specifier: ^10.0.3
-        version: 10.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 10.0.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@react-three/drei':
         specifier: ^10.7.7
-        version: 10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2))(@types/react@19.2.14)(@types/three@0.183.1)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)
+        version: 10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2))(@types/react@19.2.14)(@types/three@0.183.1)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2)
       '@react-three/fiber':
         specifier: ^9.5.0
-        version: 9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)
+        version: 9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2)
       '@tabler/icons-react':
         specifier: ^3.37.1
-        version: 3.41.1(react@19.2.4)
+        version: 3.41.1(react@19.2.5)
       d3-ease:
         specifier: ^3.0.1
         version: 3.0.1
@@ -429,7 +429,7 @@ importers:
         version: 6.0.0
       echarts-for-react:
         specifier: ^3.0.6
-        version: 3.0.6(echarts@6.0.0)(react@19.2.4)
+        version: 3.0.6(echarts@6.0.0)(react@19.2.5)
       graphql:
         specifier: ^16.13.0
         version: 16.13.2
@@ -438,7 +438,7 @@ importers:
         version: 12.5.0
       highcharts-react-official:
         specifier: ^3.2.3
-        version: 3.2.3(highcharts@12.5.0)(react@19.2.4)
+        version: 3.2.3(highcharts@12.5.0)(react@19.2.5)
       i18next:
         specifier: ^25.8.13
         version: 25.10.10(typescript@6.0.2)
@@ -458,20 +458,20 @@ importers:
         specifier: ^1.23.3
         version: 1.23.3(@swc/core@1.15.21(@swc/helpers@0.5.20))(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3)
       react:
-        specifier: ^19.2.4
-        version: 19.2.4
+        specifier: ^19.2.5
+        version: 19.2.5
       react-apollo-network-status:
         specifier: ^6.0.0
-        version: 6.0.0(@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react@19.2.4)
+        version: 6.0.0(@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react@19.2.5)
       react-dom:
-        specifier: ^19.2.4
-        version: 19.2.4(react@19.2.4)
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.6.6(i18next@25.10.10(typescript@6.0.2))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)
+        version: 16.6.6(i18next@25.10.10(typescript@6.0.2))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2)
       react-router:
         specifier: ^7.13.1
-        version: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -535,7 +535,7 @@ importers:
         version: 11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/config':
         specifier: ^4.0.3
-        version: 4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@nestjs/core':
         specifier: ^11.1.17
         version: 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -553,7 +553,7 @@ importers:
         version: 5.0.4(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(express@5.2.1)(fastify@5.8.3)
       '@nestjs/terminus':
         specifier: ^11.1.1
-        version: 11.1.1(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@25.5.0)(typescript@6.0.2)))
+        version: 11.1.1(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@25.5.0)(typescript@6.0.2)))
       '@nestjs/throttler':
         specifier: ^6.5.0
         version: 6.5.0(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
@@ -586,7 +586,7 @@ importers:
         version: 7.6.0
       '@prisma/client':
         specifier: ^7.6.0
-        version: 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)
+        version: 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2)
       '@sentry/cli':
         specifier: ^3.3.5
         version: 3.3.5
@@ -671,7 +671,7 @@ importers:
         version: 10.1.0
       prisma:
         specifier: ^7.6.0
-        version: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)
+        version: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2)
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -920,7 +920,7 @@ importers:
         version: link:../sdk-common
       '@paraspell/swap':
         specifier: 13.0.0
-        version: 13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)
+        version: 13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)
       '@scure/base':
         specifier: ^2.0.0
         version: 2.0.0
@@ -1124,13 +1124,13 @@ importers:
         version: 4.1.8-14(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/amm':
         specifier: ^0.1.4
-        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)
+        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain':
         specifier: 0.1.2
         version: 0.1.2
       '@crypto-dex-sdk/currency':
         specifier: ^0.1.4
-        version: 0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format':
         specifier: ^0.1.4
         version: 0.1.4
@@ -1139,10 +1139,10 @@ importers:
         version: 0.1.4
       '@crypto-dex-sdk/parachains-bifrost':
         specifier: ^0.1.4
-        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)
+        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/token-lists':
         specifier: ^0.1.4
-        version: 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
+        version: 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
       '@galacticcouncil/sdk':
         specifier: ^10.8.0
         version: 10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))
@@ -1195,8 +1195,8 @@ importers:
         specifier: ^8.5.8
         version: 8.5.8
       react:
-        specifier: ^19.2.4
-        version: 19.2.4
+        specifier: ^19.2.5
+        version: 19.2.5
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -3835,61 +3835,61 @@ packages:
     peerDependencies:
       '@polkadot/types': 16.5.6
 
-  '@mantine/charts@8.3.18':
-    resolution: {integrity: sha512-oudif3EUH7Nb9DPm0abAPxpFYDWWjR3k2S5ll0/CcB+pJzlhwaBG19QwpOJaRA6VAvAXDDKOXCO4mi9XCEN78g==}
+  '@mantine/charts@9.0.1':
+    resolution: {integrity: sha512-SNBHe7f7L7p7k/QWtTtgB46nTL51CgaYvZYf1cNXD6MfnNr1kHTGz01Lk5EFX1jg8AYvufjceciW7YLHE9VG9w==}
     peerDependencies:
-      '@mantine/core': 8.3.18
-      '@mantine/hooks': 8.3.18
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
-      recharts: '>=2.13.3'
+      '@mantine/core': 9.0.1
+      '@mantine/hooks': 9.0.1
+      react: ^19.2.0
+      react-dom: ^19.2.0
+      recharts: '>=3.2.1'
 
-  '@mantine/code-highlight@8.3.18':
-    resolution: {integrity: sha512-/KAxx+H9YfzKK8jv10XB/tJNV8IWCY3axbTmyij4VnLp1ivAInU7GLv9NzdXPHTx4JazIGxMwrrVANQD4QaQjA==}
+  '@mantine/code-highlight@9.0.1':
+    resolution: {integrity: sha512-ZIZDOvQzz475GNRAbNaBQCrpXLPwAekj6vaAcnbqrFjKKACVnZPJqkELm40gM9RtBCYvMFL01fmiWZfJLUT+ag==}
     peerDependencies:
-      '@mantine/core': 8.3.18
-      '@mantine/hooks': 8.3.18
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
+      '@mantine/core': 9.0.1
+      '@mantine/hooks': 9.0.1
+      react: ^19.2.0
+      react-dom: ^19.2.0
 
-  '@mantine/core@8.3.18':
-    resolution: {integrity: sha512-9tph1lTVogKPjTx02eUxDUOdXacPzK62UuSqb4TdGliI54/Xgxftq0Dfqu6XuhCxn9J5MDJaNiLDvL/1KRkYqA==}
+  '@mantine/core@9.0.1':
+    resolution: {integrity: sha512-kSYm8g7p8FTDysOsz9BN14TSqp10O0yAmo9HOZfwe6c08gGKQSytnSCPgnTe2h5DMfpbhTg+krROrT8WQy37fA==}
     peerDependencies:
-      '@mantine/hooks': 8.3.18
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
+      '@mantine/hooks': 9.0.1
+      react: ^19.2.0
+      react-dom: ^19.2.0
 
-  '@mantine/dates@8.3.18':
-    resolution: {integrity: sha512-FHx5teJOhupI0gO2o5evtVYQEdqOjayOkLRhEQfB5Nc5DvcysfPfmNILGkc1Nrp9ZQeQWKLT9qr+CkcCXwHOaw==}
+  '@mantine/dates@9.0.1':
+    resolution: {integrity: sha512-+zwqqQ4D2I8o/GiEStF66Mheo3abKmS0KaL3XDtDp1D7AVhKmSH3Rz27m48aqW/Kzqb2g2t3VgPzAkpuRsWdBA==}
     peerDependencies:
-      '@mantine/core': 8.3.18
-      '@mantine/hooks': 8.3.18
+      '@mantine/core': 9.0.1
+      '@mantine/hooks': 9.0.1
       dayjs: '>=1.0.0'
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
+      react: ^19.2.0
+      react-dom: ^19.2.0
 
-  '@mantine/form@8.3.18':
-    resolution: {integrity: sha512-r5OGLJWTkmIruFjRZRZy9oA7maNYlyt50jB4Pmd2X5360WOmJLd4KH8MFhHZQC7vN+z8/rmBl3t3XGAR2I8xig==}
+  '@mantine/form@9.0.1':
+    resolution: {integrity: sha512-47XTUugKjBwc5Dmr+2+81I4M5v48i0Z/HgGoGVdiydIgvtfchDV9GBySMxvsQ1ZVR2s+BwcYGsNHFO9RQNVM7w==}
     peerDependencies:
-      react: ^18.x || ^19.x
+      react: ^19.2.0
 
-  '@mantine/hooks@8.3.18':
-    resolution: {integrity: sha512-QoWr9+S8gg5050TQ06aTSxtlpGjYOpIllRbjYYXlRvZeTsUqiTbVfvQROLexu4rEaK+yy9Wwriwl9PMRgbLqPw==}
+  '@mantine/hooks@9.0.1':
+    resolution: {integrity: sha512-WM/GbSD8MxZoy3X2IdrbxLq0/0ca4zMA5m7lGw9k1Vecqt1dC/nBed0IJd/w2HGs6avGs9CPlvQ8C4yBEcSnLA==}
     peerDependencies:
-      react: ^18.x || ^19.x
+      react: ^19.2.0
 
-  '@mantine/notifications@8.3.18':
-    resolution: {integrity: sha512-IpQ0lmwbigTBbZCR6iSYWqIOKEx1tlcd7PcEJ5M5X1qeVSY/N3mmDQt1eJmObvcyDeL5cTJMbSA9UPqhRqo9jw==}
+  '@mantine/notifications@9.0.1':
+    resolution: {integrity: sha512-og/RfURurEwTISUmgN/wcjlIE1+OxkCgcmUDZ1Jinfm1efJ8ywXl1zf/fa7/VVN4O/xZl+HMhN46OoCnW3+/bw==}
     peerDependencies:
-      '@mantine/core': 8.3.18
-      '@mantine/hooks': 8.3.18
-      react: ^18.x || ^19.x
-      react-dom: ^18.x || ^19.x
+      '@mantine/core': 9.0.1
+      '@mantine/hooks': 9.0.1
+      react: ^19.2.0
+      react-dom: ^19.2.0
 
-  '@mantine/store@8.3.18':
-    resolution: {integrity: sha512-i+QRTLmZzLldea0egtUVnGALd6UMIu8jd44nrNWBSNIXJU/8B6rMlC6gyX+l4szopZSuOaaNJIXkqRdC1gQsVg==}
+  '@mantine/store@9.0.1':
+    resolution: {integrity: sha512-7jn/tX6qC71zd8Hcr/m/kQT7wCp87nvUM3p9OoJ2qX13oNCrMEXRtimYwqkOBK5Vx2hNApQY5KF183+arHU6NA==}
     peerDependencies:
-      react: ^18.x || ^19.x
+      react: ^19.2.0
 
   '@mantinex/dev-icons@2.0.0':
     resolution: {integrity: sha512-MoFDq9WJEE9LJ0ytFGTSlbj5MrTzGF2yi458khwvVpqJ0PlEKJA0UcVoYVPmVgIKsOqVfrThbY5gCHu5UlP/mg==}
@@ -12068,10 +12068,10 @@ packages:
     peerDependencies:
       react: ^18.2.0
 
-  react-dom@19.2.4:
-    resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
+  react-dom@19.2.5:
+    resolution: {integrity: sha512-J5bAZz+DXMMwW/wV3xzKke59Af6CHY7G4uYLN1OvBcKEsWOs4pQExj86BBKamxl/Ik5bx9whOrvBlSDfWzgSag==}
     peerDependencies:
-      react: ^19.2.4
+      react: ^19.2.5
 
   react-i18next@16.6.6:
     resolution: {integrity: sha512-ZgL2HUoW34UKUkOV7uSQFE1CDnRPD+tCR3ywSuWH7u2iapnz86U8Bi3Vrs620qNDzCf1F47NxglCEkchCTDOHw==}
@@ -12154,12 +12154,6 @@ packages:
       '@types/react':
         optional: true
 
-  react-textarea-autosize@8.5.9:
-    resolution: {integrity: sha512-U1DGlIQN5AwgjTyOEnI1oCcMuEr1pv1qOtklB2l4nyMGbHzWrI0eFsYK0zos2YWqAolJyG0IWJaqWmWj5ETh0A==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
     peerDependencies:
@@ -12179,8 +12173,8 @@ packages:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
     engines: {node: '>=0.10.0'}
 
-  react@19.2.4:
-    resolution: {integrity: sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==}
+  react@19.2.5:
+    resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
     engines: {node: '>=0.10.0'}
 
   read-package-up@11.0.0:
@@ -13652,33 +13646,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-composed-ref@1.4.0:
-    resolution: {integrity: sha512-djviaxuOOh7wkj0paeO1Q/4wMZ8Zrnag5H6yBvzN7AKKe8beOaED9SF5/ByLqsku8NP4zQqsvM2u3ew/tJK8/w==}
-    peerDependencies:
-      '@types/react': '*'
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
-  use-isomorphic-layout-effect@1.2.1:
-    resolution: {integrity: sha512-tpZZ+EX0gaghDAiFR37hj5MgY6ZN55kLiPkJsKxBMZ6GZdOSPJXiOzPM984oPYZ5AnehYx5WQp1+ME8I/P/pRA==}
-    peerDependencies:
-      '@types/react': '*'
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
-  use-latest@1.3.0:
-    resolution: {integrity: sha512-mhg3xdm9NaM8q+gLT8KryJPnRFOz1/5XPBhmDEVZK1webPzDjrPk7f/mbpeLqTgB9msytYWANxgALOCJKnLvcQ==}
-    peerDependencies:
-      '@types/react': '*'
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
   use-sidecar@1.1.3:
     resolution: {integrity: sha512-Fedw0aZvkhynoPYlA5WXrMCAMm+nSWdZt6lzJQ7Ok8S6Q+VsHmHpRWndVRJ8Be0ZbkfPc5LRYH+5XrzXcEeLRQ==}
     engines: {node: '>=10'}
@@ -14489,34 +14456,9 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@acala-network/api': 6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@acala-network/contracts': 4.3.4
-      '@acala-network/eth-transactions': 2.10.0(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      bn.js: 5.2.3
-      ethers: 5.7.2(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      graphql: 16.0.1
-      graphql-request: 3.6.1(encoding@0.1.13)(graphql@16.0.1)
-      lru-cache: 7.8.2
-    transitivePeerDependencies:
-      - '@polkadot/util-crypto'
-      - bufferutil
-      - encoding
-      - utf-8-validate
-
   '@acala-network/eth-transactions@2.10.0(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/util-crypto': 13.5.9(@polkadot/util@14.0.3)
-      ethers: 5.7.2(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  '@acala-network/eth-transactions@2.10.0(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@polkadot/util-crypto': 14.0.3(@polkadot/util@14.0.3)
       ethers: 5.7.2(bufferutil@4.1.0)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
@@ -14543,20 +14485,6 @@ snapshots:
       - encoding
       - ethers
 
-  '@acala-network/sdk-swap@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@acala-network/types': 6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - '@acala-network/api'
-      - '@acala-network/eth-providers'
-      - debug
-      - encoding
-      - ethers
-
   '@acala-network/sdk-wallet@4.1.8-14(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -14572,24 +14500,6 @@ snapshots:
     dependencies:
       '@acala-network/api': 6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)
-      '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      axios: 0.24.0
-      ethers: 5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      graphql: 16.13.2
-      graphql-request: 4.3.0(encoding@0.1.13)(graphql@16.13.2)
-      lodash: 4.17.23
-      lru-cache: 7.18.3
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - '@acala-network/types'
-      - debug
-      - encoding
-
-  '@acala-network/sdk@4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@acala-network/api': 6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)
       '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       axios: 0.24.0
@@ -14700,7 +14610,7 @@ snapshots:
     dependencies:
       graphql: 16.13.2
 
-  '@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))':
+  '@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
       '@wry/caches': 1.0.1
@@ -14713,8 +14623,8 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       graphql-ws: 6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       subscriptions-transport-ws: 0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10)
 
   '@apollo/protobufjs@1.2.7':
@@ -15621,10 +15531,10 @@ snapshots:
     dependencies:
       '@open-web3/orml-type-definitions': 0.9.4-38
 
-  '@crypto-dex-sdk/amm@0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)':
+  '@crypto-dex-sdk/amm@0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/math': 0.1.4
       '@ethersproject/abi': 5.8.0
       '@ethersproject/address': 5.8.0
@@ -15642,7 +15552,7 @@ snapshots:
 
   '@crypto-dex-sdk/chain@0.1.2': {}
 
-  '@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.2
       '@crypto-dex-sdk/format': 0.1.4
@@ -15650,8 +15560,8 @@ snapshots:
       '@ethersproject/address': 5.8.0
       '@ethersproject/units': 5.8.0
       lodash.flatmap: 4.5.0
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tiny-invariant: 1.3.3
 
   '@crypto-dex-sdk/format@0.1.4':
@@ -15667,26 +15577,26 @@ snapshots:
       tiny-invariant: 1.3.3
       toformat: 2.0.0
 
-  '@crypto-dex-sdk/parachains-bifrost@0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)':
+  '@crypto-dex-sdk/parachains-bifrost@0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
     dependencies:
-      '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)
+      '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
-      '@headlessui/react': 2.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@heroicons/react': 2.2.0(react@19.2.4)
+      '@headlessui/react': 2.2.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@heroicons/react': 2.2.0(react@19.2.5)
       '@lingui/core': 5.2.0
-      '@lingui/macro': 5.2.0(react@19.2.4)
-      '@lingui/react': 5.2.0(react@19.2.4)
+      '@lingui/macro': 5.2.0(react@19.2.5)
+      '@lingui/react': 5.2.0(react@19.2.5)
       '@polkadot-onboard/react': 1.1.0
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/api-augment': 12.4.2(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/types': 16.5.6
       '@polkadot/types-codec': 16.5.6
       '@zenlink-types/bifrost': 1.7.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
     transitivePeerDependencies:
       - '@lingui/babel-plugin-lingui-macro'
       - babel-plugin-macros
@@ -15694,9 +15604,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
+  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
     dependencies:
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@ethersproject/address': 5.8.0
@@ -16770,26 +16680,26 @@ snapshots:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react-dom@2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@floating-ui/dom': 1.7.6
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@floating-ui/react@0.26.28(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react@0.26.28(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@floating-ui/utils': 0.2.11
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tabbable: 6.4.0
 
-  '@floating-ui/react@0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@floating-ui/react@0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@floating-ui/utils': 0.2.11
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       tabbable: 6.4.0
 
   '@floating-ui/utils@0.2.11': {}
@@ -16842,26 +16752,6 @@ snapshots:
       '@polkadot/types': 16.5.6
       '@polkadot/util': 14.0.3
       '@polkadot/util-crypto': 13.5.9(@polkadot/util@14.0.3)
-      '@thi.ng/cache': 2.3.70
-      '@thi.ng/memoize': 4.0.41
-      bignumber.js: 9.3.1
-      lodash.clonedeep: 4.5.0
-      viem: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
-
-  '@galacticcouncil/sdk@10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))':
-    dependencies:
-      '@galacticcouncil/math-hsm': 1.2.0
-      '@galacticcouncil/math-lbp': 1.3.0
-      '@galacticcouncil/math-liquidity-mining': 1.3.0
-      '@galacticcouncil/math-omnipool': 1.4.0
-      '@galacticcouncil/math-stableswap': 2.5.0
-      '@galacticcouncil/math-xyk': 1.3.0
-      '@noble/hashes': 1.8.0
-      '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot/api-augment': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot/types': 16.5.6
-      '@polkadot/util': 14.0.3
-      '@polkadot/util-crypto': 14.0.3(@polkadot/util@14.0.3)
       '@thi.ng/cache': 2.3.70
       '@thi.ng/memoize': 4.0.41
       bignumber.js: 9.3.1
@@ -17271,18 +17161,18 @@ snapshots:
     dependencies:
       graphql: 16.13.2
 
-  '@headlessui/react@2.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@headlessui/react@2.2.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@floating-ui/react': 0.26.28(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-aria/focus': 3.21.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-aria/interactions': 3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@tanstack/react-virtual': 3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@floating-ui/react': 0.26.28(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-aria/focus': 3.21.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-aria/interactions': 3.27.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@tanstack/react-virtual': 3.13.23(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@heroicons/react@2.2.0(react@19.2.4)':
+  '@heroicons/react@2.2.0(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
   '@hono/node-server@1.19.11(hono@4.12.9)':
     dependencies:
@@ -17609,10 +17499,10 @@ snapshots:
       '@lingui/message-utils': 5.2.0
       unraw: 3.0.0
 
-  '@lingui/macro@5.2.0(react@19.2.4)':
+  '@lingui/macro@5.2.0(react@19.2.5)':
     dependencies:
       '@lingui/core': 5.2.0
-      '@lingui/react': 5.2.0(react@19.2.4)
+      '@lingui/react': 5.2.0(react@19.2.5)
     transitivePeerDependencies:
       - react
 
@@ -17621,11 +17511,11 @@ snapshots:
       '@messageformat/parser': 5.1.1
       js-sha256: 0.10.1
 
-  '@lingui/react@5.2.0(react@19.2.4)':
+  '@lingui/react@5.2.0(react@19.2.5)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@lingui/core': 5.2.0
-      react: 19.2.4
+      react: 19.2.5
 
   '@logion/node-api@0.27.0-4(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
@@ -17648,74 +17538,74 @@ snapshots:
     dependencies:
       '@polkadot/types': 16.5.6
 
-  '@mantine/charts@8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(redux@5.0.1))':
+  '@mantine/charts@9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(redux@5.0.1))':
     dependencies:
-      '@mantine/core': 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      recharts: 3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(redux@5.0.1)
+      '@mantine/core': 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      recharts: 3.8.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(redux@5.0.1)
 
-  '@mantine/code-highlight@8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@mantine/code-highlight@9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@mantine/core': 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
+      '@mantine/core': 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
       clsx: 2.1.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@floating-ui/react': 0.27.19(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
+      '@floating-ui/react': 0.27.19(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
       clsx: 2.1.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      react-number-format: 5.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react-remove-scroll: 2.7.2(@types/react@19.2.14)(react@19.2.4)
-      react-textarea-autosize: 8.5.9(@types/react@19.2.14)(react@19.2.4)
-      type-fest: 4.41.0
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      react-number-format: 5.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      react-remove-scroll: 2.7.2(@types/react@19.2.14)(react@19.2.5)
+      type-fest: 5.5.0
     transitivePeerDependencies:
       - '@types/react'
 
-  '@mantine/dates@8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(dayjs@1.11.20)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@mantine/dates@9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(dayjs@1.11.20)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@mantine/core': 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
+      '@mantine/core': 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
       clsx: 2.1.1
       dayjs: 1.11.20
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@mantine/form@8.3.18(react@19.2.4)':
+  '@mantine/form@9.0.1(react@19.2.5)':
     dependencies:
+      '@standard-schema/spec': 1.1.0
       fast-deep-equal: 3.1.3
       klona: 2.0.6
-      react: 19.2.4
+      react: 19.2.5
 
-  '@mantine/hooks@8.3.18(react@19.2.4)':
+  '@mantine/hooks@9.0.1(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
-  '@mantine/notifications@8.3.18(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@mantine/notifications@9.0.1(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@mantine/core': 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
-      '@mantine/store': 8.3.18(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      react-transition-group: 4.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@mantine/core': 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
+      '@mantine/store': 9.0.1(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      react-transition-group: 4.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
 
-  '@mantine/store@8.3.18(react@19.2.4)':
+  '@mantine/store@9.0.1(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
-  '@mantinex/dev-icons@2.0.0(@mantine/core@8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mantine/hooks@8.3.18(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@mantinex/dev-icons@2.0.0(@mantine/core@9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@mantine/hooks@9.0.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@mantine/core': 8.3.18(@mantine/hooks@8.3.18(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@mantine/hooks': 8.3.18(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@mantine/core': 9.0.1(@mantine/hooks@9.0.1(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@mantine/hooks': 9.0.1(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@mapbox/node-pre-gyp@2.0.3(encoding@0.1.13)(supports-color@10.2.2)':
     dependencies:
@@ -17909,7 +17799,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nestjs/config@4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@nestjs/config@4.0.3(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       dotenv: 17.2.3
@@ -18051,7 +17941,7 @@ snapshots:
       express: 5.2.1
       fastify: 5.8.3
 
-  '@nestjs/terminus@11.1.1(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@25.5.0)(typescript@6.0.2)))':
+  '@nestjs/terminus@11.1.1(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.28(pg@8.20.0)(ts-node@10.9.2(@swc/core@1.15.21(@swc/helpers@0.5.20))(@types/node@25.5.0)(typescript@6.0.2)))':
     dependencies:
       '@nestjs/common': 11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -18060,7 +17950,7 @@ snapshots:
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
     optionalDependencies:
-      '@prisma/client': 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)
+      '@prisma/client': 7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2)
       typeorm: 0.3.28(mysql2@3.15.3)(pg@8.20.0)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.15.21)(@types/node@25.5.0)(typescript@6.0.2))
 
   '@nestjs/testing@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17)(@nestjs/websockets@11.1.17)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.17(@nestjs/common@11.1.17(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.17))':
@@ -19217,7 +19107,7 @@ snapshots:
 
   '@paraspell/sdk-common@13.0.0': {}
 
-  '@paraspell/sdk-core@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
+  '@paraspell/sdk-core@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
     dependencies:
       '@noble/hashes': 2.0.1
       '@paraspell/assets': 13.0.0
@@ -19226,21 +19116,20 @@ snapshots:
       '@scure/base': 2.0.0
       viem: 2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
     optionalDependencies:
-      '@paraspell/swap': 13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)
+      '@paraspell/swap': 13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)
     transitivePeerDependencies:
       - bufferutil
       - typescript
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-pjs@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(@polkadot/api-base@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
+  '@paraspell/sdk-pjs@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(@polkadot/api-base@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util@14.0.3)(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
     dependencies:
-      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/types': 16.5.6
       '@polkadot/util': 14.0.3
-      '@polkadot/util-crypto': 14.0.3(@polkadot/util@14.0.3)
       '@snowbridge/api': 0.4.4(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@snowbridge/base-types': 0.4.4
       '@snowbridge/contract-types': 0.4.4(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -19255,10 +19144,10 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(polkadot-api@1.23.3(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3))(rxjs@7.8.2)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
+  '@paraspell/sdk@13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(polkadot-api@1.23.3(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3))(rxjs@7.8.2)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)':
     dependencies:
       '@noble/hashes': 2.0.1
-      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
       '@polkadot-api/legacy-provider': 0.3.8(rxjs@7.8.2)
       '@polkadot-labs/hdkd': 0.0.27
       '@polkadot-labs/hdkd-helpers': 0.0.28
@@ -19272,26 +19161,26 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)':
+  '@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6)':
     dependencies:
       '@acala-network/api': 6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)
-      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@acala-network/eth-providers': 2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@acala-network/sdk': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@acala-network/sdk-core': 4.1.15(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@acala-network/sdk-swap': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      '@acala-network/sdk-swap': 4.1.15(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.10.0(@acala-network/api@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@5.0.10))(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(encoding@0.1.13)(ethers@5.8.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
       '@acala-network/sdk-wallet': 4.1.8-14(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)
+      '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
-      '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(utf-8-validate@5.0.10)
-      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
-      '@galacticcouncil/sdk': 10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))
-      '@paraspell/sdk': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(polkadot-api@1.23.3(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3))(rxjs@7.8.2)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
-      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
-      '@paraspell/sdk-pjs': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.4(react@19.2.4))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(@polkadot/api-base@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
+      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
+      '@galacticcouncil/sdk': 10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@13.5.9(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))
+      '@paraspell/sdk': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(polkadot-api@1.23.3(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3))(rxjs@7.8.2)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@paraspell/sdk-core': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
+      '@paraspell/sdk-pjs': 13.0.0(@paraspell/swap@13.0.0(@acala-network/types@6.3.0(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@swc/core@1.15.21)(bufferutil@4.1.0)(encoding@0.1.13)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(typescript@6.0.2)(utf-8-validate@5.0.10)(viem@2.47.6(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6))(yaml@2.8.3)(zod@4.3.6))(@polkadot/api-base@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util@14.0.3)(bufferutil@4.1.0)(typescript@6.0.2)(utf-8-validate@5.0.10)(zod@4.3.6)
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/types': 16.5.6
@@ -19305,7 +19194,7 @@ snapshots:
       lodash-es: 4.17.23
       polkadot-api: 1.23.3(@swc/core@1.15.21(@swc/helpers@0.5.20))(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.3)
       postcss: 8.5.8
-      react: 19.2.4
+      react: 19.2.5
       rxjs: 7.8.2
     transitivePeerDependencies:
       - '@acala-network/types'
@@ -19815,7 +19704,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@polkadot/apps-config@0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(utf-8-validate@5.0.10)(yaml@2.8.3)':
+  '@polkadot/apps-config@0.170.1(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@swc/core@1.15.21)(bufferutil@4.1.0)(jiti@2.6.1)(postcss@8.5.8)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(utf-8-validate@5.0.10)(yaml@2.8.3)':
     dependencies:
       '@acala-network/type-definitions': 5.1.2(@polkadot/types@16.5.6)
       '@bifrost-finance/type-definitions': 1.11.3(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))
@@ -19843,7 +19732,7 @@ snapshots:
       '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/api-derive': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@polkadot/networks': 13.5.9
-      '@polkadot/react-identicon': 3.16.7(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@polkadot/networks@13.5.9)(@polkadot/util-crypto@13.5.9(@polkadot/util@13.5.9))(@polkadot/util@13.5.9)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)
+      '@polkadot/react-identicon': 3.16.7(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@polkadot/networks@13.5.9)(@polkadot/util-crypto@13.5.9(@polkadot/util@13.5.9))(@polkadot/util@13.5.9)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)
       '@polkadot/types': 16.5.6
       '@polkadot/types-codec': 16.5.6
       '@polkadot/util': 13.5.9
@@ -19983,7 +19872,7 @@ snapshots:
       '@substrate/ss58-registry': 1.51.0
       tslib: 2.8.1
 
-  '@polkadot/react-identicon@3.16.7(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@polkadot/networks@13.5.9)(@polkadot/util-crypto@13.5.9(@polkadot/util@13.5.9))(@polkadot/util@13.5.9)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)':
+  '@polkadot/react-identicon@3.16.7(@polkadot/keyring@14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3))(@polkadot/networks@13.5.9)(@polkadot/util-crypto@13.5.9(@polkadot/util@13.5.9))(@polkadot/util@13.5.9)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)':
     dependencies:
       '@polkadot/keyring': 14.0.3(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)
       '@polkadot/ui-settings': 3.16.7(@polkadot/networks@13.5.9)(@polkadot/util@13.5.9)
@@ -19992,11 +19881,11 @@ snapshots:
       '@polkadot/util-crypto': 13.5.9(@polkadot/util@13.5.9)
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
-      react: 19.2.4
-      react-copy-to-clipboard: 5.1.1(react@19.2.4)
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-copy-to-clipboard: 5.1.1(react@19.2.5)
+      react-dom: 19.2.5(react@19.2.5)
       react-is: 19.0.0
-      styled-components: 6.3.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      styled-components: 6.3.12(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@polkadot/networks'
@@ -20361,7 +20250,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@polkadot/networks': 13.5.6
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-crypto': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))
+      '@polkadot/wasm-crypto': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@13.5.6)
       '@polkadot/x-bigint': 13.5.6
       '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@14.0.3)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
@@ -20471,7 +20360,7 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-bridge@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))':
+  '@polkadot/wasm-bridge@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
     dependencies:
       '@polkadot/util': 13.5.6
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@13.5.6)
@@ -20543,10 +20432,10 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto-init@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))':
+  '@polkadot/wasm-crypto-init@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
     dependencies:
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))
+      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
       '@polkadot/wasm-crypto-asmjs': 7.5.4(@polkadot/util@13.5.6)
       '@polkadot/wasm-crypto-wasm': 7.5.4(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@13.5.6)
@@ -20635,12 +20524,12 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))':
+  '@polkadot/wasm-crypto@7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
     dependencies:
       '@polkadot/util': 13.5.6
-      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))
+      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
       '@polkadot/wasm-crypto-asmjs': 7.5.4(@polkadot/util@13.5.6)
-      '@polkadot/wasm-crypto-init': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.6)))
+      '@polkadot/wasm-crypto-init': 7.5.4(@polkadot/util@13.5.6)(@polkadot/x-randomvalues@13.5.6(@polkadot/util@13.5.6)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
       '@polkadot/wasm-crypto-wasm': 7.5.4(@polkadot/util@13.5.6)
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@13.5.6)
       '@polkadot/x-randomvalues': 13.5.6(@polkadot/util@14.0.3)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
@@ -20913,11 +20802,11 @@ snapshots:
 
   '@prisma/client-runtime-utils@7.6.0': {}
 
-  '@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2))(typescript@6.0.2)':
+  '@prisma/client@7.6.0(prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2))(typescript@6.0.2)':
     dependencies:
       '@prisma/client-runtime-utils': 7.6.0
     optionalDependencies:
-      prisma: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)
+      prisma: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2)
       typescript: 6.0.2
 
   '@prisma/config@7.6.0':
@@ -20998,13 +20887,13 @@ snapshots:
       env-paths: 3.0.0
       proper-lockfile: 4.1.2
 
-  '@prisma/studio-core@0.27.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@prisma/studio-core@0.27.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@radix-ui/react-toggle': 1.1.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@radix-ui/react-toggle': 1.1.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@types/react': 19.2.14
       chart.js: 4.5.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
     transitivePeerDependencies:
       - '@types/react-dom'
 
@@ -21033,144 +20922,144 @@ snapshots:
 
   '@radix-ui/primitive@1.1.3': {}
 
-  '@radix-ui/react-compose-refs@1.1.2(@types/react@19.2.14)(react@19.2.4)':
+  '@radix-ui/react-compose-refs@1.1.2(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@radix-ui/react-primitive@2.1.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@radix-ui/react-primitive@2.1.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@radix-ui/react-slot': 1.2.3(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
 
-  '@radix-ui/react-slot@1.2.3(@types/react@19.2.14)(react@19.2.4)':
+  '@radix-ui/react-slot@1.2.3(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@radix-ui/react-toggle@1.1.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@radix-ui/react-toggle@1.1.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@radix-ui/primitive': 1.1.3
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
 
-  '@radix-ui/react-use-controllable-state@1.2.2(@types/react@19.2.14)(react@19.2.4)':
+  '@radix-ui/react-use-controllable-state@1.2.2(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@radix-ui/react-use-effect-event': 0.0.2(@types/react@19.2.14)(react@19.2.4)
-      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
+      '@radix-ui/react-use-effect-event': 0.0.2(@types/react@19.2.14)(react@19.2.5)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@radix-ui/react-use-effect-event@0.0.2(@types/react@19.2.14)(react@19.2.4)':
+  '@radix-ui/react-use-effect-event@0.0.2(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.14)(react@19.2.4)':
+  '@radix-ui/react-use-layout-effect@1.1.1(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@react-aria/focus@3.21.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-aria/focus@3.21.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@react-aria/interactions': 3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-aria/utils': 3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@react-types/shared': 3.33.1(react@19.2.4)
+      '@react-aria/interactions': 3.27.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-aria/utils': 3.33.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-types/shared': 3.33.1(react@19.2.5)
       '@swc/helpers': 0.5.20
       clsx: 2.1.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@react-aria/interactions@3.27.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-aria/interactions@3.27.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@react-aria/ssr': 3.9.10(react@19.2.4)
-      '@react-aria/utils': 3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@react-aria/ssr': 3.9.10(react@19.2.5)
+      '@react-aria/utils': 3.33.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@react-stately/flags': 3.1.2
-      '@react-types/shared': 3.33.1(react@19.2.4)
+      '@react-types/shared': 3.33.1(react@19.2.5)
       '@swc/helpers': 0.5.20
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@react-aria/ssr@3.9.10(react@19.2.4)':
+  '@react-aria/ssr@3.9.10(react@19.2.5)':
     dependencies:
       '@swc/helpers': 0.5.20
-      react: 19.2.4
+      react: 19.2.5
 
-  '@react-aria/utils@3.33.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-aria/utils@3.33.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@react-aria/ssr': 3.9.10(react@19.2.4)
+      '@react-aria/ssr': 3.9.10(react@19.2.5)
       '@react-stately/flags': 3.1.2
-      '@react-stately/utils': 3.11.0(react@19.2.4)
-      '@react-types/shared': 3.33.1(react@19.2.4)
+      '@react-stately/utils': 3.11.0(react@19.2.5)
+      '@react-types/shared': 3.33.1(react@19.2.5)
       '@swc/helpers': 0.5.20
       clsx: 2.1.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  '@react-spring/animated@10.0.3(react@19.2.4)':
+  '@react-spring/animated@10.0.3(react@19.2.5)':
     dependencies:
-      '@react-spring/shared': 10.0.3(react@19.2.4)
+      '@react-spring/shared': 10.0.3(react@19.2.5)
       '@react-spring/types': 10.0.3
-      react: 19.2.4
+      react: 19.2.5
 
-  '@react-spring/core@10.0.3(react@19.2.4)':
+  '@react-spring/core@10.0.3(react@19.2.5)':
     dependencies:
-      '@react-spring/animated': 10.0.3(react@19.2.4)
-      '@react-spring/shared': 10.0.3(react@19.2.4)
+      '@react-spring/animated': 10.0.3(react@19.2.5)
+      '@react-spring/shared': 10.0.3(react@19.2.5)
       '@react-spring/types': 10.0.3
-      react: 19.2.4
+      react: 19.2.5
 
   '@react-spring/rafz@10.0.3': {}
 
-  '@react-spring/shared@10.0.3(react@19.2.4)':
+  '@react-spring/shared@10.0.3(react@19.2.5)':
     dependencies:
       '@react-spring/rafz': 10.0.3
       '@react-spring/types': 10.0.3
-      react: 19.2.4
+      react: 19.2.5
 
   '@react-spring/types@10.0.3': {}
 
-  '@react-spring/web@10.0.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@react-spring/web@10.0.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@react-spring/animated': 10.0.3(react@19.2.4)
-      '@react-spring/core': 10.0.3(react@19.2.4)
-      '@react-spring/shared': 10.0.3(react@19.2.4)
+      '@react-spring/animated': 10.0.3(react@19.2.5)
+      '@react-spring/core': 10.0.3(react@19.2.5)
+      '@react-spring/shared': 10.0.3(react@19.2.5)
       '@react-spring/types': 10.0.3
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@react-stately/flags@3.1.2':
     dependencies:
       '@swc/helpers': 0.5.20
 
-  '@react-stately/utils@3.11.0(react@19.2.4)':
+  '@react-stately/utils@3.11.0(react@19.2.5)':
     dependencies:
       '@swc/helpers': 0.5.20
-      react: 19.2.4
+      react: 19.2.5
 
-  '@react-three/drei@10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2))(@types/react@19.2.14)(@types/three@0.183.1)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)':
+  '@react-three/drei@10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2))(@types/react@19.2.14)(@types/three@0.183.1)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@mediapipe/tasks-vision': 0.10.17
       '@monogrid/gainmap-js': 3.4.0(three@0.183.2)
-      '@react-three/fiber': 9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)
-      '@use-gesture/react': 10.3.1(react@19.2.4)
+      '@react-three/fiber': 9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2)
+      '@use-gesture/react': 10.3.1(react@19.2.5)
       camera-controls: 3.1.2(three@0.183.2)
       cross-env: 7.0.3
       detect-gpu: 5.0.70
@@ -21178,50 +21067,50 @@ snapshots:
       hls.js: 1.6.15
       maath: 0.10.8(@types/three@0.183.1)(three@0.183.2)
       meshline: 3.3.1(three@0.183.2)
-      react: 19.2.4
+      react: 19.2.5
       stats-gl: 2.4.2(@types/three@0.183.1)(three@0.183.2)
       stats.js: 0.17.0
-      suspend-react: 0.1.3(react@19.2.4)
+      suspend-react: 0.1.3(react@19.2.5)
       three: 0.183.2
       three-mesh-bvh: 0.8.3(three@0.183.2)
       three-stdlib: 2.36.1(three@0.183.2)
       troika-three-text: 0.52.4(three@0.183.2)
-      tunnel-rat: 0.1.2(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      tunnel-rat: 0.1.2(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)
+      use-sync-external-store: 1.6.0(react@19.2.5)
       utility-types: 3.11.0
-      zustand: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+      zustand: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/three'
       - immer
 
-  '@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.183.2)':
+  '@react-three/fiber@9.5.0(@types/react@19.2.14)(immer@11.1.4)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(three@0.183.2)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@types/webxr': 0.5.24
       base64-js: 1.5.1
       buffer: 6.0.3
-      its-fine: 2.0.0(@types/react@19.2.14)(react@19.2.4)
-      react: 19.2.4
-      react-use-measure: 2.1.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      its-fine: 2.0.0(@types/react@19.2.14)(react@19.2.5)
+      react: 19.2.5
+      react-use-measure: 2.1.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       scheduler: 0.27.0
-      suspend-react: 0.1.3(react@19.2.4)
+      suspend-react: 0.1.3(react@19.2.5)
       three: 0.183.2
-      use-sync-external-store: 1.6.0(react@19.2.4)
-      zustand: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4))
+      use-sync-external-store: 1.6.0(react@19.2.5)
+      zustand: 5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
     transitivePeerDependencies:
       - '@types/react'
       - immer
 
-  '@react-types/shared@3.33.1(react@19.2.4)':
+  '@react-types/shared@3.33.1(react@19.2.5)':
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1))(react@19.2.4)':
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.5)(redux@5.0.1))(react@19.2.5)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -21230,8 +21119,8 @@ snapshots:
       redux-thunk: 3.1.0(redux@5.0.1)
       reselect: 5.1.1
     optionalDependencies:
-      react: 19.2.4
-      react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1)
+      react: 19.2.5
+      react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.5)(redux@5.0.1)
 
   '@repeaterjs/repeater@3.0.6': {}
 
@@ -21888,18 +21777,18 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@tabler/icons-react@3.41.1(react@19.2.4)':
+  '@tabler/icons-react@3.41.1(react@19.2.5)':
     dependencies:
       '@tabler/icons': 3.41.1
-      react: 19.2.4
+      react: 19.2.5
 
   '@tabler/icons@3.41.1': {}
 
-  '@tanstack/react-virtual@3.13.23(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@tanstack/react-virtual@3.13.23(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@tanstack/virtual-core': 3.13.23
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@tanstack/virtual-core@3.13.23': {}
 
@@ -22129,11 +22018,11 @@ snapshots:
       '@tsparticles/engine': 3.8.1
       '@tsparticles/interaction-particles-links': 3.9.1
 
-  '@tsparticles/react@3.0.0(@tsparticles/engine@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@tsparticles/react@3.0.0(@tsparticles/engine@3.8.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@tsparticles/engine': 3.8.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   '@tsparticles/shape-circle@3.8.1':
     dependencies:
@@ -22695,10 +22584,10 @@ snapshots:
 
   '@use-gesture/core@10.3.1': {}
 
-  '@use-gesture/react@10.3.1(react@19.2.4)':
+  '@use-gesture/react@10.3.1(react@19.2.5)':
     dependencies:
       '@use-gesture/core': 10.3.1
-      react: 19.2.4
+      react: 19.2.5
 
   '@vercel/nft@0.29.4(encoding@0.1.13)(rollup@4.60.1)(supports-color@10.2.2)':
     dependencies:
@@ -24369,11 +24258,11 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  echarts-for-react@3.0.6(echarts@6.0.0)(react@19.2.4):
+  echarts-for-react@3.0.6(echarts@6.0.0)(react@19.2.5):
     dependencies:
       echarts: 6.0.0
       fast-deep-equal: 3.1.3
-      react: 19.2.4
+      react: 19.2.5
       size-sensor: 1.0.3
 
   echarts@6.0.0:
@@ -25733,10 +25622,10 @@ snapshots:
 
   help-me@5.0.0: {}
 
-  highcharts-react-official@3.2.3(highcharts@12.5.0)(react@19.2.4):
+  highcharts-react-official@3.2.3(highcharts@12.5.0)(react@19.2.5):
     dependencies:
       highcharts: 12.5.0
-      react: 19.2.4
+      react: 19.2.5
 
   highcharts@12.5.0: {}
 
@@ -26361,10 +26250,10 @@ snapshots:
       has-symbols: 1.1.0
       set-function-name: 2.0.2
 
-  its-fine@2.0.0(@types/react@19.2.14)(react@19.2.4):
+  its-fine@2.0.0(@types/react@19.2.14)(react@19.2.5):
     dependencies:
       '@types/react-reconciler': 0.28.9(@types/react@19.2.14)
-      react: 19.2.4
+      react: 19.2.5
     transitivePeerDependencies:
       - '@types/react'
 
@@ -27362,12 +27251,12 @@ snapshots:
 
   numeral@2.0.6: {}
 
-  nuqs@2.8.9(react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4):
+  nuqs@2.8.9(react-router@7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5):
     dependencies:
       '@standard-schema/spec': 1.0.0
-      react: 19.2.4
+      react: 19.2.5
     optionalDependencies:
-      react-router: 7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router: 7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
 
   nypm@0.6.5:
     dependencies:
@@ -28004,12 +27893,12 @@ snapshots:
       colors: 1.4.0
       minimist: 1.2.8
 
-  prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2):
+  prisma@7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2):
     dependencies:
       '@prisma/config': 7.6.0
       '@prisma/dev': 0.24.3(typescript@6.0.2)
       '@prisma/engines': 7.6.0
-      '@prisma/studio-core': 0.27.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@prisma/studio-core': 0.27.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       mysql2: 3.15.3
       postgres: 3.4.7
     optionalDependencies:
@@ -28134,22 +28023,22 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  react-apollo-network-status@6.0.0(@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react@19.2.4):
+  react-apollo-network-status@6.0.0(@apollo/client@4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react@19.2.5):
     dependencies:
-      '@apollo/client': 4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))
+      '@apollo/client': 4.1.6(graphql-ws@6.0.8(crossws@0.3.5)(graphql@16.13.2)(ws@8.20.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)))(graphql@16.13.2)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(bufferutil@4.1.0)(graphql@16.13.2)(utf-8-validate@5.0.10))
       graphql: 16.13.2
-      react: 19.2.4
+      react: 19.2.5
 
-  react-confetti@6.4.0(react@19.2.4):
+  react-confetti@6.4.0(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
       tween-functions: 1.2.0
 
-  react-copy-to-clipboard@5.1.1(react@19.2.4):
+  react-copy-to-clipboard@5.1.1(react@19.2.5):
     dependencies:
       copy-to-clipboard: 3.3.3
       prop-types: 15.8.1
-      react: 19.2.4
+      react: 19.2.5
 
   react-dom@18.2.0(react@18.2.0):
     dependencies:
@@ -28157,104 +28046,95 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.2
 
-  react-dom@19.2.4(react@19.2.4):
+  react-dom@19.2.5(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
       scheduler: 0.27.0
 
-  react-i18next@16.6.6(i18next@25.10.10(typescript@6.0.2))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2):
+  react-i18next@16.6.6(i18next@25.10.10(typescript@6.0.2))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.2):
     dependencies:
       '@babel/runtime': 7.29.2
       html-parse-stringify: 3.0.1
       i18next: 25.10.10(typescript@6.0.2)
-      react: 19.2.4
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      react: 19.2.5
+      use-sync-external-store: 1.6.0(react@19.2.5)
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
       typescript: 6.0.2
 
   react-is@19.0.0: {}
 
-  react-number-format@5.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-number-format@5.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1):
+  react-redux@9.2.0(@types/react@19.2.14)(react@19.2.5)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
-      react: 19.2.4
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      react: 19.2.5
+      use-sync-external-store: 1.6.0(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
       redux: 5.0.1
 
   react-refresh@0.18.0: {}
 
-  react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.4):
+  react-remove-scroll-bar@2.3.8(@types/react@19.2.14)(react@19.2.5):
     dependencies:
-      react: 19.2.4
-      react-style-singleton: 2.2.3(@types/react@19.2.14)(react@19.2.4)
+      react: 19.2.5
+      react-style-singleton: 2.2.3(@types/react@19.2.14)(react@19.2.5)
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.14
 
-  react-remove-scroll@2.7.2(@types/react@19.2.14)(react@19.2.4):
+  react-remove-scroll@2.7.2(@types/react@19.2.14)(react@19.2.5):
     dependencies:
-      react: 19.2.4
-      react-remove-scroll-bar: 2.3.8(@types/react@19.2.14)(react@19.2.4)
-      react-style-singleton: 2.2.3(@types/react@19.2.14)(react@19.2.4)
+      react: 19.2.5
+      react-remove-scroll-bar: 2.3.8(@types/react@19.2.14)(react@19.2.5)
+      react-style-singleton: 2.2.3(@types/react@19.2.14)(react@19.2.5)
       tslib: 2.8.1
-      use-callback-ref: 1.3.3(@types/react@19.2.14)(react@19.2.4)
-      use-sidecar: 1.1.3(@types/react@19.2.14)(react@19.2.4)
+      use-callback-ref: 1.3.3(@types/react@19.2.14)(react@19.2.5)
+      use-sidecar: 1.1.3(@types/react@19.2.14)(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
 
-  react-router@7.13.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-router@7.13.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       cookie: 1.1.1
-      react: 19.2.4
+      react: 19.2.5
       set-cookie-parser: 2.7.2
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
 
-  react-style-singleton@2.2.3(@types/react@19.2.14)(react@19.2.4):
+  react-style-singleton@2.2.3(@types/react@19.2.14)(react@19.2.5):
     dependencies:
       get-nonce: 1.0.1
-      react: 19.2.4
+      react: 19.2.5
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.14
 
-  react-textarea-autosize@8.5.9(@types/react@19.2.14)(react@19.2.4):
-    dependencies:
-      '@babel/runtime': 7.29.2
-      react: 19.2.4
-      use-composed-ref: 1.4.0(@types/react@19.2.14)(react@19.2.4)
-      use-latest: 1.3.0(@types/react@19.2.14)(react@19.2.4)
-    transitivePeerDependencies:
-      - '@types/react'
-
-  react-transition-group@4.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-transition-group@4.4.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@babel/runtime': 7.29.2
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
-  react-use-measure@2.1.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-use-measure@2.1.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
 
   react@18.2.0:
     dependencies:
       loose-envify: 1.4.0
 
-  react@19.2.4: {}
+  react@19.2.5: {}
 
   read-package-up@11.0.0:
     dependencies:
@@ -28318,21 +28198,21 @@ snapshots:
 
   real-require@0.2.0: {}
 
-  recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@19.0.0)(react@19.2.4)(redux@5.0.1):
+  recharts@3.8.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-is@19.0.0)(react@19.2.5)(redux@5.0.1):
     dependencies:
-      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1))(react@19.2.4)
+      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.5)(redux@5.0.1))(react@19.2.5)
       clsx: 2.1.1
       decimal.js-light: 2.5.1
       es-toolkit: 1.45.1
       eventemitter3: 5.0.4
       immer: 10.2.0
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
       react-is: 19.0.0
-      react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1)
+      react-redux: 9.2.0(@types/react@19.2.14)(react@19.2.5)(redux@5.0.1)
       reselect: 5.1.1
       tiny-invariant: 1.3.3
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      use-sync-external-store: 1.6.0(react@19.2.5)
       victory-vendor: 37.3.6
     transitivePeerDependencies:
       - '@types/react'
@@ -29139,7 +29019,7 @@ snapshots:
 
   stubborn-utils@1.0.2: {}
 
-  styled-components@6.3.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  styled-components@6.3.12(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       '@emotion/unitless': 0.10.0
@@ -29147,12 +29027,12 @@ snapshots:
       css-to-react-native: 3.2.0
       csstype: 3.2.3
       postcss: 8.4.49
-      react: 19.2.4
+      react: 19.2.5
       shallowequal: 1.1.0
       stylis: 4.3.6
       tslib: 2.8.1
     optionalDependencies:
-      react-dom: 19.2.4(react@19.2.4)
+      react-dom: 19.2.5(react@19.2.5)
 
   stylis@4.3.6: {}
 
@@ -29226,9 +29106,9 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  suspend-react@0.1.3(react@19.2.4):
+  suspend-react@0.1.3(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
   svg-parser@2.0.4: {}
 
@@ -29602,9 +29482,9 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  tunnel-rat@0.1.2(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4):
+  tunnel-rat@0.1.2(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5):
     dependencies:
-      zustand: 4.5.7(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)
+      zustand: 4.5.7(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -29926,43 +29806,24 @@ snapshots:
 
   urlpattern-polyfill@8.0.2: {}
 
-  use-callback-ref@1.3.3(@types/react@19.2.14)(react@19.2.4):
+  use-callback-ref@1.3.3(@types/react@19.2.14)(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.14
 
-  use-composed-ref@1.4.0(@types/react@19.2.14)(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-    optionalDependencies:
-      '@types/react': 19.2.14
-
-  use-isomorphic-layout-effect@1.2.1(@types/react@19.2.14)(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-    optionalDependencies:
-      '@types/react': 19.2.14
-
-  use-latest@1.3.0(@types/react@19.2.14)(react@19.2.4):
-    dependencies:
-      react: 19.2.4
-      use-isomorphic-layout-effect: 1.2.1(@types/react@19.2.14)(react@19.2.4)
-    optionalDependencies:
-      '@types/react': 19.2.14
-
-  use-sidecar@1.1.3(@types/react@19.2.14)(react@19.2.4):
+  use-sidecar@1.1.3(@types/react@19.2.14)(react@19.2.5):
     dependencies:
       detect-node-es: 1.1.0
-      react: 19.2.4
+      react: 19.2.5
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.14
 
-  use-sync-external-store@1.6.0(react@19.2.4):
+  use-sync-external-store@1.6.0(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
 
   utf-8-validate@5.0.10:
     dependencies:
@@ -30746,17 +30607,17 @@ snapshots:
     dependencies:
       tslib: 2.3.0
 
-  zustand@4.5.7(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4):
+  zustand@4.5.7(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5):
     dependencies:
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      use-sync-external-store: 1.6.0(react@19.2.5)
     optionalDependencies:
       '@types/react': 19.2.14
       immer: 11.1.4
-      react: 19.2.4
+      react: 19.2.5
 
-  zustand@5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4)):
+  zustand@5.0.12(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)):
     optionalDependencies:
       '@types/react': 19.2.14
       immer: 11.1.4
-      react: 19.2.4
-      use-sync-external-store: 1.6.0(react@19.2.4)
+      react: 19.2.5
+      use-sync-external-store: 1.6.0(react@19.2.5)

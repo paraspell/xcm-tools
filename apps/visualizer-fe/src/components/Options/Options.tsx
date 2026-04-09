@@ -9,7 +9,7 @@ export const Options = () => {
     keyPrefix: 'settings'
   });
   return (
-    <Grid gutter="xl">
+    <Grid gap="xl">
       <Grid.Col
         span={{
           base: 12,

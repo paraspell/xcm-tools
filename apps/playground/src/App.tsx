@@ -7,7 +7,7 @@ import {
   CodeHighlightAdapterProvider,
   createHighlightJsAdapter,
 } from '@mantine/code-highlight';
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, v8CssVariablesResolver } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import hljs from 'highlight.js/lib/core';
 import tsLang from 'highlight.js/lib/languages/typescript';
@@ -26,7 +26,10 @@ const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
 export const App = () => (
   <BrowserRouter>
-    <MantineProvider theme={theme}>
+    <MantineProvider
+      theme={theme}
+      cssVariablesResolver={v8CssVariablesResolver}
+    >
       <NuqsAdapter>
         <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
           <Notifications />

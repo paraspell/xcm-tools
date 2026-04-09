@@ -6,7 +6,7 @@ type Props = {
 };
 
 export const VersionBadge: FC<Props> = ({ version }) => (
-  <Badge variant="light" radius="xl" mb="md" style={{ textTransform: 'unset' }}>
+  <Badge variant="dot" radius="xl" mb="md" style={{ textTransform: 'unset' }}>
     v{version}
   </Badge>
 );
