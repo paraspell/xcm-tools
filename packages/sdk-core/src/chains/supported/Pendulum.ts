@@ -4,8 +4,14 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
+import type {
+  IXTokensTransfer,
+  TTransferLocalOptions,
+  TXcmAsset,
+  TXTokensTransferOptions
+} from '../../types'
 import { assertHasId } from '../../utils'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import Chain from '../Chain'
 
 class Pendulum<TApi, TRes, TSigner>
@@ -34,6 +40,22 @@ class Pendulum<TApi, TRes, TSigner>
       },
       currencySelection
     )
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, recipient } = options
+
+    const amount = getLocalTransferAmount(options)
+
+    return api.deserializeExtrinsics({
+      module: 'Currencies',
+      method: 'transfer',
+      params: {
+        dest: { Id: recipient },
+        currency_id: this.getCustomCurrencyId(asset),
+        amount
+      }
+    })
   }
 }
 

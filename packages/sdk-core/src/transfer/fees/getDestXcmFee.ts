@@ -3,30 +3,30 @@
 
 import type { TCurrencyCore } from '@paraspell/assets'
 import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
-import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
-import { isExternalChain, isRelayChain, Parents, Version } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { isExternalChain, isRelayChain, Parents } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { DOT_LOCATION } from '../../constants'
 import type { TDestXcmFeeDetail } from '../../types'
 import { type TGetFeeForDestChainOptions } from '../../types'
-import { addXcmVersionHeader, normalizeAmount } from '../../utils'
+import { addXcmVersionHeader, createX1Payload, normalizeAmount } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
 
-export const createOriginLocation = (origin: TSubstrateChain, destination: TChain): TLocation => {
+export const createOriginLocation = (
+  origin: TSubstrateChain,
+  destination: TChain,
+  version: Version
+): TLocation => {
   if (isRelayChain(origin)) return DOT_LOCATION
 
   return {
     parents: isRelayChain(destination) ? Parents.ZERO : Parents.ONE,
-    interior: {
-      X1: [
-        {
-          Parachain: getParaId(origin)
-        }
-      ]
-    }
+    interior: createX1Payload(version, {
+      Parachain: getParaId(origin)
+    })
   }
 }
 
@@ -110,7 +110,10 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
   }
 
   const dryRunResult = await api.getDryRunXcm({
-    originLocation: addXcmVersionHeader(createOriginLocation(hopChain, destination), Version.V4),
+    originLocation: addXcmVersionHeader(
+      createOriginLocation(hopChain, destination, version),
+      version
+    ),
     tx,
     xcm: forwardedXcms[1][0],
     chain: destination,

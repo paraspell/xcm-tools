@@ -27,6 +27,7 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
+  createAssetId,
   createClientCache,
   createClientPoolHelpers,
   DEFAULT_TTL_MS,
@@ -494,12 +495,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
     const weight: TWeight | undefined = actualWeight ? actualWeight : undefined;
 
-    const destParaId =
-      forwardedXcms.length === 0
-        ? undefined
-        : forwardedXcms[0].value.interior.type === "Here"
-          ? 0
-          : forwardedXcms[0].value.interior.value[0].value;
+    const destParaId = this.extractDestParaId(forwardedXcms);
 
     const localXcm = resValue?.localXcm;
 
@@ -579,14 +575,12 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location);
 
-    const transformedAssetLoc = transform(assetLocalizedLoc);
+    const assetId = createAssetId(version, assetLocalizedLoc);
+    const transformedAssetId = transform(addXcmVersionHeader(assetId, version));
 
     const execFeeRes = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weight,
-      {
-        type: version,
-        value: transformedAssetLoc,
-      },
+      transformedAssetId,
     );
 
     let execFee = typeof execFeeRes?.value === "bigint" ? execFeeRes.value : 0n;
@@ -641,9 +635,9 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
         if (message.includes("Expected 3 parameters")) {
           usedThirdParam = true;
-          const versionedAssetLoc = addXcmVersionHeader(
-            assetLocalizedLoc,
-            version,
+          const assetId = createAssetId(version, assetLocalizedLoc);
+          const versionedAssetLoc = transform(
+            addXcmVersionHeader(assetId, version),
           );
           deliveryFeeRes = await this.api.call.xcmPaymentApi.queryDeliveryFees(
             ...baseArgs,
@@ -737,6 +731,17 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     };
   }
 
+  extractDestParaId(forwardedXcms: any[]): number | undefined {
+    const first = forwardedXcms[0];
+    const interior = first?.value?.interior;
+
+    return forwardedXcms.length === 0
+      ? undefined
+      : interior?.type === "Here"
+        ? 0
+        : (interior?.value?.[0]?.value ?? interior?.value?.value);
+  }
+
   async getDryRunXcm({
     originLocation,
     xcm,
@@ -777,12 +782,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
         ? result.value.forwardedXcms[0]
         : [];
 
-    const destParaId =
-      forwardedXcms.length === 0
-        ? undefined
-        : forwardedXcms[0].value.interior.type === "Here"
-          ? 0
-          : forwardedXcms[0].value.interior.value[0].value;
+    const destParaId = this.extractDestParaId(forwardedXcms);
 
     if (hasXcmPaymentApiSupport(chain)) {
       const fee = await this.getXcmPaymentApiFee(

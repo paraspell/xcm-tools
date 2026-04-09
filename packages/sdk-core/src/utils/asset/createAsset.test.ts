@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import { addXcmVersionHeader } from '../xcm-version'
-import { createAsset, createId, createVersionedAssets } from './createAsset'
+import { createAsset, createAssetId, createVersionedAssets } from './createAsset'
 
 vi.mock('../xcm-version')
 
@@ -13,13 +13,13 @@ const mockLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 
 
 describe('createId', () => {
   it('should create a V3 id with Concrete wrapper', () => {
-    const result = createId(Version.V3, mockLocation)
+    const result = createAssetId(Version.V3, mockLocation)
     const expectedId: TAsset['id'] = { Concrete: mockLocation }
     expect(result).toEqual(expectedId)
   })
 
   it('should create a V4 id without Concrete wrapper', () => {
-    const result = createId(Version.V4, mockLocation)
+    const result = createAssetId(Version.V4, mockLocation)
     const expectedId: TAsset['id'] = mockLocation
     expect(result).toEqual(expectedId)
   })
