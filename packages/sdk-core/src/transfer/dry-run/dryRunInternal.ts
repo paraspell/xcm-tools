@@ -127,7 +127,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
 
     const hopDryRun = await hopApi.getDryRunXcm({
       originLocation: addXcmVersionHeader(
-        createOriginLocation(currentOrigin, currentChain),
+        createOriginLocation(currentOrigin, currentChain, resolvedVersion),
         resolvedVersion
       ),
       tx,

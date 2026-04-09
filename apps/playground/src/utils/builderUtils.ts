@@ -210,9 +210,7 @@ export const setupBaseBuilder = (
     finalBuilder = finalBuilder.xcmVersion(xcmVersion);
   }
 
-  if (keepAlive) {
-    finalBuilder = finalBuilder.keepAlive(keepAlive);
-  }
+  finalBuilder = finalBuilder.keepAlive(keepAlive);
 
   if (pallet && method) {
     finalBuilder = finalBuilder.customPallet(pallet, method);

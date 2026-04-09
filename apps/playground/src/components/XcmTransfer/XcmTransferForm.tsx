@@ -130,7 +130,10 @@ export const XcmTransferForm: FC<Props> = ({
       return {
         ...values,
         // Use keepAlive only for local transfers
-        keepAlive: from === to && !swapOptions.currencyTo ? keepAlive : false,
+        keepAlive:
+          from === to && !swapOptions.currencyTo.currencyOptionId
+            ? keepAlive
+            : false,
       };
     },
     validate: {

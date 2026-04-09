@@ -27,6 +27,7 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
+  createAssetId,
   createClientCache,
   createClientPoolHelpers,
   DEFAULT_TTL_MS,
@@ -484,9 +485,11 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
+    const assetId = createAssetId(version, assetLocalizedLoc)
+
     const feeResult = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weight,
-      addXcmVersionHeader(assetLocalizedLoc, version)
+      addXcmVersionHeader(assetId, version)
     )
 
     const execFeeRes = feeResult.toJSON() as any
@@ -536,7 +539,8 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
         if (message.includes('Expected 3 arguments')) {
           usedThirdParam = true
-          const versionedAssetLoc = addXcmVersionHeader(assetLocalizedLoc, version)
+          const assetId = createAssetId(version, assetLocalizedLoc)
+          const versionedAssetLoc = addXcmVersionHeader(assetId, version)
           deliveryFeeRes = await this.api.call.xcmPaymentApi.queryDeliveryFees(
             ...baseArgs,
             versionedAssetLoc

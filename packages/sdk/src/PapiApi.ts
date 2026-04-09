@@ -29,6 +29,7 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
+  createAssetId,
   createClientCache,
   createClientPoolHelpers,
   DEFAULT_TTL_MS,
@@ -570,7 +571,8 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
         // with a generic "Cannot read properties of undefined".
         if (message.includes('Cannot read properties of undefined')) {
           usedThirdParam = true
-          const transformedAssetLoc = transform(addXcmVersionHeader(assetLocalizedLoc, version))
+          const assetId = createAssetId(version, assetLocalizedLoc)
+          const transformedAssetLoc = transform(addXcmVersionHeader(assetId, version))
           deliveryFeeRes = await xcmPaymentApi.query_delivery_fees(...baseArgs, transformedAssetLoc)
         } else {
           throw e
@@ -629,14 +631,14 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     const assetLocalizedLoc = localizeLocation(chain, asset.location)
 
-    const transformedAssetLoc = transform(assetLocalizedLoc)
+    const assetId = createAssetId(version, assetLocalizedLoc)
+    const versionedAssetId = addXcmVersionHeader(assetId, version)
+
+    const transformedAssetLoc = transform(versionedAssetId)
 
     const execFeeRes = await this.api
       .getUnsafeApi()
-      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, {
-        type: version,
-        value: transformedAssetLoc
-      })
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, transformedAssetLoc)
 
     let execFee = typeof execFeeRes?.value === 'bigint' ? execFeeRes.value : 0n
 
