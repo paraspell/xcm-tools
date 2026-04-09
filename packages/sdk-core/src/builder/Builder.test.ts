@@ -746,6 +746,30 @@ describe('Builder', () => {
       expect(disconnectAllowedSpy).not.toHaveBeenCalled()
       expect(disconnectSpy).toHaveBeenCalledWith()
     })
+
+    it('should pass override pallet and method', async () => {
+      const pallet = 'XcmPallet'
+      const method = 'transfer'
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency({ symbol: 'DOT', amount: AMOUNT })
+        .recipient(ADDRESS)
+        .customPallet(pallet, method)
+        .build()
+
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: CHAIN,
+          to: CHAIN_2,
+          currency: { symbol: 'DOT', amount: AMOUNT },
+          recipient: ADDRESS,
+          pallet: pallet,
+          method: method
+        })
+      )
+    })
   })
 
   describe('Claim asset', () => {
