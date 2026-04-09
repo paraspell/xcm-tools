@@ -7,12 +7,9 @@ import {
   getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
-  SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
-import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as utils from '../utils.js';
 import { PalletsService } from './pallets.service.js';
 import { validatePallet } from './utils/index.js';
 
@@ -43,7 +40,6 @@ vi.mock('./utils/index.js', () => ({
 
 describe('PalletsService', () => {
   let service: PalletsService;
-  let validateChainSpy: MockInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -51,7 +47,6 @@ describe('PalletsService', () => {
     }).compile();
 
     service = module.get<PalletsService>(PalletsService);
-    validateChainSpy = vi.spyOn(utils, 'validateChain');
   });
 
   afterEach(() => {
@@ -68,10 +63,6 @@ describe('PalletsService', () => {
 
       const result = service.getDefaultPallet(mockChain);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(getDefaultPallet).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(JSON.stringify(mockPallet));
     });
@@ -83,10 +74,6 @@ describe('PalletsService', () => {
 
       const result = service.getPallets(mockChain);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(getSupportedPallets).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(mockPallets);
     });
@@ -100,10 +87,6 @@ describe('PalletsService', () => {
 
       const result = service.getPalletIndex(mockChain, mockPallet);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(validatePallet).toHaveBeenCalledWith(mockPallet);
       expect(getPalletIndex).toHaveBeenCalledWith(mockChain, mockPallet);
       expect(result).toEqual(expectedIndex);
@@ -116,10 +99,6 @@ describe('PalletsService', () => {
 
       const result = service.getNativeAssetsPallet(mockChain);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(getNativeAssetsPallet).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(JSON.stringify(mockNativeAssetsPallet));
     });
@@ -131,10 +110,6 @@ describe('PalletsService', () => {
 
       const result = service.getOtherAssetsPallets(mockChain);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(getOtherAssetsPallets).toHaveBeenCalledWith(mockChain);
       expect(result).toEqual(mockOtherAssetsPallets);
     });

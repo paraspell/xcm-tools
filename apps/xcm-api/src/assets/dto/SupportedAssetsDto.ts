@@ -1,9 +1,9 @@
-import { IsNotEmpty } from 'class-validator';
+import { CHAINS } from '@paraspell/sdk';
+import { z } from 'zod';
 
-export class SupportedAssetsDto {
-  @IsNotEmpty()
-  origin: string;
+export const SupportedAssetsDtoSchema = z.object({
+  origin: z.enum(CHAINS),
+  destination: z.enum(CHAINS),
+});
 
-  @IsNotEmpty()
-  destination: string;
-}
+export type SupportedAssetsDto = z.infer<typeof SupportedAssetsDtoSchema>;

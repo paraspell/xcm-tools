@@ -5,39 +5,32 @@ import {
   getOtherAssetsPallets,
   getPalletIndex,
   getSupportedPallets,
-  SUBSTRATE_CHAINS,
   TSubstrateChain,
 } from '@paraspell/sdk';
 
-import { validateChain } from '../utils.js';
 import { validatePallet } from './utils/index.js';
 
 @Injectable()
 export class PalletsService {
-  getDefaultPallet(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return JSON.stringify(getDefaultPallet(chain as TSubstrateChain));
+  getDefaultPallet(chain: TSubstrateChain) {
+    return JSON.stringify(getDefaultPallet(chain));
   }
 
-  getPallets(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return getSupportedPallets(chain as TSubstrateChain);
+  getPallets(chain: TSubstrateChain) {
+    return getSupportedPallets(chain);
   }
 
-  getNativeAssetsPallet(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return JSON.stringify(getNativeAssetsPallet(chain as TSubstrateChain));
+  getNativeAssetsPallet(chain: TSubstrateChain) {
+    return JSON.stringify(getNativeAssetsPallet(chain));
   }
 
-  getOtherAssetsPallets(chain: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
-    return getOtherAssetsPallets(chain as TSubstrateChain);
+  getOtherAssetsPallets(chain: TSubstrateChain) {
+    return getOtherAssetsPallets(chain);
   }
 
-  getPalletIndex(chain: string, pallet: string) {
-    validateChain(chain, SUBSTRATE_CHAINS);
+  getPalletIndex(chain: TSubstrateChain, pallet: string) {
     const palletTyped = validatePallet(pallet);
-    const index = getPalletIndex(chain as TSubstrateChain, palletTyped);
+    const index = getPalletIndex(chain, palletTyped);
     return index === undefined ? null : index;
   }
 }

@@ -1,12 +1,11 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { CHAINS, type TChain } from '@paraspell/sdk';
+import type { TChain } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as utils from '../utils.js';
 import { ChainConfigsService } from './chain-configs.service.js';
 
 vi.mock('@paraspell/sdk', async () => {
@@ -46,7 +45,6 @@ describe('AssetsService', () => {
 
   describe('getParaId', () => {
     const paraId = 2000;
-    const invalidChain = 'InvalidChain';
     let getParaIdSpy: MockInstance;
 
     beforeEach(() => {
@@ -58,20 +56,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(paraId);
       expect(getParaIdSpy).toHaveBeenCalledWith(chain);
-    });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-      expect(() => service.getParaId(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getParaIdSpy).not.toHaveBeenCalled();
     });
   });
 

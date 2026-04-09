@@ -2,7 +2,6 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import {
-  CHAINS,
   type TAssetInfo,
   type TChain,
   type TChainAssetsInfo,
@@ -11,7 +10,6 @@ import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as utils from '../utils.js';
 import { AssetsService } from './assets.service.js';
 
 vi.mock('@paraspell/sdk', async (importActual) => ({
@@ -22,7 +20,6 @@ vi.mock('@paraspell/sdk', async (importActual) => ({
 describe('AssetsService', () => {
   let service: AssetsService;
   const chain: TChain = 'Acala';
-  const invalidChain = 'InvalidChain';
   const symbol = 'DOT';
   const unknownSymbol = 'UNKNOWN';
   const assetId = '1';
@@ -79,29 +76,11 @@ describe('AssetsService', () => {
         ],
       };
 
-      const validateChainSpy = vi.spyOn(utils, 'validateChain');
-
       getAssetsObjectSpy.mockImplementation(() => assetsObject);
 
       const result = service.getAssetsObject(chain);
       expect(result).toEqual(assetsObject);
-      expect(validateChainSpy).toHaveBeenCalledWith(chain, CHAINS);
       expect(getAssetsObjectSpy).toHaveBeenCalledWith(chain);
-    });
-
-    it('should throw if chain is invalid', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getAssetsObject(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAssetsObjectSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -133,21 +112,6 @@ describe('AssetsService', () => {
       );
       expect(getAssetIdSpy).toHaveBeenCalledWith(chain, unknownSymbol);
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getAssetId(invalidChain, symbol)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAssetIdSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('getAssetLocation', () => {
@@ -171,21 +135,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(JSON.stringify(assetLocation));
       expect(getAssetLocationSpy).toHaveBeenCalledWith(chain, { symbol });
-    });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() =>
-        service.getAssetLocation(invalidChain, { currency: { symbol } }),
-      ).toThrow(BadRequestException);
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAssetLocationSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -242,21 +191,6 @@ describe('AssetsService', () => {
         destination,
       );
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() =>
-        service.getAssetInfo(invalidChain, { currency: { symbol } }),
-      ).toThrow(BadRequestException);
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAssetInfoSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('getRelayChainSymbol', () => {
@@ -278,21 +212,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(JSON.stringify(relayChainSymbol));
       expect(getRelayChainSymbolSpy).toHaveBeenCalledWith(chain);
-    });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getRelayChainSymbol(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getRelayChainSymbolSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -316,21 +235,6 @@ describe('AssetsService', () => {
       expect(result).toEqual(nativeAssets);
       expect(getNativeAssetsSpy).toHaveBeenCalledWith(chain);
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getNativeAssets(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getNativeAssetsSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('getOtherAssets', () => {
@@ -353,21 +257,6 @@ describe('AssetsService', () => {
       expect(result).toEqual(otherAssets);
       expect(getOtherAssetsSpy).toHaveBeenCalledWith(chain);
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getOtherAssets(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getOtherAssetsSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('getAllAssetsSymbols', () => {
@@ -389,21 +278,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(allAssetSymbols);
       expect(getAllAssetsSymbolsSpy).toHaveBeenCalledWith(chain);
-    });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getAllAssetsSymbols(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAllAssetsSymbolsSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -438,21 +312,6 @@ describe('AssetsService', () => {
       );
       expect(getAssetDecimalsSpy).toHaveBeenCalledWith(chain, unknownSymbol);
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getDecimals(invalidChain, symbol)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(getAssetDecimalsSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('hasSupportForAsset', () => {
@@ -483,21 +342,6 @@ describe('AssetsService', () => {
       expect(result).toEqual(false);
       expect(hasSupportForAssetSpy).toHaveBeenCalledWith(chain, unknownSymbol);
     });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.hasSupportForAsset(invalidChain, symbol)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
-      expect(hasSupportForAssetSpy).not.toHaveBeenCalled();
-    });
   });
 
   describe('getSupportedAssets', () => {
@@ -525,46 +369,6 @@ describe('AssetsService', () => {
         originChain,
         destChain,
       );
-    });
-
-    it('should throw BadRequestException for invalid origin chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      const originChain = 'InvalidChain';
-      const destChain = 'Karura';
-
-      expect(() => service.getSupportedAssets(originChain, destChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(originChain, CHAINS);
-      expect(getSupportedAssetsSpy).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException for invalid destination chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation((chain: string) => {
-          if (chain === 'Acala') {
-            return;
-          }
-          throw new BadRequestException();
-        });
-
-      const originChain = 'Acala';
-      const destChain = 'InvalidChain';
-
-      expect(() => service.getSupportedAssets(originChain, destChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(originChain, CHAINS);
-      expect(validateChainSpy).toHaveBeenCalledWith(destChain, CHAINS);
-      expect(getSupportedAssetsSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -654,20 +458,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(feeAssets);
       expect(getFeeAssetsSpy).toHaveBeenCalledWith(chain);
-    });
-
-    it('should throw BadRequestException for invalid chain', () => {
-      const validateChainSpy = vi
-        .spyOn(utils, 'validateChain')
-        .mockImplementation(() => {
-          throw new BadRequestException();
-        });
-
-      expect(() => service.getFeeAssets(invalidChain)).toThrow(
-        BadRequestException,
-      );
-
-      expect(validateChainSpy).toHaveBeenCalledWith(invalidChain, CHAINS);
     });
   });
 });

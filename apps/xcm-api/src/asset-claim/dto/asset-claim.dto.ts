@@ -1,3 +1,4 @@
+import { SUBSTRATE_CHAINS } from '@paraspell/sdk';
 import { z } from 'zod';
 
 import {
@@ -7,7 +8,7 @@ import {
 } from '../../x-transfer/dto/XTransferDto.js';
 
 export const AssetClaimSchema = z.object({
-  from: z.string().optional(),
+  from: z.enum(SUBSTRATE_CHAINS),
   currency: z.union([
     CurrencyCoreWithAmountSchema,
     z.array(AssetSchema),

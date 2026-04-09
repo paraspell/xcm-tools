@@ -12,8 +12,8 @@ describe('AssetClaimController', () => {
   let assetClaimService: AssetClaimService;
   let analyticsService: AnalyticsService;
 
-  const bodyParams = {
-    from: 'address1',
+  const bodyParams: AssetClaimDto = {
+    from: 'Acala',
     currency: [
       {
         id: { parents: 1, interior: { X1: { Parachain: 2000 } } },
@@ -23,7 +23,7 @@ describe('AssetClaimController', () => {
       },
     ],
     address: 'address2',
-  } as AssetClaimDto;
+  };
 
   beforeEach(() => {
     assetClaimService = {
@@ -57,7 +57,7 @@ describe('AssetClaimController', () => {
     expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams);
 
     expect(spyTrack).toHaveBeenCalledWith(EventName.CLAIM_ASSETS, req, {
-      from: 'address1',
+      from: 'Acala',
       assetLength: 1,
     });
 

@@ -583,7 +583,7 @@ describe('XCM API (e2e)', () => {
         })
         .expect(400)
         .expect((res) => {
-          expect(res.body.message).toContain('Invalid wallet address.');
+          expect(res.body.message).toContain('Invalid address:');
         });
     });
 

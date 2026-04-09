@@ -2,15 +2,9 @@ import { BadRequestException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TSubstrateChain } from '@paraspell/sdk';
-import {
-  convertSs58,
-  InvalidAddressError,
-  SUBSTRATE_CHAINS,
-} from '@paraspell/sdk';
-import type { MockInstance } from 'vitest';
+import { convertSs58, InvalidAddressError } from '@paraspell/sdk';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as utils from '../utils.js';
 import { AddressService } from './address.service.js';
 
 const mockOutputAddress = '5Hrj...';
@@ -22,7 +16,6 @@ vi.mock('@paraspell/sdk', async (importActual) => ({
 
 describe('AddressService', () => {
   let service: AddressService;
-  let validateChainSpy: MockInstance;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,7 +23,6 @@ describe('AddressService', () => {
     }).compile();
 
     service = module.get<AddressService>(AddressService);
-    validateChainSpy = vi.spyOn(utils, 'validateChain');
   });
 
   afterEach(() => {
@@ -48,10 +40,6 @@ describe('AddressService', () => {
 
       const result = service.convertSs58(mockAddress, mockChain);
 
-      expect(validateChainSpy).toHaveBeenCalledWith(
-        mockChain,
-        SUBSTRATE_CHAINS,
-      );
       expect(convertSs58).toHaveBeenCalledWith(mockAddress, mockChain);
       expect(result).toEqual(mockOutputAddress);
     });

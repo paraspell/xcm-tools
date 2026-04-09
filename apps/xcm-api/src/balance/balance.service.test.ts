@@ -17,9 +17,6 @@ vi.mock('@paraspell/sdk', async () => {
     ...actual,
     getBalance: vi.fn(),
     getExistentialDeposit: vi.fn(),
-    CHAIN_NAMES_DOT_KSM: ['valid-chain'],
-    CHAINS_WITH_RELAY_CHAINS: ['valid-chain'],
-    CHAINS_WITH_RELAY_CHAINS_DOT_KSM: ['valid-chain'],
   };
 });
 
@@ -34,7 +31,7 @@ describe('BalanceService', () => {
 
   describe('getBalance', () => {
     it('should return asset balance as a string for a valid chain', async () => {
-      const validChain = 'valid-chain';
+      const validChain = 'Acala';
       const params: BalanceDto = {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
@@ -54,7 +51,7 @@ describe('BalanceService', () => {
     });
 
     it('should throw BadRequestException for InvalidCurrencyError', async () => {
-      const validChain = 'valid-chain';
+      const validChain = 'Acala';
       const params: BalanceDto = {
         address: '0x1234567890',
         currency: { symbol: 'INVALID_CURRENCY_XYZ' },
@@ -70,7 +67,7 @@ describe('BalanceService', () => {
     });
 
     it('should throw BadRequestException for InvalidAddressError', async () => {
-      const validChain = 'valid-chain';
+      const validChain = 'Acala';
       const params: BalanceDto = {
         address: 'invalid-address',
         currency: { symbol: 'UNQ' },
@@ -88,7 +85,7 @@ describe('BalanceService', () => {
 
   describe('getExistentialDeposit', () => {
     it('should return existential deposit for a valid chain', () => {
-      const validChain = 'valid-chain';
+      const validChain = 'Acala';
       const params: ExistentialDepositDto = {
         currency: { symbol: 'DOT' },
       };
@@ -106,7 +103,7 @@ describe('BalanceService', () => {
     });
 
     it('should throw BadRequestException for InvalidCurrencyError', () => {
-      const validChain = 'valid-chain';
+      const validChain = 'Acala';
       const params: ExistentialDepositDto = {
         currency: { symbol: 'INVALID_CURRENCY_XYZ' },
       };

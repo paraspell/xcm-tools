@@ -203,10 +203,11 @@ export class GeneralBuilder<
   /**
    * Sets a custom pallet for the transaction.
    *
-   * @param palletName - The name of the custom pallet to be used.
+   * @param pallet - The name of the custom pallet to be used.
+   * @param method - The name of the method to be used.
    * @returns An instance of the Builder.
    */
-  customPallet(pallet: string, method: string) {
+  customPallet(pallet: string | undefined, method: string | undefined) {
     return new GeneralBuilder(this.api, this.batchManager, { ...this._options, pallet, method })
   }
 

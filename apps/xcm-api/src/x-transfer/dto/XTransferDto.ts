@@ -1,4 +1,10 @@
-import { EXCHANGE_CHAINS, TRANSACT_ORIGINS, Version } from '@paraspell/sdk';
+import {
+  CHAINS,
+  EXCHANGE_CHAINS,
+  SUBSTRATE_CHAINS,
+  TRANSACT_ORIGINS,
+  Version,
+} from '@paraspell/sdk';
 import { LocationSchema } from '@paraspell/xcm-analyser';
 import { z } from 'zod';
 
@@ -140,12 +146,9 @@ const versionValues = Object.values(Version) as [Version, ...Version[]];
 
 export const XTransferDtoSchema = z
   .object({
-    from: z.string(),
-    to: z.union([z.string(), LocationSchema]),
-    recipient: z.union([
-      z.string().min(1, { message: 'Recipient is required' }),
-      LocationSchema,
-    ]),
+    from: z.enum(SUBSTRATE_CHAINS),
+    to: z.union([z.enum(CHAINS), LocationSchema]),
+    recipient: z.union([z.string(), LocationSchema]),
     currency: CurrencySchema,
     feeAsset: CurrencyCoreSchema.optional(),
     xcmVersion: z.enum(versionValues).optional().nullable(),
