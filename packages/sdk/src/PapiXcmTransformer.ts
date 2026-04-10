@@ -162,6 +162,11 @@ export const transform = (obj: any): any => {
           continue
         }
 
+        if (k === 'call') {
+          newObj[k] = v
+          continue
+        }
+
         if (k === 'currency_id' && typeof v === 'string') {
           try {
             newObj[k] = checkAndConvertToNumberOrBigInt(v)

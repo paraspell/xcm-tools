@@ -62,6 +62,7 @@ export const AssetsQueries = () => {
       'ASSET_INFO',
       'ASSET_RESERVE_CHAIN',
       'EXISTENTIAL_DEPOSIT',
+      'SUPPORTED_DESTINATIONS',
     ]);
 
     const hasCurrency = currency.isCustomCurrency
@@ -74,6 +75,11 @@ export const AssetsQueries = () => {
 
     if (useApi) {
       const endpoint = getApiEndpoint(func, formValues.chain);
+
+      if (func === 'CONVERT_SS58') {
+        return fetchFromApi({ address, chain }, endpoint, 'GET', false);
+      }
+
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(

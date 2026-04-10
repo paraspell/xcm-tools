@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from '@playwright/test';
 
 /*
 Code inspired by https://github.com/UniqueNetwork/client-tests-template
@@ -18,43 +18,41 @@ export class PolkadotjsExtensionPage {
   readonly passwordInput: Locator;
   readonly repeatPasswordInput: Locator;
   readonly polkadotExtensionCard: Locator;
-  readonly selectAllCheckbox: Locator;
   readonly confirmPrivacyOrMigrationNoticeButton: Locator;
   extensionId: string;
 
   constructor(page: Page) {
     this.page = page;
-    this.confirmButton = page.locator("//button");
+    this.confirmButton = page.locator('//button');
     this.acceptButton = page.locator(
-      '//button[contains(@class, "acceptButton")]'
+      '//button[contains(@class, "acceptButton")]',
     );
     this.addAccountIcon = page.locator(
-      '//div[contains(@class, "popupToggle")][1]'
+      '//div[contains(@class, "popupToggle")][1]',
     );
     this.importAccountFromSeedRow = page.locator(
-      '//span[text()="Import account from pre-existing seed"]'
+      '//span[text()="Import account from pre-existing seed"]',
     );
-    this.importAccountInput = page.locator("//textarea");
+    this.importAccountInput = page.locator('//textarea');
     this.fullAddress = page.locator('//div[@class="fullAddress"]');
     this.nextStepButton = page.locator(
-      '//button[div[contains(text(), "Next")]]'
+      '//button[div[contains(text(), "Next")]]',
     );
     this.addAccountButton = page.locator(
-      '//button[div[contains(text(), "Add the account with the supplied seed")]]'
+      '//button[div[contains(text(), "Add the account with the supplied seed")]]',
     );
     this.nameInput = page.locator(
-      '//label[text()="A descriptive name for your account"]/../input'
+      '//label[text()="A descriptive name for your account"]/../input',
     );
     this.passwordInput = page.locator(
-      '//label[text()="A new password for this account"]/../input'
+      '//label[text()="A new password for this account"]/../input',
     );
     this.repeatPasswordInput = page.locator(
-      '//label[text()="Repeat password for verification"]/../input'
+      '//label[text()="Repeat password for verification"]/../input',
     );
-    this.polkadotExtensionCard = page.locator("#detailsButton");
-    this.selectAllCheckbox = page.locator("Select all");
+    this.polkadotExtensionCard = page.locator('#detailsButton');
     this.confirmPrivacyOrMigrationNoticeButton = page.getByRole('button', {
-      name: /^(I Understand|Understood, let me continue)$/i
+      name: /^(I Understand|Understood, let me continue)$/i,
     });
   }
 
@@ -64,7 +62,7 @@ export class PolkadotjsExtensionPage {
   }
 
   async clickConfirm() {
-    await this.confirmPrivacyOrMigrationNoticeButton.click({ force: true })
+    await this.confirmPrivacyOrMigrationNoticeButton.click({ force: true });
     await this.confirmButton.click({ force: true });
   }
 
@@ -80,7 +78,7 @@ export class PolkadotjsExtensionPage {
       this.page = await this.page.context().newPage();
     }
     await this.page.goto(
-      `chrome-extension://${this.extensionId}/notification.html`
+      `chrome-extension://${this.extensionId}/notification.html`,
     );
     await this.page.waitForLoadState();
   }
@@ -88,24 +86,24 @@ export class PolkadotjsExtensionPage {
   async isPopupOpen() {
     await expect(
       this.page.locator(
-        '//div[label[contains(text(), "Password for this account")]]//input'
-      )
-    ).toBeVisible();
+        '//div[label[contains(text(), "Password for this account")]]//input',
+      ),
+    ).toBeVisible({ timeout: 25_000 });
   }
 
   async retrieveExtensionId() {
-    await this.page.goto("chrome://extensions/");
+    await this.page.goto('chrome://extensions/');
     await this.polkadotExtensionCard.click();
     await this.page.waitForLoadState();
     this.extensionId = new URL(this.page.url()).searchParams.get(
-      "id"
+      'id',
     ) as string;
   }
 
   async connectAccountByExtension(
     mnemonic: string,
     password: string,
-    accountName: string
+    accountName: string,
   ) {
     await this.addAccountIcon.click();
     await this.importAccountFromSeedRow.click();
@@ -118,8 +116,10 @@ export class PolkadotjsExtensionPage {
   }
 
   async connectAccountToHost() {
-    await this.page.locator("text=Select all").click();
-    await this.page.getByRole('button', { name: 'Connect 1 account(s)' }).click();
+    await this.page.locator('text=Select all').click();
+    await this.page
+      .getByRole('button', { name: 'Connect 1 account(s)' })
+      .click();
   }
 
   async close() {

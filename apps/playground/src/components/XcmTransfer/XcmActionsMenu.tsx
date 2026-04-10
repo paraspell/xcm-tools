@@ -45,6 +45,7 @@ export const XcmActionsMenu: FC<Props> = ({
           style={{
             borderLeft: '1px solid var(--mantine-color-mainColor-2)',
           }}
+          data-testid="btn-actions"
         >
           <IconChevronDown />
         </Button>

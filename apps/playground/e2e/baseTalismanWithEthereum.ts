@@ -20,7 +20,7 @@ const talismanExtensionPath = path.join(
   'apps',
   'extension',
   'dist',
-  'chrome'
+  'chrome',
 );
 
 const polkaAccount = {
@@ -160,7 +160,7 @@ export const baseTalismanWithEthereumTest = test.extend<{
 
 export const setupTalismanExtension = async (
   context: BrowserContext,
-  importAccounts: () => Promise<Page>
+  importAccounts: () => Promise<Page>,
 ) => {
   const appPage = await context.newPage();
   await appPage.goto('/');
@@ -169,6 +169,7 @@ export const setupTalismanExtension = async (
 
   const walletPopupPromise = context.waitForEvent('page');
   await appPage.getByRole('main').getByTestId('btn-connect-wallet').click();
+  await appPage.getByTestId('btn-wallet-type-substrate').click();
   await appPage.getByRole('button', { name: 'Talisman' }).click();
   const walletPopup = await walletPopupPromise;
 
@@ -191,6 +192,9 @@ export const setupTalismanExtension = async (
 };
 
 export const connectEVMAccount = async (appPage: Page) => {
+  await appPage.getByRole('main').getByTestId('btn-connect-wallet').click();
+  await appPage.getByTestId('btn-wallet-type-evm').click();
+
   const walletModal = appPage.getByRole('dialog', {
     name: 'Connect your wallet',
   });
