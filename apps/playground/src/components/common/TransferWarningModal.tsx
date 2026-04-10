@@ -8,7 +8,7 @@ import {
   ThemeIcon,
   Title,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { type FC, useCallback, useRef, useState } from 'react';
 
@@ -74,29 +74,33 @@ export const TransferWarningModal: FC<Props> = ({
 export const useTransferWarning = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const pendingCallbackRef = useRef<(() => void) | null>(null);
+  const [acknowledged, setAcknowledged] = useLocalStorage<boolean>({
+    key: STORAGE_KEY,
+    defaultValue: false,
+  });
 
   const guardTransfer = useCallback(
     (callback: () => void) => {
-      if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      if (acknowledged) {
         callback();
       } else {
         pendingCallbackRef.current = callback;
         open();
       }
     },
-    [open],
+    [acknowledged, open],
   );
 
   const onConfirm = useCallback(
     (dontShowAgain: boolean) => {
       if (dontShowAgain) {
-        localStorage.setItem(STORAGE_KEY, 'true');
+        setAcknowledged(true);
       }
       pendingCallbackRef.current?.();
       pendingCallbackRef.current = null;
       close();
     },
-    [close],
+    [close, setAcknowledged],
   );
 
   const onClose = useCallback(() => {

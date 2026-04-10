@@ -1,6 +1,7 @@
 import { Alert, Group, Text, Tooltip } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { IconAlertTriangle, IconInfoCircle } from '@tabler/icons-react';
-import { type FC, type ReactNode, useState } from 'react';
+import { type FC, type ReactNode } from 'react';
 
 import { TRANSFER_WARNING_TEXT } from '../../constants';
 
@@ -18,15 +19,15 @@ const titleNode: ReactNode = (
 );
 
 export const SubmitWarningAlert: FC = () => {
-  const [visible, setVisible] = useState(
-    () => localStorage.getItem(STORAGE_KEY) !== 'true',
-  );
+  const [dismissed, setDismissed] = useLocalStorage<boolean>({
+    key: STORAGE_KEY,
+    defaultValue: false,
+  });
 
-  if (!visible) return null;
+  if (dismissed) return null;
 
   const onDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, 'true');
-    setVisible(false);
+    setDismissed(true);
   };
 
   return (

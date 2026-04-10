@@ -184,7 +184,11 @@ export const XcmUtils = () => {
 
     const { useApi } = formValues;
 
-    const body = buildApiPayload(formValues, selectedAccountAddress, builderOptions);
+    const body = buildApiPayload(
+      formValues,
+      selectedAccountAddress,
+      builderOptions,
+    );
 
     let result;
     let apiEndpoint;

@@ -246,7 +246,13 @@ export const XcmTransferForm: FC<Props> = ({
 
       onSubmit(transformedValues, initialValues ? 'update' : submitType);
     },
-    [activeCurrencyMap, feeCurrencyMap, swapCurrencyToMap, initialValues, onSubmit],
+    [
+      activeCurrencyMap,
+      feeCurrencyMap,
+      swapCurrencyToMap,
+      initialValues,
+      onSubmit,
+    ],
   );
   const onSubmitInternal = (
     values: TFormValues,
