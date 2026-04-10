@@ -43,9 +43,8 @@ import {
   MAIN_FORM_NAME,
 } from '../../constants';
 import {
-  useCurrencyOptions,
+  useActiveCurrencyOptions,
   useFeeCurrencyOptions,
-  useSwapCurrencyOptions,
   useWallet,
 } from '../../hooks';
 import {
@@ -185,19 +184,22 @@ export const XcmTransferForm: FC<Props> = ({
 
   const { from, to, currencies, feeAsset } = form.getValues();
 
-  const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
+  const {
+    activeCurrencyOptions,
+    activeCurrencyMap,
+    currencyKey,
+    isNotParaToPara,
+    currencyMap,
+    swapCurrencyToMap,
+  } = useActiveCurrencyOptions(
+    form,
     from,
     to,
+    form.values.swapOptions.exchange,
   );
 
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
-
-  const { currencyToMap: swapCurrencyToMap } = useSwapCurrencyOptions(
-    from,
-    form.values.swapOptions.exchange,
-    to,
-  );
 
   const resolveAndSubmit = useCallback(
     (values: TFormValues, submitType: TSubmitType) => {
@@ -211,7 +213,7 @@ export const XcmTransferForm: FC<Props> = ({
 
       // Transform each currency entry
       const transformedCurrencies = normalizedValues.currencies.map((entry) =>
-        resolveCurrencyAsset(entry, currencyMap),
+        resolveCurrencyAsset(entry, activeCurrencyMap),
       );
 
       const transformedFeeAsset =
@@ -244,9 +246,8 @@ export const XcmTransferForm: FC<Props> = ({
 
       onSubmit(transformedValues, initialValues ? 'update' : submitType);
     },
-    [currencyMap, feeCurrencyMap, swapCurrencyToMap, initialValues, onSubmit],
+    [activeCurrencyMap, feeCurrencyMap, swapCurrencyToMap, initialValues, onSubmit],
   );
-
   const onSubmitInternal = (
     values: TFormValues,
     _event: FormEvent<HTMLFormElement> | undefined,
@@ -394,13 +395,13 @@ export const XcmTransferForm: FC<Props> = ({
                 <Group>
                   <Stack gap="xs" flex={1}>
                     <CurrencySelection
-                      key={from + to + index}
+                      key={currencyKey + index}
                       form={form}
                       fieldPath={`currencies.${index}`}
                       fieldValue={currencies[index]}
                       showOverrideLocation={currencies.length === 1}
                       size={currencies.length > 1 ? 'xs' : 'sm'}
-                      currencyOptions={currencyOptions}
+                      currencyOptions={activeCurrencyOptions}
                     />
                     <Group gap="xs" wrap="nowrap">
                       <TextInput

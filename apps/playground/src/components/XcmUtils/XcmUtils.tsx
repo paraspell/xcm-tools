@@ -17,6 +17,7 @@ import { useWallet } from '../../hooks';
 import type { TFormValuesTransformed, TSubmitType } from '../../types';
 import {
   addSwapToBuilder,
+  buildApiPayload,
   createBuilderOptions,
   determineCurrency,
   determineFeeAsset,
@@ -181,30 +182,9 @@ export const XcmUtils = () => {
 
     const { Builder } = await importSdk(apiType);
 
-    const { currencies, transformedFeeAsset, useApi } = formValues;
+    const { useApi } = formValues;
 
-    const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(c),
-      amount: c.isMax ? 'ALL' : c.amount,
-    }));
-
-    const body = {
-      ...formValues,
-      sender: selectedAccountAddress,
-      currency:
-        currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-      feeAsset: determineFeeAsset(transformedFeeAsset),
-      ...(formValues.transformedCurrencyTo
-        ? {
-            swapOptions: {
-              ...formValues.swapOptions,
-              currencyTo: determineCurrency(formValues.transformedCurrencyTo),
-            },
-          }
-        : {}),
-    };
-
-    console.log(body);
+    const body = buildApiPayload(formValues, selectedAccountAddress, builderOptions);
 
     let result;
     let apiEndpoint;
@@ -253,16 +233,7 @@ export const XcmUtils = () => {
 
     try {
       if (useApi) {
-        const { useApi, currencies, ...safeFormValues } = body;
-        result = await fetchFromApi(
-          {
-            ...safeFormValues,
-            options: builderOptions,
-          },
-          apiEndpoint,
-          'POST',
-          true,
-        );
+        result = await fetchFromApi(body, apiEndpoint, 'POST', true);
       } else {
         const builder = Builder(builderOptions);
         const finalBuilder = setupBaseBuilder(

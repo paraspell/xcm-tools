@@ -8,7 +8,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { GeneralBuilder, TCurrencyCore } from '@paraspell/sdk';
+import type { GeneralBuilder } from '@paraspell/sdk';
 import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
@@ -23,9 +23,8 @@ import type {
 } from '../../types';
 import type { TTransaction } from '../../utils';
 import {
+  buildApiPayload,
   createBuilderOptions,
-  determineCurrency,
-  determineFeeAsset,
   fetchFromApi,
   getTxFromApi,
   importSdk,
@@ -141,33 +140,7 @@ export const XcmTransfer = () => {
         api = await createChainClient(firstItem.from);
         tx = await getTxFromApi(
           {
-            transfers: items.map((item) => {
-              const { feeAsset, transformedFeeAsset, ...safeValues } = item;
-              const currencyInputs = item.currencies.map((c) => ({
-                ...determineCurrency(c),
-                amount: c.amount,
-              }));
-              return {
-                ...safeValues,
-                feeAsset: determineFeeAsset(transformedFeeAsset),
-                sender,
-                currency:
-                  currencyInputs.length === 1
-                    ? currencyInputs[0]
-                    : (currencyInputs as TCurrencyCore[]),
-                ...(item.transformedCurrencyTo?.currencyOptionId ||
-                item.transformedCurrencyTo?.isCustomCurrency
-                  ? {
-                      swapOptions: {
-                        ...item.swapOptions,
-                        currencyTo: determineCurrency(
-                          item.transformedCurrencyTo,
-                        ),
-                      },
-                    }
-                  : {}),
-              };
-            }),
+            transfers: items.map((item) => buildApiPayload(item, sender)),
             options: {
               mode: batchMode,
               ...builderOptions,
@@ -252,49 +225,17 @@ export const XcmTransfer = () => {
 
     const { Builder } = await importSdk(apiType);
 
-    const { currencies, useApi } = formValues;
-
-    const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(c),
-      amount: c.amount,
-    }));
+    const { useApi } = formValues;
 
     let result;
     if (useApi) {
-      const {
-        useApi,
-        currencies,
-        feeAsset,
-        transformedFeeAsset,
-        abstractDecimals,
-        swapOptions,
-        ...safeFormValues
-      } = formValues;
       result = await fetchFromApi(
-        {
-          ...safeFormValues,
-          options: {
-            ...builderOptions,
-            ...(submitType === 'dryRunPreview'
-              ? { mintFeeAssets: true }
-              : undefined),
-          },
-          sender,
-          currency:
-            currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-          feeAsset: determineFeeAsset(transformedFeeAsset),
-          ...(formValues.transformedCurrencyTo?.currencyOptionId ||
-          formValues.transformedCurrencyTo?.isCustomCurrency
-            ? {
-                swapOptions: {
-                  ...formValues.swapOptions,
-                  currencyTo: determineCurrency(
-                    formValues.transformedCurrencyTo,
-                  ),
-                },
-              }
-            : {}),
-        },
+        buildApiPayload(formValues, sender, {
+          ...builderOptions,
+          ...(submitType === 'dryRunPreview'
+            ? { mintFeeAssets: true }
+            : undefined),
+        }),
         submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
         'POST',
         true,
@@ -326,7 +267,7 @@ export const XcmTransfer = () => {
   ) => {
     const builderOptions = createBuilderOptions(formValues);
 
-    const { from, currencies, localAccount, swapOptions, useApi } = formValues;
+    const { from, localAccount, swapOptions, useApi } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -405,48 +346,11 @@ export const XcmTransfer = () => {
         return;
       }
 
-      const currencyInputs = currencies.map((c) => {
-        return {
-          ...determineCurrency(c),
-          amount: c.amount,
-        };
-      });
-
       let tx: TTransaction | undefined;
       let hash: string | undefined;
 
       if (useApi) {
-        const {
-          useApi,
-          currencies,
-          apiOverrides,
-          development,
-          feeAsset,
-          transformedFeeAsset,
-          abstractDecimals,
-          swapOptions,
-          ...safeFormValues
-        } = formValues;
-
-        const apiPayload = {
-          ...safeFormValues,
-          options: builderOptions,
-          feeAsset: determineFeeAsset(transformedFeeAsset),
-          sender,
-          currency:
-            currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs,
-          ...(formValues.transformedCurrencyTo?.currencyOptionId ||
-          formValues.transformedCurrencyTo?.isCustomCurrency
-            ? {
-                swapOptions: {
-                  ...formValues.swapOptions,
-                  currencyTo: determineCurrency(
-                    formValues.transformedCurrencyTo,
-                  ),
-                },
-              }
-            : {}),
-        };
+        const apiPayload = buildApiPayload(formValues, sender, builderOptions);
 
         if (
           swapOptions.currencyTo.currencyOptionId ||
