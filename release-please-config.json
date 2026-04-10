@@ -47,8 +47,7 @@
       "component": "xcm-api"
     },
     "apps/playground": {
-      "component": "playground",
-      "last-release-sha": "575f31071ed2d61a33b2f13fade720f97eab59bd"
+      "component": "playground"
     }
   },
   "group-pull-request-title-pattern": "chore${scope}: Release main libraries ${version}",
