@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.1.0...xcm-api-v14.0.0) (2026-04-10)
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify validation code 🔧 ([4bbca0f](https://github.com/paraspell/xcm-tools/commit/4bbca0fff7e41e4e9a99260c369f6e023ea29f84))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.0.1...xcm-api-v13.1.0) (2026-04-08)
 
 

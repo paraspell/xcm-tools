@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.1.0...sdk-pjs-v14.0.0) (2026-04-10)
+
+
+### Bug Fixes
+
+* Fix some XCM v3 transfers not working 🔧 ([536d291](https://github.com/paraspell/xcm-tools/commit/536d291e9820ca22b0febc215ebb80a4b7b8c9fe))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.0.1...sdk-pjs-v13.1.0) (2026-04-08)
 
 

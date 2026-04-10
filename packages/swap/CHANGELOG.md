@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.1.0...swap-v14.0.0) (2026-04-10)
+
+
+### Build System
+
+* Update to [@mantine](https://github.com/mantine) v9 📦 ([7244055](https://github.com/paraspell/xcm-tools/commit/724405546cf073b875ea401bd2d570a6c54c2d5a))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.0.1...swap-v13.1.0) (2026-04-08)
 
 
