@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.1.0...sdk-core-v13.2.0) (2026-04-10)
+
+
+### Bug Fixes
+
+* Fix some XCM v3 transfers not working 🔧 ([536d291](https://github.com/paraspell/xcm-tools/commit/536d291e9820ca22b0febc215ebb80a4b7b8c9fe))
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify validation code 🔧 ([4bbca0f](https://github.com/paraspell/xcm-tools/commit/4bbca0fff7e41e4e9a99260c369f6e023ea29f84))
+
+
+### Tests
+
+* **sdk-core:** Add test case for builder pallet/method override 🧪 ([4b0d49d](https://github.com/paraspell/xcm-tools/commit/4b0d49d1a256c5a53c028440e16c3b983b6636d8))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.0.1...sdk-core-v13.1.0) (2026-04-08)
 
 
