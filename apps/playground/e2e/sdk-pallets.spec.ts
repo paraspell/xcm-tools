@@ -11,14 +11,14 @@ const performPalletTest = async (
   await page.goto('/xcm-sdk/pallets');
 
   await page.getByTestId('select-chain').fill(chain);
-  await page.getByRole("option", {name: createName(chain)}).click();
+  await page.getByRole('option', { name: createName(chain) }).click();
 
   if (useApi) {
     await page.getByTestId('checkbox-api').check();
   }
 
   await page.getByTestId('select-func').click();
-  await page.getByRole("option", {name: funcName}).click();
+  await page.getByRole('option', { name: funcName }).click();
 
   await page.getByTestId('submit').click();
 

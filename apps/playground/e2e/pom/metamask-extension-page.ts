@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page } from '@playwright/test';
 
 /*
 Code inspired by https://github.com/UniqueNetwork/client-tests-template
@@ -26,43 +26,43 @@ export class MetamaskExtensionPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.metamaskExtensionCard = page.locator("#detailsButton");
+    this.metamaskExtensionCard = page.locator('#detailsButton');
     this.agreeToTermsCheckbox = page.locator(
-      '[data-testid="onboarding-terms-checkbox"]'
+      '[data-testid="onboarding-terms-checkbox"]',
     );
     this.declineDataCollectionButton = page.locator(
-      '[data-testid="metametrics-no-thanks"]'
+      '[data-testid="metametrics-no-thanks"]',
     );
     this.firstTimeFlowButton = page.locator(
-      '[data-testid="first-time-flow__button"]'
+      '[data-testid="first-time-flow__button"]',
     );
     this.cancelButton = page.locator(
-      '[data-testid="page-container-footer-cancel"]'
+      '[data-testid="page-container-footer-cancel"]',
     );
     this.confirmMnemonicButton = page.locator(
-      '[data-testid="import-srp-confirm"]'
+      '[data-testid="import-srp-confirm"]',
     );
     this.importWalletButton = page.locator(
-      '[data-testid="onboarding-import-wallet"]'
+      '[data-testid="onboarding-import-wallet"]',
     );
     this.newPasswordField = page.locator('[data-testid="create-password-new"]');
     this.repeatPasswordField = page.locator(
-      '[data-testid="create-password-confirm"]'
+      '[data-testid="create-password-confirm"]',
     );
     this.agreementCheckbox = page.locator(
-      '[data-testid="create-password-terms"]'
+      '[data-testid="create-password-terms"]',
     );
     this.confirmButton = page.locator('[data-testid="create-password-import"]');
     this.completeButton = page.locator(
-      '[data-testid="onboarding-complete-done"]'
+      '[data-testid="onboarding-complete-done"]',
     );
     this.nextButton = page.locator('[data-testid="pin-extension-next"]');
     this.doneButton = page.locator('[data-testid="pin-extension-done"]');
     this.connectNextButton = page.locator(
-      '[data-testid="page-container-footer-next"]'
+      '[data-testid="page-container-footer-next"]',
     );
     this.connectConfirmButton = page.locator(
-      '[data-testid="page-container-footer-next"]'
+      '[data-testid="page-container-footer-next"]',
     );
   }
 
@@ -80,24 +80,24 @@ export class MetamaskExtensionPage {
       await this.retrieveExtensionId();
     }
     await this.page.goto(
-      `chrome-extension://${this.extensionId}/notification.html`
+      `chrome-extension://${this.extensionId}/notification.html`,
     );
     await this.page.waitForLoadState();
   }
 
   async retrieveExtensionId() {
-    await this.page.goto("chrome://extensions/");
+    await this.page.goto('chrome://extensions/');
     await this.metamaskExtensionCard.click();
     await this.page.waitForLoadState();
     this.extensionId = new URL(this.page.url()).searchParams.get(
-      "id"
+      'id',
     ) as string;
   }
 
   async connectAccountByExtension(mnemonic: string, password: string) {
     await this.retrieveExtensionId();
     await this.page.goto(
-      `chrome-extension://${this.extensionId}/home.html#initialize/welcome`
+      `chrome-extension://${this.extensionId}/home.html#initialize/welcome`,
     );
     await this.agreeToTermsCheckbox.click();
     await this.importWalletButton.click();
@@ -114,7 +114,7 @@ export class MetamaskExtensionPage {
   }
 
   async fillFieldsWithMnemonic(mnemonic: string) {
-    const arr = mnemonic.split(" ");
+    const arr = mnemonic.split(' ');
     for (let i = 0; i < 12; i++) {
       await this.page.locator(`[id="import-srp__srp-word-${i}"]`).fill(arr[i]);
     }

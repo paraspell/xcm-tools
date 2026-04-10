@@ -297,6 +297,28 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should pass `call` through verbatim without recursing into it', () => {
+    type Call = {
+      Fungible: string
+      nested: { PalletInstance: number }
+      raw: string
+    }
+    type Result = { fee_item: number; call: Call }
+
+    const call: Call = {
+      Fungible: '1000',
+      nested: { PalletInstance: 3 },
+      raw: '0xdeadbeef'
+    }
+    const input = {
+      fee_item: '0',
+      call
+    }
+    const result: Result = transform(input)
+    expect(result.call).toBe(call)
+    expect(result).toEqual<Result>({ fee_item: 0, call })
+  })
+
   it('should handle currency_id with non-integer string', () => {
     const input = {
       currency_id: 'USD'
