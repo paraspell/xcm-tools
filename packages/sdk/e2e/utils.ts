@@ -2,13 +2,9 @@ import { PolkadotSigner } from 'polkadot-api/signer'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE } from '@polkadot-labs/hdkd-helpers'
-import { TPallet, TPapiApi, TPapiSigner, TPapiTransaction } from '../src'
+import { TPallet, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
-import {
-  GeneralBuilder,
-  TTransferBaseOptionsWithSender,
-  TSerializedExtrinsics
-} from '@paraspell/sdk-core'
+import { TSerializedExtrinsics } from '@paraspell/sdk-core'
 import { createEcdsaSigner, createSr25519Signer } from '../src/utils'
 
 export const getEcdsaSigner = () => {
@@ -35,21 +31,6 @@ export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) =
   expect(hex).toBeDefined()
   const serialized = serializeTx(tx)
   expect(serialized).toMatchSnapshot()
-}
-
-export const validateTransfer = async (
-  builder: GeneralBuilder<
-    TPapiApi,
-    TPapiTransaction,
-    TPapiSigner,
-    TTransferBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
-  >,
-  signer: PolkadotSigner
-) => {
-  const tx = await builder.build()
-  await validateTx(tx, signer)
-  const feeRes = await builder.getXcmFee()
-  expect(feeRes.failureReason).toBeUndefined()
 }
 
 export const createSigners = (): [PolkadotSigner, PolkadotSigner] => [

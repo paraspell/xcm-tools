@@ -603,7 +603,7 @@ console.log(CHAINS)
 
 - Run unit tests using `pnpm test`
 
-- Run end-to-end tests using `pnpm test:e2e`
+- Run end-to-end tests (SDK+SWAP) using `pnpm test:e2e`
 
 - Run all core tests and checks using `pnpm runAll`
 

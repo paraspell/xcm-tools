@@ -4,6 +4,10 @@ import type { TDexConfigStored, TAssetsRecord } from '../src/types';
 import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
 import { EXCHANGE_CHAINS, TExchangeChain } from '@paraspell/sdk';
 
+process.on('unhandledRejection', (reason) => {
+  console.warn('Suppressed unhandled rejection from WS provider:', reason);
+});
+
 const assetsMap = assetsMapJson as TAssetsRecord;
 
 const fetchWithTimeout = async (
@@ -14,14 +18,12 @@ const fetchWithTimeout = async (
     setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs);
   });
 
-  const fetchPromise = (async (): Promise<TDexConfigStored> => {
-    const dex = createExchangeInstance(exchangeChain);
-    const api = await dex.createApiInstance();
-    return await dex.getDexConfig(api);
-  })();
+  const dex = createExchangeInstance(exchangeChain);
+  const api = await dex.createApiInstance();
 
   try {
-    return await Promise.race([fetchPromise, timeoutPromise]);
+    const result = await Promise.race([dex.getDexConfig(api), timeoutPromise]);
+    return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.warn(`Failed to fetch ${exchangeChain} assets: ${errorMessage}`);
@@ -30,6 +32,8 @@ const fetchWithTimeout = async (
       return assetsMap[exchangeChain];
     }
     throw error;
+  } finally {
+    await api.disconnect();
   }
 };
 

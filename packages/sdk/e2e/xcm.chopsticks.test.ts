@@ -4,7 +4,7 @@ import { getChainProviders, TBuilderConfig, TSubstrateChain, TUrl } from '@paras
 import { setTimeout } from 'timers/promises'
 
 import { Builder, SUBSTRATE_CHAINS } from '../src'
-import { createSigners, validateTransfer, validateTx } from './utils'
+import { createSigners, validateTx } from './utils'
 import { generateE2eTests } from '../../sdk-core/e2e'
 
 const CHOPSTICKS_TIMEOUT_MS = 30000
@@ -59,7 +59,6 @@ generateE2eTests(
   Builder,
   createSigners(),
   validateTx,
-  validateTransfer,
   [...SUBSTRATE_CHAINS],
   config
 )

@@ -1,8 +1,6 @@
 import { expect } from 'vitest'
-import { Extrinsic, SUBSTRATE_CHAINS } from '../src'
+import { Extrinsic } from '../src'
 
 export const validateTx = async (tx: Extrinsic) => {
   expect(tx).toBeDefined()
 }
-
-export const filteredChains = SUBSTRATE_CHAINS
