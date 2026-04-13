@@ -32,7 +32,8 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*"

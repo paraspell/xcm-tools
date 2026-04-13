@@ -48,7 +48,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes, TSigner>,
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
-  validateTransfer: (
+  filteredChains: TSubstrateChain[],
+  config?: TBuilderConfig<TUrl>
+) => {
+  const validateTransfer = async (
     builder: GeneralBuilder<
       TApi,
       TRes,
@@ -56,10 +59,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner>
     >,
     signer: TSigner
-  ) => Promise<void>,
-  filteredChains: TSubstrateChain[],
-  config?: TBuilderConfig<TUrl>
-) => {
+  ) => {
+    const tx = await builder.build()
+    await validateTx(tx, signer)
+    const feeRes = await builder.getXcmFee()
+    expect(feeRes.failureReason).toBeUndefined()
+  }
   // If builderConfig override is provided, it means we're using chopsticks
   const usingChopsticks = !!config
 
