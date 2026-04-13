@@ -53,6 +53,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   }
 
   abstract init(chain: TChain, clientTtlMs?: number): Promise<void>
+  // TODO: Remove after release
   abstract createApiInstance(wsUrl: TUrl, chain: TSubstrateChain): Promise<TApi>
   abstract accountToHex(address: string, isPrefixed?: boolean): string
   abstract accountToUint8a(address: string): Uint8Array

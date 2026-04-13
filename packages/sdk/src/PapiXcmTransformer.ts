@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { NumberFormatError } from '@paraspell/sdk-core'
-import { Binary, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
+import { Binary, getSs58AddressInfo } from 'polkadot-api'
 import { isAddress } from 'viem'
 
 export const checkAndConvertToNumberOrBigInt = (input: string) => {
@@ -46,7 +46,7 @@ export const transform = (obj: any): any => {
                     type: 'Any'
                   }
                 : undefined,
-            id: FixedSizeBinary.fromHex(value.id)
+            id: value.id
           }
         }
       } else if (key === 'Id') {
@@ -102,13 +102,13 @@ export const transform = (obj: any): any => {
                     type: 'Any'
                   }
                 : undefined,
-            key: FixedSizeBinary.fromHex(value.key)
+            key: value.key
           }
         }
       } else if (key === 'SetTopic') {
         return {
           type: key,
-          value: FixedSizeBinary.fromHex(value)
+          value
         }
       } else if (key === 'SetFeesMode') {
         return {
@@ -196,7 +196,7 @@ export const transform = (obj: any): any => {
         if (typeof v === 'string' && isAddress(v)) {
           newObj[k] = v
         } else if (typeof v === 'string' && v.startsWith('0x')) {
-          newObj[k] = FixedSizeBinary.fromHex(v)
+          newObj[k] = v
         } else if (typeof v === 'string') {
           newObj[k] = {
             type: v

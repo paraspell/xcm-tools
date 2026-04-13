@@ -23,6 +23,7 @@ import {
   MissingChainApiError,
   Parents,
   RELAY_LOCATION,
+  resolveChainApi,
   SubmitTransactionError,
   type TLocation,
   type TSubstrateChain,
@@ -30,8 +31,9 @@ import {
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
-import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
-import { getWsProvider } from 'polkadot-api/ws-provider'
+import { AccountId, Binary, createClient, getSs58AddressInfo } from 'polkadot-api'
+import { toHex } from 'polkadot-api/utils'
+import { createWsClient } from 'polkadot-api/ws'
 import type { Mock } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -40,18 +42,9 @@ import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
 import { computeOriginFee, deriveAddress } from './utils'
 
-vi.mock('polkadot-api/ws-provider', () => ({
-  getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
-    send: vi.fn(),
-    disconnect: vi.fn()
-  }))
-}))
-
-vi.mock('polkadot-api/polkadot-sdk-compat', () => ({
-  withPolkadotSdkCompat: vi.fn().mockImplementation((provider: unknown) => provider)
-}))
-
 vi.mock('polkadot-api')
+vi.mock('polkadot-api/utils')
+vi.mock('polkadot-api/ws')
 
 vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
@@ -72,6 +65,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
+  resolveChainApi: vi.fn(),
   wrapTxBypass: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   findNativeAssetInfoOrThrow: vi.fn(),
@@ -139,7 +133,7 @@ describe('PapiApi', () => {
           XcmPaymentApi: {
             query_xcm_weight: vi
               .fn()
-              .mockResolvedValue({ value: { ref_time: 100n, proof_size: 200n } }),
+              .mockResolvedValue({ success: true, value: { ref_time: 100n, proof_size: 200n } }),
             query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
           }
         },
@@ -170,6 +164,11 @@ describe('PapiApi', () => {
             OperatingMode: {
               getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
             }
+          },
+          System: {
+            Account: {
+              getValue: vi.fn()
+            }
           }
         },
         txFromCallData: vi.fn().mockReturnValue(mockTransaction)
@@ -178,6 +177,7 @@ describe('PapiApi', () => {
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
     vi.mocked(deriveAddress).mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
+    vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
 
@@ -232,28 +232,24 @@ describe('PapiApi', () => {
   describe('init', () => {
     it('should create api instance when _api is undefined', async () => {
       const papiApi = new PapiApi()
-      const createApiInstanceSpy = vi
-        .spyOn(papiApi, 'createApiInstance')
-        .mockResolvedValue(mockPolkadotClient)
+      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
+      expect(resolveChainApi).toHaveBeenCalledWith(undefined, 'Acala', expect.any(Function))
       expect(papiApi.api).toBe(mockPolkadotClient)
-
-      createApiInstanceSpy.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
       papiApi = new PapiApi(mockPolkadotClient)
-      const createApiInstanceSpy = vi.spyOn(papiApi, 'createApiInstance')
+      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
       await papiApi.init('Acala')
 
+      vi.mocked(resolveChainApi).mockClear()
       await papiApi.init('Moonbeam')
 
-      expect(createApiInstanceSpy).not.toHaveBeenCalled()
+      expect(resolveChainApi).not.toHaveBeenCalled()
       expect(papiApi.api).toBe(mockPolkadotClient)
-      createApiInstanceSpy.mockRestore()
     })
 
     it('should use apiOverrides when provided in config', async () => {
@@ -268,13 +264,16 @@ describe('PapiApi', () => {
         }
       })
 
-      const createApiInstanceSpy = vi.spyOn(papiApi, 'createApiInstance')
+      vi.mocked(resolveChainApi).mockResolvedValue(customClient)
 
       await papiApi.init('Moonbeam')
 
       expect(papiApi.api).toBe(customClient)
-      expect(createApiInstanceSpy).not.toHaveBeenCalled()
-      createApiInstanceSpy.mockRestore()
+      expect(resolveChainApi).toHaveBeenCalledWith(
+        { apiOverrides: { Moonbeam: customClient } },
+        'Moonbeam',
+        expect.any(Function)
+      )
     })
 
     it('should throw MissingChainApiError in development mode when no override provided', async () => {
@@ -286,33 +285,34 @@ describe('PapiApi', () => {
         }
       })
 
+      vi.mocked(resolveChainApi).mockImplementation(() => {
+        throw new MissingChainApiError('Moonbeam')
+      })
+
       await expect(papiApi.init('Moonbeam')).rejects.toThrow(new MissingChainApiError('Moonbeam'))
     })
 
     it('should create api automatically when no config and no overrides', async () => {
       papiApi = new PapiApi()
-      const createApiInstanceSpy = vi
-        .spyOn(papiApi, 'createApiInstance')
-        .mockResolvedValue(mockPolkadotClient)
+      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init('Acala')
 
-      expect(createApiInstanceSpy).toHaveBeenCalledWith(expect.any(Array), 'Acala')
+      expect(resolveChainApi).toHaveBeenCalledWith(undefined, 'Acala', expect.any(Function))
       expect(papiApi.api).toBe(mockPolkadotClient)
-      createApiInstanceSpy.mockRestore()
     })
   })
 
   describe('createApiInstance', () => {
     it('should create a PolkadotClient instance', async () => {
       const wsUrl = 'ws://localhost:9944'
+      const mockWsClient = { mock: 'wsClient' } as unknown as ReturnType<typeof createWsClient>
+      vi.mocked(createWsClient).mockReturnValue(mockWsClient)
 
-      const apiInstance = await papiApi.createApiInstance(wsUrl, mockChain)
+      const apiInstance = await papiApi.createApiInstance(wsUrl)
 
-      expect(apiInstance).toBe(mockPolkadotClient)
-      expect(getWsProvider).toHaveBeenCalledWith(wsUrl, {})
-      expect(createClient).toHaveBeenCalledOnce()
-      vi.resetAllMocks()
+      expect(apiInstance).toBe(mockWsClient)
+      expect(createWsClient).toHaveBeenCalledWith(wsUrl)
     })
   })
 
@@ -337,6 +337,42 @@ describe('PapiApi', () => {
 
       expect(result).toBe(mockTransaction)
       expect(mockTxMethod).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('queryState', () => {
+    it('should call query with transformed params and return the result', async () => {
+      const mockValue = { balance: 1000n }
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const mockGetValue = vi.mocked(unsafeApi.query.System.Account.getValue)
+      mockGetValue.mockResolvedValue(mockValue)
+
+      const result = await papiApi.queryState({
+        module: 'System',
+        method: 'Account',
+        params: ['some_address']
+      })
+
+      expect(result).toBe(mockValue)
+      expect(mockGetValue).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('queryRuntimeApi', () => {
+    it('should call runtime api with transformed params and return the result', async () => {
+      const mockResult = { weight: 500n }
+      const mockMethod = vi.fn().mockResolvedValue(mockResult)
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.apis.AssetManager = { some_method: mockMethod }
+
+      const result = await papiApi.queryRuntimeApi({
+        module: 'AssetManager',
+        method: 'some_method',
+        params: ['param1']
+      })
+
+      expect(result).toBe(mockResult)
+      expect(mockMethod).toHaveBeenCalledOnce()
     })
   })
 
@@ -464,10 +500,6 @@ describe('PapiApi', () => {
 
   describe('getEvmStorage', () => {
     it('should return the EVM storage as bigint', async () => {
-      vi.spyOn(FixedSizeBinary, 'fromHex').mockImplementation(
-        (x: string) => x as unknown as FixedSizeBinary<32>
-      )
-
       const unsafeApi = papiApi.api.getUnsafeApi()
 
       unsafeApi.query.EVM.AccountStorages.getKey = vi.fn().mockResolvedValue(3000n)
@@ -659,6 +691,25 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
+    it('returns 0n when delivery fee response type is Unimplemented', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const forwardedXcm = [{}, [{}]]
+
+      vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).mockResolvedValue({
+        value: { type: 'Unimplemented' }
+      })
+
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        baseAsset.location,
+        Version.V5
+      )
+
+      expect(res).toBe(0n)
+    })
+
     it('falls back to 0 delivery fee when quoteAhPrice throws the runtime-entry error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetXcEqual).mockReturnValue(false)
@@ -720,7 +771,7 @@ describe('PapiApi', () => {
       vi.mocked(transform).mockReturnValueOnce(transformedThird)
 
       vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees)
-        .mockRejectedValueOnce(new Error('Cannot read properties of undefined (reading "foo")'))
+        .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
         .mockResolvedValueOnce({ value: { value: [{ fun: { value: 9n } }] } })
 
       const res = await papiApi.getDeliveryFee(
@@ -784,6 +835,7 @@ describe('PapiApi', () => {
         .fn()
         .mockResolvedValue({ value: 100n })
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        success: true,
         value: { ref_time: 100n, proof_size: 200n }
       })
 
@@ -817,6 +869,7 @@ describe('PapiApi', () => {
         .mockResolvedValue({ success: false, value: { type: 'AssetNotFound' } })
 
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        success: true,
         value: { ref_time: 100n, proof_size: 200n }
       })
 
@@ -848,6 +901,7 @@ describe('PapiApi', () => {
         .mockResolvedValue({ success: false, value: { type: 'AssetNotFound' } })
 
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        success: true,
         value: { ref_time: 100n, proof_size: 200n }
       })
 
@@ -957,17 +1011,17 @@ describe('PapiApi', () => {
     it('should return the hex representation of the account - prefixed', () => {
       const account = 'some_account'
       const hexAccount = '0x1234567890abcdef'
+      const encoded = new Uint8Array([1, 2, 3])
 
-      const mockFixedSizeBinary = {
-        asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
-      }
-      const spy = vi
-        .spyOn(FixedSizeBinary, 'fromAccountId32')
-        .mockReturnValue(mockFixedSizeBinary as unknown as FixedSizeBinary<32>)
+      vi.mocked(AccountId).mockReturnValue({
+        enc: vi.fn().mockReturnValue(encoded)
+      } as unknown as Codec<SS58String>)
+      vi.mocked(toHex).mockReturnValue(hexAccount)
 
       const result = papiApi.accountToHex(account)
 
-      expect(spy).toHaveBeenCalledWith(account)
+      expect(AccountId).toHaveBeenCalled()
+      expect(toHex).toHaveBeenCalledWith(encoded)
       expect(result).toBe(hexAccount)
     })
 
@@ -1101,14 +1155,18 @@ describe('PapiApi', () => {
   describe('txFromHex', () => {
     it('should return a transaction object from the hex string', async () => {
       const hexString = '0xdeadbeef'
+      const binaryData = new Uint8Array([0xde, 0xad, 0xbe, 0xef])
+
+      vi.mocked(Binary.fromHex).mockReturnValue(binaryData)
 
       const unsafeApi = papiApi.api.getUnsafeApi()
       const spy = vi.spyOn(unsafeApi, 'txFromCallData')
 
       const result = await papiApi.txFromHex(hexString)
 
+      expect(Binary.fromHex).toHaveBeenCalledWith(hexString)
       expect(result).toBe(mockTransaction)
-      expect(spy).toHaveBeenCalledWith(hexString)
+      expect(spy).toHaveBeenCalledWith(binaryData)
     })
   })
 
@@ -1179,16 +1237,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should retry with version and succeed if first attempt fails with VersionedConversionFailed', async () => {
-      const versionedConversionFailedResponse = {
-        success: true,
-        value: {
-          execution_result: {
-            success: false,
-            value: { error: { value: { type: 'VersionedConversionFailed' } } }
-          }
-        }
-      }
+    it('should retry with version and succeed if first attempt throws Incompatible runtime entry', async () => {
       const successResponseWithVersion = {
         success: true,
         value: {
@@ -1208,7 +1257,7 @@ describe('PapiApi', () => {
       }
 
       dryRunApiCallMock
-        .mockResolvedValueOnce(versionedConversionFailedResponse)
+        .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
         .mockResolvedValueOnce(successResponseWithVersion)
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'DOT'
@@ -1254,7 +1303,7 @@ describe('PapiApi', () => {
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'DOT',
         location: { parents: 1, interior: { Here: null } }
-      } as unknown as TAssetInfo)
+      } as TAssetInfo)
 
       const unsafeApi = papiApi.api.getUnsafeApi()
       const successWithLocalXcm = {
@@ -1294,15 +1343,6 @@ describe('PapiApi', () => {
     })
 
     it('should retry with version and still fail if retry attempt also fails', async () => {
-      const versionedConversionFailedResponse = {
-        success: true,
-        value: {
-          execution_result: {
-            success: false,
-            value: { error: { value: { type: 'VersionedConversionFailed' } } }
-          }
-        }
-      }
       const retryFailedResponse = {
         success: true,
         value: {
@@ -1314,7 +1354,7 @@ describe('PapiApi', () => {
       }
 
       dryRunApiCallMock
-        .mockResolvedValueOnce(versionedConversionFailedResponse)
+        .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
         .mockResolvedValueOnce(retryFailedResponse)
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
         symbol: 'GLMR'
@@ -1780,8 +1820,8 @@ describe('PapiApi', () => {
 
       const customAsset = {
         symbol: 'USDC',
-        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
-      } as unknown as TAssetInfo
+        location: { parents: Parents.ZERO, interior: 'Here' }
+      } as TAssetInfo
 
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
 
@@ -1843,12 +1883,12 @@ describe('PapiApi', () => {
 
       const nativeAsset = {
         symbol: 'HYDR',
-        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
-      } as unknown as TAssetInfo
+        location: { parents: Parents.ZERO, interior: 'Here' }
+      } as TAssetInfo
       const multiAsset = {
         symbol: 'USDC',
-        location: { parents: Parents.ZERO, interior: { type: 'Here' } }
-      } as unknown as TAssetInfo
+        location: { parents: Parents.ZERO, interior: 'Here' }
+      } as TAssetInfo
 
       vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
       vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
@@ -2523,7 +2563,17 @@ describe('PapiApi', () => {
   describe('objectToHex', () => {
     it('should return the hex representation of the object', async () => {
       const object = { key1: 'value1', key2: 'value2' }
+      const encodedData = new Uint8Array([1, 2, 3, 4, 5])
+
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.tx.PolkadotXcm.send = vi.fn().mockReturnValue({
+        getEncodedData: vi.fn().mockResolvedValue(encodedData)
+      })
+
+      vi.mocked(toHex).mockReturnValue('0x0000000000abcdef')
+
       const result = await papiApi.objectToHex(object, 'XcmVersionedXcm', Version.V5)
+      expect(toHex).toHaveBeenCalledWith(encodedData)
       expect(result).toBe('0xabcdef')
     })
   })
@@ -2533,17 +2583,11 @@ describe('PapiApi', () => {
       const hex = '0x1234567890abcdef'
       const uint8a = new Uint8Array([18, 52, 86, 120, 144, 171, 205, 239])
 
-      const mockBinary = {
-        asBytes: vi.fn().mockReturnValue(uint8a)
-      }
-      const spy = vi
-        .spyOn(Binary, 'fromHex')
-        .mockReturnValue(mockBinary as unknown as FixedSizeBinary<32>)
+      const spy = vi.spyOn(Binary, 'fromHex').mockReturnValue(uint8a)
 
       const result = papiApi.hexToUint8a(hex)
 
       expect(result).toEqual(uint8a)
-
       expect(spy).toHaveBeenCalledWith(hex)
     })
   })
@@ -2553,17 +2597,11 @@ describe('PapiApi', () => {
       const string = 'some_string'
       const uint8a = new Uint8Array([115, 111, 109, 101, 95, 115, 116, 114, 105, 110, 103])
 
-      const mockBinary = {
-        asBytes: vi.fn().mockReturnValue(uint8a)
-      }
-      const spy = vi
-        .spyOn(Binary, 'fromText')
-        .mockReturnValue(mockBinary as unknown as FixedSizeBinary<32>)
+      const spy = vi.spyOn(Binary, 'fromText').mockReturnValue(uint8a)
 
       const result = papiApi.stringToUint8a(string)
 
       expect(spy).toHaveBeenCalledWith(string)
-
       expect(result).toEqual(uint8a)
     })
   })
@@ -2685,7 +2723,14 @@ describe('PapiApi', () => {
 
   describe('PapiApi - timed cache integration', () => {
     beforeEach(() => {
-      vi.mocked(createClient).mockReset()
+      vi.mocked(createWsClient).mockReset()
+      vi.mocked(resolveChainApi).mockImplementation(async (_config, _chain, createApiInstance) =>
+        createApiInstance(_config as string)
+      )
+    })
+
+    afterEach(() => {
+      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
     })
 
     it('re-uses the same PolkadotClient and destroys it after refs drop to 0 when destroyWanted=true', async () => {
@@ -2696,9 +2741,9 @@ describe('PapiApi', () => {
         destroy: vi.fn(),
         getUnsafeApi: vi.fn().mockReturnValue({}),
         getChainSpecData: vi.fn().mockResolvedValue(undefined)
-      } as unknown as PolkadotClient
+      } as unknown as ReturnType<typeof createWsClient>
 
-      vi.mocked(createClient).mockReturnValue(sharedClient)
+      vi.mocked(createWsClient).mockReturnValue(sharedClient)
 
       const apiA = new PapiApi(ws)
       await apiA.init('Acala', 1_000) // ttl = 1 s
@@ -2706,7 +2751,7 @@ describe('PapiApi', () => {
       const apiB = new PapiApi(ws)
       await apiB.init('Acala', 1_000)
 
-      expect(createClient).toHaveBeenCalledTimes(1)
+      expect(createWsClient).toHaveBeenCalledTimes(1)
 
       vi.advanceTimersByTime(1_001)
       expect(sharedClient.destroy).not.toHaveBeenCalled()
@@ -2730,8 +2775,8 @@ describe('PapiApi', () => {
         destroy: vi.fn(),
         getUnsafeApi: vi.fn().mockReturnValue({}),
         getChainSpecData: vi.fn().mockResolvedValue(undefined)
-      } as unknown as PolkadotClient
-      vi.mocked(createClient).mockReturnValue(idleClient)
+      } as unknown as ReturnType<typeof createWsClient>
+      vi.mocked(createWsClient).mockReturnValue(idleClient)
 
       const api = new PapiApi(ws)
       await api.init('Acala', 500) // ttl = 0.5 s
@@ -2761,9 +2806,11 @@ describe('PapiApi', () => {
         signAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
       } as unknown as TPapiTransaction
 
+      const spy = vi.spyOn(mockTx, 'signAndSubmit')
+
       const result = await papiApi.signAndSubmit(mockTx, '//Alice')
 
-      expect(mockTx.signAndSubmit).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalled()
       expect(result).toBe(mockTxHash)
     })
   })
@@ -2780,9 +2827,11 @@ describe('PapiApi', () => {
         signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
+      const spy = vi.spyOn(mockTx, 'signSubmitAndWatch')
+
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
-      expect(mockTx.signSubmitAndWatch).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalled()
       expect(result).toBe(mockTxHash)
     })
 

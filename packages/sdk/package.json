@@ -25,6 +25,7 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "build": "rollup -c",
+    "postinstall": "papi",
     "lint:check": "eslint src",
     "lint": "eslint --fix src",
     "format:check": "prettier --check src",
@@ -38,14 +39,14 @@
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
-    "@polkadot-api/legacy-provider": "^0.3.8",
     "@paraspell/sdk-core": "workspace:*",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot-labs/hdkd": "^0.0.27",
     "@polkadot-labs/hdkd-helpers": "^0.0.28",
     "viem": "^2.47.6"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.23.3 < 2"
+    "polkadot-api": ">= 2 < 3"
   },
   "devDependencies": {
     "@acala-network/chopsticks": "^1.3.0",

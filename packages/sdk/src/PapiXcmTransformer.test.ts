@@ -6,9 +6,6 @@ import { checkAndConvertToNumberOrBigInt, transform } from './PapiXcmTransformer
 
 vi.mock('polkadot-api', () => ({
   getSs58AddressInfo: vi.fn(),
-  FixedSizeBinary: {
-    fromHex: vi.fn((hex: string) => `FixedSizeBinary(${hex})`)
-  },
   Binary: {
     fromHex: vi.fn((hex: string) => `Binary(${hex})`)
   }
@@ -81,7 +78,7 @@ describe('transform', () => {
         network: {
           type: 'Any'
         },
-        id: `FixedSizeBinary(0x1234abcd)`
+        id: '0x1234abcd'
       }
     }
     expect(transform(input)).toEqual(expected)
@@ -179,7 +176,8 @@ describe('transform', () => {
     const expected = {
       type: 'AccountKey20',
       value: {
-        key: `FixedSizeBinary(0xabcdef1234567890)`
+        network: undefined,
+        key: '0xabcdef1234567890'
       }
     }
     expect(transform(input)).toEqual(expected)
@@ -207,7 +205,7 @@ describe('transform', () => {
     }
     const expected = {
       type: 'SetTopic',
-      value: `FixedSizeBinary(0xabcdef1234567890)`
+      value: '0xabcdef1234567890'
     }
 
     expect(transform(input)).toEqual(expected)
@@ -232,7 +230,7 @@ describe('transform', () => {
           network: {
             type: 'Any'
           },
-          id: `FixedSizeBinary(0x12345678)`
+          id: '0x12345678'
         }
       }
     }
@@ -290,7 +288,7 @@ describe('transform', () => {
       currency_id: 100,
       amount: 5000000000n,
       dest_weight: undefined,
-      id: `FixedSizeBinary(0xdeadbeef)`,
+      id: '0xdeadbeef',
       other_field: {
         type: 'PalletInstance',
         value: 3
@@ -354,7 +352,7 @@ describe('transform', () => {
         type: 'AccountKey20',
         value: {
           network: { type: 'Any' },
-          key: `FixedSizeBinary(0xabcdef)`
+          key: '0xabcdef'
         }
       },
       {
@@ -382,7 +380,8 @@ describe('transform', () => {
       {
         type: 'AccountKey20',
         value: {
-          key: `FixedSizeBinary(0xabcdef)`
+          network: undefined,
+          key: '0xabcdef'
         }
       },
       {
@@ -463,7 +462,7 @@ describe('transform', () => {
           type: 'AccountId32',
           value: {
             network: { type: 'Any' },
-            id: `FixedSizeBinary(0x12345678)`
+            id: '0x12345678'
           }
         },
         {
@@ -593,7 +592,7 @@ describe('transform', () => {
       value: {
         fee_item: 5,
         amount: 1234n,
-        id: `FixedSizeBinary(0x1234abcd)`,
+        id: '0x1234abcd',
         nested_object: {
           currency_id: { type: 'invalid_currency' },
           dest_weight: undefined,

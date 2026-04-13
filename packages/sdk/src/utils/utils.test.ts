@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import PapiApi from '../PapiApi'
 import type { TPapiApi } from '../types'
-import { createChainClient, createPapiApiCall, findFailingEvent } from './utils'
+import { createChainClient, createPapiApiCall, extractDestParaId, findFailingEvent } from './utils'
 
 vi.mock('@paraspell/sdk-core', async importActual => ({
   ...(await importActual()),
@@ -141,5 +141,35 @@ describe('findFailingEvent', () => {
     }
 
     expect(findFailingEvent(result)).toBe(failingEvent1)
+  })
+})
+
+describe('extractDestParaId', () => {
+  it('returns undefined for empty array', () => {
+    expect(extractDestParaId([])).toBeUndefined()
+  })
+
+  it('returns 0 when interior type is Here', () => {
+    const forwardedXcms = [{ value: { interior: { type: 'Here' } } }]
+    expect(extractDestParaId(forwardedXcms)).toBe(0)
+  })
+
+  it('returns parachain id when interior is X1 with Parachain', () => {
+    const forwardedXcms = [
+      { value: { interior: { type: 'X1', value: { type: 'Parachain', value: 2000 } } } }
+    ]
+    expect(extractDestParaId(forwardedXcms)).toBe(2000)
+  })
+
+  it('returns undefined when interior is X1 but not Parachain', () => {
+    const forwardedXcms = [
+      { value: { interior: { type: 'X1', value: { type: 'AccountId32', value: '0x123' } } } }
+    ]
+    expect(extractDestParaId(forwardedXcms)).toBeUndefined()
+  })
+
+  it('returns undefined for unrecognized interior type', () => {
+    const forwardedXcms = [{ value: { interior: { type: 'X2', value: {} } } }]
+    expect(extractDestParaId(forwardedXcms)).toBeUndefined()
   })
 })

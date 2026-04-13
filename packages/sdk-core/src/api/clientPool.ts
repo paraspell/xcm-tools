@@ -6,14 +6,14 @@ export const keyFromWs = (ws: TUrl): TClientKey => {
 
 export const createClientPoolHelpers = <TClient>(
   clientPool: ClientCache<TClient>,
-  createClient: (ws: TUrl, useLegacy: boolean) => TClient | Promise<TClient>
+  createClient: (ws: TUrl) => TClient | Promise<TClient>
 ) => {
-  const leaseClient = async (ws: TUrl, ttlMs: number, useLegacy: boolean): Promise<TClient> => {
+  const leaseClient = async (ws: TUrl, ttlMs: number): Promise<TClient> => {
     const key = keyFromWs(ws)
     let entry = clientPool.peek(key)
 
     if (!entry) {
-      const client = await createClient(ws, useLegacy)
+      const client = await createClient(ws)
       entry = { client, refs: 0, destroyWanted: false }
       clientPool.set(key, entry, ttlMs)
     }

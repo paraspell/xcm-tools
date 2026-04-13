@@ -58,7 +58,7 @@ class Interlay<TApi, TRes, TSigner>
       params: {
         dest: recipient,
         currency_id: currencyId,
-        value: asset.amount
+        amount: asset.amount
       }
     })
   }

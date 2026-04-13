@@ -13,11 +13,9 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
   ): Promise<TSetBalanceRes> {
     const { location, amount } = asset
 
-    const notUseAddressIdChains = ['NeuroWeb']
+    const notUseId: TSubstrateChain[] = ['NeuroWeb']
 
-    const notUseId = notUseAddressIdChains.some(prefix => chain.startsWith(prefix))
-
-    const addr = notUseId ? address : { Id: address }
+    const addr = notUseId.some(prefix => chain.startsWith(prefix)) ? address : { Id: address }
 
     return Promise.resolve({
       assetStatusTx: {

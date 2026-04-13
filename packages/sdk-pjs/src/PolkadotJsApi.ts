@@ -92,13 +92,11 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    this._api = await resolveChainApi(this._config, chain, (wsUrl, c) =>
-      this.createApiInstance(wsUrl, c)
-    )
+    this._api = await resolveChainApi(this._config, chain, wsUrl => leaseClient(wsUrl, this._ttlMs))
   }
 
   createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
-    return leaseClient(wsUrl, this._ttlMs, false)
+    return leaseClient(wsUrl, this._ttlMs)
   }
 
   accountToHex(address: string, isPrefixed = true) {

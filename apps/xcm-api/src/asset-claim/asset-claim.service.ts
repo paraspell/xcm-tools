@@ -7,6 +7,7 @@ import {
   TPapiSigner,
   TPapiTransaction,
 } from '@paraspell/sdk';
+import { toHex } from 'polkadot-api/utils';
 
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
@@ -36,7 +37,7 @@ export class AssetClaimService {
       const tx = await builder.build();
 
       const encoded = await tx.getEncodedData();
-      return encoded.asHex();
+      return toHex(encoded);
     } catch (e) {
       return handleXcmApiError(e);
     } finally {

@@ -90,11 +90,12 @@ import * as paraspell from '@paraspell/sdk'
 > - You can now pass signer directly into sender parameter
 > - The local transfers now have additional builder parameter called keepAlive
 > - Transact is here! Find out more: https://paraspell.github.io/docs/sdk/xcmPallet.html#transact
-> 
-> **Latest news:**
 > - V12 > V13 Migration guide: https://paraspell.github.io/docs/migration/v12-to-v13.html
 > - Swap package is now available on every XCM SDK version: https://paraspell.github.io/docs/sdk/getting-started.html#install-swap-extension
+> 
+> **Latest news:**
 > - abstractDecimals is now turned on by default!
+> - PAPI V2 available from version 13.2.0 onwards!
 
 ### Sending XCM
 For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).

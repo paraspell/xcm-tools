@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TPapiApi } from '@paraspell/sdk';
 import { transform } from '@paraspell/sdk';
@@ -30,7 +29,7 @@ export const getQuotedAmount = async (
 
     if (quoted !== undefined) {
       return {
-        amountOut: BigInt(quoted.toString()),
+        amountOut: BigInt((quoted as bigint).toString()),
         usedFromML: localizedFrom,
         usedToML: localizedTo,
       };
