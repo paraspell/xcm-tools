@@ -75,22 +75,18 @@ const builderMock = {
   transact: vi.fn().mockReturnThis(),
   swap: vi.fn().mockReturnThis(),
   buildBatch: vi.fn().mockReturnValue({
-    getEncodedData: vi.fn().mockResolvedValue({
-      asHex: vi.fn().mockReturnValue(txHashBatch),
-    }),
+    getEncodedData: vi
+      .fn()
+      .mockResolvedValue(new Uint8Array([1, 2, 3, 4, 5, 6])),
   }),
   build: vi.fn().mockResolvedValue({
-    getEncodedData: vi.fn().mockResolvedValue({
-      asHex: vi.fn().mockReturnValue(txHash),
-    }),
+    getEncodedData: vi.fn().mockResolvedValue(new Uint8Array([1])),
   }),
   buildAll: vi.fn().mockResolvedValue([
     {
       chain: 'Acala',
       tx: {
-        getEncodedData: vi.fn().mockResolvedValue({
-          asHex: vi.fn().mockReturnValue(txHash),
-        }),
+        getEncodedData: vi.fn().mockResolvedValue(new Uint8Array([1])),
       },
     },
   ]),
@@ -109,6 +105,14 @@ const builderMock = {
   signAndSubmit: vi.fn().mockResolvedValue(txHash),
   disconnect: vi.fn(),
 };
+
+vi.mock('polkadot-api/utils', () => ({
+  toHex: vi
+    .fn()
+    .mockImplementation((input: Uint8Array) =>
+      input.length > 1 ? '0x123456' : '0x123',
+    ),
+}));
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');

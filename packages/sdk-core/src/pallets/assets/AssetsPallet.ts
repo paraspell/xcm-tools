@@ -17,8 +17,14 @@ export class AssetsPallet extends BaseAssetsPallet {
 
     const { assetId, amount } = asset
 
-    const bigintIdChains = ['Astar', 'Shiden', 'Moonbeam', 'NeuroWeb']
-    const notUseAddressIdChains = ['NeuroWeb']
+    const bigintIdChains: TSubstrateChain[] = [
+      'Astar',
+      'Shiden',
+      'Moonbeam',
+      'NeuroWeb',
+      'Darwinia'
+    ]
+    const notUseAddressIdChains: TSubstrateChain[] = ['NeuroWeb', 'Darwinia']
 
     const useBigInt = bigintIdChains.some(prefix => chain.startsWith(prefix))
 

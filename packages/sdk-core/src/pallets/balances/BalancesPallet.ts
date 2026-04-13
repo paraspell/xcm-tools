@@ -13,7 +13,7 @@ export class BalancesPallet extends BaseAssetsPallet {
   ): Promise<TSetBalanceRes> {
     const { amount } = assetInfo
 
-    const noIdPrefixes = ['Hydration', 'NeuroWeb', 'Basilisk']
+    const noIdPrefixes = ['Hydration', 'NeuroWeb', 'Basilisk', 'Darwinia']
     const notUseId = noIdPrefixes.some(prefix => chain.startsWith(prefix)) || isChainEvm(chain)
 
     return Promise.resolve({

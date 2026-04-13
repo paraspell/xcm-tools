@@ -2,14 +2,15 @@
 import Highcharts from 'highcharts';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import HighchartsReact from 'highcharts-react-official';
-import { FixedSizeBinary } from 'polkadot-api';
 import type { FC, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toHex } from 'polkadot-api/utils';
 
 import type { AccountCountsQuery } from '../../../gql/graphql';
 import type { ChartDataItem, CustomPoint } from '../../../types/types';
 
 import 'highcharts/highcharts-more';
+import { AccountId } from 'polkadot-api';
 
 type Props = {
   counts: AccountCountsQuery['accountCounts'];
@@ -54,7 +55,7 @@ export const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
 
         let encodedAddress;
         try {
-          encodedAddress = FixedSizeBinary.fromAccountId32<32>(address).asHex();
+          encodedAddress = toHex(AccountId().enc(address));
         } catch (_e) {
           encodedAddress = address;
         }

@@ -22,21 +22,21 @@ describe('resolveChainApi', () => {
   it('uses default provider when config is undefined', async () => {
     const result = await resolveChainApi(undefined, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider', CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider')
     expect(result).toBe(fakeApi)
   })
 
   it('uses default provider when config is an empty object', async () => {
     const result = await resolveChainApi({}, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider', CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider')
     expect(result).toBe(fakeApi)
   })
 
   it('creates api from string url passed directly as config', async () => {
     const result = await resolveChainApi(WS_URL, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith(WS_URL, CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith(WS_URL)
     expect(result).toBe(fakeApi)
   })
 
@@ -44,7 +44,7 @@ describe('resolveChainApi', () => {
     const urls = ['wss://a', 'wss://b']
     const result = await resolveChainApi(urls, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith(urls, CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith(urls)
     expect(result).toBe(fakeApi)
   })
 
@@ -61,7 +61,7 @@ describe('resolveChainApi', () => {
     }
     const result = await resolveChainApi(config, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith(WS_URL, CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith(WS_URL)
     expect(result).toBe(fakeApi)
   })
 
@@ -81,7 +81,7 @@ describe('resolveChainApi', () => {
     }
     const result = await resolveChainApi(config, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider', CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider')
     expect(result).toBe(fakeApi)
   })
 
@@ -100,7 +100,7 @@ describe('resolveChainApi', () => {
     }
     const result = await resolveChainApi(config, CHAIN, createApiInstance)
 
-    expect(createApiInstance).toHaveBeenCalledWith(WS_URL, CHAIN)
+    expect(createApiInstance).toHaveBeenCalledWith(WS_URL)
     expect(result).toBe(fakeApi)
   })
 })

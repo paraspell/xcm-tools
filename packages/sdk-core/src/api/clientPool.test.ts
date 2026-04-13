@@ -37,12 +37,12 @@ describe('clientPool', () => {
 
     const ws = 'wss://node'
 
-    const c1 = await leaseClient(ws, 1_000, false)
-    const c2 = await leaseClient(ws, 1_000, true)
+    const c1 = await leaseClient(ws, 1_000)
+    const c2 = await leaseClient(ws, 1_000)
 
     expect(c2).toBe(c1)
     expect(createClient).toHaveBeenCalledTimes(1)
-    expect(createClient).toHaveBeenCalledWith(ws, false)
+    expect(createClient).toHaveBeenCalledWith(ws)
 
     const entry = cache.peek(keyFromWs(ws))
     expect(entry?.refs).toBe(2)
@@ -60,7 +60,7 @@ describe('clientPool', () => {
     const { leaseClient } = createClientPoolHelpers(cache, createClient)
 
     const ws = ['wss://a', 'wss://b']
-    await leaseClient(ws, 1_000, false)
+    await leaseClient(ws, 1_000)
 
     const key = keyFromWs(ws)
     const entry = cache.peek(key)
@@ -68,7 +68,7 @@ describe('clientPool', () => {
 
     entry!.destroyWanted = true
 
-    await leaseClient(ws, 1_000, false)
+    await leaseClient(ws, 1_000)
     expect(cache.peek(key)?.destroyWanted).toBe(false)
   })
 
@@ -84,7 +84,7 @@ describe('clientPool', () => {
     expect(deleteSpy).not.toHaveBeenCalled()
 
     const ws = 'wss://node'
-    await leaseClient(ws, 1_000, false)
+    await leaseClient(ws, 1_000)
 
     const key = keyFromWs(ws)
     const entry = cache.peek(key)

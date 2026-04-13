@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PolkadotApi, TApiOrUrl, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
@@ -31,6 +32,20 @@ export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult
 
     return apiCall(optionsWithApi)
   }
+}
+
+export const extractDestParaId = (forwardedXcms: any[]): number | undefined => {
+  if (forwardedXcms.length === 0) return undefined
+
+  const interior = forwardedXcms[0].value.interior
+
+  if (interior.type === 'Here') return 0
+
+  if (interior.type === 'X1' && interior.value.type === 'Parachain') {
+    return interior.value.value as number
+  }
+
+  return undefined
 }
 
 export const findFailingEvent = (result: any) =>

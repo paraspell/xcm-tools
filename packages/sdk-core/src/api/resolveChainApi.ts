@@ -8,7 +8,7 @@ import { isConfig } from '../utils'
 export const resolveChainApi = <TApi>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined,
   chain: TSubstrateChain,
-  createApiInstance: (wsUrl: TUrl, chain: TSubstrateChain) => Promise<TApi>
+  createApiInstance: (wsUrl: TUrl) => Promise<TApi>
 ): Promise<TApi> => {
   const apiConfig = isConfig(config) ? config.apiOverrides?.[chain] : config
 
@@ -17,11 +17,11 @@ export const resolveChainApi = <TApi>(
   }
 
   if (!apiConfig) {
-    return createApiInstance(getChainProviders(chain), chain)
+    return createApiInstance(getChainProviders(chain))
   }
 
   if (typeof apiConfig === 'string' || apiConfig instanceof Array) {
-    return createApiInstance(apiConfig, chain)
+    return createApiInstance(apiConfig)
   }
 
   return Promise.resolve(apiConfig)

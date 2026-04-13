@@ -96,7 +96,7 @@ describe('Kintsugi', () => {
         params: {
           dest: mockOptions.recipient,
           currency_id: { ForeignAsset: 1 },
-          value: BigInt(mockOptions.assetInfo.amount)
+          amount: BigInt(mockOptions.assetInfo.amount)
         }
       })
     })

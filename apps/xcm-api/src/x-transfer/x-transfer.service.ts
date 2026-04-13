@@ -12,6 +12,7 @@ import {
   TTransferBaseOptionsWithSwap,
 } from '@paraspell/sdk';
 import { getExchangePairs } from '@paraspell/swap';
+import { toHex } from 'polkadot-api/utils';
 
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
@@ -180,7 +181,7 @@ export class XTransferService {
       async (finalBuilder) => {
         const tx = await finalBuilder.build();
         const encoded = await tx.getEncodedData();
-        return encoded.asHex();
+        return toHex(encoded);
       },
     );
   }
@@ -194,7 +195,7 @@ export class XTransferService {
         const response = await Promise.all(
           txContexts.map(async (txContext) => {
             const txData = await txContext.tx.getEncodedData();
-            const txHash = txData.asHex();
+            const txHash = toHex(txData);
 
             return {
               type: txContext.type,
@@ -285,7 +286,7 @@ export class XTransferService {
       const tx = await builder.buildBatch(batchOptions);
 
       const encoded = await tx.getEncodedData();
-      return encoded.asHex();
+      return toHex(encoded);
     } catch (e) {
       return handleXcmApiError(e);
     } finally {

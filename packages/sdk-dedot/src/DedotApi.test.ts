@@ -18,6 +18,7 @@ import {
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   localizeLocation,
+  resolveChainApi,
   RuntimeApiUnavailableError,
   type TLocation,
   type TSubstrateChain,
@@ -103,15 +104,7 @@ vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
         failureSubReason: err?.value?.error?.type,
       }),
     ),
-  resolveChainApi: vi
-    .fn()
-    .mockImplementation(
-      (
-        _config: unknown,
-        _chain: unknown,
-        factory: (wsUrl: string, chain: string) => Promise<TDedotApi>,
-      ) => factory("ws://mock:9944", "Acala"),
-    ),
+  resolveChainApi: vi.fn(),
   isExternalChain: vi.fn().mockReturnValue(false),
   isConfig: vi.fn().mockReturnValue(false),
   isSenderSigner: vi.fn().mockReturnValue(false),
@@ -208,7 +201,7 @@ describe("DedotApi", () => {
     mockApi = mockApiRaw as unknown as TDedotApi;
 
     dedotApi = new DedotApi();
-    vi.spyOn(dedotApi, "createApiInstance").mockResolvedValue(mockApi);
+    vi.mocked(resolveChainApi).mockResolvedValue(mockApi);
     await dedotApi.init(mockChain);
 
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false);

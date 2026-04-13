@@ -10,6 +10,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AssetClaimService } from './asset-claim.service.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 
+vi.mock('polkadot-api/utils', () => ({
+  toHex: vi.fn().mockReturnValue('hash'),
+}));
+
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
@@ -19,9 +23,7 @@ vi.mock('@paraspell/sdk', async () => {
       currency: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue({
-        getEncodedData: vi.fn().mockResolvedValue({
-          asHex: vi.fn().mockReturnValue('hash'),
-        }),
+        getEncodedData: vi.fn().mockResolvedValue(new Uint8Array()),
       }),
       disconnect: vi.fn(),
     })),
