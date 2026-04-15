@@ -45,13 +45,13 @@ class Unique<TApi, TRes, TSigner>
       params: [asset.location]
     })
 
-    const balance = await api.queryRuntimeApi<{ success: boolean; value: bigint }>({
+    const balance = await api.queryRuntimeApi<{ success: boolean; value: bigint; ok: bigint }>({
       module: 'UniqueApi',
       method: 'balance',
       params: [collectionId, { Substrate: address }, Number(asset.assetId)]
     })
 
-    return balance?.value ?? 0n
+    return balance?.value ?? (balance?.ok != undefined ? BigInt(balance.ok) : undefined) ?? 0n
   }
 }
 

@@ -3,6 +3,8 @@ import type {
   TDryRunCallBaseOptions,
   TDryRunXcmBaseOptions,
   TSerializedExtrinsics,
+  TSerializedRuntimeApiQuery,
+  TSerializedStateQuery,
   WithAmount
 } from '@paraspell/sdk-core'
 import {
@@ -417,6 +419,47 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.txFromHex(hex)
       expect(txFromHexUtil).toHaveBeenCalledWith(polkadotApi.api, hex)
       expect(result).toBe('mocked_tx_from_hex')
+    })
+  })
+
+  describe('queryState', () => {
+    it('should call api.query with lowercased module and method and return JSON', async () => {
+      const mockResult = {
+        toJSON: vi.fn().mockReturnValue({ free: '1000000000000' })
+      } as unknown as Codec
+      const balancesMock = vi.fn().mockResolvedValue(mockResult)
+      Object.assign(mockApiPromise.query, {
+        balances: { account: balancesMock }
+      })
+
+      const serialized: TSerializedStateQuery = {
+        module: 'Balances',
+        method: 'Account',
+        params: ['0x1234']
+      }
+
+      const result = await polkadotApi.queryState(serialized)
+
+      expect(balancesMock).toHaveBeenCalledWith('0x1234')
+      expect(result).toEqual({ free: '1000000000000' })
+    })
+  })
+
+  describe('queryRuntimeApi', () => {
+    it('should call api.call with lowercased module and camelCased method and return JSON', async () => {
+      const mockResult = { toJSON: vi.fn().mockReturnValue({ ok: '500' }) } as unknown as Codec
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockResult)
+
+      const serialized: TSerializedRuntimeApiQuery = {
+        module: 'XcmPaymentApi',
+        method: 'query_xcm_weight',
+        params: ['some_xcm']
+      }
+
+      const result = await polkadotApi.queryRuntimeApi(serialized)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith('some_xcm')
+      expect(result).toEqual({ ok: '500' })
     })
   })
 

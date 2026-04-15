@@ -1,4 +1,4 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { normalizeLocation, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
@@ -36,7 +36,13 @@ const buildAssets = <TApi, TRes, TSigner>(
     assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
   }
 
-  assets.push(createAsset(version, asset.amount, localizeLocation(chain, asset.location)))
+  assets.push(
+    createAsset(
+      version,
+      asset.amount,
+      normalizeLocation(localizeLocation(chain, asset.location), version)
+    )
+  )
 
   return sortAssets(assets)
 }

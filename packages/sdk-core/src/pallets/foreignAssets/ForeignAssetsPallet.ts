@@ -1,11 +1,23 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class ForeignAssetsPallet extends BaseAssetsPallet {
-  mint(address: string, asset: WithAmount<TAssetInfo>): Promise<TSetBalanceRes> {
+  mint(
+    address: string,
+    asset: WithAmount<TAssetInfo>,
+    _balance: bigint,
+    chain: TSubstrateChain
+  ): Promise<TSetBalanceRes> {
     const { location, amount } = asset
+
+    const notUseAddressIdChains = ['NeuroWeb']
+
+    const notUseId = notUseAddressIdChains.some(prefix => chain.startsWith(prefix))
+
+    const addr = notUseId ? address : { Id: address }
 
     return Promise.resolve({
       assetStatusTx: {
@@ -13,10 +25,10 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
         method: 'force_asset_status',
         params: {
           id: location,
-          owner: { Id: address },
-          issuer: { Id: address },
-          admin: { Id: address },
-          freezer: { Id: address },
+          owner: addr,
+          issuer: addr,
+          admin: addr,
+          freezer: addr,
           min_balance: 0n,
           is_sufficient: true,
           is_frozen: false
@@ -27,7 +39,7 @@ export class ForeignAssetsPallet extends BaseAssetsPallet {
         method: 'mint',
         params: {
           id: location,
-          beneficiary: { Id: address },
+          beneficiary: addr,
           amount
         }
       }

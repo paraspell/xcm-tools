@@ -40,7 +40,7 @@ afterEach(ctx => {
   console.log(`✅ Finished test: ${ctx.task.name}`)
 })
 
-const MOCK_AMOUNT = 1
+const MOCK_AMOUNT = 5
 const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
