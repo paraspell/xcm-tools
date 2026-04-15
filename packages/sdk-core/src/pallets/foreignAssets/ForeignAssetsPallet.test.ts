@@ -14,7 +14,7 @@ describe('ForeignAssetsPallet.setBalance', () => {
     const location = { parents: 1, interior: { Here: null } }
     const asset = { location, amount: 123n } as WithAmount<TAssetInfo>
 
-    const res = await pallet.mint(address, asset)
+    const res = await pallet.mint(address, asset, 0n, 'Acala')
 
     expect(res.assetStatusTx?.module).toBe('ForeignAssets')
     expect(res.assetStatusTx?.method).toBe('force_asset_status')

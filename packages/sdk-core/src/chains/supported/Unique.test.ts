@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -44,5 +45,40 @@ describe('Unique', () => {
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
     expect(() => chain.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
+  })
+
+  describe('getBalanceForeign', () => {
+    const address = '5FbalanceAddr'
+    const asset: TAssetInfo = {
+      symbol: 'QTZ',
+      decimals: 12,
+      assetId: '42',
+      location: { parents: 1, interior: { X1: [{ Parachain: 2037 }] } }
+    }
+
+    it('should return balance.value when present', async () => {
+      const queryState = vi.fn().mockResolvedValue(100)
+      const queryRuntimeApi = vi.fn().mockResolvedValue({ success: true, value: 500n, ok: 300n })
+
+      const api = { queryState, queryRuntimeApi } as unknown as PolkadotApi<
+        unknown,
+        unknown,
+        unknown
+      >
+
+      const balance = await chain.getBalanceForeign(api, address, asset)
+
+      expect(queryState).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'ForeignAssetToCollection',
+        params: [asset.location]
+      })
+      expect(queryRuntimeApi).toHaveBeenCalledWith({
+        module: 'UniqueApi',
+        method: 'balance',
+        params: [100, { Substrate: address }, 42]
+      })
+      expect(balance).toBe(500n)
+    })
   })
 })

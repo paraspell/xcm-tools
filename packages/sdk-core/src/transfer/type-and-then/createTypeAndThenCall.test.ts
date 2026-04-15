@@ -1,5 +1,5 @@
 import type { TAsset, TAssetInfo, TAssetWithFee } from '@paraspell/assets'
-import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
+import { findNativeAssetInfoOrThrow, normalizeLocation } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -88,6 +88,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
+    vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
     vi.mocked(sortAssets).mockImplementation(assets => assets)

@@ -1,3 +1,4 @@
+import { normalizeLocation } from '@paraspell/assets'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
@@ -81,7 +82,11 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
     )
 
   assetsFilter.push(
-    createAsset(version, assetInfo.amount, localizeLocation(reserve.chain, assetInfo.location))
+    createAsset(
+      version,
+      assetInfo.amount,
+      normalizeLocation(localizeLocation(reserve.chain, assetInfo.location), version)
+    )
   )
 
   if (isSubBridge || (origin.chain !== reserve.chain && dest.chain !== reserve.chain)) {

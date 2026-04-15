@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/assets'
+import { normalizeLocation, type TAsset } from '@paraspell/assets'
 import { getXcmPallet, type TPallet } from '@paraspell/pallets'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
@@ -50,7 +50,11 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner>(
 
   const feeMultiAsset =
     feeAsset ??
-    createAsset(version, assetInfo.amount, localizeLocation(origin.chain, feeAssetLocation))
+    createAsset(
+      version,
+      assetInfo.amount,
+      normalizeLocation(localizeLocation(origin.chain, feeAssetLocation), version)
+    )
 
   const module = (pallet as TPallet) ?? getXcmPallet(origin.chain)
   const methodName = method ?? 'transfer_assets_using_type_and_then'
