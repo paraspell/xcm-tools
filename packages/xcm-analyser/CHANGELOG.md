@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.7](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.6...xcm-analyser-v3.0.7) (2026-04-16)
+
+
+### Documentation
+
+* Remove snyk ([c9385d3](https://github.com/paraspell/xcm-tools/commit/c9385d3c88b72d9fc333a4a6b13cd29d46b804d3))
+
 ## [3.0.6](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.5...xcm-analyser-v3.0.6) (2026-04-02)
 
 
