@@ -801,9 +801,6 @@ importers:
       '@paraspell/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
-      '@polkadot-api/descriptors':
-        specifier: file:.papi/descriptors
-        version: file:packages/sdk/.papi/descriptors(polkadot-api@2.0.2(bufferutil@4.1.0)(esbuild@0.27.4)(rxjs@7.8.2)(utf-8-validate@5.0.10))
       '@polkadot-labs/hdkd':
         specifier: ^0.0.27
         version: 0.0.27
@@ -5108,11 +5105,6 @@ packages:
 
   '@polkadot-api/codegen@0.22.3':
     resolution: {integrity: sha512-TaJpxUOuXFIgrkjhPw/H0fwyKz74R/NL4W3Z0YPkxa89fvMmUqlvnam4e7GzcuR7glcXVTELYY6miCEsg4f+Eg==}
-
-  '@polkadot-api/descriptors@file:packages/sdk/.papi/descriptors':
-    resolution: {directory: packages/sdk/.papi/descriptors, type: directory}
-    peerDependencies:
-      polkadot-api: '>=2.0.0'
 
   '@polkadot-api/ink-contracts@0.4.6':
     resolution: {integrity: sha512-wpFPa8CnGnmq+cFYMzuTEDmtt3ElBM0UWgTz4RpmI9E7knZ1ctWBhO7amXxOWcILqIG6sqWIE95x0cfF1PRcQg==}
@@ -19540,10 +19532,6 @@ snapshots:
       '@polkadot-api/metadata-compatibility': 0.6.1
       '@polkadot-api/substrate-bindings': 0.20.1
       '@polkadot-api/utils': 0.4.0
-
-  '@polkadot-api/descriptors@file:packages/sdk/.papi/descriptors(polkadot-api@2.0.2(bufferutil@4.1.0)(esbuild@0.27.4)(rxjs@7.8.2)(utf-8-validate@5.0.10))':
-    dependencies:
-      polkadot-api: 2.0.2(bufferutil@4.1.0)(esbuild@0.27.4)(rxjs@7.8.2)(utf-8-validate@5.0.10)
 
   '@polkadot-api/ink-contracts@0.4.6':
     dependencies:

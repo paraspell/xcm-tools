@@ -60,7 +60,6 @@ import {
   SubmitTransactionError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { type ah, XcmV5Junctions, XcmVersionedLocation } from '@polkadot-api/descriptors'
 import type { TypedApi } from 'polkadot-api'
 import { AccountId, Binary, getSs58AddressInfo } from 'polkadot-api'
 import { toHex } from 'polkadot-api/utils'
@@ -128,14 +127,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     this._api = await resolveChainApi(this._config, chain, wsUrl => leaseClient(wsUrl, this._ttlMs))
   }
 
-  _typedApi: TypedApi<typeof ah, false> | null = null
-
   _untypedApi: TypedApi<any, false> | null = null
-
-  private get typedApi() {
-    if (!this._typedApi) this._typedApi = this.api.getUnsafeApi<typeof ah>()
-    return this._typedApi
-  }
 
   private get untypedApi() {
     if (!this._untypedApi) this._untypedApi = this.api.getUnsafeApi()
@@ -206,11 +198,14 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   async objectToHex(obj: unknown, _typeName: string, version: Version) {
     const transformedObj = transform(obj)
 
-    const tx = this.typedApi.tx.PolkadotXcm.send({
-      dest: XcmVersionedLocation[version]({
-        parents: Parents.ZERO,
-        interior: XcmV5Junctions.Here()
-      }),
+    const tx = this.untypedApi.tx.PolkadotXcm.send({
+      dest: {
+        type: version,
+        value: {
+          parents: Parents.ZERO,
+          interior: { type: 'Here' }
+        }
+      },
       message: transformedObj
     })
 
@@ -275,8 +270,8 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     const transformedFromMl = transform(fromMl)
     const transformedToMl = transform(toMl)
 
-    const response =
-      await this.typedApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
+    const response: any =
+      await this.untypedApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
         transformedFromMl,
         transformedToMl,
         amountIn,
@@ -520,9 +515,11 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {
-    const { success, value } = await this.typedApi.apis.XcmPaymentApi.query_xcm_weight(
+    const weightRes: any = await this.untypedApi.apis.XcmPaymentApi.query_xcm_weight(
       !xcm.type ? transform(xcm) : xcm
     )
+
+    const { success, value } = weightRes
 
     if (!success)
       throw new RuntimeApiError(
@@ -612,7 +609,8 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     const transformedXcm = transformXcm ? transform(localXcm) : localXcm
 
     const queryWeight = async () => {
-      const weightRes = await this.typedApi.apis.XcmPaymentApi.query_xcm_weight(transformedXcm)
+      const weightRes: any =
+        await this.untypedApi.apis.XcmPaymentApi.query_xcm_weight(transformedXcm)
 
       if (!weightRes.success)
         throw new RuntimeApiError(
@@ -633,7 +631,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     const transformedAssetLoc = transform(versionedAssetId)
 
-    const execFeeRes = await this.typedApi.apis.XcmPaymentApi.query_weight_to_asset_fee(
+    const execFeeRes: any = await this.untypedApi.apis.XcmPaymentApi.query_weight_to_asset_fee(
       weight,
       transformedAssetLoc
     )
@@ -669,13 +667,11 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     asset: TAssetInfo,
     version: Version
   ): Promise<bigint | undefined> {
-    const fallbackExecFeeRes = await this.typedApi.apis.XcmPaymentApi.query_weight_to_asset_fee(
-      weightValue,
-      {
+    const fallbackExecFeeRes: any =
+      await this.untypedApi.apis.XcmPaymentApi.query_weight_to_asset_fee(weightValue, {
         type: version,
         value: transform(RELAY_LOCATION)
-      }
-    )
+      })
 
     if (typeof fallbackExecFeeRes?.value !== 'bigint') {
       return undefined
@@ -722,7 +718,10 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     const transformedOriginLocation = transform(originLocation)
 
-    const result = await this.typedApi.apis.DryRunApi.dry_run_xcm(transformedOriginLocation, xcm)
+    const result: any = await this.untypedApi.apis.DryRunApi.dry_run_xcm(
+      transformedOriginLocation,
+      xcm
+    )
 
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
@@ -826,7 +825,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       })
     }
 
-    const feeEventValue = feeEvent.value.value as any
+    const feeEventValue = feeEvent.value.value
 
     let fee = feeEvent.type === 'AssetConversion' ? feeEventValue.amount_in : feeEventValue.amount
 
