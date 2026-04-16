@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.1.0...sdk-v13.2.0) (2026-04-16)
+
+
+### Bug Fixes
+
+* Fix some XCM v3 transfers not working 🔧 ([536d291](https://github.com/paraspell/xcm-tools/commit/536d291e9820ca22b0febc215ebb80a4b7b8c9fe))
+
+
+### Tests
+
+* Add e2e for Dedot & PJS sdks 🧪 ([b4816ba](https://github.com/paraspell/xcm-tools/commit/b4816ba08e42756330fe44b2cac3a9b2c8ae2ee3))
+
+
+### Build System
+
+* **sdk:** Update to Papi v2 ✨ ([be558c6](https://github.com/paraspell/xcm-tools/commit/be558c69cfbf4e9ec0060f60355007a339645a07))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.0.1...sdk-v13.1.0) (2026-04-08)
 
 
