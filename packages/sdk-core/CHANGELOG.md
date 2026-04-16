@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.2.1...sdk-core-v13.2.2) (2026-04-16)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update swap peer dep version range 📦 ([b1c4ed5](https://github.com/paraspell/xcm-tools/commit/b1c4ed5e663e756c3c07e8ef49bb5152e6471691))
+
 ## [13.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.2.0...sdk-core-v13.2.1) (2026-04-16)
 
 
