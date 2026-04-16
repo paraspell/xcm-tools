@@ -50,7 +50,7 @@
       "component": "playground"
     }
   },
-  "group-pull-request-title-pattern": "chore${scope}: Release main libraries ${version}",
+  "group-pull-request-title-pattern": "chore${scope}: release main libraries",
   "plugins": [
     {
       "type": "linked-versions",
