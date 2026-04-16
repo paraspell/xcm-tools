@@ -92,7 +92,7 @@ import * as paraspell from '@paraspell/sdk'
 > 
 > **Latest news:**
 > - abstractDecimals is now turned on by default!
-> - PAPI V2 available from version 13.2.0 onwards!
+> - PAPI V2 available from version 13.2.2 onwards!
 
 ### Sending XCM
 For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
