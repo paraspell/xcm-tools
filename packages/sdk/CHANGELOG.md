@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v13.2.0...sdk-v13.2.1) (2026-04-16)
+
+
+### Bug Fixes
+
+* **sdk:** Remove papi desriptors temporarily 🔧 ([49bd23d](https://github.com/paraspell/xcm-tools/commit/49bd23df8ca2065f32665f00ab47ee1af9b6a561))
+
 ## [13.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.1.0...sdk-v13.2.0) (2026-04-16)
 
 
