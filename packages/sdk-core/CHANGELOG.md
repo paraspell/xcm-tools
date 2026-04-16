@@ -1,5 +1,34 @@
 # Changelog
 
+## [13.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.1.0...sdk-core-v13.2.0) (2026-04-16)
+
+
+### Bug Fixes
+
+* Fix some XCM v3 transfers not working 🔧 ([536d291](https://github.com/paraspell/xcm-tools/commit/536d291e9820ca22b0febc215ebb80a4b7b8c9fe))
+* **sdk-pjs:** Fix XCM V3 X1 junction normalization 🔧 ([5308397](https://github.com/paraspell/xcm-tools/commit/53083979d575ff0a30e02bc874b2a73aa34f5bca))
+
+
+### Documentation
+
+* Remove snyk ([c9385d3](https://github.com/paraspell/xcm-tools/commit/c9385d3c88b72d9fc333a4a6b13cd29d46b804d3))
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify validation code 🔧 ([4bbca0f](https://github.com/paraspell/xcm-tools/commit/4bbca0fff7e41e4e9a99260c369f6e023ea29f84))
+
+
+### Tests
+
+* Add e2e for Dedot & PJS sdks 🧪 ([b4816ba](https://github.com/paraspell/xcm-tools/commit/b4816ba08e42756330fe44b2cac3a9b2c8ae2ee3))
+* **sdk-core:** Add test case for builder pallet/method override 🧪 ([4b0d49d](https://github.com/paraspell/xcm-tools/commit/4b0d49d1a256c5a53c028440e16c3b983b6636d8))
+
+
+### Build System
+
+* **sdk:** Update to Papi v2 ✨ ([be558c6](https://github.com/paraspell/xcm-tools/commit/be558c69cfbf4e9ec0060f60355007a339645a07))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.0.1...sdk-core-v13.1.0) (2026-04-08)
 
 
