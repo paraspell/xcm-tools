@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.1.0...xcm-api-v13.2.0) (2026-04-16)
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify validation code 🔧 ([4bbca0f](https://github.com/paraspell/xcm-tools/commit/4bbca0fff7e41e4e9a99260c369f6e023ea29f84))
+
+
+### Build System
+
+* **sdk:** Update to Papi v2 ✨ ([be558c6](https://github.com/paraspell/xcm-tools/commit/be558c69cfbf4e9ec0060f60355007a339645a07))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.0.1...xcm-api-v13.1.0) (2026-04-08)
 
 

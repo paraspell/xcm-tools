@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.1.0...sdk-common-v13.2.0) (2026-04-16)
+
+
+### Documentation
+
+* Remove snyk ([c9385d3](https://github.com/paraspell/xcm-tools/commit/c9385d3c88b72d9fc333a4a6b13cd29d46b804d3))
+
 ## [13.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.0.1...sdk-common-v13.1.0) (2026-04-08)
 
 
