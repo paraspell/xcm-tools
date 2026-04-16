@@ -13,9 +13,6 @@
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
     </a>
-    <a href="https://snyk.io/test/github/paraspell/sdk">
-      <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
-    </a>
   </p>
 </div>
 
