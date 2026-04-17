@@ -52,7 +52,11 @@ export const AdvancedOptions = <T extends TAdvancedOptions>({
   return (
     <Accordion variant="separated" value={isOpened} onChange={onChange}>
       <Accordion.Item value="advanced">
-        <Accordion.Control fz="md" className={classes.control}>
+        <Accordion.Control
+          fz="md"
+          className={classes.control}
+          data-testid="advanced-options-toggle"
+        >
           Advanced options
         </Accordion.Control>
         <Accordion.Panel>
