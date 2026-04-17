@@ -26,17 +26,16 @@ import ExchangeChain from '../ExchangeChain';
 import { calculateFee, getAssetInfo } from './utils';
 
 class HydrationExchange extends ExchangeChain {
-  async swapCurrency<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  async swapCurrency<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult> {
-    const { origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
+  ): Promise<TSingleSwapResult<TRes>> {
+    const { apiPjs, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
     const {
       api: { router: tradeRouter },
       tx: txBuilderFactory,
-    } = createSdkContext(api);
+    } = createSdkContext(apiPjs);
 
     const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
     const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
@@ -129,12 +128,14 @@ class HydrationExchange extends ExchangeChain {
     return { tx, amountOut: amountOutModified };
   }
 
-  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>): Promise<bigint> {
-    const { assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
+  async getAmountOut<TApi, TRes, TSigner>(
+    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
+  ): Promise<bigint> {
+    const { apiPjs, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 
     const {
       api: { router: tradeRouter },
-    } = createSdkContext(api);
+    } = createSdkContext(apiPjs);
 
     const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
     const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);

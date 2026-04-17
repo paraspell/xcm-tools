@@ -2,7 +2,7 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 
 import type { TExtrinsic } from '../types';
 
-export const isPjsExtrinsic = (tx: TExtrinsic): tx is Extrinsic =>
+export const isPjsExtrinsic = <TRes>(tx: TExtrinsic<TRes>): tx is Extrinsic =>
   typeof tx === 'object' &&
   tx !== null &&
   'send' in tx &&

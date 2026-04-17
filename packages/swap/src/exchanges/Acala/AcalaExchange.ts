@@ -1,10 +1,10 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import { getBalance } from '@paraspell/sdk';
 import {
   AmountTooLowError,
   formatUnits,
+  getBalance,
   getNativeAssetSymbol,
   padValueBy,
   parseUnits,
@@ -25,23 +25,22 @@ import ExchangeChain from '../ExchangeChain';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
 class AcalaExchange extends ExchangeChain {
-  async swapCurrency<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  async swapCurrency<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult> {
-    const { papiApi, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
+  ): Promise<TSingleSwapResult<TRes>> {
+    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
 
-    const wallet = new Wallet(api);
+    const wallet = new Wallet(apiPjs);
     await wallet.isReady;
 
     const fromToken = wallet.getToken(assetFrom.symbol);
     const toToken = wallet.getToken(assetTo.symbol);
 
-    const acalaDex = new AcalaDex({ api, wallet });
+    const acalaDex = new AcalaDex({ api: apiPjs, wallet });
 
     const dex = new AggregateDex({
-      api,
+      api: apiPjs,
       wallet,
       providers: [acalaDex],
     });
@@ -53,7 +52,7 @@ class AcalaExchange extends ExchangeChain {
     Logger.log('Total fee native:', totalNativeCurrencyFee);
 
     const balance = await getBalance({
-      api: papiApi,
+      api,
       address: sender,
       chain: this.chain,
     });
@@ -111,19 +110,19 @@ class AcalaExchange extends ExchangeChain {
     return { tx, amountOut };
   }
 
-  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>) {
-    const { assetFrom, assetTo, amount, origin } = options;
+  async getAmountOut<TApi, TRes, TSigner>(options: TGetAmountOutOptions<TApi, TRes, TSigner>) {
+    const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 
-    const wallet = new Wallet(api);
+    const wallet = new Wallet(apiPjs);
     await wallet.isReady;
 
     const fromToken = wallet.getToken(assetFrom.symbol);
     const toToken = wallet.getToken(assetTo.symbol);
 
-    const acalaDex = new AcalaDex({ api, wallet });
+    const acalaDex = new AcalaDex({ api: apiPjs, wallet });
 
     const dex = new AggregateDex({
-      api,
+      api: apiPjs,
       wallet,
       providers: [acalaDex],
     });

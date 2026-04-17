@@ -20,10 +20,8 @@ import {
   isAssetXcEqual,
   isSystemChain,
   localizeLocation,
-  MissingChainApiError,
   Parents,
   RELAY_LOCATION,
-  resolveChainApi,
   SubmitTransactionError,
   type TLocation,
   type TSubstrateChain,
@@ -65,7 +63,6 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
   getChainProviders: vi.fn(),
-  resolveChainApi: vi.fn(),
   wrapTxBypass: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   findNativeAssetInfoOrThrow: vi.fn(),
@@ -93,6 +90,7 @@ describe('PapiApi', () => {
           proof_size: 0n
         }
       }),
+      getEncodedData: vi.fn().mockResolvedValue(new Uint8Array()),
       decodedCall: {
         value: {
           type: 'transfer_assets'
@@ -177,7 +175,6 @@ describe('PapiApi', () => {
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
     vi.mocked(deriveAddress).mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
-    vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
 
@@ -227,93 +224,6 @@ describe('PapiApi', () => {
 
   it('should return PAPI api type', () => {
     expect(papiApi.type).toBe('PAPI')
-  })
-
-  describe('init', () => {
-    it('should create api instance when _api is undefined', async () => {
-      const papiApi = new PapiApi()
-      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
-
-      await papiApi.init('Acala')
-
-      expect(resolveChainApi).toHaveBeenCalledWith(undefined, 'Acala', expect.any(Function))
-      expect(papiApi.api).toBe(mockPolkadotClient)
-    })
-
-    it('should return early if already initialized', async () => {
-      papiApi = new PapiApi(mockPolkadotClient)
-      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
-      await papiApi.init('Acala')
-
-      vi.mocked(resolveChainApi).mockClear()
-      await papiApi.init('Moonbeam')
-
-      expect(resolveChainApi).not.toHaveBeenCalled()
-      expect(papiApi.api).toBe(mockPolkadotClient)
-    })
-
-    it('should use apiOverrides when provided in config', async () => {
-      const customClient = {
-        ...mockPolkadotClient,
-        customProp: 'custom'
-      } as unknown as PolkadotClient
-
-      papiApi = new PapiApi({
-        apiOverrides: {
-          Moonbeam: customClient
-        }
-      })
-
-      vi.mocked(resolveChainApi).mockResolvedValue(customClient)
-
-      await papiApi.init('Moonbeam')
-
-      expect(papiApi.api).toBe(customClient)
-      expect(resolveChainApi).toHaveBeenCalledWith(
-        { apiOverrides: { Moonbeam: customClient } },
-        'Moonbeam',
-        expect.any(Function)
-      )
-    })
-
-    it('should throw MissingChainApiError in development mode when no override provided', async () => {
-      papiApi = new PapiApi({
-        development: true,
-        apiOverrides: {
-          Acala: mockPolkadotClient
-          // Moonbeam not provided
-        }
-      })
-
-      vi.mocked(resolveChainApi).mockImplementation(() => {
-        throw new MissingChainApiError('Moonbeam')
-      })
-
-      await expect(papiApi.init('Moonbeam')).rejects.toThrow(new MissingChainApiError('Moonbeam'))
-    })
-
-    it('should create api automatically when no config and no overrides', async () => {
-      papiApi = new PapiApi()
-      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
-
-      await papiApi.init('Acala')
-
-      expect(resolveChainApi).toHaveBeenCalledWith(undefined, 'Acala', expect.any(Function))
-      expect(papiApi.api).toBe(mockPolkadotClient)
-    })
-  })
-
-  describe('createApiInstance', () => {
-    it('should create a PolkadotClient instance', async () => {
-      const wsUrl = 'ws://localhost:9944'
-      const mockWsClient = { mock: 'wsClient' } as unknown as ReturnType<typeof createWsClient>
-      vi.mocked(createWsClient).mockReturnValue(mockWsClient)
-
-      const apiInstance = await papiApi.createApiInstance(wsUrl)
-
-      expect(apiInstance).toBe(mockWsClient)
-      expect(createWsClient).toHaveBeenCalledWith(wsUrl)
-    })
   })
 
   describe('deserializeExtrinsics', () => {
@@ -563,10 +473,15 @@ describe('PapiApi', () => {
       const destroySpy = spyDestroy()
 
       papiApi = new PapiApi('ws://example:9944')
+
+      const leaseClientSpy = vi.spyOn(papiApi, 'leaseClient').mockResolvedValue(mockPolkadotClient)
+
       await papiApi.init(mockChain)
       await papiApi.disconnect(true)
 
       expect(destroySpy).toHaveBeenCalledTimes(1)
+
+      leaseClientSpy.mockRestore()
     })
 
     it('does NOT destroy when _api is an injected client and force = false', async () => {
@@ -653,11 +568,11 @@ describe('PapiApi', () => {
       expect(res).toBe(7n)
     })
 
-    it('converts delivery fee via quoteAhPrice when asset is NOT native', async () => {
+    it('converts delivery fee via queryRuntimeApi when asset is NOT native', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetXcEqual).mockReturnValue(false)
 
-      const quoteSpy = vi.spyOn(papiApi, 'quoteAhPrice').mockResolvedValue(5n)
+      const quoteSpy = vi.spyOn(papiApi, 'queryRuntimeApi').mockResolvedValue(5n)
 
       const asset: TAssetInfo = {
         symbol: 'USDC',
@@ -710,11 +625,11 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
-    it('falls back to 0 delivery fee when quoteAhPrice throws the runtime-entry error', async () => {
+    it('falls back to 0 delivery fee when queryRuntimeApi throws the runtime-entry error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetXcEqual).mockReturnValue(false)
 
-      vi.spyOn(papiApi, 'quoteAhPrice').mockRejectedValue(
+      vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(
         new Error(
           'Runtime entry RuntimeCall(AssetConversionApi.quote_price_exact_tokens_for_tokens) not found'
         )
@@ -737,11 +652,11 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
-    it('falls back to 0 delivery fee when quoteAhPrice throws an unexpected error', async () => {
+    it('falls back to 0 delivery fee when queryRuntimeApi throws an unexpected error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetXcEqual).mockReturnValue(false)
 
-      vi.spyOn(papiApi, 'quoteAhPrice').mockRejectedValue(new Error('network flake'))
+      vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(new Error('network flake'))
 
       const asset: TAssetInfo = {
         symbol: 'USDT',
@@ -952,13 +867,13 @@ describe('PapiApi', () => {
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
-        quoteAhPrice: vi.fn().mockResolvedValue(convertedFee)
+        queryRuntimeApi: vi.fn().mockResolvedValue(convertedFee)
       } as unknown as PapiApi
 
       const cloneSpy = vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
 
       const ahInitSpy = vi.spyOn(ahApiMock, 'init')
-      const ahQuoteSpy = vi.spyOn(ahApiMock, 'quoteAhPrice')
+      const ahQuoteSpy = vi.spyOn(ahApiMock, 'queryRuntimeApi')
 
       const res = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset, Version.V4)
 
@@ -970,7 +885,11 @@ describe('PapiApi', () => {
       expect(cloneSpy).toHaveBeenCalledTimes(1)
       expect(ahInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', asset.location)
-      expect(ahQuoteSpy).toHaveBeenCalledWith(RELAY_LOCATION, localizedLoc, fallbackFee, false)
+      expect(ahQuoteSpy).toHaveBeenCalledWith({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [RELAY_LOCATION, localizedLoc, fallbackFee, false]
+      })
       expect(res).toBe(convertedFee)
     })
 
@@ -991,7 +910,7 @@ describe('PapiApi', () => {
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
-        quoteAhPrice: vi.fn().mockResolvedValue(undefined)
+        queryRuntimeApi: vi.fn().mockResolvedValue(undefined)
       } as unknown as PapiApi
 
       vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
@@ -1167,6 +1086,20 @@ describe('PapiApi', () => {
       expect(Binary.fromHex).toHaveBeenCalledWith(hexString)
       expect(result).toBe(mockTransaction)
       expect(spy).toHaveBeenCalledWith(binaryData)
+    })
+  })
+
+  describe('txToHex', () => {
+    it('should return hex string from encoded transaction data', async () => {
+      const encodedData = new Uint8Array([0xab, 0xcd])
+      const spy = vi.spyOn(mockTransaction, 'getEncodedData').mockResolvedValue(encodedData)
+      vi.mocked(toHex).mockReturnValue('0xabcd')
+
+      const result = await papiApi.txToHex(mockTransaction)
+
+      expect(spy).toHaveBeenCalled()
+      expect(toHex).toHaveBeenCalledWith(encodedData)
+      expect(result).toBe('0xabcd')
     })
   })
 
@@ -2659,61 +2592,6 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('quoteAhPrices', () => {
-    it('should return the quote for the provided asset', async () => {
-      const mlFrom = {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: 1000
-          }
-        }
-      }
-      const mlTo = {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: 1001
-          }
-        }
-      }
-
-      const amountIn = 1000n
-      const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
-
-      expect(quote).toBe(1n)
-    })
-
-    it('should return undefined when quote is not available', async () => {
-      const mlFrom = {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: 1000
-          }
-        }
-      }
-      const mlTo = {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: 1001
-          }
-        }
-      }
-
-      const amountIn = 1000n
-      const unsafeApi = papiApi.api.getUnsafeApi()
-      unsafeApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens = vi
-        .fn()
-        .mockResolvedValue(undefined)
-
-      const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
-
-      expect(quote).toBeUndefined()
-    })
-  })
-
   describe('getBridgeStatus', () => {
     it('should return the bridge status', async () => {
       const status = await papiApi.getBridgeStatus()
@@ -2724,13 +2602,6 @@ describe('PapiApi', () => {
   describe('PapiApi - timed cache integration', () => {
     beforeEach(() => {
       vi.mocked(createWsClient).mockReset()
-      vi.mocked(resolveChainApi).mockImplementation(async (_config, _chain, createApiInstance) =>
-        createApiInstance(_config as string)
-      )
-    })
-
-    afterEach(() => {
-      vi.mocked(resolveChainApi).mockResolvedValue(mockPolkadotClient)
     })
 
     it('re-uses the same PolkadotClient and destroys it after refs drop to 0 when destroyWanted=true', async () => {

@@ -11,10 +11,11 @@ export const selectBestExchangeAmountOut = async <TApi, TRes, TSigner>(
     options,
     originApi,
     async (dex, assetFromExchange, assetTo, _options, parsedAmount) => {
-      const pjsApi = await dex.createApiInstance();
-      const papiApi = await dex.createApiInstancePapi();
-      return dex.getAmountOut(pjsApi, {
-        papiApi,
+      const exchangeApi = await options.api.createApiForChain(dex.chain);
+      const exchangePjsApi = await dex.createApiInstance();
+      return dex.getAmountOut({
+        api: exchangeApi,
+        apiPjs: exchangePjsApi,
         assetFrom: assetFromExchange,
         assetTo,
         amount: BigInt(parsedAmount),

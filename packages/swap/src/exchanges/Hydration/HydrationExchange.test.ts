@@ -98,10 +98,11 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
       const toDestTransactionFee = 10n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         UnableToComputeError,
       );
 
@@ -139,10 +140,11 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
       const toDestTransactionFee = 10n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         UnableToComputeError,
       );
 
@@ -158,10 +160,11 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
       const toDestTransactionFee = 10n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         InvalidCurrencyError,
       );
     });
@@ -175,11 +178,12 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'NON_EXISTENT' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
 
       const toDestTransactionFee = 10n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         InvalidCurrencyError,
       );
     });
@@ -211,10 +215,11 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'HDX' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
       const toDestTransactionFee = 10n;
 
-      const result = await chain.swapCurrency(api, options, toDestTransactionFee);
+      const result = await chain.swapCurrency(options, toDestTransactionFee);
 
       expect(result.tx).toBe('mockExtrinsic');
       expect(result.amountOut).toBe(9999999999999999n);
@@ -234,11 +239,12 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
 
       const toDestTransactionFee = 10n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         AmountTooLowError,
       );
     });
@@ -268,13 +274,14 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 10000n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
       const toDestTransactionFee = 10n;
 
       const tradeSpy = vi.spyOn(mockTxBuilderFactory, 'trade');
       const slippageSpy = vi.spyOn(mockTxBuilderFactory.trade(mockTrade), 'withSlippage');
 
-      const result = await chain.swapCurrency(api, options, toDestTransactionFee);
+      const result = await chain.swapCurrency(options, toDestTransactionFee);
 
       expect(result.tx).toBe('mockExtrinsic');
       expect(typeof result.amountOut).toBe('bigint');
@@ -308,11 +315,12 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
         amount: 100n,
-      } as TSwapOptions<unknown>;
+        apiPjs: api,
+      } as TSwapOptions<unknown, unknown, unknown>;
 
       const toDestTransactionFee = 99999n;
 
-      await expect(chain.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+      await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         AmountTooLowError,
       );
     });
@@ -365,9 +373,10 @@ describe('HydrationExchange', () => {
         assetTo: { symbol: 'HDX' },
         amount: 100n,
         origin: {},
-      } as TGetAmountOutOptions<unknown>;
+        apiPjs: api,
+      } as TGetAmountOutOptions<unknown, unknown, unknown>;
 
-      const amountOut = await chain.getAmountOut(api, options);
+      const amountOut = await chain.getAmountOut(options);
 
       expect(amountOut).toBe(100n);
     });

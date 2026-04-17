@@ -112,7 +112,7 @@ describe('Mythos', () => {
     const mockApi = {
       clone: vi.fn(),
       init: vi.fn(),
-      quoteAhPrice: vi.fn(),
+      queryRuntimeApi: vi.fn(),
       deserializeExtrinsics: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -135,7 +135,7 @@ describe('Mythos', () => {
 
       vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
       vi.spyOn(mockApi, 'init').mockResolvedValue(undefined)
-      vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
+      vi.spyOn(mockApi, 'queryRuntimeApi').mockResolvedValue(1000n)
       vi.spyOn(mockApi, 'deserializeExtrinsics').mockResolvedValue('ethereum_tx_result')
     })
 

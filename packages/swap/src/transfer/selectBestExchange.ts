@@ -35,10 +35,10 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
       const { amountOut } = await dex.handleMultiSwap(
-        modifiedOptions.exchange.apiPjs,
         {
           ...modifiedOptions,
-          papiApi: modifiedOptions.exchange.apiPapi,
+          api: modifiedOptions.exchange.api,
+          apiPjs: modifiedOptions.exchange.apiPjs,
           assetFrom: modifiedOptions.exchange.assetFrom,
           assetTo: modifiedOptions.exchange.assetTo,
           isForFeeEstimation,

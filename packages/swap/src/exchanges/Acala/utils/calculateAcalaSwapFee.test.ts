@@ -18,7 +18,7 @@ describe('calculateAcalaTransactionFee', () => {
   let walletMock: Partial<Wallet>;
   let tokenFromMock: Partial<Token>;
   let tokenToMock: Partial<Token>;
-  let swapOptionsMock: Partial<TSwapOptions<unknown>>;
+  let swapOptionsMock: Partial<TSwapOptions<unknown, unknown, unknown>>;
 
   const extrinsicMock = { method: 'mockExtrinsicMethod' };
 
@@ -71,7 +71,7 @@ describe('calculateAcalaTransactionFee', () => {
       walletMock as Wallet,
       tokenFromMock as Token,
       tokenToMock as Token,
-      swapOptionsMock as TSwapOptions<unknown>,
+      swapOptionsMock as TSwapOptions<unknown, unknown, unknown>,
     );
 
     expect(dexMock.swap).toHaveBeenCalledTimes(1);
@@ -97,7 +97,7 @@ describe('calculateAcalaTransactionFee', () => {
       walletMock as Wallet,
       tokenMock as Token,
       tokenToMock as Token,
-      swapOptionsMock as TSwapOptions<unknown>,
+      swapOptionsMock as TSwapOptions<unknown, unknown, unknown>,
     );
 
     expect(result).toBe(1n);

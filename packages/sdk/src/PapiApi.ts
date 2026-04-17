@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -10,7 +9,6 @@ import { blake2b } from '@noble/hashes/blake2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import type {
   TAssetInfo,
-  TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunError,
@@ -20,6 +18,7 @@ import type {
   TPaymentInfo,
   TSender,
   TSerializedExtrinsics,
+  TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
   TSubstrateChain,
   TUrl,
@@ -32,7 +31,6 @@ import {
   createAssetId,
   createClientCache,
   createClientPoolHelpers,
-  DEFAULT_TTL_MS,
   EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
@@ -44,7 +42,6 @@ import {
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
-  isExternalChain,
   isRelayChain,
   isSenderSigner,
   localizeLocation,
@@ -54,7 +51,6 @@ import {
   PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
-  resolveChainApi,
   RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
@@ -114,17 +110,10 @@ const extractDryRunXcmFailureReason = (result: any): string => {
 }
 
 class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
-  public readonly type = 'PAPI'
+  readonly type = 'PAPI'
 
-  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this._chain !== undefined || isExternalChain(chain)) {
-      return
-    }
-
-    this._ttlMs = clientTtlMs
-    this._chain = chain
-
-    this._api = await resolveChainApi(this._config, chain, wsUrl => leaseClient(wsUrl, this._ttlMs))
+  leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TPapiApi> {
+    return leaseClient(wsUrl, ttlMs)
   }
 
   _untypedApi: TypedApi<any, false> | null = null
@@ -132,10 +121,6 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   private get untypedApi() {
     if (!this._untypedApi) this._untypedApi = this.api.getUnsafeApi()
     return this._untypedApi
-  }
-
-  createApiInstance(wsUrl: TUrl): Promise<TPapiApi> {
-    return Promise.resolve(createWsClient(wsUrl))
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -169,11 +154,16 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     return this.untypedApi.txFromCallData(callData)
   }
 
+  async txToHex(tx: TPapiTransaction): Promise<string> {
+    const encoded = await tx.getEncodedData()
+    return toHex(encoded)
+  }
+
   queryState<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
     return this.untypedApi.query[module][method].getValue(...params.map(transform)) as Promise<T>
   }
 
-  queryRuntimeApi<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
+  queryRuntimeApi<T>({ module, method, params }: TSerializedRuntimeApiQuery): Promise<T> {
     return this.untypedApi.apis[module][method](...params.map(transform)) as Promise<T>
   }
 
@@ -264,21 +254,6 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
         refTime: ref_time
       }
     }
-  }
-
-  async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
-    const transformedFromMl = transform(fromMl)
-    const transformedToMl = transform(toMl)
-
-    const response: any =
-      await this.untypedApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
-        transformedFromMl,
-        transformedToMl,
-        amountIn,
-        includeFee
-      )
-
-    return response ? BigInt(response) : undefined
   }
 
   getEvmStorage(contract: string, slot: string): Promise<string> {
@@ -579,20 +554,23 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       return deliveryFeeResolved
     } else {
       try {
-        const res = await this.quoteAhPrice(
-          localizeLocation(chain, nativeAsset.location),
-          assetLocalizedLoc,
-          deliveryFeeResolved,
-          false
-        )
+        const res = await this.queryRuntimeApi<bigint | undefined>({
+          module: 'AssetConversionApi',
+          method: 'quote_price_exact_tokens_for_tokens',
+          params: [
+            localizeLocation(chain, nativeAsset.location),
+            assetLocalizedLoc,
+            deliveryFeeResolved,
+            false
+          ]
+        })
 
         return res ?? 0n
       } catch (e) {
         if (e instanceof Error && /Runtime entry RuntimeCall\(.+\) not found/.test(e.message)) {
           return 0n
-        } else {
-          return 0n
         }
+        return 0n
       }
     }
   }
@@ -685,14 +663,13 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
-    const convertedExecFee = await ahApi.quoteAhPrice(
-      RELAY_LOCATION,
-      ahLocalizedLoc,
-      fallbackExecFeeRes.value,
-      false
-    )
+    const convertedExecFee = await ahApi.queryRuntimeApi<bigint | undefined>({
+      module: 'AssetConversionApi',
+      method: 'quote_price_exact_tokens_for_tokens',
+      params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFeeRes.value, false]
+    })
 
-    if (typeof convertedExecFee === 'bigint') {
+    if (convertedExecFee !== undefined) {
       return convertedExecFee
     }
 

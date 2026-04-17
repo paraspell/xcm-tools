@@ -95,7 +95,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
@@ -121,7 +121,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'FOO' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'BAR' } as Asset;
@@ -167,7 +167,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     const currencyFromInfo = { id: '1', symbol: 'BSX' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
@@ -191,7 +191,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     const currencyFromInfo = { id: '9999', symbol: 'HDX' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
@@ -229,7 +229,7 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
     const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
 

@@ -31,10 +31,10 @@ export const createSwapTx = async <TApi, TRes, TSigner>(
   const toDestTxFee = await calculateFromExchangeFee(options);
 
   const swapResult = await exchange.handleMultiSwap(
-    options.exchange.apiPjs,
     {
       ...options,
-      papiApi: options.exchange.apiPapi,
+      api: options.exchange.api,
+      apiPjs: options.exchange.apiPjs,
       assetFrom: options.exchange.assetFrom,
       assetTo: options.exchange.assetTo,
       isForFeeEstimation,
