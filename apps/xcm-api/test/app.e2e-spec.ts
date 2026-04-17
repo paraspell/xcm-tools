@@ -14,17 +14,25 @@ import {
   TChain,
   Version,
   getAllAssetsSymbols,
+  getFeeAssets,
   getAssetsObject,
   getDefaultPallet,
+  getNativeAssetsPallet,
   getNativeAssets,
+  getOtherAssetsPallets,
   getOtherAssets,
   getParaId,
+  getPalletIndex,
+  getChainProviders,
   getRelayChainSymbol,
   getSupportedPallets,
+  getTChain,
+  hasDryRunSupport,
   hasSupportForAsset,
   replaceBigInt,
   SUBSTRATE_CHAINS,
   CHAINS,
+  TSwapOptions,
 } from '@paraspell/sdk';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { ExpressAdapter } from '@nestjs/platform-express';
@@ -68,6 +76,24 @@ describe('XCM API (e2e)', () => {
           .expect(200)
           .expect(JSON.stringify(pallet));
       });
+
+      const nativeAssetsPalletUrl = `/pallets/${chain}/native-assets`;
+      it(`Native assets pallet - ${nativeAssetsPalletUrl} (GET)`, () => {
+        const pallet = getNativeAssetsPallet(chain);
+        return request(app.getHttpServer())
+          .get(nativeAssetsPalletUrl)
+          .expect(200)
+          .expect(JSON.stringify(pallet));
+      });
+
+      const otherAssetsPalletsUrl = `/pallets/${chain}/other-assets`;
+      it(`Other assets pallets - ${otherAssetsPalletsUrl} (GET)`, () => {
+        const pallets = getOtherAssetsPallets(chain);
+        return request(app.getHttpServer())
+          .get(otherAssetsPalletsUrl)
+          .expect(200)
+          .expect(pallets);
+      });
     });
 
     const supportedPalletsUnknownChainUrl = `/pallets/${unknownChain}`;
@@ -81,6 +107,24 @@ describe('XCM API (e2e)', () => {
     it(`Default pallet - ${defaultPalletUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
         .get(defaultPalletUnknownChainUrl)
+        .expect(400);
+    });
+
+    const validPalletForMockChain = getSupportedPallets(mockChain)[0];
+    const palletIndexUrl = `/pallets/${mockChain}/index`;
+    it(`Pallet index - ${palletIndexUrl}?pallet=${validPalletForMockChain} (GET)`, () => {
+      const palletIndex = getPalletIndex(mockChain, validPalletForMockChain);
+      return request(app.getHttpServer())
+        .get(palletIndexUrl)
+        .query({ pallet: validPalletForMockChain })
+        .expect(200)
+        .expect(JSON.stringify(palletIndex));
+    });
+
+    it(`Pallet index invalid pallet - ${palletIndexUrl} (GET)`, () => {
+      return request(app.getHttpServer())
+        .get(palletIndexUrl)
+        .query({ pallet: 'InvalidPallet' })
         .expect(400);
     });
   });
@@ -106,6 +150,39 @@ describe('XCM API (e2e)', () => {
             expect(res.body).toBeDefined();
           });
       });
+    });
+
+    SUBSTRATE_CHAINS.forEach((chain) => {
+      it(`Get has dry-run support - /chains/${chain}/has-dry-run-support (GET)`, () => {
+        return request(app.getHttpServer())
+          .get(`/chains/${chain}/has-dry-run-support`)
+          .expect(200)
+          .expect(JSON.stringify(hasDryRunSupport(chain)));
+      });
+    });
+
+    it('Get has dry-run support - unknown chain - /chains/:chain/has-dry-run-support (GET)', () => {
+      return request(app.getHttpServer())
+        .get(`/chains/${unknownChain}/has-dry-run-support`)
+        .expect(400);
+    });
+
+    it('Get chain by para id - /chains/:paraId?ecosystem=polkadot (GET)', () => {
+      const paraId = getParaId('Acala');
+      const chain = getTChain(paraId, 'Polkadot');
+      return request(app.getHttpServer())
+        .get(`/chains/${paraId}`)
+        .query({ ecosystem: 'Polkadot' })
+        .expect(200)
+        .expect(JSON.stringify(chain));
+    });
+
+    it('Get chain by para id - invalid ecosystem - /chains/:paraId?ecosystem=invalid (GET)', () => {
+      const paraId = getParaId('Acala');
+      return request(app.getHttpServer())
+        .get(`/chains/${paraId}`)
+        .query({ ecosystem: 'invalid' })
+        .expect(400);
     });
   });
 
@@ -251,6 +328,25 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
+    const hasSupportUrl = `/assets/${mockChain}/has-support`;
+    it(`Has support for asset - ${hasSupportUrl} (GET)`, () => {
+      const hasSupport = hasSupportForAsset(mockChain, mockSymbol);
+      return request(app.getHttpServer())
+        .get(hasSupportUrl)
+        .query({ symbol: mockSymbol })
+        .expect(200)
+        .expect(JSON.stringify(hasSupport));
+    });
+
+    const feeAssetsUrl = `/assets/${mockChain}/fee-assets`;
+    it(`Get fee assets - ${feeAssetsUrl} (GET)`, () => {
+      const feeAssets = getFeeAssets(mockChain);
+      return request(app.getHttpServer())
+        .get(feeAssetsUrl)
+        .expect(200)
+        .expect(feeAssets);
+    });
+
     const parachainIdUnknownChainUrl = `/chains/${unknownChain}/para-id `;
     it(`Get parachain id - ${parachainIdUnknownChainUrl} (GET)`, () => {
       return request(app.getHttpServer())
@@ -329,6 +425,7 @@ describe('XCM API (e2e)', () => {
     const recipient = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const sender = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
     const xTransferUrl = '/x-transfer';
+    const xTransfersUrl = '/x-transfers';
     const xTransferBatchUrl = '/x-transfer-batch';
 
     it(`Generate XCM call - No from or to provided - ${xTransferUrl}`, () => {
@@ -355,6 +452,15 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           to: unknownChain,
+          recipient,
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM calls - No from or to provided - ${xTransfersUrl}`, () => {
+      return request(app.getHttpServer())
+        .post(xTransfersUrl)
+        .send({
           recipient,
         })
         .expect(400);
@@ -1162,12 +1268,405 @@ describe('XCM API (e2e)', () => {
         .expect(500);
     });
 
+    it(`Generate XCM call - keepAlive enabled - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'Hydration',
+          to: 'AssetHubPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: 'DOT',
+            amount: '10000000000',
+          },
+          keepAlive: true,
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.message).toContain(
+            'Keep alive option is not yet supported for XCM transfers.',
+          );
+        });
+    });
+
+    it(`Generate XCM call - keepAlive invalid type - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'Hydration',
+          to: 'AssetHubPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: 'DOT',
+            amount: '10000000000',
+          },
+          keepAlive: 'true',
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM call - transact options invalid origin kind - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'AssetHubKusama',
+          to: 'BifrostKusama',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'KSM' },
+            amount,
+          },
+          transactOptions: {
+            call: '0x00',
+            originKind: 'InvalidOrigin',
+            maxWeight: {
+              refTime: 0,
+              proofSize: 0,
+            },
+          },
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM call - transact options invalid maxWeight type - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'AssetHubKusama',
+          to: 'BifrostKusama',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'KSM' },
+            amount,
+          },
+          transactOptions: {
+            call: '0x00',
+            originKind: 'Native',
+            maxWeight: {
+              refTime: 'invalid',
+              proofSize: 0,
+            },
+          },
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM call - swap options invalid exchange - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'Astar',
+          to: 'BifrostPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'ASTR' },
+            amount: '1000000000000000000',
+          },
+          swapOptions: {
+            currencyTo: { symbol: 'DOT' },
+            exchange: 'InvalidExchange',
+            slippage: 5,
+          },
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM call - advanced options (development requires overrides) - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'Astar',
+          to: 'BifrostPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'ASTR' },
+            amount: '1000000000000000000',
+          },
+          options: {
+            development: true,
+            abstractDecimals: false,
+            xcmFormatCheck: true,
+          },
+        })
+        .expect(400);
+    });
+
+    it(`Generate XCM call - advanced options invalid apiOverrides type - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from: 'Astar',
+          to: 'BifrostPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'ASTR' },
+            amount: '1000000000000000000',
+          },
+          options: {
+            development: true,
+            apiOverrides: {
+              Astar: 123,
+            },
+          },
+        })
+        .expect(400);
+    });
+
+    it('Get best amount out - missing swap options - /best-amount-out', () => {
+      return request(app.getHttpServer())
+        .post('/best-amount-out')
+        .send({
+          from: 'Astar',
+          to: 'BifrostPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: { type: 'Native', value: 'ASTR' },
+            amount: '1000000000000000000',
+          },
+        })
+        .expect(500);
+    });
+
+    it('Dry run preview - invalid mintFeeAssets type - /dry-run-preview', () => {
+      return request(app.getHttpServer())
+        .post('/dry-run-preview')
+        .send({
+          from: 'Hydration',
+          to: 'AssetHubPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: 'DOT',
+            amount: '10000000000',
+          },
+          options: {
+            mintFeeAssets: 'true',
+          },
+        })
+        .expect(400);
+    });
+
+    it('Get XCM fee - invalid disableFallback type - /xcm-fee', () => {
+      return request(app.getHttpServer())
+        .post('/xcm-fee')
+        .send({
+          from: 'Hydration',
+          to: 'AssetHubPolkadot',
+          sender,
+          recipient,
+          currency: {
+            symbol: 'DOT',
+            amount: '10000000000',
+          },
+          disableFallback: 'true',
+        })
+        .expect(400);
+    });
+
+    it('Sign and submit - invalid sender derivation path - /sign-and-submit', () => {
+      return request(app.getHttpServer())
+        .post('/sign-and-submit')
+        .send({
+          from: 'AssetHubKusama',
+          to: 'Basilisk',
+          sender,
+          recipient,
+          currency: {
+            id: 1984,
+            amount,
+          },
+        })
+        .expect(400);
+    });
+
     it(`Gets Ethereum bridge status`, async () => {
       return request(app.getHttpServer())
         .get('/x-transfer/eth-bridge-status')
         .expect(200)
         .expect((res) => {
           expect(res.body).toBeDefined();
+        });
+    });
+
+    it('Get swap pairs - invalid exchange - /swap/pairs (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/swap/pairs')
+        .query({ exchange: 'InvalidExchange' })
+        .expect(400);
+    });
+
+    it('Get swap pairs - valid exchange - /swap/pairs (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/swap/pairs')
+        .query({ exchange: 'Hydration' })
+        .expect(200)
+        .expect((res) => {
+          expect(Array.isArray(res.body)).toBe(true);
+        });
+    });
+
+    it('Get swap pairs - valid exchange array - /swap/pairs (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/swap/pairs')
+        .query({ exchange: ['Hydration', 'Acala'] })
+        .expect(200)
+        .expect((res) => {
+          expect(Array.isArray(res.body)).toBe(true);
+        });
+    });
+
+    it(`X-transfer with valid advanced options + overrides - ${xTransferUrl}`, async () => {
+      const from: TChain = 'Hydration';
+      const to: TChain = 'AssetHubPolkadot';
+      const currency: TCurrencyInputWithAmount = {
+        symbol: 'DOT',
+        amount: '10000000000',
+      };
+
+      const options = {
+        development: true,
+        abstractDecimals: false,
+        xcmFormatCheck: true,
+        apiOverrides: {
+          Hydration: ['wss://rpc.hydradx.cloud', 'wss://hydration.ibp.network'],
+          AssetHubPolkadot: ['wss://polkadot-asset-hub-rpc.polkadot.io', 'wss://dot-rpc.stakeworld.io/assethub'],
+        },
+      };
+
+      const tx = await Builder(options)
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .sender(sender)
+        .recipient(recipient)
+        .build();
+
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to,
+          sender,
+          recipient,
+          currency,
+          options,
+        })
+        .expect(201)
+        .expect((await tx.getEncodedData()).asHex());
+    });
+
+    it(`X-transfer with valid transact options - ${xTransferUrl}`, async () => {
+      const from: TChain = 'AssetHubKusama';
+      const to: TChain = 'BifrostKusama';
+      const currency: TCurrencyInputWithAmount = {
+        symbol: { type: 'Native', value: 'KSM' },
+        amount,
+      };
+      const transactOptions = {
+        call: '0x00',
+        originKind: 'Native' as const,
+        maxWeight: {
+          refTime: '1000',
+          proofSize: '100',
+        },
+      };
+      const transactWeightForBuilder = {
+        refTime: 1000n,
+        proofSize: 100n,
+      };
+
+      const tx = await Builder()
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .sender(sender)
+        .recipient(recipient)
+        .transact(
+          transactOptions.call,
+          transactOptions.originKind,
+          transactWeightForBuilder,
+        )
+        .build();
+
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to,
+          sender,
+          recipient,
+          currency,
+          transactOptions,
+        })
+        .expect(201)
+        .expect((await tx.getEncodedData()).asHex());
+    });
+
+    it(`X-transfers with valid swap options array exchange - ${xTransfersUrl}`, async () => {
+      const from: TChain = 'Astar';
+      const to: TChain = 'BifrostPolkadot';
+      const currency: TCurrencyInputWithAmount = {
+        symbol: { type: 'Native', value: 'ASTR' },
+        amount: '1000000000000000000',
+      };
+      const builder = Builder();
+      const swapOptions: Parameters<typeof builder.swap>[0] = {
+        currencyTo: { symbol: 'DOT' },
+        exchange: ['Hydration', 'Acala'],
+        slippage: 1,
+      };
+
+      const txContexts = await builder
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .sender(sender)
+        .recipient(recipient)
+        .swap(swapOptions)
+        .buildAll();
+
+      const expectedResponse = await Promise.all(
+        txContexts.map(async (txContext) => ({
+          type: txContext.type,
+          chain: txContext.chain,
+          wsProviders: getChainProviders(txContext.chain),
+        })),
+      );
+
+      return request(app.getHttpServer())
+        .post(xTransfersUrl)
+        .send({
+          from,
+          to,
+          sender,
+          recipient,
+          currency,
+          swapOptions,
+        })
+        .expect(201)
+        .expect(({ body }) => {
+          expect(body).toHaveLength(expectedResponse.length);
+
+          body.forEach((txContext: (typeof body)[number], index: number) => {
+            expect(txContext.tx).toMatch(/^0x[0-9a-f]+$/);
+            expect({
+              type: txContext.type,
+              chain: txContext.chain,
+              wsProviders: txContext.wsProviders,
+            }).toEqual({
+              type: expectedResponse[index].type,
+              chain: expectedResponse[index].chain,
+              wsProviders: expectedResponse[index].wsProviders,
+            });
+          });
         });
     });
   });

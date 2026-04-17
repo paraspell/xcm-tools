@@ -1,26 +1,27 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import { BrowserContext, chromium, test } from "@playwright/test";
-import { PolkadotjsExtensionPage } from "./pom";
+import { BrowserContext, chromium, test } from '@playwright/test';
+
+import { PolkadotjsExtensionPage } from './pom';
+import { TEST_MNEMONIC } from './utils/testData';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const polkadotExtensionPath = path.join(
   __dirname,
-  "extensions",
-  "polkadot-ext",
-  "packages",
-  "extension",
-  "build"
+  'extensions',
+  'polkadot-ext',
+  'packages',
+  'extension',
+  'build',
 );
 
 const polkaAccount = {
-  mnemonic:
-    "leg observe column teach until outside since school october dinner impact title",
-  password: "1234qwe",
-  name: "ExtensionUser",
+  mnemonic: TEST_MNEMONIC,
+  password: '1234qwe',
+  name: 'ExtensionUser',
 };
 
 export const basePjsTest = test.extend({
@@ -33,21 +34,21 @@ export const basePjsTest = test.extend({
         `--load-extension=${polkadotExtensionPath}`,
       ],
     };
-    const context = await chromium.launchPersistentContext("", launchOptions);
+    const context = await chromium.launchPersistentContext('', launchOptions);
     await use(context);
   },
 });
 
 export const setupPolkadotExtension = async (context: BrowserContext) => {
   const appPage = await context.newPage();
-  await appPage.goto("/");
+  await appPage.goto('/');
 
   const extensionPage = new PolkadotjsExtensionPage(await context.newPage());
   await extensionPage.firstOpen();
   await extensionPage.connectAccountByExtension(
     polkaAccount.mnemonic,
     polkaAccount.password,
-    polkaAccount.name
+    polkaAccount.name,
   );
 
   await appPage.bringToFront();
@@ -59,7 +60,7 @@ export const setupPolkadotExtension = async (context: BrowserContext) => {
 
   await extensionPage.connectAccountToHost();
 
-  await appPage.getByTestId("btn-account-confirm").click();
+  await appPage.getByTestId('btn-account-confirm').click();
 
   return { appPage, extensionPage };
 };

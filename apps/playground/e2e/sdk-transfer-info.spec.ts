@@ -1,6 +1,13 @@
 import { expect, Page } from '@playwright/test';
+
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
+import {
+  enableApiMode,
+  selectSdkCurrency,
+  selectSdkDestination,
+} from './utils/sdkForm';
 import { createName } from './utils/selectorName';
+import { TEST_SS58_ADDRESS } from './utils/testData';
 
 const testData = [
   {
@@ -11,7 +18,7 @@ const testData = [
   {
     fromChain: 'AssetHubKusama',
     toChain: 'BifrostKusama',
-    currency: 'USDT - 11',
+    currency: 'KSM - Native',
   },
   {
     fromChain: 'Astar',
@@ -45,19 +52,12 @@ const performTransferInfoTest = async (
   await page.getByTestId('select-origin').fill(fromChain);
   await page.getByRole('option', { name: createName(fromChain) }).click();
 
-  await page.getByTestId('select-destination').fill(destChain);
-  await page.getByRole('option', { name: createName(destChain) }).click();
-
-  await page.getByTestId('select-currency').first().click();
-  await page.getByRole('option', { name: currency, exact: true }).click();
-
-  const testAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
-  await page.getByTestId('input-address').fill(testAddress);
+  await selectSdkDestination(page, destChain);
+  await selectSdkCurrency(page, currency);
+  await page.getByTestId('input-address').fill(TEST_SS58_ADDRESS);
   await page.getByTestId('input-amount-0').fill('10');
 
-  if (useApi) {
-    await page.getByTestId('checkbox-api').click();
-  }
+  await enableApiMode(page, useApi);
 
   await page.getByTestId('btn-actions').click();
   await page.getByTestId('menu-item-transfer-info').click();
@@ -83,8 +83,8 @@ basePjsTest.describe('XCM SDK - Transfer Info', () => {
     await appPage.goto('/xcm-sdk/utils');
   });
 
-  testData.map(({fromChain, toChain, currency}) => {
-    [false, true].map((useApi) => {
+  testData.forEach(({ fromChain, toChain, currency }) => {
+    [false, true].forEach((useApi) => {
       const apiLabel = useApi ? ' - API' : '';
       basePjsTest(
         `Should succeed for transfer info from ${fromChain} to ${toChain}${apiLabel}`,

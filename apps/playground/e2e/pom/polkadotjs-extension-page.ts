@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from "@playwright/test";
+import { expect, Locator, Page } from '@playwright/test';
 
 /*
 Code inspired by https://github.com/UniqueNetwork/client-tests-template
@@ -18,13 +18,12 @@ export class PolkadotjsExtensionPage {
   readonly passwordInput: Locator;
   readonly repeatPasswordInput: Locator;
   readonly polkadotExtensionCard: Locator;
-  readonly selectAllCheckbox: Locator;
   readonly confirmPrivacyOrMigrationNoticeButton: Locator;
   extensionId: string;
 
   constructor(page: Page) {
     this.page = page;
-    this.confirmButton = page.locator("//button");
+    this.confirmButton = page.locator('//button');
     this.acceptButton = page.locator(
       '//button[contains(@class, "acceptButton")]'
     );
@@ -34,7 +33,7 @@ export class PolkadotjsExtensionPage {
     this.importAccountFromSeedRow = page.locator(
       '//span[text()="Import account from pre-existing seed"]'
     );
-    this.importAccountInput = page.locator("//textarea");
+    this.importAccountInput = page.locator('//textarea');
     this.fullAddress = page.locator('//div[@class="fullAddress"]');
     this.nextStepButton = page.locator(
       '//button[div[contains(text(), "Next")]]'
@@ -51,10 +50,9 @@ export class PolkadotjsExtensionPage {
     this.repeatPasswordInput = page.locator(
       '//label[text()="Repeat password for verification"]/../input'
     );
-    this.polkadotExtensionCard = page.locator("#detailsButton");
-    this.selectAllCheckbox = page.locator("Select all");
+    this.polkadotExtensionCard = page.locator('#detailsButton');
     this.confirmPrivacyOrMigrationNoticeButton = page.getByRole('button', {
-      name: /^(I Understand|Understood, let me continue)$/i
+      name: /^(I Understand|Understood, let me continue)$/i,
     });
   }
 
@@ -64,7 +62,7 @@ export class PolkadotjsExtensionPage {
   }
 
   async clickConfirm() {
-    await this.confirmPrivacyOrMigrationNoticeButton.click({ force: true })
+    await this.confirmPrivacyOrMigrationNoticeButton.click({ force: true });
     await this.confirmButton.click({ force: true });
   }
 
@@ -90,15 +88,15 @@ export class PolkadotjsExtensionPage {
       this.page.locator(
         '//div[label[contains(text(), "Password for this account")]]//input'
       )
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
   }
 
   async retrieveExtensionId() {
-    await this.page.goto("chrome://extensions/");
+    await this.page.goto('chrome://extensions/');
     await this.polkadotExtensionCard.click();
     await this.page.waitForLoadState();
     this.extensionId = new URL(this.page.url()).searchParams.get(
-      "id"
+      'id',
     ) as string;
   }
 
@@ -118,7 +116,7 @@ export class PolkadotjsExtensionPage {
   }
 
   async connectAccountToHost() {
-    await this.page.locator("text=Select all").click();
+    await this.page.locator('text=Select all').click();
     await this.page.getByRole('button', { name: 'Connect 1 account(s)' }).click();
   }
 

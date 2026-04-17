@@ -214,7 +214,7 @@ export const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
             placeholder="Enter address"
             required
             data-testid="input-address"
-            {...form.getInputProps('address')}
+            {...form.getInputProps('recipient')}
           />
 
           {form.values.from === 'Moonbeam' && form.values.to === 'Ethereum' && (
