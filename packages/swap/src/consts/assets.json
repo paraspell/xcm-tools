@@ -1295,6 +1295,38 @@
               "Parachain": 2034
             },
             {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xca30f9ff99394c55deda293df223e3740635c72e"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x49f925bf72718f4abbc57adef1b705931f928a2a"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
               "GeneralIndex": 0
             }
           ]

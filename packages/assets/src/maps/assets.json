@@ -2731,6 +2731,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1816",
+        "symbol": "aSIGIL",
+        "decimals": 18,
+        "existentialDeposit": "20000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x987ddc8b236fb23e1e48882b206396ca9b42648b"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "420",
         "symbol": "GETH",
         "decimals": 18,
@@ -6987,6 +7010,29 @@
         "alias": "DED2"
       },
       {
+        "assetId": "50000496",
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000496
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "USDt4"
+      },
+      {
         "assetId": "555",
         "symbol": "GAME",
         "decimals": 10,
@@ -7235,6 +7281,29 @@
           }
         },
         "existentialDeposit": "1000000000000"
+      },
+      {
+        "assetId": "50000495",
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000495
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "USDt3"
       },
       {
         "assetId": "2023",
