@@ -4,8 +4,8 @@ import type { TChainEndpoint } from '../types'
  * Error thrown when the Dry Run fails.
  */
 export class DryRunFailedError extends Error {
-  public readonly reason: string
-  public readonly dryRunType?: TChainEndpoint
+  readonly reason: string
+  readonly dryRunType?: TChainEndpoint
 
   /**
    * Constructs a new DryRunFailedError.

@@ -13,7 +13,10 @@ vi.mock('../exchanges/ExchangeChainFactory');
 vi.mock('./selectBestExchangeAmountOut');
 vi.mock('./utils/resolveAssets');
 
-const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown, unknown, unknown>;
+const mockApi = {
+  getConfig: () => undefined,
+  createApiForChain: vi.fn().mockResolvedValue({}),
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 describe('getBestAmountOut', () => {
   beforeEach(() => {
@@ -58,12 +61,13 @@ describe('getBestAmountOut', () => {
     expect(selectBestExchangeAmountOut).not.toHaveBeenCalled();
     expect(resolveAssets).toHaveBeenCalledWith(fakeDex, { ...options, api: mockApi });
     expect(createApiSpy).toHaveBeenCalled();
-    expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance', {
-      assetFrom: fakeAssets.assetFromExchange,
-      assetTo: fakeAssets.assetTo,
-      amount: 100n,
-      papiApi: 'api_instance_papi',
-    });
+    expect(getAmountOutSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        assetFrom: fakeAssets.assetFromExchange,
+        assetTo: fakeAssets.assetTo,
+        amount: 100n,
+      }),
+    );
     expect(result).toEqual({
       exchange: fakeDex.chain,
       amountOut: 200,
@@ -111,12 +115,13 @@ describe('getBestAmountOut', () => {
     expect(createExchangeInstance).not.toHaveBeenCalled();
     expect(resolveAssets).toHaveBeenCalledWith(fakeDex, { ...options, api: mockApi });
     expect(createApiSpy).toHaveBeenCalled();
-    expect(getAmountOutSpy).toHaveBeenCalledWith('api_instance_b', {
-      assetFrom: fakeAssets.assetFromExchange,
-      assetTo: fakeAssets.assetTo,
-      amount: 50n,
-      papiApi: 'api_instance_papi_b',
-    });
+    expect(getAmountOutSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        assetFrom: fakeAssets.assetFromExchange,
+        assetTo: fakeAssets.assetTo,
+        amount: 50n,
+      }),
+    );
     expect(result).toEqual({
       exchange: fakeDex.chain,
       amountOut: 75,

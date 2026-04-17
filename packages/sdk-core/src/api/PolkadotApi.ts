@@ -1,6 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { isExternalChain } from '@paraspell/sdk-common'
 
 import { DEFAULT_TTL_MS } from '../constants'
 import { ApiNotInitializedError } from '../errors'
@@ -20,6 +21,7 @@ import type {
   TUrl,
   TWeight
 } from '../types'
+import { resolveChainApi } from './resolveChainApi'
 
 export abstract class PolkadotApi<TApi, TRes, TSigner> {
   _api?: TApi
@@ -27,38 +29,50 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   readonly _config?: TBuilderOptions<TApiOrUrl<TApi>>
   _ttlMs = DEFAULT_TTL_MS
   _disconnectAllowed = true
-  public abstract readonly type: TApiType
+  abstract readonly type: TApiType
 
   constructor(config?: TBuilderOptions<TApiOrUrl<TApi>>) {
     this._config = config
   }
 
-  public get api(): TApi {
+  get api(): TApi {
     if (!this._api) {
       throw new ApiNotInitializedError()
     }
     return this._api
   }
 
-  public set disconnectAllowed(allowed: boolean) {
+  set disconnectAllowed(allowed: boolean) {
     this._disconnectAllowed = allowed
   }
 
-  public get disconnectAllowed() {
+  get disconnectAllowed() {
     return this._disconnectAllowed
   }
 
-  public get config() {
+  get config() {
     return this._config
   }
 
-  abstract init(chain: TChain, clientTtlMs?: number): Promise<void>
-  // TODO: Remove after release
-  abstract createApiInstance(wsUrl: TUrl, chain: TSubstrateChain): Promise<TApi>
+  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS): Promise<void> {
+    if (this._chain !== undefined || isExternalChain(chain)) {
+      return
+    }
+
+    this._ttlMs = clientTtlMs
+    this._chain = chain
+
+    this._api = await resolveChainApi(this._config, chain, wsUrl =>
+      this.leaseClient(wsUrl, this._ttlMs)
+    )
+  }
+
+  abstract leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TApi>
   abstract accountToHex(address: string, isPrefixed?: boolean): string
   abstract accountToUint8a(address: string): Uint8Array
   abstract deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes
   abstract txFromHex(hex: string): Promise<TRes>
+  abstract txToHex(tx: TRes): Promise<string>
   abstract queryState<T>(serialized: TSerializedStateQuery): Promise<T>
   abstract queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   abstract callBatchMethod(calls: TRes[], mode: BatchMode): TRes
@@ -73,12 +87,6 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
     tx: TRes,
     address: string
   ): Promise<{ partialFee: bigint; weight: TWeight }>
-  abstract quoteAhPrice(
-    fromMl: TLocation,
-    toMl: TLocation,
-    amountIn: bigint,
-    includeFee?: boolean
-  ): Promise<bigint | undefined>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   abstract getXcmWeight(xcm: any): Promise<TWeight>
   abstract getXcmPaymentApiFee(

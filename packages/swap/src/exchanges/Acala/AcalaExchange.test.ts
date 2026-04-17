@@ -1,5 +1,4 @@
-import { getBalance } from '@paraspell/sdk';
-import { AmountTooLowError, getNativeAssetSymbol } from '@paraspell/sdk-core';
+import { AmountTooLowError, getBalance, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,17 +6,10 @@ import type { TSwapOptions } from '../../types';
 import AcalaExchange from './AcalaExchange';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
-vi.mock('@paraspell/sdk', async () => {
-  const original = await vi.importActual('@paraspell/sdk');
-  return {
-    ...original,
-    getBalance: vi.fn(),
-  };
-});
-
 vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   getNativeAssetSymbol: vi.fn(),
+  getBalance: vi.fn(),
 }));
 
 vi.mock('@acala-network/sdk-core', () => ({
@@ -143,10 +135,11 @@ describe('AcalaExchange', () => {
   describe('swapCurrency', () => {
     const mockApi = {} as ApiPromise;
     const baseSwapOptions = {
+      apiPjs: mockApi,
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
       vi.mocked(getBalance).mockResolvedValueOnce(1_000_000n);
@@ -154,14 +147,14 @@ describe('AcalaExchange', () => {
 
       await expect(
         chain.swapCurrency(
-          {} as ApiPromise,
           {
+            apiPjs: mockApi,
             assetFrom: { symbol: 'DOT' },
             assetTo: { symbol: 'ACA' },
             amount: -1n,
             sender: '5xxxx',
             origin: {},
-          } as TSwapOptions<unknown>,
+          } as TSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -170,21 +163,22 @@ describe('AcalaExchange', () => {
     it('should throw AmountTooLowError when amountWithoutFee is negative in swapCurrency', async () => {
       const mockApi = {} as ApiPromise;
       const options = {
+        apiPjs: mockApi,
         assetFrom: { symbol: 'DOT' },
         assetTo: { symbol: 'ACA' },
         amount: 1n,
         sender: 'some-address',
         origin: {},
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(getBalance).mockResolvedValueOnce(0n);
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(1n);
 
-      await expect(chain.swapCurrency(mockApi, options, 1n)).rejects.toThrow(AmountTooLowError);
+      await expect(chain.swapCurrency(options, 1n)).rejects.toThrow(AmountTooLowError);
     });
 
     it('should swap successfully and return the tx and modified amountOut', async () => {
-      const result = await chain.swapCurrency(mockApi, baseSwapOptions, 1n);
+      const result = await chain.swapCurrency(baseSwapOptions, 1n);
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
@@ -195,22 +189,21 @@ describe('AcalaExchange', () => {
     it('should throw AmountTooLowError if the amount is too small to cover fees', async () => {
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(9999n);
 
-      await expect(chain.swapCurrency(mockApi, baseSwapOptions, 1n)).rejects.toThrow(
-        AmountTooLowError,
-      );
+      await expect(chain.swapCurrency(baseSwapOptions, 1n)).rejects.toThrow(AmountTooLowError);
     });
   });
 
   describe('getAmountOut', () => {
     const mockApi = {} as ApiPromise;
     const baseSwapOptions = {
+      apiPjs: mockApi,
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     it('should return the amountOut with fee deducted', async () => {
-      const result = await chain.getAmountOut(mockApi, baseSwapOptions);
+      const result = await chain.getAmountOut(baseSwapOptions);
       expect(result).toBe(42000000000000n);
     });
   });

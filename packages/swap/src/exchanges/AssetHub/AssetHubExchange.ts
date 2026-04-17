@@ -1,7 +1,8 @@
-import { transform } from '@paraspell/sdk';
+import type { PolkadotApi, TLocation } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
+  localizeLocation,
   padValueBy,
   Parents,
   RoutingResolutionError,
@@ -18,55 +19,81 @@ import type {
   TSwapOptions,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
-import { getDexConfig, getQuotedAmount } from './utils';
+import { getDexConfig } from './utils';
 
 class AssetHubExchange extends ExchangeChain {
-  async swapCurrency<TApi>(
-    _api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  private async quoteOrThrow<TApi, TRes, TSigner>(
+    api: PolkadotApi<TApi, TRes, TSigner>,
+    fromLocation: TLocation,
+    toLocation: TLocation,
+    amount: bigint,
+    includeFee = true,
+  ): Promise<bigint> {
+    let quoted: bigint | undefined;
+    let cause: unknown;
+
+    try {
+      quoted = await api.queryRuntimeApi<bigint | undefined>({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [fromLocation, toLocation, amount, includeFee],
+      });
+    } catch (err) {
+      cause = err;
+    }
+
+    if (quoted == null) {
+      const message = cause instanceof Error ? ` (${cause.message})` : '';
+      throw new RoutingResolutionError(`Swap failed: Pool not found${message}`);
+    }
+
+    return BigInt(quoted);
+  }
+
+  async swapCurrency<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTxFee: bigint,
-  ): Promise<TSingleSwapResult> {
-    const { assetFrom, assetTo, amount, sender, slippagePct, origin, papiApi } = options;
+  ): Promise<TSingleSwapResult<TRes>> {
+    const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
+
+    const localizedFrom = localizeLocation(this.chain, assetFrom.location);
+    const localizedTo = localizeLocation(this.chain, assetTo.location);
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    const { amountOut, usedFromML, usedToML } = await getQuotedAmount(
-      papiApi,
-      this.chain,
-      assetFrom.location,
-      assetTo.location,
-      amountWithoutFee,
-    );
+    const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
 
     const slippageMultiplier = Number(slippagePct);
-
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
-    const tx = papiApi.getUnsafeApi().tx.AssetConversion.swap_exact_tokens_for_tokens({
-      path: [transform(usedFromML), transform(usedToML)],
-      amount_in: amountWithoutFee,
-      amount_out_min: minAmountOut,
-      send_to: sender,
-      keep_alive: !!assetFrom.isNative,
+    const tx = api.deserializeExtrinsics({
+      module: 'AssetConversion',
+      method: 'swap_exact_tokens_for_tokens',
+      params: {
+        path: [localizedFrom, localizedTo],
+        amount_in: amountWithoutFee,
+        amount_out_min: minAmountOut,
+        send_to: sender,
+        keep_alive: !!assetFrom.isNative,
+      },
     });
 
     const toDestFeeCurrencyTo =
       assetTo.symbol == getNativeAssetSymbol(this.chain)
         ? toDestTxFee
-        : await getQuotedAmount(
-            papiApi,
-            this.chain,
+        : await this.quoteOrThrow(
+            api,
             {
               parents: Parents.ONE,
               interior: {
                 Here: null,
               },
             },
-            assetTo.location,
+            localizedTo,
             toDestTxFee,
             true,
-          ).then((res) => res.amountOut);
+          );
 
     const finalAmountOut = amountOut - padValueBy(toDestFeeCurrencyTo, FEE_BUFFER_PCT);
 
@@ -78,11 +105,10 @@ class AssetHubExchange extends ExchangeChain {
     };
   }
 
-  async handleMultiSwap<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  async handleMultiSwap<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
-  ): Promise<TMultiSwapResult> {
+  ): Promise<TMultiSwapResult<TRes>> {
     const { assetFrom, assetTo } = options;
 
     const nativeAsset = getExchangeAsset(this.chain, {
@@ -102,15 +128,15 @@ class AssetHubExchange extends ExchangeChain {
 
     if (isAssetFromNative || isAssetToNative) {
       // Single hop
-      const singleSwapResult = await this.swapCurrency(api, { ...options }, toDestTransactionFee);
+      const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
       return {
         txs: [singleSwapResult.tx],
         amountOut: singleSwapResult.amountOut,
       };
     } else {
       // Multi-hop: AssetA -> Native -> AssetB
-      const optionsHop1: TSwapOptions<TApi> = { ...options, assetTo: nativeAsset };
-      const resultHop1 = await this.swapCurrency(api, optionsHop1, 0n);
+      const optionsHop1: TSwapOptions<TApi, TRes, TSigner> = { ...options, assetTo: nativeAsset };
+      const resultHop1 = await this.swapCurrency(optionsHop1, 0n);
 
       if (resultHop1.amountOut <= 0n) {
         throw new AmountTooLowError(
@@ -121,8 +147,9 @@ class AssetHubExchange extends ExchangeChain {
       const hop1Received = resultHop1.amountOut;
       const assumedInputForHop2 = padValueBy(hop1Received, -2);
 
-      const optionsHop2: TSwapOptions<TApi> = {
-        papiApi: options.papiApi,
+      const optionsHop2: TSwapOptions<TApi, TRes, TSigner> = {
+        apiPjs: options.apiPjs,
+        api: options.api,
         slippagePct: options.slippagePct,
         sender: options.sender,
         origin: undefined,
@@ -132,7 +159,7 @@ class AssetHubExchange extends ExchangeChain {
         feeCalcAddress: options.feeCalcAddress,
       };
 
-      const resultHop2 = await this.swapCurrency(api, optionsHop2, toDestTransactionFee);
+      const resultHop2 = await this.swapCurrency(optionsHop2, toDestTransactionFee);
 
       if (resultHop2.amountOut <= 0n) {
         throw new AmountTooLowError(
@@ -147,8 +174,8 @@ class AssetHubExchange extends ExchangeChain {
     }
   }
 
-  async getAmountOut<TApi>(_api: ApiPromise, options: TGetAmountOutOptions<TApi>) {
-    const { assetFrom, assetTo, amount, origin, papiApi } = options;
+  async getAmountOut<TApi, TRes, TSigner>(options: TGetAmountOutOptions<TApi, TRes, TSigner>) {
+    const { api, assetFrom, assetTo, amount, origin } = options;
 
     const nativeAsset = getExchangeAsset(this.chain, {
       symbol: getNativeAssetSymbol(this.chain),
@@ -169,21 +196,17 @@ class AssetHubExchange extends ExchangeChain {
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
     if (isAssetFromNative || isAssetToNative) {
-      const { amountOut } = await getQuotedAmount(
-        papiApi,
-        this.chain,
-        assetFrom.location,
-        assetTo.location,
+      return this.quoteOrThrow(
+        api,
+        localizeLocation(this.chain, assetFrom.location),
+        localizeLocation(this.chain, assetTo.location),
         amountWithoutFee,
       );
-
-      return amountOut;
     } else {
-      const { amountOut: hop1AmountOut } = await getQuotedAmount(
-        papiApi,
-        this.chain,
-        assetFrom.location,
-        nativeAsset.location,
+      const hop1AmountOut = await this.quoteOrThrow(
+        api,
+        localizeLocation(this.chain, assetFrom.location),
+        localizeLocation(this.chain, nativeAsset.location),
         amountWithoutFee,
       );
 
@@ -195,11 +218,10 @@ class AssetHubExchange extends ExchangeChain {
 
       const assumedInputForHop2 = padValueBy(hop1AmountOut, -2);
 
-      const { amountOut: finalAmountOut } = await getQuotedAmount(
-        papiApi,
-        this.chain,
-        nativeAsset.location,
-        assetTo.location,
+      const finalAmountOut = await this.quoteOrThrow(
+        api,
+        localizeLocation(this.chain, nativeAsset.location),
+        localizeLocation(this.chain, assetTo.location),
         assumedInputForHop2,
       );
 

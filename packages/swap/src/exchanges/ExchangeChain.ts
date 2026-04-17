@@ -24,27 +24,24 @@ abstract class ExchangeChain {
     return this._chain;
   }
 
-  abstract swapCurrency<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  abstract swapCurrency<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult>;
+  ): Promise<TSingleSwapResult<TRes>>;
 
-  async handleMultiSwap<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  async handleMultiSwap<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
-  ): Promise<TMultiSwapResult> {
-    const singleSwapResult = await this.swapCurrency(api, options, toDestTransactionFee);
+  ): Promise<TMultiSwapResult<TRes>> {
+    const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
     return {
       txs: [singleSwapResult.tx],
       amountOut: singleSwapResult.amountOut,
     };
   }
 
-  abstract getAmountOut<TApi>(
-    api: ApiPromise,
-    options: TGetAmountOutOptions<TApi>,
+  abstract getAmountOut<TApi, TRes, TSigner>(
+    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
   ): Promise<bigint>;
 
   abstract getDexConfig(api: ApiPromise): Promise<TDexConfigStored>;

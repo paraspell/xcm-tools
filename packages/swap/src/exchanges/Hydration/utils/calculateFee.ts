@@ -13,8 +13,8 @@ import type { TSwapOptions } from '../../../types';
 import { calculateTxFeePjs, pow10n } from '../../../utils';
 import { getAssetInfo } from './utils';
 
-export const calculateFee = async <TApi>(
-  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi>,
+export const calculateFee = async <TApi, TRes, TSigner>(
+  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi, TRes, TSigner>,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
   currencyFromInfo: Asset,

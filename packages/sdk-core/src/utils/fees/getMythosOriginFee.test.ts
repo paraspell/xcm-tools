@@ -20,7 +20,7 @@ describe('getMythosOriginFee', () => {
   const mockClone = {
     init: vi.fn(),
     disconnect: vi.fn(),
-    quoteAhPrice: vi.fn()
+    queryRuntimeApi: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
@@ -35,12 +35,12 @@ describe('getMythosOriginFee', () => {
       decimals: 18,
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
-    vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(200n)
+    vi.spyOn(mockClone, 'queryRuntimeApi').mockResolvedValue(200n)
     vi.mocked(padValueBy).mockReturnValue(220n)
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
     const initSpy = vi.spyOn(mockClone, 'init')
-    const quoteSpy = vi.spyOn(mockClone, 'quoteAhPrice')
+    const quoteSpy = vi.spyOn(mockClone, 'queryRuntimeApi')
 
     const res = await getMythosOriginFee(mockApi)
 
@@ -48,7 +48,11 @@ describe('getMythosOriginFee', () => {
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockClone, false)
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Mythos')
-    expect(quoteSpy).toHaveBeenCalledWith(expect.anything(), { parents: 1, interior: [] }, 150n)
+    expect(quoteSpy).toHaveBeenCalledWith({
+      module: 'AssetConversionApi',
+      method: 'quote_price_exact_tokens_for_tokens',
+      params: [expect.anything(), { parents: 1, interior: [] }, 150n, true]
+    })
     expect(padValueBy).toHaveBeenCalledWith(200n, 10)
     expect(res).toBe(220n)
   })
@@ -60,7 +64,7 @@ describe('getMythosOriginFee', () => {
       decimals: 18,
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
-    vi.spyOn(mockClone, 'quoteAhPrice').mockResolvedValue(undefined)
+    vi.spyOn(mockClone, 'queryRuntimeApi').mockResolvedValue(undefined)
     await expect(getMythosOriginFee(mockApi)).rejects.toThrow(UnableToComputeError)
   })
 })

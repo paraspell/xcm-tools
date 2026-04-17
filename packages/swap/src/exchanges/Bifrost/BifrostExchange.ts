@@ -24,12 +24,11 @@ import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils'
 import { getDexConfig } from './utils/getDexConfig';
 
 class BifrostExchange extends ExchangeChain {
-  async swapCurrency<TApi>(
-    api: ApiPromise,
-    options: TSwapOptions<TApi>,
+  async swapCurrency<TApi, TRes, TSigner>(
+    options: TSwapOptions<TApi, TRes, TSigner>,
     toDestTxFee: bigint,
-  ): Promise<TSingleSwapResult> {
-    const { assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
+  ): Promise<TSingleSwapResult<TRes>> {
+    const { apiPjs, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
     const chainId = getParaId(this.chain);
 
@@ -52,7 +51,7 @@ class BifrostExchange extends ExchangeChain {
 
     const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
 
-    const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
+    const pairs = await getFilteredPairs(apiPjs, chainId, currencyCombinations);
 
     Logger.log('To dest tx fee in native currency:', toDestTxFee);
     Logger.log('Original amount', amount);
@@ -70,12 +69,12 @@ class BifrostExchange extends ExchangeChain {
 
     const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
 
-    const blockNumber = await api.derive.chain.bestNumber();
+    const blockNumber = await apiPjs.derive.chain.bestNumber();
 
     const deadline = blockNumber.toNumber() + 20;
 
     const { extrinsic } = SwapRouter.swapCallParameters(trade, {
-      api,
+      api: apiPjs,
       allowedSlippage,
       recipient: sender,
       deadline,
@@ -106,8 +105,10 @@ class BifrostExchange extends ExchangeChain {
     };
   }
 
-  async getAmountOut<TApi>(api: ApiPromise, options: TGetAmountOutOptions<TApi>): Promise<bigint> {
-    const { assetFrom, assetTo, amount, origin } = options;
+  async getAmountOut<TApi, TRes, TSigner>(
+    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
+  ): Promise<bigint> {
+    const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 
     const chainId = getParaId(this.chain);
 
@@ -130,7 +131,7 @@ class BifrostExchange extends ExchangeChain {
 
     const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
 
-    const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
+    const pairs = await getFilteredPairs(apiPjs, chainId, currencyCombinations);
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
 

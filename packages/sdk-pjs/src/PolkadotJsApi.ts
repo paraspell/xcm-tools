@@ -7,7 +7,6 @@
 import type {
   TAssetInfo,
   TBridgeStatus,
-  TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunError,
@@ -31,7 +30,6 @@ import {
   createAssetId,
   createClientCache,
   createClientPoolHelpers,
-  DEFAULT_TTL_MS,
   EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
@@ -40,14 +38,12 @@ import {
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   isConfig,
-  isExternalChain,
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
   normalizeLocation,
   PolkadotApi,
   RELAY_LOCATION,
-  resolveChainApi,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   UnsupportedOperationError,
@@ -82,21 +78,10 @@ const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
 const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
 class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
-  public readonly type = 'PJS'
+  readonly type = 'PJS'
 
-  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this._chain !== undefined || isExternalChain(chain)) {
-      return
-    }
-
-    this._ttlMs = clientTtlMs
-    this._chain = chain
-
-    this._api = await resolveChainApi(this._config, chain, wsUrl => leaseClient(wsUrl, this._ttlMs))
-  }
-
-  createApiInstance(wsUrl: TUrl, _chain: TSubstrateChain) {
-    return leaseClient(wsUrl, this._ttlMs)
+  leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TPjsApi> {
+    return leaseClient(wsUrl, ttlMs)
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -137,6 +122,10 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
   txFromHex(hex: string): Promise<Extrinsic> {
     return Promise.resolve(txFromHexUtil(this.api, hex))
+  }
+
+  txToHex(tx: Extrinsic): Promise<string> {
+    return Promise.resolve(tx.toHex())
   }
 
   async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
@@ -187,17 +176,6 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       },
       partialFee: partialFee.toBigInt()
     }
-  }
-
-  async quoteAhPrice(fromMl: TLocation, toMl: TLocation, amountIn: bigint, includeFee = true) {
-    const quoted = await this.api.call.assetConversionApi.quotePriceExactTokensForTokens(
-      fromMl,
-      toMl,
-      amountIn.toString(),
-      includeFee
-    )
-
-    return quoted.toJSON() !== null ? BigInt(quoted.toString()) : undefined
   }
 
   getEvmStorage(contract: string, slot: string): Promise<string> {
@@ -575,14 +553,18 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     }
 
     try {
-      const res = await this.quoteAhPrice(
-        localizeLocation(chain, nativeAsset.location),
-        assetLocalizedLoc,
-        deliveryFeeResolved,
-        false
-      )
+      const res = await this.queryRuntimeApi<bigint | null>({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [
+          localizeLocation(chain, nativeAsset.location),
+          assetLocalizedLoc,
+          deliveryFeeResolved,
+          false
+        ]
+      })
 
-      return res ?? 0n
+      return res != null ? BigInt(res) : 0n
     } catch (_e) {
       return 0n
     }
@@ -618,15 +600,14 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
-    const convertedExecFee = await ahApi.quoteAhPrice(
-      RELAY_LOCATION,
-      ahLocalizedLoc,
-      fallbackExecFee,
-      false
-    )
+    const convertedExecFee = await ahApi.queryRuntimeApi<bigint | null>({
+      module: 'AssetConversionApi',
+      method: 'quote_price_exact_tokens_for_tokens',
+      params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false]
+    })
 
-    if (typeof convertedExecFee === 'bigint') {
-      return convertedExecFee
+    if (convertedExecFee != null) {
+      return BigInt(convertedExecFee)
     }
 
     return undefined

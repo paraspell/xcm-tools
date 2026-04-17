@@ -18,7 +18,6 @@ import {
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   localizeLocation,
-  resolveChainApi,
   RuntimeApiUnavailableError,
   type TLocation,
   type TSubstrateChain,
@@ -93,6 +92,7 @@ vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
   findNativeAssetInfoOrThrow: vi.fn(),
   localizeLocation: vi.fn(),
   isAssetXcEqual: vi.fn(),
+  isSenderSigner: vi.fn().mockReturnValue(false),
   resolveModuleError: vi
     .fn()
     .mockImplementation(
@@ -104,15 +104,6 @@ vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
         failureSubReason: err?.value?.error?.type,
       }),
     ),
-  resolveChainApi: vi.fn(),
-  isExternalChain: vi.fn().mockReturnValue(false),
-  isConfig: vi.fn().mockReturnValue(false),
-  isSenderSigner: vi.fn().mockReturnValue(false),
-  createClientCache: vi.fn().mockReturnValue(new Map()),
-  createClientPoolHelpers: vi.fn().mockReturnValue({
-    leaseClient: vi.fn(),
-    releaseClient: vi.fn(),
-  }),
 }));
 
 const createMockApi = (mockTx: TDedotExtrinsic) => ({
@@ -201,7 +192,7 @@ describe("DedotApi", () => {
     mockApi = mockApiRaw as unknown as TDedotApi;
 
     dedotApi = new DedotApi();
-    vi.mocked(resolveChainApi).mockResolvedValue(mockApi);
+    vi.spyOn(dedotApi, "leaseClient").mockResolvedValue(mockApi);
     await dedotApi.init(mockChain);
 
     vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false);
@@ -267,6 +258,14 @@ describe("DedotApi", () => {
     });
   });
 
+  describe("txToHex", () => {
+    it("returns the callHex of the transaction", async () => {
+      const tx = { callHex: "0xcafebabe" } as unknown as TDedotExtrinsic;
+      const result = await dedotApi.txToHex(tx);
+      expect(result).toBe("0xcafebabe");
+    });
+  });
+
   describe("queryState", () => {
     it("queries state with single param", async () => {
       const serialized: TSerializedStateQuery = {
@@ -314,7 +313,7 @@ describe("DedotApi", () => {
       });
 
       const result = await dedotApi.queryRuntimeApi(serialized);
-      expect(mockCallMethod).toHaveBeenCalledWith("xcm");
+      expect(mockCallMethod).toHaveBeenCalledWith({ val: "transformed" });
       expect(result).toEqual({ weight: 100n });
     });
   });
@@ -382,33 +381,6 @@ describe("DedotApi", () => {
         partialFee: 1000n,
         weight: { refTime: 10n, proofSize: 20n },
       });
-    });
-  });
-
-  describe("quoteAhPrice", () => {
-    it("returns the quoted price as bigint", async () => {
-      const result = await dedotApi.quoteAhPrice(
-        { parents: 0, interior: { Here: null } } as TLocation,
-        { parents: 1, interior: { Here: null } } as TLocation,
-        1000n,
-      );
-      expect(
-        mockApiRaw.call.assetConversionApi.quotePriceExactTokensForTokens,
-      ).toHaveBeenCalled();
-      expect(result).toBe(42n);
-    });
-
-    it("returns undefined when quote returns null", async () => {
-      mockApiRaw.call.assetConversionApi.quotePriceExactTokensForTokens.mockResolvedValueOnce(
-        null,
-      );
-
-      const result = await dedotApi.quoteAhPrice(
-        {} as TLocation,
-        {} as TLocation,
-        1000n,
-      );
-      expect(result).toBeUndefined();
     });
   });
 
@@ -1075,9 +1047,9 @@ describe("DedotApi", () => {
       expect(result).toBe(0n);
     });
 
-    it("converts delivery fee via quoteAhPrice for non-native asset", async () => {
+    it("converts delivery fee via queryRuntimeApi for non-native asset", async () => {
       vi.mocked(isAssetXcEqual).mockReturnValue(false);
-      vi.spyOn(dedotApi, "quoteAhPrice").mockResolvedValue(5n);
+      vi.spyOn(dedotApi, "queryRuntimeApi").mockResolvedValue(5n);
 
       const asset: TAssetInfo = {
         symbol: "USDC",
@@ -1098,9 +1070,9 @@ describe("DedotApi", () => {
       expect(result).toBe(5n);
     });
 
-    it("falls back to 0 when quoteAhPrice throws", async () => {
+    it("falls back to 0 when queryRuntimeApi throws", async () => {
       vi.mocked(isAssetXcEqual).mockReturnValue(false);
-      vi.spyOn(dedotApi, "quoteAhPrice").mockRejectedValue(
+      vi.spyOn(dedotApi, "queryRuntimeApi").mockRejectedValue(
         new Error("not available"),
       );
 

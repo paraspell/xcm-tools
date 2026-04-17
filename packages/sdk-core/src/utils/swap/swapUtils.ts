@@ -80,6 +80,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
   }
 
+  // @ts-expect-error - Will be removed in the next version
   let builder = RouterBuilder(api)
     .from(from)
     .exchange(exchange)
@@ -93,6 +94,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())
 
   if (onStatusChange) {
+    // @ts-expect-error - Will be removed in the next version
     builder = builder.onStatusChange(onStatusChange)
   }
 
