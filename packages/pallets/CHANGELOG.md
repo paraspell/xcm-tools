@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.2.3](https://github.com/paraspell/xcm-tools/compare/pallets-v13.2.2...pallets-v13.2.3) (2026-04-18)
+
+
+### Code Refactoring
+
+* **swap:** Make AH exchange generic 🔧 ([a56de67](https://github.com/paraspell/xcm-tools/commit/a56de67238f4df7aadb46cf8d4754adc7c591e79))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/pallets-v13.2.1...pallets-v13.2.2) (2026-04-16)
 
 
