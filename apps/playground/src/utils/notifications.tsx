@@ -58,7 +58,7 @@ export const showSuccessNotification = (
   notifToUpdateId: string | undefined,
   title: string,
   message: string,
-  autoClose?: boolean,
+  autoClose = true,
 ) => {
   const autoCloseDuration = autoClose ? 5000 : false;
 

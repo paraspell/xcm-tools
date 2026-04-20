@@ -73,10 +73,7 @@ export type TNavItem = {
   Icon: FC<IconProps>;
 };
 
-export type TSubmitType =
-  | 'default'
-  | 'update'
-  | 'delete'
+export type TQuerySubmitType =
   | 'dryRun'
   | 'dryRunPreview'
   | 'getXcmFee'
@@ -86,8 +83,14 @@ export type TSubmitType =
   | 'getReceivableAmount'
   | 'getBestAmountOut'
   | 'verifyEdOnDestination'
-  | 'getTransferInfo'
-  | 'addToBatch';
+  | 'getTransferInfo';
+
+export type TSubmitType =
+  | 'default'
+  | 'update'
+  | 'delete'
+  | 'addToBatch'
+  | TQuerySubmitType;
 
 export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
 

@@ -8,26 +8,30 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { GeneralBuilder } from '@paraspell/sdk';
+import type { GeneralBuilder, TBuilderConfig, TUrl } from '@paraspell/sdk';
 import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
+import { QUERY_CONFIG } from '../../constants';
 import { useWallet } from '../../hooks';
 import type {
   TApiTransaction,
   TFormValuesTransformed,
   TProgressSwapEvent,
+  TQuerySubmitType,
   TSubmitType,
 } from '../../types';
 import type { TTransaction } from '../../utils';
 import {
+  addSwapToBuilder,
   buildApiPayload,
   createBuilderOptions,
   fetchFromApi,
   getTxFromApi,
   importSdk,
+  isSwapActive,
   resolveSender,
   setupBaseBuilder,
   submitApiTransactions,
@@ -96,6 +100,17 @@ export const XcmTransfer = () => {
 
   const onStatusChange = (status: TProgressSwapEvent) => {
     setProgressInfo(status);
+  };
+
+  const handleError = (e: unknown, notifId?: string) => {
+    if (e instanceof Error) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      showErrorNotification(e.message, notifId);
+      setError(e);
+      closeOutputAlert();
+      openErrorAlert();
+    }
   };
 
   const submitBatch = async (
@@ -192,14 +207,7 @@ export const XcmTransfer = () => {
         'Transaction was successful',
       );
     } catch (e) {
-      if (e instanceof Error) {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        showErrorNotification(e.message, notifId);
-        setError(e);
-        closeOutputAlert();
-        openErrorAlert();
-      }
+      handleError(e, notifId);
     } finally {
       setLoading(false);
     }
@@ -214,78 +222,104 @@ export const XcmTransfer = () => {
     void submitBatch([...batchItems, lastFormValues], value);
   };
 
-  const performDryRun = async (
+  const executeSdkQuery = async (
     formValues: TFormValuesTransformed,
     sender: string,
     signer: PolkadotSigner | Signer,
-    submitType: 'dryRun' | 'dryRunPreview',
-    notifId: string | undefined,
+    builderOptions: TBuilderConfig<TUrl>,
+    submitType: TQuerySubmitType,
   ) => {
+    const { Builder } = await importSdk(apiType);
+    const builder = Builder(builderOptions);
+    const finalBuilder = setupBaseBuilder(builder, formValues, sender, signer);
+
+    switch (submitType) {
+      case 'dryRun':
+        return finalBuilder.dryRun();
+      case 'dryRunPreview':
+        return finalBuilder.dryRunPreview({ mintFeeAssets: true });
+      case 'getXcmFee':
+        return finalBuilder.getXcmFee();
+      case 'getOriginXcmFee':
+        return finalBuilder.getOriginXcmFee();
+      case 'getTransferableAmount':
+        return finalBuilder.getTransferableAmount();
+      case 'getMinTransferableAmount':
+        return finalBuilder.getMinTransferableAmount();
+      case 'getReceivableAmount':
+        return finalBuilder.getReceivableAmount();
+      case 'verifyEdOnDestination':
+        return finalBuilder.verifyEdOnDestination();
+      case 'getTransferInfo':
+        return finalBuilder.getTransferInfo();
+      case 'getBestAmountOut': {
+        if (!formValues.transformedCurrencyTo) {
+          throw new Error(
+            'Swap configuration is required for getBestAmountOut.',
+          );
+        }
+
+        const swapBuilder = addSwapToBuilder(
+          finalBuilder,
+          formValues.transformedCurrencyTo,
+          formValues.swapOptions,
+          signer,
+          sender,
+        );
+        return swapBuilder.getBestAmountOut();
+      }
+    }
+  };
+
+  const performQuery = async (
+    formValues: TFormValuesTransformed,
+    sender: string,
+    signer: PolkadotSigner | Signer,
+    notifId: string | undefined,
+    submitType: TQuerySubmitType,
+  ) => {
+    const { endpoint, message } = QUERY_CONFIG[submitType];
     const builderOptions = createBuilderOptions(formValues);
 
-    const { Builder } = await importSdk(apiType);
-
-    const { useApi } = formValues;
-
-    let result;
-    if (useApi) {
-      result = await fetchFromApi(
-        buildApiPayload(formValues, sender, {
-          ...builderOptions,
-          ...(submitType === 'dryRunPreview'
-            ? { mintFeeAssets: true }
-            : undefined),
-        }),
-        submitType === 'dryRunPreview' ? '/dry-run-preview' : '/dry-run',
-        'POST',
-        true,
-      );
-    } else {
-      const builder = Builder(builderOptions);
-      const finalBuilder = setupBaseBuilder(
-        builder,
-        formValues,
-        sender,
-        signer,
-      );
-
-      result =
-        submitType === 'dryRun'
-          ? await finalBuilder.dryRun()
-          : await finalBuilder.dryRunPreview({ mintFeeAssets: true });
-    }
+    const result = formValues.useApi
+      ? await fetchFromApi(
+          buildApiPayload(formValues, sender, {
+            ...builderOptions,
+            ...(submitType === 'dryRunPreview'
+              ? { mintFeeAssets: true }
+              : undefined),
+          }),
+          endpoint,
+          'POST',
+          true,
+        )
+      : await executeSdkQuery(
+          formValues,
+          sender,
+          signer,
+          builderOptions,
+          submitType,
+        );
 
     setOutput(JSON.stringify(result, replaceBigInt, 2));
     openOutputAlert();
     closeErrorAlert();
-    showSuccessNotification(notifId ?? '', 'Success', 'Dry run was successful');
+    showSuccessNotification(notifId ?? '', 'Success', message);
   };
 
   const submit = async (
     formValues: TFormValuesTransformed,
     submitType: TSubmitType,
   ) => {
-    const builderOptions = createBuilderOptions(formValues);
+    const { from, localAccount, useApi } = formValues;
 
-    const { from, localAccount, swapOptions, useApi } = formValues;
+    const batchIndex = currentPage - 1;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
         const newBatch = [...prevItems];
-        newBatch.splice(currentPage - 1, 1);
-
-        // Decide which page to show next
-        let nextPage;
-        if (currentPage > 1) {
-          nextPage = currentPage - 1;
-        } else if (newBatch.length > 0) {
-          nextPage = 1;
-        } else {
-          nextPage = 1;
-        }
-
-        setCurrentPage(nextPage);
-
+        newBatch.splice(batchIndex, 1);
+        setCurrentPage(Math.max(1, batchIndex));
         return newBatch;
       });
 
@@ -296,7 +330,7 @@ export const XcmTransfer = () => {
     if (submitType === 'update') {
       setBatchItems((prev) => {
         const newBatch = [...prev];
-        newBatch[currentPage - 1] = formValues;
+        newBatch[batchIndex] = formValues;
         return newBatch;
       });
 
@@ -330,32 +364,30 @@ export const XcmTransfer = () => {
     setLoading(true);
     let notifId = showLoadingNotification(
       'Processing',
-      submitType === 'dryRun'
-        ? 'Dry run is being processed'
+      submitType !== 'default'
+        ? 'Processing request...'
         : 'Waiting to sign transaction',
     );
 
     const signer = await getSigner();
 
-    const { createChainClient, Builder } = await importSdk(apiType);
-
-    let api;
     try {
-      if (submitType === 'dryRun' || submitType === 'dryRunPreview') {
-        await performDryRun(formValues, sender, signer, submitType, notifId);
+      if (submitType !== 'default') {
+        await performQuery(formValues, sender, signer, notifId, submitType);
         return;
       }
 
+      const builderOptions = createBuilderOptions(formValues);
+      const { createChainClient, Builder } = await importSdk(apiType);
+
+      let api;
       let tx: TTransaction | undefined;
       let hash: string | undefined;
 
       if (useApi) {
         const apiPayload = buildApiPayload(formValues, sender, builderOptions);
 
-        if (
-          swapOptions.currencyTo.currencyOptionId ||
-          swapOptions.currencyTo.isCustomCurrency
-        ) {
+        if (isSwapActive(formValues.swapOptions)) {
           const transactions = await fetchFromApi<
             typeof apiPayload,
             TApiTransaction[]
@@ -401,10 +433,7 @@ export const XcmTransfer = () => {
           signer,
         );
 
-        if (
-          swapOptions.currencyTo.currencyOptionId ||
-          swapOptions.currencyTo.isCustomCurrency
-        ) {
+        if (isSwapActive(formValues.swapOptions)) {
           const txContexts = await finalBuilder.buildAll();
 
           if (txContexts.length > 1) {
@@ -458,17 +487,11 @@ export const XcmTransfer = () => {
           notifId ?? '',
           'Success',
           `Transaction was submitted`,
+          false,
         );
       }
     } catch (e) {
-      if (e instanceof Error) {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        showErrorNotification(e.message, notifId);
-        setError(e);
-        closeOutputAlert();
-        openErrorAlert();
-      }
+      handleError(e, notifId);
     } finally {
       setLoading(false);
       setShowStepper(false);

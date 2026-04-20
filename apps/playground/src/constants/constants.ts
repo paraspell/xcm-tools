@@ -2,7 +2,6 @@ import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconCurrencyEthereum,
-  IconPackages,
   IconSend,
 } from '@tabler/icons-react';
 
@@ -11,6 +10,7 @@ import type {
   TCurrencyEntry,
   TCurrencyEntryBase,
   TNavItem,
+  TQuerySubmitType,
   TSwapFields,
   TTransactFields,
 } from '../types';
@@ -25,11 +25,6 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     label: 'EVM Transfer',
     url: PageRoute.XCM_SDK.EVM_TRANSFER,
     Icon: IconCurrencyEthereum,
-  },
-  {
-    label: 'XCM Utils',
-    url: PageRoute.XCM_SDK.XCM_UTILS,
-    Icon: IconPackages,
   },
   {
     label: 'Assets',
@@ -138,6 +133,46 @@ export const EVM_ORIGIN_CHAINS = [
   'Moonriver',
   'Darwinia',
 ] as const;
+
+export const QUERY_CONFIG: Record<
+  TQuerySubmitType,
+  { endpoint: string; message: string }
+> = {
+  dryRun: { endpoint: '/dry-run', message: 'Dry run was successful' },
+  dryRunPreview: {
+    endpoint: '/dry-run-preview',
+    message: 'Dry run was successful',
+  },
+  getXcmFee: { endpoint: '/xcm-fee', message: 'XCM fee retrieved' },
+  getOriginXcmFee: {
+    endpoint: '/origin-xcm-fee',
+    message: 'Origin XCM fee retrieved',
+  },
+  getTransferableAmount: {
+    endpoint: '/transferable-amount',
+    message: 'Transferable amount retrieved',
+  },
+  getMinTransferableAmount: {
+    endpoint: '/min-transferable-amount',
+    message: 'Minimum transferable amount retrieved',
+  },
+  getReceivableAmount: {
+    endpoint: '/receivable-amount',
+    message: 'Receivable amount retrieved',
+  },
+  verifyEdOnDestination: {
+    endpoint: '/verify-ed-on-destination',
+    message: 'ED verification result retrieved',
+  },
+  getTransferInfo: {
+    endpoint: '/transfer-info',
+    message: 'Transfer info retrieved',
+  },
+  getBestAmountOut: {
+    endpoint: '/best-amount-out',
+    message: 'Best amount out retrieved',
+  },
+};
 
 export const TRANSFER_WARNING_TEXT =
   'This tool is intended for testing only, use at your own risk for non tested transfer scenarios. Always test with small amounts first.';

@@ -4,7 +4,6 @@ import {
   Checkbox,
   Fieldset,
   Group,
-  Menu,
   Paper,
   Stack,
   TextInput,
@@ -17,14 +16,7 @@ import {
   isExternalChain,
   SUBSTRATE_CHAINS,
 } from '@paraspell/sdk';
-import {
-  IconChevronDown,
-  IconLocationCheck,
-  IconLocationQuestion,
-  IconPlus,
-  IconTransfer,
-  IconTrash,
-} from '@tabler/icons-react';
+import { IconPlus, IconTransfer, IconTrash } from '@tabler/icons-react';
 import {
   parseAsBoolean,
   parseAsJson,
@@ -58,9 +50,11 @@ import {
 import type {
   TFormValues,
   TFormValuesTransformed,
+  TQuerySubmitType,
   TSubmitType,
 } from '../../types';
 import {
+  isSwapActive,
   isValidPolkadotAddress,
   resolveCurrencyAsset,
   validateCustomEndpoint,
@@ -79,6 +73,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
 import { Transact } from '../Transact/Transact';
+import { XcmActionsMenu } from './XcmActionsMenu';
 
 type Props = {
   onSubmit: (values: TFormValuesTransformed, submitType: TSubmitType) => void;
@@ -130,9 +125,7 @@ export const XcmTransferForm: FC<Props> = ({
         ...values,
         // Use keepAlive only for local transfers
         keepAlive:
-          from === to && !swapOptions.currencyTo.currencyOptionId
-            ? keepAlive
-            : false,
+          from === to && !isSwapActive(swapOptions) ? keepAlive : false,
       };
     },
     validate: {
@@ -262,7 +255,8 @@ export const XcmTransferForm: FC<Props> = ({
     if (
       submitType === 'dryRun' ||
       submitType === 'dryRunPreview' ||
-      submitType === 'delete'
+      submitType === 'delete' ||
+      submitType === 'addToBatch'
     ) {
       resolveAndSubmit(values, submitType);
       return;
@@ -289,6 +283,17 @@ export const XcmTransferForm: FC<Props> = ({
     form.validate();
     if (form.isValid()) {
       onSubmitInternal(form.getTransformedValues(), undefined, 'addToBatch');
+    }
+  };
+
+  const onDeleteFromBatch = () => {
+    onSubmitInternal(form.getTransformedValues(), undefined, 'delete');
+  };
+
+  const onSubmitUtils = (submitType: TQuerySubmitType) => {
+    form.validate();
+    if (form.isValid()) {
+      resolveAndSubmit(form.getTransformedValues(), submitType);
     }
   };
 
@@ -419,6 +424,7 @@ export const XcmTransferForm: FC<Props> = ({
                               label="MAX"
                               labelPosition="left"
                               size={currencies.length > 1 ? 'xs' : 'sm'}
+                              radius="xl"
                               {...form.getInputProps(
                                 `currencies.${index}.isMax`,
                                 {
@@ -537,57 +543,15 @@ export const XcmTransferForm: FC<Props> = ({
                 {getSubmitLabel()}
               </Button>
 
-              <Menu shadow="md" width={200} position="bottom-end">
-                <Menu.Target>
-                  <Button
-                    style={{
-                      borderLeft: '1px solid #ff93c0',
-                    }}
-                  >
-                    <IconChevronDown />
-                  </Button>
-                </Menu.Target>
-
-                <Menu.Dropdown>
-                  <Menu.Item
-                    leftSection={<IconLocationCheck size={16} />}
-                    onClick={onSubmitInternalDryRun}
-                  >
-                    Dry run
-                  </Menu.Item>
-
-                  <Menu.Item
-                    leftSection={<IconLocationQuestion size={16} />}
-                    onClick={onSubmitInternalDryRunPreview}
-                  >
-                    Dry run preview
-                  </Menu.Item>
-
-                  {!initialValues && (
-                    <Menu.Item
-                      leftSection={<IconPlus size={16} />}
-                      onClick={onSubmitInternalAddToBatch}
-                    >
-                      Add to batch
-                    </Menu.Item>
-                  )}
-
-                  {initialValues && (
-                    <Menu.Item
-                      leftSection={<IconTrash size={16} />}
-                      onClick={() =>
-                        onSubmitInternal(
-                          form.getTransformedValues(),
-                          undefined,
-                          'delete',
-                        )
-                      }
-                    >
-                      Delete from batch
-                    </Menu.Item>
-                  )}
-                </Menu.Dropdown>
-              </Menu>
+              <XcmActionsMenu
+                initialValues={initialValues}
+                showSwapItems={isSwapActive(form.values.swapOptions)}
+                onDryRun={onSubmitInternalDryRun}
+                onDryRunPreview={onSubmitInternalDryRunPreview}
+                onAddToBatch={onSubmitInternalAddToBatch}
+                onDeleteFromBatch={onDeleteFromBatch}
+                onQueryAction={onSubmitUtils}
+              />
             </Button.Group>
           ) : (
             <Button
