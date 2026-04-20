@@ -1327,6 +1327,22 @@
               "Parachain": 2034
             },
             {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x987ddc8b236fb23e1e48882b206396ca9b42648b"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
               "GeneralIndex": 0
             }
           ]
