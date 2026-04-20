@@ -14,7 +14,7 @@
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
     </a>
   </p>
-  <p>Analyser documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
+  <p>Analyser documentation <a href = "https://paraspell.github.io/docs/xcm-analyser/getting-started.html" \>[here]</p>
 </div>
 
 <br /><br />
@@ -182,7 +182,7 @@ This should result into:
 
 ## Contribute to XCM Tools and earn rewards 💰
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 ## Get Support 🚑
 

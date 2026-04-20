@@ -14,7 +14,7 @@
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
-  <p>Supporting every XCM Active Parachain <a href = "https://paraspell.github.io/docs/supported.html"\>[list]</p>
+  <p>Supporting every XCM Active Parachain <a href = "https://paraspell.github.io/docs/supported-chains.html"\>[list]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
 </div>
 
@@ -43,7 +43,7 @@ npm install | pnpm add | yarn add @paraspell/sdk-pjs
 
 ### Install Swap extension
 
-If you plan to [do Swap XCMs](https://paraspell.github.io/docs/sdk/xcmPallet.html#swap) you can install Swap package which allows you to do cross-chain swaps on popular Polkadot, Kusama, Paseo, Westend exchanges. Now available in all JS client versions of SDK.
+If you plan to [do Swap XCMs](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#swap) you can install Swap package which allows you to do cross-chain swaps on popular Polkadot, Kusama, Paseo, Westend exchanges. Now available in all JS client versions of SDK.
 
 > [!IMPORTANT]
 > - ⚠️  **WebAssembly (Wasm) must be enabled in your project** because of the Hydration SDK (One of the exchanges implemented in XCM Router). Wasm can be enabled either through the web application configuration or through the appropriate plugin. 
@@ -86,16 +86,16 @@ import * as paraspell from '@paraspell/sdk-pjs'
 > [!NOTE]
 > - You can now pass signer directly into sender parameter
 > - The local transfers now have additional builder parameter called keepAlive
-> - Transact is here! Find out more: https://paraspell.github.io/docs/sdk/xcmPallet.html#transact
+> - Transact is here! Find out more: https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#transact
 > 
 > **Latest news:**
 > - V12 > V13 Migration guide: https://paraspell.github.io/docs/migration/v12-to-v13.html
-> - Swap package is now available on every XCM SDK version: https://paraspell.github.io/docs/sdk/getting-started.html#install-swap-extension
+> - Swap package is now available on every XCM SDK version: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension
 > - abstractDecimals is now turned on by default!
 
 
 ### Sending XCM
-For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
+For full documentation on XCM Transfers head over to [official documentation](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html).
 
 #### Transfer assets from Substrate to Substrate
 
@@ -174,7 +174,7 @@ await builder.disconnect()
 
 ```ts
 const builder = Builder(/*client | builder_config | ws_url | [ws_url, ws_url,..] - Optional*/)
-      .from(TSubstrateChain) // 'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
+      .from(TSubstrateChain) // 'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types
       .to(TChain) // Has to be same as origin (from)
       .currency(CURRENCY_SPEC) // Refer to currency spec options below
       .sender(sender | PAPI SIGNER)
@@ -193,8 +193,8 @@ await builder.disconnect()
 
 ```ts
 const builder = Builder(/*client | builder_config |ws_url | [ws_url, ws_url,..] - Optional*/)
-      .from(TSubstrateChain) // 'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
-      .to(TChain /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
+      .from(TSubstrateChain) // 'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types
+      .to(TChain /*,customParaId - optional*/ | Location object /*Only works for PolkadotXCM pallet*/) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types
       .currency({id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom Location'), amount: amount /*Use "ALL" to transfer everything*/})
       .recipient(address | Location object /*If you are sending through xTokens, you need to pass the destination and address location in one object (x2)*/)
       .sender(address | PAPI_SIGNER /*Only in PAPI SDK*/ | {address, PJS_SIGNER} /*Only in PJS SDK*/) // - OPTIONAL but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub/Hydration with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
@@ -308,7 +308,7 @@ await builder.disconnect()
 
 ### XCM Fee queries
 
-For full documentation with output examples of XCM Fee queries, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
+For full documentation with output examples of XCM Fee queries, head to [official documentation](https://paraspell.github.io/docs/xcm-sdk/xcm-utils.html).
 
 #### XCM Fee (Origin and Dest.)
 
@@ -424,8 +424,8 @@ const ed = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array -
 
 ```ts
 const result = await Builder(/*chain api/builder_config/ws_url_string/ws_url_array - optional*/)
-      .from(TSubstrateChain) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
-      .to(TChain) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/sdk/AssetPallet.html#import-chains-as-types
+      .from(TSubstrateChain) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types
+      .to(TChain) //'AssetHubPolkadot' | 'Hydration' | 'Moonbeam' | 'Polkadot' |  ... https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types
       .currency(CURRENCY_SPEC) 
       .recipient(RECIPIENT_ADDRESS)
       .sender(SENDER_ADDRESS)
@@ -473,7 +473,7 @@ let result = convertSs58(ADDRESS, TChain) // returns converted address in string
 
 ### Asset queries:
 
-For full documentation with output examples of asset queries, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
+For full documentation with output examples of asset queries, head over to [official documentation](https://paraspell.github.io/docs/xcm-sdk/asset-package.html).
 
 ```ts
 import { getSupportedDestinations, getFeeAssets, getAssetsObject, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, getParaId, getTChain, getAssetLocation, CHAINS, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/sdk-pjs'
@@ -523,7 +523,7 @@ CHAINS
 
 ### Parachain XCM Pallet queries
 
-For full documentation with output examples of pallet queries, head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
+For full documentation with output examples of pallet queries, head over to [official documentation](https://paraspell.github.io/docs/xcm-sdk/pallet-package.html).
 
 ```ts
 import { getDefaultPallet, getSupportedPallets, getPalletIndex, getNativeAssetsPallet, getOtherAssetsPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk-pjs';
@@ -609,7 +609,7 @@ console.log(CHAINS)
 
 ## Contribute to XCM Tools and earn rewards 💰
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 ## Get Support 🚑
 

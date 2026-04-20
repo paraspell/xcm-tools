@@ -62,7 +62,7 @@ export const Navbar = () => {
         <Button
           radius="lg"
           component="a"
-          href="https://paraspell.github.io/docs/api/g-started.html"
+          href="https://paraspell.github.io/docs/xcm-api/getting-started.html"
           target="_blank"
         >
           Get started

@@ -103,7 +103,7 @@ export const XcmVisualizer = () => (
         <Button
           variant="outline"
           component="a"
-          href="https://paraspell.github.io/docs/visualizer/user-guide.html"
+          href="https://paraspell.github.io/docs/xcm-visualizer/user-guide.html"
           target="_blank"
           size="lg"
           radius="lg"

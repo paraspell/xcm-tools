@@ -14,7 +14,7 @@
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
-  <p>How to swap <a href = "https://paraspell.github.io/docs/sdk/xcmPallet.html#swap" \>[here]</p>
+  <p>How to swap <a href = "https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#swap" \>[here]</p>
     <p>XCM SDK starter template project <a href = "https://github.com/paraspell/xcm-sdk-template" \>[here]</p>
 </div>
 
@@ -23,7 +23,7 @@
 
 # Installation
 
-Please reffer to [SDK documentation](https://paraspell.github.io/docs/sdk/getting-started.html#install-swap-extension) 
+Please reffer to [SDK documentation](https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension) 
 
 ## 💻 Testing
 
@@ -38,7 +38,7 @@ Please reffer to [SDK documentation](https://paraspell.github.io/docs/sdk/gettin
 
 ## Contribute to XCM Tools and earn rewards 💰
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 ## Get Support 🚑
 

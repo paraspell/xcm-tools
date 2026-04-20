@@ -7,7 +7,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 </p>
 
 **Monorepo contains the following XCM tools:**
-- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **three** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk), [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) & [Dedot Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-dedot) as the `first` and `only` XCM SDK in the ecosystem. All of the SDKs support an extension package called [Swap](https://paraspell.github.io/docs/sdk/getting-started.html#install-swap-extension) (Formerly known as XCM Router).
+- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **three** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk), [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) & [Dedot Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-dedot) as the `first` and `only` XCM SDK in the ecosystem. All of the SDKs support an extension package called [Swap](https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension) (Formerly known as XCM Router).
 - [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) ⚡️: An API that provides the ability to integrate XCM interoperability into your decentralized application in a package-less way, offloading heavy computing tasks from your decentralized application, and reducing associated costs.
 - [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) 🔎 - Analyser package to convert XCM Multilocations into a human-readable format.
 - [XCM Visualizer](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizer-fe) 🖼️ - An application developed to visualize XCM within the Polkadot ecosystem.
@@ -115,7 +115,7 @@ Your favourite tool seems to be down? Check this link to confirm: [status.parasp
 
 **Contribute to XCM Tools and earn rewards 💰**
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 </details>
 

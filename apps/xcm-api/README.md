@@ -17,7 +17,7 @@
   <p align="center">Now live at https://api.paraspell.xyz/v1</p>
 
   <p>XCM API downtime monitoring <a href="https://status.paraspell.xyz/">[here]</a></p>
-  <p>XCM API documentation <a href="https://paraspell.github.io/docs/api/g-started.html">[here]</a></p>
+  <p>XCM API documentation <a href="https://paraspell.github.io/docs/xcm-api/getting-started.html">[here]</a></p>
   <p>XCM API starter template project <a href="https://github.com/paraspell/xcm-api-template">[here]</a></p>
 </div>
 <br /><br />
@@ -26,7 +26,7 @@
 
 ### Sending XCM
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html).
 
 Possible parameters:
 
@@ -160,7 +160,7 @@ const response = await fetch('http://localhost:3001/v1/x-transfer-batch', {
 
 ### Localhost testing setup
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#localhost-testing-setup).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#localhost-testing-setup).
 
 Possible parameters:
 - Inherited from concrete endpoint
@@ -196,7 +196,7 @@ const response = await fetch("http://localhost:3001/v1/x-transfer", {
 
 ### Localhost testing setup II
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#localhost-testing-setup-ii).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#localhost-testing-setup-ii).
 
 Possible parameters:
 - Inherited from concrete endpoint
@@ -232,7 +232,7 @@ const response = await fetch("http://localhost:3001/v1/sign-and-submit", {
 
 ### XCM Fee queries
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html).
 
 Possible parameters:
 
@@ -401,7 +401,7 @@ const response = await fetch('http://localhost:3001/v1/convert-ss58?address=:add
 
 ### Asset queries
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/assetP.html).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#asset-queries).
 
 Possible parameters:
 
@@ -494,7 +494,7 @@ const response = await fetch("http://localhost:3001/v1/assets/:chain/supported-d
 
 ### XCM Pallet queries
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/chainP.html).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#xcm-pallet-queries).
 
 Possible parameters:
 
@@ -522,7 +522,7 @@ const response = await fetch('http://localhost:3001/v1/pallets/:chain/other-asse
 
 ### XCM Analyser
 
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmAnalyser.html).
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-analyser-functionality.html).
 
 ```
 NOTICE: Only one parameter at a time is allowed, either location or xcm.
@@ -573,9 +573,9 @@ $ pnpm start:prod
 
 ### Other
 
-#### Upgrading request per minute count - [guide](https://paraspell.github.io/docs/api/upgrade.html).
+#### Upgrading request per minute count - [guide](https://paraspell.github.io/docs/xcm-api/upgrade-xcm-request-amount.html).
 
-#### Deploying API yourself - [guide](https://paraspell.github.io/docs/api/deploy.html).
+#### Deploying API yourself - [guide](https://paraspell.github.io/docs/xcm-api/deploy-api-yourself.html).
 
 ## Tests
 
@@ -593,7 +593,7 @@ $ pnpm start:prod
 
 ## Contribute to XCM Tools and earn rewards 💰
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 ## Get Support 🚑
 
