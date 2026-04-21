@@ -14,6 +14,7 @@ import type {
   TTransferOptions
 } from '../../types'
 import { assertToIsString } from '../assertions'
+import { isConfig } from '../guards'
 import { executeWithRouter } from '../swap'
 import { parseUnits } from '../unit'
 import {
@@ -23,11 +24,10 @@ import {
   createTxOverrideAmount,
   overrideTxAmount
 } from './create-txs'
-import { isConfig } from './isConfig'
 
 vi.mock('@paraspell/assets')
 vi.mock('../assertions')
-vi.mock('./isConfig')
+vi.mock('../guards')
 vi.mock('../unit')
 vi.mock('../../transfer')
 vi.mock('../swap')

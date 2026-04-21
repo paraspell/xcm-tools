@@ -11,6 +11,8 @@ import type { TEvmChainFromPapi } from '../types'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
+ *
+ * @deprecated EvmBuilder is deprecated. Please use the Builder class instead.
  */
 export class EvmBuilderCore<
   TApi,
@@ -106,6 +108,7 @@ export class EvmBuilderCore<
  *
  * @param provider - The Ethereum provider to use for the transfer.
  * @returns An instance of EvmBuilder class
+ * @deprecated EvmBuilder is deprecated. Please use the Builder class instead.
  */
 export const EvmBuilder = <TApi, TRes, TSigner>(api: PolkadotApi<TApi, TRes, TSigner>) =>
   new EvmBuilderCore({ api })

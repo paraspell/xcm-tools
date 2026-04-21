@@ -1,6 +1,7 @@
 {
   "packages/xcm-analyser": "3.0.7",
   "packages/swap": "13.2.2",
+  "packages/evm": "13.2.2",
   "packages/sdk": "13.2.2",
   "packages/sdk-core": "13.2.2",
   "packages/sdk-pjs": "13.2.2",

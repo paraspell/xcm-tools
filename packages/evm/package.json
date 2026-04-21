@@ -1,0 +1,56 @@
+{
+  "name": "@paraspell/evm",
+  "version": "13.2.2",
+  "description": "Optional EVM extension for @paraspell/sdk enabling interaction with EVM-compatible chains.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paraspell/xcm-tools.git",
+    "directory": "packages/evm"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "build": "rollup -c",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix src",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest",
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "@paraspell/sdk-core": "workspace:*",
+    "viem": "^2.47.6"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-import-attributes": "^7.28.6",
+    "@babel/preset-env": "^7.29.2",
+    "@codecov/rollup-plugin": "^1.9.1",
+    "@rollup/plugin-babel": "^7.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "dotenv": "^17.3.1",
+    "rollup": "^4.60.1",
+    "rollup-plugin-dts": "^6.4.1",
+    "tslib": "^2.8.1"
+  }
+}

@@ -9,7 +9,7 @@ import type {
   TUrl
 } from '../../types'
 import { assertAddressIsString, assertSender, assertToIsString } from '../assertions'
-import { isConfig } from '../builder'
+import { isConfig } from '../guards'
 import { getSwapExtensionOrThrow } from './swapRegistry'
 
 const isUrl = (value: unknown): value is string | string[] =>

@@ -3,11 +3,13 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TSubstrateChain, Version } from '@paraspell/sdk-common'
+import type { WalletClient } from 'viem'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import {
   BatchValidationError,
   DryRunFailedError,
+  InvalidAddressError,
   UnableToComputeError,
   UnsupportedOperationError
 } from '../errors'
@@ -51,8 +53,10 @@ import {
   createTransferOrSwapAll,
   createTxOverrideAmount,
   executeWithRouter,
+  getEvmExtensionOrThrow,
   isConfig,
   isSenderSigner,
+  isViemSigner,
   normalizeExchange
 } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
@@ -151,12 +155,28 @@ export class GeneralBuilder<
   }
 
   /**
-   * Sets the sender address.
+   * Sets the sender address or signer.
    *
-   * @param sender - The sender address or signer.
+   * @param sender - The sender address, substrate signer, or viem `WalletClient`.
    * @returns An instance of Builder
    */
-  sender(sender: TSender<TSigner>): GeneralBuilder<TApi, TRes, TSigner, T & { sender: string }> {
+  sender(
+    sender: TSender<TSigner> | WalletClient
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { sender: string }> {
+    if (isViemSigner(sender)) {
+      const address = sender.account?.address
+      if (!address) {
+        throw new InvalidAddressError(
+          'viem WalletClient has no account attached. Create it with a specific account.'
+        )
+      }
+      return new GeneralBuilder(this.api, this.batchManager, {
+        ...this._options,
+        sender: address,
+        senderSource: sender
+      })
+    }
+
     const isPath = typeof sender === 'string' && sender.startsWith('//')
     const isPathOrSigner = isPath || isSenderSigner(sender)
     const address = isPathOrSigner ? this.api.deriveAddress(sender) : sender
@@ -267,6 +287,7 @@ export class GeneralBuilder<
   addToBatch(
     this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }> {
+    this.assertNotEvmSigner()
     this.batchManager.addTransaction({
       api: this.api,
       ...this._options,
@@ -292,6 +313,7 @@ export class GeneralBuilder<
     this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
     options?: TBatchOptions
   ) {
+    this.assertNotEvmSigner()
     return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
@@ -327,6 +349,7 @@ export class GeneralBuilder<
   async build(
     this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TRes> {
+    this.assertNotEvmSigner()
     const { tx } = await this.buildCommon()
     return tx
   }
@@ -339,8 +362,17 @@ export class GeneralBuilder<
   async buildAll(
     this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
   ): Promise<TTransactionContext<TApi, TRes>[]> {
+    this.assertNotEvmSigner()
     const { txContexts } = await this.buildCommonAll()
     return txContexts
+  }
+
+  private assertNotEvmSigner() {
+    if (isViemSigner(this._options.senderSource)) {
+      throw new UnsupportedOperationError(
+        'This operation is not supported for EVM transfers. Call .signAndSubmit() with your viem WalletClient instead.'
+      )
+    }
   }
 
   private validateBatchState(isCalledInternally: boolean) {
@@ -698,6 +730,10 @@ export class GeneralBuilder<
     const { senderSource, swapOptions } = this._options
     assertSenderSource(senderSource)
 
+    if (isViemSigner(senderSource)) {
+      return this.executeWithEvmSigner(senderSource)
+    }
+
     if (swapOptions) {
       if (!isSenderSigner(senderSource)) {
         throw new UnsupportedOperationError(
@@ -728,6 +764,11 @@ export class GeneralBuilder<
     const { senderSource, swapOptions } = this._options
     assertSenderSource(senderSource)
 
+    if (isViemSigner(senderSource)) {
+      const hash = await this.executeWithEvmSigner(senderSource)
+      return [hash]
+    }
+
     if (swapOptions) {
       if (!isSenderSigner(senderSource)) {
         throw new UnsupportedOperationError(
@@ -743,6 +784,25 @@ export class GeneralBuilder<
     const { tx } = await this.buildInternal()
     const txHash = await this.api.signAndSubmit(tx, senderSource)
     return [txHash]
+  }
+
+  private async executeWithEvmSigner(
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    signer: WalletClient
+  ): Promise<string> {
+    const { from, to, currency, recipient, ahAddress } = this._options
+    assertToIsString(to)
+    assertAddressIsString(recipient)
+
+    return getEvmExtensionOrThrow().executeEvmTransfer({
+      api: this.api,
+      from,
+      to,
+      currency,
+      recipient,
+      ahAddress,
+      signer
+    })
   }
 
   /**

@@ -1,11 +1,12 @@
 import type { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
+import { UnsupportedOperationError } from '../errors'
 import { claimAssets } from '../transfer'
 import type { TBuilderInternalOptions, TSender } from '../types'
 import { type TAddress } from '../types'
 import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
-import { assertSenderSource, isSenderSigner } from '../utils'
+import { assertSenderSource, isSenderSigner, isViemSigner } from '../utils'
 
 /**
  * Builder class for constructing asset claim transactions.
@@ -96,6 +97,11 @@ export class AssetClaimBuilder<
   ) {
     const { senderSource: sender } = this._options
     assertSenderSource(sender)
+    if (isViemSigner(sender)) {
+      throw new UnsupportedOperationError(
+        'Asset claim with a viem WalletClient signer is not supported.'
+      )
+    }
     const tx = await claimAssets({ api: this.api, ...this._options })
     return this.api.signAndSubmit(tx, sender)
   }

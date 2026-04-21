@@ -26,6 +26,7 @@ export type GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TPapiApi, TPapiTransaction, TPapiSigner>> = object
 > = GeneralBuilderCore<PolkadotClient, TPapiTransaction, PolkadotSigner, T>
 
+/** @deprecated EvmBuilder is deprecated. Please use the Builder class instead. */
 export const EvmBuilder = (api?: TBuilderOptions<TApiOrUrl<TPapiApi>>) => {
   const papiApi = new PapiApi(api)
   return EvmBuilderImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)

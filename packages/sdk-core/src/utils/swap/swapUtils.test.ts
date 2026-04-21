@@ -9,7 +9,7 @@ import type {
   TTransferOptionsWithSwap
 } from '../../types'
 import * as assertions from '../assertions'
-import * as builder from '../builder'
+import * as guards from '../guards'
 import type { TSwapExtension } from './swapRegistry'
 import { registerSwapExtension } from './swapRegistry'
 import {
@@ -20,7 +20,7 @@ import {
 } from './swapUtils'
 
 vi.mock('../assertions')
-vi.mock('../builder')
+vi.mock('../guards')
 
 const mockBuilderInstance = {
   from: vi.fn().mockReturnThis(),
@@ -184,7 +184,7 @@ describe('swapUtils', () => {
     })
 
     it('should strip xcmFormatCheck and pass rest when config is a plain config object', () => {
-      vi.mocked(builder.isConfig).mockReturnValue(true)
+      vi.mocked(guards.isConfig).mockReturnValue(true)
 
       const config = { development: true, xcmFormatCheck: true }
       const result = convertBuilderConfig(config)
@@ -193,7 +193,7 @@ describe('swapUtils', () => {
     })
 
     it('should pass config with filtered string apiOverrides', () => {
-      vi.mocked(builder.isConfig).mockReturnValue(true)
+      vi.mocked(guards.isConfig).mockReturnValue(true)
 
       const config = {
         development: false,
@@ -209,7 +209,7 @@ describe('swapUtils', () => {
     })
 
     it('should throw when apiOverrides contain non-string object values', () => {
-      vi.mocked(builder.isConfig).mockReturnValue(true)
+      vi.mocked(guards.isConfig).mockReturnValue(true)
 
       const config = {
         apiOverrides: { Acala: { someClient: true } }
@@ -222,7 +222,7 @@ describe('swapUtils', () => {
     })
 
     it('should throw when config is not a config object and not a WS URL', () => {
-      vi.mocked(builder.isConfig).mockReturnValue(false)
+      vi.mocked(guards.isConfig).mockReturnValue(false)
 
       const config = 42
 
@@ -233,7 +233,7 @@ describe('swapUtils', () => {
     })
 
     it('should return rest without apiOverrides when apiOverrides is undefined in config', () => {
-      vi.mocked(builder.isConfig).mockReturnValue(true)
+      vi.mocked(guards.isConfig).mockReturnValue(true)
 
       const config = { development: true }
       const result = convertBuilderConfig(config)

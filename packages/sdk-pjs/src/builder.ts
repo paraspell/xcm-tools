@@ -26,6 +26,7 @@ export type GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TPjsApi, Extrinsic, TPjsSigner>> = object
 > = GeneralBuilderCore<TPjsApi, Extrinsic, TPjsSigner, T>
 
+/** @deprecated EvmBuilder is deprecated. Please use the Builder class instead. */
 export const EvmBuilder = (
   provider?: AbstractProvider,
   api?: TBuilderOptions<TApiOrUrl<TPjsApi>>

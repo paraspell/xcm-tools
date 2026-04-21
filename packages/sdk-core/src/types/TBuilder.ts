@@ -7,16 +7,14 @@ import type { WithApi } from './TApi'
 import type { TTransactionContext } from './TSwap'
 import type { TTransferBaseOptions, TTransferOptions } from './TTransfer'
 
-export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
-
 /**
  * The options for the Ethereum to Polkadot transfer builder.
  */
 export type TEvmBuilderOptionsBase = {
   /**
-   * The source chain. Can be either 'Ethereum', 'Moonbeam', 'Moonriver', or 'Darwinia'.
+   * The source chain. The registered EVM extension validates at runtime.
    */
-  from: TEvmChainFrom
+  from: TChain
   /**
    * The destination chain on Polkadot network.
    */
@@ -45,18 +43,6 @@ export type TEvmBuilderOptions<TApi, TRes, TSigner> = WithApi<
   TRes,
   TSigner
 >
-
-export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptionsBase, 'signer'> & {
-  destAddress: string
-}
-
-export type TSerializedEthTransfer = {
-  token: string
-  destinationParaId: number
-  destinationFee: bigint
-  amount: bigint
-  fee: bigint
-}
 
 /**
  * The options for the batch builder.
@@ -152,5 +138,5 @@ export type TBuildAllInternalRes<
 export type TSender<TSigner> = string | TSigner
 
 export type TBuilderInternalOptions<TSigner> = {
-  senderSource?: TSender<TSigner>
+  senderSource?: TSender<TSigner> | WalletClient
 }

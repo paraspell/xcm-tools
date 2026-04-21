@@ -11,9 +11,9 @@ import type {
   TTransferOptions
 } from '../../types'
 import { assertToIsString } from '../assertions'
+import { isConfig } from '../guards'
 import { executeWithRouter } from '../swap'
 import { parseUnits } from '../unit'
-import { isConfig } from './isConfig'
 
 export const computeOverridenAmount = <TApi, TRes, TSigner>(
   options: TCreateTxsOptions<TApi, TRes, TSigner>,

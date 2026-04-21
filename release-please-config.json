@@ -42,6 +42,9 @@
     "packages/swap": {
       "component": "swap"
     },
+    "packages/evm": {
+      "component": "evm"
+    },
     "packages/xcm-analyser": {},
     "apps/xcm-api": {
       "component": "xcm-api"
@@ -64,6 +67,7 @@
         "assets",
         "pallets",
         "swap",
+        "evm",
         "xcm-api",
         "playground"
       ]
