@@ -2,7 +2,6 @@ import type { PolkadotApi } from '@paraspell/sdk-core'
 import {
   type TChain,
   type TCurrencyInputWithAmount,
-  type TEvmChainFrom,
   transferMoonbeamEvm,
   transferMoonbeamToEth,
   UnsupportedOperationError,
@@ -12,7 +11,7 @@ import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 import { transferEthToPolkadot } from '../ethTransfer'
-import type { TPjsEvmBuilderOptions } from '../types'
+import type { TEvmChainFrom, TPjsEvmBuilderOptions } from '../types'
 import { isEthersSigner } from '../utils'
 
 /**

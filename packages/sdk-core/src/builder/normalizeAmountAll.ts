@@ -4,7 +4,7 @@ import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions, TTransferOptions, TTxFactory } from '../types'
-import { assertSender, assertToIsString, executeWithRouter } from '../utils'
+import { assertSender, assertSubstrateOrigin, assertToIsString, executeWithRouter } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <
@@ -20,12 +20,14 @@ export const normalizeAmountAll = async <
   options: TTransferOptions<TApi, TRes, TSigner> & TOptions
   buildTx: TTxFactory<TRes>
 }> => {
-  const { currency, swapOptions } = options
+  const { currency, swapOptions, from } = options
 
   const isAmountAll = !Array.isArray(currency) && currency.amount === AMOUNT_ALL
 
   if (!isAmountAll)
     return { options: { api, isAmountAll, ...options }, buildTx: builder['createTxFactory']() }
+
+  assertSubstrateOrigin(from)
 
   const builderWithMinAmount = builder.currency({
     ...options.currency,
@@ -37,13 +39,13 @@ export const normalizeAmountAll = async <
   assertSender(options.sender)
 
   const transferable = swapOptions
-    ? await executeWithRouter({ ...options, api, swapOptions }, builder =>
+    ? await executeWithRouter({ ...options, api, from, swapOptions }, builder =>
         builder.getTransferableAmount()
       )
     : await getTransferableAmountInternal({
         api,
         buildTx,
-        origin: options.from,
+        origin: from,
         destination: options.to,
         sender: options.sender,
         feeAsset: options.feeAsset,

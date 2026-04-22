@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core'
 import {
   findAssetInfoOrThrow,
@@ -6,18 +5,14 @@ import {
   isOverrideLocationSpecifier,
   MissingParameterError
 } from '@paraspell/sdk-core'
-import { type Context, toPolkadotV2 } from '@snowbridge/api'
-import type { ValidationResult } from '@snowbridge/api/dist/toPolkadot_v2'
+import { SnowbridgeApi, toPolkadotV2 } from '@snowbridge/api'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from '../types'
 import { isEthersSigner } from '../utils'
-import { createContext } from './createContext'
 import { transferEthToPolkadot } from './ethTransfer'
-
-vi.mock('./createContext')
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
@@ -25,7 +20,6 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isOverrideLocationSpecifier: vi.fn().mockReturnValue(false),
-  isEthersSigner: vi.fn(),
   abstractDecimals: vi.fn(),
   assertHasId: vi.fn(),
   MissingParameterError: class extends Error {},
@@ -35,33 +29,41 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
 
 vi.mock('../utils')
 
-vi.mock('@snowbridge/api', async () => {
-  const actual = await vi.importActual<typeof import('@snowbridge/api')>('@snowbridge/api')
-  return {
-    ...actual,
-    toPolkadotV2: {
-      ...actual.toPolkadotV2,
-      getDeliveryFee: vi.fn().mockResolvedValue(100n),
-      createTransfer: vi.fn().mockResolvedValue({
-        tx: {}
-      }),
-      validateTransfer: vi.fn().mockResolvedValue({
-        logs: []
-      }),
-      getMessageReceipt: vi.fn().mockResolvedValue({ some: 'receipt' })
-    },
-    assetsV2: {
-      buildRegistry: vi.fn().mockImplementation(contextData => ({ contextData })),
-      fromContext: vi.fn().mockResolvedValue({
-        polkadot: () => ({}),
-        ethereum: () => ({}),
-        bridgeHub: async () => ({}),
-        assetHub: async () => ({}),
-        parachain: async () => ({})
-      })
+const senderMock = {
+  fee: vi.fn(),
+  tx: vi.fn(),
+  validate: vi.fn(),
+  messageId: vi.fn()
+}
+
+const setEthProviderMock = vi.fn()
+
+vi.mock('@snowbridge/api', () => {
+  const ValidationKind = { Warning: 0, Error: 1 }
+  const SnowbridgeApi = vi.fn(
+    class {
+      context = { setEthProvider: setEthProviderMock, ethereum: () => ({}) }
+      sender = vi.fn(() => senderMock)
     }
+  )
+  return {
+    SnowbridgeApi,
+    toPolkadotV2: { ValidationKind }
   }
 })
+
+vi.mock('@snowbridge/registry', () => ({
+  bridgeInfoFor: vi.fn(() => ({
+    environment: { name: 'polkadot_mainnet', ethChainId: 1, ethereumChains: {} },
+    registry: {},
+    routes: [],
+    chains: {}
+  }))
+}))
+
+vi.mock('@snowbridge/provider-ethers', () => ({
+  EthersEthereumProvider: vi.fn(class {})
+}))
 
 describe('transferEthToPolkadot', () => {
   const ethAsset: TAssetInfo = {
@@ -71,19 +73,18 @@ describe('transferEthToPolkadot', () => {
     location: { parents: 0, interior: 'Here' }
   }
 
+  beforeEach(() => {
+    vi.clearAllMocks()
+    senderMock.fee.mockResolvedValue(100n)
+    senderMock.tx.mockResolvedValue({ tx: {} })
+    senderMock.validate.mockResolvedValue({ logs: [] })
+    senderMock.messageId.mockResolvedValue({ some: 'receipt' })
+  })
+
   it('successfully returns tx response and message receipt', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(createContext).mockReturnValue({
-      config: {},
-      ethereum: () => ({}),
-      polkadot: () => ({}),
-      gateway: () => ({}),
-      bridgeHub: async () => ({}),
-      assetHub: async () => ({}),
-      parachain: async () => ({})
-    } as unknown as Context)
     const fakeSigner = {
       provider: {},
       getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
@@ -105,6 +106,9 @@ describe('transferEthToPolkadot', () => {
 
     const result = await transferEthToPolkadot(options)
 
+    expect(SnowbridgeApi).toHaveBeenCalledOnce()
+    expect(setEthProviderMock).toHaveBeenCalledWith(1, options.provider)
+    expect(senderMock.fee).toHaveBeenCalledWith('eth-asset-id')
     expect(result).toEqual({
       response: {
         hash: '0xFakeHash',
@@ -199,21 +203,9 @@ describe('transferEthToPolkadot', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(createContext).mockReturnValue({
-      config: {},
-      ethereum: () => ({}),
-      polkadot: () => ({}),
-      gateway: () => ({}),
-      bridgeHub: async () => ({}),
-      assetHub: async () => ({}),
-      parachain: async () => ({})
-    } as unknown as Context)
 
-    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
-      logs: []
-    } as unknown as ValidationResult)
+    senderMock.messageId.mockResolvedValue(null)
 
-    vi.spyOn(toPolkadotV2, 'getMessageReceipt').mockResolvedValue(null)
     const fakeSigner = {
       provider: {},
       getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
@@ -241,19 +233,7 @@ describe('transferEthToPolkadot', () => {
   it('throws error if transaction receipt is missing', async () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
-    vi.mocked(createContext).mockReturnValue({
-      config: {},
-      ethereum: () => ({}),
-      polkadot: () => ({}),
-      gateway: () => ({}),
-      bridgeHub: async () => ({}),
-      assetHub: async () => ({}),
-      parachain: async () => ({})
-    } as unknown as Context)
-
-    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
-      logs: []
-    } as unknown as ValidationResult)
+    vi.mocked(isEthersSigner).mockReturnValue(true)
 
     const fakeSigner = {
       provider: {},
@@ -283,19 +263,10 @@ describe('transferEthToPolkadot', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(createContext).mockReturnValue({
-      config: {},
-      ethereum: () => ({}),
-      polkadot: () => ({}),
-      gateway: () => ({}),
-      bridgeHub: async () => ({}),
-      assetHub: async () => ({}),
-      parachain: async () => ({})
-    } as unknown as Context)
 
-    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
+    senderMock.validate.mockResolvedValue({
       logs: [{ kind: toPolkadotV2.ValidationKind.Error, message: 'Validation error occurred' }]
-    } as unknown as ValidationResult)
+    })
 
     const fakeSigner = {
       provider: {},

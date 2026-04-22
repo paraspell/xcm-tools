@@ -10,7 +10,7 @@ import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { UnsupportedOperationError } from '../../../errors'
-import type { TEvmBuilderOptions } from '../../../types'
+import type { TEvmTransferOptions } from '../../../types'
 import { abstractDecimals, assertHasId, formatAssetIdToERC20 } from '../../../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
@@ -23,7 +23,7 @@ const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 
 // Partially inspired by Moonbeam XCM-SDK
 export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
-  options: TEvmBuilderOptions<TApi, TRes, TSigner>
+  options: TEvmTransferOptions<TApi, TRes, TSigner>
 ): Promise<string> => {
   const { api, from, to, signer, recipient, currency } = options
 

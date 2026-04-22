@@ -3,7 +3,7 @@ import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { TEvmBuilderOptions } from '../../../types'
+import type { TEvmTransferOptions } from '../../../types'
 import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 vi.mock('viem')
@@ -30,7 +30,7 @@ describe('transferMoonbeamLocal', () => {
     signer: mockSigner,
     recipient: mockAddress,
     currency: { symbol: 'xcDOT', amount: '5000000' }
-  } as unknown as TEvmBuilderOptions<unknown, unknown, unknown>
+  } as unknown as TEvmTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()

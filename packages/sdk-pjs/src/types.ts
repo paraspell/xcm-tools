@@ -1,4 +1,4 @@
-import type { TChain, TCurrencyInputWithAmount, TEvmChainFrom, WithApi } from '@paraspell/sdk-core'
+import type { TChain, TCurrencyInputWithAmount, WithApi } from '@paraspell/sdk-core'
 import type { ApiPromise } from '@polkadot/api'
 import type { Signer as PjsSigner } from '@polkadot/api/types'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
@@ -8,6 +8,8 @@ import type { WalletClient } from 'viem'
 export type TPjsApi = ApiPromise
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 export type TPjsSigner = { signer: PjsSigner; address: string }
+
+export type TEvmChainFrom = Extract<TChain, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
 
 type TEvmBuilderOptionsBase = {
   /**

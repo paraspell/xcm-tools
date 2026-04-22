@@ -6,9 +6,9 @@ import { UnsupportedOperationError } from '../../errors'
 import { createTransfer } from '../../transfer'
 import type {
   TCreateTxsOptions,
+  TSubstrateTransferOptions,
   TTransactionContext,
-  TTransferBaseOptions,
-  TTransferOptions
+  TTransferBaseOptions
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from '../guards'
@@ -66,7 +66,7 @@ export const createTxOverrideAmount = async <TApi, TRes, TSigner>(
 }
 
 export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
-  options: TTransferOptions<TApi, TRes, TSigner>
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
 ): Promise<TTransactionContext<TApi, TRes>[]> => {
   const { api, from, swapOptions } = options
 
@@ -81,7 +81,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
 }
 
 export const createTransferOrSwap = async <TApi, TRes, TSigner>(
-  options: TTransferOptions<TApi, TRes, TSigner>
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const res = await createTransferOrSwapAll(options)
 

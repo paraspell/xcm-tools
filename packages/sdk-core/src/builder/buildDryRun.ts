@@ -3,7 +3,7 @@ import { isTLocation } from '@paraspell/sdk-common'
 import type { PolkadotApi } from '../api'
 import { InvalidAddressError } from '../errors'
 import { dryRun } from '../transfer'
-import type { TBypassOptions, TTransferBaseOptionsWithSender } from '../types'
+import type { TBypassOptions, TSubstrateTransferBaseOptionsWithSender } from '../types'
 
 /**
  * Helper function to run a dry run on a transaction used by the Builder class.
@@ -11,7 +11,7 @@ import type { TBypassOptions, TTransferBaseOptionsWithSender } from '../types'
 export const buildDryRun = <TApi, TRes, TSigner>(
   api: PolkadotApi<TApi, TRes, TSigner>,
   tx: TRes,
-  options: TTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
+  options: TSubstrateTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
   bypassOptions?: TBypassOptions
 ) => {
   const { to, sender, feeAsset, from, currency, version } = options

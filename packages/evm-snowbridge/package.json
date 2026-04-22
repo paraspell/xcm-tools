@@ -1,11 +1,11 @@
 {
-  "name": "@paraspell/sdk-pjs",
+  "name": "@paraspell/evm-snowbridge",
   "version": "13.2.2",
-  "description": "Polkadot.js based SDK for ParaSpell XCM/XCMP tool for developers",
+  "description": "Optional Snowbridge extension for @paraspell/sdk enabling Ethereum -> Polkadot transfers.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paraspell/xcm-tools.git",
-    "directory": "packages/sdk-pjs"
+    "directory": "packages/evm-snowbridge"
   },
   "license": "MIT",
   "type": "module",
@@ -17,8 +17,8 @@
     }
   },
   "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -32,25 +32,17 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
+  "keywords": [],
+  "author": "",
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
     "@snowbridge/api": "^1.0.13",
     "@snowbridge/base-types": "^1.0.13",
-    "@snowbridge/contract-types": "^1.0.13",
-    "@snowbridge/provider-ethers": "^1.0.13",
+    "@snowbridge/provider-viem": "^1.0.13",
     "@snowbridge/registry": "^1.0.13",
-    "ethers": "^6.16.0",
     "viem": "^2.47.6"
-  },
-  "peerDependencies": {
-    "@polkadot/api": ">= 16.0 < 17",
-    "@polkadot/api-base": ">= 16.0 < 17",
-    "@polkadot/types": ">= 16.0 < 17",
-    "@polkadot/util": ">= 14",
-    "@polkadot/util-crypto": ">= 14"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
@@ -60,7 +52,6 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@vitest/coverage-v8": "^4.1.2",
-    "axios": "^1.14.0",
     "dotenv": "^17.3.1",
     "rollup": "^4.60.1",
     "rollup-plugin-dts": "^6.4.1",

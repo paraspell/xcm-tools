@@ -20,7 +20,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
-import type { TDestination, TTransferOptions } from '../../types'
+import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
@@ -112,7 +112,7 @@ export const validateEthereumAsset = (
 }
 
 export const validateAssetSupport = <TApi, TRes, TSigner>(
-  { from: origin, to: destination, currency }: TTransferOptions<TApi, TRes, TSigner>,
+  { from: origin, to: destination, currency }: TSubstrateTransferOptions<TApi, TRes, TSigner>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAssetInfo | null

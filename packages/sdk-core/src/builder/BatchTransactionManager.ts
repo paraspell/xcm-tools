@@ -5,7 +5,7 @@ import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { BatchValidationError } from '../errors'
 import type { TBatchedTransferOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
-import { createTransferOrSwap } from '../utils'
+import { assertSubstrateOrigin, createTransferOrSwap } from '../utils'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes, TSigner> {
@@ -44,7 +44,13 @@ class BatchTransactionManager<TApi, TRes, TSigner> {
       })
     )
 
-    const txs = await Promise.all(normalized.map(({ options }) => createTransferOrSwap(options)))
+    const txs = await Promise.all(
+      normalized.map(({ options }) => {
+        const { from: origin } = options
+        assertSubstrateOrigin(origin)
+        return createTransferOrSwap({ ...options, from: origin })
+      })
+    )
 
     return api.callBatchMethod(txs, mode)
   }

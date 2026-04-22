@@ -69,7 +69,7 @@ export type TTransferBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain
    */
-  from: TSubstrateChain
+  from: TChain
   /**
    * The destination address. A SS58 or H160 format.
    */
@@ -136,6 +136,20 @@ export type TTransferOptions<TApi, TRes, TSigner> = WithApi<
   isAmountAll: boolean
 }
 
+export type TSubstrateTransferBaseOptions<TApi, TRes, TSigner> = Omit<
+  TTransferBaseOptions<TApi, TRes, TSigner>,
+  'from'
+> & {
+  from: TSubstrateChain
+}
+
+export type TSubstrateTransferOptions<TApi, TRes, TSigner> = Omit<
+  TTransferOptions<TApi, TRes, TSigner>,
+  'from'
+> & {
+  from: TSubstrateChain
+}
+
 export type WithRequiredSender<TBase> = Omit<TBase, 'sender'> & {
   /**
    * The sender address. A SS58 or H160 format.
@@ -148,7 +162,7 @@ export type WithRequiredSwapOptions<TBase, TApi, TRes, TSigner> = Omit<TBase, 's
 }
 
 export type TTransferOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwapOptions<
-  Omit<TTransferOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
+  Omit<TSubstrateTransferOptions<TApi, TRes, TSigner>, 'isAmountAll'>,
   TApi,
   TRes,
   TSigner
@@ -163,6 +177,10 @@ export type TTransferBaseOptionsWithSwap<TApi, TRes, TSigner> = WithRequiredSwap
 
 export type TTransferBaseOptionsWithSender<TApi, TRes, TSigner> = WithRequiredSender<
   TTransferBaseOptions<TApi, TRes, TSigner>
+>
+
+export type TSubstrateTransferBaseOptionsWithSender<TApi, TRes, TSigner> = WithRequiredSender<
+  TSubstrateTransferBaseOptions<TApi, TRes, TSigner>
 >
 
 export type TTransferInternalOptions<TApi, TRes, TSigner> = Omit<

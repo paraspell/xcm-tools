@@ -15,7 +15,7 @@ import {
   NumberFormatError,
   UnsupportedOperationError
 } from '../../../errors'
-import { type TEvmBuilderOptions } from '../../../types'
+import { type TEvmTransferOptions } from '../../../types'
 import { abstractDecimals, assertHasId, assertSender } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
@@ -29,7 +29,7 @@ const XCDOT = '0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080'
 
 export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
   from: TSubstrateChain,
-  { api, to, signer, recipient, ahAddress, currency }: TEvmBuilderOptions<TApi, TRes, TSigner>
+  { api, to, signer, recipient, ahAddress, currency }: TEvmTransferOptions<TApi, TRes, TSigner>
 ) => {
   if (!ahAddress) {
     throw new MissingParameterError('ahAddress')

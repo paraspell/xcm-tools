@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../api/PolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { DryRunFailedError } from '../errors'
+import { getEvmExtensionOrThrow, getEvmSnowbridgeExtensionOrThrow } from '../extensions'
 import {
   claimAssets,
   getMinTransferableAmount,
@@ -28,13 +29,13 @@ import type {
 } from '../types'
 import {
   assertAddressIsString,
+  assertNotEvmTransfer,
   assertSender,
   assertSenderSource,
   assertToIsString,
   createTransferOrSwap,
   createTransferOrSwapAll,
   executeWithRouter,
-  getEvmExtensionOrThrow,
   isConfig,
   isSenderSigner,
   isViemSigner
@@ -44,6 +45,7 @@ import { Builder } from './Builder'
 
 vi.mock('../transfer')
 vi.mock('../utils')
+vi.mock('../extensions')
 vi.mock('./buildDryRun')
 vi.mock('@paraspell/assets')
 
@@ -1353,7 +1355,7 @@ describe('Builder', () => {
       vi.mocked(buildDryRun).mockResolvedValueOnce({
         failureReason: 'Bad XCM format',
         failureChain: CHAIN_2
-      } as unknown as TDryRunResult)
+      } as TDryRunResult)
       vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
         abstractDecimals: true,
         xcmFormatCheck: true
@@ -1466,11 +1468,16 @@ describe('Builder', () => {
     } as unknown as WalletClient
 
     const executeEvmTransfer = vi.fn()
+    const executeEvmSnowbridgeTransfer = vi.fn()
 
     beforeEach(() => {
       vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
       executeEvmTransfer.mockReset()
+      executeEvmSnowbridgeTransfer.mockReset()
       vi.mocked(getEvmExtensionOrThrow).mockReturnValue({ executeEvmTransfer })
+      vi.mocked(getEvmSnowbridgeExtensionOrThrow).mockReturnValue({
+        executeEvmSnowbridgeTransfer
+      })
     })
 
     it('routes signAndSubmit through the EVM extension when senderSource is a WalletClient', async () => {
@@ -1511,32 +1518,28 @@ describe('Builder', () => {
       expect(result).toEqual(['0xevmhash2'])
     })
 
-    it('build() throws UnsupportedOperationError when sender is a WalletClient', async () => {
-      vi.mocked(isViemSigner).mockReturnValue(true)
+    it('build() guards against EVM transfers via assertNotEvmTransfer', async () => {
+      await Builder(mockApi)
+        .from('Moonbeam')
+        .to('Polkadot')
+        .currency({ symbol: 'GLMR', amount: AMOUNT })
+        .sender(walletClient)
+        .recipient(ADDRESS)
+        .build()
 
-      await expect(
-        Builder(mockApi)
-          .from('Moonbeam')
-          .to('Polkadot')
-          .currency({ symbol: 'GLMR', amount: AMOUNT })
-          .sender(walletClient)
-          .recipient(ADDRESS)
-          .build()
-      ).rejects.toThrow(/not supported for EVM transfers/i)
+      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Moonbeam', walletClient)
     })
 
-    it('buildAll() throws UnsupportedOperationError when sender is a WalletClient', async () => {
-      vi.mocked(isViemSigner).mockReturnValue(true)
+    it('buildAll() guards against EVM transfers via assertNotEvmTransfer', async () => {
+      await Builder(mockApi)
+        .from('Moonbeam')
+        .to('Polkadot')
+        .currency({ symbol: 'GLMR', amount: AMOUNT })
+        .sender(walletClient)
+        .recipient(ADDRESS)
+        .buildAll()
 
-      await expect(
-        Builder(mockApi)
-          .from('Moonbeam')
-          .to('Polkadot')
-          .currency({ symbol: 'GLMR', amount: AMOUNT })
-          .sender(walletClient)
-          .recipient(ADDRESS)
-          .buildAll()
-      ).rejects.toThrow(/not supported for EVM transfers/i)
+      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Moonbeam', walletClient)
     })
   })
 

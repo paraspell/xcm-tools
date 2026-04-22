@@ -15,7 +15,7 @@ import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import type { TTransferOptions } from '../../types'
+import type { TSubstrateTransferOptions } from '../../types'
 import { abstractDecimals, createAsset } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
@@ -43,7 +43,7 @@ describe('resolveOverriddenAsset', () => {
     currency: { symbol: 'TEST', amount: '1000' },
     from: mockOrigin,
     to: mockDestination
-  } as TTransferOptions<unknown, unknown, unknown>
+  } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -67,7 +67,7 @@ describe('resolveOverriddenAsset', () => {
         } as TLocationValueWithOverride,
         amount: '1000'
       }
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
 
@@ -92,7 +92,7 @@ describe('resolveOverriddenAsset', () => {
       ...defaultOptions,
       currency: assets,
       feeAsset: { location: {} }
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
@@ -134,7 +134,7 @@ describe('resolveOverriddenAsset', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}]
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
@@ -148,7 +148,7 @@ describe('resolveOverriddenAsset', () => {
       ...defaultOptions,
       currency: [{}, {}],
       feeAsset: { symbol: 'ASSET' }
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTAsset).mockReturnValue(true)
@@ -168,7 +168,7 @@ describe('resolveOverriddenAsset', () => {
           value: {}
         }
       }
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
     vi.mocked(isTAsset).mockReturnValue(true)
@@ -182,7 +182,7 @@ describe('resolveOverriddenAsset', () => {
     const options = {
       ...defaultOptions,
       currency: { symbol: 'NO_OVERRIDE' }
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const result = resolveOverriddenAsset(options, false, false, {} as TAssetInfo)
     expect(result).toBeUndefined()

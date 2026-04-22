@@ -9,7 +9,7 @@ import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../../api'
-import type { TEvmBuilderOptions } from '../../../types'
+import type { TEvmTransferOptions } from '../../../types'
 import { abstractDecimals, formatAssetIdToERC20 } from '../../../utils'
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationLocation } from './getDestinationLocation'
@@ -179,7 +179,7 @@ describe('transferMoonbeamEvm', () => {
         signer: mockSigner,
         recipient: mockRecipient,
         currency: []
-      } as TEvmBuilderOptions<unknown, unknown, unknown>)
+      } as TEvmTransferOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
   })
 
@@ -196,7 +196,7 @@ describe('transferMoonbeamEvm', () => {
           location: { type: 'Override', value: { parents: 1, interior: {} } },
           amount: 1000
         }
-      } as TEvmBuilderOptions<unknown, unknown, unknown>)
+      } as TEvmTransferOptions<unknown, unknown, unknown>)
     ).rejects.toThrow()
   })
 
@@ -211,7 +211,7 @@ describe('transferMoonbeamEvm', () => {
       signer: mockSigner,
       recipient: mockRecipient,
       currency: { symbol: 'xcDOT', amount: '5000000' }
-    } as TEvmBuilderOptions<unknown, unknown, unknown>
+    } as TEvmTransferOptions<unknown, unknown, unknown>
 
     const result = await transferMoonbeamEvm(options)
 

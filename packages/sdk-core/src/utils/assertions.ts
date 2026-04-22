@@ -1,10 +1,17 @@
 import type { TAssetInfoWithId } from '@paraspell/assets'
 import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
-import type { TLocation } from '@paraspell/sdk-common'
-import { isTLocation, replaceBigInt } from '@paraspell/sdk-common'
+import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { isExternalChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
+import type { WalletClient } from 'viem'
 
-import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
+import {
+  ExtensionNotInstalledError,
+  InvalidAddressError,
+  MissingParameterError,
+  UnsupportedOperationError
+} from '../errors'
 import type { TAddress, TDestination, TSender, TSwapOptions } from '../types'
+import { isViemSigner } from './guards'
 
 export const assertToIsString: (
   to: TDestination,
@@ -57,6 +64,38 @@ export const assertSwapSupport = <TApi, TRes, TSigner>(
   if (options) {
     throw new UnsupportedOperationError(
       'Swap options are not supported by this operation. Please open an issue if you would like to see this supported.'
+    )
+  }
+}
+
+const evmTransferUnsupportedMessage = (origin: TChain): string =>
+  `This operation is not supported for EVM transfers (origin '${origin}'). Call .signAndSubmit() with your viem WalletClient instead.`
+
+export const assertSubstrateOrigin: (chain: TChain) => asserts chain is TSubstrateChain = chain => {
+  if (isExternalChain(chain)) {
+    throw new UnsupportedOperationError(evmTransferUnsupportedMessage(chain))
+  }
+}
+
+export const assertNotEvmTransfer: <TSigner>(
+  from: TChain,
+  senderSource?: TSender<TSigner> | WalletClient
+) => asserts from is TSubstrateChain = (from, senderSource) => {
+  assertSubstrateOrigin(from)
+  if (isViemSigner(senderSource)) {
+    throw new UnsupportedOperationError(evmTransferUnsupportedMessage(from))
+  }
+}
+
+export const assertExtensionInstalled: <T>(
+  extension: T | undefined,
+  extensionName: string,
+  packageName: string,
+  usage: string
+) => asserts extension is T = (extension, extensionName, packageName, usage) => {
+  if (!extension) {
+    throw new ExtensionNotInstalledError(
+      `The ${extensionName} extension is not registered. Please install ${packageName} and import it before ${usage}.`
     )
   }
 }

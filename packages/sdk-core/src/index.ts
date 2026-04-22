@@ -19,6 +19,7 @@ export {
   TX_CLIENT_TIMEOUT_MS
 } from './constants'
 export * from './errors'
+export * from './extensions'
 export * from './transfer'
 export * from './types'
 export * from './utils'

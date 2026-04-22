@@ -10,8 +10,8 @@ import { createTransfer } from '../../transfer'
 import type {
   TBuilderConfig,
   TCreateTxsOptions,
-  TTransferBaseOptionsWithSender,
-  TTransferOptions
+  TSubstrateTransferOptions,
+  TTransferBaseOptionsWithSender
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from '../guards'
@@ -192,8 +192,8 @@ describe('createTx', () => {
 })
 
 const makeTransferOptions = (
-  overrides: Partial<TTransferOptions<unknown, unknown, unknown>> = {}
-): TTransferOptions<unknown, unknown, unknown> =>
+  overrides: Partial<TSubstrateTransferOptions<unknown, unknown, unknown>> = {}
+): TSubstrateTransferOptions<unknown, unknown, unknown> =>
   ({
     api: {
       api: 'mockApi',
@@ -206,7 +206,7 @@ const makeTransferOptions = (
     currency: { symbol: 'DOT', amount: '100' },
     isAmountAll: false,
     ...overrides
-  }) as TTransferOptions<unknown, unknown, unknown>
+  }) as TSubstrateTransferOptions<unknown, unknown, unknown>
 
 describe('createTransferOrSwapAll', () => {
   beforeEach(() => {

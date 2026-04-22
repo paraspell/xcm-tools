@@ -16,7 +16,7 @@ import {
 import { isHex } from 'viem'
 
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
-import type { TDestination, TTransferOptions } from '../../types'
+import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
@@ -112,7 +112,7 @@ export const validateTransact = <TApi, TRes, TSigner>({
   sender,
   recipient: address,
   transactOptions
-}: TTransferOptions<TApi, TRes, TSigner>) => {
+}: TSubstrateTransferOptions<TApi, TRes, TSigner>) => {
   const call = transactOptions?.call
 
   if (!call) return

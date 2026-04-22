@@ -1,5 +1,6 @@
 import { DEFAULT_SWAP_SLIPPAGE } from '../../constants'
 import { UnsupportedOperationError } from '../../errors'
+import { getSwapExtensionOrThrow } from '../../extensions'
 import type {
   TApiOrUrl,
   TBuilderConfig,
@@ -10,7 +11,6 @@ import type {
 } from '../../types'
 import { assertAddressIsString, assertSender, assertToIsString } from '../assertions'
 import { isConfig } from '../guards'
-import { getSwapExtensionOrThrow } from './swapRegistry'
 
 const isUrl = (value: unknown): value is string | string[] =>
   typeof value === 'string' || Array.isArray(value)

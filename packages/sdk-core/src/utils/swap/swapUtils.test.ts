@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { ExtensionNotInstalledError, UnsupportedOperationError } from '../../errors'
+import { UnsupportedOperationError } from '../../errors'
+import type { TSwapExtension } from '../../extensions'
+import { registerSwapExtension } from '../../extensions'
 import type {
   TApiOrUrl,
   TBuilderOptions,
@@ -10,8 +12,6 @@ import type {
 } from '../../types'
 import * as assertions from '../assertions'
 import * as guards from '../guards'
-import type { TSwapExtension } from './swapRegistry'
-import { registerSwapExtension } from './swapRegistry'
 import {
   convertBuilderConfig,
   createRouterBuilder,
@@ -241,21 +241,17 @@ describe('swapUtils', () => {
       expect(result).toEqual(expect.objectContaining({ development: true }))
     })
 
-    it('should throw ExtensionNotInstalledError when swap extension is not registered', async () => {
-      // Reset the registry by importing a fresh module
-      const { registerSwapExtension: freshRegister } = await import('./swapRegistry')
-      // Register with undefined to clear
-      freshRegister(undefined as never)
-
+    it('should guard against missing swap extension via assertExtensionInstalled', () => {
       const options = createBaseOptions()
 
-      expect(() => createRouterBuilder(options)).toThrow(ExtensionNotInstalledError)
-      expect(() => createRouterBuilder(options)).toThrow(
-        'The swap extension is not registered. Please install @paraspell/swap and import it before using swap features.'
-      )
+      createRouterBuilder(options)
 
-      // Restore
-      freshRegister({ RouterBuilder: MockRouterBuilder })
+      expect(assertions.assertExtensionInstalled).toHaveBeenCalledWith(
+        expect.anything(),
+        'swap',
+        '@paraspell/swap',
+        'using swap features'
+      )
     })
   })
 

@@ -8,12 +8,13 @@ import {
   RoutingResolutionError,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
-import { toPolkadotV2 } from '@snowbridge/api'
+import { SnowbridgeApi, toPolkadotV2 } from '@snowbridge/api'
+import { EthersEthereumProvider } from '@snowbridge/provider-ethers'
 import { bridgeInfoFor } from '@snowbridge/registry'
 
 import type { TPjsEvmBuilderOptions } from '../types'
 import { isEthersSigner } from '../utils'
-import { createContext } from './createContext'
+import { createEnvironment } from './createEnvironment'
 
 /**
  * Transfers an Ethereum asset to a Polkadot account.
@@ -56,68 +57,50 @@ export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
 
   const amount = abstractDecimals(currency.amount, ethAsset.decimals, api)
 
-  const { environment, registry } = bridgeInfoFor('polkadot_mainnet')
-  const context = createContext(provider, environment)
+  const info = bridgeInfoFor('polkadot_mainnet')
+  const environment = createEnvironment(
+    info.environment,
+    typeof provider === 'string' ? provider : undefined
+  )
+  const snowbridgeApi = new SnowbridgeApi({
+    info: { ...info, environment },
+    ethereumProvider: new EthersEthereumProvider()
+  })
+  if (typeof provider !== 'string') {
+    snowbridgeApi.context.setEthProvider(environment.ethChainId, provider)
+  }
 
   const destParaId = getParaId(to)
 
   assertHasId(ethAsset)
 
-  const fee = await toPolkadotV2.getDeliveryFee(
-    {
-      gateway: context.gateway(),
-      assetHub: await context.assetHub(),
-      destination: await context.parachain(destParaId)
-    },
-    registry,
-    ethAsset.assetId,
-    destParaId
+  const sender = snowbridgeApi.sender(
+    { kind: 'ethereum', id: environment.ethChainId },
+    { kind: 'polkadot', id: destParaId }
   )
 
   const sourceAddress = await signer.getAddress()
 
-  const transfer = await toPolkadotV2.createTransfer(
-    registry,
-    sourceAddress,
-    recipient,
-    ethAsset.assetId,
-    destParaId,
-    amount,
-    fee
-  )
+  const fee = await sender.fee(ethAsset.assetId)
+  const transfer = await sender.tx(sourceAddress, recipient, ethAsset.assetId, amount, fee)
+  const validated = await sender.validate(transfer)
 
-  const validation = await toPolkadotV2.validateTransfer(
-    {
-      ethereum: context.ethereum(),
-      gateway: context.gateway(),
-      bridgeHub: await context.bridgeHub(),
-      assetHub: await context.assetHub(),
-      destParachain:
-        destParaId !== getParaId('AssetHubPolkadot')
-          ? await context.parachain(destParaId)
-          : undefined
-    },
-    transfer
-  )
-
-  if (validation.logs.find(l => l.kind == toPolkadotV2.ValidationKind.Error)) {
+  if (validated.logs.find(l => l.kind === toPolkadotV2.ValidationKind.Error)) {
     throw new RoutingResolutionError(
-      `Validation failed with following errors: \n\n ${validation.logs
-        .filter(l => l.kind == toPolkadotV2.ValidationKind.Error)
+      `Validation failed with following errors: \n\n ${validated.logs
+        .filter(l => l.kind === toPolkadotV2.ValidationKind.Error)
         .map(l => l.message)
         .join('\n\n')}`
     )
   }
 
-  const { tx } = transfer
-
-  const response = await signer.sendTransaction(tx)
+  const response = await signer.sendTransaction(transfer.tx)
   const receipt = await response.wait(1)
   if (!receipt) {
     throw new RoutingResolutionError(`Transaction ${response.hash} not included.`)
   }
 
-  const messageReceipt = await toPolkadotV2.getMessageReceipt(receipt)
+  const messageReceipt = await sender.messageId(receipt)
   if (!messageReceipt) {
     throw new RoutingResolutionError(`Transaction ${receipt.hash} did not emit a message.`)
   }

@@ -2,12 +2,12 @@ import type {
   PolkadotApi,
   TChain,
   TCurrencyInputWithAmount,
-  TEvmBuilderOptions
+  TEvmTransferOptions
 } from '@paraspell/sdk-core'
 import { transferMoonbeamEvm, transferMoonbeamToEth, validateAddress } from '@paraspell/sdk-core'
 import type { WalletClient } from 'viem'
 
-import type { TEvmChainFromPapi } from '../types'
+import type { TEvmChainFrom } from '../types'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
@@ -18,7 +18,7 @@ export class EvmBuilderCore<
   TApi,
   TRes,
   TSigner,
-  T extends Partial<TEvmBuilderOptions<TApi, TRes, TSigner>> = object
+  T extends Partial<TEvmTransferOptions<TApi, TRes, TSigner>> = object
 > {
   protected readonly _options: T
 
@@ -26,9 +26,7 @@ export class EvmBuilderCore<
     this._options = options
   }
 
-  from(
-    chain: TEvmChainFromPapi
-  ): EvmBuilderCore<TApi, TRes, TSigner, T & { from: TEvmChainFromPapi }> {
+  from(chain: TEvmChainFrom): EvmBuilderCore<TApi, TRes, TSigner, T & { from: TEvmChainFrom }> {
     return new EvmBuilderCore({ ...this._options, from: chain })
   }
 
@@ -90,7 +88,7 @@ export class EvmBuilderCore<
    * @throws Error if any required parameters are missing.
    */
   async build(
-    this: EvmBuilderCore<TApi, TRes, TSigner, TEvmBuilderOptions<TApi, TRes, TSigner>>
+    this: EvmBuilderCore<TApi, TRes, TSigner, TEvmTransferOptions<TApi, TRes, TSigner>>
   ): Promise<string> {
     const { from, to, recipient, api } = this._options
     validateAddress(api, recipient, to)

@@ -5,40 +5,19 @@ import type { WalletClient } from 'viem'
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
 import type { TTransactionContext } from './TSwap'
-import type { TTransferBaseOptions, TTransferOptions } from './TTransfer'
+import type { TSubstrateTransferOptions, TTransferBaseOptions, TTransferOptions } from './TTransfer'
 
-/**
- * The options for the Ethereum to Polkadot transfer builder.
- */
-export type TEvmBuilderOptionsBase = {
-  /**
-   * The source chain. The registered EVM extension validates at runtime.
-   */
+export type TEvmTransferOptionsBase = {
   from: TChain
-  /**
-   * The destination chain on Polkadot network.
-   */
   to: TChain
-  /**
-   * The currency to transfer. Symbol or ID.
-   */
   currency: TCurrencyInputWithAmount
-  /**
-   * The Polkadot destination address.
-   */
   recipient: string
-  /**
-   * The AssetHub address
-   */
   ahAddress?: string
-  /**
-   * The Ethereum signer.
-   */
   signer: WalletClient
 }
 
-export type TEvmBuilderOptions<TApi, TRes, TSigner> = WithApi<
-  TEvmBuilderOptionsBase,
+export type TEvmTransferOptions<TApi, TRes, TSigner> = WithApi<
+  TEvmTransferOptionsBase,
   TApi,
   TRes,
   TSigner
@@ -89,10 +68,15 @@ export type TCreateTxsOptions<TApi, TRes, TSigner> = Pick<
 >
 
 export type TBatchedTransferOptions<TApi, TRes, TSigner> = Omit<
-  TTransferOptions<TApi, TRes, TSigner>,
+  TSubstrateTransferOptions<TApi, TRes, TSigner>,
   'isAmountAll'
 > & {
-  builder: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
+  builder: GeneralBuilder<
+    TApi,
+    TRes,
+    TSigner,
+    TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+  >
 }
 
 export type TBuildInternalResBase<

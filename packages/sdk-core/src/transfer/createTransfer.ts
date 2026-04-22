@@ -5,7 +5,7 @@ import { normalizeLocation } from '@paraspell/assets'
 import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type { TTransferOptions } from '../types'
+import type { TSubstrateTransferOptions } from '../types'
 import {
   abstractDecimals,
   getChain,
@@ -26,7 +26,7 @@ import {
 } from './utils'
 
 export const resolveTransferParams = <TApi, TRes, TSigner>(
-  options: TTransferOptions<TApi, TRes, TSigner>
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
 ) => {
   const {
     api,
@@ -115,7 +115,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
 }
 
 export const createTransfer = async <TApi, TRes, TSigner>(
-  options: TTransferOptions<TApi, TRes, TSigner>
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
 ): Promise<TRes> => {
   const {
     api,

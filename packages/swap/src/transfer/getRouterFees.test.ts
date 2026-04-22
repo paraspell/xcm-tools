@@ -226,7 +226,7 @@ describe('getRouterFees', () => {
       const failedToExchangeFee = {
         ...toExchangeFeeValue,
         failureReason: 'InsufficientBalance',
-        failureChain: 'origin' as const,
+        failureChain: 'origin',
       } as TGetXcmFeeResult<false>;
       vi.mocked(getToExchangeFee).mockResolvedValue(failedToExchangeFee);
 

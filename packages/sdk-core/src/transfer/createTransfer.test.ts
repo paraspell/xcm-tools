@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../api'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type { TTransferOptions } from '../types'
+import type { TSubstrateTransferOptions } from '../types'
 import {
   abstractDecimals,
   getChain,
@@ -82,7 +82,7 @@ describe('send', () => {
       currency: { symbol: 'TEST', amount: '100' },
       recipient: 'some-address',
       to: 'Astar'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
 
@@ -127,7 +127,7 @@ describe('send', () => {
       currency: { symbol: 'DOT', amount: '100' },
       feeAsset: { symbol: 'USDT' },
       recipient: 'some-address'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -157,7 +157,7 @@ describe('send', () => {
       currency: { symbol: 'TEST', amount: 100 },
       recipient: 'some-address',
       to: 'Astar'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const apiSpy = vi.spyOn(apiMock, 'init')
 
@@ -179,7 +179,7 @@ describe('send', () => {
       },
       recipient: 'some-address',
       to: 'Astar'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     await expect(createTransfer(options)).rejects.toThrow('Invalid currency')
 
@@ -197,7 +197,7 @@ describe('send', () => {
       currency: currency,
       recipient: 'some-address',
       to: 'Astar'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -222,7 +222,7 @@ describe('send', () => {
       feeAsset: { location: {} },
       recipient: 'some-address',
       to: 'Astar'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -245,7 +245,7 @@ describe('send', () => {
       recipient: 'some-address',
       to: 'Astar',
       sender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     await createTransfer(options)
 
@@ -267,7 +267,7 @@ describe('send', () => {
       paraIdTo: undefined,
       version: undefined,
       sender: undefined
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -291,7 +291,7 @@ describe('send', () => {
       to: 'Astar',
       currency: [] as TCurrencyInput,
       recipient: 'some-address'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -321,7 +321,7 @@ describe('send', () => {
       to: 'Astar',
       currency: { symbol: 'DOT', amount: '1' },
       recipient: 'some-address'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 
@@ -347,7 +347,7 @@ describe('send', () => {
       to: 'Astar',
       currency: { symbol: 'TEST', amount: '100' },
       recipient: 'some-address'
-    } as TTransferOptions<unknown, unknown, unknown>
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
     const transferSpy = vi.spyOn(originChainMock, 'transfer')
 

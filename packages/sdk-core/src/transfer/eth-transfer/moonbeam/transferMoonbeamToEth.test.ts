@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getParaId } from '../../../chains/config'
 import { BridgeHaltedError, MissingParameterError } from '../../../errors'
-import type { TEvmBuilderOptions } from '../../../types'
+import type { TEvmTransferOptions } from '../../../types'
 import { abstractDecimals } from '../../../utils'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
@@ -107,7 +107,7 @@ describe('transferMoonbeamToEth', () => {
     address: '0xmockedAddress',
     ahAddress: '0xmockedAhAddress',
     currency: { symbol: 'WETH', amount: 1000 }
-  } as unknown as TEvmBuilderOptions<unknown, unknown, unknown>
+  } as unknown as TEvmTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
