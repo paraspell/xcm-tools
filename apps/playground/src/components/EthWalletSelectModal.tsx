@@ -1,12 +1,13 @@
 import { Button, Image, Modal, Stack } from '@mantine/core';
+import type { EIP6963ProviderDetail } from 'mipd';
 import type { FC } from 'react';
 
-import type { EIP6963ProviderDetail } from '../types';
+import classes from './WalletSelectModal/WalletSelectModal.module.css';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  providers: EIP6963ProviderDetail[];
+  providers: readonly EIP6963ProviderDetail[];
   onProviderSelect: (providerInfo: EIP6963ProviderDetail) => void;
   onDisconnect?: () => void;
 };
@@ -21,8 +22,10 @@ export const EthWalletSelectModal: FC<Props> = ({
   <Modal
     opened={isOpen}
     onClose={onClose}
-    title="Select Wallet Provider"
+    title="Connect your wallet"
     centered
+    padding="xl"
+    classNames={classes}
   >
     <Stack gap="sm">
       {providers.map((providerInfo, index) => (

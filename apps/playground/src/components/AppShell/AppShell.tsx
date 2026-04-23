@@ -34,7 +34,6 @@ import { NAVIGATION_ITEMS } from '../../constants';
 import { useWallet } from '../../hooks';
 import {
   AssetsQueriesPage,
-  EvmTransferPage,
   PalletsQueriesPage,
   XcmAnalyserPage,
   XcmTransferPage,
@@ -329,10 +328,6 @@ export const AppShell = () => {
           <Route
             path={PageRoute.XCM_SDK.XCM_TRANSFER}
             Component={XcmTransferPage}
-          />
-          <Route
-            path={PageRoute.XCM_SDK.EVM_TRANSFER}
-            Component={EvmTransferPage}
           />
           <Route
             path={PageRoute.XCM_SDK.ASSETS}

@@ -1,14 +1,10 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
-import { getContract } from 'viem'
+import type { TAssetInfo, TEvmTransferOptions, WithAmount } from '@paraspell/sdk-core'
+import { getContract, type GetContractReturnType, type PublicClient, type WalletClient } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { TEvmTransferOptions } from '../../../types'
 import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 vi.mock('viem')
-
-vi.mock('../../../utils')
 
 describe('transferMoonbeamLocal', () => {
   const mockTransferFn = vi.fn().mockResolvedValue('0xLocalTxHash')
@@ -42,9 +38,9 @@ describe('transferMoonbeamLocal', () => {
       symbol: 'xcDOT',
       assetId: '0xFFFFFFF1FCACBD218EDC0EBA20FC2308C778080',
       decimals: 10,
-      location: {},
+      location: { parents: 1, interior: 'Here' },
       amount: 5000000n
-    } as WithAmount<TAssetInfo>
+    }
 
     const result = await transferMoonbeamLocal(mockClient, assetInfo, baseOptions)
 

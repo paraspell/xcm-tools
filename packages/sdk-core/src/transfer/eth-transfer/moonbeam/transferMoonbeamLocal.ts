@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { createPublicClient } from 'viem'
+import type { Address, createPublicClient } from 'viem'
 import { getContract } from 'viem'
 
 import type { TEvmTransferOptions } from '../../../types'
@@ -41,12 +41,12 @@ export const transferMoonbeamLocal = async <TApi, TRes, TSigner>(
 
   const contract = getContract({
     abi,
-    address: assetInfo.assetId as `0x${string}`,
+    address: assetInfo.assetId as Address,
     client: {
       public: client,
       wallet: signer
     }
   })
 
-  return contract.write.transfer([recipient as `0x${string}`, assetInfo.amount])
+  return contract.write.transfer([recipient as Address, assetInfo.amount])
 }

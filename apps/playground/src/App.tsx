@@ -20,6 +20,8 @@ import { theme } from './theme/themeConfig';
 
 hljs.registerLanguage('ts', tsLang);
 
+import '@paraspell/evm';
+import '@paraspell/evm-snowbridge';
 import '@paraspell/swap';
 
 const highlightJsAdapter = createHighlightJsAdapter(hljs);

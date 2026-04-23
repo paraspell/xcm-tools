@@ -20,6 +20,7 @@ import {
 } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
+import type { WalletClient } from 'viem';
 
 import type {
   TAdvancedOptions,
@@ -213,6 +214,31 @@ export const addSwapToBuilder = <
       evmSigner,
       evmSenderAddress: evmInjectorAddress || undefined,
     });
+};
+
+export const setupEvmBuilder = (
+  builder: GeneralBuilder,
+  formValues: TFormValuesTransformed,
+  walletClient: WalletClient,
+) => {
+  const { from, to, recipient, ahAddress } = formValues;
+
+  const currencyInputs = formValues.currencies.map((c) => ({
+    ...determineCurrency(c),
+    amount: c.amount,
+  }));
+
+  return builder
+    .from(from)
+    .to(to)
+    .currency(
+      currencyInputs.length === 1
+        ? currencyInputs[0]
+        : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
+    )
+    .recipient(recipient)
+    .ahAddress(ahAddress)
+    .sender(walletClient);
 };
 
 export const setupBaseBuilder = (

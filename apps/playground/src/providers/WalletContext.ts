@@ -1,8 +1,10 @@
 import type { TApiType } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
+import type { EIP6963ProviderDetail } from 'mipd';
 import type { PolkadotSigner } from 'polkadot-api';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
 import { createContext } from 'react';
+import type { Chain, WalletClient } from 'viem';
 
 import type { TWalletAccount } from '../types';
 
@@ -24,6 +26,10 @@ type WalletState = {
   handleApiSwitch: (value: TApiType) => void;
   isLoadingExtensions: boolean;
   isInitialized: boolean;
+  selectedEvmAccount?: TWalletAccount;
+  selectedEvmProvider?: EIP6963ProviderDetail;
+  getEvmWalletClient: (chain: Chain) => WalletClient | undefined;
+  disconnectEvmWallet: () => void;
 };
 
 const defaultWalletState: WalletState = {
@@ -44,6 +50,10 @@ const defaultWalletState: WalletState = {
   handleApiSwitch: (_value: TApiType) => {},
   isLoadingExtensions: false,
   isInitialized: false,
+  selectedEvmAccount: undefined,
+  selectedEvmProvider: undefined,
+  getEvmWalletClient: () => undefined,
+  disconnectEvmWallet: () => {},
 };
 
 export const WalletContext = createContext(defaultWalletState);

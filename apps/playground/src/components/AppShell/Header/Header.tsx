@@ -1,5 +1,6 @@
 import type { MantineSize } from '@mantine/core';
 import {
+  Badge,
   Box,
   Burger,
   Button,
@@ -38,7 +39,8 @@ export const Header: FC<Props> = ({
   onChangeAccountClick,
   onConnectWalletClick,
 }) => {
-  const { apiType, selectedAccount } = useWallet();
+  const { apiType, selectedAccount, selectedEvmAccount, selectedEvmProvider } =
+    useWallet();
 
   const { icon } = getExtensionInfo(selectedAccount?.meta.source);
 
@@ -109,7 +111,34 @@ export const Header: FC<Props> = ({
             apiTypeInitialized={apiTypeInitialized}
             size={size}
           />
-          {selectedAccount ? (
+          {selectedEvmAccount ? (
+            <Button
+              onClick={onChangeAccountClick}
+              variant="outline"
+              loading={!apiTypeInitialized}
+              size={size}
+              leftSection={
+                <Badge size="xs" variant="light" color="blue" radius="sm">
+                  EVM
+                </Badge>
+              }
+              rightSection={
+                selectedEvmProvider?.info.icon ? (
+                  <Image
+                    ml={2}
+                    src={selectedEvmProvider.info.icon}
+                    w={16}
+                    h={16}
+                    radius="sm"
+                    alt={selectedEvmProvider.info.name}
+                  />
+                ) : undefined
+              }
+              data-testid="btn-evm-account"
+            >
+              {selectedEvmAccount.meta.name}
+            </Button>
+          ) : selectedAccount ? (
             <Button
               onClick={onChangeAccountClick}
               variant="outline"
@@ -120,6 +149,7 @@ export const Header: FC<Props> = ({
                   ml={2}
                   src={icon}
                   w={16}
+                  h={16}
                   radius="sm"
                   alt={selectedAccount.meta.source}
                 />

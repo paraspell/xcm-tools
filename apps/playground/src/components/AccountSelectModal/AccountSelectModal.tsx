@@ -12,6 +12,7 @@ type Props = {
   onAccountSelect: (account: TWalletAccount) => void;
   title?: string;
   onDisconnect?: () => void;
+  onChangeWalletType?: () => void;
 };
 
 export const AccountSelectModal: FC<Props> = ({
@@ -21,6 +22,7 @@ export const AccountSelectModal: FC<Props> = ({
   onAccountSelect,
   title = 'Select account',
   onDisconnect,
+  onChangeWalletType,
 }) => {
   const [value, setValue] = useState<string | null>(null);
 
@@ -59,6 +61,16 @@ export const AccountSelectModal: FC<Props> = ({
         >
           Confirm
         </Button>
+        {onChangeWalletType && (
+          <Button
+            size="sm"
+            variant="default"
+            onClick={onChangeWalletType}
+            data-testid="btn-change-wallet-type"
+          >
+            Switch wallet type
+          </Button>
+        )}
         {onDisconnect && (
           <Button size="sm" variant="default" onClick={onDisconnect}>
             Disconnect account

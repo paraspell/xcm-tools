@@ -4,7 +4,7 @@ import type { ApiPromise } from '@polkadot/api'
 import { type TAssetInfo } from '../src'
 import { capitalizeLocation } from './utils'
 import { formatAssetIdToERC20 } from '../../sdk-core/src/utils/asset'
-import { createPublicClient, http } from 'viem'
+import { Address, createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
 import { Parents } from '@paraspell/sdk-common'
 
@@ -85,13 +85,13 @@ export const fetchMoonbeamForeignAssets = async (
         const tokenAddress = formatAssetIdToERC20(numberAssetId)
 
         const symbol = await client.readContract({
-          address: tokenAddress as `0x${string}`,
+          address: tokenAddress as Address,
           abi: ERC20_ABI,
           functionName: 'symbol'
         })
 
         const decimals = await client.readContract({
-          address: tokenAddress as `0x${string}`,
+          address: tokenAddress as Address,
           abi: ERC20_ABI,
           functionName: 'decimals'
         })

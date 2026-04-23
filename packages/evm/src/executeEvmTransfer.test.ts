@@ -4,7 +4,7 @@ import {
   registerEvmExtension,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
-import type { WalletClient } from 'viem'
+import type { Address, WalletClient } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 describe('@paraspell/evm', () => {
@@ -30,9 +30,9 @@ describe('@paraspell/evm', () => {
         currency: { symbol: 'ACA', amount: '1' },
         recipient: '0x0',
         signer: {
-          account: { address: '0x0' },
+          account: { address: '0x0' as Address },
           chain: {}
-        } as unknown as WalletClient
+        } as WalletClient
       })
     ).rejects.toThrow(UnsupportedOperationError)
   })

@@ -43,6 +43,14 @@ flag_management:
       paths:
         - packages/swap
       carryforward: true
+    - name: evm
+      paths:
+        - packages/evm
+      carryforward: true
+    - name: evm-snowbridge
+      paths:
+        - packages/evm-snowbridge
+      carryforward: true
     - name: xcm-api
       paths:
         - apps/xcm-api

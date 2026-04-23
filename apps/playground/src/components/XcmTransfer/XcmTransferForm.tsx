@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Badge,
   Button,
   Checkbox,
   Fieldset,
@@ -10,13 +11,13 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { CHAINS, isChainEvm, isExternalChain } from '@paraspell/sdk';
 import {
-  CHAINS,
-  isChainEvm,
-  isExternalChain,
-  SUBSTRATE_CHAINS,
-} from '@paraspell/sdk';
-import { IconPlus, IconTransfer, IconTrash } from '@tabler/icons-react';
+  IconCurrencyEthereum,
+  IconPlus,
+  IconTransfer,
+  IconTrash,
+} from '@tabler/icons-react';
 import {
   parseAsBoolean,
   parseAsJson,
@@ -32,6 +33,7 @@ import {
   DEFAULT_ADDRESS,
   DEFAULT_CURRENCY_ENTRY,
   DEFAULT_CURRENCY_ENTRY_BASE,
+  EVM_CHAINS,
   MAIN_FORM_NAME,
 } from '../../constants';
 import {
@@ -73,6 +75,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
 import { Transact } from '../Transact/Transact';
+import { EthAssetActions } from './EthAssetActions';
 import { XcmActionsMenu } from './XcmActionsMenu';
 
 type Props = {
@@ -90,14 +93,20 @@ export const XcmTransferForm: FC<Props> = ({
   initialValues,
   isVisible = true,
 }) => {
-  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
-    useWallet();
+  const {
+    connectWallet,
+    selectedAccount,
+    isInitialized,
+    isLoadingExtensions,
+    selectedEvmAccount,
+    getEvmWalletClient,
+  } = useWallet();
 
   const { warningOpened, warningOnClose, warningOnConfirm, guardTransfer } =
     useTransferWarning();
 
   const [queryState, setQueryState] = useQueryStates({
-    from: parseAsStringLiteral(SUBSTRATE_CHAINS).withDefault('Astar'),
+    from: parseAsStringLiteral(CHAINS).withDefault('Astar'),
     to: parseAsStringLiteral(CHAINS).withDefault('Hydration'),
     currencies: parseAsNativeArrayOf(
       parseAsJson(CurrencyEntrySchema),
@@ -330,6 +339,15 @@ export const XcmTransferForm: FC<Props> = ({
     }
   };
 
+  const isEvmMode = Boolean(selectedEvmAccount);
+  const activeAccount = selectedEvmAccount?.address ?? selectedAccount?.address;
+
+  useEffect(() => {
+    if (isEvmMode && form.values.useApi) {
+      form.setFieldValue('useApi', false);
+    }
+  }, [isEvmMode, form.values.useApi]);
+
   const onConnectWalletClick = () => void connectWallet();
 
   const getSubmitLabel = () => {
@@ -352,24 +370,60 @@ export const XcmTransferForm: FC<Props> = ({
     form.setFieldValue('feeAsset', DEFAULT_CURRENCY_ENTRY_BASE);
   };
 
+  const renderEthAssetActions = (index: number) => {
+    if (!isEvmMode || !EVM_CHAINS.includes(from) || currencies.length !== 1) {
+      return null;
+    }
+    const entry = currencies[index];
+    if (entry.isCustomCurrency) return null;
+    const asset = activeCurrencyMap[entry.currencyOptionId];
+    if (!asset?.assetId) return null;
+    return (
+      <EthAssetActions
+        key={entry.currencyOptionId + selectedEvmAccount?.address}
+        symbol={asset.symbol}
+        decimals={asset.decimals ?? 18}
+        assetId={asset.assetId}
+        amount={entry.amount}
+        isMax={entry.isMax}
+        getEvmWalletClient={getEvmWalletClient}
+      />
+    );
+  };
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <Paper p="xl" shadow="md">
+    <Paper p="xl" pt={isEvmMode ? 48 : 'xl'} shadow="md" pos="relative">
       <TransferWarningModal
         opened={warningOpened}
         onClose={warningOnClose}
         onConfirm={warningOnConfirm}
       />
+      {isEvmMode && (
+        <Badge
+          variant="light"
+          color="blue"
+          radius="sm"
+          size="sm"
+          leftSection={<IconCurrencyEthereum size={12} />}
+          pos="absolute"
+          top={20}
+          right={24}
+          data-testid="badge-evm-mode"
+        >
+          EVM mode
+        </Badge>
+      )}
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack gap="lg">
           <ParachainSelect
             label="Origin"
             placeholder="Pick value"
             description="Select the origin chain"
-            data={SUBSTRATE_CHAINS}
+            data={CHAINS}
             data-testid="select-origin"
             {...form.getInputProps('from')}
           />
@@ -450,6 +504,7 @@ export const XcmTransferForm: FC<Props> = ({
                         style={{ flex: 1 }}
                       />
                     </Group>
+                    {renderEthAssetActions(index)}
                   </Stack>
                   {form.values.currencies.length > 1 && (
                     <ActionIcon
@@ -520,6 +575,7 @@ export const XcmTransferForm: FC<Props> = ({
 
           <Group gap="lg">
             <XcmApiCheckbox
+              disabled={isEvmMode}
               {...form.getInputProps('useApi', { type: 'checkbox' })}
             />
             <KeepAliveCheckbox
@@ -532,7 +588,7 @@ export const XcmTransferForm: FC<Props> = ({
 
           <SubmitWarningAlert />
 
-          {selectedAccount ? (
+          {activeAccount ? (
             <Button.Group>
               <Button
                 type="submit"
@@ -543,15 +599,17 @@ export const XcmTransferForm: FC<Props> = ({
                 {getSubmitLabel()}
               </Button>
 
-              <XcmActionsMenu
-                initialValues={initialValues}
-                showSwapItems={isSwapActive(form.values.swapOptions)}
-                onDryRun={onSubmitInternalDryRun}
-                onDryRunPreview={onSubmitInternalDryRunPreview}
-                onAddToBatch={onSubmitInternalAddToBatch}
-                onDeleteFromBatch={onDeleteFromBatch}
-                onQueryAction={onSubmitUtils}
-              />
+              {!isEvmMode && (
+                <XcmActionsMenu
+                  initialValues={initialValues}
+                  showSwapItems={isSwapActive(form.values.swapOptions)}
+                  onDryRun={onSubmitInternalDryRun}
+                  onDryRunPreview={onSubmitInternalDryRunPreview}
+                  onAddToBatch={onSubmitInternalAddToBatch}
+                  onDeleteFromBatch={onDeleteFromBatch}
+                  onQueryAction={onSubmitUtils}
+                />
+              )}
             </Button.Group>
           ) : (
             <Button

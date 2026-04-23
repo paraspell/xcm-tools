@@ -1,7 +1,8 @@
+import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
+import type { TChain } from '@paraspell/sdk';
 import {
   IconBoxAlignBottomRight,
   IconCoins,
-  IconCurrencyEthereum,
   IconSend,
 } from '@tabler/icons-react';
 
@@ -20,11 +21,6 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     label: 'XCM Transfer',
     url: PageRoute.XCM_SDK.XCM_TRANSFER,
     Icon: IconSend,
-  },
-  {
-    label: 'EVM Transfer',
-    url: PageRoute.XCM_SDK.EVM_TRANSFER,
-    Icon: IconCurrencyEthereum,
   },
   {
     label: 'Assets',
@@ -127,12 +123,7 @@ export const SYMBOL_TYPES = [
   'foreignAbstract',
 ] as const;
 
-export const EVM_ORIGIN_CHAINS = [
-  'Ethereum',
-  'Moonbeam',
-  'Moonriver',
-  'Darwinia',
-] as const;
+export const EVM_CHAINS: TChain[] = ['Ethereum', ...EVM_ORIGIN_CHAINS];
 
 export const QUERY_CONFIG: Record<
   TQuerySubmitType,

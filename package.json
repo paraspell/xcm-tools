@@ -28,7 +28,12 @@
     "@polkadot/types": "16.5.6",
     "@polkadot-api/json-rpc-provider": "^0.2.0",
     "react-is": "19.0.0",
-    "@crypto-dex-sdk/chain": "0.1.2"
+    "@crypto-dex-sdk/chain": "0.1.2",
+    "@snowbridge/api": "^1.0.13",
+    "@snowbridge/base-types": "^1.0.13",
+    "@snowbridge/contract-types": "^1.0.13",
+    "@snowbridge/contracts": "^1.0.13",
+    "@snowbridge/registry": "^1.0.13"
   },
   "pnpm": {
     "overrides": {

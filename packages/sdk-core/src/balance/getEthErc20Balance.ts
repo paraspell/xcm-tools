@@ -1,6 +1,6 @@
 import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
 import type { TExternalChain } from '@paraspell/sdk-common'
-import type { Chain } from 'viem'
+import type { Address, Chain } from 'viem'
 import { createPublicClient, http } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 
@@ -38,13 +38,13 @@ export const getEthErc20Balance = async (
   assertHasId(asset)
 
   if (asset.symbol === getNativeAssetSymbol('Ethereum')) {
-    return await client.getBalance({ address: address as `0x${string}` })
+    return await client.getBalance({ address: address as Address })
   }
 
   return await client.readContract({
-    address: asset.assetId as `0x${string}`,
+    address: asset.assetId as Address,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
-    args: [address as `0x${string}`]
+    args: [address as Address]
   })
 }

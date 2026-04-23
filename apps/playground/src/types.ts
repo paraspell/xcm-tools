@@ -4,7 +4,6 @@ import type {
   TExchangeChain,
   TPapiApi,
   TPapiTransaction,
-  TSubstrateChain,
   TSwapEventType,
   TTransactionContext,
   TTransactOptions,
@@ -13,7 +12,6 @@ import type {
 import type { IconProps } from '@tabler/icons-react';
 import type { PolkadotSigner } from 'polkadot-api';
 import type { FC } from 'react';
-import type { Web3 } from 'web3';
 
 import type {
   ASSET_QUERIES,
@@ -49,11 +47,6 @@ export type TEthBridgeApiResponse = {
   fee: string;
 };
 
-type ValueType<T> = T extends Map<unknown, infer V> ? V : never;
-export type EIP6963ProviderDetail = ValueType<
-  Awaited<ReturnType<typeof Web3.requestEIP6963Providers>>
->;
-
 export type TWalletAccount = {
   address: string;
   meta: {
@@ -61,6 +54,8 @@ export type TWalletAccount = {
     source?: string;
   };
 };
+
+export type TWalletType = 'substrate' | 'evm';
 
 export type TExtension = {
   id: string;
@@ -91,8 +86,6 @@ export type TSubmitType =
   | 'delete'
   | 'addToBatch'
   | TQuerySubmitType;
-
-export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
 
 export type TEndpoint = {
   url: string;
@@ -159,7 +152,7 @@ export type TSwapFields = {
 };
 
 export type TFormValues = {
-  from: TSubstrateChain;
+  from: TChain;
   to: TChain;
   currencies: TCurrencyEntry[];
   feeAsset: TCurrencyEntryBase;

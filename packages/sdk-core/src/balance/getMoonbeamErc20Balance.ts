@@ -1,4 +1,5 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { Address } from 'viem'
 import { createPublicClient, http } from 'viem'
 import { moonbeam, moonriver } from 'viem/chains'
 
@@ -31,9 +32,9 @@ export const getMoonbeamErc20Balance = async (
   const tokenAddress = assetId.startsWith('0x') ? assetId : formatAssetIdToERC20(assetId)
 
   return await client.readContract({
-    address: tokenAddress as `0x${string}`,
+    address: tokenAddress as Address,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
-    args: [address as `0x${string}`]
+    args: [address as Address]
   })
 }

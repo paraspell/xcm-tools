@@ -9,12 +9,12 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { GeneralBuilder, TBuilderConfig, TUrl } from '@paraspell/sdk';
-import { BatchMode, replaceBigInt } from '@paraspell/sdk';
+import { BatchMode, isExternalChain, replaceBigInt } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
-import { QUERY_CONFIG } from '../../constants';
+import { EVM_CHAINS, QUERY_CONFIG } from '../../constants';
 import { useWallet } from '../../hooks';
 import type {
   TApiTransaction,
@@ -30,10 +30,12 @@ import {
   createBuilderOptions,
   fetchFromApi,
   getTxFromApi,
+  getViemChainConfig,
   importSdk,
   isSwapActive,
   resolveSender,
   setupBaseBuilder,
+  setupEvmBuilder,
   submitApiTransactions,
   submitSdkTransactions,
   submitTx,
@@ -53,7 +55,13 @@ import { XcmTransferForm } from './XcmTransferForm';
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 export const XcmTransfer = () => {
-  const { selectedAccount, apiType, getSigner } = useWallet();
+  const {
+    selectedAccount,
+    apiType,
+    getSigner,
+    selectedEvmAccount,
+    getEvmWalletClient,
+  } = useWallet();
 
   const [
     outputAlertOpened,
@@ -152,6 +160,11 @@ export const XcmTransfer = () => {
     try {
       let tx: TTransaction;
       if (useApi) {
+        if (isExternalChain(firstItem.from)) {
+          throw Error(
+            'Ethereum origin is not supported for XCM API batch requests',
+          );
+        }
         api = await createChainClient(firstItem.from);
         tx = await getTxFromApi(
           {
@@ -359,6 +372,67 @@ export const XcmTransfer = () => {
       return;
     }
 
+    const isEvmMode = Boolean(selectedEvmAccount);
+
+    if (isEvmMode && submitType !== 'default') {
+      showErrorNotification(
+        'This action is not supported when an Ethereum wallet is connected',
+      );
+      return;
+    }
+
+    if (isEvmMode) {
+      if (!EVM_CHAINS.includes(from)) {
+        showErrorNotification(
+          `Origin ${from} cannot be used with an Ethereum wallet. Pick an EVM chain (Ethereum, Moonbeam, Moonriver, Darwinia) or connect a Substrate wallet`,
+        );
+        return;
+      }
+
+      const walletClient = getEvmWalletClient(getViemChainConfig(from));
+      if (!walletClient) {
+        showErrorNotification('Ethereum wallet is not available');
+        throw Error('Ethereum wallet is not available');
+      }
+
+      setLoading(true);
+      const notifId = showLoadingNotification(
+        'Processing',
+        'Waiting to sign transaction',
+      );
+
+      try {
+        const builderOptions = createBuilderOptions(formValues);
+        const { Builder } = await importSdk(apiType);
+        const builder = Builder(builderOptions);
+        const evmBuilder = setupEvmBuilder(builder, formValues, walletClient);
+
+        const hash = await evmBuilder.signAndSubmit();
+
+        setOutput(`'Transaction was submitted. Hash: ${hash}'`);
+        openOutputAlert();
+        closeErrorAlert();
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          'Transaction was submitted',
+          false,
+        );
+      } catch (e) {
+        handleError(e, notifId);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    if (isExternalChain(from)) {
+      showErrorNotification(
+        `Origin ${from} requires an Ethereum wallet. Connect one from the header`,
+      );
+      return;
+    }
+
     const sender = resolveSender(localAccount, selectedAccount);
 
     setLoading(true);
@@ -413,6 +487,11 @@ export const XcmTransfer = () => {
             'Transaction was successful',
           );
         } else {
+          if (isExternalChain(from)) {
+            throw Error(
+              'Ethereum origin is not supported for XCM API requests',
+            );
+          }
           api = await createChainClient(from);
           tx = await getTxFromApi(
             apiPayload,

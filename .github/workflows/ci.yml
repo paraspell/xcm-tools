@@ -181,6 +181,18 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/swap
           flags: swap
+      - name: Upload EVM coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/evm
+          flags: evm
+      - name: Upload EVM Snowbridge coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/evm-snowbridge
+          flags: evm-snowbridge
       - name: Upload Visualizer BE coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:

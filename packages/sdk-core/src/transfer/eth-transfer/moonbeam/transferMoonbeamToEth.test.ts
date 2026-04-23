@@ -1,10 +1,11 @@
 import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import type { WalletClient } from 'viem'
+import type { Address, WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../..'
 import { getParaId } from '../../../chains/config'
 import { BridgeHaltedError, MissingParameterError } from '../../../errors'
 import type { TEvmTransferOptions } from '../../../types'
@@ -82,7 +83,7 @@ describe('transferMoonbeamToEth', () => {
         }))
       }))
     }))
-  }
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const moonbeamAsset: TAssetInfo = {
     symbol: 'WETH',
@@ -104,10 +105,10 @@ describe('transferMoonbeamToEth', () => {
     api: mockApi,
     from,
     to: 'Ethereum',
-    address: '0xmockedAddress',
+    recipient: '0xmockedAddress',
     ahAddress: '0xmockedAhAddress',
     currency: { symbol: 'WETH', amount: 1000 }
-  } as unknown as TEvmTransferOptions<unknown, unknown, unknown>
+  } as TEvmTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -163,7 +164,7 @@ describe('transferMoonbeamToEth', () => {
     it('should work with viem signer', async () => {
       const result = await transferMoonbeamToEth(from, {
         ...baseOptions,
-        signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
+        signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
       })
 
       expect(result).toBe('0xviemHash')
@@ -176,14 +177,14 @@ describe('transferMoonbeamToEth', () => {
   it('should handle messageId generation correctly', async () => {
     await transferMoonbeamToEth(from, {
       ...baseOptions,
-      signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
+      signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
     })
   })
 
   it('should construct XCM parameters correctly', async () => {
     await transferMoonbeamToEth(from, {
       ...baseOptions,
-      signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
+      signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
     })
   })
 
@@ -192,7 +193,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth(from, {
         ...baseOptions,
-        signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
+        signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
       })
     ).rejects.toThrow(BridgeHaltedError)
   })
