@@ -87,7 +87,7 @@ describe('getDexConfig', () => {
 
     vi.mocked(localizeLocation).mockImplementation((_chain, ml) => {
       if (JSON.stringify(ml) === JSON.stringify(assetOriginalMl)) {
-        return assetTransformedMl as TLocation;
+        return assetTransformedMl;
       }
       return ml;
     });

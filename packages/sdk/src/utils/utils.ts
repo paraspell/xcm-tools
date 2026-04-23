@@ -27,7 +27,7 @@ export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult
 
     const optionsWithApi = {
       ...options,
-      api: papiApi as PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner>
+      api: papiApi
     } as TArgs & { api: PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> }
 
     return apiCall(optionsWithApi)

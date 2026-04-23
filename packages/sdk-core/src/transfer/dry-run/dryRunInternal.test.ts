@@ -152,7 +152,7 @@ describe('dryRunInternal', () => {
         forwardedXcms: originOk.forwardedXcms,
         hasPassedExchange: false,
         isDestination: false
-      } as HopProcessParams<unknown, unknown, unknown>)
+      })
 
       return {
         hops: [{ chain: 'AssetHubPolkadot', result: hopResult }]
@@ -343,7 +343,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown, unknown>)
+        })
 
         return {
           hops: [
@@ -399,7 +399,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: true
-        } as HopProcessParams<unknown, unknown, unknown>)
+        })
 
         return {
           hops: [],
@@ -448,7 +448,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: true,
           isDestination: false
-        } as HopProcessParams<unknown, unknown, unknown>)
+        })
 
         return {
           hops: [],
@@ -503,7 +503,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown, unknown>)
+        })
 
         return {
           hops: [
@@ -695,7 +695,7 @@ describe('dryRunInternal', () => {
           forwardedXcms: [null, [{ value: [1] }]],
           hasPassedExchange: false,
           isDestination: false
-        } as HopProcessParams<unknown, unknown, unknown>)
+        })
 
         return {
           hops: [

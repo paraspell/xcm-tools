@@ -20,7 +20,7 @@ describe('getDestinationLocation', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockDestination = 'AssetHubPolkadot' as TParachain
+    mockDestination = 'AssetHubPolkadot'
 
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: false } as TChainAssetsInfo)
     vi.mocked(getChainConfig).mockReturnValue({ paraId: 2000 } as TChainConfig)

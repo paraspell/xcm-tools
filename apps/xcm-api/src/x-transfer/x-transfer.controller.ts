@@ -86,7 +86,7 @@ export class XTransferController {
   @Post('xcm-fee')
   @UsePipes(new ZodValidationPipe(GetXcmFeeSchema))
   getXcmFee(@Body() params: GetXcmFeeDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GET_XCM_FEE, req, params as XTransferDto);
+    this.trackAnalytics(EventName.GET_XCM_FEE, req, params);
     return this.service.getXcmFee(params);
   }
 

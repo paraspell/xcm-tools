@@ -28,7 +28,7 @@ describe('AssetClaimController', () => {
   beforeEach(() => {
     assetClaimService = {
       claimAssets: vi.fn(),
-    } as unknown as AssetClaimService;
+    };
 
     analyticsService = {
       track: vi.fn(),

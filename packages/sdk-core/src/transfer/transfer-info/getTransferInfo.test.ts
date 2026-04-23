@@ -6,7 +6,7 @@ import {
   isAssetEqual,
   isChainEvm
 } from '@paraspell/assets'
-import { type TChain, type TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -70,8 +70,8 @@ describe('getTransferInfo', () => {
 
     baseOptions = {
       buildTx,
-      origin: 'Polkadot' as TSubstrateChain,
-      destination: 'AssetHubPolkadot' as TChain,
+      origin: 'Polkadot',
+      destination: 'AssetHubPolkadot',
       sender: 'senderAlice',
       ahAddress: 'ahBob',
       recipient: 'receiverCharlie',
@@ -293,7 +293,7 @@ describe('getTransferInfo', () => {
       origin: { fee: 100000000n, feeType: 'paymentInfo', asset: feeAssetFromFee },
       hops: [],
       destination: { fee: 70000000n, feeType: 'paymentInfo', asset: dotAsset }
-    } as TGetXcmFeeResult)
+    })
 
     await getTransferInfo(options)
 

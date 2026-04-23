@@ -35,7 +35,7 @@ vi.mock('../../balance')
 
 describe('getMinTransferableAmountInternal', () => {
   // eslint-disable-next-line @typescript-eslint/require-await
-  const buildTx = vi.fn(async () => ({}) as unknown)
+  const buildTx = vi.fn(async () => ({}))
 
   const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
   const api = {
@@ -46,7 +46,7 @@ describe('getMinTransferableAmountInternal', () => {
 
   const mockBuilder = {
     currency: vi.fn().mockReturnThis(),
-    buildInternal: vi.fn().mockReturnValue({} as unknown)
+    buildInternal: vi.fn().mockReturnValue({})
   } as unknown as GeneralBuilder<
     unknown,
     unknown,
@@ -102,7 +102,7 @@ describe('getMinTransferableAmountInternal', () => {
 
     const currencySpy = vi.spyOn(mockBuilder, 'currency')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const buildSpy = vi.spyOn(mockBuilder as any, 'buildInternal').mockResolvedValue({} as unknown)
+    const buildSpy = vi.spyOn(mockBuilder as any, 'buildInternal').mockResolvedValue({})
 
     const cloneSpy = vi.spyOn(api, 'clone')
     const destInitSpy = vi.spyOn(destApi, 'init')
@@ -163,7 +163,7 @@ describe('getMinTransferableAmountInternal', () => {
     const out = await mod.getMinTransferableAmountInternal({
       ...baseOptions,
       destination: 'Hydration',
-      feeAsset: { symbol: 'FEE' } as TAssetInfo
+      feeAsset: { symbol: 'FEE' }
     })
 
     // origin(5) + 0 + 0 + ED(0) + 1 = 6

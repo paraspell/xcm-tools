@@ -116,10 +116,7 @@ export const localizeLocation = (
     return {
       parents: Parents.TWO,
       interior: {
-        X2: [
-          { GlobalConsensus: { [originRelay]: null } as Record<string, null> },
-          { Parachain: getParaId(origin) }
-        ]
+        X2: [{ GlobalConsensus: { [originRelay]: null } }, { Parachain: getParaId(origin) }]
       }
     }
   }
@@ -135,10 +132,7 @@ export const localizeLocation = (
       .flat()
       .filter(junction => typeof junction === 'object' && junction !== null)
 
-    const updatedJunctions = [
-      { GlobalConsensus: { [originRelay]: null } as Record<string, null> },
-      ...junctions
-    ]
+    const updatedJunctions = [{ GlobalConsensus: { [originRelay]: null } }, ...junctions]
 
     return {
       parents: Parents.TWO,

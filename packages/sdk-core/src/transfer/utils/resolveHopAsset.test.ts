@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyCore, TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
   findAssetInfoOnDest,
   findAssetOnDestOrThrow,
@@ -31,7 +31,7 @@ describe('resolveHopAsset', () => {
 
   const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'asset'> = {
     api: mockApi,
-    tx: {} as unknown,
+    tx: {},
     originChain: 'Acala',
     currentChain: 'Astar',
     destination: 'Moonbeam',
@@ -78,7 +78,7 @@ describe('resolveHopAsset', () => {
     const expectedAsset = { symbol: 'USDT' } as TAssetInfo
     const swapConfig: TSwapConfig = {
       exchangeChain: 'Astar',
-      currencyTo: { symbol: 'USDT' } as TCurrencyCore
+      currencyTo: { symbol: 'USDT' }
     }
 
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(expectedAsset)

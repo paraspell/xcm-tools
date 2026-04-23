@@ -35,7 +35,7 @@ describe('selectBestExchange', () => {
 
     createApiForChainSpy.mockResolvedValue({
       getApi: vi.fn().mockReturnValue({}),
-    } as never);
+    });
 
     baseOptions = {
       ...MOCK_TRANSFER_OPTIONS,

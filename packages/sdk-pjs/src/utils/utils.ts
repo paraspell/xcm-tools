@@ -24,7 +24,7 @@ export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, T
 
     const optionsWithApi = {
       ...options,
-      api: pjsApi as PolkadotApi<TPjsApi, Extrinsic, TPjsSigner>
+      api: pjsApi
     } as TArgs & { api: PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> }
 
     return apiCall(optionsWithApi)

@@ -1,12 +1,6 @@
 // Unit tests for transfer utils
 
-import type {
-  PolkadotApi,
-  TAssetInfo,
-  TPapiApi,
-  TPapiTransaction,
-  TSubstrateChain,
-} from '@paraspell/sdk';
+import type { PolkadotApi, TAssetInfo, TPapiApi, TSubstrateChain } from '@paraspell/sdk';
 import { createChainClient } from '@paraspell/sdk';
 import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -42,7 +36,7 @@ const builderMock = {
   build: vi.fn().mockReturnValue({
     signAsync: vi.fn().mockResolvedValue('signedTx'),
     send: vi.fn().mockResolvedValue('sentTx'),
-  } as unknown as TPapiTransaction),
+  }),
   getXcmFee: vi.fn().mockResolvedValue({ origin: 100n, destination: 200n }),
 };
 

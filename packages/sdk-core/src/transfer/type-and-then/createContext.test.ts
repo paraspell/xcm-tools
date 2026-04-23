@@ -234,7 +234,7 @@ describe('createTypeAndThenCallContext', () => {
     const options = {
       ...mockOptions,
       assetInfo: relayAsset
-    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+    }
 
     const result = await createTypeAndThenCallContext(options, {})
 

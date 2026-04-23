@@ -26,7 +26,7 @@ export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
   amount: '1000000000',
   sender: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
   recipient: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-  signer: {} as unknown as PolkadotSigner,
+  signer: {},
   slippagePct: '1',
 };
 

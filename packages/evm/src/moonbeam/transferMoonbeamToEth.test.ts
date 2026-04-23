@@ -72,9 +72,11 @@ describe('transferMoonbeamToEth', () => {
 
   const from = 'Moonbeam' as const
 
+  const address: Address = '0xmockedAddress'
+
   const signer = {
     chain: {},
-    account: { address: '0xviem' as Address }
+    account: { address }
   } as WalletClient
 
   const baseOptions: TEvmTransferOptions<unknown, unknown, unknown> = {

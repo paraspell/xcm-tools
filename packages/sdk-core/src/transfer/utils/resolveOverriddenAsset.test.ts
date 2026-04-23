@@ -30,7 +30,7 @@ vi.mock('@paraspell/assets', () => ({
   isTAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   isOverrideLocationSpecifier: vi.fn(),
-  extractAssetLocation: vi.fn().mockResolvedValue({} as TLocation),
+  extractAssetLocation: vi.fn().mockResolvedValue({}),
   InvalidCurrencyError: class extends Error {}
 }))
 

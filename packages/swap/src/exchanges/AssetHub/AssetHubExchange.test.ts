@@ -52,7 +52,7 @@ describe('AssetHubExchange', () => {
       slippagePct: '5',
       feeCalcAddress: 'sender',
       origin: undefined,
-    } as TSwapOptions<unknown, unknown, unknown>;
+    };
   });
 
   describe('swapCurrency', () => {
@@ -197,7 +197,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetNative,
             assetTo: assetNative,
-          } as TSwapOptions<unknown, unknown, unknown>,
+          },
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);

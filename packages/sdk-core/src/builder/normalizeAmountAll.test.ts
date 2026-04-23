@@ -72,22 +72,8 @@ describe('normalizeAmountAll', () => {
     const createTxFactory = vi.fn()
     const currencyMock = vi
       .fn()
-      .mockImplementationOnce(
-        () =>
-          ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
-            unknown,
-            unknown,
-            TTransferBaseOptions<unknown, unknown, unknown>
-          >
-      )
-      .mockImplementationOnce(
-        () =>
-          ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
-            unknown,
-            unknown,
-            TTransferBaseOptions<unknown, unknown, unknown>
-          >
-      )
+      .mockImplementationOnce(() => ({ createTxFactory: vi.fn(() => initialBuildTx) }))
+      .mockImplementationOnce(() => ({ createTxFactory: vi.fn(() => finalBuildTx) }))
 
     const builder = {
       currency: currencyMock,
@@ -156,24 +142,8 @@ describe('normalizeAmountAll', () => {
     const createTxFactory = vi.fn()
     const currencyMock = vi
       .fn()
-      .mockImplementationOnce(
-        () =>
-          ({ createTxFactory: vi.fn(() => initialBuildTx) }) as unknown as GeneralBuilder<
-            unknown,
-            unknown,
-            unknown,
-            TTransferBaseOptions<unknown, unknown, unknown>
-          >
-      )
-      .mockImplementationOnce(
-        () =>
-          ({ createTxFactory: vi.fn(() => finalBuildTx) }) as unknown as GeneralBuilder<
-            unknown,
-            unknown,
-            unknown,
-            TTransferBaseOptions<unknown, unknown, unknown>
-          >
-      )
+      .mockImplementationOnce(() => ({ createTxFactory: vi.fn(() => initialBuildTx) }))
+      .mockImplementationOnce(() => ({ createTxFactory: vi.fn(() => finalBuildTx) }))
 
     const builder = {
       currency: currencyMock,

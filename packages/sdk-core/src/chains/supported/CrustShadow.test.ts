@@ -4,7 +4,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TReserveAsset, TXTokensTransferOptions } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type CrustShadow from './CrustShadow'
 
@@ -37,7 +37,7 @@ describe('CrustShadow', () => {
 
     chain.transferXTokens(mockInput)
 
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve')
   })
 
   it('should call transferXTokens with OtherReserve when currencyID is defined and currency does not match native asset', () => {
@@ -45,7 +45,7 @@ describe('CrustShadow', () => {
 
     chain.transferXTokens(mockInput)
 
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { OtherReserve: 123n } as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { OtherReserve: 123n })
   })
 
   it('should throw InvalidCurrencyError when currencyID is undefined and currency does not match native asset', () => {

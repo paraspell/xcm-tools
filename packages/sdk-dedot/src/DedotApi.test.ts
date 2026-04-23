@@ -2,10 +2,8 @@ import type {
   TAssetInfo,
   TChain,
   TChainAssetsInfo,
-  TDestination,
   TDryRunCallBaseOptions,
   TDryRunXcmBaseOptions,
-  TPallet,
   TSerializedExtrinsics,
   TSerializedStateQuery,
   WithAmount,
@@ -424,18 +422,12 @@ describe("DedotApi", () => {
 
   describe("hasMethod", () => {
     it("returns true when the method exists", async () => {
-      const result = await dedotApi.hasMethod(
-        "PolkadotXcm" as TPallet,
-        "transfer_assets",
-      );
+      const result = await dedotApi.hasMethod("PolkadotXcm", "transfer_assets");
       expect(result).toBe(true);
     });
 
     it("returns false when the pallet does not exist", async () => {
-      const result = await dedotApi.hasMethod(
-        "NonExistent" as TPallet,
-        "some_method",
-      );
+      const result = await dedotApi.hasMethod("AssetConversion", "some_method");
       expect(result).toBe(false);
     });
   });
@@ -501,9 +493,9 @@ describe("DedotApi", () => {
     const createOptions = (): TDryRunCallBaseOptions<TDedotExtrinsic> => ({
       tx: mockTx,
       address: "addr",
-      chain: "Hydration" as TSubstrateChain,
+      chain: "Hydration",
       version: Version.V5,
-      destination: "Moonbeam" as TDestination,
+      destination: "Moonbeam",
       asset: { symbol: "DOT" } as WithAmount<TAssetInfo>,
     });
 
@@ -513,7 +505,7 @@ describe("DedotApi", () => {
 
       const result = await dedotApi.resolveFeeAsset({
         ...createOptions(),
-        chain: "Acala" as TSubstrateChain,
+        chain: "Acala",
       });
 
       expect(result).toEqual({ isCustomAsset: false, asset: nativeAsset });
@@ -565,7 +557,7 @@ describe("DedotApi", () => {
           }) as TChainAssetsInfo,
       );
 
-      dryRunCallMock = mockApiRaw.call.dryRunApi.dryRunCall as unknown as Mock;
+      dryRunCallMock = mockApiRaw.call.dryRunApi.dryRunCall;
       vi.mocked(computeOriginFee).mockReturnValue(500n);
     });
 

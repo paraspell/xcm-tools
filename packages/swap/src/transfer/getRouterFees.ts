@@ -55,8 +55,8 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
           assetInfoFrom: {
             ...(origin?.assetFrom ?? exchange.assetFrom),
             amount: BigInt(amt),
-          } as WithAmount<TAssetInfo>,
-          assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+          },
+          assetInfoTo: { ...exchange.assetTo, amount: amountOut },
           currencyTo,
           feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
           sender: evmSenderAddress ?? sender,

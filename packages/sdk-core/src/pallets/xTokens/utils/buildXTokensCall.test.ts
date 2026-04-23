@@ -1,5 +1,4 @@
 import type { TAsset } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -96,7 +95,7 @@ describe('buildXTokensCall', () => {
       ...baseInput,
       useMultiAssetTransfer: true,
       overriddenAsset: undefined,
-      pallet: 'TestPallet' as TPallet,
+      pallet: 'TestPallet',
       method: undefined,
       origin: 'Astar',
       destination: 'Polkadot',

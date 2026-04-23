@@ -52,9 +52,7 @@ export class AssetsService {
   }
 
   getAssetInfo(chain: TChain, { currency, destination }: FindAssetDto) {
-    return JSON.stringify(
-      findAssetInfo(chain, currency, destination as TChain),
-    );
+    return JSON.stringify(findAssetInfo(chain, currency, destination));
   }
 
   getRelayChainSymbol(chain: TChain) {

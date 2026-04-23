@@ -1,4 +1,4 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/sdk-core';
+import type { TAssetInfo } from '@paraspell/sdk-core';
 import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -40,8 +40,8 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
         assetInfoFrom: {
           ...(origin?.assetFrom ?? exchange.assetFrom),
           amount: BigInt(amount),
-        } as WithAmount<TAssetInfo>,
-        assetInfoTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAssetInfo>,
+        },
+        assetInfoTo: { ...exchange.assetTo, amount: amountOut },
         sender: evmSenderAddress ?? sender,
         recipient: recipient ?? sender,
         currencyTo,

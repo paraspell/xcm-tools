@@ -231,7 +231,7 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       if ('symbol' in currency && currency.symbol === 'USDT')
-        return { symbol: 'USDT', decimals: 6, location: feeLocation } as TAssetInfo;
+        return { symbol: 'USDT', decimals: 6, location: feeLocation };
       return null;
     });
 
@@ -240,7 +240,7 @@ describe('resolveAssets', () => {
       decimals: 6,
       location: feeLocation,
       isFeeAsset: false,
-    } as TAssetInfo);
+    });
 
     expect(() => resolveAssets(dex, options)).toThrow('is not a valid fee asset');
   });

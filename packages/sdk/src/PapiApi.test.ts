@@ -58,7 +58,7 @@ vi.mock('./utils', async importActual => ({
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   addXcmVersionHeader: vi.fn(),
-  createChainClient: vi.fn().mockResolvedValue({} as PolkadotClient),
+  createChainClient: vi.fn().mockResolvedValue({}),
   getAssetsObject: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),

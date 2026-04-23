@@ -1,6 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import type { TParachain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -43,7 +42,7 @@ describe('handleExecuteTransfer', () => {
     assetInfo: { symbol: 'DOT', amount: 1000n, isNative: true },
     asset: {} as TAsset,
     scenario: 'ParaToRelay',
-    destChain: 'Hydration' as TParachain,
+    destChain: 'Hydration',
     beneficiaryLocation: {} as TLocation,
     paraIdTo: 1001,
     sender: '0x1234567890abcdef',

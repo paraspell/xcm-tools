@@ -8,7 +8,6 @@ import {
   InvalidCurrencyError,
   UnableToComputeError,
 } from '@paraspell/sdk-core';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -42,7 +41,7 @@ describe('HydrationExchange', () => {
 
     chain = new HydrationExchange('Hydration');
 
-    const mockGet = vi.fn().mockReturnValue('mockExtrinsic' as unknown as Extrinsic);
+    const mockGet = vi.fn().mockReturnValue('mockExtrinsic');
     const mockBuild = vi.fn().mockResolvedValue({ get: mockGet });
     const mockWithBeneficiary = vi.fn().mockReturnValue({ build: mockBuild });
     const mockWithSlippage = vi.fn().mockReturnValue({ withBeneficiary: mockWithBeneficiary });

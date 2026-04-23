@@ -1,4 +1,4 @@
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -23,7 +23,7 @@ const swapApiPapi = {
   getUnsafeApi: () => ({
     tx: {
       Utility: {
-        batch_all: vi.fn().mockReturnValue('batchTx' as unknown as TPapiTransaction),
+        batch_all: vi.fn().mockReturnValue('batchTx'),
       },
     },
   }),
@@ -66,7 +66,7 @@ describe('buildTransactions', () => {
 
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx' as unknown as TPapiTransaction],
+      swapTxs: ['swapTx'],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -93,8 +93,8 @@ describe('buildTransactions', () => {
 
   test('adds transfer-to-exchange when origin differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
-      toExchangeTx: 'toExchangeTx' as unknown as TPapiTransaction,
-      swapTxs: ['swapTx' as unknown as TPapiTransaction],
+      toExchangeTx: 'toExchangeTx',
+      swapTxs: ['swapTx'],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -122,8 +122,8 @@ describe('buildTransactions', () => {
   test('adds batched swap+transfer when destination differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx' as unknown as TPapiTransaction],
-      toDestTx: 'toDestTx' as unknown as TPapiTransaction,
+      swapTxs: ['swapTx'],
+      toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
 
@@ -147,9 +147,9 @@ describe('buildTransactions', () => {
 
   test('includes all steps when both origin & destination differ', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
-      toExchangeTx: 'toExchangeTx' as unknown as TPapiTransaction,
-      swapTxs: ['swapTx' as unknown as TPapiTransaction],
-      toDestTx: 'toDestTx' as unknown as TPapiTransaction,
+      toExchangeTx: 'toExchangeTx',
+      swapTxs: ['swapTx'],
+      toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
 

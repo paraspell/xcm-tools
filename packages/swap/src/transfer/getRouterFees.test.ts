@@ -1,4 +1,3 @@
-import type { TPapiTransaction } from '@paraspell/sdk';
 import type {
   PolkadotApi,
   TAssetInfo,
@@ -103,9 +102,7 @@ describe('getRouterFees', () => {
     vi.mocked(getToExchangeFee).mockResolvedValue(toExchangeFeeValue);
     vi.mocked(getFromExchangeFee).mockResolvedValue(toDestFeeValue);
     vi.mocked(getXcmFee).mockResolvedValue(executeTransferResult);
-    vi.mocked(handleSwapExecuteTransfer).mockResolvedValue(
-      'mock-tx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(handleSwapExecuteTransfer).mockResolvedValue('mock-tx');
   });
 
   describe('Execute transfer path', () => {
@@ -352,9 +349,7 @@ describe('getRouterFees', () => {
 
     await getRouterFees(assetHubDex, localOptions, false);
 
-    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
-      a?: string,
-    ) => Promise<unknown>;
+    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx;
     await buildTx();
 
     const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {
@@ -397,9 +392,7 @@ describe('getRouterFees', () => {
 
     await getRouterFees(assetHubDex, localOptions, false);
 
-    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx as (
-      a?: string,
-    ) => Promise<unknown>;
+    const buildTx = vi.mocked(getXcmFee).mock.calls[0][0].buildTx;
     await buildTx();
 
     const arg = vi.mocked(handleSwapExecuteTransfer).mock.calls[0][0] as {

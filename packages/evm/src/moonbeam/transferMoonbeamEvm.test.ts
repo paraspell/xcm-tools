@@ -197,7 +197,7 @@ describe('transferMoonbeamEvm', () => {
         signer: mockSigner,
         recipient: mockRecipient,
         currency: []
-      } as TEvmTransferOptions<unknown, unknown, unknown>)
+      })
     ).rejects.toThrow()
   })
 
@@ -214,7 +214,7 @@ describe('transferMoonbeamEvm', () => {
           location: { type: 'Override', value: { parents: 1, interior: {} } },
           amount: 1000
         }
-      } as TEvmTransferOptions<unknown, unknown, unknown>)
+      })
     ).rejects.toThrow()
   })
 

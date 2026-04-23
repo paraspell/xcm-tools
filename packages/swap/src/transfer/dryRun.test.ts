@@ -91,7 +91,7 @@ const createOptions = (
 
 const createTransaction = (chain: string): TTransaction<unknown, unknown> =>
   ({
-    api: {} as PolkadotClient,
+    api: {},
     chain,
     tx: {},
     type: 'TRANSFER',
@@ -171,7 +171,7 @@ describe('dryRunRouter', () => {
   it('propagates bypass options to the second transaction when the first dry run succeeds', async () => {
     const transformedOptions = createOptions({
       origin: {
-        api: {} as PolkadotClient,
+        api: {},
         chain: 'BifrostPolkadot',
         assetFrom: {
           symbol: 'BNC',

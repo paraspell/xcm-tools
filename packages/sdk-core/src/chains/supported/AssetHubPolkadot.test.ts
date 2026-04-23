@@ -4,7 +4,6 @@ import {
   normalizeSymbol,
   type TAsset
 } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -107,7 +106,7 @@ describe('AssetHubPolkadot', () => {
       beforeEach(() => {
         vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
         vi.mocked(handleExecuteTransfer).mockResolvedValue({
-          module: 'System' as TPallet,
+          module: 'System',
           method: 'remark',
           params: { _remark: '0x' }
         })

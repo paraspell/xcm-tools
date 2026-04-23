@@ -1,6 +1,6 @@
 import type {
   HealthCheckResult,
-  HealthIndicatorStatus,
+  HealthIndicatorResult,
 } from '@nestjs/terminus';
 import { HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
 import type { TestingModule } from '@nestjs/testing';
@@ -48,8 +48,8 @@ describe('HealthService', () => {
   describe('checkDb', () => {
     it('should call health.check with database ping check', async () => {
       const mockResult = { status: 'ok' } as HealthCheckResult;
-      const mockPingCheckResult = Promise.resolve({
-        database: { status: 'up' as HealthIndicatorStatus },
+      const mockPingCheckResult = Promise.resolve<HealthIndicatorResult>({
+        database: { status: 'up' },
       });
 
       const spyPingCheck = vi

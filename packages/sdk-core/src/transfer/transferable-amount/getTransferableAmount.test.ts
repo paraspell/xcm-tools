@@ -27,7 +27,7 @@ describe('getTransferableAmount', () => {
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  const buildTx = vi.fn(async () => ({}) as unknown)
+  const buildTx = vi.fn(async () => ({}))
 
   const baseOptions = {
     api: mockApi,

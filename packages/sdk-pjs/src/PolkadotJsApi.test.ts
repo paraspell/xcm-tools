@@ -190,17 +190,17 @@ describe('PolkadotJsApi', () => {
           proofSize: '0'
         }
       })
-    } as unknown as Codec)
+    })
 
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockReset()
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
       toJSON: vi.fn().mockReturnValue({ ok: 0 })
-    } as unknown as Codec)
+    })
 
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockReset()
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockResolvedValue({
       toJSON: vi.fn().mockReturnValue({ ok: { v4: [] } })
-    } as unknown as Codec)
+    })
 
     accountCurrencyMapMock = mockApiPromise.query.multiTransactionPayment
       .accountCurrencyMap as unknown as Mock
@@ -594,11 +594,11 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ ok: weight })
-      } as unknown as Codec)
+      })
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ ok: 0 })
-      } as unknown as Codec)
+      })
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees)
         .mockRejectedValueOnce(new Error('Expected 3 arguments, found 2'))
@@ -608,7 +608,7 @@ describe('PolkadotJsApi', () => {
               v4: [{ fun: { fungible: '123' } }]
             }
           })
-        } as unknown as Codec)
+        })
 
       const queryRuntimeSpy = vi.spyOn(polkadotApi, 'queryRuntimeApi')
 
@@ -852,11 +852,11 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ ok: weight })
-      } as unknown as Codec)
+      })
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ err: 'AssetNotFound' })
-      } as unknown as Codec)
+      })
 
       const fallbackSpy = vi
         .spyOn(polkadotApi, 'getBridgeHubFallbackExecFee')
@@ -882,11 +882,11 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ ok: weight })
-      } as unknown as Codec)
+      })
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValue({
         toJSON: vi.fn().mockReturnValue({ err: 'AssetNotFound' })
-      } as unknown as Codec)
+      })
 
       const fallbackSpy = vi
         .spyOn(polkadotApi, 'getBridgeHubFallbackExecFee')
@@ -920,7 +920,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
         toJSON: vi.fn().mockReturnValue({ ok: fallbackFee })
-      } as unknown as Codec)
+      })
 
       const ahApiMock = new PolkadotJsApi(mockApiPromise)
       const initSpy = vi.spyOn(ahApiMock, 'init').mockResolvedValue(undefined)
@@ -955,7 +955,7 @@ describe('PolkadotJsApi', () => {
       vi.mocked(addXcmVersionHeader).mockReturnValue({ V4: {} })
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
         toJSON: vi.fn().mockReturnValue({ ok: undefined })
-      } as unknown as Codec)
+      })
 
       const resWithoutFee = await polkadotApi.getBridgeHubFallbackExecFee(
         chain,
@@ -967,7 +967,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
         toJSON: vi.fn().mockReturnValue({ ok: 123 })
-      } as unknown as Codec)
+      })
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),

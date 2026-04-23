@@ -4,11 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  TForeignOrTokenAsset,
-  TTransferLocalOptions,
-  TXTokensTransferOptions
-} from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Kintsugi from './Kintsugi'
 
@@ -40,7 +36,7 @@ describe('Kintsugi', () => {
     chain.transferXTokens(mockInput)
     expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
       ForeignAsset: 123
-    } as TForeignOrTokenAsset)
+    })
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
@@ -57,7 +53,7 @@ describe('Kintsugi', () => {
 
     expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'KINT'
-    } as TForeignOrTokenAsset)
+    })
   })
 
   const mockApi = {

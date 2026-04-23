@@ -246,7 +246,7 @@ describe('createTransferOrSwapAll', () => {
       exchange: undefined,
       slippage: 1
     }
-    const options = makeTransferOptions({ swapOptions } as never)
+    const options = makeTransferOptions({ swapOptions })
     const result = await createTransferOrSwapAll(options)
 
     expect(result).toEqual(swapTxs)
@@ -285,7 +285,7 @@ describe('createTransferOrSwap', () => {
       exchange: undefined,
       slippage: 1
     }
-    const options = makeTransferOptions({ swapOptions } as never)
+    const options = makeTransferOptions({ swapOptions })
 
     await expect(createTransferOrSwap(options)).rejects.toThrow(UnsupportedOperationError)
     await expect(createTransferOrSwap(options)).rejects.toThrow(/Use .buildAll\(\) instead/)

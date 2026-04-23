@@ -19,6 +19,8 @@ describe('@paraspell/evm', () => {
     await import('./index')
     const { executeEvmTransfer } = await import('./executeEvmTransfer')
 
+    const address: Address = '0x0'
+
     await expect(
       executeEvmTransfer({
         api: {
@@ -30,7 +32,7 @@ describe('@paraspell/evm', () => {
         currency: { symbol: 'ACA', amount: '1' },
         recipient: '0x0',
         signer: {
-          account: { address: '0x0' as Address },
+          account: { address },
           chain: {}
         } as WalletClient
       })

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   findAssetInfoOrThrow,
   getNativeAssetSymbol,
@@ -75,8 +74,7 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
   // Partially inspired by Moonbeam XCM-SDK
   // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/sdk/src/contract/contracts/Xtokens/Xtokens.ts#L53
   const createTx = (func: string, args: unknown[]): Promise<WriteContractReturnType> => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return contract.write[func](args as any)
+    return contract.write[func](args)
   }
 
   const multiCurrencySymbols = ['xcPINK', 'xcDED', 'xcSTINK', 'xcWIFD', 'xcNCTR']

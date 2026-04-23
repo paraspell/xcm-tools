@@ -4,12 +4,7 @@ import type { PolkadotApi } from '../../api'
 import { UnsupportedOperationError } from '../../errors'
 import type { TSwapExtension } from '../../extensions'
 import { registerSwapExtension } from '../../extensions'
-import type {
-  TApiOrUrl,
-  TBuilderOptions,
-  TSwapOptions,
-  TTransferOptionsWithSwap
-} from '../../types'
+import type { TApiOrUrl, TBuilderOptions, TTransferOptionsWithSwap } from '../../types'
 import * as assertions from '../assertions'
 import * as guards from '../guards'
 import {
@@ -82,7 +77,7 @@ describe('swapUtils', () => {
     it('should throw UnsupportedOperationError when transactOptions.call is set', () => {
       const options = createBaseOptions({
         transactOptions: { call: '0x1234' }
-      } as Partial<TTransferOptionsWithSwap<Api, Res, Signer>>)
+      })
 
       expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
       expect(() => createRouterBuilder(options)).toThrow(
@@ -144,7 +139,7 @@ describe('swapUtils', () => {
           exchange: undefined,
           slippage: 1,
           onStatusChange
-        } as TSwapOptions<Api, Res, Signer>
+        }
       })
 
       createRouterBuilder(options)

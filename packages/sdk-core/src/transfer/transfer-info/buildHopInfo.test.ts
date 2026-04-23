@@ -49,9 +49,9 @@ describe('buildHopInfo', () => {
 
     baseOptions = {
       api: mockApi,
-      chain: 'AssetHubPolkadot' as TSubstrateChain,
+      chain: 'AssetHubPolkadot',
       fee: DEFAULT_HOP_FEE,
-      originChain: 'Polkadot' as TSubstrateChain,
+      originChain: 'Polkadot',
       currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
       asset: { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo,
       sender: 'senderAlice',
@@ -68,7 +68,7 @@ describe('buildHopInfo', () => {
       assetId: '1984',
       decimals: 6,
       location: {} as TLocation
-    } as TAssetInfo)
+    })
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(DEFAULT_ED)
   })
 

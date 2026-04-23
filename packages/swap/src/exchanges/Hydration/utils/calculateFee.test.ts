@@ -2,7 +2,6 @@ import type { Asset, TxBuilderFactory } from '@galacticcouncil/sdk';
 import { BigNumber } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
 import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk-core';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TSwapOptions } from '../../../types';
@@ -46,7 +45,7 @@ describe('calculateFee', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    const mockGet = vi.fn().mockReturnValue('mockExtrinsic' as unknown as Extrinsic);
+    const mockGet = vi.fn().mockReturnValue('mockExtrinsic');
     const mockBuild = vi.fn().mockResolvedValue({ get: mockGet });
     const mockWithBeneficiary = vi.fn().mockReturnValue({ build: mockBuild });
     const mockWithSlippage = vi.fn().mockReturnValue({ withBeneficiary: mockWithBeneficiary });

@@ -108,7 +108,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
 
   // For Ethereum destination, the actual hop target is AssetHub (bridge hub)
   const resolvedDestChain: TSubstrateChain | undefined = isEthereumDest
-    ? (`AssetHub${getRelayChainOf(chain ?? exchangeChain)}` as TSubstrateChain)
+    ? `AssetHub${getRelayChainOf(chain ?? exchangeChain)}`
     : undefined
 
   const assetFrom = createAsset(

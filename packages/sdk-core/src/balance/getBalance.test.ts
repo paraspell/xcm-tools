@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { getPalletInstance } from '../pallets'
-import type { BaseAssetsPallet, TGetAssetBalanceOptions, TGetBalanceOptions } from '../types'
+import type { BaseAssetsPallet } from '../types'
 import { getChain, validateAddress } from '../utils'
 import * as getBalanceModule from './getBalance'
 import { getEthErc20Balance } from './getEthErc20Balance'
@@ -44,7 +44,7 @@ describe('getAssetBalanceInternal', () => {
       address: '0x123',
       chain: 'Ethereum',
       asset
-    } as TGetAssetBalanceOptions<unknown, unknown, unknown>)
+    })
 
     expect(validateAddress).toHaveBeenCalledWith(api, '0x123', 'Ethereum', false)
     expect(initSpy).toHaveBeenCalledWith('Ethereum')
@@ -70,7 +70,7 @@ describe('getAssetBalanceInternal', () => {
       address: 'relay-account',
       chain: 'Polkadot',
       asset: baseAsset
-    } as TGetAssetBalanceOptions<unknown, unknown, unknown>)
+    })
 
     expect(validateAddress).toHaveBeenCalledWith(api, 'relay-account', 'Polkadot', false)
     expect(initSpy).toHaveBeenCalledWith('Polkadot')
@@ -126,7 +126,7 @@ describe('getBalanceInternal', () => {
       address: 'addr',
       chain: 'Astar',
       currency: baseCurrency
-    } as TGetBalanceOptions<unknown, unknown, unknown>)
+    })
 
     expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Astar', baseCurrency)
     expect(chainGetBalance).toHaveBeenCalledWith(api, 'addr', baseAsset)

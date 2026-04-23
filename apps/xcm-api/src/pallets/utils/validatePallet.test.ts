@@ -50,7 +50,7 @@ describe('validatePallet', () => {
   it('should be case-sensitive and throw for incorrect casing if not in SUPPORTED_PALLETS', () => {
     const palletWithWrongCase = 'system';
     expect(PALLETS.includes(palletWithWrongCase as TPallet)).toBe(false);
-    expect(PALLETS.includes('System' as TPallet)).toBe(true);
+    expect(PALLETS.includes('System')).toBe(true);
 
     expect(() => validatePallet(palletWithWrongCase)).toThrow(
       BadRequestException,

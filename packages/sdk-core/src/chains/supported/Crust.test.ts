@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TReserveAsset, TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Crust from './Crust'
 
@@ -35,7 +35,7 @@ describe('Crust', () => {
 
   it('should call transferXTokens with SelfReserve when currency matches native asset', () => {
     chain.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve')
   })
 
   it('should call transferXTokens with OtherReserve when currencyID is defined and currency does not match native asset', () => {
@@ -49,7 +49,7 @@ describe('Crust', () => {
     } as TXTokensTransferOptions<unknown, unknown, unknown>
 
     chain.transferXTokens(input)
-    expect(transferXTokens).toHaveBeenCalledWith(input, { OtherReserve: 123n } as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(input, { OtherReserve: 123n })
   })
 
   it('should throw InvalidCurrencyError when currencyID is undefined and currency does not match native asset', () => {

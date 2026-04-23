@@ -6,7 +6,6 @@ import type {
 } from '@nestjs/throttler';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { RequestWithUser } from '../types/types.js';
 import { throttlerConfig } from './throttler.config.js';
 
 describe('throttlerConfig', () => {
@@ -75,7 +74,7 @@ describe('throttlerConfig', () => {
     });
     mockHttpContext.getRequest = vi.fn().mockReturnValue({
       user: { requestLimit: 100 },
-    } as RequestWithUser);
+    });
 
     const result: ThrottlerModuleOptions = throttlerConfig(mockConfigService);
     const throttlers = getThrottlers(result);
@@ -91,7 +90,7 @@ describe('throttlerConfig', () => {
 
     mockHttpContext.getRequest = vi.fn().mockReturnValue({
       user: {}, // User without a specific requestLimit
-    } as RequestWithUser);
+    });
 
     const result: ThrottlerModuleOptions = throttlerConfig(mockConfigService);
     const throttlers = getThrottlers(result);
@@ -108,7 +107,7 @@ describe('throttlerConfig', () => {
 
     mockHttpContext.getRequest = vi.fn().mockReturnValue({
       user: undefined, // No user, public request
-    } as RequestWithUser);
+    });
 
     const result: ThrottlerModuleOptions = throttlerConfig(mockConfigService);
     const throttlers = getThrottlers(result);

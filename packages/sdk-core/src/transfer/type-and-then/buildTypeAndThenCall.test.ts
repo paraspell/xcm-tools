@@ -205,7 +205,7 @@ describe('buildTypeAndThenCall', () => {
           ...mockContext.options,
           overriddenAsset: overriddenAssets
         }
-      } as TTypeAndThenCallContext<unknown, unknown, unknown>,
+      },
       false,
       mockCustomXcm,
       mockAssets

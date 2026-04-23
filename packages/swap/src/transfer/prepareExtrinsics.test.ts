@@ -1,4 +1,4 @@
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
 import { handleSwapExecuteTransfer } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -52,7 +52,7 @@ describe('prepareExtrinsics', () => {
     vi.clearAllMocks();
 
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
-      txs: ['swapTx' as unknown as TPapiTransaction],
+      txs: ['swapTx'],
       amountOut: 1000n,
     });
   });
@@ -77,9 +77,7 @@ describe('prepareExtrinsics', () => {
   });
 
   test('creates transfer-to-exchange when origin differs', async () => {
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue(
-      'toExchangeTx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
 
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
@@ -99,9 +97,7 @@ describe('prepareExtrinsics', () => {
   });
 
   test('creates transfer-from-exchange when destination differs', async () => {
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue(
-      'toDestTx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
@@ -121,12 +117,8 @@ describe('prepareExtrinsics', () => {
   });
 
   test('creates all three extrinsics when both origin & destination differ', async () => {
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue(
-      'toExchangeTx' as unknown as TPapiTransaction,
-    );
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue(
-      'toDestTx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
+    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(dexChain, baseOptions);
 
@@ -139,9 +131,7 @@ describe('prepareExtrinsics', () => {
   });
 
   test('handles AssetHub/Hydration special case with handleSwapExecuteTransfer', async () => {
-    vi.mocked(handleSwapExecuteTransfer).mockResolvedValue(
-      'handleSwapExecuteTransferTx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(handleSwapExecuteTransfer).mockResolvedValue('handleSwapExecuteTransferTx');
 
     const assetHubDexChain = {
       chain: 'AssetHubPolkadot',
@@ -268,12 +258,8 @@ describe('prepareExtrinsics', () => {
       throw new DryRunFailedError('Filtered', 'origin');
     });
 
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue(
-      'toExchangeTx' as unknown as TPapiTransaction,
-    );
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue(
-      'toDestTx' as unknown as TPapiTransaction,
-    );
+    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
+    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 

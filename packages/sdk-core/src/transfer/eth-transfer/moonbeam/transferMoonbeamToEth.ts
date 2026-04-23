@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { TAsset } from '@paraspell/assets'
 import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -116,7 +114,7 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
   // Partially inspired by Moonbeam XCM-SDK
   // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/sdk/src/contract/contracts/Xtokens/Xtokens.ts#L53
   const createTx = (func: string, args: unknown[]): Promise<WriteContractReturnType> => {
-    return contract.write[func](args as any)
+    return contract.write[func](args)
   }
 
   const numberToHex32 = (num: number) =>

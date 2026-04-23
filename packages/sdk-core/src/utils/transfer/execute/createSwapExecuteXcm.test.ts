@@ -179,7 +179,7 @@ describe('createSwapExecuteXcm', () => {
         assetId: '0x123'
       } as any)
       vi.mocked(generateMessageId).mockResolvedValue('msg-id-1')
-      vi.mocked(createEthereumBridgeInstructions).mockReturnValue(['SNOW1'] as any)
+      vi.mocked(createEthereumBridgeInstructions).mockReturnValue(['SNOW1'])
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
       vi.mocked(createAsset).mockReturnValue({} as any)

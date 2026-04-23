@@ -96,7 +96,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
     let builtHops: TTransferInfo['hops'] = []
 
     if (hops && hops.length > 0) {
-      builtHops = (await Promise.all(
+      builtHops = await Promise.all(
         hops.map(async hop => {
           const result = await buildHopInfo({
             api,
@@ -113,7 +113,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
             result
           }
         })
-      )) as TTransferInfo['hops']
+      )
     }
 
     const totalHopFee = hops.reduce(

@@ -7,7 +7,10 @@ describe('getBypassResultWithRetries', () => {
   it('returns immediately when initialTx succeeds', async () => {
     const buildTx = vi.fn((a?: string, r?: boolean) => Promise.resolve({ a, r }))
     const internalFn = vi.fn(() => Promise.resolve({}))
-    const res = await getBypassResultWithRetries({ buildTx }, internalFn, {} as unknown)
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn, {
+      a: undefined,
+      r: undefined
+    })
     expect(res).toEqual({})
     expect(internalFn).toHaveBeenCalledTimes(1)
     expect(buildTx).not.toHaveBeenCalled()
@@ -77,7 +80,7 @@ describe('getBypassResultWithRetries', () => {
     const internalFn = vi.fn(() => {
       const next = responses.shift()
       if (!next) throw new Error('unexpected call')
-      return Promise.resolve(next as Record<string, unknown>)
+      return Promise.resolve(next)
     })
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(res).toEqual({})
@@ -106,7 +109,7 @@ describe('getBypassResultWithRetries', () => {
       .fn()
       .mockRejectedValueOnce(new AmountTooLowError('low'))
       .mockResolvedValueOnce({})
-    const res = await getBypassResultWithRetries({ buildTx }, internalFn, {} as unknown)
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn, { a: undefined })
     expect(res).toEqual({})
     expect(buildTx).toHaveBeenCalledWith('1', undefined)
   })

@@ -80,7 +80,7 @@ const createExchangeInfo = (
 });
 
 const createOriginInfo = (chain: TSubstrateChain): TOriginInfo<unknown> => ({
-  api: {} as TPapiApi,
+  api: {},
   chain,
   assetFrom: sdkAsset,
 });

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXcmAsset, TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain, getLocalTransferAmount } from '../../utils'
 import type Pendulum from './Pendulum'
 
@@ -41,9 +41,12 @@ describe('Pendulum', () => {
 
   it('should call transferXTokens with native asset', () => {
     chain.transferXTokens(mockInput)
-    expect(transferXTokens).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: false }, {
-      Native: null
-    } as TXcmAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(
+      { ...mockInput, useMultiAssetTransfer: false },
+      {
+        Native: null
+      }
+    )
   })
 
   it('should call transferXTokens with XCM asset when foreign asset is provided', () => {

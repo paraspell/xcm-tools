@@ -179,7 +179,7 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
       destination: { fee: 1000000000n, feeType: 'paymentInfo', asset }
-    } as TGetXcmFeeResult<false>)
+    })
     vi.mocked(normalizeSymbol).mockImplementation(s => String(s))
 
     const msg = `The XCM fee could not be calculated because the origin or destination chain does not support DryRun.

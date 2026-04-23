@@ -85,6 +85,8 @@ describe('transferMoonbeamToEth', () => {
     }))
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
+  const address: Address = '0xviem'
+
   const moonbeamAsset: TAssetInfo = {
     symbol: 'WETH',
     decimals: 18,
@@ -133,7 +135,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth(from, {
         ...baseOptions,
-        currency: [] as unknown as TCurrencyInputWithAmount
+        currency: []
       })
     ).rejects.toThrow('Multi-assets are not yet supported for EVM transfers')
   })
@@ -164,7 +166,7 @@ describe('transferMoonbeamToEth', () => {
     it('should work with viem signer', async () => {
       const result = await transferMoonbeamToEth(from, {
         ...baseOptions,
-        signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
+        signer: { chain: {}, account: { address } } as WalletClient
       })
 
       expect(result).toBe('0xviemHash')
@@ -177,14 +179,14 @@ describe('transferMoonbeamToEth', () => {
   it('should handle messageId generation correctly', async () => {
     await transferMoonbeamToEth(from, {
       ...baseOptions,
-      signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
+      signer: { chain: {}, account: { address } } as WalletClient
     })
   })
 
   it('should construct XCM parameters correctly', async () => {
     await transferMoonbeamToEth(from, {
       ...baseOptions,
-      signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
+      signer: { chain: {}, account: { address } } as WalletClient
     })
   })
 
@@ -193,7 +195,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth(from, {
         ...baseOptions,
-        signer: { chain: {}, account: { address: '0xviem' as Address } } as WalletClient
+        signer: { chain: {}, account: { address } } as WalletClient
       })
     ).rejects.toThrow(BridgeHaltedError)
   })

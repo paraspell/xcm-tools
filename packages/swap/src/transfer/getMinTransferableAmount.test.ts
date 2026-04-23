@@ -57,7 +57,7 @@ const createExchangeInfo = (
 });
 
 const createOriginInfo = (chain: TSubstrateChain, assetSymbol: string): TOriginInfo<unknown> => ({
-  api: {} as TPapiApi,
+  api: {},
   chain,
   assetFrom: createAssetInfo(assetSymbol),
 });

@@ -25,7 +25,7 @@ describe('canBuildToExchangeTx', () => {
     location: { parents: 1, interior: 'Here' },
   };
   const defaultOptions = {
-    from: 'Polkadot' as TParachain,
+    from: 'Polkadot',
     amount: '10000000000',
     api: mockApi,
   } as TGetBestAmountOutOptions<unknown, unknown, unknown>;
@@ -166,11 +166,11 @@ describe('canBuildToExchangeTx', () => {
   it('should handle TGetBestAmountOutOptions type for options input', async () => {
     vi.mocked(buildToExchangeExtrinsic).mockResolvedValue(mockTx);
     const getBestAmountOutOptions = {
-      from: 'Moonbeam' as TParachain,
+      from: 'Moonbeam',
       amount: '5000000000000000000',
       currencyFrom: { symbol: 'GLMR' },
       currencyTo: { symbol: 'DOT' },
-      to: 'Polkadot' as TParachain,
+      to: 'Polkadot',
       api: mockApi,
     } as TGetBestAmountOutOptions<unknown, unknown, unknown>;
 

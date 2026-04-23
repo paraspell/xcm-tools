@@ -156,7 +156,7 @@ describe('buildDestInfo', () => {
         decimals: 10,
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAssetInfo)
+      })
       vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
         if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -185,7 +185,7 @@ describe('buildDestInfo', () => {
         decimals: 10,
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAssetInfo)
+      })
       vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
         if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -216,7 +216,7 @@ describe('buildDestInfo', () => {
         decimals: 6,
         location: LOCATION,
         existentialDeposit: DEFAULT_ED
-      } as TAssetInfo)
+      })
       vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
         if (chain === ahToAhBase.origin) return 'DOT'
         return 'KSM'
@@ -247,7 +247,7 @@ describe('buildDestInfo', () => {
       decimals: 6,
       location: LOCATION,
       existentialDeposit: DEFAULT_ED
-    } as TAssetInfo)
+    })
     const options = {
       ...baseOptions,
       api: mockApi,
