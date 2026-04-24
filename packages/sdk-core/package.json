@@ -42,14 +42,6 @@
     "@scure/base": "^2.0.0",
     "viem": "^2.47.6"
   },
-  "peerDependencies": {
-    "@paraspell/swap": "^13.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@paraspell/swap": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
     "@babel/preset-env": "^7.29.2",

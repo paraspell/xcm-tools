@@ -1,5 +1,4 @@
-import type { TExchangeInput } from '@paraspell/sdk';
-import type { PolkadotApi } from '@paraspell/sdk-core';
+import type { PolkadotApi, TExchangeInput } from '@paraspell/sdk-core';
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
@@ -11,7 +10,7 @@ import {
   transfer,
 } from '../transfer';
 import type { TTransferBaseOptions } from '../types';
-import { RouterBuilder } from './RouterBuilder';
+import { SwapBuilder } from './SwapBuilder';
 
 vi.mock('../transfer');
 
@@ -59,8 +58,8 @@ describe('Builder', () => {
     getMinTransferableAmountSpy = vi.mocked(getMinTransferableAmount).mockResolvedValue(123n);
   });
 
-  it('should construct transactions using RouterBuilder', async () => {
-    await RouterBuilder(mockApi)
+  it('should construct transactions using SwapBuilder', async () => {
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -76,8 +75,8 @@ describe('Builder', () => {
     expect(buildApiTransactionsSpy).toHaveBeenCalledWith({ ...transferParams, api: mockApi });
   });
 
-  it('should construct a transfer using RouterBuilder', async () => {
-    await RouterBuilder(mockApi)
+  it('should construct a transfer using SwapBuilder', async () => {
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -93,10 +92,10 @@ describe('Builder', () => {
     expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, api: mockApi });
   });
 
-  it('should construct a transfer using RouterBuilder with onStatusChange', async () => {
+  it('should construct a transfer using SwapBuilder with onStatusChange', async () => {
     const onStatusChange = vi.fn();
 
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -113,12 +112,12 @@ describe('Builder', () => {
     expect(transferSpy).toHaveBeenCalledWith({ ...transferParams, onStatusChange, api: mockApi });
   });
 
-  it('should construct a transfer using RouterBuilder with evmSenderAddress and evmSigner', async () => {
+  it('should construct a transfer using SwapBuilder with evmSenderAddress and evmSigner', async () => {
     const onStatusChange = vi.fn();
     const evmSenderAddress = '0x1234567890';
     const evmSigner = {} as PolkadotSigner;
 
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -143,10 +142,10 @@ describe('Builder', () => {
     });
   });
 
-  it('should construct a transfer using RouterBuilder with feeAsset', async () => {
+  it('should construct a transfer using SwapBuilder with feeAsset', async () => {
     const feeAsset = { symbol: 'DOT' };
 
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -167,10 +166,10 @@ describe('Builder', () => {
     });
   });
 
-  it('should construct a transfer using RouterBuilder with automatic selection', async () => {
+  it('should construct a transfer using SwapBuilder with automatic selection', async () => {
     const onStatusChange = vi.fn();
 
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .to(to)
       .currencyFrom(currencyFrom)
@@ -192,7 +191,7 @@ describe('Builder', () => {
   });
 
   it('should get best amount out', async () => {
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -205,7 +204,7 @@ describe('Builder', () => {
   });
 
   it('should get xcm fees', async () => {
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -235,7 +234,7 @@ describe('Builder', () => {
   });
 
   it('should get min transferable amount', async () => {
-    const result = await RouterBuilder(mockApi)
+    const result = await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)
@@ -262,10 +261,10 @@ describe('Builder', () => {
     });
   });
 
-  it('should construct transactions using RouterBuilder with single element exchange array', async () => {
+  it('should construct transactions using SwapBuilder with single element exchange array', async () => {
     const exchange: TExchangeInput = ['Hydration'];
 
-    await RouterBuilder(mockApi)
+    await SwapBuilder(mockApi)
       .from(from)
       .exchange(exchange)
       .to(to)

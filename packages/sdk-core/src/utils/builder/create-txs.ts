@@ -12,7 +12,7 @@ import type {
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from '../guards'
-import { executeWithRouter } from '../swap'
+import { executeWithSwap } from '../swap'
 import { parseUnits } from '../unit'
 
 export const computeOverridenAmount = <TApi, TRes, TSigner>(
@@ -71,8 +71,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
   const { api, from, swapOptions } = options
 
   if (swapOptions) {
-    // @ts-expect-error - Will be removed in the next version
-    return executeWithRouter({ ...options, swapOptions }, builder => builder.build())
+    return executeWithSwap({ ...options, swapOptions }, builder => builder.build())
   }
 
   const tx = await createTransfer(options)

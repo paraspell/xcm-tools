@@ -61,7 +61,7 @@ import {
   createTransferOrSwap,
   createTransferOrSwapAll,
   createTxOverrideAmount,
-  executeWithRouter,
+  executeWithSwap,
   isConfig,
   isSenderSigner,
   isViemSigner,
@@ -480,7 +480,7 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithRouter({ ...this._options, from, api: this.api, swapOptions }, builder =>
+      return executeWithSwap({ ...this._options, from, api: this.api, swapOptions }, builder =>
         builder.dryRun()
       )
     }
@@ -548,7 +548,7 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithRouter({ ...normalizedOptions, from, swapOptions }, builder =>
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions }, builder =>
         builder.getXcmFees(options)
       )
     }
@@ -629,7 +629,7 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithRouter({ ...normalizedOptions, from, swapOptions }, builder =>
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions }, builder =>
         builder.getTransferableAmount()
       )
     }
@@ -670,7 +670,7 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithRouter({ ...normalizedOptions, from, swapOptions }, builder =>
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions }, builder =>
         builder.getMinTransferableAmount()
       )
     }
@@ -812,7 +812,7 @@ export class GeneralBuilder<
     const { from, senderSource, swapOptions } = this._options
     assertNotEvmTransfer(from, senderSource)
 
-    return executeWithRouter({ ...this._options, from, api: this.api, swapOptions }, builder =>
+    return executeWithSwap({ ...this._options, from, api: this.api, swapOptions }, builder =>
       builder.getBestAmountOut()
     )
   }
@@ -841,7 +841,7 @@ export class GeneralBuilder<
         )
       }
 
-      const txHashes = await executeWithRouter(
+      const txHashes = await executeWithSwap(
         { ...this._options, from, swapOptions, api: this.api },
         builder => builder.signer(senderSource).signAndSubmit()
       )
@@ -878,7 +878,7 @@ export class GeneralBuilder<
         )
       }
 
-      return executeWithRouter({ ...this._options, from, swapOptions, api: this.api }, builder =>
+      return executeWithSwap({ ...this._options, from, swapOptions, api: this.api }, builder =>
         builder.signer(senderSource).signAndSubmit()
       )
     }

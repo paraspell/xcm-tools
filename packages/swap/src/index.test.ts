@@ -8,7 +8,7 @@ import {
   getSupportedAssetsTo,
   getSupportedFeeAssets,
 } from './assets';
-import * as RouterBuilder from './builder/RouterBuilder';
+import * as SwapBuilder from './builder/SwapBuilder';
 import * as Consts from './consts';
 import * as indexExports from './index';
 import * as Types from './types';
@@ -28,9 +28,9 @@ describe('Index re-exports', () => {
     });
   });
 
-  it('should re-export everything from builder/RouterBuilder', () => {
-    (Object.keys(RouterBuilder) as Array<keyof typeof RouterBuilder>).forEach((key) => {
-      expect(moduleExports[key]).toBe(RouterBuilder[key]);
+  it('should re-export everything from builder/SwapBuilder', () => {
+    (Object.keys(SwapBuilder) as Array<keyof typeof SwapBuilder>).forEach((key) => {
+      expect(moduleExports[key]).toBe(SwapBuilder[key]);
     });
   });
 

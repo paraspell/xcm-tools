@@ -1,9 +1,8 @@
 import { registerSwapExtension } from '@paraspell/sdk';
 
-import { RouterBuilder } from './builder/RouterBuilder';
+import { SwapBuilder } from './builder/SwapBuilder';
 
-// @ts-expect-error - Will be removed after the next release
-registerSwapExtension({ RouterBuilder });
+registerSwapExtension({ SwapBuilder });
 
 export {
   getExchangeAssets,
@@ -13,6 +12,6 @@ export {
   getSupportedAssetsTo,
   getSupportedFeeAssets,
 } from './assets';
-export * from './builder/RouterBuilder';
+export * from './builder/SwapBuilder';
 export * from './consts';
 export * from './types';

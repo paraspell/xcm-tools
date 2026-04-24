@@ -4,7 +4,7 @@ import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions, TTransferOptions, TTxFactory } from '../types'
-import { assertSender, assertSubstrateOrigin, assertToIsString, executeWithRouter } from '../utils'
+import { assertSender, assertSubstrateOrigin, assertToIsString, executeWithSwap } from '../utils'
 import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <
@@ -39,7 +39,7 @@ export const normalizeAmountAll = async <
   assertSender(options.sender)
 
   const transferable = swapOptions
-    ? await executeWithRouter({ ...options, api, from, swapOptions }, builder =>
+    ? await executeWithSwap({ ...options, api, from, swapOptions }, builder =>
         builder.getTransferableAmount()
       )
     : await getTransferableAmountInternal({

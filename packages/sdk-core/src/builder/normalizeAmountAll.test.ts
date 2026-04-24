@@ -4,14 +4,14 @@ import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions } from '../types'
-import { executeWithRouter } from '../utils'
+import { executeWithSwap } from '../utils'
 import type { GeneralBuilder } from './Builder'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 vi.mock('../transfer')
 vi.mock('../utils/swap', async importOriginal => ({
   ...(await importOriginal()),
-  executeWithRouter: vi.fn()
+  executeWithSwap: vi.fn()
 }))
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
@@ -121,7 +121,7 @@ describe('normalizeAmountAll', () => {
     expect(result.options.currency).not.toBe(options.currency)
   })
 
-  it('uses executeWithRouter when swapOptions is provided and amount is AMOUNT_ALL', async () => {
+  it('uses executeWithSwap when swapOptions is provided and amount is AMOUNT_ALL', async () => {
     const transferable = 456n
     const initialBuildTx = vi.fn()
     const finalBuildTx = vi.fn()
@@ -132,7 +132,7 @@ describe('normalizeAmountAll', () => {
       slippage: 1
     }
 
-    vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
+    vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) => {
       const routerBuilder = {
         getTransferableAmount: vi.fn<() => Promise<bigint>>().mockResolvedValue(transferable)
       }
@@ -162,7 +162,7 @@ describe('normalizeAmountAll', () => {
 
     const result = await normalizeAmountAll(mockApi, builder, options)
 
-    expect(executeWithRouter).toHaveBeenCalledWith(
+    expect(executeWithSwap).toHaveBeenCalledWith(
       expect.objectContaining({ api: mockApi, swapOptions }),
       expect.any(Function)
     )

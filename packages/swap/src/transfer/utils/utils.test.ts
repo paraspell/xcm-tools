@@ -6,7 +6,7 @@ import { createChainClient as createChainClientPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { transferParams } from '../../builder/RouterBuilder.test';
+import { transferParams } from '../../builder/SwapBuilder.test';
 import type {
   TBuildFromExchangeTxOptions,
   TBuildToExchangeTxOptions,

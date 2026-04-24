@@ -1,9 +1,8 @@
-import type { RouterBuilder } from '@paraspell/swap'
-
+import type { TSwapBuilderFactory } from '../types'
 import { assertExtensionInstalled } from '../utils/assertions'
 
 export interface TSwapExtension {
-  RouterBuilder: typeof RouterBuilder
+  SwapBuilder: TSwapBuilderFactory
 }
 
 let swapExtension: TSwapExtension | undefined

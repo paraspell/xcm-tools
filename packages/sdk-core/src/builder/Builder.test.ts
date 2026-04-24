@@ -35,7 +35,7 @@ import {
   assertToIsString,
   createTransferOrSwap,
   createTransferOrSwapAll,
-  executeWithRouter,
+  executeWithSwap,
   isConfig,
   isSenderSigner,
   isViemSigner
@@ -900,7 +900,7 @@ describe('Builder', () => {
       expect(buildDryRun).toHaveBeenCalledTimes(1)
     })
 
-    it('should dry run with swapOptions via executeWithRouter', async () => {
+    it('should dry run with swapOptions via executeWithSwap', async () => {
       const mockDryRunResult: TDryRunResult = {
         origin: {
           success: true,
@@ -917,7 +917,7 @@ describe('Builder', () => {
 
       const dryRunSpy = vi.fn().mockResolvedValue(mockDryRunResult)
 
-      vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) =>
+      vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) =>
         executor({ dryRun: dryRunSpy } as unknown as Parameters<typeof executor>[0])
       )
 
@@ -931,7 +931,7 @@ describe('Builder', () => {
         .dryRun()
 
       expect(result).toEqual(mockDryRunResult)
-      expect(executeWithRouter).toHaveBeenCalledWith(
+      expect(executeWithSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           swapOptions: SWAP_OPTIONS
@@ -963,11 +963,11 @@ describe('Builder', () => {
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
-    it('should fetch XCM fee with swapOptions via executeWithRouter', async () => {
+    it('should fetch XCM fee with swapOptions via executeWithSwap', async () => {
       const mockFeeResult = {} as TGetXcmFeeResult
       const getXcmFeesSpy = vi.fn().mockResolvedValue(mockFeeResult)
 
-      vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) =>
+      vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) =>
         executor({ getXcmFees: getXcmFeesSpy } as unknown as Parameters<typeof executor>[0])
       )
 
@@ -981,7 +981,7 @@ describe('Builder', () => {
         .getXcmFee()
 
       expect(result).toEqual(mockFeeResult)
-      expect(executeWithRouter).toHaveBeenCalledWith(
+      expect(executeWithSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           swapOptions: SWAP_OPTIONS
         }),
@@ -1434,10 +1434,10 @@ describe('Builder', () => {
       expect(result).toEqual(['0x1234567890abcdef'])
     })
 
-    it('should return tx hashes array from executeWithRouter for swap', async () => {
+    it('should return tx hashes array from executeWithSwap for swap', async () => {
       const mockTxHashes = ['0xabc', '0xdef']
       vi.mocked(isSenderSigner).mockReturnValue(true)
-      vi.mocked(executeWithRouter).mockResolvedValue(mockTxHashes)
+      vi.mocked(executeWithSwap).mockResolvedValue(mockTxHashes)
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -1448,7 +1448,7 @@ describe('Builder', () => {
         .swap(SWAP_OPTIONS)
         .signAndSubmitAll()
 
-      expect(executeWithRouter).toHaveBeenCalledWith(
+      expect(executeWithSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           swapOptions: expect.objectContaining({
@@ -1631,9 +1631,9 @@ describe('Builder', () => {
   })
 
   describe('getBestAmountOut', () => {
-    it('should delegate to executeWithRouter and return the result', async () => {
+    it('should delegate to executeWithSwap and return the result', async () => {
       const mockBestAmount = '500000000'
-      vi.mocked(executeWithRouter).mockResolvedValue(mockBestAmount)
+      vi.mocked(executeWithSwap).mockResolvedValue(mockBestAmount)
 
       const result = await Builder(mockApi)
         .from(CHAIN)
@@ -1643,7 +1643,7 @@ describe('Builder', () => {
         .swap(SWAP_OPTIONS)
         .getBestAmountOut()
 
-      expect(executeWithRouter).toHaveBeenCalledWith(
+      expect(executeWithSwap).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: CHAIN,

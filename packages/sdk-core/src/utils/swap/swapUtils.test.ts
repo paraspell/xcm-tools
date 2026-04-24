@@ -9,8 +9,8 @@ import * as assertions from '../assertions'
 import * as guards from '../guards'
 import {
   convertBuilderConfig,
-  createRouterBuilder,
-  executeWithRouter,
+  createSwapBuilder,
+  executeWithSwap,
   normalizeExchange
 } from './swapUtils'
 
@@ -31,9 +31,7 @@ const mockBuilderInstance = {
   onStatusChange: vi.fn().mockReturnThis()
 }
 
-const MockRouterBuilder = vi.fn(
-  () => mockBuilderInstance
-) as unknown as TSwapExtension['RouterBuilder']
+const MockSwapBuilder = vi.fn(() => mockBuilderInstance) as unknown as TSwapExtension['SwapBuilder']
 
 type Api = unknown
 type Res = unknown
@@ -70,17 +68,17 @@ const createBaseOptions = (
 describe('swapUtils', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    registerSwapExtension({ RouterBuilder: MockRouterBuilder })
+    registerSwapExtension({ SwapBuilder: MockSwapBuilder })
   })
 
-  describe('createRouterBuilder', () => {
+  describe('createSwapBuilder', () => {
     it('should throw UnsupportedOperationError when transactOptions.call is set', () => {
       const options = createBaseOptions({
         transactOptions: { call: '0x1234' }
       })
 
-      expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
-      expect(() => createRouterBuilder(options)).toThrow(
+      expect(() => createSwapBuilder(options)).toThrow(UnsupportedOperationError)
+      expect(() => createSwapBuilder(options)).toThrow(
         'Cannot use transact options together with swap options.'
       )
     })
@@ -88,7 +86,7 @@ describe('swapUtils', () => {
     it('should call assertion functions with correct arguments', () => {
       const options = createBaseOptions()
 
-      createRouterBuilder(options)
+      createSwapBuilder(options)
 
       expect(assertions.assertToIsString).toHaveBeenCalledWith(options.to)
       expect(assertions.assertAddressIsString).toHaveBeenCalledWith(options.recipient)
@@ -103,8 +101,8 @@ describe('swapUtils', () => {
         ] as TTransferOptionsWithSwap<Api, Res, Signer>['currency']
       })
 
-      expect(() => createRouterBuilder(options)).toThrow(UnsupportedOperationError)
-      expect(() => createRouterBuilder(options)).toThrow(
+      expect(() => createSwapBuilder(options)).toThrow(UnsupportedOperationError)
+      expect(() => createSwapBuilder(options)).toThrow(
         'Swaps with multiple currencies are not supported.'
       )
     })
@@ -112,7 +110,7 @@ describe('swapUtils', () => {
     it('should build router with correct chain methods when config is undefined', () => {
       const options = createBaseOptions()
 
-      const result = createRouterBuilder(options)
+      const result = createSwapBuilder(options)
 
       expect(mockBuilderInstance.from).toHaveBeenCalledWith('Acala')
       expect(mockBuilderInstance.exchange).toHaveBeenCalledWith(undefined)
@@ -142,7 +140,7 @@ describe('swapUtils', () => {
         }
       })
 
-      createRouterBuilder(options)
+      createSwapBuilder(options)
 
       expect(mockBuilderInstance.onStatusChange).toHaveBeenCalledWith(onStatusChange)
     })
@@ -157,19 +155,19 @@ describe('swapUtils', () => {
         }
       })
 
-      createRouterBuilder(options)
+      createSwapBuilder(options)
 
       expect(mockBuilderInstance.evmSenderAddress).toHaveBeenCalledWith('0xabc123')
       expect(mockBuilderInstance.slippagePct).toHaveBeenCalledWith('2')
     })
 
-    it('should pass api to RouterBuilder', () => {
+    it('should pass api to SwapBuilder', () => {
       const api = createMockApi('PAPI')
       const options = createBaseOptions({ api })
 
-      createRouterBuilder(options)
+      createSwapBuilder(options)
 
-      expect(MockRouterBuilder).toHaveBeenCalledWith(api)
+      expect(MockSwapBuilder).toHaveBeenCalledWith(api)
     })
   })
 
@@ -239,7 +237,7 @@ describe('swapUtils', () => {
     it('should guard against missing swap extension via assertExtensionInstalled', () => {
       const options = createBaseOptions()
 
-      createRouterBuilder(options)
+      createSwapBuilder(options)
 
       expect(assertions.assertExtensionInstalled).toHaveBeenCalledWith(
         expect.anything(),
@@ -250,13 +248,13 @@ describe('swapUtils', () => {
     })
   })
 
-  describe('executeWithRouter', () => {
+  describe('executeWithSwap', () => {
     it('should call executor with the created router builder', async () => {
       const options = createBaseOptions()
       const expectedResult = 'execution-result'
       const executor = vi.fn().mockResolvedValue(expectedResult)
 
-      const result = await executeWithRouter(options, executor)
+      const result = await executeWithSwap(options, executor)
 
       expect(executor).toHaveBeenCalledWith(mockBuilderInstance)
       expect(result).toBe(expectedResult)

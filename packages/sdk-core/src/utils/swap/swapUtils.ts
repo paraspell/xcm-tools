@@ -6,6 +6,7 @@ import type {
   TBuilderConfig,
   TBuilderOptions,
   TExchangeInput,
+  TSwapBuilder,
   TTransferOptionsWithSwap,
   TUrl
 } from '../../types'
@@ -52,7 +53,7 @@ export const convertBuilderConfig = <TApi>(
   }
 }
 
-export const createRouterBuilder = <TApi, TRes, TSigner>(
+export const createSwapBuilder = <TApi, TRes, TSigner>(
   options: TTransferOptionsWithSwap<TApi, TRes, TSigner>
 ) => {
   const { api } = options
@@ -61,7 +62,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Cannot use transact options together with swap options.')
   }
 
-  const { RouterBuilder } = getSwapExtensionOrThrow()
+  const { SwapBuilder } = getSwapExtensionOrThrow()
 
   const {
     from,
@@ -80,8 +81,7 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
   }
 
-  // @ts-expect-error - Will be removed in the next version
-  let builder = RouterBuilder(api)
+  let builder = SwapBuilder<TApi, TRes, TSigner>(api)
     .from(from)
     .exchange(exchange)
     .to(to)
@@ -94,19 +94,18 @@ export const createRouterBuilder = <TApi, TRes, TSigner>(
     .slippagePct(slippage?.toString() ?? DEFAULT_SWAP_SLIPPAGE.toString())
 
   if (onStatusChange) {
-    // @ts-expect-error - Will be removed in the next version
     builder = builder.onStatusChange(onStatusChange)
   }
 
   return builder
 }
 
-export const executeWithRouter = async <TApi, TRes, TSigner, T>(
+export const executeWithSwap = async <TApi, TRes, TSigner, T>(
   options: TTransferOptionsWithSwap<TApi, TRes, TSigner>,
-  executor: (builder: ReturnType<typeof createRouterBuilder<TApi, TRes, TSigner>>) => Promise<T>
+  executor: (builder: TSwapBuilder<TApi, TRes, TSigner>) => Promise<T>
 ) => {
-  const routerBuilder = createRouterBuilder(options)
-  return executor(routerBuilder)
+  const swapBuilder = createSwapBuilder(options)
+  return executor(swapBuilder)
 }
 
 export const normalizeExchange = (exchange: TExchangeInput): TExchangeInput =>

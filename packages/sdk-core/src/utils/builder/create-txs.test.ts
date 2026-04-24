@@ -15,7 +15,7 @@ import type {
 } from '../../types'
 import { assertToIsString } from '../assertions'
 import { isConfig } from '../guards'
-import { executeWithRouter } from '../swap'
+import { executeWithSwap } from '../swap'
 import { parseUnits } from '../unit'
 import {
   computeOverridenAmount,
@@ -228,15 +228,15 @@ describe('createTransferOrSwapAll', () => {
       tx: mockTx
     })
     expect(createTransfer).toHaveBeenCalledWith(options)
-    expect(executeWithRouter).not.toHaveBeenCalled()
+    expect(executeWithSwap).not.toHaveBeenCalled()
   })
 
-  it('delegates to executeWithRouter when swapOptions is provided', async () => {
+  it('delegates to executeWithSwap when swapOptions is provided', async () => {
     const swapTxs = [
       { type: 'SWAP', api: 'api1', chain: 'Acala', tx: 'tx1' },
       { type: 'TRANSFER', api: 'api2', chain: 'Hydration', tx: 'tx2' }
     ]
-    vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
+    vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) => {
       const fakeBuilder = { build: vi.fn().mockResolvedValue(swapTxs) }
       return executor(fakeBuilder as never)
     })
@@ -250,7 +250,7 @@ describe('createTransferOrSwapAll', () => {
     const result = await createTransferOrSwapAll(options)
 
     expect(result).toEqual(swapTxs)
-    expect(executeWithRouter).toHaveBeenCalled()
+    expect(executeWithSwap).toHaveBeenCalled()
     expect(createTransfer).not.toHaveBeenCalled()
   })
 })
@@ -275,7 +275,7 @@ describe('createTransferOrSwap', () => {
       { type: 'SWAP', api: 'a1', chain: 'Acala', tx: 'tx1' },
       { type: 'TRANSFER', api: 'a2', chain: 'Hydration', tx: 'tx2' }
     ]
-    vi.mocked(executeWithRouter).mockImplementation(async (_opts, executor) => {
+    vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) => {
       const fakeBuilder = { build: vi.fn().mockResolvedValue(multiTxs) }
       return executor(fakeBuilder as never)
     })
