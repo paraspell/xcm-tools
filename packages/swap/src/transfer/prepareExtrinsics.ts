@@ -24,9 +24,10 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
 
   if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
     try {
-      const amountOut = await dex.getAmountOut(exchange.apiPjs, {
+      const amountOut = await dex.getAmountOut({
         ...options,
-        papiApi: exchange.apiPapi,
+        api: exchange.api,
+        apiPjs: exchange.apiPjs,
         assetFrom: exchange.assetFrom,
         assetTo: exchange.assetTo,
       });
@@ -46,10 +47,11 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner>(
         currencyTo,
         feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
         calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-          dex.getAmountOut(exchange.apiPjs, {
+          dex.getAmountOut({
             ...options,
             amount: amountIn,
-            papiApi: options.exchange.apiPapi,
+            api: options.exchange.api,
+            apiPjs: options.exchange.apiPjs,
             assetFrom: options.exchange.assetFrom,
             assetTo: assetTo ?? options.exchange.assetTo,
           }),

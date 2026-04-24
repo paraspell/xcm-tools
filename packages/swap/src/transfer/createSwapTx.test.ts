@@ -100,8 +100,12 @@ describe('createSwapTx', () => {
 
     expect(spy).toHaveBeenCalledOnce();
     expect(spy).toHaveBeenCalledWith(
-      swapApi,
-      expect.objectContaining({ ...options, isForFeeEstimation: false }),
+      expect.objectContaining({
+        ...options,
+        apiPjs: swapApi,
+        api: mockExchangeApi,
+        isForFeeEstimation: false,
+      }),
       10n,
     );
 

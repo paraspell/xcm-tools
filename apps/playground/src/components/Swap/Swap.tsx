@@ -18,6 +18,7 @@ import { useEffect } from 'react';
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
 import { useEvmWallet, useSwapCurrencyOptions } from '../../hooks';
 import type { TFormValues } from '../../types';
+import { isSwapActive } from '../../utils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { PolkadotWalletSelectModal } from '../WalletSelectModal/WalletSelectModal';
@@ -30,8 +31,7 @@ export const Swap = ({ form }: Props) => {
   const { colorScheme } = useMantineColorScheme();
 
   const [opened, { open, close }] = useDisclosure(
-    form.values.swapOptions.currencyTo.currencyOptionId !== '' ||
-      form.values.swapOptions.currencyTo.isCustomCurrency,
+    isSwapActive(form.values.swapOptions),
   );
 
   const {

@@ -4,10 +4,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import type {
   TAssetInfo,
   TBridgeStatus,
-  TChain,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunError,
@@ -18,6 +18,7 @@ import type {
   TPaymentInfo,
   TSender,
   TSerializedExtrinsics,
+  TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
   TSubstrateChain,
   TUrl,
@@ -30,7 +31,6 @@ import {
   createAssetId,
   createClientCache,
   createClientPoolHelpers,
-  DEFAULT_TTL_MS,
   EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
@@ -39,14 +39,12 @@ import {
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
   isConfig,
-  isExternalChain,
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
   PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
-  resolveChainApi,
   RuntimeApiUnavailableError,
   UnsupportedOperationError,
   wrapTxBypass,
@@ -115,23 +113,10 @@ const extractDryRunXcmFailureReason = (result: any): string => {
 };
 
 class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
-  public readonly type = "DEDOT";
+  readonly type = "DEDOT";
 
-  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this._chain !== undefined || isExternalChain(chain)) {
-      return;
-    }
-
-    this._ttlMs = clientTtlMs;
-    this._chain = chain;
-
-    this._api = await resolveChainApi(this._config, chain, (wsUrl) =>
-      leaseClient(wsUrl, this._ttlMs),
-    );
-  }
-
-  createApiInstance(wsUrl: TUrl) {
-    return leaseClient(wsUrl, this._ttlMs);
+  leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TDedotApi> {
+    return leaseClient(wsUrl, ttlMs);
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -146,7 +131,10 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
   }
 
   private convertToDedotCall<
-    T extends TSerializedExtrinsics | TSerializedStateQuery,
+    T extends
+      | TSerializedExtrinsics
+      | TSerializedStateQuery
+      | TSerializedRuntimeApiQuery,
   >({ module, method }: T) {
     return {
       module: lowercaseFirstLetter(module),
@@ -166,6 +154,10 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     return Promise.resolve(this.api.toTx(hex as `0x${string}`));
   }
 
+  txToHex(tx: TDedotExtrinsic): Promise<string> {
+    return Promise.resolve(tx.callHex);
+  }
+
   queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
@@ -174,10 +166,10 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     );
   }
 
-  queryRuntimeApi<T>(serialized: TSerializedStateQuery): Promise<T> {
+  queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
-    return this.api.call[module][method](...params);
+    return this.api.call[module][method](...params.map(transform));
   }
 
   callBatchMethod(calls: TDedotExtrinsic[], mode: BatchMode) {
@@ -221,22 +213,6 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     address: string,
   ): Promise<TPaymentInfo> {
     return tx.paymentInfo(address);
-  }
-
-  async quoteAhPrice(
-    fromMl: TLocation,
-    toMl: TLocation,
-    amountIn: bigint,
-    includeFee = true,
-  ) {
-    const quoted =
-      await this.api.call.assetConversionApi.quotePriceExactTokensForTokens(
-        fromMl,
-        toMl,
-        amountIn,
-        includeFee,
-      );
-    return quoted !== undefined && quoted !== null ? BigInt(quoted) : undefined;
   }
 
   getEvmStorage(contract: string, slot: string): Promise<string> {
@@ -660,12 +636,16 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     }
 
     try {
-      const res = await this.quoteAhPrice(
-        localizeLocation(chain, nativeAsset.location),
-        assetLocalizedLoc,
-        deliveryFeeResolved,
-        false,
-      );
+      const res = await this.queryRuntimeApi<bigint | undefined>({
+        module: "AssetConversionApi",
+        method: "quote_price_exact_tokens_for_tokens",
+        params: [
+          localizeLocation(chain, nativeAsset.location),
+          assetLocalizedLoc,
+          deliveryFeeResolved,
+          false,
+        ],
+      });
 
       return res ?? 0n;
     } catch (_e) {
@@ -706,12 +686,11 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
     const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location);
 
-    const convertedExecFee = await ahApi.quoteAhPrice(
-      RELAY_LOCATION,
-      ahLocalizedLoc,
-      fallbackExecFee,
-      false,
-    );
+    const convertedExecFee = await ahApi.queryRuntimeApi<bigint | undefined>({
+      module: "AssetConversionApi",
+      method: "quote_price_exact_tokens_for_tokens",
+      params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false],
+    });
 
     if (typeof convertedExecFee === "bigint") {
       return convertedExecFee;

@@ -367,10 +367,9 @@ describe('getRouterFees', () => {
     await arg.calculateMinAmountOut(123n, customAssetTo);
 
     expect(spy).toHaveBeenLastCalledWith(
-      localOptions.exchange.apiPjs,
       expect.objectContaining({
+        apiPjs: localOptions.exchange.apiPjs,
         amount: 123n,
-        papiApi: localOptions.exchange.apiPapi,
         assetFrom: localOptions.exchange.assetFrom,
         assetTo: customAssetTo,
         slippagePct: '1',
@@ -412,10 +411,9 @@ describe('getRouterFees', () => {
     await arg.calculateMinAmountOut(777n);
 
     expect(spy).toHaveBeenLastCalledWith(
-      localOptions.exchange.apiPjs,
       expect.objectContaining({
+        apiPjs: localOptions.exchange.apiPjs,
         amount: 777n,
-        papiApi: localOptions.exchange.apiPapi,
         assetFrom: localOptions.exchange.assetFrom,
         assetTo: localOptions.exchange.assetTo,
         slippagePct: '1',

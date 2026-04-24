@@ -86,7 +86,7 @@ describe('selectBestExchange', () => {
 
     expect(calculateFromExchangeFee).toHaveBeenCalledTimes(1);
 
-    expect(vi.mocked(spy).mock.calls[0][2]).toBe(fee);
+    expect(vi.mocked(spy).mock.calls[0][1]).toBe(fee);
   });
 
   it('propagates errors from selectBestExchangeCommon (e.g. unsupported asset)', async () => {

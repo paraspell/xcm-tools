@@ -1,5 +1,4 @@
-import type { TPapiApi } from '@paraspell/sdk';
-import { transform } from '@paraspell/sdk';
+import type { PolkadotApi } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
@@ -13,81 +12,62 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExchangeAsset } from '../../assets';
 import type { TSingleSwapResult, TSwapOptions } from '../../types';
 import AssetHubExchange from './AssetHubExchange';
-import { getQuotedAmount } from './utils';
-
-vi.mock('@paraspell/sdk', async () => {
-  const original = await vi.importActual('@paraspell/sdk');
-  return {
-    ...original,
-    transform: vi.fn(),
-  };
-});
 
 vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   getNativeAssetSymbol: vi.fn(),
+  localizeLocation: vi.fn((_chain: unknown, ml: TLocation) => ml),
 }));
 
-vi.mock('./utils');
 vi.mock('../../assets');
 
 describe('AssetHubExchange', () => {
   let instance: AssetHubExchange;
   let api: ApiPromise;
-  let papiApi: TPapiApi = {} as unknown as TPapiApi;
+  let mockPolkadotApi: {
+    queryRuntimeApi: ReturnType<typeof vi.fn>;
+    deserializeExtrinsics: ReturnType<typeof vi.fn>;
+  };
   const dummyTx = { dummy: true };
   const assetFromML: TLocation = { parents: 0, interior: { X1: [{ PalletInstance: 1 }] } };
   const assetToML: TLocation = { parents: 0, interior: { X1: [{ GeneralIndex: 2 }] } };
-  let baseSwapOptions: TSwapOptions<unknown>;
-  const swapMock = vi.fn(() => dummyTx);
+  let baseSwapOptions: TSwapOptions<unknown, unknown, unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     instance = new AssetHubExchange('AssetHubPolkadot');
     api = {} as unknown as ApiPromise;
-    papiApi = {
-      getUnsafeApi: () => ({
-        tx: {
-          AssetConversion: {
-            swap_exact_tokens_for_tokens: swapMock,
-          },
-        },
-      }),
-    } as unknown as TPapiApi;
+    mockPolkadotApi = {
+      queryRuntimeApi: vi.fn(),
+      deserializeExtrinsics: vi.fn(() => dummyTx),
+    };
 
     baseSwapOptions = {
-      papiApi: papiApi,
+      api: mockPolkadotApi as unknown as PolkadotApi<unknown, unknown, unknown>,
+      apiPjs: api,
       assetFrom: { symbol: 'ASSET1', decimals: 10, isNative: true, location: assetFromML },
       assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
       amount: 1000n,
       sender: 'sender',
       slippagePct: '5',
+      feeCalcAddress: 'sender',
       origin: undefined,
-    } as TSwapOptions<unknown>;
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    vi.mocked(transform).mockImplementation((ml) => ml);
+    } as TSwapOptions<unknown, unknown, unknown>;
   });
 
   describe('swapCurrency', () => {
     it('should throw AmountTooLowError if amount is too small', async () => {
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce({
-        amountOut: 100n,
-        usedFromML: assetFromML,
-        usedToML: assetToML,
-      });
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce({
-        amountOut: 10000000n,
-        usedFromML: assetFromML,
-        usedToML: assetToML,
-      });
+      vi.mocked(mockPolkadotApi.queryRuntimeApi)
+        .mockResolvedValueOnce(100n)
+        .mockResolvedValueOnce(10000000n);
       const opts = {
         ...baseSwapOptions,
         assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
         assetTo: { symbol: 'NATIVE', decimals: 10, location: assetToML },
         amount: 1000n,
-      } as TSwapOptions<unknown>;
-      await expect(instance.swapCurrency(api, opts, 50000n)).rejects.toThrow(AmountTooLowError);
+      } as TSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('NOT_NATIVE');
+      await expect(instance.swapCurrency(opts, 50000n)).rejects.toThrow(AmountTooLowError);
     });
 
     it('should swap using native fee conversion when assetTo.symbol equals native asset symbol', async () => {
@@ -95,67 +75,72 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetTo: { symbol: 'NATIVE', location: assetToML },
         origin: {},
-      } as TSwapOptions<unknown>;
-      const firstQuote = {
-        amountOut: 2000n,
-        usedFromML: assetFromML,
-        usedToML: assetToML,
-      };
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+      } as TSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       const toDestTxFee = 50n;
-      const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
-      expect(swapMock).toHaveBeenCalledWith({
-        path: [assetFromML, assetToML],
-        amount_in: 990n,
-        amount_out_min: 1900n,
-        send_to: 'sender',
-        keep_alive: true,
+      const result: TSingleSwapResult<unknown> = await instance.swapCurrency(opts, toDestTxFee);
+      expect(mockPolkadotApi.deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'AssetConversion',
+        method: 'swap_exact_tokens_for_tokens',
+        params: {
+          path: [assetFromML, assetToML],
+          amount_in: 990n,
+          amount_out_min: 1900n,
+          send_to: 'sender',
+          keep_alive: true,
+        },
       });
       expect(result).toEqual({ tx: dummyTx, amountOut: 1945n });
-      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
     });
 
-    it('should swap using fee conversion via getQuotedAmount when assetTo.symbol is not native', async () => {
+    it('should swap using fee conversion via queryRuntimeApi when assetTo.symbol is not native', async () => {
       const opts = {
         ...baseSwapOptions,
         assetTo: { symbol: 'NON_NATIVE', location: assetToML },
         origin: undefined,
-      } as TSwapOptions<unknown>;
-      const firstQuote = {
-        amountOut: 2000n,
-        usedFromML: assetFromML,
-        usedToML: assetToML,
-      };
-      const feeQuote = {
-        amountOut: 100n,
-        usedFromML: { parents: Parents.ONE, interior: { Here: null } },
-        usedToML: assetToML,
-      };
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote).mockResolvedValueOnce(feeQuote);
+      } as TSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(mockPolkadotApi.queryRuntimeApi)
+        .mockResolvedValueOnce(2000n)
+        .mockResolvedValueOnce(100n);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       const toDestTxFee = 50n;
-      const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
-      expect(swapMock).toHaveBeenCalledWith({
-        path: [assetFromML, assetToML],
-        amount_in: 1000n,
-        amount_out_min: 1900n,
-        send_to: 'sender',
-        keep_alive: true,
+      const result: TSingleSwapResult<unknown> = await instance.swapCurrency(opts, toDestTxFee);
+      expect(mockPolkadotApi.deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'AssetConversion',
+        method: 'swap_exact_tokens_for_tokens',
+        params: {
+          path: [assetFromML, assetToML],
+          amount_in: 1000n,
+          amount_out_min: 1900n,
+          send_to: 'sender',
+          keep_alive: true,
+        },
       });
       expect(result).toEqual({ tx: dummyTx, amountOut: 1890n });
-      expect(getQuotedAmount).toHaveBeenCalledTimes(2);
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(2);
 
-      expect(getQuotedAmount).toHaveBeenCalledWith(
-        papiApi,
-        instance.chain,
-        {
-          parents: Parents.ONE,
-          interior: { Here: null },
-        },
-        assetToML,
-        toDestTxFee,
-        true,
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(2, {
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [
+          {
+            parents: Parents.ONE,
+            interior: { Here: null },
+          },
+          assetToML,
+          toDestTxFee,
+          true,
+        ],
+      });
+    });
+
+    it('should throw RoutingResolutionError if queryRuntimeApi returns undefined', async () => {
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(undefined);
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
+      await expect(instance.swapCurrency(baseSwapOptions, 0n)).rejects.toThrow(
+        RoutingResolutionError,
       );
     });
   });
@@ -177,26 +162,29 @@ describe('AssetHubExchange', () => {
     };
 
     const baseOpts = {
+      api: {} as TSwapOptions<unknown, unknown, unknown>['api'],
+      apiPjs: api,
       amount: 1000n,
       sender: 'sender',
       slippagePct: '5',
+      feeCalcAddress: 'sender',
       origin: undefined,
     };
 
     beforeEach(() => {
       vi.mocked(getExchangeAsset).mockReturnValue(assetNative);
+      baseOpts.api = mockPolkadotApi as unknown as PolkadotApi<unknown, unknown, unknown>;
     });
 
     it('throws when native asset not found', async () => {
       vi.mocked(getExchangeAsset).mockReturnValue(null);
       await expect(
         instance.handleMultiSwap(
-          api,
           {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown>,
+          } as TSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);
@@ -205,12 +193,11 @@ describe('AssetHubExchange', () => {
     it('throws when swapping native asset to itself', async () => {
       await expect(
         instance.handleMultiSwap(
-          api,
           {
             ...baseOpts,
             assetFrom: assetNative,
             assetTo: assetNative,
-          } as TSwapOptions<unknown>,
+          } as TSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);
@@ -225,12 +212,11 @@ describe('AssetHubExchange', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        api,
         {
           ...baseOpts,
           assetFrom: assetNative,
           assetTo: assetB,
-        } as TSwapOptions<unknown>,
+        } as TSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -247,12 +233,11 @@ describe('AssetHubExchange', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        api,
         {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetNative,
-        } as TSwapOptions<unknown>,
+        } as TSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -269,12 +254,11 @@ describe('AssetHubExchange', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        api,
         {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetB,
-        } as TSwapOptions<unknown>,
+        } as TSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -289,12 +273,11 @@ describe('AssetHubExchange', () => {
       instance.swapCurrency = vi.fn().mockResolvedValueOnce({ tx: 'tx1', amountOut: 0n });
       await expect(
         instance.handleMultiSwap(
-          api,
           {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown>,
+          } as TSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -308,12 +291,11 @@ describe('AssetHubExchange', () => {
 
       await expect(
         instance.handleMultiSwap(
-          api,
           {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown>,
+          } as TSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -348,8 +330,8 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown>;
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+      } as TSwapOptions<unknown, unknown, unknown>;
+      await expect(instance.getAmountOut(opts)).rejects.toThrow(
         'Native asset not found for this exchange chain.',
       );
     });
@@ -359,8 +341,8 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetNative,
         assetTo: assetNative,
-      } as TSwapOptions<unknown>;
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+      } as TSwapOptions<unknown, unknown, unknown>;
+      await expect(instance.getAmountOut(opts)).rejects.toThrow(
         'Cannot swap native asset to itself.',
       );
     });
@@ -371,25 +353,18 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const firstQuote = {
-        amountOut: 2000n,
-        usedFromML: assetNative.location,
-        usedToML: assetB.location,
-      };
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
-      const amountOut = await instance.getAmountOut(api, opts);
+      const amountOut = await instance.getAmountOut(opts);
       expect(amountOut).toEqual(2000n);
-      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
-      expect(getQuotedAmount).toHaveBeenCalledWith(
-        papiApi,
-        instance.chain,
-        assetNative.location,
-        assetB.location,
-        1000n,
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledWith({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetNative.location, assetB.location, 1000n, true],
+      });
     });
 
     it('should return amountOut for single hop when assetTo is native', async () => {
@@ -398,25 +373,18 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetNative,
         origin: undefined,
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const firstQuote = {
-        amountOut: 2000n,
-        usedFromML: assetA.location,
-        usedToML: assetNative.location,
-      };
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
-      const amountOut = await instance.getAmountOut(api, opts);
+      const amountOut = await instance.getAmountOut(opts);
       expect(amountOut).toEqual(2000n);
-      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
-      expect(getQuotedAmount).toHaveBeenCalledWith(
-        papiApi,
-        instance.chain,
-        assetA.location,
-        assetNative.location,
-        1000n,
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledWith({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetA.location, assetNative.location, 1000n, true],
+      });
     });
 
     it('should return amountOut for single hop with origin fee deduction', async () => {
@@ -425,24 +393,17 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const firstQuote = {
-        amountOut: 2000n,
-        usedFromML: assetNative.location,
-        usedToML: assetB.location,
-      };
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
-      const amountOut = await instance.getAmountOut(api, opts);
+      const amountOut = await instance.getAmountOut(opts);
       expect(amountOut).toEqual(2000n);
-      expect(getQuotedAmount).toHaveBeenCalledWith(
-        papiApi,
-        instance.chain,
-        assetNative.location,
-        assetB.location,
-        990n,
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledWith({
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetNative.location, assetB.location, 990n, true],
+      });
     });
 
     it('should handle multi-hop swap when both assets are non-native', async () => {
@@ -451,42 +412,27 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const hop1Quote = {
-        amountOut: 1000n,
-        usedFromML: assetA.location,
-        usedToML: assetNative.location,
-      };
-      const hop2Quote = {
-        amountOut: 950n,
-        usedFromML: assetNative.location,
-        usedToML: assetB.location,
-      };
+      vi.mocked(mockPolkadotApi.queryRuntimeApi)
+        .mockResolvedValueOnce(1000n)
+        .mockResolvedValueOnce(950n);
 
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
-
-      const amountOut = await instance.getAmountOut(api, opts);
+      const amountOut = await instance.getAmountOut(opts);
       expect(amountOut).toEqual(950n);
-      expect(getQuotedAmount).toHaveBeenCalledTimes(2);
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(2);
 
-      expect(getQuotedAmount).toHaveBeenNthCalledWith(
-        1,
-        papiApi,
-        instance.chain,
-        assetA.location,
-        assetNative.location,
-        1000n,
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(1, {
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetA.location, assetNative.location, 1000n, true],
+      });
 
-      expect(getQuotedAmount).toHaveBeenNthCalledWith(
-        2,
-        papiApi,
-        instance.chain,
-        assetNative.location,
-        assetB.location,
-        980n, // 1000 * 0.98
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(2, {
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetNative.location, assetB.location, 980n, true],
+      });
     });
 
     it('should handle multi-hop swap with origin fee deduction', async () => {
@@ -495,41 +441,26 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const hop1Quote = {
-        amountOut: 1000n,
-        usedFromML: assetA.location,
-        usedToML: assetNative.location,
-      };
-      const hop2Quote = {
-        amountOut: 950n,
-        usedFromML: assetNative.location,
-        usedToML: assetB.location,
-      };
+      vi.mocked(mockPolkadotApi.queryRuntimeApi)
+        .mockResolvedValueOnce(1000n)
+        .mockResolvedValueOnce(950n);
 
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
-
-      const amountOut = await instance.getAmountOut(api, opts);
+      const amountOut = await instance.getAmountOut(opts);
       expect(amountOut).toEqual(950n);
 
-      expect(getQuotedAmount).toHaveBeenNthCalledWith(
-        1,
-        papiApi,
-        instance.chain,
-        assetA.location,
-        assetNative.location,
-        990n,
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(1, {
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetA.location, assetNative.location, 990n, true],
+      });
 
-      expect(getQuotedAmount).toHaveBeenNthCalledWith(
-        2,
-        papiApi,
-        instance.chain,
-        assetNative.location,
-        assetB.location,
-        980n, // 1000 (hop1Quote.amountOut) * 0.98
-      );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(2, {
+        module: 'AssetConversionApi',
+        method: 'quote_price_exact_tokens_for_tokens',
+        params: [assetNative.location, assetB.location, 980n, true],
+      });
     });
 
     it('should throw AmountTooLowError if first hop returns zero in multi-hop', async () => {
@@ -537,17 +468,11 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const hop1Quote = {
-        amountOut: 0n,
-        usedFromML: assetA.location,
-        usedToML: assetNative.location,
-      };
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(0n);
 
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote);
-
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+      await expect(instance.getAmountOut(opts)).rejects.toThrow(
         `First hop (${assetA.symbol} -> ${assetNative.symbol}) resulted in zero or negative output.`,
       );
     });
@@ -557,24 +482,27 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown>;
+      } as TSwapOptions<unknown, unknown, unknown>;
 
-      const hop1Quote = {
-        amountOut: 1000n,
-        usedFromML: assetA.location,
-        usedToML: assetNative.location,
-      };
-      const hop2Quote = {
-        amountOut: 0n,
-        usedFromML: assetNative.location,
-        usedToML: assetB.location,
-      };
+      vi.mocked(mockPolkadotApi.queryRuntimeApi)
+        .mockResolvedValueOnce(1000n)
+        .mockResolvedValueOnce(0n);
 
-      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
-
-      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+      await expect(instance.getAmountOut(opts)).rejects.toThrow(
         `Second hop (${assetNative.symbol} -> ${assetB.symbol}) resulted in zero or negative output.`,
       );
+    });
+
+    it('should throw RoutingResolutionError if queryRuntimeApi returns undefined', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetNative,
+        assetTo: assetB,
+      } as TSwapOptions<unknown, unknown, unknown>;
+
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(undefined);
+
+      await expect(instance.getAmountOut(opts)).rejects.toThrow(RoutingResolutionError);
     });
   });
 });

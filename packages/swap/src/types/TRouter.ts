@@ -1,4 +1,4 @@
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TPapiApi } from '@paraspell/sdk';
 import type {
   TAmount,
   TAssetInfo,
@@ -13,9 +13,11 @@ import type {
 } from '@paraspell/sdk-core';
 import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 
-export type TSwapOptions<TApi> = {
-  papiApi: TPapiApi;
+export type TSwapOptions<TApi, TRes, TSigner> = {
+  apiPjs: ApiPromise;
+  api: PolkadotApi<TApi, TRes, TSigner>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   amount: bigint;
@@ -26,8 +28,9 @@ export type TSwapOptions<TApi> = {
   isForFeeEstimation?: boolean;
 };
 
-export type TGetAmountOutOptions<TApi> = {
-  papiApi: TPapiApi;
+export type TGetAmountOutOptions<TApi, TRes, TSigner> = {
+  apiPjs: ApiPromise;
+  api: PolkadotApi<TApi, TRes, TSigner>;
   origin?: TOriginInfo<TApi>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
@@ -35,15 +38,15 @@ export type TGetAmountOutOptions<TApi> = {
   slippagePct?: string;
 };
 
-export type TExtrinsic = Extrinsic | TPapiTransaction;
+export type TExtrinsic<TRes> = Extrinsic | TRes;
 
-export type TSingleSwapResult = {
-  tx: TExtrinsic;
+export type TSingleSwapResult<TRes> = {
+  tx: TExtrinsic<TRes>;
   amountOut: bigint;
 };
 
-export type TMultiSwapResult = {
-  txs: TExtrinsic[];
+export type TMultiSwapResult<TRes> = {
+  txs: TExtrinsic<TRes>[];
   amountOut: bigint;
 };
 

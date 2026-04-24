@@ -35,7 +35,7 @@ export const Footer = () => {
               </ActionIcon>
               <ActionIcon
                 component="a"
-                href="https://paraspell.github.io/docs/visualizer/getting-start.html"
+                href="https://paraspell.github.io/docs/xcm-visualizer/getting-started.html"
                 target="_blank"
                 color="gray.6"
                 size={36}

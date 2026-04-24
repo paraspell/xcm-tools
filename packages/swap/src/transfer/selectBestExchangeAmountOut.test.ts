@@ -5,7 +5,9 @@ import { describe, expect, it, vi } from 'vitest';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TGetBestAmountOutOptions } from '../types';
 
-const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
+const mockApi = {
+  createApiForChain: vi.fn().mockResolvedValue({}),
+} as unknown as PolkadotApi<unknown, unknown, unknown>;
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
@@ -52,12 +54,14 @@ describe('selectBestExchangeAmountOut', () => {
     const bestExchange = await selectBestExchangeAmountOut(mockOptions, originApi);
     expect(bestExchange).toBe(fakeDex);
     expect(createApiSpy).toHaveBeenCalledTimes(1);
-    expect(getAmountOutSpy).toHaveBeenCalledWith('fakeApi', {
-      assetFrom: 'assetFrom',
-      assetTo: 'assetTo',
-      amount: BigInt(mockOptions.amount),
-      papiApi: 'fakePapiApi',
-    });
+    expect(getAmountOutSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        apiPjs: 'fakeApi',
+        assetFrom: 'assetFrom',
+        assetTo: 'assetTo',
+        amount: BigInt(mockOptions.amount),
+      }),
+    );
   });
 
   it('should propagate errors thrown by selectBestExchangeCommon', async () => {

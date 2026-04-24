@@ -11,7 +11,7 @@
     </a>
   </p>
   <p align="center">Live at https://xcm-visualizer.paraspell.xyz/</p>
-  <p>XCM Visualizer documentation <a href = "https://paraspell.github.io/docs/visualizer/getting-start.html" \>[here]</p>
+  <p>XCM Visualizer documentation <a href = "https://paraspell.github.io/docs/xcm-visualizer/getting-started.html" \>[here]</p>
 </div>
 
 <br /><br />
@@ -54,7 +54,7 @@
     ```
 ## Contribute to XCM Tools and earn rewards 💰
 
-We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution.html).
+We run an open Bug Bounty Program that rewards contributors for reporting and fixing bugs in the project. More information on bug bounty can be found in the [official documentation](https://paraspell.github.io/docs/contribution-guidelines.html).
 
 ## Get Support 🚑
 

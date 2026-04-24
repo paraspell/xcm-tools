@@ -38,10 +38,11 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
           overrideAmount !== undefined
             ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true)
             : amount;
-        const amountOut = await dex.getAmountOut(exchange.apiPjs, {
+        const amountOut = await dex.getAmountOut({
           ...options,
           amount: amt,
-          papiApi: exchange.apiPapi,
+          api: exchange.api,
+          apiPjs: exchange.apiPjs,
           assetFrom: exchange.assetFrom,
           assetTo: exchange.assetTo,
         });
@@ -61,10 +62,11 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
           sender: evmSenderAddress ?? sender,
           recipient: recipient ?? sender,
           calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-            dex.getAmountOut(exchange.apiPjs, {
+            dex.getAmountOut({
               ...options,
               amount: amountIn,
-              papiApi: options.exchange.apiPapi,
+              apiPjs: options.exchange.apiPjs,
+              api: options.exchange.api,
               assetFrom: options.exchange.assetFrom,
               assetTo: assetTo ?? options.exchange.assetTo,
               slippagePct: '1',
@@ -74,10 +76,11 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
         return tx;
       };
 
-      const mainAmountOut = await dex.getAmountOut(exchange.apiPjs, {
+      const mainAmountOut = await dex.getAmountOut({
         ...options,
         amount,
-        papiApi: exchange.apiPapi,
+        api: exchange.api,
+        apiPjs: exchange.apiPjs,
         assetFrom: exchange.assetFrom,
         assetTo: exchange.assetTo,
       });

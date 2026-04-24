@@ -44,7 +44,6 @@ vi.mock('../utils', async () => {
   const actual = await vi.importActual('../utils')
   return {
     ...actual,
-    createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
     isTLocation: vi.fn(),
     createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryLocation'),
     getRelayChainOf: vi.fn().mockReturnValue('Polkadot'),
@@ -107,7 +106,7 @@ class TestParachain extends TestParachainBase {
     return 'transferPolkadotXCM called'
   }
 
-  public exposeTransferToEthereum(
+  exposeTransferToEthereum(
     options: TPolkadotXCMTransferOptions<unknown, unknown, unknown>,
     useOnlyDepositAsset = false
   ) {

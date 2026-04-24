@@ -33,7 +33,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  public async handleEthBridgeNativeTransfer<TApi, TRes, TSigner>(
+  async handleEthBridgeNativeTransfer<TApi, TRes, TSigner>(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, version, destination, sender, recipient, paraIdTo, assetInfo: asset } = input

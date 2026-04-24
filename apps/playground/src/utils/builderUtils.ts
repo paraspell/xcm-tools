@@ -31,6 +31,12 @@ import type {
   TTransferCurrencyType,
 } from '../types';
 
+export const isSwapActive = (swapOptions: TSwapOptions): boolean =>
+  !!(
+    swapOptions.currencyTo.currencyOptionId ||
+    swapOptions.currencyTo.isCustomCurrency
+  );
+
 // Transforms apiOverrides array used by URL params to Record used by the SDK
 export const transformApiOverrides = (
   apiOverrides: TAdvancedOptions['apiOverrides'],

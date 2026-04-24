@@ -1,5 +1,4 @@
 import { createChainClient, type TChain } from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { TSwapOptions } from '../types';
@@ -33,15 +32,14 @@ describe('ExchangeChain', () => {
   });
 
   it('should return correct multi swap result using swapCurrency', async () => {
-    const mockApi = {} as ApiPromise;
-    const mockOptions = {} as TSwapOptions<unknown>;
+    const mockOptions = {} as TSwapOptions<unknown, unknown, unknown>;
     const mockFee = 0n;
 
     const chain = new MockExchangeChain('Acala');
 
-    const result = await chain.handleMultiSwap(mockApi, mockOptions, mockFee);
+    const result = await chain.handleMultiSwap(mockOptions, mockFee);
 
-    expect(chain.swapCurrency).toHaveBeenCalledWith(mockApi, mockOptions, mockFee);
+    expect(chain.swapCurrency).toHaveBeenCalledWith(mockOptions, mockFee);
     expect(result).toEqual({
       txs: ['mockTxHash'],
       amountOut: 1000n,

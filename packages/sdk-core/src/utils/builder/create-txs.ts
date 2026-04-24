@@ -71,6 +71,7 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
   const { api, from, swapOptions } = options
 
   if (swapOptions) {
+    // @ts-expect-error - Will be removed in the next version
     return executeWithRouter({ ...options, swapOptions }, builder => builder.build())
   }
 

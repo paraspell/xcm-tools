@@ -92,7 +92,7 @@ export const XcmAnalyser = () => {
         <div className={classes.controls}>
           <Button
             component="a"
-            href="https://paraspell.github.io/docs/analyser/getng-strtd.html"
+            href="https://paraspell.github.io/docs/xcm-analyser/getting-started.html"
             target="_blank"
             size="lg"
             radius="lg"

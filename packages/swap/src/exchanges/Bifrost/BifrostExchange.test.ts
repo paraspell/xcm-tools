@@ -80,12 +80,13 @@ describe('BifrostExchange', () => {
 
   describe('swapCurrency', () => {
     const swapOptions = {
+      apiPjs: mockApi,
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
       sender: '5xxxxxx',
       slippagePct: '0.5',
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
     const mockToDestTransactionFee = 1000n;
 
     beforeEach(() => {
@@ -110,9 +111,9 @@ describe('BifrostExchange', () => {
     it('should throw an error if currency from token is not found', async () => {
       vi.mocked(findToken).mockImplementationOnce(() => undefined);
 
-      await expect(
-        chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrow('Currency from not found');
+      await expect(chain.swapCurrency(swapOptions, mockToDestTransactionFee)).rejects.toThrow(
+        'Currency from not found',
+      );
     });
 
     it('should throw an error if currency to token is not found', async () => {
@@ -120,15 +121,14 @@ describe('BifrostExchange', () => {
         .mockImplementationOnce((tm, symbol) => tm[symbol])
         .mockImplementationOnce(() => undefined);
 
-      await expect(
-        chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrow('Currency to not found');
+      await expect(chain.swapCurrency(swapOptions, mockToDestTransactionFee)).rejects.toThrow(
+        'Currency to not found',
+      );
     });
 
     it('throws AmountTooLowError when input amount is negative (amountWithoutFee.isNegative)', async () => {
       await expect(
         chain.swapCurrency(
-          mockApi,
           {
             ...swapOptions,
             amount: -1n,
@@ -143,9 +143,9 @@ describe('BifrostExchange', () => {
         extrinsic: null,
       });
 
-      await expect(
-        chain.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrow('Extrinsic is null');
+      await expect(chain.swapCurrency(swapOptions, mockToDestTransactionFee)).rejects.toThrow(
+        'Extrinsic is null',
+      );
     });
 
     it('should throw an error if the amount is too small to cover the fees', async () => {
@@ -158,7 +158,6 @@ describe('BifrostExchange', () => {
 
       await expect(
         chain.swapCurrency(
-          mockApi,
           {
             ...swapOptions,
             assetFrom: {
@@ -192,7 +191,6 @@ describe('BifrostExchange', () => {
       });
 
       const result = await chain.swapCurrency(
-        mockApi,
         {
           ...swapOptions,
           amount: 100000000000000n,
@@ -207,10 +205,11 @@ describe('BifrostExchange', () => {
 
   describe('getAmountOut', () => {
     const swapOptions = {
+      apiPjs: mockApi,
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
-    } as TSwapOptions<unknown>;
+    } as TSwapOptions<unknown, unknown, unknown>;
 
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);
@@ -233,9 +232,7 @@ describe('BifrostExchange', () => {
     it('should throw an error if currency from token is not found', async () => {
       vi.mocked(findToken).mockImplementationOnce(() => undefined);
 
-      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrow(
-        'Currency from not found',
-      );
+      await expect(chain.getAmountOut(swapOptions)).rejects.toThrow('Currency from not found');
     });
 
     it('should throw an error if currency to token is not found', async () => {
@@ -243,13 +240,11 @@ describe('BifrostExchange', () => {
         .mockImplementationOnce((tm, symbol) => tm[symbol])
         .mockImplementationOnce(() => undefined);
 
-      await expect(chain.getAmountOut(mockApi, swapOptions)).rejects.toThrow(
-        'Currency to not found',
-      );
+      await expect(chain.getAmountOut(swapOptions)).rejects.toThrow('Currency to not found');
     });
 
     it('should return the amount out', async () => {
-      const result = await chain.getAmountOut(mockApi, swapOptions);
+      const result = await chain.getAmountOut(swapOptions);
       expect(result).toEqual(1000000000000n);
     });
   });

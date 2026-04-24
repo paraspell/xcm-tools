@@ -39,7 +39,6 @@ import {
   XcmAnalyserPage,
   XcmTransferPage,
 } from '../../routes';
-import { XcmUtilsPage } from '../../routes/XcmUtilsPage';
 import { LinksGroup } from '../LinksGroup/LinksGroup';
 import { PageRoute } from '../PageRoute';
 import { Header } from './Header/Header';
@@ -335,7 +334,6 @@ export const AppShell = () => {
             path={PageRoute.XCM_SDK.EVM_TRANSFER}
             Component={EvmTransferPage}
           />
-          <Route path={PageRoute.XCM_SDK.XCM_UTILS} Component={XcmUtilsPage} />
           <Route
             path={PageRoute.XCM_SDK.ASSETS}
             Component={AssetsQueriesPage}

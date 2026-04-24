@@ -16,11 +16,13 @@ export const getMythosOriginFee = async <TApi, TRes, TSigner>(
 
   const nativeAsset = findNativeAssetInfoOrThrow('Mythos')
 
-  const feeConverted = await ahApi.quoteAhPrice(
-    DOT_LOCATION,
-    nativeAsset.location,
-    bridgeFee + ahExecutionFee
-  )
+  const feeConvertedRes = await ahApi.queryRuntimeApi<bigint | null>({
+    module: 'AssetConversionApi',
+    method: 'quote_price_exact_tokens_for_tokens',
+    params: [DOT_LOCATION, nativeAsset.location, bridgeFee + ahExecutionFee, true]
+  })
+
+  const feeConverted = feeConvertedRes != null ? BigInt(feeConvertedRes) : undefined
 
   await ahApi.disconnect()
 

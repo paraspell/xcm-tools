@@ -35,12 +35,13 @@ export const getBestAmountOut = async <TApi, TRes, TSigner>(
   const { config } = api;
   const exchangeConfig = convertBuilderConfig<TApi>(config);
   const pjsApi = await dex.createApiInstance(exchangeConfig);
-  const papiApi = await dex.createApiInstancePapi(exchangeConfig);
+  const exchangeApi = await api.createApiForChain(dex.chain);
 
   return {
     exchange: dex.chain,
-    amountOut: await dex.getAmountOut(pjsApi, {
-      papiApi,
+    amountOut: await dex.getAmountOut({
+      api: exchangeApi,
+      apiPjs: pjsApi,
       assetFrom,
       assetTo,
       amount: applyDecimalAbstraction(

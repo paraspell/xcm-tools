@@ -12,6 +12,6 @@ export const ASSETS_PALLETS = [
   'OrmlTokens'
 ] as const
 
-export const OTHER_PALLETS = ['Utility'] as const
+export const OTHER_PALLETS = ['Utility', 'AssetConversion'] as const
 
 export const PALLETS = [...CROSSCHAIN_PALLETS, ...ASSETS_PALLETS, ...OTHER_PALLETS] as const
