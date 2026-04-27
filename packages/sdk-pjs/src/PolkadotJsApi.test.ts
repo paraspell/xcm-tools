@@ -429,6 +429,13 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('encodeTx', () => {
+    it('should wrap the hex string in an encoded object', () => {
+      const hex = '0xdeadbeef'
+      expect(polkadotApi.encodeTx(hex)).toEqual({ encoded: hex })
+    })
+  })
+
   describe('queryState', () => {
     it('should call api.query with lowercased module and method and return JSON', async () => {
       const mockResult = {

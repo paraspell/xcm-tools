@@ -10,7 +10,8 @@ describe('createTransactInstructions', () => {
     clone: vi.fn(),
     init: vi.fn(),
     txFromHex: vi.fn(),
-    getPaymentInfo: vi.fn()
+    getPaymentInfo: vi.fn(),
+    encodeTx: vi.fn((hex: string) => ({ encoded: hex }))
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockWeight: TWeight = {

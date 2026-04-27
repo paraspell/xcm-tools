@@ -60,7 +60,7 @@ export const createTransactInstructions = async <TApi, TRes, TSigner>(
       Transact: {
         origin_kind: originKind ?? 'SovereignAccount',
         [weightKey]: convertWeight(weight),
-        call
+        call: typeof call === 'string' ? api.encodeTx(call) : call
       }
     },
     {

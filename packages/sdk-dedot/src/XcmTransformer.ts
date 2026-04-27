@@ -167,9 +167,7 @@ export const transform = (obj: any): any => {
         const k = snakeToCamel(key);
 
         if (key === "call") {
-          newObj[k] = {
-            encoded: v,
-          };
+          newObj[k] = v;
           continue;
         }
 

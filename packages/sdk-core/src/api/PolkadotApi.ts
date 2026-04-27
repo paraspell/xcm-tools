@@ -73,6 +73,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   abstract deserializeExtrinsics(serialized: TSerializedExtrinsics): TRes
   abstract txFromHex(hex: string): Promise<TRes>
   abstract txToHex(tx: TRes): Promise<string>
+  abstract encodeTx(hex: string): unknown
   abstract queryState<T>(serialized: TSerializedStateQuery): Promise<T>
   abstract queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   abstract callBatchMethod(calls: TRes[], mode: BatchMode): TRes

@@ -158,6 +158,10 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     return Promise.resolve(tx.callHex);
   }
 
+  encodeTx(hex: string) {
+    return { encoded: hex };
+  }
+
   queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);

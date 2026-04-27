@@ -128,6 +128,10 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     return Promise.resolve(tx.toHex())
   }
 
+  encodeTx(hex: string) {
+    return { encoded: hex }
+  }
+
   async queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized
     const { module, method } = this.convertToPjsStateQuery(serialized)
@@ -641,7 +645,8 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     const isSuccess = result.Ok && result.Ok.executionResult.Complete
 
     if (!isSuccess) {
-      const error = result.Ok.executionResult.Incomplete.error
+      const execRes = result.Ok?.executionResult
+      const error = execRes?.Incomplete?.error ?? execRes?.Error?.error
       const failureReason = typeof error === 'string' ? error : error.error
       return { success: false, failureReason, asset }
     }

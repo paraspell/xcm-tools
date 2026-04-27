@@ -1103,6 +1103,19 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('encodeTx', () => {
+    it('should return Binary built from the hex string', () => {
+      const hex = '0xdeadbeef'
+      const binaryData = new Uint8Array([0xde, 0xad, 0xbe, 0xef])
+      vi.mocked(Binary.fromHex).mockReturnValue(binaryData)
+
+      const result = papiApi.encodeTx(hex)
+
+      expect(Binary.fromHex).toHaveBeenCalledWith(hex)
+      expect(result).toBe(binaryData)
+    })
+  })
+
   describe('getDryRunCall', () => {
     let dryRunApiCallMock: Mock
     const testAddress = 'some_address'

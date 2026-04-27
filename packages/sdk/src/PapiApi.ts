@@ -159,6 +159,10 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     return toHex(encoded)
   }
 
+  encodeTx(hex: string) {
+    return Binary.fromHex(hex)
+  }
+
   queryState<T>({ module, method, params }: TSerializedStateQuery): Promise<T> {
     return this.untypedApi.query[module][method].getValue(...params.map(transform)) as Promise<T>
   }

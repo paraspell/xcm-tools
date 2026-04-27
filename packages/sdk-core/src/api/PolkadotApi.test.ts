@@ -17,6 +17,7 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown> {
   deserializeExtrinsics = () => ({})
   txFromHex = () => Promise.resolve({})
   txToHex = () => Promise.resolve('')
+  encodeTx = () => ({})
   queryState = <T>() => Promise.resolve({} as T)
   queryRuntimeApi = <T>() => Promise.resolve({} as T)
   callBatchMethod = () => ({})
