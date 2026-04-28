@@ -900,6 +900,46 @@ describe('Builder', () => {
       expect(buildDryRun).toHaveBeenCalledTimes(1)
     })
 
+    it('should dry run preview with swapOptions via executeWithSwap', async () => {
+      const mockDryRunResult: TDryRunResult = {
+        origin: {
+          success: true,
+          fee: 500n,
+          asset: {
+            symbol: 'DOT',
+            decimals: 10
+          } as TAssetInfo,
+          forwardedXcms: [],
+          destParaId: 0
+        },
+        hops: []
+      }
+
+      const dryRunPreviewSpy = vi.fn().mockResolvedValue(mockDryRunResult)
+
+      vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) =>
+        executor({ dryRunPreview: dryRunPreviewSpy } as unknown as Parameters<typeof executor>[0])
+      )
+
+      const previewOptions = { mintFeeAssets: true }
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+        .swap(SWAP_OPTIONS)
+        .dryRunPreview(previewOptions)
+
+      expect(result).toEqual(mockDryRunResult)
+      expect(executeWithSwap).toHaveBeenCalledWith(
+        expect.objectContaining({ swapOptions: SWAP_OPTIONS }),
+        expect.any(Function)
+      )
+      expect(dryRunPreviewSpy).toHaveBeenCalledWith(previewOptions)
+      expect(buildDryRun).not.toHaveBeenCalled()
+    })
+
     it('should dry run with swapOptions via executeWithSwap', async () => {
       const mockDryRunResult: TDryRunResult = {
         origin: {
@@ -1012,6 +1052,36 @@ describe('Builder', () => {
       expect(disconnectSpy).toHaveBeenCalledTimes(1)
     })
 
+    it('should fetch origin XCM fee with swapOptions via executeWithSwap', async () => {
+      const mockFeeResult = {} as TXcmFeeDetail
+      const getOriginXcmFeeSpy = vi.fn().mockResolvedValue(mockFeeResult)
+
+      vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) =>
+        executor({ getOriginXcmFee: getOriginXcmFeeSpy } as unknown as Parameters<
+          typeof executor
+        >[0])
+      )
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+        .swap(SWAP_OPTIONS)
+        .getOriginXcmFee()
+
+      expect(result).toEqual(mockFeeResult)
+      expect(executeWithSwap).toHaveBeenCalledWith(
+        expect.objectContaining({
+          swapOptions: SWAP_OPTIONS
+        }),
+        expect.any(Function)
+      )
+      expect(getOriginXcmFeeSpy).toHaveBeenCalledOnce()
+      expect(getOriginXcmFee).not.toHaveBeenCalled()
+    })
+
     it('should fetch transferable amount', async () => {
       const amount = 1000n
 
@@ -1088,6 +1158,34 @@ describe('Builder', () => {
       expect(getTransferInfo).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
       expect(assertToIsString).toHaveBeenCalledWith(CHAIN_2)
+    })
+
+    it('should fetch transfer info with swapOptions via executeWithSwap', async () => {
+      const mockTransferInfo = {} as TTransferInfo
+      const getSwapInfoSpy = vi.fn().mockResolvedValue(mockTransferInfo)
+
+      vi.mocked(executeWithSwap).mockImplementation(async (_opts, executor) =>
+        executor({ getSwapInfo: getSwapInfoSpy } as unknown as Parameters<typeof executor>[0])
+      )
+
+      const result = await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+        .swap(SWAP_OPTIONS)
+        .getTransferInfo()
+
+      expect(result).toEqual(mockTransferInfo)
+      expect(executeWithSwap).toHaveBeenCalledWith(
+        expect.objectContaining({
+          swapOptions: SWAP_OPTIONS
+        }),
+        expect.any(Function)
+      )
+      expect(getSwapInfoSpy).toHaveBeenCalledOnce()
+      expect(getTransferInfo).not.toHaveBeenCalled()
     })
 
     it('should call getTransferInfo when fetching receivable amount', async () => {
@@ -1352,7 +1450,7 @@ describe('Builder', () => {
 
     it('should throw DryRunFailedError when dryRun reports a failure', async () => {
       vi.mocked(isConfig).mockReturnValue(true)
-      vi.mocked(buildDryRun).mockResolvedValueOnce({
+      vi.mocked(buildDryRun).mockResolvedValue({
         failureReason: 'Bad XCM format',
         failureChain: CHAIN_2
       } as TDryRunResult)
@@ -1361,15 +1459,19 @@ describe('Builder', () => {
         xcmFormatCheck: true
       })
 
-      await expect(
-        Builder(mockApi)
-          .from(CHAIN)
-          .to(CHAIN_2)
-          .currency(CURRENCY)
-          .recipient(ADDRESS)
-          .sender(SENDER)
-          .build()
-      ).rejects.toBeInstanceOf(DryRunFailedError)
+      const buildPromise = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER)
+        .build()
+
+      await expect(buildPromise).rejects.toBeInstanceOf(DryRunFailedError)
+      await expect(buildPromise).rejects.toMatchObject({
+        reason: 'Bad XCM format',
+        message: `XCM format check failed. Dry run on ${CHAIN_2} failed: Bad XCM format`
+      })
     })
 
     it('should skip dryRun when config is not recognized by isConfig', async () => {

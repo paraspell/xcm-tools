@@ -25,7 +25,11 @@ import { getRouterFees } from './getRouterFees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
 vi.mock('./fees');
-vi.mock('./utils');
+vi.mock('./utils', async (importActual) => ({
+  ...(await importActual()),
+  getToExchangeFee: vi.fn(),
+  getFromExchangeFee: vi.fn(),
+}));
 
 vi.mock('@paraspell/sdk-core', async () => {
   const actual = await vi.importActual('@paraspell/sdk-core');
@@ -326,7 +330,7 @@ describe('getRouterFees', () => {
         }),
       }),
     );
-    expect(arg.currency).toEqual(expect.objectContaining({ amount: BigInt(options.amount) }));
+    expect(arg.currency).toEqual(expect.objectContaining({ amount: options.amount }));
   });
 
   it('calculateMinAmountOut forwards amount and provided assetTo to dex.getAmountOut', async () => {

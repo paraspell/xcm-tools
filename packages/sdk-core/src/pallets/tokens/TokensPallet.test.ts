@@ -1,5 +1,4 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { assertHasId, getChain } from '../../utils'
@@ -23,7 +22,7 @@ describe('TokensPallet.setBalance', () => {
   it('non-Bifrost: uses assetId, calls assertHasId twice, formats tx correctly', async () => {
     const pallet = new TokensPallet('Tokens')
     const address = 'Alice'
-    const chain = 'Acala' as TSubstrateChain
+    const chain = 'Acala'
     const asset = { assetId: '123', amount: 777n } as WithAmount<TAssetInfo>
 
     vi.mocked(assertHasId).mockImplementation(() => {})
@@ -46,7 +45,7 @@ describe('TokensPallet.setBalance', () => {
   it('Bifrost: uses getCurrencySelection and does not call assertHasId', async () => {
     const pallet = new TokensPallet('Tokens')
     const address = 'Alice'
-    const chain = 'BifrostKusama' as TSubstrateChain
+    const chain = 'BifrostKusama'
     const asset = { amount: 5n } as WithAmount<TAssetInfo>
 
     const res = await pallet.mint(address, asset, 0n, chain)

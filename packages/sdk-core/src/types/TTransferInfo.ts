@@ -11,6 +11,7 @@ export type THopTransferInfo = {
   result: {
     xcmFee: TXcmFeeBase
     asset: TAssetInfo
+    isExchange?: boolean
   }
 }
 
@@ -33,6 +34,7 @@ export type TTransferInfo = {
       balance: bigint
       balanceAfter: bigint
     }
+    isExchange?: boolean
   }
   hops: THopTransferInfo[]
   destination: {
@@ -46,12 +48,25 @@ export type TTransferInfo = {
     xcmFee: TXcmFeeBase & {
       balanceAfter: bigint | UnableToComputeError
     }
+    isExchange?: boolean
   }
+}
+
+export type TBuildOriginInfoOptions<TApi, TRes, TSigner> = {
+  api: PolkadotApi<TApi, TRes, TSigner>
+  origin: TSubstrateChain
+  sender: string
+  currency: TCurrencyCore
+  originAsset: TAssetInfo
+  amount: bigint
+  originFee: bigint
+  originFeeAsset: TAssetInfo
+  isFeeAssetAh: boolean
 }
 
 export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
   api: PolkadotApi<TApi, TRes, TSigner>
-  chain: TSubstrateChain
+  chain: TChain
   fee: bigint
   originChain: TSubstrateChain
   currency: TCurrencyCore

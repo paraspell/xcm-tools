@@ -1,8 +1,7 @@
 import {
   findNativeAssetInfoOrThrow,
   hasXcmPaymentApiSupport,
-  isAssetEqual,
-  type TCurrencyCore
+  isAssetEqual
 } from '@paraspell/assets'
 import {
   isExternalChain,
@@ -23,6 +22,7 @@ import type {
   TSwapFeeEstimates,
   TWeight
 } from '../../../types'
+import { assertCurrencyCore } from '../../assertions'
 import { getRelayChainOf } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
@@ -204,6 +204,8 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     calculateMinAmountOut
   } = options
 
+  assertCurrencyCore(currencyTo)
+
   await api.init(chain ?? exchangeChain)
 
   validateAmount(assetFrom.amount, MIN_FEE)
@@ -237,7 +239,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
     },
     feeAsset: feeAssetInfo ? { location: feeAssetInfo.location } : undefined,
     swapConfig: {
-      currencyTo: currencyTo as TCurrencyCore,
+      currencyTo,
       exchangeChain,
       amountOut: assetTo.amount
     },

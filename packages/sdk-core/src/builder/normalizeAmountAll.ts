@@ -1,10 +1,14 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-
 import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { getTransferableAmountInternal } from '../transfer'
 import type { TTransferBaseOptions, TTransferOptions, TTxFactory } from '../types'
-import { assertSender, assertSubstrateOrigin, assertToIsString, executeWithSwap } from '../utils'
+import {
+  assertCurrencyCore,
+  assertSender,
+  assertSubstrateOrigin,
+  assertToIsString,
+  executeWithSwap
+} from '../utils'
 import type { GeneralBuilder } from './Builder'
 
 export const normalizeAmountAll = async <
@@ -37,6 +41,7 @@ export const normalizeAmountAll = async <
 
   assertToIsString(options.to)
   assertSender(options.sender)
+  assertCurrencyCore(currency)
 
   const transferable = swapOptions
     ? await executeWithSwap({ ...options, api, from, swapOptions }, builder =>
@@ -50,7 +55,7 @@ export const normalizeAmountAll = async <
         sender: options.sender,
         feeAsset: options.feeAsset,
         version: options.version,
-        currency: { ...currency, amount: MIN_AMOUNT } as WithAmount<TCurrencyCore>
+        currency: { ...currency, amount: MIN_AMOUNT }
       })
 
   const finalBuildTx = builder

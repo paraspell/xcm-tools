@@ -1,1 +1,5 @@
+export * from './aggregateHopFees'
+export * from './buildDestInfo'
+export * from './buildHopInfo'
+export * from './buildOriginInfo'
 export * from './getTransferInfo'

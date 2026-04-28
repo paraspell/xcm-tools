@@ -4,8 +4,10 @@ import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest'
 
 import {
   buildApiTransactions,
+  dryRunRouterPreview,
   getBestAmountOut,
   getMinTransferableAmount,
+  getOriginXcmFee,
   getXcmFees,
   transfer,
 } from '../transfer';
@@ -230,6 +232,72 @@ describe('Builder', () => {
         api: mockApi,
       },
       false,
+    );
+  });
+
+  it('should get origin xcm fee', async () => {
+    await SwapBuilder(mockApi)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .sender(sender)
+      .recipient(recipient)
+      .slippagePct(slippagePct)
+      .getOriginXcmFee();
+
+    expect(getOriginXcmFee).toHaveBeenCalledWith(
+      {
+        from,
+        exchange,
+        to,
+        currencyFrom,
+        currencyTo,
+        amount,
+        sender,
+        recipient,
+        slippagePct,
+        api: mockApi,
+      },
+      false,
+    );
+  });
+
+  it('should get origin xcm fee with disableFallback', async () => {
+    await SwapBuilder(mockApi)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .sender(sender)
+      .recipient(recipient)
+      .slippagePct(slippagePct)
+      .getOriginXcmFee({ disableFallback: true });
+
+    expect(getOriginXcmFee).toHaveBeenCalledWith(expect.any(Object), true);
+  });
+
+  it('should dry run preview with provided options', async () => {
+    await SwapBuilder(mockApi)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .sender(sender)
+      .recipient(recipient)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .dryRunPreview({ mintFeeAssets: true });
+
+    expect(dryRunRouterPreview).toHaveBeenCalledWith(
+      { ...transferParams, api: mockApi },
+      { mintFeeAssets: true },
     );
   });
 

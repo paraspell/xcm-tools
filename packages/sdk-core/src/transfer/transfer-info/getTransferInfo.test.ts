@@ -6,7 +6,7 @@ import {
   isAssetEqual,
   isChainEvm
 } from '@paraspell/assets'
-import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -313,7 +313,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should correctly calculate originBalanceFeeAfter when feeAsset is same as transfer currency on AssetHubPolkadot (isFeeAssetAh true)', async () => {
-    const ahOrigin = 'AssetHubPolkadot' as TSubstrateChain
+    const ahOrigin = 'AssetHubPolkadot'
     const sameCurrency = {
       symbol: 'USDT',
       amount: 50000000n

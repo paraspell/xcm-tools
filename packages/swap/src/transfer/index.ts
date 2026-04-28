@@ -5,3 +5,4 @@ export * from './getBestAmountOut';
 export * from './getMinTransferableAmount';
 export * from './getTransferableAmount';
 export * from './transfer';
+export * from './transfer-info';

@@ -272,3 +272,21 @@ export type TBuildFromExchangeTxOptions<TApi, TRes, TSigner> = {
   sender: string;
   api: PolkadotApi<TApi, TRes, TSigner>;
 };
+
+export type TSwapTransformedOptions<TApi, TRes, TSigner> = TTransformedOptions<
+  TBuildTransactionsOptions<TApi, TRes, TSigner>,
+  TApi,
+  TRes,
+  TSigner
+>;
+
+export type TCallDexAmountOutOverrides = {
+  amount?: bigint;
+  assetTo?: TAssetInfo;
+  slippagePct?: string;
+};
+
+export type TBuildSwapExecuteOverrides = {
+  amount?: bigint;
+  feeEstimation?: boolean;
+};

@@ -187,7 +187,7 @@ describe('PapiApi', () => {
     const createOptions = () => ({
       tx: mockTransaction,
       address: 'addr',
-      chain: 'Hydration' as TSubstrateChain,
+      chain: 'Hydration' as const,
       version: Version.V5,
       destination: 'Moonbeam' as TDestination,
       asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>

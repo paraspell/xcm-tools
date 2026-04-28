@@ -11,11 +11,6 @@ overrides:
   '@polkadot-api/json-rpc-provider': ^0.2.0
   react-is: 19.0.0
   '@crypto-dex-sdk/chain': 0.1.2
-  '@snowbridge/api': ^1.0.13
-  '@snowbridge/base-types': ^1.0.13
-  '@snowbridge/contract-types': ^1.0.13
-  '@snowbridge/contracts': ^1.0.13
-  '@snowbridge/registry': ^1.0.13
 
 importers:
 
@@ -58,7 +53,7 @@ importers:
         specifier: ^2.9.6
         version: 2.9.6
       typescript:
-        specifier: 6.0.3
+        specifier: ^6.0.3
         version: 6.0.3
       typescript-eslint:
         specifier: ^8.59.1
@@ -733,8 +728,8 @@ importers:
         specifier: ^12.3.0
         version: 12.3.0(rollup@4.60.2)(tslib@2.8.1)(typescript@6.0.3)
       '@snowbridge/registry':
-        specifier: ^1.0.13
-        version: 1.0.13
+        specifier: ^1.0.15
+        version: 1.0.15
       '@vitest/coverage-v8':
         specifier: ^4.1.5
         version: 4.1.5(vitest@4.1.5)
@@ -6277,6 +6272,9 @@ packages:
   '@snowbridge/base-types@1.0.13':
     resolution: {integrity: sha512-2uA5uvA/+fN4LNzpS41D4TQY5eHevgVvRv8fn2sJEIJaOSG0BDdOLffXV6WD8ufPPVuPq0euMn1DDw52PE0dDg==}
 
+  '@snowbridge/base-types@1.0.15':
+    resolution: {integrity: sha512-Ft/JhgqX3FSyrcHCV50YH7+g6JX+QbH4Xet6U8uWrC769IAKQgVo3jRV+InE7WjmKwXj6yk5hABo4EgawQxouQ==}
+
   '@snowbridge/contract-types@1.0.13':
     resolution: {integrity: sha512-CY+IfbY0dNaEbLR8bwWz/TXK2yLZOK9bGYhrWybPzoxjfgk/B1x3fGdqFFHsdsSUp6hDM1Yla82Xl1WE+6wXYQ==}
 
@@ -6291,6 +6289,9 @@ packages:
 
   '@snowbridge/registry@1.0.13':
     resolution: {integrity: sha512-WAYEE/S8KO4wE0+PGjyoQvBOsHGJyPkZwY08i0G3xAokMEJsfeIUnXzCSv+Hj0CepB3cG2qwhHI0FDGyjKKL/g==}
+
+  '@snowbridge/registry@1.0.15':
+    resolution: {integrity: sha512-u1Wi7EVOUb+C4lIdFtTutCXQk1rt5j0THsFhrILf3VT/9fOUspC+JrtDvz1Xvp74084/ks3a8pdXE5fQnFAgvw==}
 
   '@snowfork/snowbridge-types@0.2.7':
     resolution: {integrity: sha512-Dz3OM8xvYhzL7XU/QOjgyPWZI4IgPKGByaJo6eZe3UMS6F7TLaFaZW1oYhQVTTahGWWAE6ZwwCuMkVh2FC/9bw==}
@@ -20701,6 +20702,8 @@ snapshots:
 
   '@snowbridge/base-types@1.0.13': {}
 
+  '@snowbridge/base-types@1.0.15': {}
+
   '@snowbridge/contract-types@1.0.13(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
       '@snowbridge/contracts': 1.0.13
@@ -20732,6 +20735,10 @@ snapshots:
   '@snowbridge/registry@1.0.13':
     dependencies:
       '@snowbridge/base-types': 1.0.13
+
+  '@snowbridge/registry@1.0.15':
+    dependencies:
+      '@snowbridge/base-types': 1.0.15
 
   '@snowfork/snowbridge-types@0.2.7(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:

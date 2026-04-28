@@ -52,6 +52,7 @@ import type {
 } from '../types'
 import {
   assertAddressIsString,
+  assertCurrencyCore,
   assertNotEvmTransfer,
   assertSender,
   assertSenderSource,
@@ -463,7 +464,11 @@ export class GeneralBuilder<
       )
 
       if (dryRunResult.failureReason) {
-        throw new DryRunFailedError(dryRunResult.failureReason, dryRunResult.failureChain)
+        throw new DryRunFailedError(
+          dryRunResult.failureReason,
+          dryRunResult.failureChain,
+          'XCM format check failed.'
+        )
       }
     }
   }
@@ -497,10 +502,15 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
     >,
     dryRunOptions?: TDryRunPreviewOptions
-  ) {
+  ): Promise<TDryRunResult> {
     const { from, senderSource, swapOptions } = this._options
     assertNotEvmTransfer(from, senderSource)
-    assertSwapSupport(swapOptions)
+
+    if (swapOptions) {
+      return executeWithSwap({ ...this._options, from, api: this.api, swapOptions }, builder =>
+        builder.dryRunPreview(dryRunOptions)
+      )
+    }
 
     const { tx, options } = await this.buildInternal()
     return buildDryRun(
@@ -572,23 +582,30 @@ export class GeneralBuilder<
    *
    * @returns An origin fee.
    */
-  async getOriginXcmFee(
+  async getOriginXcmFee<TDisableFallback extends boolean = false>(
     this: GeneralBuilder<
       TApi,
       TRes,
       TSigner,
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
     >,
-    { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
+    options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
+    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
+
     const { senderSource } = this._options
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
     const { api, from, to, sender, currency, feeAsset, version, swapOptions } = normalizedOptions
 
     assertToIsString(to)
-    assertSwapSupport(swapOptions)
     assertNotEvmTransfer(from, senderSource)
+
+    if (swapOptions) {
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions }, builder =>
+        builder.getOriginXcmFee(options)
+      )
+    }
 
     try {
       return await getOriginXcmFee({
@@ -757,8 +774,15 @@ export class GeneralBuilder<
 
     assertToIsString(to)
     assertAddressIsString(recipient)
-    assertSwapSupport(swapOptions)
     assertNotEvmTransfer(from, senderSource)
+
+    if (swapOptions) {
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions }, builder =>
+        builder.getSwapInfo()
+      )
+    }
+
+    assertCurrencyCore(feeAsset)
 
     return getTransferInfo({
       api,
@@ -770,7 +794,7 @@ export class GeneralBuilder<
       ahAddress,
       version,
       currency: currency as WithAmount<TCurrencyCore>,
-      feeAsset: feeAsset as TCurrencyCore
+      feeAsset
     })
   }
 

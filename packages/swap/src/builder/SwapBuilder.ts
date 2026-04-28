@@ -3,6 +3,7 @@ import type {
   TAmount,
   TChain,
   TCurrencyInput,
+  TDryRunPreviewOptions,
   TDryRunResult,
   TExchangeChain,
   TExchangeInput,
@@ -12,14 +13,19 @@ import type {
   TSubstrateChain,
   TSwapBuilder,
   TTransactionContext,
+  TTransferInfo,
+  TXcmFeeDetailWithForwardedXcm,
 } from '@paraspell/sdk-core';
 import { normalizeExchange } from '@paraspell/sdk-core';
 
 import {
   buildApiTransactions,
   dryRunRouter,
+  dryRunRouterPreview,
   getBestAmountOut,
   getMinTransferableAmount,
+  getOriginXcmFee,
+  getSwapInfo,
   getTransferableAmount,
   getXcmFees,
   transfer,
@@ -133,6 +139,20 @@ export class SwapBuilderCore<
     return getXcmFees({ ...this._options, api: this._api }, disableFallback);
   }
 
+  async getOriginXcmFee<TDisableFallback extends boolean = false>(
+    this: SwapBuilderCore<TApi, TRes, TSigner, TBuildTransactionsBaseOptions<TApi, TRes, TSigner>>,
+    options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback },
+  ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> {
+    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback;
+    return getOriginXcmFee({ ...this._options, api: this._api }, disableFallback);
+  }
+
+  async getSwapInfo(
+    this: SwapBuilderCore<TApi, TRes, TSigner, TBuildTransactionsBaseOptions<TApi, TRes, TSigner>>,
+  ): Promise<TTransferInfo> {
+    return getSwapInfo({ ...this._options, api: this._api });
+  }
+
   async getTransferableAmount(
     this: SwapBuilderCore<TApi, TRes, TSigner, TBuildTransactionsBaseOptions<TApi, TRes, TSigner>>,
   ): Promise<bigint> {
@@ -161,6 +181,13 @@ export class SwapBuilderCore<
     this: SwapBuilderCore<TApi, TRes, TSigner, TBuildTransactionsBaseOptions<TApi, TRes, TSigner>>,
   ): Promise<TDryRunResult> {
     return dryRunRouter({ ...this._options, api: this._api });
+  }
+
+  dryRunPreview(
+    this: SwapBuilderCore<TApi, TRes, TSigner, TBuildTransactionsBaseOptions<TApi, TRes, TSigner>>,
+    previewOptions?: TDryRunPreviewOptions,
+  ): Promise<TDryRunResult> {
+    return dryRunRouterPreview({ ...this._options, api: this._api }, previewOptions);
   }
 
   getBestAmountOut(

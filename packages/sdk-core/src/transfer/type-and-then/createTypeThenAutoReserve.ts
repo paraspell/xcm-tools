@@ -55,7 +55,7 @@ export const createTypeThenAutoReserve = async <TApi, TRes, TSigner>(
   }
 
   const relay = getRelayChainOf(chain)
-  const assetHubReserve = `AssetHub${relay}` as TSubstrateChain
+  const assetHubReserve: TSubstrateChain = `AssetHub${relay}`
 
   const ahResult = await createCallForReserve(chain, assetHubReserve, options)
   if (ahResult.success) return ahResult.call

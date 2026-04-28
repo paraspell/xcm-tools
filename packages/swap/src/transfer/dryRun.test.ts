@@ -9,7 +9,7 @@ import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } fro
 
 const mockApi = { clone: () => mockApi } as unknown as PolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
-import { dryRunRouter } from './dryRun';
+import { dryRunRouter, dryRunRouterPreview, dryRunTransactions } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
 vi.mock('@paraspell/sdk-core', async () => {
@@ -249,5 +249,143 @@ describe('dryRunRouter', () => {
     );
 
     expect(dryRun).not.toHaveBeenCalled();
+  });
+});
+
+describe('dryRunRouterPreview', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('passes preview bypass options to the single transaction', async () => {
+    const transformedOptions = createOptions();
+
+    resolvePrepareOptions(transformedOptions, 'Acala');
+    vi.mocked(buildTransactions).mockResolvedValue([createTransaction('Acala')]);
+    vi.mocked(dryRun).mockResolvedValue(createDryRunResult());
+
+    await dryRunRouterPreview({ ...createInitialOptions(), api: mockApi }, { mintFeeAssets: true });
+
+    expect(dryRun).toHaveBeenCalledTimes(1);
+    expect(dryRun).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bypassOptions: { sentAssetMintMode: 'preview', mintFeeAssets: true },
+      }),
+    );
+  });
+
+  it('mints on origin and exchange in two-transaction flows', async () => {
+    const transformedOptions = createOptions({
+      origin: {
+        api: {},
+        chain: 'BifrostPolkadot',
+        assetFrom: {
+          symbol: 'BNC',
+          decimals: 12,
+          location: { parents: 0, interior: 'Here' },
+        },
+      },
+      destination: { chain: 'Moonbeam', address: 'dest-address' },
+      exchange: {
+        chain: 'Hydration',
+        apiPjs: {} as ApiPromise,
+        apiPapi: {} as PolkadotClient,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
+        assetFrom: ausdAsset,
+        assetTo: acaAsset,
+      },
+    });
+
+    resolvePrepareOptions(transformedOptions, 'Hydration');
+
+    vi.mocked(buildTransactions).mockResolvedValue([
+      createTransaction('BifrostPolkadot'),
+      createTransaction('Hydration'),
+    ]);
+
+    vi.mocked(dryRun)
+      .mockResolvedValueOnce(createDryRunResult())
+      .mockResolvedValueOnce(createDryRunResult());
+
+    vi.mocked(getFailureInfo)
+      .mockReturnValueOnce({ failureReason: undefined })
+      .mockReturnValueOnce({ failureReason: undefined });
+
+    await dryRunRouterPreview({ ...createInitialOptions(), api: mockApi }, { mintFeeAssets: true });
+
+    expect(dryRun).toHaveBeenCalledTimes(2);
+
+    const [firstCall, secondCall] = vi.mocked(dryRun).mock.calls;
+
+    expect(firstCall[0].bypassOptions).toEqual({
+      sentAssetMintMode: 'preview',
+      mintFeeAssets: true,
+    });
+    expect(secondCall[0].bypassOptions).toEqual({
+      sentAssetMintMode: 'preview',
+      mintFeeAssets: true,
+    });
+  });
+
+  it('defaults mintFeeAssets to undefined when no preview options provided', async () => {
+    const transformedOptions = createOptions();
+
+    resolvePrepareOptions(transformedOptions, 'Acala');
+    vi.mocked(buildTransactions).mockResolvedValue([createTransaction('Acala')]);
+    vi.mocked(dryRun).mockResolvedValue(createDryRunResult());
+
+    await dryRunRouterPreview({ ...createInitialOptions(), api: mockApi });
+
+    expect(dryRun).toHaveBeenCalledWith(
+      expect.objectContaining({
+        bypassOptions: { sentAssetMintMode: 'preview', mintFeeAssets: undefined },
+      }),
+    );
+  });
+});
+
+describe('dryRunTransactions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('uses the override for the exchange leg instead of recomputing it', async () => {
+    const transformedOptions = createOptions({
+      origin: {
+        api: {},
+        chain: 'BifrostPolkadot',
+        assetFrom: { symbol: 'BNC', decimals: 12, location: { parents: 0, interior: 'Here' } },
+      },
+      destination: { chain: 'Moonbeam', address: 'dest-address' },
+      exchange: {
+        chain: 'Hydration',
+        apiPjs: {} as ApiPromise,
+        apiPapi: {} as PolkadotClient,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
+        assetFrom: ausdAsset,
+        assetTo: acaAsset,
+      },
+    });
+
+    vi.mocked(dryRun)
+      .mockResolvedValueOnce(createDryRunResult())
+      .mockResolvedValueOnce(createDryRunResult());
+
+    vi.mocked(getFailureInfo)
+      .mockReturnValueOnce({ failureReason: undefined })
+      .mockReturnValueOnce({ failureReason: undefined });
+
+    await dryRunTransactions(
+      [createTransaction('BifrostPolkadot'), createTransaction('Hydration')],
+      transformedOptions,
+      { sentAssetMintMode: 'bypass' },
+      { sentAssetMintMode: 'bypass' },
+    );
+
+    expect(dryRun).toHaveBeenCalledTimes(2);
+
+    const [firstCall, secondCall] = vi.mocked(dryRun).mock.calls;
+    expect(firstCall[0].bypassOptions).toEqual({ sentAssetMintMode: 'bypass' });
+    expect(secondCall[0].bypassOptions).toEqual({ sentAssetMintMode: 'bypass' });
   });
 });

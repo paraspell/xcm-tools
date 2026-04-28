@@ -7,7 +7,7 @@ import type {
   TExchangeChain,
   TGetXcmFeeResult,
   TTransferInfo,
-  TXcmFeeDetail,
+  TXcmFeeDetailWithFallback,
 } from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -168,7 +168,7 @@ describe('XTransferController', () => {
 
   describe('getOriginXcmFee', () => {
     it('should call service.getOriginXcmFee and returns its value', async () => {
-      const mockResult = {} as TXcmFeeDetail;
+      const mockResult = {} as TXcmFeeDetailWithFallback;
       const spy = vi
         .spyOn(service, 'getOriginXcmFee')
         .mockResolvedValue(mockResult);

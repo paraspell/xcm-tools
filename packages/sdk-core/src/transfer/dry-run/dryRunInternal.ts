@@ -10,6 +10,7 @@ import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import {
   abstractDecimals,
   addXcmVersionHeader,
+  assertCurrencyCore,
   getRelayChainOf,
   pickCompatibleXcmVersion
 } from '../../utils'
@@ -37,6 +38,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     bypassOptions,
     useRootOrigin = false
   } = options
+
+  assertCurrencyCore(currency)
 
   const asset = findAssetInfoOrThrow(origin, currency, destination)
 
@@ -148,7 +151,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     api,
     origin,
     destination,
-    currency: currency as TCurrencyCore,
+    currency,
     initialForwardedXcms,
     initialDestParaId,
     swapConfig,
@@ -161,8 +164,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
   })
 
   // Process Ethereum bridge fees
-  const bridgeHubChain = `BridgeHub${getRelayChainOf(origin)}` as TSubstrateChain
-  const assetHubChain = `AssetHub${getRelayChainOf(origin)}` as TSubstrateChain
+  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOf(origin)}`
+  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(origin)}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 

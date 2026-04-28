@@ -3,8 +3,14 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
 import type { EXCHANGE_CHAINS } from '../constants'
+import type { TDryRunPreviewOptions } from './TBuilder'
 import type { TDryRunResult } from './TDryRun'
-import type { TGetXcmFeeBuilderOptions, TGetXcmFeeResult } from './TXcmFee'
+import type { TTransferInfo } from './TTransferInfo'
+import type {
+  TGetXcmFeeBuilderOptions,
+  TGetXcmFeeResult,
+  TXcmFeeDetailWithForwardedXcm
+} from './TXcmFee'
 
 export type TExchangeChain = (typeof EXCHANGE_CHAINS)[number]
 
@@ -77,10 +83,15 @@ export interface TSwapBuilder<TApi, TRes, TSigner> {
   getXcmFees<TDisableFallback extends boolean = false>(
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ): Promise<TGetXcmFeeResult<TDisableFallback>>
+  getOriginXcmFee<TDisableFallback extends boolean = false>(
+    options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
+  ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>>
+  getSwapInfo(): Promise<TTransferInfo>
   getTransferableAmount(): Promise<bigint>
   getMinTransferableAmount(): Promise<bigint>
   getBestAmountOut(): Promise<{ exchange: TExchangeChain; amountOut: bigint }>
   dryRun(): Promise<TDryRunResult>
+  dryRunPreview(previewOptions?: TDryRunPreviewOptions): Promise<TDryRunResult>
   build(): Promise<TTransactionContext<TApi, TRes>[]>
   signAndSubmit(): Promise<string[]>
 }
