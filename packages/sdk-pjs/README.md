@@ -41,7 +41,7 @@ npm install | pnpm add | yarn add @polkadot/api @polkadot/types @polkadot/api-ba
 npm install | pnpm add | yarn add @paraspell/sdk-pjs
 ```
 
-### Install Swap extension
+### (OPTIONAL) Install Swap extension
 
 If you plan to [do Swap XCMs](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#swap) you can install Swap package which allows you to do cross-chain swaps on popular Polkadot, Kusama, Paseo, Westend exchanges. Now available in all JS client versions of SDK.
 
@@ -54,13 +54,53 @@ If you plan to [do Swap XCMs](https://paraspell.github.io/docs/xcm-sdk/send-xcm.
 npm install | pnpm add | yarn add @paraspell/swap @galacticcouncil/api-augment
 ```
 
-### Setup Swap extension
+#### Setup Swap extension
 
 Add the `@paraspell/swap` import to your application's root component (Usually `App.tsx`). This ensures the extension is registered before using Builder.
 
 ```ts
 // Import swap extension here
 import '@paraspell/swap';
+
+export default function App() {
+  return {/* Your app here */};
+}
+```
+
+### (OPTIONAL) Install EVM extension
+If you plan to [do EVM contract transfers](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#moonbeam-xtokens-smart-contract) you can install EVM package which allows you to interact with EVM contract based XCMs on Moonbeam, Moonriver and Darwinia. Available in **ALL** versions of SDK.
+
+```bash
+npm install | pnpm add | yarn add @paraspell/evm
+```
+
+#### Setup EVM extension
+
+Add the `@paraspell/evm` import to your application's root component (Usually `App.tsx`). This ensures the extension is registered before using Builder.
+
+```ts
+// Import EVM extension here
+import '@paraspell/evm';
+
+export default function App() {
+  return {/* Your app here */};
+}
+```
+
+### (OPTIONAL) Install Snowbridge extension
+If you plan to [do Snowbridge transfers from Ethereum](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#ethereum-polkadot-transfer) you can install Snowbridge package which allows you to input "Ethereum" as from chain parameter. Available in **ALL** versions of SDK.
+
+```bash
+npm install | pnpm add | yarn add @paraspell/evm-snowbridge
+```
+
+#### Setup Snowbridge extension
+
+Add the `@paraspell/evm-snowbridge` import to your application's root component (Usually `App.tsx`). This ensures the extension is registered before using Builder.
+
+```ts
+// Import Snowbridge extension here
+import '@paraspell/evm-snowbridge';
 
 export default function App() {
   return {/* Your app here */};
@@ -84,14 +124,11 @@ import * as paraspell from '@paraspell/sdk-pjs'
 ## Implementation
 
 > [!NOTE]
-> - You can now pass signer directly into sender parameter
-> - The local transfers now have additional builder parameter called keepAlive
-> - Transact is here! Find out more: https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#transact
-> 
 > **Latest news:**
 > - V12 > V13 Migration guide: https://paraspell.github.io/docs/migration/v12-to-v13.html
-> - Swap package is now available on every XCM SDK version: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension
-> - abstractDecimals is now turned on by default!
+> - Swap extension is now available on every XCM SDK version: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension
+> - EVM extension is now available: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-evm-extension
+> - Snowbridge extension is now available: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-snowbridge-extension
 
 
 ### Sending XCM
