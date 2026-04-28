@@ -2,7 +2,7 @@
   "packages/xcm-analyser": "3.0.7",
   "packages/swap": "13.3.0",
   "packages/evm": "13.3.0",
-  "packages/evm-snowbridge": "13.2.2",
+  "packages/evm-snowbridge": "13.3.0",
   "packages/sdk": "13.3.0",
   "packages/sdk-core": "13.3.0",
   "packages/sdk-pjs": "13.3.0",
