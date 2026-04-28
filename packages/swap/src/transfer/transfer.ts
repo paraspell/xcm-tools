@@ -3,7 +3,7 @@ import { isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
 import type { TTransferOptions } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
-import { prepareTransformedOptions } from './utils';
+import { maybePerformXcmFormatCheck, prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
 export const transfer = async <TApi, TRes, TSigner>(
@@ -46,6 +46,8 @@ export const transfer = async <TApi, TRes, TSigner>(
   const { dex, options } = await prepareTransformedOptions(initialOptions);
 
   const routerPlan = await buildTransactions(dex, options);
+
+  await maybePerformXcmFormatCheck(api, options, routerPlan);
 
   return executeRouterPlan(routerPlan, {
     signer,

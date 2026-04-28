@@ -24,6 +24,7 @@ import {
   buildToExchangeExtrinsic,
   getFromExchangeFee,
   getToExchangeFee,
+  getToExchangeOriginFee,
 } from './utils';
 
 const builderMock = {
@@ -38,6 +39,7 @@ const builderMock = {
     send: vi.fn().mockResolvedValue('sentTx'),
   }),
   getXcmFee: vi.fn().mockResolvedValue({ origin: 100n, destination: 200n }),
+  getOriginXcmFee: vi.fn().mockResolvedValue({ fee: 42n, asset: { symbol: 'DOT' } }),
 };
 
 vi.mock('@paraspell/sdk', async () => {
@@ -252,6 +254,24 @@ describe('transfer utils', () => {
 
       expect(builderMock.getXcmFee).toHaveBeenCalledWith({ disableFallback: true });
       expect(result).toEqual({ origin: 100n, destination: 200n });
+    });
+  });
+
+  describe('getToExchangeOriginFee', () => {
+    it('delegates to builder.getOriginXcmFee with disableFallback', async () => {
+      const result = await getToExchangeOriginFee(
+        {
+          ...transferParams,
+          amount: BigInt(transferParams.amount),
+          origin: { api: parachainPapiApi, chain: 'Acala', assetFrom: astrAsset },
+          exchange: { chain: 'Acala' } as TExchangeInfo<unknown, unknown, unknown>,
+          api: mockApi,
+        },
+        true,
+      );
+
+      expect(builderMock.getOriginXcmFee).toHaveBeenCalledWith({ disableFallback: true });
+      expect(result).toEqual({ fee: 42n, asset: { symbol: 'DOT' } });
     });
   });
 

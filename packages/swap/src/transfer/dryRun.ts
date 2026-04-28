@@ -1,11 +1,16 @@
 import type {
   TBypassOptions,
   TChain,
-  TCurrencyCore,
+  TDryRunPreviewOptions,
   TDryRunResult,
   WithApi,
 } from '@paraspell/sdk-core';
-import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk-core';
+import {
+  assertCurrencyCore,
+  dryRun,
+  getFailureInfo,
+  UnsupportedOperationError,
+} from '@paraspell/sdk-core';
 
 import type {
   TBuildTransactionsOptions,
@@ -55,6 +60,8 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
     options;
   const { tx, chain } = transaction;
 
+  assertCurrencyCore(currencyTo);
+
   const senderResolved = evmSenderAddress ?? sender;
   const resolvedDest = destChain ?? destination?.chain ?? exchange.chain;
 
@@ -65,7 +72,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
     destination: resolvedDest,
     sender: senderResolved,
     swapConfig: {
-      currencyTo: currencyTo as TCurrencyCore,
+      currencyTo,
       exchangeChain: exchange.chain,
     },
     currency: {
@@ -102,50 +109,70 @@ const mergeDryRunResults = <TApi, TRes, TSigner>(
 const dryRun2Transactions = async <TApi, TRes, TSigner>(
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   transactions: TRouterPlan<TApi, TRes>,
+  originBypass?: TBypassOptions,
+  exchangeBypass?: TBypassOptions,
 ): Promise<TDryRunResult> => {
   const { exchange } = options;
 
   const [firstTx, secondTx] = transactions;
 
-  const firstRes = await dryRunTransaction(options, firstTx, exchange.chain);
+  const firstRes = await dryRunTransaction(options, firstTx, exchange.chain, originBypass);
 
   const { failureReason } = getFailureInfo(firstRes);
 
-  const bypassOptions: TBypassOptions | undefined = !failureReason
-    ? {
-        sentAssetMintMode: 'preview',
-        mintFeeAssets: false,
-      }
-    : undefined;
+  const exchangeBypassOptions: TBypassOptions | undefined =
+    exchangeBypass ??
+    (!failureReason
+      ? {
+          sentAssetMintMode: 'preview',
+          mintFeeAssets: originBypass?.mintFeeAssets ?? false,
+        }
+      : undefined);
 
-  const secondRes = await dryRunTransaction(options, secondTx, undefined, bypassOptions);
+  const secondRes = await dryRunTransaction(options, secondTx, undefined, exchangeBypassOptions);
 
   return mergeDryRunResults(options, firstRes, secondRes);
 };
 
-const dryRunTransactions = <TApi, TRes, TSigner>(
+export const dryRunTransactions = <TApi, TRes, TSigner>(
   transactions: TRouterPlan<TApi, TRes>,
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  originBypass?: TBypassOptions,
+  exchangeBypass?: TBypassOptions,
 ) => {
   if (transactions.length === 1) {
-    return dryRunTransaction(options, transactions[0]);
+    return dryRunTransaction(options, transactions[0], undefined, originBypass);
   }
 
   if (transactions.length === 2) {
-    return dryRun2Transactions(options, transactions);
+    return dryRun2Transactions(options, transactions, originBypass, exchangeBypass);
   }
 
   throw new UnsupportedOperationError('Router dry run supports up to two transactions per flow.');
 };
 
-export const dryRunRouter = async <TApi, TRes, TSigner>(
+const runDryRun = async <TApi, TRes, TSigner>(
   initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  originBypassOptions?: TBypassOptions,
 ): Promise<TDryRunResult> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions);
   const routerPlan = await buildTransactions(dex, options);
 
-  const result = await dryRunTransactions(routerPlan, options);
+  const result = await dryRunTransactions(routerPlan, options, originBypassOptions);
 
   return assignIsExchange(result, options);
 };
+
+export const dryRunRouter = <TApi, TRes, TSigner>(
+  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+): Promise<TDryRunResult> => runDryRun(initialOptions);
+
+export const dryRunRouterPreview = <TApi, TRes, TSigner>(
+  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  previewOptions?: TDryRunPreviewOptions,
+): Promise<TDryRunResult> =>
+  runDryRun(initialOptions, {
+    sentAssetMintMode: 'preview',
+    mintFeeAssets: previewOptions?.mintFeeAssets,
+  });

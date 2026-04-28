@@ -1,21 +1,19 @@
 import {
   findAssetInfoOrThrow,
-  getExistentialDepositOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
-  isAssetXcEqual,
   isChainEvm
 } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getAssetBalanceInternal } from '../../balance'
 import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveFeeAsset } from '../utils'
+import { aggregateHopFees } from './aggregateHopFees'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
+import { buildOriginInfo } from './buildOriginInfo'
 
 export const getTransferInfo = async <TApi, TRes, TSigner>({
   api,
@@ -45,15 +43,6 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
 
     const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
-    const originBalance = await getAssetBalanceInternal({
-      api,
-      address: sender,
-      chain: origin,
-      asset: originAsset
-    })
-
-    const edOrigin = getExistentialDepositOrThrow(origin, currency)
-
     const {
       origin: { fee: originFee, asset: originFeeAsset },
       destination: destFeeDetail,
@@ -71,27 +60,22 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       disableFallback: false
     })
 
-    const originBalanceFee = await getAssetBalanceInternal({
-      api,
-      address: sender,
-      chain: origin,
-      asset: originFeeAsset
-    })
-
     const isFeeAssetAh =
       origin === 'AssetHubPolkadot' &&
-      resolvedFeeAsset &&
+      !!resolvedFeeAsset &&
       isAssetEqual(resolvedFeeAsset, originAsset)
 
-    const originBalanceAfter = originBalance - amount
-
-    const originBalanceFeeAfter = isFeeAssetAh
-      ? originBalanceFee - amount
-      : originBalanceFee - originFee
-
-    const originBalanceNativeSufficient = originBalanceFee >= originFee
-
-    const originBalanceSufficient = originBalanceAfter >= edOrigin
+    const originInfo = await buildOriginInfo({
+      api,
+      origin,
+      sender,
+      currency,
+      originAsset,
+      amount,
+      originFee,
+      originFeeAsset,
+      isFeeAssetAh
+    })
 
     let builtHops: TTransferInfo['hops'] = []
 
@@ -100,7 +84,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
         hops.map(async hop => {
           const result = await buildHopInfo({
             api,
-            chain: hop.chain as TSubstrateChain,
+            chain: hop.chain,
             fee: hop.result.fee,
             originChain: origin,
             currency,
@@ -116,12 +100,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       )
     }
 
-    const totalHopFee = hops.reduce(
-      (acc, hop) => (isAssetXcEqual(hop.result.asset, originAsset) ? acc + hop.result.fee : acc),
-      0n
-    )
-
-    const bridgeHop = hops.find(hop => hop.chain.startsWith('BridgeHub'))
+    const { totalHopFee, bridgeFee } = aggregateHopFees(hops, originAsset)
 
     const destinationInfo = await buildDestInfo({
       api,
@@ -133,10 +112,10 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
         amount
       },
       originFee,
-      isFeeAssetAh: !!isFeeAssetAh,
+      isFeeAssetAh,
       destFeeDetail,
       totalHopFee,
-      bridgeFee: bridgeHop?.result.fee
+      bridgeFee
     })
 
     return {
@@ -145,21 +124,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
         destination,
         ecosystem: getRelayChainSymbol(origin)
       },
-      origin: {
-        selectedCurrency: {
-          sufficient: originBalanceSufficient,
-          balance: originBalance,
-          balanceAfter: originBalanceAfter,
-          asset: originAsset
-        },
-        xcmFee: {
-          sufficient: originBalanceNativeSufficient,
-          fee: originFee,
-          balance: originBalanceFee,
-          balanceAfter: originBalanceFeeAfter,
-          asset: originFeeAsset
-        }
-      },
+      origin: originInfo,
       hops: builtHops,
       destination: destinationInfo
     }

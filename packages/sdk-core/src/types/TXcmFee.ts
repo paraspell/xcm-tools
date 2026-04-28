@@ -58,7 +58,7 @@ export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
 
-export type TGetOriginXcmFeeBaseOptions<TRes> = {
+export type TGetOriginXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
   buildTx: TTxFactory<TRes>
   origin: TSubstrateChain
   destination: TChain
@@ -66,16 +66,16 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   currency: WithAmount<TCurrencyCore>
   version?: Version
   feeAsset?: TCurrencyInput
-  disableFallback: boolean
+  disableFallback: TDisableFallback
   useRootOrigin?: boolean
 }
 
-export type TGetOriginXcmFeeOptions<TApi, TRes, TSigner> = WithApi<
-  TGetOriginXcmFeeBaseOptions<TRes>,
+export type TGetOriginXcmFeeOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TDisableFallback extends boolean = boolean
+> = WithApi<TGetOriginXcmFeeBaseOptions<TRes, TDisableFallback>, TApi, TRes, TSigner>
 
 export type TGetOriginXcmFeeInternalOptions<TApi, TRes, TSigner> = Omit<
   TGetOriginXcmFeeOptions<TApi, TRes, TSigner>,
@@ -164,9 +164,9 @@ export type TXcmFeeHopResult = {
 export type TConditionalXcmFeeDetail<TDisableFallback extends boolean> =
   TDisableFallback extends false ? TXcmFeeDetailWithFallback : TXcmFeeDetail
 
-export type TDestXcmFeeDetail<TDisableFallback extends boolean> =
+export type TXcmFeeDetailWithForwardedXcm<TDisableFallback extends boolean> =
   TConditionalXcmFeeDetail<TDisableFallback> & {
-    forwardedXcms?: any
+    forwardedXcms?: unknown
     destParaId?: number
   }
 

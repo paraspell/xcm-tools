@@ -56,7 +56,7 @@ export const fetchHydrationAssets = async (
   const [module, method] = query.split('.')
   const response = await api.query[module][method].entries()
 
-  const ahChain = `AssetHub${getRelayChainOf(chain)}` as TSubstrateChain
+  const ahChain: TSubstrateChain = `AssetHub${getRelayChainOf(chain)}`
 
   const ahApi = await createChainClient(ahChain)
 

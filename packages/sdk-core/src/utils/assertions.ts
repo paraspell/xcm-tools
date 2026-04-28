@@ -1,5 +1,9 @@
-import type { TAssetInfoWithId } from '@paraspell/assets'
-import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfoWithId, TCurrencyCore, TLocationValueWithOverride } from '@paraspell/assets'
+import {
+  InvalidCurrencyError,
+  isOverrideLocationSpecifier,
+  type TAssetInfo
+} from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isExternalChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
@@ -41,6 +45,32 @@ export const assertSender: (address: string | undefined) => asserts address is s
 export const assertHasId: (asset: TAssetInfo) => asserts asset is TAssetInfoWithId = asset => {
   if (asset.assetId === undefined) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset, replaceBigInt)} has no assetId`)
+  }
+}
+
+export const assertCurrencyCore: <T>(
+  value: T
+) => asserts value is (T & TCurrencyCore) | (T & undefined) = value => {
+  if (value === undefined) return
+
+  if (value === null) {
+    throw new InvalidCurrencyError('A currency selector is required.')
+  }
+
+  if (Array.isArray(value)) {
+    throw new InvalidCurrencyError(
+      'Multi-asset currency input is not supported here. Provide a single currency selector ({ symbol }, { id }, or { location }).'
+    )
+  }
+
+  if (
+    typeof value === 'object' &&
+    'location' in value &&
+    isOverrideLocationSpecifier((value as { location: TLocationValueWithOverride }).location)
+  ) {
+    throw new InvalidCurrencyError(
+      'Override location specifier is not supported here. Provide a regular location.'
+    )
   }
 }
 

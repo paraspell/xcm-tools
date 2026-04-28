@@ -8,7 +8,7 @@ import { isExternalChain, isRelayChain, Parents } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { DOT_LOCATION } from '../../constants'
-import type { TDestXcmFeeDetail } from '../../types'
+import type { TXcmFeeDetailWithForwardedXcm } from '../../types'
 import { type TGetFeeForDestChainOptions } from '../../types'
 import { addXcmVersionHeader, createX1Payload, normalizeAmount } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -32,7 +32,7 @@ export const createOriginLocation = (
 
 export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
   options: TGetFeeForDestChainOptions<TApi, TRes, TSigner>
-): Promise<TDestXcmFeeDetail<TDisableFallback>> => {
+): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
   const {
     api,
     origin,
@@ -130,7 +130,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
       return {
         dryRunError: dryRunResult.failureReason,
         dryRunSubError: dryRunResult.failureSubReason
-      } as TDestXcmFeeDetail<TDisableFallback>
+      } as TXcmFeeDetailWithForwardedXcm<TDisableFallback>
     }
 
     const fee = await calcPaymentInfoFee()

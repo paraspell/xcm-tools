@@ -1,0 +1,26 @@
+import type { PolkadotApi, TBypassOptions } from '@paraspell/sdk-core';
+import { DryRunFailedError, isConfig } from '@paraspell/sdk-core';
+
+import type { TBuildTransactionsOptions, TRouterPlan, TTransformedOptions } from '../../types';
+import { dryRunTransactions } from '../dryRun';
+
+const BYPASS: TBypassOptions = { sentAssetMintMode: 'bypass' };
+
+export const maybePerformXcmFormatCheck = async <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
+  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  routerPlan: TRouterPlan<TApi, TRes>,
+) => {
+  const { config } = api;
+  if (!isConfig(config) || !config.xcmFormatCheck) return;
+
+  const result = await dryRunTransactions(routerPlan, options, BYPASS, BYPASS);
+
+  if (result.failureReason) {
+    throw new DryRunFailedError(
+      result.failureReason,
+      result.failureChain,
+      'XCM format check failed.',
+    );
+  }
+};

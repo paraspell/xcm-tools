@@ -1,4 +1,4 @@
-import type { TXcmFeeDetail } from '@paraspell/sdk-core';
+import type { TConditionalXcmFeeDetail } from '@paraspell/sdk-core';
 import { AmountTooLowError, applyDecimalAbstraction, getOriginXcmFee } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -9,7 +9,7 @@ export const getSwapFee = async <TApi, TRes, TSigner, TDisableFallback extends b
   exchange: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   disableFallback?: TDisableFallback,
-): Promise<{ result: TXcmFeeDetail; amountOut: bigint }> => {
+): Promise<{ result: TConditionalXcmFeeDetail<TDisableFallback>; amountOut: bigint }> => {
   const {
     sender,
     exchange: { assetFrom, api },
@@ -54,7 +54,7 @@ export const getSwapFee = async <TApi, TRes, TSigner, TDisableFallback extends b
     disableFallback: disableFallback ?? false,
   });
 
-  const finalFee = (result.fee as bigint) * BigInt(txs.length);
+  const finalFee = (result.fee ?? 0n) * BigInt(txs.length);
 
   return {
     result: {

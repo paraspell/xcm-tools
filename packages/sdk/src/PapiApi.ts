@@ -661,7 +661,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
     const ahApi = this.clone()
 
-    const assetHubChain = `AssetHub${getRelayChainOf(chain)}` as TSubstrateChain
+    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(chain)}`
 
     await ahApi.init(assetHubChain)
 

@@ -29,7 +29,7 @@ export const getAssetReserveChain = (
   if (isRelayChain(chain)) return chain
 
   const relaychain = getRelayChainOf(chain)
-  const ahChain = `AssetHub${relaychain}` as TSubstrateChain
+  const ahChain: TSubstrateChain = `AssetHub${relaychain}`
 
   if (hasGlobalConsensusJunction) {
     return ahChain

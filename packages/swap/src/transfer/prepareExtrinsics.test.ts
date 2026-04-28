@@ -12,9 +12,17 @@ import type {
 } from '../types';
 import * as createSwapTxModule from './createSwapTx';
 import { prepareExtrinsics } from './prepareExtrinsics';
-import * as utils from './utils';
 
-vi.mock('./utils');
+const { mockBuildTo, mockBuildFrom } = vi.hoisted(() => ({
+  mockBuildTo: vi.fn(),
+  mockBuildFrom: vi.fn(),
+}));
+
+vi.mock('./utils/utils', async (importActual) => ({
+  ...(await importActual()),
+  buildToExchangeExtrinsic: mockBuildTo,
+  buildFromExchangeExtrinsic: mockBuildFrom,
+}));
 vi.mock('./createSwapTx');
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
@@ -71,13 +79,13 @@ describe('prepareExtrinsics', () => {
       amountOut: 1000n,
     });
 
-    expect(utils.buildToExchangeExtrinsic).not.toHaveBeenCalled();
-    expect(utils.buildFromExchangeExtrinsic).not.toHaveBeenCalled();
+    expect(mockBuildTo).not.toHaveBeenCalled();
+    expect(mockBuildFrom).not.toHaveBeenCalled();
     expect(createSwapTxModule.createSwapTx).toHaveBeenCalledWith(dexChain, expect.any(Object));
   });
 
   test('creates transfer-to-exchange when origin differs', async () => {
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
+    mockBuildTo.mockResolvedValue('toExchangeTx');
 
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
@@ -91,13 +99,13 @@ describe('prepareExtrinsics', () => {
       amountOut: 1000n,
     });
 
-    expect(utils.buildToExchangeExtrinsic).toHaveBeenCalledWith(
+    expect(mockBuildTo).toHaveBeenCalledWith(
       expect.objectContaining({ origin: baseOptions.origin }),
     );
   });
 
   test('creates transfer-from-exchange when destination differs', async () => {
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
+    mockBuildFrom.mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(dexChain, {
       ...baseOptions,
@@ -111,14 +119,12 @@ describe('prepareExtrinsics', () => {
       amountOut: 1000n,
     });
 
-    expect(utils.buildFromExchangeExtrinsic).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: 1000n }),
-    );
+    expect(mockBuildFrom).toHaveBeenCalledWith(expect.objectContaining({ amount: 1000n }));
   });
 
   test('creates all three extrinsics when both origin & destination differ', async () => {
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
+    mockBuildTo.mockResolvedValue('toExchangeTx');
+    mockBuildFrom.mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(dexChain, baseOptions);
 
@@ -258,8 +264,8 @@ describe('prepareExtrinsics', () => {
       throw new DryRunFailedError('Filtered', 'origin');
     });
 
-    vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue('toExchangeTx');
-    vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue('toDestTx');
+    mockBuildTo.mockResolvedValue('toExchangeTx');
+    mockBuildFrom.mockResolvedValue('toDestTx');
 
     const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 

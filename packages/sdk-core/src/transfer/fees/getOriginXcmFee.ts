@@ -1,16 +1,16 @@
 import { AmountTooLowError } from '../../errors'
-import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import type { TGetOriginXcmFeeOptions, TXcmFeeDetailWithForwardedXcm } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
-export const getOriginXcmFee = async <TApi, TRes, TSigner>(
-  options: TGetOriginXcmFeeOptions<TApi, TRes, TSigner>
-): Promise<
-  TXcmFeeDetail & {
-    forwardedXcms?: unknown
-    destParaId?: number
-  }
-> => {
+export const getOriginXcmFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean = boolean
+>(
+  options: TGetOriginXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>
+): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
   const { buildTx } = options
 
   try {
@@ -21,7 +21,7 @@ export const getOriginXcmFee = async <TApi, TRes, TSigner>(
     return {
       ...forced,
       sufficient: real.sufficient
-    }
+    } as TXcmFeeDetailWithForwardedXcm<TDisableFallback>
   } catch (e: unknown) {
     if (!(e instanceof AmountTooLowError)) throw e
 
@@ -30,6 +30,6 @@ export const getOriginXcmFee = async <TApi, TRes, TSigner>(
     return {
       ...forced,
       sufficient: false
-    }
+    } as TXcmFeeDetailWithForwardedXcm<TDisableFallback>
   }
 }

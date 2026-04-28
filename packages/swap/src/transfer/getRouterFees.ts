@@ -1,149 +1,42 @@
-import type { TAssetInfo, TCurrencyCore, TGetXcmFeeResult, WithAmount } from '@paraspell/sdk-core';
-import {
-  applyDecimalAbstraction,
-  DryRunFailedError,
-  getXcmFee,
-  handleSwapExecuteTransfer,
-  RoutingResolutionError,
-} from '@paraspell/sdk-core';
+import type { TGetXcmFeeResult } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { getSwapFee } from './fees';
-import { getFromExchangeFee, getToExchangeFee } from './utils';
+import {
+  canUseExecuteTransfer,
+  getFromExchangeFee,
+  getSwapExecuteXcmFee,
+  getToExchangeFee,
+  isFilteredError,
+} from './utils';
 
 export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
   dex: ExchangeChain,
   options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
   disableFallback: TDisableFallback,
 ): Promise<TGetXcmFeeResult> => {
-  const {
-    api,
-    origin,
-    exchange,
-    currencyFrom,
-    currencyTo,
-    feeAsset,
-    destination,
-    amount,
-    sender,
-    recipient,
-    evmSenderAddress,
-  } = options;
+  const { api, origin, exchange, destination, sender } = options;
 
-  if ((origin || destination) && (dex.chain.includes('AssetHub') || dex.chain === 'Hydration')) {
+  if (canUseExecuteTransfer(dex, options)) {
     try {
-      const buildTx = async (overrideAmount?: string) => {
-        const amt =
-          overrideAmount !== undefined
-            ? applyDecimalAbstraction(overrideAmount, exchange.assetFrom.decimals, true)
-            : amount;
-        const amountOut = await dex.getAmountOut({
-          ...options,
-          amount: amt,
-          api: exchange.api,
-          apiPjs: exchange.apiPjs,
-          assetFrom: exchange.assetFrom,
-          assetTo: exchange.assetTo,
-        });
+      const { result } = await getSwapExecuteXcmFee(dex, options, disableFallback);
 
-        const tx = await handleSwapExecuteTransfer({
-          api,
-          chain: origin?.chain,
-          exchangeChain: exchange.chain,
-          destChain: destination?.chain,
-          assetInfoFrom: {
-            ...(origin?.assetFrom ?? exchange.assetFrom),
-            amount: BigInt(amt),
-          },
-          assetInfoTo: { ...exchange.assetTo, amount: amountOut },
-          currencyTo,
-          feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
-          sender: evmSenderAddress ?? sender,
-          recipient: recipient ?? sender,
-          calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-            dex.getAmountOut({
-              ...options,
-              amount: amountIn,
-              apiPjs: options.exchange.apiPjs,
-              api: options.exchange.api,
-              assetFrom: options.exchange.assetFrom,
-              assetTo: assetTo ?? options.exchange.assetTo,
-              slippagePct: '1',
-            }),
-        });
-
-        return tx;
-      };
-
-      const mainAmountOut = await dex.getAmountOut({
-        ...options,
-        amount,
-        api: exchange.api,
-        apiPjs: exchange.apiPjs,
-        assetFrom: exchange.assetFrom,
-        assetTo: exchange.assetTo,
-      });
-
-      const executeResult = await getXcmFee({
-        api,
-        buildTx,
-        origin: origin?.chain ?? exchange.chain,
-        destination: destination?.chain ?? exchange.chain,
-        sender: evmSenderAddress ?? sender,
-        recipient: recipient ?? sender,
-        currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
-        feeAsset,
-        disableFallback,
-        swapConfig: {
-          currencyTo: currencyTo as TCurrencyCore,
-          exchangeChain: exchange.chain,
-          amountOut: mainAmountOut,
-        },
-      });
-
-      if (executeResult.failureReason === 'NoDeal' && exchange.chain === 'Hydration') {
-        throw new RoutingResolutionError(
-          'An error occured, either this route is not registered for swap on exchange chain, or the amount out was not able to be calculated.',
-        );
-      }
-
-      const transformedHops = executeResult.hops.map((hop) => {
-        if (hop.chain === exchange.chain) {
-          return {
-            chain: hop.chain,
-            result: {
-              ...hop.result,
-              isExchange: true,
-            },
-          };
-        }
-        return hop;
-      });
+      const transformedHops = result.hops.map((hop) =>
+        hop.chain === exchange.chain
+          ? { chain: hop.chain, result: { ...hop.result, isExchange: true } }
+          : hop,
+      );
 
       return {
-        ...executeResult,
-        origin: {
-          ...executeResult.origin,
-          ...(!origin && { isExchange: true }),
-        },
-        destination: {
-          ...executeResult.destination,
-          ...(!destination && { isExchange: true }),
-        },
+        ...result,
+        origin: { ...result.origin, ...(!origin && { isExchange: true }) },
+        destination: { ...result.destination, ...(!destination && { isExchange: true }) },
         hops: transformedHops,
       };
     } catch (error) {
-      // If the execute is not supported, fallback to default swap execution
-      if (
-        !(
-          error instanceof DryRunFailedError &&
-          error.dryRunType === 'origin' &&
-          error.reason === 'Filtered'
-        )
-      ) {
-        throw error;
-      }
+      if (!isFilteredError(error)) throw error;
+      // Fall through to three-leg path
     }
   }
 
@@ -160,13 +53,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
   const receivingChain =
     destination && destination.chain !== exchange.chain
       ? await getFromExchangeFee(
-          {
-            exchange,
-            destination,
-            amount: amountOut,
-            sender,
-            api,
-          },
+          { exchange, destination, amount: amountOut, sender, api },
           disableFallback,
         )
       : undefined;
@@ -182,7 +69,7 @@ export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extend
             chain: exchange.chain,
             result: {
               ...swapChain,
-              fee: (swapChain.fee as bigint) + (receivingChain?.origin.fee ?? 0n),
+              fee: swapChain.fee + (receivingChain?.origin.fee ?? 0n),
               isExchange: true,
             },
           },

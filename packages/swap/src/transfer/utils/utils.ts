@@ -31,6 +31,11 @@ export const getToExchangeFee = <TApi, TRes, TSigner, TDisableFallback extends b
   disableFallback: TDisableFallback,
 ) => createToExchangeBuilder(options).getXcmFee({ disableFallback });
 
+export const getToExchangeOriginFee = <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+  options: TBuildToExchangeTxOptions<TApi, TRes, TSigner>,
+  disableFallback: TDisableFallback,
+) => createToExchangeBuilder(options).getOriginXcmFee({ disableFallback });
+
 export const createFromExchangeBuilder = <TApi, TRes, TSigner>({
   exchange,
   destination,

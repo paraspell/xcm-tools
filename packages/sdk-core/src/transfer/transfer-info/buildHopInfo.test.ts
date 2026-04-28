@@ -1,14 +1,9 @@
 import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
-import {
-  findAssetOnDestOrThrow,
-  findNativeAssetInfoOrThrow,
-  getExistentialDepositOrThrow
-} from '@paraspell/assets'
+import { findAssetOnDestOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { UnableToComputeError } from '../../errors'
 import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
 
@@ -17,14 +12,9 @@ vi.mock('@paraspell/assets', async () => {
   return {
     ...actual,
     findAssetOnDestOrThrow: vi.fn(),
-    getExistentialDepositOrThrow: vi.fn(),
     findNativeAssetInfoOrThrow: vi.fn()
   }
 })
-
-vi.mock('../../../errors', () => ({
-  UnableToComputeError: class extends Error {}
-}))
 
 describe('buildHopInfo', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
@@ -32,7 +22,6 @@ describe('buildHopInfo', () => {
   let baseOptions: BuildHopInfoOptions<unknown, unknown, unknown>
 
   const DEFAULT_HOP_FEE = 100000000n
-  const DEFAULT_ED = 100000000n
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -69,7 +58,6 @@ describe('buildHopInfo', () => {
       decimals: 6,
       location: {} as TLocation
     })
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(DEFAULT_ED)
   })
 
   it('should successfully build info for an AssetHub-like hop chain (non-EVM origin)', async () => {
@@ -91,10 +79,6 @@ describe('buildHopInfo', () => {
       options.currency
     )
 
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.chain, {
-      location: (vi.mocked(findAssetOnDestOrThrow).mock.results[0].value as TAssetInfo).location
-    })
-
     expect(result).toEqual({
       asset: {
         symbol: 'USDT',
@@ -102,7 +86,6 @@ describe('buildHopInfo', () => {
         decimals: 6,
         location: {}
       },
-      existentialDeposit: BigInt(DEFAULT_ED),
       xcmFee: {
         fee: DEFAULT_HOP_FEE,
         asset: { symbol: 'USDT', assetId: '1984', decimals: 6 }
@@ -125,7 +108,6 @@ describe('buildHopInfo', () => {
     expect(initSpy).toHaveBeenCalledWith(chain)
     expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith(chain)
     expect(findAssetOnDestOrThrow).not.toHaveBeenCalled()
-    expect(getExistentialDepositOrThrow).not.toHaveBeenCalled()
 
     expect(result).toEqual({
       asset: {
@@ -144,23 +126,7 @@ describe('buildHopInfo', () => {
     expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw UnableToComputeError if ED is not found for AssetHub-like chain', async () => {
-    vi.mocked(getExistentialDepositOrThrow).mockImplementation(() => {
-      throw new UnableToComputeError('Existential deposit not found')
-    })
-    const options = { ...baseOptions }
-
-    const disconnectAllowedSpy = vi.spyOn(mockHopApi, 'disconnectAllowed', 'set')
-    const disconnectSpy = vi.spyOn(mockHopApi, 'disconnect')
-
-    await expect(buildHopInfo(options)).rejects.toThrow(UnableToComputeError)
-
-    expect(disconnectAllowedSpy).toHaveBeenCalledTimes(2)
-    expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
-  })
-
-  it('should handle hop asset without location correctly', async () => {
+  it('should return the resolved hop asset for a non-BridgeHub chain', async () => {
     const asset: TAssetInfo = {
       symbol: 'OTHER',
       assetId: 'otherId',
@@ -172,15 +138,25 @@ describe('buildHopInfo', () => {
     }
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
     const options = { ...baseOptions }
-    await buildHopInfo(options)
 
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.chain, {
-      location: asset.location
+    const result = await buildHopInfo(options)
+
+    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
+      options.originChain,
+      options.chain,
+      options.currency
+    )
+    expect(result).toEqual({
+      asset,
+      xcmFee: {
+        fee: DEFAULT_HOP_FEE,
+        asset: baseOptions.asset
+      }
     })
   })
 
   it('should call finally block (disconnect) even if an earlier call fails', async () => {
-    vi.mocked(getExistentialDepositOrThrow).mockImplementation(() => {
+    vi.mocked(findAssetOnDestOrThrow).mockImplementation(() => {
       throw new Error('Network error')
     })
     const options = { ...baseOptions }

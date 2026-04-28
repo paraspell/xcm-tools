@@ -1,5 +1,4 @@
 import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BalancesPallet } from './BalancesPallet'
@@ -14,7 +13,7 @@ describe('BalancesPallet.setBalance', () => {
   it('uses address string for Hydration chains', async () => {
     const pallet = new BalancesPallet('Balances')
     const address = 'Alice'
-    const chain = 'HydrationPaseo' as TSubstrateChain
+    const chain = 'HydrationPaseo'
     const asset = { amount: 111n } as WithAmount<TAssetInfo>
 
     vi.mocked(isChainEvm).mockReturnValue(false)
@@ -30,7 +29,7 @@ describe('BalancesPallet.setBalance', () => {
   it('uses address string for Basilisk', async () => {
     const pallet = new BalancesPallet('Balances')
     const address = 'Alice'
-    const chain = 'Basilisk' as TSubstrateChain
+    const chain = 'Basilisk'
     const asset = { amount: 222n } as WithAmount<TAssetInfo>
 
     vi.mocked(isChainEvm).mockReturnValue(false)
@@ -44,7 +43,7 @@ describe('BalancesPallet.setBalance', () => {
   it('uses address string when chain is EVM', async () => {
     const pallet = new BalancesPallet('Balances')
     const address = '0xAlice'
-    const chain = 'Moonbeam' as TSubstrateChain
+    const chain = 'Moonbeam'
     const asset = { amount: 333n } as WithAmount<TAssetInfo>
 
     vi.mocked(isChainEvm).mockReturnValue(true)
@@ -58,7 +57,7 @@ describe('BalancesPallet.setBalance', () => {
   it('uses { Id: address } for other non-EVM chains', async () => {
     const pallet = new BalancesPallet('Balances')
     const address = '5FbrsAddr'
-    const chain = 'Acala' as TSubstrateChain
+    const chain = 'Acala'
     const asset = { amount: 444n } as WithAmount<TAssetInfo>
 
     vi.mocked(isChainEvm).mockReturnValue(false)

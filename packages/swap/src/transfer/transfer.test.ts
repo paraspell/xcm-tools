@@ -15,7 +15,7 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
 import { transfer } from './transfer';
-import { prepareTransformedOptions } from './utils';
+import { maybePerformXcmFormatCheck, prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
@@ -136,6 +136,7 @@ describe('transfer', () => {
 
     expect(prepareTransformedOptions).toHaveBeenCalledTimes(1);
     expect(buildTransactions).toHaveBeenCalledTimes(1);
+    expect(maybePerformXcmFormatCheck).toHaveBeenCalledTimes(1);
     expect(executeRouterPlan).toHaveBeenCalledTimes(1);
   });
 

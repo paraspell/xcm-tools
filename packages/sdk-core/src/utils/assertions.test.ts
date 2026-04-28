@@ -1,7 +1,13 @@
+import { InvalidCurrencyError, type TCurrencyInput } from '@paraspell/assets'
 import { describe, expect, it } from 'vitest'
 
 import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
-import { assertSender, assertSenderSource, assertSwapSupport } from './assertions'
+import {
+  assertCurrencyCore,
+  assertSender,
+  assertSenderSource,
+  assertSwapSupport
+} from './assertions'
 
 describe('assertions', () => {
   describe('assertSender', () => {
@@ -27,6 +33,48 @@ describe('assertions', () => {
 
     it('does not throw when swapOptions is undefined', () => {
       expect(() => assertSwapSupport(undefined)).not.toThrow()
+    })
+  })
+
+  describe('assertCurrencyCore', () => {
+    it('passes for a symbol selector', () => {
+      const value: TCurrencyInput = { symbol: 'DOT' }
+      expect(() => assertCurrencyCore(value)).not.toThrow()
+    })
+
+    it('passes for an id selector', () => {
+      const value: TCurrencyInput = { id: 1984 }
+      expect(() => assertCurrencyCore(value)).not.toThrow()
+    })
+
+    it('passes for a string location selector', () => {
+      const value: TCurrencyInput = { location: '{"parents":1,"interior":"Here"}' }
+      expect(() => assertCurrencyCore(value)).not.toThrow()
+    })
+
+    it('passes for an object location selector', () => {
+      const value: TCurrencyInput = { location: { parents: 1, interior: 'Here' } }
+      expect(() => assertCurrencyCore(value)).not.toThrow()
+    })
+
+    it('passes for undefined (optional field)', () => {
+      expect(() => assertCurrencyCore(undefined)).not.toThrow()
+    })
+
+    it('throws InvalidCurrencyError for null', () => {
+      expect(() => assertCurrencyCore(null)).toThrow(InvalidCurrencyError)
+    })
+
+    it('throws InvalidCurrencyError for a multi-asset array', () => {
+      const value = [{ symbol: 'DOT', amount: 1n }] as unknown as TCurrencyInput
+      expect(() => assertCurrencyCore(value)).toThrow(InvalidCurrencyError)
+    })
+
+    it('throws InvalidCurrencyError for an override location specifier', () => {
+      const value: TCurrencyInput = {
+        location: { type: 'Override', value: { parents: 1, interior: 'Here' } }
+      }
+      expect(() => assertCurrencyCore(value)).toThrow(InvalidCurrencyError)
     })
   })
 })

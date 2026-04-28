@@ -5,7 +5,7 @@ import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TAdditionalTransferOptions, TBuildTransactionsOptions, TRouterPlan } from '../types';
 import { buildApiTransactions } from './buildApiTransactions';
 import { buildTransactions } from './buildTransactions';
-import { prepareTransformedOptions } from './utils';
+import { maybePerformXcmFormatCheck, prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
@@ -60,6 +60,12 @@ describe('buildApiTransactions', () => {
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(prepareTransformedOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(buildTransactions).toHaveBeenCalledOnce();
+    expect(maybePerformXcmFormatCheck).toHaveBeenCalledOnce();
+    expect(maybePerformXcmFormatCheck).toHaveBeenCalledWith(
+      mockApi,
+      expect.any(Object),
+      mockTransactions,
+    );
     expect(result).toEqual(mockTransactions);
   });
 
