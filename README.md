@@ -43,6 +43,8 @@ packages | - XCM SDK
          | - XCM SDK-DEDOT
          | - XCM SDK-Core
          | - XCM SDK-Common
+         | - EVM
+         | - EVM-Snowbridge
          | - Swap
          | - XCM Analyser
          | - Assets
