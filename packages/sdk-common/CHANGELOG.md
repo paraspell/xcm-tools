@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.2.2...sdk-common-v13.3.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* Remove unused cjs build files link 🔧 ([612d3e4](https://github.com/paraspell/xcm-tools/commit/612d3e4a5f38e4168ea85b7d784cab0ae8dd9be2))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.2.1...sdk-common-v13.2.2) (2026-04-16)
 
 

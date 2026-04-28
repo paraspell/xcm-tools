@@ -1,5 +1,32 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.2.2...sdk-core-v13.3.0) (2026-04-28)
+
+
+### Features
+
+* **evm-snowbridge:** Add evm-snowbridge extension ✨ ([72bd5e4](https://github.com/paraspell/xcm-tools/commit/72bd5e47d1a2856c07f5cb9c4a4d53270651ca42))
+* **evm:** add @paraspell/evm extension and unify EVM dispatch in Builder ([0ade7ba](https://github.com/paraspell/xcm-tools/commit/0ade7ba4f793d5cfc3215e7e03e64e752d3c628f))
+* **playground:** Redesign EVM transfers ✨ ([07855a8](https://github.com/paraspell/xcm-tools/commit/07855a8aa533d9b803a3bcd52ace5a57851a8072))
+
+
+### Bug Fixes
+
+* Remove unnecessary type casts 🔧 ([d878270](https://github.com/paraspell/xcm-tools/commit/d87827082ab8180626eff4aa952cac3fb277712a))
+* Remove unused cjs build files link 🔧 ([612d3e4](https://github.com/paraspell/xcm-tools/commit/612d3e4a5f38e4168ea85b7d784cab0ae8dd9be2))
+* Resolve the swap extension circular dependency problem ⚙️ ([482aeb8](https://github.com/paraspell/xcm-tools/commit/482aeb8eb18cff37789441b6ede84871cd955b6b))
+* Update transact call param encoding 🔧 ([5c450cb](https://github.com/paraspell/xcm-tools/commit/5c450cb6f4ce1628ab3e5d703a8eb7caa359bc0f))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Code Refactoring
+
+* **swap:** Make AH exchange generic 🔧 ([a56de67](https://github.com/paraspell/xcm-tools/commit/a56de67238f4df7aadb46cf8d4754adc7c591e79))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.2.1...sdk-core-v13.2.2) (2026-04-16)
 
 

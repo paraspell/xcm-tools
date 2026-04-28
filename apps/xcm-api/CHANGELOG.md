@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.2.2...xcm-api-v13.3.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* Remove unnecessary type casts 🔧 ([d878270](https://github.com/paraspell/xcm-tools/commit/d87827082ab8180626eff4aa952cac3fb277712a))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Tests
+
+* Improve xcm-tools e2e tests 🧪 ([568cea8](https://github.com/paraspell/xcm-tools/commit/568cea82e38125bd938e74aa00087b0814e8c7ed))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.2.1...xcm-api-v13.2.2) (2026-04-16)
 
 

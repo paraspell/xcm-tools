@@ -1,5 +1,27 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.2.2...playground-v13.3.0) (2026-04-28)
+
+
+### Features
+
+* **playground:** Redesign EVM transfers ✨ ([07855a8](https://github.com/paraspell/xcm-tools/commit/07855a8aa533d9b803a3bcd52ace5a57851a8072))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Code Refactoring
+
+* **playground:** Join xcm utils to xcm transfer form ✨ ([357cdc7](https://github.com/paraspell/xcm-tools/commit/357cdc7875deb8fbb1e654023f113404daf8324c))
+
+
+### Tests
+
+* Improve xcm-tools e2e tests 🧪 ([568cea8](https://github.com/paraspell/xcm-tools/commit/568cea82e38125bd938e74aa00087b0814e8c7ed))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/playground-v13.2.1...playground-v13.2.2) (2026-04-16)
 
 

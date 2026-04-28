@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/pallets-v13.2.2...pallets-v13.3.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* Remove unused cjs build files link 🔧 ([612d3e4](https://github.com/paraspell/xcm-tools/commit/612d3e4a5f38e4168ea85b7d784cab0ae8dd9be2))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Code Refactoring
+
+* **swap:** Make AH exchange generic 🔧 ([a56de67](https://github.com/paraspell/xcm-tools/commit/a56de67238f4df7aadb46cf8d4754adc7c591e79))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/pallets-v13.2.1...pallets-v13.2.2) (2026-04-16)
 
 

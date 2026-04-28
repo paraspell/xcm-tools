@@ -1,5 +1,30 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/assets-v13.2.2...assets-v13.3.0) (2026-04-28)
+
+
+### Features
+
+* **playground:** Redesign EVM transfers ✨ ([07855a8](https://github.com/paraspell/xcm-tools/commit/07855a8aa533d9b803a3bcd52ace5a57851a8072))
+
+
+### Bug Fixes
+
+* Remove unused cjs build files link 🔧 ([612d3e4](https://github.com/paraspell/xcm-tools/commit/612d3e4a5f38e4168ea85b7d784cab0ae8dd9be2))
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([6f05664](https://github.com/paraspell/xcm-tools/commit/6f05664aab6b169cb142fe864651761c7a957d7a))
+* **assets:** Update SDK assets 📋 ([2dbcf67](https://github.com/paraspell/xcm-tools/commit/2dbcf67c74c7a941d77d5ded4d12b973b38f6652))
+* **swap:** Update swap assets 📋 ([6f05664](https://github.com/paraspell/xcm-tools/commit/6f05664aab6b169cb142fe864651761c7a957d7a))
+* **swap:** Update swap assets 📋 ([2dbcf67](https://github.com/paraspell/xcm-tools/commit/2dbcf67c74c7a941d77d5ded4d12b973b38f6652))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/assets-v13.2.1...assets-v13.2.2) (2026-04-16)
 
 
