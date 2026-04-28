@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.2.2...sdk-dedot-v13.3.0) (2026-04-28)
+
+
+### Bug Fixes
+
+* Remove unnecessary type casts 🔧 ([d878270](https://github.com/paraspell/xcm-tools/commit/d87827082ab8180626eff4aa952cac3fb277712a))
+* Remove unused cjs build files link 🔧 ([612d3e4](https://github.com/paraspell/xcm-tools/commit/612d3e4a5f38e4168ea85b7d784cab0ae8dd9be2))
+* Update transact call param encoding 🔧 ([5c450cb](https://github.com/paraspell/xcm-tools/commit/5c450cb6f4ce1628ab3e5d703a8eb7caa359bc0f))
+
+
+### Documentation
+
+* Add evm extension docs ([8f46808](https://github.com/paraspell/xcm-tools/commit/8f4680841646b8a1586e96d8416fd0c5550bf68f))
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Code Refactoring
+
+* **swap:** Make AH exchange generic 🔧 ([a56de67](https://github.com/paraspell/xcm-tools/commit/a56de67238f4df7aadb46cf8d4754adc7c591e79))
+
 ## [13.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.2.1...sdk-dedot-v13.2.2) (2026-04-16)
 
 
