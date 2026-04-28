@@ -107,7 +107,7 @@ describe('approveToken', () => {
     const asset: TAssetInfo = {
       symbol: 'WETH',
       decimals: 18,
-      assetId: 'not-an-address',
+      assetId: 'not-address',
       location: { parents: 0, interior: 'Here' }
     }
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(asset)

@@ -45,6 +45,9 @@
     "packages/evm": {
       "component": "evm"
     },
+    "packages/evm-snowbridge": {
+      "component": "evm-snowbridge"
+    },
     "packages/xcm-analyser": {},
     "apps/xcm-api": {
       "component": "xcm-api"
@@ -68,6 +71,7 @@
         "pallets",
         "swap",
         "evm",
+        "evm-snowbridge",
         "xcm-api",
         "playground"
       ]
