@@ -4,8 +4,8 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
-import { join } from 'path';
 import path from 'path';
+import { join } from 'path';
 import { fileURLToPath } from 'url';
 
 import { AddressModule } from './address/address.module.js';

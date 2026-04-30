@@ -13,7 +13,7 @@ import {
 } from '@paraspell/sdk-common'
 import { getChain } from '../src'
 
-const assetIdRequired: TChain[] = ['Manta', 'Peaq', 'Pendulum']
+const assetIdRequired: TChain[] = ['Peaq', 'Pendulum']
 
 export const doesNotSupportParaToRelay: TChain[] = [
   'Peaq',

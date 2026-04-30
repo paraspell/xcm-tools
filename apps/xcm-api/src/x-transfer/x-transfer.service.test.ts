@@ -10,11 +10,11 @@ import type {
   TDryRunResult,
   TGetXcmFeeResult,
 } from '@paraspell/sdk';
+import * as paraspellSdk from '@paraspell/sdk';
 import {
   InvalidCurrencyError,
   ScenarioNotSupportedError,
 } from '@paraspell/sdk';
-import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';

@@ -20,7 +20,6 @@ export const PARACHAINS = [
   'CoretimePolkadot',
   'Collectives',
   'Crust',
-  'Manta',
   'NeuroWeb',
   'Pendulum',
   'Mythos',

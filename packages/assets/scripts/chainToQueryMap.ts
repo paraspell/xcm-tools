@@ -50,7 +50,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Kintsugi: ['assetRegistry.metadata'],
   Laos: [], // No assets metadata query
   LaosPaseo: [], // No assets metadata query
-  Manta: ['assets.metadata'],
   Moonbeam: ['evmForeignAssets.assetsById'],
   Moonriver: ['evmForeignAssets.assetsById'],
   Mythos: [], // No assets metadata query

@@ -30,7 +30,6 @@ import { getChainProviders, getParaId, reverseTransformLocation } from '../../sd
 import { getRelayChainSymbolOf, isChainEvm } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
-import { fetchMantaOtherAssets } from './fetchMantaAssets'
 import { fetchHydrationAssets } from './fetchHydrationAssets'
 import { fetchAstarAssets } from './fetchAstarAssets'
 import { fetchDarwiniaAssets } from './fetchDarwiniaAssets'
@@ -307,10 +306,6 @@ const fetchOtherAssets = async (
 
   if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq') {
     otherAssets = await fetchAjunaOtherAssets(api, chain, query)
-  }
-
-  if (chain === 'Manta') {
-    otherAssets = await fetchMantaOtherAssets(api, query)
   }
 
   if (chain === 'Astar' || chain === 'Shiden') {

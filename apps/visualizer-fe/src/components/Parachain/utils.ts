@@ -13,7 +13,6 @@ import darwiniaPng from '../../logos/darwinia.png';
 import hydrationPng from '../../logos/hydration.png';
 import interlayPng from '../../logos/interlay.png';
 import laosPng from '../../logos/laos.png';
-import mantaPng from '../../logos/manta.png';
 import moonbeamPng from '../../logos/moonbeam.png';
 import mythosPng from '../../logos/mythos.png';
 import neuroWebPng from '../../logos/neuroWeb.png';
@@ -38,8 +37,6 @@ export const getChainLogo = (chain: TSubstrateChain) => {
       return acalaPng;
     case 'Pendulum':
       return pendulumPng;
-    case 'Manta':
-      return mantaPng;
     case 'Moonbeam':
       return moonbeamPng;
     case 'BifrostPolkadot':

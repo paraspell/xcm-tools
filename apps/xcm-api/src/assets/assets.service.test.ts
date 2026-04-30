@@ -1,12 +1,12 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import * as paraspellSdk from '@paraspell/sdk';
 import {
   type TAssetInfo,
   type TChain,
   type TChainAssetsInfo,
 } from '@paraspell/sdk';
-import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
