@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.8](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.7...xcm-analyser-v3.0.8) (2026-04-30)
+
+
+### Documentation
+
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e0a64a1](https://github.com/paraspell/xcm-tools/commit/e0a64a1513786f3c729d1699788f1a47a7b1ed3c))
+
 ## [3.0.7](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.6...xcm-analyser-v3.0.7) (2026-04-16)
 
 
