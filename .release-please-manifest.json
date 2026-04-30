@@ -1,5 +1,5 @@
 {
-  "packages/xcm-analyser": "3.0.7",
+  "packages/xcm-analyser": "3.0.8",
   "packages/swap": "13.4.1",
   "packages/evm": "13.4.1",
   "packages/evm-snowbridge": "13.4.1",
