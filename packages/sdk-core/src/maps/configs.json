@@ -58,14 +58,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://acala-rpc.n.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://acala.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://acala.dotters.network"
       }
     ]
   },
@@ -77,14 +69,6 @@
       {
         "name": "AjunaNetwork",
         "endpoint": "wss://rpc-para.ajuna.network"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://ajuna.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://ajuna.dotters.network"
       }
     ]
   },
@@ -116,14 +100,6 @@
     "info": "bifrost",
     "paraId": 2030,
     "providers": [
-      {
-        "name": "IBP1",
-        "endpoint": "wss://bifrost-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bifrost-polkadot.dotters.network"
-      },
       {
         "name": "Liebi",
         "endpoint": "wss://hk.p.bifrost-rpc.liebi.com/ws"
@@ -288,12 +264,8 @@
         "endpoint": "wss://moonbeam-rpc.publicnode.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://moonbeam.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://moonbeam.dotters.network"
+        "name": "Dwellir",
+        "endpoint": "wss://moonbeam-rpc.n.dwellir.com"
       },
       {
         "name": "Moonbeam Foundation",
@@ -302,10 +274,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://moonbeam.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://moonbeam.public.curie.radiumblock.co/ws"
       },
       {
         "name": "UnitedBloc",
@@ -410,17 +378,6 @@
       }
     ]
   },
-  "Manta": {
-    "name": "Manta",
-    "info": "manta",
-    "paraId": 2104,
-    "providers": [
-      {
-        "name": "Manta Network",
-        "endpoint": "wss://ws.manta.systems"
-      }
-    ]
-  },
   "NeuroWeb": {
     "name": "NeuroWeb",
     "info": "neuroweb",
@@ -449,8 +406,8 @@
     "paraId": 3369,
     "providers": [
       {
-        "name": "parity",
-        "endpoint": "wss://polkadot-mythos-rpc.polkadot.io"
+        "name": "dmarket",
+        "endpoint": "wss://mythos-rpc.dmarket.com/"
       }
     ]
   },
@@ -508,14 +465,6 @@
       {
         "name": "Geo Load Balancer",
         "endpoint": "wss://ws.unique.network"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://unique.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://unique.dotters.network"
       }
     ]
   },
@@ -672,16 +621,16 @@
         "endpoint": "wss://moonriver-rpc.publicnode.com"
       },
       {
+        "name": "Dwellir",
+        "endpoint": "wss://moonriver-rpc.n.dwellir.com"
+      },
+      {
         "name": "Moonbeam Foundation",
         "endpoint": "wss://wss.api.moonriver.moonbeam.network"
       },
       {
         "name": "OnFinality",
         "endpoint": "wss://moonriver.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://moonriver.public.curie.radiumblock.co/ws"
       },
       {
         "name": "UnitedBloc",
@@ -1308,7 +1257,7 @@
       },
       {
         "name": "RadiumBlock",
-        "endpoint": "wss://westend.public.curie.radiumblock.co/ws"
+        "endpoint": "wss://rpc.public.curie.radiumblock.xyz/ws-westend"
       }
     ]
   },

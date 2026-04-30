@@ -31,32 +31,32 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateChainConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/fetchChainConfigs.ts",
+    "updateChainConfigs": "TS_NODE_PROJECT=./scripts/tsconfig.json node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/fetchChainConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
-    "@noble/hashes": "^2.0.1",
+    "@noble/hashes": "^2.2.0",
     "@paraspell/assets": "workspace:*",
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
-    "@scure/base": "^2.0.0",
-    "viem": "^2.47.6"
+    "@scure/base": "^2.2.0",
+    "viem": "^2.48.4"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
     "@babel/preset-env": "^7.29.2",
-    "@codecov/rollup-plugin": "^1.9.1",
+    "@codecov/rollup-plugin": "^2.0.1",
     "@polkadot/api": "^16.5.6",
     "@polkadot/types": "^16.5.6",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.2",
-    "axios": "^1.14.0",
-    "dotenv": "^17.3.1",
-    "rollup": "^4.60.1",
+    "@vitest/coverage-v8": "^4.1.5",
+    "axios": "^1.15.2",
+    "dotenv": "^17.4.2",
+    "rollup": "^4.60.2",
     "rollup-plugin-dts": "^6.4.1",
-    "ts-morph": "^27.0.2",
+    "ts-morph": "^28.0.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1"
   }

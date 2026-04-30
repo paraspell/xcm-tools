@@ -39,7 +39,6 @@ import Kintsugi from '../chains/supported/Kintsugi'
 import Kusama from '../chains/supported/Kusama'
 import Laos from '../chains/supported/Laos'
 import LaosPaseo from '../chains/supported/LaosPaseo'
-import Manta from '../chains/supported/Manta'
 import Moonbeam from '../chains/supported/Moonbeam'
 import Moonriver from '../chains/supported/Moonriver'
 import Mythos from '../chains/supported/Mythos'
@@ -85,7 +84,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes, TSigner>(),
   PeoplePolkadot: new PeoplePolkadot<TApi, TRes, TSigner>(),
   RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes, TSigner>(),
-  Manta: new Manta<TApi, TRes, TSigner>(),
   NeuroWeb: new NeuroWeb<TApi, TRes, TSigner>(),
   Pendulum: new Pendulum<TApi, TRes, TSigner>(),
   Collectives: new Collectives<TApi, TRes, TSigner>(),

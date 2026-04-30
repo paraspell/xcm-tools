@@ -515,33 +515,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "AssetManager"]
   },
-  "Manta": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 34
-      },
-      {
-        "name": "Assets",
-        "index": 45
-      },
-      {
-        "name": "AssetManager",
-        "index": 46
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets", "AssetManager"]
-  },
   "NeuroWeb": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [

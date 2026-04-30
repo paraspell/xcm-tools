@@ -42,7 +42,7 @@
     "@snowbridge/provider-ethers": "^1.0.13",
     "@snowbridge/registry": "^1.0.13",
     "ethers": "^6.16.0",
-    "viem": "^2.47.6"
+    "viem": "^2.48.4"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",
@@ -54,14 +54,14 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
     "@babel/preset-env": "^7.29.2",
-    "@codecov/rollup-plugin": "^1.9.1",
+    "@codecov/rollup-plugin": "^2.0.1",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.2",
-    "axios": "^1.14.0",
-    "dotenv": "^17.3.1",
-    "rollup": "^4.60.1",
+    "@vitest/coverage-v8": "^4.1.5",
+    "axios": "^1.15.2",
+    "dotenv": "^17.4.2",
+    "rollup": "^4.60.2",
     "rollup-plugin-dts": "^6.4.1",
     "tslib": "^2.8.1"
   }

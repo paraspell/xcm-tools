@@ -32,16 +32,16 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "zod": "^4.3.6"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
-    "@codecov/rollup-plugin": "^1.9.1",
+    "@codecov/rollup-plugin": "^2.0.1",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.2",
-    "dotenv": "^17.3.1",
-    "rollup": "^4.60.1",
+    "@vitest/coverage-v8": "^4.1.5",
+    "dotenv": "^17.4.2",
+    "rollup": "^4.60.2",
     "rollup-plugin-dts": "^6.4.1",
     "ts-node": "^10.9.2"
   }
