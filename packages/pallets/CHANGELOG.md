@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.4.1](https://github.com/paraspell/xcm-tools/compare/pallets-v13.4.0...pallets-v13.4.1) (2026-04-30)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([e0a64a1](https://github.com/paraspell/xcm-tools/commit/e0a64a1513786f3c729d1699788f1a47a7b1ed3c))
+
 ## [13.4.0](https://github.com/paraspell/xcm-tools/compare/pallets-v13.3.0...pallets-v13.4.0) (2026-04-28)
 
 
