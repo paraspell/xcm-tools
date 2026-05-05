@@ -1,11 +1,15 @@
 import type { TSubstrateChain } from '@paraspell/sdk-core'
 import { registerEvmExtension } from '@paraspell/sdk-core'
 
+import { buildEvmTransfer } from './buildEvmTransfer'
 import { executeEvmTransfer } from './executeEvmTransfer'
 
-registerEvmExtension({ executeEvmTransfer })
+registerEvmExtension({
+  executeTransfer: executeEvmTransfer,
+  buildTransfer: buildEvmTransfer
+})
 
-export { executeEvmTransfer }
+export { buildEvmTransfer, executeEvmTransfer }
 
 export const EVM_ORIGIN_CHAINS = [
   'Moonbeam',

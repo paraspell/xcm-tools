@@ -1,28 +1,26 @@
-import {
-  type TEvmTransferOptions,
-  UnsupportedOperationError,
-  validateAddress
-} from '@paraspell/sdk-core'
+import type { TEvmTransferOptions } from '@paraspell/sdk-core'
+import { MissingParameterError } from '@paraspell/sdk-core'
 
-import { transferMoonbeamEvm } from './moonbeam/transferMoonbeamEvm'
-import { transferMoonbeamToEth } from './moonbeam/transferMoonbeamToEth'
+import { buildEvmTransfer } from './buildEvmTransfer'
 
 export const executeEvmTransfer = async <TApi, TRes, TSigner>(
   options: TEvmTransferOptions<TApi, TRes, TSigner>
 ): Promise<string> => {
-  const { api, from, to, recipient } = options
-
-  validateAddress(api, recipient, to)
-
-  if (from === 'Moonbeam' && to === 'Ethereum') {
-    return transferMoonbeamToEth(from, options)
+  const { signer } = options
+  const account = signer.account
+  if (!account) {
+    throw new MissingParameterError(
+      'signer.account',
+      'viem WalletClient must have an account configured.'
+    )
   }
+  const sender = account.address
 
-  if (from === 'Moonbeam' || from === 'Moonriver' || from === 'Darwinia') {
-    return transferMoonbeamEvm(options)
-  }
+  const tx = await buildEvmTransfer({ ...options, sender })
 
-  throw new UnsupportedOperationError(
-    `EVM transfer from '${from}' to '${to}' is not supported by @paraspell/evm.`
-  )
+  return signer.sendTransaction({
+    ...tx,
+    chain: signer.chain,
+    account
+  })
 }

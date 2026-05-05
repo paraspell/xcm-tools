@@ -16,6 +16,7 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
+  EvmXTransferDto,
   SignAndSubmitDto,
   XTransferDtoWSender,
 } from './dto/XTransferDto.js';
@@ -69,6 +70,52 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('generateEvmXcmCall', () => {
+    it('should call generateEvmXcmCall service method with correct parameters and return hex', async () => {
+      const mockResult = '0x02deadbeef';
+      const spy = vi
+        .spyOn(service, 'generateEvmXcmCall')
+        .mockResolvedValue(mockResult);
+
+      const evmBody: EvmXTransferDto = {
+        ...bodyParams,
+        from: 'Moonbeam',
+        to: 'AssetHubPolkadot',
+      };
+
+      const result = await controller.generateEvmXcmCall(
+        evmBody,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(evmBody);
+    });
+  });
+
+  describe('generateEvmApprove', () => {
+    it('should call generateEvmApprove service method with correct parameters and return hex', () => {
+      const mockResult = '0x02feedface';
+      const spy = vi
+        .spyOn(service, 'generateEvmApprove')
+        .mockReturnValue(mockResult);
+
+      const approveBody = {
+        symbol: 'WETH',
+        amount: '1000',
+        sender: '0x1111111111111111111111111111111111111111',
+      };
+
+      const result = controller.generateEvmApprove(
+        approveBody,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(approveBody);
     });
   });
 

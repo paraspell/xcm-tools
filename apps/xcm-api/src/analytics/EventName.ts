@@ -36,6 +36,8 @@ export enum EventName {
   GENERATE_XCM_CALL = 'Generate XCM Call',
   GENERATE_XCM_CALLS = 'Generate XCM Calls',
   GENERATE_XCM_CALL_BATCH = 'Generate XCM Call Batch',
+  GENERATE_EVM_XCM_CALL = 'Generate EVM XCM Call',
+  GENERATE_EVM_APPROVE = 'Generate EVM Approve',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
   GET_ROUTER_XCM_FEES = 'Get router xcm fees',

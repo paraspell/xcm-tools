@@ -342,12 +342,6 @@ export const XcmTransferForm: FC<Props> = ({
   const isEvmMode = Boolean(selectedEvmAccount);
   const activeAccount = selectedEvmAccount?.address ?? selectedAccount?.address;
 
-  useEffect(() => {
-    if (isEvmMode && form.values.useApi) {
-      form.setFieldValue('useApi', false);
-    }
-  }, [isEvmMode, form.values.useApi]);
-
   const onConnectWalletClick = () => void connectWallet();
 
   const getSubmitLabel = () => {
@@ -386,6 +380,7 @@ export const XcmTransferForm: FC<Props> = ({
         assetId={asset.assetId}
         amount={entry.amount}
         isMax={entry.isMax}
+        useApi={form.values.useApi}
         getEvmWalletClient={getEvmWalletClient}
       />
     );
@@ -576,7 +571,6 @@ export const XcmTransferForm: FC<Props> = ({
 
           <Group gap="lg">
             <XcmApiCheckbox
-              disabled={isEvmMode}
               {...form.getInputProps('useApi', { type: 'checkbox' })}
             />
             <KeepAliveCheckbox

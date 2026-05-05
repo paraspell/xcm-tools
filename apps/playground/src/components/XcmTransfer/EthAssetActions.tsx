@@ -6,6 +6,7 @@ import type { Chain, WalletClient } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
 import { mainnet } from 'viem/chains';
 
+import { submitEvmApproveFromApi } from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -18,6 +19,7 @@ type Props = {
   assetId: string;
   amount: string;
   isMax?: boolean;
+  useApi?: boolean;
   getEvmWalletClient: (chain: Chain) => WalletClient | undefined;
 };
 
@@ -29,6 +31,7 @@ export const EthAssetActions: FC<Props> = ({
   assetId,
   amount,
   isMax,
+  useApi,
   getEvmWalletClient,
 }) => {
   const isNativeEth = assetId.toLowerCase() === ETHER_TOKEN_ADDRESS;
@@ -95,7 +98,18 @@ export const EthAssetActions: FC<Props> = ({
         `Approving ${symbol}…`,
       );
       try {
-        await approveToken(client, parsedAmount, symbol);
+        if (useApi) {
+          const sender = client.account?.address;
+          if (!sender) {
+            throw Error('Connected wallet has no active account');
+          }
+          await submitEvmApproveFromApi(
+            { symbol, amount: parsedAmount, sender },
+            client,
+          );
+        } else {
+          await approveToken(client, parsedAmount, symbol);
+        }
         showSuccessNotification(notifId ?? '', 'Success', `${symbol} approved`);
         setRefreshToken((n) => n + 1);
       } catch (e) {

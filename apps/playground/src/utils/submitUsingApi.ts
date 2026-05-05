@@ -3,6 +3,8 @@ import axios, { AxiosError } from 'axios';
 import type { DedotClient } from 'dedot';
 import type { PolkadotClient } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
+import type { Hex, WalletClient } from 'viem';
+import { parseTransaction } from 'viem';
 
 import { API_URL } from '../constants';
 import type { TApi, TTransaction } from './importSdk';
@@ -45,6 +47,57 @@ export const fetchFromApi = async <T, TResponse = unknown>(
       cause: error,
     });
   }
+};
+
+const submitParsedEvmTx = async (
+  hex: Hex,
+  walletClient: WalletClient,
+): Promise<Hex> => {
+  const parsed = parseTransaction(hex);
+
+  const account = walletClient.account;
+  if (!account) {
+    throw new Error('Connected wallet has no active account.');
+  }
+
+  return walletClient.sendTransaction({
+    account,
+    chain: walletClient.chain ?? null,
+    to: parsed.to ?? undefined,
+    data: parsed.data,
+    value: parsed.value,
+  });
+};
+
+export const submitEvmTxFromApi = async <T>(
+  params: T,
+  walletClient: WalletClient,
+): Promise<Hex> => {
+  const hex = await fetchFromApi<T, Hex>(
+    params,
+    '/evm-x-transfer',
+    'POST',
+    true,
+  );
+  return submitParsedEvmTx(hex, walletClient);
+};
+
+export const submitEvmApproveFromApi = async (
+  params: { symbol: string; amount: bigint; sender: string },
+  walletClient: WalletClient,
+): Promise<Hex> => {
+  const payload = {
+    symbol: params.symbol,
+    amount: params.amount.toString(),
+    sender: params.sender,
+  };
+  const hex = await fetchFromApi<typeof payload, Hex>(
+    payload,
+    '/evm-approve',
+    'POST',
+    true,
+  );
+  return submitParsedEvmTx(hex, walletClient);
 };
 
 export const getTxFromApi = async <T>(

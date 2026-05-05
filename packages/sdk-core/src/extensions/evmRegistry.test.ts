@@ -16,11 +16,13 @@ describe('evmRegistry', () => {
   })
 
   it('returns the registered extension', () => {
-    const executeEvmTransfer = (_: TEvmTransferOptions<unknown, unknown, unknown>) =>
+    const executeTransfer = (_: TEvmTransferOptions<unknown, unknown, unknown>) =>
       Promise.resolve('0xdeadbeef')
-    registerEvmExtension({ executeEvmTransfer })
+    const buildTransfer = () => Promise.resolve({ type: 'eip1559', chainId: 1284 } as const)
+    registerEvmExtension({ executeTransfer, buildTransfer })
 
-    expect(getEvmExtensionOrThrow().executeEvmTransfer).toBe(executeEvmTransfer)
+    expect(getEvmExtensionOrThrow().executeTransfer).toBe(executeTransfer)
+    expect(getEvmExtensionOrThrow().buildTransfer).toBe(buildTransfer)
 
     // Reset for isolation.
     registerEvmExtension(undefined)

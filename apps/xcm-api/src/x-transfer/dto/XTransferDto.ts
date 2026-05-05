@@ -1,3 +1,4 @@
+import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
 import {
   CHAINS,
   EXCHANGE_CHAINS,
@@ -185,6 +186,17 @@ export const SignAndSubmitSchema = XTransferDtoSchema.extend({
   }),
 });
 
+export const EvmXTransferDtoSchema = XTransferDtoWSenderSchema.extend({
+  from: z.enum(['Ethereum', ...EVM_ORIGIN_CHAINS]),
+});
+
+export const EvmApproveDtoSchema = z
+  .object({
+    symbol: z.string().min(1, { message: 'Symbol is required' }),
+    amount: AmountSchema,
+  })
+  .strip();
+
 export const ExchangePairsSchema = z.object({
   exchange: ExchangeSchema,
 });
@@ -202,6 +214,8 @@ export const SupportedAssetsToSchema = z.object({
 export type SwapOptions = z.infer<typeof SwapOptionsSchema>;
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
 export type XTransferDtoWSender = z.infer<typeof XTransferDtoWSenderSchema>;
+export type EvmXTransferDto = z.infer<typeof EvmXTransferDtoSchema>;
+export type EvmApproveDto = z.infer<typeof EvmApproveDtoSchema>;
 export type DryRunPreviewDto = z.infer<typeof DryRunPreviewSchema>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;
 export type SignAndSubmitDto = z.infer<typeof SignAndSubmitSchema>;

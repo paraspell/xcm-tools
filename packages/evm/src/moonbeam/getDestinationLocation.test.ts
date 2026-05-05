@@ -1,10 +1,5 @@
-import type { TChainAssetsInfo, TChainConfig } from '@paraspell/sdk-core'
-import {
-  getAssetsObject,
-  getChainConfig,
-  type PolkadotApi,
-  type TParachain
-} from '@paraspell/sdk-core'
+import type { TChainAssetsInfo } from '@paraspell/sdk-core'
+import { getAssetsObject, getParaId, type PolkadotApi, type TParachain } from '@paraspell/sdk-core'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getDestinationLocation } from './getDestinationLocation'
@@ -23,7 +18,7 @@ describe('getDestinationLocation', () => {
     mockDestination = 'AssetHubPolkadot'
 
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: false } as TChainAssetsInfo)
-    vi.mocked(getChainConfig).mockReturnValue({ paraId: 2000 } as TChainConfig)
+    vi.mocked(getParaId).mockReturnValue(2000)
   })
 
   it('returns correct location when isEVM=false', () => {
@@ -49,7 +44,7 @@ describe('getDestinationLocation', () => {
 
   it('returns correct location when isEVM=true', () => {
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: true } as TChainAssetsInfo)
-    vi.mocked(getChainConfig).mockReturnValue({ paraId: 3000 } as TChainConfig)
+    vi.mocked(getParaId).mockReturnValue(3000)
     const spy = vi.spyOn(mockApi, 'accountToHex').mockReturnValue('deadbeef')
 
     const result = getDestinationLocation(mockApi, 'another-address', mockDestination)
@@ -64,10 +59,10 @@ describe('getDestinationLocation', () => {
     expect(finalAddress).toBe('0x03deadbeef00')
   })
 
-  it('calls getChainConfig with the correct destination', () => {
+  it('calls getParaId with the correct destination', () => {
     getDestinationLocation(mockApi, 'some-address', mockDestination)
-    expect(getChainConfig).toHaveBeenCalledTimes(1)
-    expect(getChainConfig).toHaveBeenCalledWith(mockDestination)
+    expect(getParaId).toHaveBeenCalledTimes(1)
+    expect(getParaId).toHaveBeenCalledWith(mockDestination)
   })
 
   it('calls getAssetsObject with the correct destination', () => {

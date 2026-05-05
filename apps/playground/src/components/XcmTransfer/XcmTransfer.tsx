@@ -37,6 +37,7 @@ import {
   setupBaseBuilder,
   setupEvmBuilder,
   submitApiTransactions,
+  submitEvmTxFromApi,
   submitSdkTransactions,
   submitTx,
 } from '../../utils';
@@ -403,11 +404,25 @@ export const XcmTransfer = () => {
 
       try {
         const builderOptions = createBuilderOptions(formValues);
-        const { Builder } = await importSdk(apiType);
-        const builder = Builder(builderOptions);
-        const evmBuilder = setupEvmBuilder(builder, formValues, walletClient);
+        let hash: string;
 
-        const hash = await evmBuilder.signAndSubmit();
+        if (formValues.useApi) {
+          const evmSender = walletClient.account?.address;
+          if (!evmSender) {
+            throw Error('Ethereum wallet has no active account');
+          }
+
+          hash = await submitEvmTxFromApi(
+            buildApiPayload(formValues, evmSender, builderOptions),
+            walletClient,
+          );
+        } else {
+          const { Builder } = await importSdk(apiType);
+          const builder = Builder(builderOptions);
+          const evmBuilder = setupEvmBuilder(builder, formValues, walletClient);
+
+          hash = await evmBuilder.signAndSubmit();
+        }
 
         setOutput(`'Transaction was submitted. Hash: ${hash}'`);
         openOutputAlert();

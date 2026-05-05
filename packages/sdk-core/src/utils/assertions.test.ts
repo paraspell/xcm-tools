@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { InvalidAddressError, MissingParameterError, UnsupportedOperationError } from '../errors'
 import {
   assertCurrencyCore,
+  assertEvmAddress,
   assertSender,
   assertSenderSource,
   assertSwapSupport
@@ -16,6 +17,18 @@ describe('assertions', () => {
     })
     it('should not throw if address is a string', () => {
       expect(() => assertSender('some-address')).not.toThrow()
+    })
+  })
+
+  describe('assertEvmAddress', () => {
+    it('does not throw for a valid EVM address', () => {
+      expect(() =>
+        assertEvmAddress('0x1111111111111111111111111111111111111111')
+      ).not.toThrow()
+    })
+
+    it('throws InvalidAddressError for a malformed address', () => {
+      expect(() => assertEvmAddress('not-an-address')).toThrow(InvalidAddressError)
     })
   })
 
