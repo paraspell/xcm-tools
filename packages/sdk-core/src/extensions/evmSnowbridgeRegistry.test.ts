@@ -19,13 +19,13 @@ describe('evmSnowbridgeRegistry', () => {
   })
 
   it('returns the registered extension', () => {
-    const executeEvmSnowbridgeTransfer = (_: TEvmTransferOptions<unknown, unknown, unknown>) =>
+    const executeTransfer = (_: TEvmTransferOptions<unknown, unknown, unknown>) =>
       Promise.resolve('0xdeadbeef')
-    registerEvmSnowbridgeExtension({ executeEvmSnowbridgeTransfer })
+    const buildTransfer = () => Promise.resolve({ type: 'eip1559', chainId: 1 } as const)
+    registerEvmSnowbridgeExtension({ executeTransfer, buildTransfer })
 
-    expect(getEvmSnowbridgeExtensionOrThrow().executeEvmSnowbridgeTransfer).toBe(
-      executeEvmSnowbridgeTransfer
-    )
+    expect(getEvmSnowbridgeExtensionOrThrow().executeTransfer).toBe(executeTransfer)
+    expect(getEvmSnowbridgeExtensionOrThrow().buildTransfer).toBe(buildTransfer)
 
     // Reset for isolation.
     registerEvmSnowbridgeExtension(undefined)

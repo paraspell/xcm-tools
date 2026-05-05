@@ -20,6 +20,10 @@ import {
 import {
   DryRunPreviewDto,
   DryRunPreviewSchema,
+  EvmApproveDto,
+  EvmApproveDtoSchema,
+  EvmXTransferDto,
+  EvmXTransferDtoSchema,
   ExchangePairsDto,
   ExchangePairsSchema,
   GetXcmFeeDto,
@@ -43,7 +47,7 @@ export class XTransferController {
   private trackAnalytics(
     eventName: EventName,
     req: Request,
-    params: XTransferDto,
+    params: XTransferDto | EvmXTransferDto,
   ) {
     const { from, to, currency } = params;
     const resolvedCurrency = JSON.stringify(currency, replaceBigInt);
@@ -102,6 +106,22 @@ export class XTransferController {
   generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
     return this.service.generateXcmCall(bodyParams);
+  }
+
+  @Post('evm-x-transfer')
+  @UsePipes(new ZodValidationPipe(EvmXTransferDtoSchema))
+  generateEvmXcmCall(@Body() bodyParams: EvmXTransferDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_EVM_XCM_CALL, req, bodyParams);
+    return this.service.generateEvmXcmCall(bodyParams);
+  }
+
+  @Post('evm-approve')
+  @UsePipes(new ZodValidationPipe(EvmApproveDtoSchema))
+  generateEvmApprove(@Body() bodyParams: EvmApproveDto, @Req() req: Request) {
+    this.analyticsService.track(EventName.GENERATE_EVM_APPROVE, req, {
+      symbol: bodyParams.symbol,
+    });
+    return this.service.generateEvmApprove(bodyParams);
   }
 
   @Post('x-transfers')

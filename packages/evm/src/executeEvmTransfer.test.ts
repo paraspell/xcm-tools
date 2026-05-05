@@ -1,47 +1,103 @@
-import type { PolkadotApi } from '@paraspell/sdk-core'
+import type { PolkadotApi, TEvmTransferOptions } from '@paraspell/sdk-core'
 import {
   getEvmExtensionOrThrow,
+  MissingParameterError,
   registerEvmExtension,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
 import type { Address, WalletClient } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { buildEvmTransfer } from './buildEvmTransfer'
+
+vi.mock('./buildEvmTransfer')
 
 describe('@paraspell/evm', () => {
+  const sendTransaction = vi.fn().mockResolvedValue('0xtxhash')
+  const account = { address: '0xsender' as Address }
+  const chain = { id: 1284 } as never
+
+  const signer = {
+    account,
+    chain,
+    sendTransaction
+  } as unknown as WalletClient
+
+  const mockApi = {
+    init: () => Promise.resolve(),
+    clone: () => ({})
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const baseOptions: TEvmTransferOptions<unknown, unknown, unknown> = {
+    api: mockApi,
+    from: 'Moonbeam',
+    to: 'AssetHubPolkadot',
+    currency: { symbol: 'GLMR', amount: '1' },
+    recipient: '0xRecipient',
+    signer
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(buildEvmTransfer).mockResolvedValue({
+      type: 'eip1559',
+      chainId: 1284,
+      to: '0xprecompile',
+      data: '0xdata',
+      value: 0n
+    })
+  })
+
   it('registers the extension on import', async () => {
     await import('./index')
 
     const ext = getEvmExtensionOrThrow()
-    expect(typeof ext.executeEvmTransfer).toBe('function')
+    expect(typeof ext.executeTransfer).toBe('function')
+    expect(typeof ext.buildTransfer).toBe('function')
   })
 
-  it('throws UnsupportedOperationError for unsupported (from, to) pairs', async () => {
+  it('builds the tx and signs+sends via the WalletClient', async () => {
     await import('./index')
     const { executeEvmTransfer } = await import('./executeEvmTransfer')
 
-    const address: Address = '0x0'
+    const result = await executeEvmTransfer(baseOptions)
+
+    expect(buildEvmTransfer).toHaveBeenCalledWith({ ...baseOptions, sender: '0xsender' })
+    expect(sendTransaction).toHaveBeenCalledWith({
+      type: 'eip1559',
+      chainId: 1284,
+      to: '0xprecompile',
+      data: '0xdata',
+      value: 0n,
+      account,
+      chain
+    })
+    expect(result).toBe('0xtxhash')
+  })
+
+  it('throws MissingParameterError when the WalletClient has no account', async () => {
+    await import('./index')
+    const { executeEvmTransfer } = await import('./executeEvmTransfer')
 
     await expect(
       executeEvmTransfer({
-        api: {
-          init: () => Promise.resolve(),
-          clone: () => ({})
-        } as unknown as PolkadotApi<unknown, unknown, unknown>,
-        from: 'Acala',
-        to: 'AssetHubPolkadot',
-        currency: { symbol: 'ACA', amount: '1' },
-        recipient: '0x0',
-        signer: {
-          account: { address },
-          chain: {}
-        } as WalletClient
+        ...baseOptions,
+        signer: { chain, sendTransaction } as unknown as WalletClient
       })
-    ).rejects.toThrow(UnsupportedOperationError)
+    ).rejects.toThrow(MissingParameterError)
+  })
+
+  it('propagates UnsupportedOperationError from the dispatcher', async () => {
+    await import('./index')
+    const { executeEvmTransfer } = await import('./executeEvmTransfer')
+
+    vi.mocked(buildEvmTransfer).mockRejectedValueOnce(new UnsupportedOperationError('nope'))
+
+    await expect(executeEvmTransfer(baseOptions)).rejects.toThrow(UnsupportedOperationError)
   })
 
   it('leaves the registry populated for the whole session (no teardown)', () => {
     expect(() => getEvmExtensionOrThrow()).not.toThrow()
-    // Reset for tests in other files that may assume a clean slate.
     registerEvmExtension(undefined)
   })
 })

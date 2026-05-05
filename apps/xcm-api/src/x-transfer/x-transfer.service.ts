@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { buildApproveToken } from '@paraspell/evm-snowbridge';
 import {
   Builder,
   GeneralBuilder,
@@ -13,11 +14,14 @@ import {
 } from '@paraspell/sdk';
 import { getExchangePairs } from '@paraspell/swap';
 import { toHex } from 'polkadot-api/utils';
+import { serializeTransaction } from 'viem';
 
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   DryRunPreviewDto,
+  EvmApproveDto,
+  EvmXTransferDto,
   ExchangePairsDto,
   GetXcmFeeDto,
   SignAndSubmitDto,
@@ -56,7 +60,7 @@ export class XTransferService {
   }
 
   private async executeWithBuilder<T>(
-    transfer: XTransferDtoWSender,
+    transfer: XTransferDtoWSender | EvmXTransferDto,
     executor: (
       finalBuilder: GeneralBuilder<
         TTransferBaseOptionsWithSender<TPapiApi, TPapiTransaction, TPapiSigner>
@@ -70,7 +74,7 @@ export class XTransferService {
   }
 
   private async executeWithBuilderOptionalSender<T>(
-    transfer: XTransferDto,
+    transfer: XTransferDto | EvmXTransferDto,
     executor: (
       finalBuilder: ReturnType<typeof this.buildXTransfer>,
     ) => Promise<T>,
@@ -93,7 +97,7 @@ export class XTransferService {
 
   private buildXTransfer(
     builder: ReturnType<typeof Builder>,
-    transfer: XTransferDto,
+    transfer: XTransferDto | EvmXTransferDto,
   ) {
     const {
       from,
@@ -184,6 +188,21 @@ export class XTransferService {
         return toHex(encoded);
       },
     );
+  }
+
+  generateEvmXcmCall(transfer: EvmXTransferDto) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      serializeTransaction(await finalBuilder.buildEvm()),
+    );
+  }
+
+  generateEvmApprove({ symbol, amount }: EvmApproveDto) {
+    try {
+      const tx = buildApproveToken(symbol, BigInt(amount));
+      return serializeTransaction(tx);
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   generateXcmCalls(transfer: XTransferDto) {

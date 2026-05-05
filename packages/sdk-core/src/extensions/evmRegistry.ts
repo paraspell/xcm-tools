@@ -1,10 +1,15 @@
-import type { TEvmTransferOptions } from '../types'
+import type { TransactionSerializableEIP1559 } from 'viem'
+
+import type { TBuildEvmTransferOptions, TEvmTransferOptions } from '../types'
 import { assertExtensionInstalled } from '../utils/assertions'
 
 export interface TEvmExtension {
-  executeEvmTransfer: <TApi, TRes, TSigner>(
+  executeTransfer: <TApi, TRes, TSigner>(
     options: TEvmTransferOptions<TApi, TRes, TSigner>
   ) => Promise<string>
+  buildTransfer: <TApi, TRes, TSigner>(
+    options: TBuildEvmTransferOptions<TApi, TRes, TSigner>
+  ) => Promise<TransactionSerializableEIP1559>
 }
 
 let evmExtension: TEvmExtension | undefined

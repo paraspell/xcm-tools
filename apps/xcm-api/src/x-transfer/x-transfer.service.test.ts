@@ -20,6 +20,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
   DryRunPreviewDto,
+  EvmXTransferDto,
   SignAndSubmitDto,
   XTransferDto,
   XTransferDtoWSender,
@@ -103,6 +104,17 @@ const builderMock = {
     .fn()
     .mockResolvedValue({ exchange: 'Hydration', amountOut: 500n }),
   signAndSubmit: vi.fn().mockResolvedValue(txHash),
+  buildEvm: vi.fn().mockResolvedValue({
+    type: 'eip1559',
+    chainId: 1284,
+    to: '0x0000000000000000000000000000000000000804',
+    data: '0xdeadbeef',
+    value: 0n,
+    nonce: 0,
+    gas: 100_000n,
+    maxFeePerGas: 1_000_000_000n,
+    maxPriorityFeePerGas: 1_000_000n,
+  }),
   disconnect: vi.fn(),
 };
 
@@ -129,6 +141,20 @@ vi.mock('@paraspell/swap', async (importActual) => ({
   getExchangePairs: vi
     .fn()
     .mockReturnValue([[{}, {}]] as [TAssetInfo, TAssetInfo][]),
+}));
+
+vi.mock('@paraspell/evm-snowbridge', () => ({
+  buildApproveToken: vi.fn().mockReturnValue({
+    type: 'eip1559',
+    chainId: 1,
+    to: '0x2222222222222222222222222222222222222222',
+    data: '0xdeadbeef',
+    value: 0n,
+    nonce: 0,
+    gas: 60_000n,
+    maxFeePerGas: 25_000_000_000n,
+    maxPriorityFeePerGas: 2_000_000_000n,
+  }),
 }));
 
 describe('XTransferService', () => {
@@ -399,6 +425,39 @@ describe('XTransferService', () => {
       expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
       expect(builderMock.sender).toHaveBeenCalledWith(options.sender);
       expect(builderMock.signAndSubmit).toHaveBeenCalled();
+    });
+  });
+
+  describe('generateEvmXcmCall', () => {
+    it('should call buildEvm() on the builder and serialize the returned tx', async () => {
+      const options: EvmXTransferDto = {
+        ...xTransferDto,
+        from: 'Moonbeam',
+        sender: '0xSender',
+      };
+
+      const result = await service.generateEvmXcmCall(options);
+
+      expect(builderMock.from).toHaveBeenCalledWith(options.from);
+      expect(builderMock.to).toHaveBeenCalledWith(options.to);
+      expect(builderMock.currency).toHaveBeenCalledWith(currency);
+      expect(builderMock.recipient).toHaveBeenCalledWith(recipient);
+      expect(builderMock.sender).toHaveBeenCalledWith(options.sender);
+      expect(builderMock.buildEvm).toHaveBeenCalled();
+      expect(typeof result).toBe('string');
+      expect(result.startsWith('0x02')).toBe(true);
+    });
+  });
+
+  describe('generateEvmApprove', () => {
+    it('should call buildApproveToken and serialize the returned tx', () => {
+      const result = service.generateEvmApprove({
+        symbol: 'WETH',
+        amount: '1000',
+      });
+
+      expect(typeof result).toBe('string');
+      expect(result.startsWith('0x02')).toBe(true);
     });
   });
 

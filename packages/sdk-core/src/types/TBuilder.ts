@@ -13,11 +13,17 @@ export type TEvmTransferOptionsBase = {
   currency: TCurrencyInputWithAmount
   recipient: string
   ahAddress?: string
-  signer: WalletClient
 }
 
 export type TEvmTransferOptions<TApi, TRes, TSigner> = WithApi<
-  TEvmTransferOptionsBase,
+  TEvmTransferOptionsBase & { signer: WalletClient },
+  TApi,
+  TRes,
+  TSigner
+>
+
+export type TBuildEvmTransferOptions<TApi, TRes, TSigner> = WithApi<
+  TEvmTransferOptionsBase & { sender: string },
   TApi,
   TRes,
   TSigner

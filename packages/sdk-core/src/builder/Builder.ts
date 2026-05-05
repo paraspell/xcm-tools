@@ -8,7 +8,7 @@ import {
   type TSubstrateChain,
   type Version
 } from '@paraspell/sdk-common'
-import type { WalletClient } from 'viem'
+import type { TransactionSerializableEIP1559, WalletClient } from 'viem'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import {
@@ -378,6 +378,22 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
     const { tx } = await this.buildCommon()
     return tx
+  }
+
+  /**
+   * Builds an unsigned EIP-1559 transaction (viem `TransactionSerializableEIP1559`) for an
+   * EVM-compatible origin. `nonce`, `gas`, and fees are populated from the origin chain's RPC.
+   */
+  async buildEvm(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+    >
+  ): Promise<TransactionSerializableEIP1559> {
+    const { ext, options } = this.prepareEvmDispatch()
+    return ext.buildTransfer({ ...options, sender: this._options.sender })
   }
 
   /**
@@ -916,31 +932,25 @@ export class GeneralBuilder<
     this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
     signer: WalletClient
   ): Promise<string> {
+    const { ext, options } = this.prepareEvmDispatch()
+    return ext.executeTransfer({ ...options, signer })
+  }
+
+  private prepareEvmDispatch(
+    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
+  ) {
     const { from, to, currency, recipient, ahAddress } = this._options
     assertToIsString(to)
     assertAddressIsString(recipient)
 
-    if (isExternalChain(from)) {
-      return getEvmSnowbridgeExtensionOrThrow().executeEvmSnowbridgeTransfer({
-        api: this.api,
-        from,
-        to,
-        currency,
-        recipient,
-        ahAddress,
-        signer
-      })
-    }
+    const ext = isExternalChain(from)
+      ? getEvmSnowbridgeExtensionOrThrow()
+      : getEvmExtensionOrThrow()
 
-    return getEvmExtensionOrThrow().executeEvmTransfer({
-      api: this.api,
-      from,
-      to,
-      currency,
-      recipient,
-      ahAddress,
-      signer
-    })
+    return {
+      ext,
+      options: { api: this.api, from, to, currency, recipient, ahAddress }
+    }
   }
 
   /**

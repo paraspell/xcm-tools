@@ -6,7 +6,8 @@ import {
 } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isExternalChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
-import type { WalletClient } from 'viem'
+import type { Address, WalletClient } from 'viem'
+import { isAddress } from 'viem'
 
 import {
   ExtensionNotInstalledError,
@@ -39,6 +40,12 @@ export const assertAddressIsString: (
 export const assertSender: (address: string | undefined) => asserts address is string = address => {
   if (!address) {
     throw new MissingParameterError('sender')
+  }
+}
+
+export const assertEvmAddress: (address: string) => asserts address is Address = address => {
+  if (!isAddress(address)) {
+    throw new InvalidAddressError(address)
   }
 }
 

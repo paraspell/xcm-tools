@@ -1,3 +1,7 @@
+// Register ParaSpell extensions
+import '@paraspell/evm';
+import '@paraspell/evm-snowbridge';
+
 import { Module } from '@nestjs/common';
 
 import { XTransferController } from './x-transfer.controller.js';

@@ -1569,22 +1569,30 @@ describe('Builder', () => {
       sendTransaction: vi.fn()
     } as unknown as WalletClient
 
-    const executeEvmTransfer = vi.fn()
-    const executeEvmSnowbridgeTransfer = vi.fn()
+    const executeTransfer = vi.fn()
+    const buildTransfer = vi.fn()
+    const executeSnowbridgeTransfer = vi.fn()
+    const buildSnowbridgeTransfer = vi.fn()
 
     beforeEach(() => {
       vi.mocked(createTransferOrSwap).mockResolvedValue(mockExtrinsic)
-      executeEvmTransfer.mockReset()
-      executeEvmSnowbridgeTransfer.mockReset()
-      vi.mocked(getEvmExtensionOrThrow).mockReturnValue({ executeEvmTransfer })
+      executeTransfer.mockReset()
+      buildTransfer.mockReset()
+      executeSnowbridgeTransfer.mockReset()
+      buildSnowbridgeTransfer.mockReset()
+      vi.mocked(getEvmExtensionOrThrow).mockReturnValue({
+        executeTransfer,
+        buildTransfer
+      })
       vi.mocked(getEvmSnowbridgeExtensionOrThrow).mockReturnValue({
-        executeEvmSnowbridgeTransfer
+        executeTransfer: executeSnowbridgeTransfer,
+        buildTransfer: buildSnowbridgeTransfer
       })
     })
 
     it('routes signAndSubmit through the EVM extension when senderSource is a WalletClient', async () => {
       vi.mocked(isViemSigner).mockReturnValue(true)
-      executeEvmTransfer.mockResolvedValue('0xevmhash')
+      executeTransfer.mockResolvedValue('0xevmhash')
 
       const result = await Builder(mockApi)
         .from('Moonbeam')
@@ -1594,7 +1602,7 @@ describe('Builder', () => {
         .recipient(ADDRESS)
         .signAndSubmit()
 
-      expect(executeEvmTransfer).toHaveBeenCalledWith(
+      expect(executeTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           from: 'Moonbeam',
           to: 'Polkadot',
@@ -1607,7 +1615,7 @@ describe('Builder', () => {
 
     it('signAndSubmitAll wraps the single EVM hash into an array', async () => {
       vi.mocked(isViemSigner).mockReturnValue(true)
-      executeEvmTransfer.mockResolvedValue('0xevmhash2')
+      executeTransfer.mockResolvedValue('0xevmhash2')
 
       const result = await Builder(mockApi)
         .from('Moonbeam')
@@ -1642,6 +1650,56 @@ describe('Builder', () => {
         .buildAll()
 
       expect(assertNotEvmTransfer).toHaveBeenCalledWith('Moonbeam', walletClient)
+    })
+
+    it('buildEvm() dispatches to the EVM extension with options from the builder', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(false)
+      vi.mocked(isSenderSigner).mockReturnValue(false)
+      buildTransfer.mockResolvedValue('0xserialized')
+
+      const result = await Builder(mockApi)
+        .from('Moonbeam')
+        .to('Polkadot')
+        .currency({ symbol: 'GLMR', amount: AMOUNT })
+        .sender('0xsender')
+        .recipient(ADDRESS)
+        .buildEvm()
+
+      expect(buildTransfer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Moonbeam',
+          to: 'Polkadot',
+          recipient: ADDRESS,
+          sender: '0xsender'
+        })
+      )
+      expect(result).toBe('0xserialized')
+    })
+
+    it('buildEvm() routes external origins through the Snowbridge extension', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(false)
+      vi.mocked(isSenderSigner).mockReturnValue(false)
+      buildSnowbridgeTransfer.mockResolvedValue('0xsnowserialized')
+
+      const result = await Builder(mockApi)
+        .from('Ethereum')
+        .to('Moonbeam')
+        .currency({ symbol: 'WETH', amount: AMOUNT })
+        .sender('0xsender')
+        .recipient(ADDRESS)
+        .buildEvm()
+
+      expect(buildSnowbridgeTransfer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          api: mockApi,
+          from: 'Ethereum',
+          to: 'Moonbeam',
+          recipient: ADDRESS,
+          sender: '0xsender'
+        })
+      )
+      expect(result).toBe('0xsnowserialized')
     })
   })
 
