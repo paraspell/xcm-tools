@@ -2,6 +2,7 @@ import type { TAssetInfo, TBuildEvmTransferOptions } from '@paraspell/sdk-core'
 import {
   abstractDecimals,
   assertHasId,
+  DEFAULT_TTL_MS,
   findAssetInfoOrThrow,
   getParaId,
   isOverrideLocationSpecifier,
@@ -17,6 +18,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { buildSnowbridgeTransfer } from './buildSnowbridgeTransfer'
 import { createEnvironment } from './createEnvironment'
+import { ETHEREUM_WS_URLS, leaseClient, releaseClient } from './viemClientCache'
 
 const { senderMethods, setEthProvider, senderFactory } = vi.hoisted(() => {
   const senderMethods = {
@@ -49,6 +51,11 @@ vi.mock('@snowbridge/api', () => ({
 vi.mock('@snowbridge/provider-viem')
 vi.mock('@snowbridge/registry')
 vi.mock('./createEnvironment')
+vi.mock('./publicClientCache', () => ({
+  ETHEREUM_WS_URLS: ['wss://test-cache.example'],
+  leaseClient: vi.fn(),
+  releaseClient: vi.fn()
+}))
 
 const ASSET_ID = '0x2222222222222222222222222222222222222222'
 const SOURCE = '0x3333333333333333333333333333333333333333'
@@ -99,6 +106,8 @@ describe('buildSnowbridgeTransfer', () => {
     senderMethods.fee.mockResolvedValue({ fee: 10n })
     senderMethods.tx.mockResolvedValue({ tx: { to: '0xabc', data: '0x', value: 5n } })
     senderMethods.validate.mockResolvedValue({ logs: [] })
+
+    vi.mocked(leaseClient).mockResolvedValue({} as PublicClient)
   })
 
   it('throws UnsupportedOperationError when currency is an array', async () => {
@@ -177,5 +186,34 @@ describe('buildSnowbridgeTransfer', () => {
     await expect(buildSnowbridgeTransfer(baseOptions(), publicClient)).rejects.toThrow(
       RoutingResolutionError
     )
+  })
+
+  it('uses the cached WS public client when caller does not supply one', async () => {
+    const cachedClient = { id: 'cached' } as unknown as PublicClient
+    vi.mocked(leaseClient).mockResolvedValue(cachedClient)
+
+    const result = await buildSnowbridgeTransfer(baseOptions())
+
+    expect(leaseClient).toHaveBeenCalledTimes(1)
+    expect(leaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS, DEFAULT_TTL_MS)
+    expect(setEthProvider).toHaveBeenCalledWith(1, cachedClient)
+    expect(releaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS)
+    expect(result.tx.chainId).toBe(1)
+  })
+
+  it('does not release the lease when validation fails (TTL handles cleanup)', async () => {
+    senderMethods.validate.mockResolvedValue({
+      logs: [{ kind: toPolkadotV2.ValidationKind.Error, message: 'nope' }]
+    })
+
+    await expect(buildSnowbridgeTransfer(baseOptions())).rejects.toThrow(RoutingResolutionError)
+    expect(leaseClient).toHaveBeenCalledTimes(1)
+    expect(releaseClient).not.toHaveBeenCalled()
+  })
+
+  it('does not lease the cache when caller supplies a public client', async () => {
+    await buildSnowbridgeTransfer(baseOptions(), publicClient)
+    expect(leaseClient).not.toHaveBeenCalled()
+    expect(setEthProvider).toHaveBeenCalledWith(1, publicClient)
   })
 })
