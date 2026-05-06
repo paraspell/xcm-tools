@@ -22,9 +22,7 @@ describe('assertions', () => {
 
   describe('assertEvmAddress', () => {
     it('does not throw for a valid EVM address', () => {
-      expect(() =>
-        assertEvmAddress('0x1111111111111111111111111111111111111111')
-      ).not.toThrow()
+      expect(() => assertEvmAddress('0x1111111111111111111111111111111111111111')).not.toThrow()
     })
 
     it('throws InvalidAddressError for a malformed address', () => {

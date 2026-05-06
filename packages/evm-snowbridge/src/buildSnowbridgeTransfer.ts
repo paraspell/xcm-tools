@@ -2,6 +2,7 @@ import type { TBuildEvmTransferOptions } from '@paraspell/sdk-core'
 import {
   abstractDecimals,
   assertHasId,
+  DEFAULT_TTL_MS,
   findAssetInfoOrThrow,
   getParaId,
   isOverrideLocationSpecifier,
@@ -12,12 +13,9 @@ import { SnowbridgeApi, toPolkadotV2 } from '@snowbridge/api'
 import { ViemEthereumProvider } from '@snowbridge/provider-viem'
 import { bridgeInfoFor } from '@snowbridge/registry'
 import type { PublicClient, TransactionSerializableEIP1559 } from 'viem'
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
 
 import { createEnvironment } from './createEnvironment'
-
-const ETHEREUM_RPC_URL = 'https://ethereum.publicnode.com/'
+import { ETHEREUM_WS_URLS, leaseClient, releaseClient } from './viemClientCache'
 
 export const buildSnowbridgeTransfer = async <TApi, TRes, TSigner>(
   {
@@ -51,8 +49,7 @@ export const buildSnowbridgeTransfer = async <TApi, TRes, TSigner>(
     ethereumProvider: new ViemEthereumProvider()
   })
 
-  const publicClient =
-    client ?? createPublicClient({ chain: mainnet, transport: http(ETHEREUM_RPC_URL) })
+  const publicClient = client ?? (await leaseClient(ETHEREUM_WS_URLS, DEFAULT_TTL_MS))
 
   snowbridgeApi.context.setEthProvider(environment.ethChainId, publicClient)
 
@@ -86,6 +83,8 @@ export const buildSnowbridgeTransfer = async <TApi, TRes, TSigner>(
     value: value ?? 0n,
     chainId: environment.ethChainId
   }
+
+  releaseClient(ETHEREUM_WS_URLS)
 
   return {
     tx,
