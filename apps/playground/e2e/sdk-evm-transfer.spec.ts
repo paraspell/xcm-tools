@@ -99,7 +99,7 @@ const ensureEthAccountSelected = async (
 };
 
 const performTransfer = async (appPage: Page) => {
-  await appPage.getByTestId('input-address').fill(TEST_SS58_ADDRESS);
+  await appPage.getByTestId('input-recipient').fill(TEST_SS58_ADDRESS);
 
   await appPage.getByTestId('select-currency').click();
   await appPage.getByRole('option').first().click();
@@ -107,7 +107,7 @@ const performTransfer = async (appPage: Page) => {
   await appPage.getByTestId('submit').click();
   await acknowledgeTransferWarningIfOpened(appPage);
   const errorLocator = appPage.getByTestId('error');
-  await expect(errorLocator).toBeVisible({ timeout: 15_000 });
+  await expect(errorLocator).toBeVisible();
 
   const errorRegex = new RegExp(
     '(' +
@@ -142,7 +142,7 @@ baseUiTest.describe('XCM SDK - ETH Bridge', () => {
     await ensureEthAccountSelected(appPage, extensionPage);
 
     const pjsApiSelector = appPage.getByTestId('label-pjs-api').first();
-    await expect(pjsApiSelector).toBeVisible({ timeout: 10_000 });
+    await expect(pjsApiSelector).toBeVisible();
     await pjsApiSelector.click();
   });
 

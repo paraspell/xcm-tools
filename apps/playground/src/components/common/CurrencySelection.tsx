@@ -28,6 +28,7 @@ type Props<T extends object> = {
   label?: string;
   description?: string;
   onClear?: () => void;
+  dataTestId?: string;
 };
 
 export const CurrencySelection = <T extends object>({
@@ -42,6 +43,7 @@ export const CurrencySelection = <T extends object>({
   label = 'Currency',
   description,
   onClear,
+  dataTestId,
 }: Props<T>) => {
   const isCustomCurrency = fieldValue.isCustomCurrency;
   const customCurrencyType = fieldValue.customCurrencyType;
@@ -119,7 +121,7 @@ export const CurrencySelection = <T extends object>({
           disabled={disabled}
           clearable={!!onClear}
           onClear={onClear}
-          data-testid="select-currency"
+          data-testid={dataTestId || 'select-currency'}
           {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
         />
       )}

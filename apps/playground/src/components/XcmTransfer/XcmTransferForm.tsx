@@ -545,6 +545,7 @@ export const XcmTransferForm: FC<Props> = ({
             disabled={feeAssetDisabled}
             required={false}
             onClear={onFeeAssetClear}
+            dataTestId="select-fee-currency"
           />
 
           <TextInput

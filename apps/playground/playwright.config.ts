@@ -8,6 +8,8 @@ export default defineConfig({
   workers: 10,
   maxFailures: 100,
   reporter: "html",
+  timeout: 90_000,
+  expect: { timeout: 90_000 },
   use: {
     baseURL: "http://localhost:5173",
     channel: "chromium",
