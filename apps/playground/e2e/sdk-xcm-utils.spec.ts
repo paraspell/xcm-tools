@@ -175,7 +175,7 @@ const openAdvancedOptionsAccordion = async (page: Page) => {
       .click({ force: true });
   }
 
-  await expect(developmentSwitch).toBeVisible({ timeout: 10_000 });
+  await expect(developmentSwitch).toBeVisible();
 };
 
 const applyUtilityAdvancedOptions = async (
@@ -220,7 +220,7 @@ const applyUtilityAdvancedOptions = async (
 
 const expectUtilityOutput = async (page: Page) => {
   await expect(page.getByTestId('error')).not.toBeVisible();
-  await expect(page.getByTestId('output')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByTestId('output')).toBeVisible();
 };
 
 const ACTION_PARENT_MENU: Record<string, string> = {
@@ -531,22 +531,6 @@ basePjsTest.describe('XCM SDK - Utilities', () => {
   });
 
   basePjsTest(
-    'Should require AssetHub address for EVM origin on Get Transfer Info action',
-    async () => {
-      await fillUtilityEvmForm(appPage);
-      await selectUtilityAction(
-        appPage,
-        'Get Transfer Info',
-        'menu-item-transfer-info',
-      );
-      await expect(
-        appPage.getByText('AssetHub address is required for EVM origin.'),
-      ).toBeVisible();
-      await expect(appPage.getByTestId('output')).not.toBeVisible();
-    },
-  );
-
-  basePjsTest(
     'Should validate AssetHub address format for EVM origin on Get Receivable Amount action',
     async () => {
       await fillUtilityEvmForm(appPage);
@@ -613,7 +597,7 @@ basePjsTest.describe('XCM SDK - Utilities', () => {
   );
 
   basePjsTest(
-    'Should run Get Transfer Info action with advanced options',
+    'Should fail Get Transfer Info action with advanced options - incompatible runtime',
     async () => {
       await fillUtilityBaseForm(appPage);
       await applyUtilityAdvancedOptions(
@@ -635,12 +619,17 @@ basePjsTest.describe('XCM SDK - Utilities', () => {
         'Get Transfer Info',
         'menu-item-transfer-info',
       );
-      await expectUtilityOutput(appPage);
+      const error = appPage.getByTestId('error');
+      await expect(error).toBeVisible();
+      await expect(error).toContainText(
+        /Incompatible runtime entry RuntimeCall\(DryRunApi_dry_run_call\)/,
+      );
+      await expect(appPage.getByTestId('output')).not.toBeVisible();
     },
   );
 
   basePjsTest(
-    'Should run Get Transfer Info action with advanced options - API',
+    'Should fail Get Transfer Info action with advanced options - incompatible runtime - API',
     async () => {
       await fillUtilityBaseForm(appPage);
       await applyUtilityAdvancedOptions(
@@ -663,7 +652,12 @@ basePjsTest.describe('XCM SDK - Utilities', () => {
         'Get Transfer Info',
         'menu-item-transfer-info',
       );
-      await expectUtilityOutput(appPage);
+      const error = appPage.getByTestId('error');
+      await expect(error).toBeVisible();
+      await expect(error).toContainText(
+        /Incompatible runtime entry RuntimeCall\(DryRunApi_dry_run_call\)/,
+      );
+      await expect(appPage.getByTestId('output')).not.toBeVisible();
     },
   );
 

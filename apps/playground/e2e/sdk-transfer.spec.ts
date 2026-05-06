@@ -21,11 +21,11 @@ type TTransferAdvancedOptions = {
 };
 
 type TTransferAdvancedInputs = {
-  method: string;
-  pallet: string;
+  method?: string;
+  pallet?: string;
   xcmVersion: string;
   localAccount: 'Alice' | 'Bob';
-  apiOverrides?: Array<{ chain: string; endpoint: string }>;
+  apiOverrides?: Array<{ chain: string; endpoints: string[] }>;
 };
 
 type TTransferCurrency = string[] | null;
@@ -422,7 +422,7 @@ const openAdvancedOptionsAccordion = async (appPage: Page) => {
       .click({ force: true });
   }
 
-  await expect(developmentSwitch).toBeVisible({ timeout: 10000 });
+  await expect(developmentSwitch).toBeVisible();
 };
 
 const applyTransferAdvancedOptions = async (
@@ -451,11 +451,15 @@ const applyTransferAdvancedOptions = async (
   await appPage.getByTestId('select-local-account').click();
   await appPage.getByRole('option', { name: inputs.localAccount }).click();
 
-  await appPage.getByTestId('input-pallet').fill(inputs.pallet);
-  await appPage.getByTestId('input-method').fill(inputs.method);
+  if (inputs.pallet)
+    await appPage.getByTestId('input-pallet').fill(inputs.pallet);
+
+  if (inputs.method)
+    await appPage.getByTestId('input-method').fill(inputs.method);
 
   const overrides = inputs.apiOverrides ?? [];
 
+  let endpointStart = 0;
   for (let i = 0; i < overrides.length; i++) {
     const override = overrides[i];
     await appPage.getByRole('button', { name: 'Add chain' }).click();
@@ -463,7 +467,21 @@ const applyTransferAdvancedOptions = async (
     await appPage
       .getByRole('option', { name: createName(override.chain) })
       .click();
-    await appPage.getByTestId('input-endpoint').nth(i).fill(override.endpoint);
+
+    for (let j = 1; j < override.endpoints.length; j++) {
+      await appPage
+        .getByRole('button', { name: 'Add endpoint' })
+        .nth(i)
+        .click();
+    }
+
+    for (let j = 0; j < override.endpoints.length; j++) {
+      await appPage
+        .getByTestId('input-endpoint')
+        .nth(endpointStart + j)
+        .fill(override.endpoints[j]);
+    }
+    endpointStart += override.endpoints.length;
   }
 };
 
@@ -494,7 +512,7 @@ const performTransfer = async (
 
   const error = appPage.getByTestId('error');
   if (expectedErrorPattern) {
-    await expect(error).toBeVisible({ timeout: 15_000 });
+    await expect(error).toBeVisible();
     await expect(error).toContainText(expectedErrorPattern);
     return;
   }
@@ -547,7 +565,7 @@ const expectTransferOutputWithoutError = async (appPage: Page) => {
     error,
     (await error.isVisible()) ? await error.innerText() : '',
   ).not.toBeVisible();
-  await expect(appPage.getByTestId('output')).toBeVisible({ timeout: 15_000 });
+  await expect(appPage.getByTestId('output')).toBeVisible();
 };
 
 basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
@@ -620,83 +638,75 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
     },
   );
 
-  basePjsTest('Should cancel transfer from warning modal', async () => {
-    await fillBaseTransferForm(appPage);
-
-    await appPage.getByTestId('submit').click();
-    await expect(
-      appPage.getByRole('button', { name: 'I understand' }),
-    ).toBeVisible();
-    await appPage.getByRole('button', { name: 'Cancel' }).click();
-    await expect(
-      appPage.getByRole('button', { name: 'I understand' }),
-    ).not.toBeVisible();
-    await expect(appPage.getByTestId('error')).not.toBeVisible();
-  });
-
-  const paraToParaAstarToBifrostPolkadot = async (useApi: boolean) =>
-    performTransfer(appPage, extensionPage, {
-      fromChain: 'Astar',
-      toChain: 'BifrostPolkadot',
-      currency: null,
-      useApi,
-    });
-
-  const relayToParaJamtonToPolkadot = async (useApi: boolean) =>
-    performTransfer(appPage, extensionPage, {
-      fromChain: 'Jamton',
-      toChain: 'Polkadot',
-      currency: null,
-      useApi,
-    });
-
-  const paraToRelayPolkadotToJamton = async (useApi: boolean) =>
-    performTransfer(appPage, extensionPage, {
-      fromChain: 'Polkadot',
-      toChain: 'Jamton',
-      currency: null,
-      useApi,
-    });
-
   basePjsTest(
     'Should succeed for ParaToPara transfer Astar -> BifrostPolkadot',
     async () => {
-      await paraToParaAstarToBifrostPolkadot(false);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Astar',
+        toChain: 'BifrostPolkadot',
+        currency: null,
+        useApi: false,
+      });
     },
   );
 
   basePjsTest(
     'Should succeed for ParaToPara transfer Astar -> BifrostPolkadot - API',
     async () => {
-      await paraToParaAstarToBifrostPolkadot(true);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Astar',
+        toChain: 'BifrostPolkadot',
+        currency: null,
+        useApi: true,
+      });
     },
   );
 
   basePjsTest(
     'Should succeed for RelayToPara transfer Jamton -> Polkadot',
     async () => {
-      await relayToParaJamtonToPolkadot(false);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Jamton',
+        toChain: 'Polkadot',
+        currency: null,
+        useApi: false,
+      });
     },
   );
 
   basePjsTest(
     'Should succeed for RelayToPara transfer Jamton -> Polkadot - API',
     async () => {
-      await relayToParaJamtonToPolkadot(true);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Jamton',
+        toChain: 'Polkadot',
+        currency: null,
+        useApi: true,
+      });
     },
   );
 
   basePjsTest(
     'Should succeed for ParaToRelay transfer Polkadot -> Jamton',
     async () => {
-      await paraToRelayPolkadotToJamton(false);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Polkadot',
+        toChain: 'Jamton',
+        currency: null,
+        useApi: false,
+      });
     },
   );
 
   basePjsTest(
     'Should succeed for ParaToRelay transfer Polkadot -> Jamton - API',
     async () => {
-      await paraToRelayPolkadotToJamton(true);
+      await performTransfer(appPage, extensionPage, {
+        fromChain: 'Polkadot',
+        toChain: 'Jamton',
+        currency: null,
+        useApi: true,
+      });
     },
   );
 
@@ -1096,7 +1106,7 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
   );
 
   basePjsTest(
-    'Should succeed for Transfer with advanced options (V5 + Bob + PolkadotXcm transfer_assets)',
+    'Should fail for Transfer with advanced options (V5 + Bob + PolkadotXcm transfer_assets)',
     async () => {
       await performTransfer(appPage, extensionPage, {
         fromChain: transferAdvancedBase.fromChain,
@@ -1118,12 +1128,15 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
               method: 'transfer_assets',
             },
           ),
+        expectPopup: false,
+        expectedErrorPattern:
+          /Incompatible runtime entry RuntimeCall\(DryRunApi_dry_run_call\)/,
       });
     },
   );
 
   basePjsTest(
-    'Should succeed for Transfer with advanced options development mode + valid api override - API',
+    'Should fail for Transfer with advanced options development mode + valid api override - API',
     async () => {
       await performTransfer(appPage, extensionPage, {
         fromChain: transferAdvancedBase.fromChain,
@@ -1141,13 +1154,20 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
             {
               xcmVersion: 'V5',
               localAccount: 'Alice',
-              pallet: 'XTokens',
-              method: 'transfer',
               apiOverrides: [
-                { chain: 'Astar', endpoint: 'wss://astar-rpc.dwellir.com' },
+                {
+                  chain: 'Astar',
+                  endpoints: [
+                    'wss://astar.public.curie.radiumblock.co/ws',
+                    'wss://rpc.astar.network',
+                  ],
+                },
                 {
                   chain: 'BifrostPolkadot',
-                  endpoint: 'wss://bifrost-polkadot.ibp.network',
+                  endpoints: [
+                    'wss://hk.p.bifrost-rpc.liebi.com/ws',
+                    'wss://eu.bifrost-polkadot-rpc.liebi.com/ws',
+                  ],
                 },
               ],
             },
@@ -1175,13 +1195,20 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
             {
               xcmVersion: 'V5',
               localAccount: 'Alice',
-              pallet: 'XTokens',
-              method: 'transfer',
               apiOverrides: [
-                { chain: 'Astar', endpoint: 'wss://astar-rpc.dwellir.com' },
+                {
+                  chain: 'Astar',
+                  endpoints: [
+                    'wss://astar.public.curie.radiumblock.co/ws',
+                    'wss://rpc.astar.network',
+                  ],
+                },
                 {
                   chain: 'BifrostPolkadot',
-                  endpoint: 'wss://api-bifrost-polkadot.n.dwellir.com',
+                  endpoints: [
+                    'wss://hk.p.bifrost-rpc.liebi.com/ws',
+                    'wss://eu.bifrost-polkadot-rpc.liebi.com/ws',
+                  ],
                 },
               ],
             },

@@ -27,7 +27,7 @@ const submitAssetsQuery = async (page: Page, useApi = false) => {
   await enableApiMode(page, useApi);
   await page.getByTestId('submit').click();
   await expect(page.getByTestId('error')).not.toBeVisible();
-  await expect(page.getByTestId('output')).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByTestId('output')).toBeVisible();
 };
 
 test.describe.configure({ mode: 'parallel' });
