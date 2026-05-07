@@ -113,6 +113,22 @@ const response = await fetch('http://localhost:3001/v1/x-transfers', {
   }),
 });
 
+//Sending EVM XCM transfer https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#sending-evm-xcm
+const response = await fetch("http://localhost:3001/v1/evm-x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "TChain", // Replace "TChain" with sender EVM Chain, for example, "Ethereum" or "Moonbeam"
+        to: "TChain",   // Replace "TChain" with destination Chain, for example, "Hydration" or custom Location
+        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+            //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+        recipient: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
+        sender: "sender" // Sender address
+    })
+});
+
 //DryRun your XCM calls to find whether they will execute
 const response = await fetch('http://localhost:3001/v1/dry-run', {
   method: 'POST',
