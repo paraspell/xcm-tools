@@ -51,7 +51,7 @@ vi.mock('@snowbridge/api', () => ({
 vi.mock('@snowbridge/provider-viem')
 vi.mock('@snowbridge/registry')
 vi.mock('./createEnvironment')
-vi.mock('./publicClientCache', () => ({
+vi.mock('./viemClientCache', () => ({
   ETHEREUM_WS_URLS: ['wss://test-cache.example'],
   leaseClient: vi.fn(),
   releaseClient: vi.fn()
