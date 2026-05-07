@@ -399,6 +399,26 @@ const response = await fetch("http://localhost:3001/v1/balance/:chain/existentia
 const response = await fetch('http://localhost:3001/v1/convert-ss58?address=:address&chain=:chain');
 ```
 
+### Swap helper queries
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#swap-helper-queries).
+
+Possible parameters:
+
+- `from`: (query parameter): Optional - origin chain.
+- `to`: (query parameter): Optional - destination chain.
+- `exchange`: (query parameter): Optional - exchange chain (array of them or standalone).
+
+```ts
+// Get list of exchange chains
+const response = await fetch('http://localhost:3001/v1/swap/exchange-chains');
+
+// Get list of possible assets to exchange from
+const response = await fetch('http://localhost:3001/v1/swap/supported-assets-from?from=:chain&exchange=:exchange');
+
+// Get list of possible assets to exchange to
+const response = await fetch('http://localhost:3001/v1/swap/supported-assets-from?exchange=:exchange&to=:chain');
+```
+
 ### Asset queries
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#asset-queries).
