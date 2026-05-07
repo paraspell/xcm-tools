@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   Builder,
+  EXCHANGE_CHAINS,
   GeneralBuilder,
   getBridgeStatus,
   getChainProviders,
@@ -11,7 +12,11 @@ import {
   TTransferBaseOptionsWithSender,
   TTransferBaseOptionsWithSwap,
 } from '@paraspell/sdk';
-import { getExchangePairs } from '@paraspell/swap';
+import {
+  getExchangePairs,
+  getSupportedAssetsFrom,
+  getSupportedAssetsTo,
+} from '@paraspell/swap';
 import { toHex } from 'polkadot-api/utils';
 
 import { handleXcmApiError } from '../utils/error-handler.js';
@@ -21,6 +26,8 @@ import {
   ExchangePairsDto,
   GetXcmFeeDto,
   SignAndSubmitDto,
+  SupportedAssetsFromDto,
+  SupportedAssetsToDto,
   XTransferDto,
   XTransferDtoWSender,
 } from './dto/XTransferDto.js';
@@ -304,5 +311,17 @@ export class XTransferService {
 
   getExchangePairs(exchange: ExchangePairsDto['exchange']) {
     return getExchangePairs(exchange);
+  }
+
+  getExchangeChains() {
+    return EXCHANGE_CHAINS;
+  }
+
+  getSupportedAssetsFrom({ from, exchange }: SupportedAssetsFromDto) {
+    return getSupportedAssetsFrom(from, exchange);
+  }
+
+  getSupportedAssetsTo({ exchange, to }: SupportedAssetsToDto) {
+    return getSupportedAssetsTo(exchange, to);
   }
 }

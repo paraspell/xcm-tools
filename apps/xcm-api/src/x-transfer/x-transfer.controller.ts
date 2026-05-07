@@ -26,6 +26,10 @@ import {
   GetXcmFeeSchema,
   SignAndSubmitDto,
   SignAndSubmitSchema,
+  SupportedAssetsFromDto,
+  SupportedAssetsFromSchema,
+  SupportedAssetsToDto,
+  SupportedAssetsToSchema,
   XTransferDto,
   XTransferDtoSchema,
   XTransferDtoWSender,
@@ -212,5 +216,37 @@ export class XTransferController {
       exchange: exchange as string,
     });
     return this.service.getExchangePairs(exchange);
+  }
+
+  @Get('swap/exchange-chains')
+  getExchangeChains(@Req() req: Request) {
+    this.analyticsService.track(EventName.GET_EXCHANGE_CHAINS, req);
+    return this.service.getExchangeChains();
+  }
+
+  @Get('swap/supported-assets-from')
+  @UsePipes(new ZodValidationPipe(SupportedAssetsFromSchema))
+  getSupportedAssetsFrom(
+    @Query() query: SupportedAssetsFromDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_SWAP_ASSETS_FROM, req, {
+      from: query.from ?? 'unknown',
+      exchange: JSON.stringify(query.exchange),
+    });
+    return this.service.getSupportedAssetsFrom(query);
+  }
+
+  @Get('swap/supported-assets-to')
+  @UsePipes(new ZodValidationPipe(SupportedAssetsToSchema))
+  getSupportedAssetsTo(
+    @Query() query: SupportedAssetsToDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_SWAP_ASSETS_TO, req, {
+      to: query.to ?? 'unknown',
+      exchange: JSON.stringify(query.exchange),
+    });
+    return this.service.getSupportedAssetsTo(query);
   }
 }

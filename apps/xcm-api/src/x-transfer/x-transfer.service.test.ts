@@ -129,6 +129,12 @@ vi.mock('@paraspell/swap', async (importActual) => ({
   getExchangePairs: vi
     .fn()
     .mockReturnValue([[{}, {}]] as [TAssetInfo, TAssetInfo][]),
+  getSupportedAssetsFrom: vi
+    .fn()
+    .mockReturnValue([{ symbol: 'DOT' }] as TAssetInfo[]),
+  getSupportedAssetsTo: vi
+    .fn()
+    .mockReturnValue([{ symbol: 'USDT' }] as TAssetInfo[]),
 }));
 
 describe('XTransferService', () => {
@@ -837,6 +843,33 @@ describe('XTransferService', () => {
     it('should return exchange pairs', () => {
       const pairs = service.getExchangePairs('Acala');
       expect(pairs).toEqual([[{}, {}]]);
+    });
+  });
+
+  describe('getExchangeChains', () => {
+    it('should return all supported exchange chains', () => {
+      const chains = service.getExchangeChains();
+      expect(chains).toEqual(paraspellSdk.EXCHANGE_CHAINS);
+    });
+  });
+
+  describe('getSupportedAssetsFrom', () => {
+    it('should return supported origin assets', () => {
+      const assets = service.getSupportedAssetsFrom({
+        from: 'Acala',
+        exchange: 'Hydration',
+      });
+      expect(assets).toEqual([{ symbol: 'DOT' }]);
+    });
+  });
+
+  describe('getSupportedAssetsTo', () => {
+    it('should return supported destination assets', () => {
+      const assets = service.getSupportedAssetsTo({
+        exchange: 'Hydration',
+        to: 'Acala',
+      });
+      expect(assets).toEqual([{ symbol: 'USDT' }]);
     });
   });
 });

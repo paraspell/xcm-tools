@@ -9,7 +9,7 @@ import type {
   TTransferInfo,
   TXcmFeeDetailWithFallback,
 } from '@paraspell/sdk';
-import { BatchMode } from '@paraspell/sdk';
+import { BatchMode, EXCHANGE_CHAINS } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -346,6 +346,56 @@ describe('XTransferController', () => {
 
       expect(result).toEqual(mockResult);
       expect(spy).toHaveBeenCalledWith(exchange);
+    });
+  });
+
+  describe('getExchangeChains', () => {
+    it('should call getExchangeChains service method and return result', () => {
+      const spy = vi.spyOn(service, 'getExchangeChains');
+
+      const result = controller.getExchangeChains(mockRequestObject);
+
+      expect(result).toEqual(EXCHANGE_CHAINS);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getSupportedAssetsFrom', () => {
+    it('should call getSupportedAssetsFrom service method with correct params and return result', () => {
+      const query = {
+        from: 'Acala' as const,
+        exchange: 'Hydration' as TExchangeChain,
+      };
+      const mockResult = [{ symbol: 'DOT' }] as TAssetInfo[];
+      const spy = vi
+        .spyOn(service, 'getSupportedAssetsFrom')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getSupportedAssetsFrom(
+        query,
+        mockRequestObject,
+      );
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith(query);
+    });
+  });
+
+  describe('getSupportedAssetsTo', () => {
+    it('should call getSupportedAssetsTo service method with correct params and return result', () => {
+      const query = {
+        exchange: 'Hydration' as TExchangeChain,
+        to: 'Acala' as const,
+      };
+      const mockResult = [{ symbol: 'USDT' }] as TAssetInfo[];
+      const spy = vi
+        .spyOn(service, 'getSupportedAssetsTo')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getSupportedAssetsTo(query, mockRequestObject);
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith(query);
     });
   });
 });
