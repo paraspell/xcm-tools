@@ -159,7 +159,11 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
   }
 
   encodeTx(hex: string) {
-    return { encoded: hex };
+    // Pad odd-length hex to match PAPI behavior (0x0 -> 0x00)
+    const prefix = hex.startsWith("0x") ? "0x" : "";
+    const body = prefix ? hex.slice(2) : hex;
+    const padded = body.length % 2 === 1 ? `0${body}` : body;
+    return { encoded: `${prefix}${padded}` };
   }
 
   queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
@@ -444,7 +448,9 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
         }
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        failureErr = failureErr || { failureReason: msg };
+        if (!failureErr.failureReason) {
+          failureErr = { failureReason: msg };
+        }
         return {
           success: false,
           failureReason: failureErr.failureReason,

@@ -695,6 +695,31 @@ describe("DedotApi", () => {
       expect(result.success).toBe(true);
     });
 
+    it("returns failure with second-attempt message when retry also throws", async () => {
+      dryRunCallMock
+        .mockRejectedValueOnce(new Error("Expected 3 parameters"))
+        .mockRejectedValueOnce(new Error("hex string expected"));
+
+      vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+        symbol: "DOT",
+      } as TAssetInfo);
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: testAddress,
+        chain: "Hydration",
+        destination: "AssetHubPolkadot",
+        version: Version.V5,
+        asset: { symbol: "DOT" } as WithAmount<TAssetInfo>,
+      });
+
+      expect(dryRunCallMock).toHaveBeenCalledTimes(2);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.failureReason).toBe("hex string expected");
+      }
+    });
+
     it("returns failure when first call throws unexpected error", async () => {
       dryRunCallMock.mockRejectedValue(new Error("Network error"));
 
