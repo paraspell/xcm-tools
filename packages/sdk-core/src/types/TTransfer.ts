@@ -288,6 +288,7 @@ export type TCreateBaseTransferXcmOptions<TRes> = {
   version: Version
   useJitWithdraw?: boolean
   useFeeAssetOnHops?: boolean
+  forceBuyExecution?: boolean
   // refactor this
   paraIdTo?: number
   transactOptions?: TTransactOptions<TRes>

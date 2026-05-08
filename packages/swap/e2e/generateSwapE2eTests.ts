@@ -243,7 +243,17 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .currency({ id: 6, amount: 300 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { id: 10111 }, exchange: 'AssetHubWestend' })
+          .swap({
+            currencyTo: {
+              location: {
+                parents: 1,
+                interior: {
+                  Here: null,
+                },
+              },
+            },
+            exchange: 'AssetHubWestend',
+          })
           .buildAll();
 
         expect(txs).toBeDefined();

@@ -167,7 +167,8 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
         originFee: hasSeparateFeeAsset ? ethBridgeFee || originFee : originFee,
         reserveFee: originReserveFee
       },
-      version
+      version,
+      forceBuyExecution: true
     },
     assetToLocalizedToDest
   )
@@ -224,6 +225,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
               originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
               reserveFee: destReserveFee
             },
+            forceBuyExecution: true,
             suffixXcm: snowbridgeInstructions
           })
   } else if (destChain) {
@@ -236,6 +238,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
       recipient,
       // Deal with this after feeAsset is supported
       fees: { originFee: 0n, reserveFee: destReserveFee },
+      forceBuyExecution: true,
       suffixXcm: [depositInstruction]
     })
   } else {
@@ -253,6 +256,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
         version,
         recipient,
         fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
+        forceBuyExecution: true,
         suffixXcm: [...exchangeInstructions, ...exchangeToDestXcm]
       })
     : [...exchangeInstructions, ...exchangeToDestXcm]
