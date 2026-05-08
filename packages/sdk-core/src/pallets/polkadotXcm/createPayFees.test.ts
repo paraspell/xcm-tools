@@ -47,21 +47,50 @@ describe('createPayFees', () => {
     ])
   })
 
-  it('should create BuyExecution with Unlimited weight for V5 and above', () => {
+  it('should create PayFees with RefundSurplus for V5 and above', () => {
     const result = createPayFees(Version.V5, asset)
 
     expect(result).toEqual([
       {
-        BuyExecution: {
-          fees: asset,
-          weight_limit: 'Unlimited'
+        PayFees: {
+          asset
+        }
+      },
+      {
+        RefundSurplus: undefined
+      }
+    ])
+  })
+
+  it('should create PayFees with RefundSurplus for V5 when weight is provided (weight ignored)', () => {
+    const result = createPayFees(Version.V5, asset, weight)
+
+    expect(result).toEqual([
+      {
+        PayFees: {
+          asset
+        }
+      },
+      {
+        RefundSurplus: undefined
+      }
+    ])
+  })
+
+  it('should omit RefundSurplus for V5 when includeRefundSurplus is false', () => {
+    const result = createPayFees(Version.V5, asset, undefined, false)
+
+    expect(result).toEqual([
+      {
+        PayFees: {
+          asset
         }
       }
     ])
   })
 
-  it('should create BuyExecution with Limited weight for V5 when weight is provided', () => {
-    const result = createPayFees(Version.V5, asset, weight)
+  it('should force BuyExecution for V5 when forceBuyExecution is true', () => {
+    const result = createPayFees(Version.V5, asset, weight, true, true)
 
     expect(result).toEqual([
       {

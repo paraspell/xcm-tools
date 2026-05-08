@@ -78,6 +78,7 @@ export const createBaseExecuteXcm = <TRes>(
     paraIdTo,
     transactOptions,
     useFeeAssetOnHops,
+    forceBuyExecution = false,
     suffixXcm = []
   } = options
 
@@ -129,7 +130,10 @@ export const createBaseExecuteXcm = <TRes>(
                   updateAsset(
                     assetLocalizedToDest,
                     reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
-                  )
+                  ),
+                undefined,
+                true,
+                forceBuyExecution
               ),
               ...suffixXcm
             ]
@@ -177,7 +181,10 @@ export const createBaseExecuteXcm = <TRes>(
             xcm: [
               ...createPayFees(
                 version,
-                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
+                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction),
+                undefined,
+                true,
+                forceBuyExecution
               ),
               ...suffixXcm
             ]
@@ -197,7 +204,10 @@ export const createBaseExecuteXcm = <TRes>(
               ...createPayFees(
                 version,
                 hopFeeAssetToReserve ??
-                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
+                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction),
+                undefined,
+                true,
+                forceBuyExecution
               ),
               // Then deposit to final destination
               ...resolvedDepositInstruction
@@ -219,7 +229,10 @@ export const createBaseExecuteXcm = <TRes>(
                 version,
                 // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
                 // than requested, so we need to account for that
-                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
+                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n),
+                undefined,
+                true,
+                forceBuyExecution
               ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
