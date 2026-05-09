@@ -1,7 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import Highcharts from 'highcharts';
-import type { HighchartsReactRefObject } from 'highcharts-react-official';
-import HighchartsReact from 'highcharts-react-official';
+import { HighchartsReact, type HighchartsReactRefObject } from 'highcharts-react-official';
 import type { FC, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toHex } from 'polkadot-api/utils';
