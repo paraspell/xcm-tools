@@ -21,6 +21,7 @@ import type {
   TCallDexAmountOutOverrides,
   TSwapTransformedOptions,
 } from '../../types';
+import { pickExchangeApiVariant } from './buildExchangeApiVariant';
 
 export const callDexAmountOut = <TApi, TRes, TSigner>(
   dex: ExchangeChain,
@@ -29,9 +30,9 @@ export const callDexAmountOut = <TApi, TRes, TSigner>(
 ) =>
   dex.getAmountOut({
     ...options,
+    ...pickExchangeApiVariant(options.exchange),
     amount: overrides.amount ?? options.amount,
     api: options.exchange.api,
-    apiPjs: options.exchange.apiPjs,
     assetFrom: options.exchange.assetFrom,
     assetTo: overrides.assetTo ?? options.exchange.assetTo,
     ...(overrides.slippagePct !== undefined && { slippagePct: overrides.slippagePct }),

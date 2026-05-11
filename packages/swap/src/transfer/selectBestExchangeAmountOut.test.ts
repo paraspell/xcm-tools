@@ -25,6 +25,7 @@ describe('selectBestExchangeAmountOut', () => {
 
   it('should compute the amount out using the dex callback and return the best exchange', async () => {
     const fakeDex = {
+      apiType: 'PJS',
       createApiInstance: vi.fn().mockResolvedValue('fakeApi'),
       createApiInstancePapi: vi.fn().mockResolvedValue('fakePapiApi'),
       getAmountOut: vi.fn().mockResolvedValue(300n),

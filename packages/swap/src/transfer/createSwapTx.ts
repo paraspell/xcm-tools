@@ -2,7 +2,7 @@ import { parseUnits } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
-import { buildFromExchangeExtrinsic, convertTxToTarget } from './utils';
+import { buildFromExchangeExtrinsic, convertTxToTarget, pickExchangeApiVariant } from './utils';
 
 const FEE_ESTIMATION_UNITS = '100';
 
@@ -33,8 +33,8 @@ export const createSwapTx = async <TApi, TRes, TSigner>(
   const swapResult = await exchange.handleMultiSwap(
     {
       ...options,
+      ...pickExchangeApiVariant(options.exchange),
       api: options.exchange.api,
-      apiPjs: options.exchange.apiPjs,
       assetFrom: options.exchange.assetFrom,
       assetTo: options.exchange.assetTo,
       isForFeeEstimation,

@@ -17,16 +17,18 @@ import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfigStored,
-  TGetAmountOutOptions,
+  TPjsGetAmountOutOptions,
+  TPjsSwapOptions,
   TSingleSwapResult,
-  TSwapOptions,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
-class AcalaExchange extends ExchangeChain {
+class AcalaExchange extends ExchangeChain<'PJS'> {
+  readonly apiType = 'PJS';
+
   async swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TPjsSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
@@ -110,7 +112,7 @@ class AcalaExchange extends ExchangeChain {
     return { tx, amountOut };
   }
 
-  async getAmountOut<TApi, TRes, TSigner>(options: TGetAmountOutOptions<TApi, TRes, TSigner>) {
+  async getAmountOut<TApi, TRes, TSigner>(options: TPjsGetAmountOutOptions<TApi, TRes, TSigner>) {
     const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 
     const wallet = new Wallet(apiPjs);

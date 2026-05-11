@@ -1,44 +1,47 @@
-import { BigNumber, createSdkContext } from '@galacticcouncil/sdk';
+import { createSdkContext } from '@galacticcouncil/sdk-next';
+import type { TPapiApi } from '@paraspell/sdk';
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
+  findNativeAssetInfoOrThrow,
   formatUnits,
-  getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   padValueBy,
   UnableToComputeError,
 } from '@paraspell/sdk-core';
-import type { ApiPromise } from '@polkadot/api';
 import { parseUnits } from 'ethers-v6';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfigStored,
-  TGetAmountOutOptions,
+  TPapiGetAmountOutOptions,
+  TPapiSwapOptions,
   TSingleSwapResult,
-  TSwapOptions,
 } from '../../types';
 import { pow10n } from '../../utils';
 import ExchangeChain from '../ExchangeChain';
 import { calculateFee, getAssetInfo } from './utils';
 
-class HydrationExchange extends ExchangeChain {
+class HydrationExchange extends ExchangeChain<'PAPI'> {
+  readonly apiType = 'PAPI';
+
   async swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TPapiSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
-    const { apiPjs, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
+    const { apiPapi, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
     const {
       api: { router: tradeRouter },
+      client: { asset: assetClient },
       tx: txBuilderFactory,
-    } = createSdkContext(apiPjs);
+    } = await createSdkContext(apiPapi);
 
-    const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
-    const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
+    const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
+    const currencyToInfo = await getAssetInfo(assetClient, assetTo);
 
     if (currencyFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
@@ -50,6 +53,7 @@ class HydrationExchange extends ExchangeChain {
       options,
       tradeRouter,
       txBuilderFactory,
+      assetClient,
       currencyFromInfo,
       currencyToInfo,
       currencyFromInfo.decimals,
@@ -79,9 +83,9 @@ class HydrationExchange extends ExchangeChain {
 
     const tx = substrateTx.get();
 
-    const amountOut = BigInt(trade.amountOut.decimalPlaces(0).toString());
+    const amountOut = trade.amountOut;
 
-    const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
+    const nativeCurrencyInfo = await getAssetInfo(assetClient, {
       symbol: getNativeAssetSymbol(this.chain),
     });
 
@@ -89,17 +93,13 @@ class HydrationExchange extends ExchangeChain {
       throw new InvalidCurrencyError('Native currency not found');
     }
 
-    const nativeCurrencyDecimals = getAssetDecimals(this.chain, nativeCurrencyInfo.symbol);
+    const { decimals: nativeCurrencyDecimals } = findNativeAssetInfoOrThrow(this.chain);
 
-    if (nativeCurrencyDecimals === null) {
-      throw new UnableToComputeError('Native currency decimals not found');
-    }
-
-    let priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
+    let priceInfo = await tradeRouter.getSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
 
     if (currencyToInfo.id === nativeCurrencyInfo.id) {
       priceInfo = {
-        amount: BigNumber(parseUnits('1', nativeCurrencyDecimals)),
+        amount: parseUnits('1', nativeCurrencyDecimals),
         decimals: nativeCurrencyDecimals,
       };
     }
@@ -108,7 +108,7 @@ class HydrationExchange extends ExchangeChain {
       throw new UnableToComputeError('Price not found');
     }
 
-    const currencyToPrice = BigInt(priceInfo.amount.decimalPlaces(0).toString());
+    const currencyToPrice = priceInfo.amount;
 
     const feeInCurrencyTo =
       (toDestTransactionFee *
@@ -129,16 +129,17 @@ class HydrationExchange extends ExchangeChain {
   }
 
   async getAmountOut<TApi, TRes, TSigner>(
-    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
+    options: TPapiGetAmountOutOptions<TApi, TRes, TSigner>,
   ): Promise<bigint> {
-    const { apiPjs, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
+    const { apiPapi, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 
     const {
       api: { router: tradeRouter },
-    } = createSdkContext(apiPjs);
+      client: { asset: assetClient },
+    } = await createSdkContext(apiPapi);
 
-    const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
-    const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
+    const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
+    const currencyToInfo = await getAssetInfo(assetClient, assetTo);
 
     if (currencyFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
@@ -159,39 +160,40 @@ class HydrationExchange extends ExchangeChain {
       amountNormalized,
     );
 
-    const amountOut = BigInt(trade.amountOut.decimalPlaces(0).toString());
+    const amountOut = trade.amountOut;
 
     const slippageMultiplier = Number(slippagePct);
 
     return padValueBy(amountOut, -slippageMultiplier);
   }
 
-  async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
-    const {
-      api: { router: tradeRouter },
-    } = createSdkContext(api);
+  async getDexConfig(api: TPapiApi): Promise<TDexConfigStored> {
+    const sdk = await createSdkContext(api);
 
-    const assets = await tradeRouter.getAllAssets();
+    try {
+      const assets = await sdk.client.asset.getSupported();
+      const sdkAssets = getAssets(this.chain);
 
-    const sdkAssets = getAssets(this.chain);
+      const transformedAssets: TAssetInfo[] = assets
+        .map(({ symbol, id }) => {
+          const asset =
+            sdkAssets.find((a) => !a.isNative && a.assetId === id.toString()) ??
+            sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
 
-    const transformedAssets: TAssetInfo[] = assets
-      .map(({ symbol, id }) => {
-        const asset =
-          sdkAssets.find((a) => !a.isNative && a.assetId === id) ??
-          sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
+          if (!asset) return null;
 
-        if (!asset) return null;
+          return asset;
+        })
+        .filter((asset) => asset !== null);
 
-        return asset;
-      })
-      .filter((asset) => asset !== null);
-
-    return {
-      isOmni: true,
-      assets: transformedAssets.map((asset) => asset.location),
-      pairs: [],
-    };
+      return {
+        isOmni: true,
+        assets: transformedAssets.map((asset) => asset.location),
+        pairs: [],
+      };
+    } finally {
+      sdk.destroy();
+    }
   }
 }
 

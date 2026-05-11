@@ -1,3 +1,4 @@
+import type { TPapiApi } from '@paraspell/sdk';
 import { getAssets, localizeLocation, type TAssetInfo, type TLocation } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -16,24 +17,54 @@ const makeAsset = (symbol: string, id: string, ml: object): TAssetInfo => ({
   location: ml as TLocation,
 });
 
-const DOT_ML = { Parachain: 1000 };
-const ACA_ML = { Parachain: 2000 };
-const OTHER_ML = { Parachain: 3000 };
+// Stored asset locations use flat enum shape (PalletInstance/Parachain at the
+// junction level, X1/X3/Here at the interior level).
+const DOT_FLAT = { parents: 1, interior: { Here: null } };
+const ACA_FLAT = { parents: 1, interior: { X1: [{ Parachain: 2000 }] } };
+const OTHER_FLAT = {
+  parents: 0,
+  interior: { X1: [{ PalletInstance: 50 }] },
+};
+const USDT_FLAT = {
+  parents: 0,
+  interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] },
+};
 
-const DOT_FA = makeAsset('DOT', '1', DOT_ML);
-const ACA_FA = makeAsset('ACA', '2', ACA_ML);
-const OTHER_FA = makeAsset('OTHER', '3', OTHER_ML);
+// Papi unsafe API decodes the same locations as variant-encoded enums,
+// with u128 leaves (GeneralIndex) as bigint.
+const DOT_PAPI = { parents: 1, interior: { type: 'Here', value: undefined } };
+const ACA_PAPI = {
+  parents: 1,
+  interior: { type: 'X1', value: [{ type: 'Parachain', value: 2000 }] },
+};
+const USDT_PAPI = {
+  parents: 0,
+  interior: {
+    type: 'X2',
+    value: [
+      { type: 'PalletInstance', value: 50 },
+      { type: 'GeneralIndex', value: 1984n },
+    ],
+  },
+};
 
-const makeApi = (entriesReturn: unknown[]) =>
+const DOT_FA = makeAsset('DOT', '1', DOT_FLAT);
+const ACA_FA = makeAsset('ACA', '2', ACA_FLAT);
+const OTHER_FA = makeAsset('OTHER', '3', OTHER_FLAT);
+const USDT_FA = makeAsset('USDT', '4', USDT_FLAT);
+
+const makeApi = (entries: unknown[]) =>
   ({
-    query: {
-      assetConversion: {
-        pools: {
-          entries: vi.fn().mockResolvedValue(entriesReturn),
+    getUnsafeApi: () => ({
+      query: {
+        AssetConversion: {
+          Pools: {
+            getEntries: vi.fn().mockResolvedValue(entries),
+          },
         },
       },
-    },
-  }) as unknown as import('@polkadot/api').ApiPromise;
+    }),
+  }) as unknown as TPapiApi;
 
 describe('getDexConfig', () => {
   beforeEach(() => {
@@ -41,81 +72,60 @@ describe('getDexConfig', () => {
     vi.mocked(localizeLocation).mockImplementation((_chain, ml) => ml);
   });
 
-  it('returns filtered assets based on on-chain pools, empty pairs, and isOmni true', async () => {
+  it('matches papi-decoded pool keys against stored asset locations', async () => {
     vi.mocked(getAssets).mockReturnValue([DOT_FA, ACA_FA, OTHER_FA]);
 
-    const eraMock = { toJSON: () => [DOT_ML, ACA_ML] };
-    const apiMock = makeApi([[{ args: [eraMock] }, {}]]);
+    const apiMock = makeApi([{ keyArgs: [[DOT_PAPI, ACA_PAPI]] }]);
 
     const cfg = await getDexConfig(apiMock, 'Acala');
 
-    expect(cfg.assets).toEqual(expect.arrayContaining([DOT_ML, ACA_ML]));
+    expect(cfg.assets).toEqual(expect.arrayContaining([DOT_FLAT, ACA_FLAT]));
     expect(cfg.assets.length).toBe(2);
-
     expect(cfg.pairs).toEqual([]);
-
     expect(cfg.isOmni).toBe(true);
-
-    expect(getAssets).toHaveBeenCalledWith('Acala');
-    expect(apiMock.query.assetConversion.pools.entries).toHaveBeenCalled();
   });
 
-  it('returns empty assets and pairs if no pools exist on-chain', async () => {
+  it('returns empty assets when no pools exist on-chain', async () => {
     vi.mocked(getAssets).mockReturnValue([DOT_FA, ACA_FA]);
 
-    const apiMock = makeApi([]);
+    const cfg = await getDexConfig(makeApi([]), 'AssetHubPolkadot');
+
+    expect(cfg.assets).toEqual([]);
+    expect(cfg.pairs).toEqual([]);
+    expect(cfg.isOmni).toBe(true);
+  });
+
+  it('matches a u128 leaf (GeneralIndex bigint → number)', async () => {
+    vi.mocked(getAssets).mockReturnValue([USDT_FA, DOT_FA]);
+
+    const apiMock = makeApi([{ keyArgs: [[USDT_PAPI, DOT_PAPI]] }]);
 
     const cfg = await getDexConfig(apiMock, 'AssetHubPolkadot');
 
-    expect(cfg.assets).toEqual([]);
-    expect(cfg.assets.length).toBe(0);
-
-    expect(cfg.pairs).toEqual([]);
-    expect(cfg.isOmni).toBe(true);
-
-    expect(getAssets).toHaveBeenCalledWith('AssetHubPolkadot');
+    expect(cfg.assets).toEqual(expect.arrayContaining([USDT_FLAT, DOT_FLAT]));
+    expect(cfg.assets.length).toBe(2);
   });
 
-  it('includes an asset if its transformed location matches a pool location', async () => {
-    const poolMl = { parents: 1, interior: { X1: { Parachain: 4000 } } };
+  it('falls back to the localized location for cross-chain matches', async () => {
+    const originalMl = { assetVersion: 'v1', network: 'Polkadot', id: 'uniqueAsset' };
+    const localizedMl = { parents: 1, interior: { X1: [{ Parachain: 4000 }] } };
 
-    const assetOriginalMl = { assetVersion: 'v1', network: 'Polkadot', id: 'uniqueAsset' };
-    const assetTransformedMl = { parents: 1, interior: { X1: { Parachain: 4000 } } };
+    const specialAsset = makeAsset('SPECIAL', 'sp_id', originalMl);
+    vi.mocked(getAssets).mockReturnValue([specialAsset]);
 
-    const specialAsset = makeAsset('SPECIAL', 'sp_id', assetOriginalMl);
-    vi.mocked(getAssets).mockReturnValue([specialAsset, DOT_FA]);
+    vi.mocked(localizeLocation).mockImplementation((_chain, ml) =>
+      JSON.stringify(ml) === JSON.stringify(originalMl) ? localizedMl : ml,
+    );
 
-    vi.mocked(localizeLocation).mockImplementation((_chain, ml) => {
-      if (JSON.stringify(ml) === JSON.stringify(assetOriginalMl)) {
-        return assetTransformedMl;
-      }
-      return ml;
-    });
-
-    const eraMock = { toJSON: () => [poolMl, ACA_ML] };
-    const apiMock = makeApi([[{ args: [eraMock] }, {}]]);
+    const poolMlPapi = {
+      parents: 1,
+      interior: { type: 'X1', value: [{ type: 'Parachain', value: 4000 }] },
+    };
+    const apiMock = makeApi([{ keyArgs: [[poolMlPapi, ACA_PAPI]] }]);
 
     const cfg = await getDexConfig(apiMock, 'Moonbeam');
 
-    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', assetOriginalMl);
-    expect(cfg.assets.length).toBe(1);
-    expect(cfg.assets).toEqual(expect.arrayContaining([assetOriginalMl]));
-
-    expect(cfg.pairs).toEqual([]);
-    expect(cfg.isOmni).toBe(true);
-  });
-
-  it('handles assets whose location directly matches a pool location (no transformation needed)', async () => {
-    vi.mocked(getAssets).mockReturnValue([DOT_FA]);
-
-    const eraMock = { toJSON: () => [DOT_ML, OTHER_ML] };
-    const apiMock = makeApi([[{ args: [eraMock] }, {}]]);
-
-    const cfg = await getDexConfig(apiMock, 'Acala');
-
-    expect(cfg.assets.length).toBe(1);
-    expect(cfg.assets[0]).toEqual(DOT_ML);
-    expect(cfg.isOmni).toBe(true);
-    expect(cfg.pairs).toEqual([]);
+    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalMl);
+    expect(cfg.assets).toEqual([originalMl]);
   });
 });

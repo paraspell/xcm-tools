@@ -8,6 +8,7 @@ import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import type { TGetBestAmountOutOptions, TGetBestAmountOutResult } from '../types';
 import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
+import { buildExchangeApiVariant } from './utils/buildExchangeApiVariant';
 import { resolveAssets } from './utils/resolveAssets';
 
 export const getBestAmountOut = async <TApi, TRes, TSigner>(
@@ -34,14 +35,13 @@ export const getBestAmountOut = async <TApi, TRes, TSigner>(
 
   const { config } = api;
   const exchangeConfig = convertBuilderConfig<TApi>(config);
-  const pjsApi = await dex.createApiInstance(exchangeConfig);
   const exchangeApi = await api.createApiForChain(dex.chain);
 
   return {
     exchange: dex.chain,
     amountOut: await dex.getAmountOut({
+      ...(await buildExchangeApiVariant(dex, exchangeConfig)),
       api: exchangeApi,
-      apiPjs: pjsApi,
       assetFrom,
       assetTo,
       amount: applyDecimalAbstraction(

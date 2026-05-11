@@ -1,7 +1,7 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk-core';
-import type { TPjsApi, TSubstrateChain } from '@paraspell/sdk-pjs';
+import type { TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -48,7 +48,7 @@ const createExchangeInfo = (
   assetFromSymbol: string,
   assetToSymbol = 'ASTR',
 ): TExchangeInfo<unknown, unknown, unknown> => ({
-  apiPjs: {} as TPjsApi,
+  apiType: 'PAPI',
   apiPapi: {} as TPapiApi,
   api: mockApi,
   chain: 'Hydration',

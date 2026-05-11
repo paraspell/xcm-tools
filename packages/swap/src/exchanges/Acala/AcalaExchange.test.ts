@@ -2,7 +2,7 @@ import { AmountTooLowError, getBalance, getNativeAssetSymbol } from '@paraspell/
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TSwapOptions } from '../../types';
+import type { TPjsSwapOptions } from '../../types';
 import AcalaExchange from './AcalaExchange';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
@@ -139,7 +139,7 @@ describe('AcalaExchange', () => {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPjsSwapOptions<unknown, unknown, unknown>;
 
     it('throws AmountTooLowError when amount is negative (amountWithoutFee < 0)', async () => {
       vi.mocked(getBalance).mockResolvedValueOnce(1_000_000n);
@@ -154,7 +154,7 @@ describe('AcalaExchange', () => {
             amount: -1n,
             sender: '5xxxx',
             origin: {},
-          } as TSwapOptions<unknown, unknown, unknown>,
+          } as TPjsSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -169,7 +169,7 @@ describe('AcalaExchange', () => {
         amount: 1n,
         sender: 'some-address',
         origin: {},
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TPjsSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(getBalance).mockResolvedValueOnce(0n);
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(1n);
@@ -200,7 +200,7 @@ describe('AcalaExchange', () => {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
       amount: 100n,
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPjsSwapOptions<unknown, unknown, unknown>;
 
     it('should return the amountOut with fee deducted', async () => {
       const result = await chain.getAmountOut(baseSwapOptions);

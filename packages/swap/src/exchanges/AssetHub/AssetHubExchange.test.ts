@@ -6,11 +6,10 @@ import {
   RoutingResolutionError,
   type TLocation,
 } from '@paraspell/sdk-core';
-import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset } from '../../assets';
-import type { TSingleSwapResult, TSwapOptions } from '../../types';
+import type { TGenericSwapOptions, TSingleSwapResult } from '../../types';
 import AssetHubExchange from './AssetHubExchange';
 
 vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
@@ -23,7 +22,6 @@ vi.mock('../../assets');
 
 describe('AssetHubExchange', () => {
   let instance: AssetHubExchange;
-  let api: ApiPromise;
   let mockPolkadotApi: {
     queryRuntimeApi: ReturnType<typeof vi.fn>;
     deserializeExtrinsics: ReturnType<typeof vi.fn>;
@@ -31,20 +29,19 @@ describe('AssetHubExchange', () => {
   const dummyTx = { dummy: true };
   const assetFromML: TLocation = { parents: 0, interior: { X1: [{ PalletInstance: 1 }] } };
   const assetToML: TLocation = { parents: 0, interior: { X1: [{ GeneralIndex: 2 }] } };
-  let baseSwapOptions: TSwapOptions<unknown, unknown, unknown>;
+  let baseSwapOptions: TGenericSwapOptions<unknown, unknown, unknown>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     instance = new AssetHubExchange('AssetHubPolkadot');
-    api = {} as unknown as ApiPromise;
     mockPolkadotApi = {
       queryRuntimeApi: vi.fn(),
       deserializeExtrinsics: vi.fn(() => dummyTx),
     };
 
     baseSwapOptions = {
+      apiType: 'GENERIC',
       api: mockPolkadotApi as unknown as PolkadotApi<unknown, unknown, unknown>,
-      apiPjs: api,
       assetFrom: { symbol: 'ASSET1', decimals: 10, isNative: true, location: assetFromML },
       assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
       amount: 1000n,
@@ -65,7 +62,7 @@ describe('AssetHubExchange', () => {
         assetFrom: { symbol: 'ASSET1', decimals: 10, location: assetFromML },
         assetTo: { symbol: 'NATIVE', decimals: 10, location: assetToML },
         amount: 1000n,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NOT_NATIVE');
       await expect(instance.swapCurrency(opts, 50000n)).rejects.toThrow(AmountTooLowError);
     });
@@ -75,7 +72,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetTo: { symbol: 'NATIVE', location: assetToML },
         origin: {},
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       const toDestTxFee = 50n;
@@ -100,7 +97,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetTo: { symbol: 'NON_NATIVE', location: assetToML },
         origin: undefined,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
       vi.mocked(mockPolkadotApi.queryRuntimeApi)
         .mockResolvedValueOnce(2000n)
         .mockResolvedValueOnce(100n);
@@ -162,8 +159,8 @@ describe('AssetHubExchange', () => {
     };
 
     const baseOpts = {
-      api: {} as TSwapOptions<unknown, unknown, unknown>['api'],
-      apiPjs: api,
+      apiType: 'GENERIC' as const,
+      api: {} as TGenericSwapOptions<unknown, unknown, unknown>['api'],
       amount: 1000n,
       sender: 'sender',
       slippagePct: '5',
@@ -184,7 +181,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown, unknown, unknown>,
+          } as TGenericSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(RoutingResolutionError);
@@ -216,7 +213,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetNative,
           assetTo: assetB,
-        } as TSwapOptions<unknown, unknown, unknown>,
+        } as TGenericSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -237,7 +234,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetNative,
-        } as TSwapOptions<unknown, unknown, unknown>,
+        } as TGenericSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -258,7 +255,7 @@ describe('AssetHubExchange', () => {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetB,
-        } as TSwapOptions<unknown, unknown, unknown>,
+        } as TGenericSwapOptions<unknown, unknown, unknown>,
         0n,
       );
 
@@ -277,7 +274,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown, unknown, unknown>,
+          } as TGenericSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -295,7 +292,7 @@ describe('AssetHubExchange', () => {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
-          } as TSwapOptions<unknown, unknown, unknown>,
+          } as TGenericSwapOptions<unknown, unknown, unknown>,
           0n,
         ),
       ).rejects.toThrow(AmountTooLowError);
@@ -330,7 +327,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
       await expect(instance.getAmountOut(opts)).rejects.toThrow(
         'Native asset not found for this exchange chain.',
       );
@@ -341,7 +338,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetNative,
         assetTo: assetNative,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
       await expect(instance.getAmountOut(opts)).rejects.toThrow(
         'Cannot swap native asset to itself.',
       );
@@ -353,7 +350,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
@@ -373,7 +370,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetNative,
         origin: undefined,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
@@ -393,7 +390,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetNative,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
 
@@ -412,7 +409,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: undefined,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi)
         .mockResolvedValueOnce(1000n)
@@ -441,7 +438,7 @@ describe('AssetHubExchange', () => {
         assetFrom: assetA,
         assetTo: assetB,
         origin: {},
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi)
         .mockResolvedValueOnce(1000n)
@@ -468,7 +465,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(0n);
 
@@ -482,7 +479,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetA,
         assetTo: assetB,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi)
         .mockResolvedValueOnce(1000n)
@@ -498,7 +495,7 @@ describe('AssetHubExchange', () => {
         ...baseSwapOptions,
         assetFrom: assetNative,
         assetTo: assetB,
-      } as TSwapOptions<unknown, unknown, unknown>;
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
 
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(undefined);
 

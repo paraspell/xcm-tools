@@ -9,6 +9,7 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../../exchanges/ExchangeChainFactory';
 import type { TCommonRouterOptions, TTransformedOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
+import { buildExchangeApiVariant } from './buildExchangeApiVariant';
 import { resolveAssets } from './resolveAssets';
 import { determineFeeCalcAddress } from './utils';
 
@@ -62,8 +63,7 @@ export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
           }
         : undefined,
     exchange: {
-      apiPjs: await dex.createApiInstance(exchangeConfig),
-      apiPapi: await dex.createApiInstancePapi(exchangeConfig),
+      ...(await buildExchangeApiVariant(dex, exchangeConfig)),
       api: exchangeApi,
       chain: dex.chain,
       assetFrom: assetFromExchange,

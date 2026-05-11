@@ -82,9 +82,10 @@ describe('getRouterFees', () => {
 
     options = {
       exchange: {
+        apiType: 'PJS',
         chain: exchangeChain,
         api: {},
-        apiPapi: {},
+        apiPjs: {},
         assetFrom: { symbol: 'DOT', decimals: 10 },
         assetTo: { symbol: 'USDT' },
       },
@@ -365,6 +366,7 @@ describe('getRouterFees', () => {
     const customAssetTo = { symbol: 'USDC' } as TAssetInfo;
     await arg.calculateMinAmountOut(123n, customAssetTo);
 
+    if (localOptions.exchange.apiType !== 'PJS') throw new Error('expected PJS exchange');
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         apiPjs: localOptions.exchange.apiPjs,
@@ -407,6 +409,7 @@ describe('getRouterFees', () => {
 
     await arg.calculateMinAmountOut(777n);
 
+    if (localOptions.exchange.apiType !== 'PJS') throw new Error('expected PJS exchange');
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         apiPjs: localOptions.exchange.apiPjs,
@@ -428,8 +431,8 @@ describe('getRouterFees', () => {
       origin: { chain: 'Moonbeam' },
       destination: { chain: 'Moonbeam' },
       exchange: {
+        apiType: 'PAPI',
         chain: 'Hydration',
-        apiPjs: {} as unknown,
         apiPapi: {} as unknown,
         api: {} as unknown,
         assetFrom: { symbol: 'USDC', decimals: 6 } as TAssetInfo,

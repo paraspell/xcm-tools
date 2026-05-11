@@ -77,9 +77,9 @@ const createOptions = (
   origin: undefined,
   destination: undefined,
   exchange: {
+    apiType: 'PJS' as const,
     chain: 'Acala',
     apiPjs: {} as ApiPromise,
-    apiPapi: {} as PolkadotClient,
     api: {} as PolkadotApi<unknown, unknown, unknown>,
     assetFrom: acaAsset,
     assetTo: ausdAsset,
@@ -129,9 +129,9 @@ describe('dryRunRouter', () => {
       origin: undefined,
       destination: undefined,
       exchange: {
+        apiType: 'PJS' as const,
         chain: 'Acala',
         apiPjs: {} as ApiPromise,
-        apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: acaAsset,
         assetTo: ausdAsset,
@@ -184,8 +184,8 @@ describe('dryRunRouter', () => {
         address: 'dest-address',
       },
       exchange: {
+        apiType: 'PAPI' as const,
         chain: 'Hydration',
-        apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: ausdAsset,
@@ -287,8 +287,8 @@ describe('dryRunRouterPreview', () => {
       },
       destination: { chain: 'Moonbeam', address: 'dest-address' },
       exchange: {
+        apiType: 'PAPI' as const,
         chain: 'Hydration',
-        apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: ausdAsset,
@@ -358,8 +358,8 @@ describe('dryRunTransactions', () => {
       },
       destination: { chain: 'Moonbeam', address: 'dest-address' },
       exchange: {
+        apiType: 'PAPI' as const,
         chain: 'Hydration',
-        apiPjs: {} as ApiPromise,
         apiPapi: {} as PolkadotClient,
         api: {} as PolkadotApi<unknown, unknown, unknown>,
         assetFrom: ausdAsset,

@@ -43,9 +43,9 @@ const baseOptions = {
     assetFrom: { symbol: 'ACA' },
   },
   exchange: {
+    apiType: 'PJS' as const,
     chain: 'Acala',
     apiPjs: swapApi,
-    apiPapi: swapApiPapi,
     api: exchangeApi,
   },
   destination: {

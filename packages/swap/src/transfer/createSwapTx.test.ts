@@ -17,7 +17,11 @@ const mockExchangeApi = {
 
 const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
-vi.mock('./utils');
+vi.mock('./utils', async (importActual) => ({
+  ...(await importActual()),
+  buildFromExchangeExtrinsic: vi.fn(),
+  convertTxToTarget: vi.fn(),
+}));
 vi.mock('../utils');
 
 describe('createSwapTx', () => {
@@ -44,6 +48,7 @@ describe('createSwapTx', () => {
       amount: 1000n,
       feeCalcAddress: 'someFeeCalcAddress',
       exchange: {
+        apiType: 'PJS',
         apiPjs: swapApi,
         api: mockExchangeApi,
         assetTo: { decimals: 10 },

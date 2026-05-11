@@ -1,7 +1,8 @@
 import type { PolkadotApi } from '@paraspell/sdk-core';
+import { toHex } from 'polkadot-api/utils';
 
 import type { TExtrinsic } from '../../types';
-import { isPjsExtrinsic } from '../../utils';
+import { isPapiTransaction, isPjsExtrinsic } from '../../utils';
 
 const stripHeaderBytes = (hex: string, byteCount: number) => '0x' + hex.slice(2 + byteCount * 2);
 
@@ -11,7 +12,14 @@ export const convertTxToTarget = async <TApi, TRes, TSigner>(
 ): Promise<TRes> => {
   const isPjsTx = isPjsExtrinsic(tx);
 
-  const hex = isPjsTx ? tx.toHex() : await api.txToHex(tx);
+  let hex: string;
+  if (isPjsTx) {
+    hex = tx.toHex();
+  } else if (isPapiTransaction(tx)) {
+    hex = toHex(await tx.getEncodedData());
+  } else {
+    hex = await api.txToHex(tx);
+  }
 
   if (isPjsTx && api.type === 'PAPI') {
     try {

@@ -7,13 +7,15 @@ import type { ApiPromise } from '@polkadot/api';
 
 import type {
   TDexConfigStored,
-  TGetAmountOutOptions,
+  TExchangeApiType,
+  TGetAmountOutOptionsFor,
+  TGetDexConfigApi,
   TMultiSwapResult,
   TSingleSwapResult,
-  TSwapOptions,
+  TSwapOptionsFor,
 } from '../types';
 
-abstract class ExchangeChain {
+abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiType> {
   private readonly _chain: TExchangeChain;
 
   constructor(chain: TExchangeChain) {
@@ -24,13 +26,15 @@ abstract class ExchangeChain {
     return this._chain;
   }
 
+  abstract readonly apiType: TApiType;
+
   abstract swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>>;
 
   async handleMultiSwap<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult<TRes>> {
     const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
@@ -41,10 +45,10 @@ abstract class ExchangeChain {
   }
 
   abstract getAmountOut<TApi, TRes, TSigner>(
-    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
+    options: TGetAmountOutOptionsFor<TApi, TRes, TSigner, TApiType>,
   ): Promise<bigint>;
 
-  abstract getDexConfig(api: ApiPromise): Promise<TDexConfigStored>;
+  abstract getDexConfig(api: TGetDexConfigApi<TApiType>): Promise<TDexConfigStored>;
 
   async createApiInstance(
     builderOptions?: TBuilderOptions<TApiOrUrl<TPjsApi>>,

@@ -1,4 +1,4 @@
-import type { TPapiApi } from '@paraspell/sdk';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import type {
   TAmount,
   TAssetInfo,
@@ -12,11 +12,24 @@ import type {
   WithApi,
 } from '@paraspell/sdk-core';
 import type { PolkadotApi } from '@paraspell/sdk-core';
-import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
-export type TSwapOptions<TApi, TRes, TSigner> = {
-  apiPjs: ApiPromise;
+export type TExchangeApiType = 'PJS' | 'PAPI' | 'GENERIC';
+
+export type TExchangeApiVariant =
+  | { apiType: 'PJS'; apiPjs: ApiPromise }
+  | { apiType: 'PAPI'; apiPapi: TPapiApi }
+  | { apiType: 'GENERIC' };
+
+export type TGetDexConfigApi<TApiType extends TExchangeApiType> = TApiType extends 'PJS'
+  ? ApiPromise
+  : TPapiApi;
+
+type WithApiVariant<TBase, TApiType extends TExchangeApiType = TExchangeApiType> = TBase &
+  Extract<TExchangeApiVariant, { apiType: TApiType }>;
+
+type TSwapOptionsCommon<TApi, TRes, TSigner> = {
   api: PolkadotApi<TApi, TRes, TSigner>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
@@ -28,8 +41,27 @@ export type TSwapOptions<TApi, TRes, TSigner> = {
   isForFeeEstimation?: boolean;
 };
 
-export type TGetAmountOutOptions<TApi, TRes, TSigner> = {
-  apiPjs: ApiPromise;
+export type TSwapOptions<TApi, TRes, TSigner> = WithApiVariant<
+  TSwapOptionsCommon<TApi, TRes, TSigner>
+>;
+
+export type TSwapOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  TApiType extends TExchangeApiType,
+> = WithApiVariant<TSwapOptionsCommon<TApi, TRes, TSigner>, TApiType>;
+
+export type TPjsSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<TApi, TRes, TSigner, 'PJS'>;
+export type TPapiSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<TApi, TRes, TSigner, 'PAPI'>;
+export type TGenericSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  'GENERIC'
+>;
+
+type TGetAmountOutOptionsCommon<TApi, TRes, TSigner> = {
   api: PolkadotApi<TApi, TRes, TSigner>;
   origin?: TOriginInfo<TApi>;
   assetFrom: TAssetInfo;
@@ -38,7 +70,37 @@ export type TGetAmountOutOptions<TApi, TRes, TSigner> = {
   slippagePct?: string;
 };
 
-export type TExtrinsic<TRes> = Extrinsic | TRes;
+export type TGetAmountOutOptions<TApi, TRes, TSigner> = WithApiVariant<
+  TGetAmountOutOptionsCommon<TApi, TRes, TSigner>
+>;
+
+export type TGetAmountOutOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  TApiType extends TExchangeApiType,
+> = WithApiVariant<TGetAmountOutOptionsCommon<TApi, TRes, TSigner>, TApiType>;
+
+export type TPjsGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  'PJS'
+>;
+export type TPapiGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  'PAPI'
+>;
+export type TGenericGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+  TApi,
+  TRes,
+  TSigner,
+  'GENERIC'
+>;
+
+export type TExtrinsic<TRes> = Extrinsic | TPapiTransaction | TRes;
 
 export type TSingleSwapResult<TRes> = {
   tx: TExtrinsic<TRes>;
@@ -171,15 +233,33 @@ export type TOriginInfo<TApi> = {
   feeAssetInfo?: TAssetInfo;
 };
 
-export type TExchangeInfo<TApi, TRes, TSigner> = {
-  apiPjs: TPjsApi;
-  apiPapi: TPapiApi;
+type TExchangeInfoCommon<TApi, TRes, TSigner> = {
   api: PolkadotApi<TApi, TRes, TSigner>;
   chain: TExchangeChain;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   feeAssetInfo?: TAssetInfo;
 };
+
+export type TExchangeInfo<TApi, TRes, TSigner> = WithApiVariant<
+  TExchangeInfoCommon<TApi, TRes, TSigner>
+>;
+
+export type TExchangeInfoFor<
+  TApi,
+  TRes,
+  TSigner,
+  TApiType extends TExchangeApiType,
+> = WithApiVariant<TExchangeInfoCommon<TApi, TRes, TSigner>, TApiType>;
+
+export type TPjsExchangeInfo<TApi, TRes, TSigner> = TExchangeInfoFor<TApi, TRes, TSigner, 'PJS'>;
+export type TPapiExchangeInfo<TApi, TRes, TSigner> = TExchangeInfoFor<TApi, TRes, TSigner, 'PAPI'>;
+export type TGenericExchangeInfo<TApi, TRes, TSigner> = TExchangeInfoFor<
+  TApi,
+  TRes,
+  TSigner,
+  'GENERIC'
+>;
 
 export type TDestinationInfo = {
   chain: TChain;

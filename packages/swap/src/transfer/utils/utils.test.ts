@@ -203,8 +203,8 @@ describe('transfer utils', () => {
           address: 'MOCK_ADDRESS',
         },
         exchange: {
+          apiType: 'PJS',
           apiPjs: parachainApi,
-          apiPapi: parachainPapiApi,
           api: mockExchangeApi,
           chain: 'Acala',
           assetFrom: astrAsset,
@@ -225,7 +225,7 @@ describe('transfer utils', () => {
           address: 'MOCK_ADDRESS',
         },
         exchange: {
-          apiPapi: parachainPapiApi,
+          apiType: 'PJS',
           apiPjs: parachainApi,
           api: mockExchangeApi,
           chain: 'Acala',
@@ -283,8 +283,8 @@ describe('transfer utils', () => {
           amount: BigInt(transferParams.amount),
           destination: { chain: 'Polkadot', address: 'MOCK_ADDRESS' },
           exchange: {
+            apiType: 'PJS',
             apiPjs: parachainApi,
-            apiPapi: parachainPapiApi,
             api: mockExchangeApi,
             chain: 'Acala',
             assetFrom: astrAsset,

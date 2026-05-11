@@ -1,4 +1,5 @@
 import { writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
+import type ExchangeChain from '../src/exchanges/ExchangeChain';
 import { createExchangeInstance } from '../src/exchanges/ExchangeChainFactory';
 import type { TDexConfigStored, TAssetsRecord } from '../src/types';
 import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
@@ -10,6 +11,20 @@ process.on('unhandledRejection', (reason) => {
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
+const acquireApi = async (dex: ExchangeChain) => {
+  if (dex.apiType === 'PJS') {
+    const api = await dex.createApiInstance();
+    return { api, release: () => api.disconnect() };
+  }
+  const api = await dex.createApiInstancePapi();
+  return {
+    api,
+    release: async () => {
+      api.destroy();
+    },
+  };
+};
+
 const fetchWithTimeout = async (
   exchangeChain: TExchangeChain,
   timeoutMs: number = 60000,
@@ -19,11 +34,10 @@ const fetchWithTimeout = async (
   });
 
   const dex = createExchangeInstance(exchangeChain);
-  const api = await dex.createApiInstance();
+  const { api, release } = await acquireApi(dex);
 
   try {
-    const result = await Promise.race([dex.getDexConfig(api), timeoutPromise]);
-    return result;
+    return await Promise.race([dex.getDexConfig(api), timeoutPromise]);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.warn(`Failed to fetch ${exchangeChain} assets: ${errorMessage}`);
@@ -33,7 +47,7 @@ const fetchWithTimeout = async (
     }
     throw error;
   } finally {
-    await api.disconnect();
+    await release();
   }
 };
 
