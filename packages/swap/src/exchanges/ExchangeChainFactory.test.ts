@@ -10,7 +10,10 @@ import { createExchangeInstance } from './ExchangeChainFactory';
 import HydrationExchange from './Hydration/HydrationExchange';
 
 describe('createExchangeInstance', () => {
-  const testCases: Array<{ chain: TExchangeChain; expectedClass: typeof ExchangeChain }> = [
+  const testCases: Array<{
+    chain: TExchangeChain;
+    expectedClass: new (chain: TExchangeChain) => ExchangeChain;
+  }> = [
     { chain: 'Hydration', expectedClass: HydrationExchange },
     { chain: 'Acala', expectedClass: AcalaExchange },
     { chain: 'BifrostPolkadot', expectedClass: BifrostExchange },

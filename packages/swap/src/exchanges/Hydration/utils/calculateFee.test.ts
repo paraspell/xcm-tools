@@ -1,29 +1,13 @@
-import type { Asset, TxBuilderFactory } from '@galacticcouncil/sdk';
-import { BigNumber } from '@galacticcouncil/sdk';
-import { TradeRouter } from '@galacticcouncil/sdk';
+import type { Asset } from '@galacticcouncil/sdk-next';
+import type { AssetClient } from '@galacticcouncil/sdk-next/client';
+import type { TradeRouter } from '@galacticcouncil/sdk-next/sor';
+import type { TxBuilderFactory } from '@galacticcouncil/sdk-next/tx';
 import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TSwapOptions } from '../../../types';
-import { calculateTxFeePjs } from '../../../utils';
+import type { TPapiSwapOptions } from '../../../types';
 import { calculateFee } from './calculateFee';
 import { getAssetInfo } from './utils';
-
-vi.mock('@galacticcouncil/sdk', async () => {
-  const actual = await vi.importActual('@galacticcouncil/sdk');
-  return {
-    ...actual,
-    TradeRouter: vi.fn(),
-  };
-});
-
-vi.mock('../../../utils', async () => {
-  const actual = await vi.importActual('../../../utils');
-  return {
-    ...actual,
-    calculateTxFeePjs: vi.fn(),
-  };
-});
 
 vi.mock('./utils', async () => {
   const actual = await vi.importActual('./utils');
@@ -41,11 +25,13 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
 
 describe('calculateFee', () => {
   let mockTxBuilderFactory: TxBuilderFactory;
+  let mockAssetClient: AssetClient;
 
   beforeEach(() => {
     vi.resetAllMocks();
 
-    const mockGet = vi.fn().mockReturnValue('mockExtrinsic');
+    const mockGetPaymentInfo = vi.fn().mockResolvedValue({ partial_fee: 10n });
+    const mockGet = vi.fn().mockReturnValue({ getPaymentInfo: mockGetPaymentInfo });
     const mockBuild = vi.fn().mockResolvedValue({ get: mockGet });
     const mockWithBeneficiary = vi.fn().mockReturnValue({ build: mockBuild });
     const mockWithSlippage = vi.fn().mockReturnValue({ withBeneficiary: mockWithBeneficiary });
@@ -55,26 +41,16 @@ describe('calculateFee', () => {
       trade: mockTrade,
     } as unknown as TxBuilderFactory;
 
-    const mockTradeResult = {
-      amountOut: BigNumber('10000000000000000'),
-    };
+    mockAssetClient = {
+      getSupported: vi.fn(),
+    } as unknown as AssetClient;
 
-    vi.mocked(TradeRouter).mockImplementation(
-      () =>
-        ({
-          getBestSell: vi.fn().mockResolvedValue(mockTradeResult),
-          getBestSpotPrice: vi.fn().mockResolvedValue({ amount: BigNumber('1'), decimals: 12 }),
-        }) as unknown as TradeRouter,
-    );
-
-    vi.mocked(calculateTxFeePjs).mockResolvedValue(10n);
-
-    vi.mocked(getAssetInfo).mockImplementation((_router, asset) => {
+    vi.mocked(getAssetInfo).mockImplementation((_client, asset) => {
       if ('symbol' in asset && asset.symbol === 'HDX') {
-        return Promise.resolve({ id: '9999', symbol: 'HDX' } as Asset);
+        return Promise.resolve({ id: 9999, symbol: 'HDX' } as Asset);
       }
       if ('symbol' in asset && asset.symbol === 'BSX') {
-        return Promise.resolve({ id: '8888', symbol: 'BSX' } as Asset);
+        return Promise.resolve({ id: 8888, symbol: 'BSX' } as Asset);
       }
       return Promise.resolve(undefined);
     });
@@ -85,19 +61,19 @@ describe('calculateFee', () => {
   it('should throw if native currency info is not found', async () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
-        amountOut: BigNumber('1000'),
+        amountOut: 1000n,
       }),
-      getBestSpotPrice: vi.fn().mockResolvedValue({ amount: BigNumber('1'), decimals: 12 }),
+      getSpotPrice: vi.fn().mockResolvedValue({ amount: 1n, decimals: 12 }),
     } as unknown as TradeRouter;
 
     const options = {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
 
-    const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
-    const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
+    const currencyFromInfo = { id: 1, symbol: 'KSM' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'DOT' } as Asset;
 
     vi.mocked(getAssetInfo).mockResolvedValue(undefined);
 
@@ -106,6 +82,7 @@ describe('calculateFee', () => {
         options,
         mockTradeRouter,
         mockTxBuilderFactory,
+        mockAssetClient,
         currencyFromInfo,
         currencyToInfo,
         12,
@@ -120,16 +97,16 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
 
-    const currencyFromInfo = { id: '1', symbol: 'FOO' } as Asset;
-    const currencyToInfo = { id: '2', symbol: 'BAR' } as Asset;
+    const currencyFromInfo = { id: 1, symbol: 'FOO' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'BAR' } as Asset;
 
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
-        amountOut: BigNumber('1000'),
+        amountOut: 1000n,
       }),
-      getBestSpotPrice: vi.fn().mockResolvedValue({ amount: BigNumber('1'), decimals: 12 }),
+      getSpotPrice: vi.fn().mockResolvedValue({ amount: 1n, decimals: 12 }),
     } as unknown as TradeRouter;
 
     vi.mocked(getAssetInfo).mockResolvedValue({
@@ -143,6 +120,7 @@ describe('calculateFee', () => {
         options,
         mockTradeRouter,
         mockTxBuilderFactory,
+        mockAssetClient,
         currencyFromInfo,
         currencyToInfo,
         12,
@@ -157,25 +135,26 @@ describe('calculateFee', () => {
 
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
-        amountOut: BigNumber('1000'),
+        amountOut: 1000n,
       }),
-      getBestSpotPrice: vi.fn().mockResolvedValue(undefined),
+      getSpotPrice: vi.fn().mockResolvedValue(undefined),
     } as unknown as TradeRouter;
 
     const options = {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
 
-    const currencyFromInfo = { id: '1', symbol: 'BSX' } as Asset;
-    const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
+    const currencyFromInfo = { id: 1, symbol: 'BSX' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'KSM' } as Asset;
 
     await expect(
       calculateFee(
         options,
         mockTradeRouter,
         mockTxBuilderFactory,
+        mockAssetClient,
         currencyFromInfo,
         currencyToInfo,
         12,
@@ -190,29 +169,28 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
 
-    const currencyFromInfo = { id: '9999', symbol: 'HDX' } as Asset;
-    const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
+    const currencyFromInfo = { id: 9999, symbol: 'HDX' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'KSM' } as Asset;
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
-        amountOut: BigNumber('1000'),
+        amountOut: 1000n,
       }),
-      getBestSpotPrice: vi.fn().mockResolvedValue({
-        amount: BigNumber('1'),
+      getSpotPrice: vi.fn().mockResolvedValue({
+        amount: 1n,
         decimals: 12,
       }),
     } as unknown as TradeRouter;
-
-    vi.mocked(calculateTxFeePjs).mockResolvedValue(10n);
 
     const result = await calculateFee(
       options,
       mockTradeRouter,
       mockTxBuilderFactory,
+      mockAssetClient,
       currencyFromInfo,
       currencyToInfo,
       12,
@@ -228,29 +206,27 @@ describe('calculateFee', () => {
       amount: 1000n,
       slippagePct: '1',
       feeCalcAddress: 'someAddress',
-    } as TSwapOptions<unknown, unknown, unknown>;
-    const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
-    const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
+    const currencyFromInfo = { id: 1, symbol: 'KSM' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'DOT' } as Asset;
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
-        amountOut: BigNumber('1000'),
+        amountOut: 1000n,
       }),
-      getBestSpotPrice: vi.fn().mockResolvedValue({
-        amount: BigNumber('2'),
+      getSpotPrice: vi.fn().mockResolvedValue({
+        amount: 2n,
         decimals: 12,
       }),
-      getAllAssets: vi.fn(),
     } as unknown as TradeRouter;
-
-    vi.mocked(calculateTxFeePjs).mockResolvedValue(10n);
 
     const finalFeeBN = await calculateFee(
       options,
       mockTradeRouter,
       mockTxBuilderFactory,
+      mockAssetClient,
       currencyFromInfo,
       currencyToInfo,
       12,

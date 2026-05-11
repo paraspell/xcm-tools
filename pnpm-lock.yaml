@@ -1233,29 +1233,29 @@ importers:
         specifier: 4.1.8-14
         version: 4.1.8-14(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/amm':
-        specifier: ^0.1.4
-        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
+        specifier: ^0.1.5
+        version: 0.1.5(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain':
         specifier: 0.1.2
         version: 0.1.2
       '@crypto-dex-sdk/currency':
-        specifier: ^0.1.4
-        version: 0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
+        specifier: ^0.1.5
+        version: 0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format':
         specifier: ^0.1.4
         version: 0.1.4
       '@crypto-dex-sdk/math':
-        specifier: ^0.1.4
-        version: 0.1.4
+        specifier: ^0.1.5
+        version: 0.1.5
       '@crypto-dex-sdk/parachains-bifrost':
-        specifier: ^0.1.4
-        version: 0.1.4(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
+        specifier: ^0.1.5
+        version: 0.1.5(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/token-lists':
         specifier: ^0.1.4
-        version: 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
-      '@galacticcouncil/sdk':
-        specifier: ^10.8.0
-        version: 10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.48.4(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.1))
+        version: 0.1.4(@crypto-dex-sdk/currency@0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.5)(@ethersproject/address@5.8.0)
+      '@galacticcouncil/sdk-next':
+        specifier: ^1.0.1
+        version: 1.0.1(@galacticcouncil/common@1.0.0(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10)))(@galacticcouncil/descriptors@2.1.0)(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10))(viem@2.48.4(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.1))
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../sdk
@@ -1323,9 +1323,6 @@ importers:
       '@codecov/rollup-plugin':
         specifier: ^2.0.1
         version: 2.0.1(rollup@4.60.2)
-      '@galacticcouncil/api-augment':
-        specifier: ^0.10.0
-        version: 0.10.0
       '@rollup/plugin-babel':
         specifier: ^7.0.0
         version: 7.0.0(@babel/core@7.29.0)(@types/babel__core@7.20.5)(rollup@4.60.2)
@@ -2262,14 +2259,14 @@ packages:
   '@crustio/type-definitions@1.3.0':
     resolution: {integrity: sha512-xdW6npZTmWfDzZEVCMjRK7f7wQrU/cgIltGlvnXY2AFD2m9uBW+s6/lx9YHuLbk7y3NrrQwbp3owFuGw4A2hNw==}
 
-  '@crypto-dex-sdk/amm@0.1.4':
-    resolution: {integrity: sha512-gfBTGuEdM7Vca9LCLAbyGH3lIJQdaq8NOCi22e8+X5mj4fbkA9BEGCDZiSnFgIE5E+A094GNkal9FaDMbUvEoA==}
+  '@crypto-dex-sdk/amm@0.1.5':
+    resolution: {integrity: sha512-UFL7bAFcflZSickaFY1w1RahdecMLX6rED+4k/dZ5HPuR9rK+k2cDf9gDQ8VoRYErvk8JPrppuXkpiRuQU51Lg==}
 
   '@crypto-dex-sdk/chain@0.1.2':
     resolution: {integrity: sha512-xC42jemoCa0o2tbhtwbKpnJlD68jcMeUX/Ggne0gqj1fi3b54PvKVsayFDM3/XCE8mt1+2vo+oDvMNyCW40OSA==}
 
-  '@crypto-dex-sdk/currency@0.1.4':
-    resolution: {integrity: sha512-rK25+tqQ37B1iv8I0/8qBqN/G1g/CpmIKpM7anjLKJ75ShWIXif++ShrcL4AGhziAJ0ZB9Emm7v2Qf9LM81jZw==}
+  '@crypto-dex-sdk/currency@0.1.5':
+    resolution: {integrity: sha512-Hnfl4UxBVIuN+B+77bBr0aD8unzlQ8C95yROtWNQKjyZl1cdsUdKP6ICiXcLoeIfpAI/yimeygQVhqkW5fOP/A==}
     peerDependencies:
       react: 19.0.0
       react-dom: 19.0.0
@@ -2277,11 +2274,11 @@ packages:
   '@crypto-dex-sdk/format@0.1.4':
     resolution: {integrity: sha512-VkW3/UL4+xEsav+SjWJ2OcFcK2wZiCfvPa6y3Ok9Go2N/2z3hbbTqn7XOzJw69yNdfipcZvDhZuG7pjKtfgW3w==}
 
-  '@crypto-dex-sdk/math@0.1.4':
-    resolution: {integrity: sha512-G2c84aOf7xYlg4ZOk8rntILC0XhT1sCsYyN4XhLtIOn9BkmHk/5JGk23INJ8x7+jPKkPRO0yrftn+UK1+udyFQ==}
+  '@crypto-dex-sdk/math@0.1.5':
+    resolution: {integrity: sha512-kGeKhBS6aXFBfvp7UR9uoo5ArFyYXr9Kr0dRLTL39Wn5dj1UQPNwE6nZ5iuuWFZD1zTK/nHcuU1lW/DI9yxajg==}
 
-  '@crypto-dex-sdk/parachains-bifrost@0.1.4':
-    resolution: {integrity: sha512-xv1GVIA1rpUyqs1cW+OwmhPCxAME0FPzohBejLYbgRBmzv0UWrPG2Hpm6VIJPaO4Fkxlf/+9jJYT/s0/ARWCAw==}
+  '@crypto-dex-sdk/parachains-bifrost@0.1.5':
+    resolution: {integrity: sha512-Qiz6b3XCdKDNRID5/c5arTSVIBsfIDwmpI2iAvSQADSkRBX3F2PxA22k4kT8ah4Hlv+VGqjxWhgW3IlWJiEnUg==}
     peerDependencies:
       react: 19.0.0
       react-dom: 19.0.0
@@ -3049,8 +3046,13 @@ packages:
   '@frequency-chain/api-augment@1.11.1':
     resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
 
-  '@galacticcouncil/api-augment@0.10.0':
-    resolution: {integrity: sha512-U2uwq/i6OCfQWHpHCrjSNsQJxaZ5GirIKbuS2UPiYrm06v9mPI5ujqVoi26ePeFy9DpRfM0F9oov6gJBMHJ0ww==}
+  '@galacticcouncil/common@1.0.0':
+    resolution: {integrity: sha512-pEHDDXvTqB5nbFoR9cv6T+pdqb8yjVKREe8bTnZWl+0XRICaOcioad4+wkL9nYXumbho/GxPKaFaW8xg072O9w==}
+    peerDependencies:
+      polkadot-api: ^2.1.0
+
+  '@galacticcouncil/descriptors@2.1.0':
+    resolution: {integrity: sha512-r/U09nEqlOjh0hUH4zJK4M4YhdGhbyoWrmVzByP5pCwb2AzJSVd7Id+ZHscq0GpKF14IvH6C0NNGdjLP//CTsg==}
 
   '@galacticcouncil/math-hsm@1.2.0':
     resolution: {integrity: sha512-SGTYWqWQ6EFFCkJOANLWLx3MkKoJBLNE06BD2tqscuhp7J5kgmfLi1KzRjv4DIjBDFfWz/b6PPMvyu2P07O+4A==}
@@ -3067,17 +3069,18 @@ packages:
   '@galacticcouncil/math-stableswap@2.5.0':
     resolution: {integrity: sha512-96xh4NRg3Siyx+4UXRPGkpKYNzuBSZxohHKOFgOackYzHBtupnUtPpDpLFjs8IYEB1joPtQrgKz57bOkScOeUA==}
 
+  '@galacticcouncil/math-staking@1.3.0':
+    resolution: {integrity: sha512-JhB/fG/Lob4TdBnNqas1rWhagWknJlbjBtRhlvPXKWPIeWlcDVAUZyHzpb/pXcp5jo1rp0QBJ9y9Mssxzr4uuw==}
+
   '@galacticcouncil/math-xyk@1.3.0':
     resolution: {integrity: sha512-ZYVSyI5W2pQKCqpkaRM7t1AJqtPyxQ0P04T2+KpBEEABMRjSpQz2x44s1tk6r3DdFR8dICeZJEh5BI7eQYlT6w==}
 
-  '@galacticcouncil/sdk@10.8.0':
-    resolution: {integrity: sha512-qT2QXOOQ2ifthMX92Xqu7/5iM+kYUtqyzLVFPdqNpbprahu1Eo4Irof7O3gEPsHbSDV3ylEQGCnQtin2qROxIA==}
+  '@galacticcouncil/sdk-next@1.0.1':
+    resolution: {integrity: sha512-bLS0mrn5zMntkE4UMVZCBMav3w0HWTYMBDLkHMFHc4NDRsBnjLeRfdMyP1zDKZErIxO17X6K9tPLkWHsfP2iqw==}
     peerDependencies:
-      '@polkadot/api': 16.5.6
-      '@polkadot/api-augment': ~16.4.8
-      '@polkadot/types': 16.5.6
-      '@polkadot/util': ~13.5.6
-      '@polkadot/util-crypto': ~13.5.6
+      '@galacticcouncil/common': '>=1.0.0'
+      '@galacticcouncil/descriptors': '>=2.0.0'
+      polkadot-api: ^2.1.0
       viem: ^2.38.3
 
   '@gar/promisify@1.1.3':
@@ -10533,9 +10536,6 @@ packages:
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
 
-  lodash.clonedeep@4.5.0:
-    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
-
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
@@ -15181,11 +15181,11 @@ snapshots:
     dependencies:
       '@open-web3/orml-type-definitions': 0.9.4-38
 
-  '@crypto-dex-sdk/amm@0.1.4(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
+  '@crypto-dex-sdk/amm@0.1.5(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
-      '@crypto-dex-sdk/math': 0.1.4
+      '@crypto-dex-sdk/currency': 0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
+      '@crypto-dex-sdk/math': 0.1.5
       '@ethersproject/abi': 5.8.0
       '@ethersproject/address': 5.8.0
       '@ethersproject/bignumber': 5.8.0
@@ -15202,11 +15202,11 @@ snapshots:
 
   '@crypto-dex-sdk/chain@0.1.2': {}
 
-  '@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5)':
+  '@crypto-dex-sdk/currency@0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.2
       '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
+      '@crypto-dex-sdk/math': 0.1.5
       '@ethersproject/address': 5.8.0
       '@ethersproject/units': 5.8.0
       lodash.flatmap: 4.5.0
@@ -15219,7 +15219,7 @@ snapshots:
       '@ethersproject/address': 5.8.0
       numeral: 2.0.6
 
-  '@crypto-dex-sdk/math@0.1.4':
+  '@crypto-dex-sdk/math@0.1.5':
     dependencies:
       big.js: 6.2.2
       decimal.js-light: 2.5.1
@@ -15227,13 +15227,13 @@ snapshots:
       tiny-invariant: 1.3.3
       toformat: 2.0.0
 
-  '@crypto-dex-sdk/parachains-bifrost@0.1.4(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
+  '@crypto-dex-sdk/parachains-bifrost@0.1.5(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)':
     dependencies:
-      '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
+      '@crypto-dex-sdk/amm': 0.1.5(bufferutil@4.1.0)(react-dom@19.0.0(react@19.2.5))(react@19.2.5)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain': 0.1.2
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
+      '@crypto-dex-sdk/currency': 0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
+      '@crypto-dex-sdk/math': 0.1.5
       '@headlessui/react': 2.2.0(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
       '@heroicons/react': 2.2.0(react@19.2.5)
       '@lingui/core': 5.2.0
@@ -15254,11 +15254,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
+  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.5)(@ethersproject/address@5.8.0)':
     dependencies:
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
+      '@crypto-dex-sdk/currency': 0.1.5(react-dom@19.0.0(react@19.2.5))(react@19.2.5)
       '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
+      '@crypto-dex-sdk/math': 0.1.5
       '@ethersproject/address': 5.8.0
 
   '@cspotcode/source-map-support@0.8.1':
@@ -16296,7 +16296,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@galacticcouncil/api-augment@0.10.0': {}
+  '@galacticcouncil/common@1.0.0(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10))':
+    dependencies:
+      big.js: 6.2.2
+      lru-cache: 11.3.5
+      polkadot-api: 2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+
+  '@galacticcouncil/descriptors@2.1.0': {}
 
   '@galacticcouncil/math-hsm@1.2.0': {}
 
@@ -16308,26 +16314,26 @@ snapshots:
 
   '@galacticcouncil/math-stableswap@2.5.0': {}
 
+  '@galacticcouncil/math-staking@1.3.0': {}
+
   '@galacticcouncil/math-xyk@1.3.0': {}
 
-  '@galacticcouncil/sdk@10.8.0(@polkadot/api-augment@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/api@16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10))(@polkadot/types@16.5.6)(@polkadot/util-crypto@14.0.3(@polkadot/util@14.0.3))(@polkadot/util@14.0.3)(viem@2.48.4(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.1))':
+  '@galacticcouncil/sdk-next@1.0.1(@galacticcouncil/common@1.0.0(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10)))(@galacticcouncil/descriptors@2.1.0)(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10))(viem@2.48.4(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.1))':
     dependencies:
+      '@galacticcouncil/common': 1.0.0(polkadot-api@2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10))
+      '@galacticcouncil/descriptors': 2.1.0
       '@galacticcouncil/math-hsm': 1.2.0
       '@galacticcouncil/math-lbp': 1.3.0
       '@galacticcouncil/math-liquidity-mining': 1.3.0
       '@galacticcouncil/math-omnipool': 1.4.0
       '@galacticcouncil/math-stableswap': 2.5.0
+      '@galacticcouncil/math-staking': 1.3.0
       '@galacticcouncil/math-xyk': 1.3.0
       '@noble/hashes': 1.8.0
-      '@polkadot/api': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot/api-augment': 16.5.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot/types': 16.5.6
-      '@polkadot/util': 14.0.3
-      '@polkadot/util-crypto': 14.0.3(@polkadot/util@14.0.3)
       '@thi.ng/cache': 2.3.72
       '@thi.ng/memoize': 4.0.43
-      bignumber.js: 9.3.1
-      lodash.clonedeep: 4.5.0
+      big.js: 6.2.2
+      polkadot-api: 2.1.1(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(utf-8-validate@5.0.10)
       viem: 2.48.4(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.1)
 
   '@gar/promisify@1.1.3':
@@ -19612,10 +19618,10 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-crypto': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
+      '@polkadot/wasm-crypto': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@12.6.2)
       '@polkadot/x-bigint': 12.6.2
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       '@scure/base': 1.2.6
       tslib: 2.8.1
 
@@ -19705,11 +19711,11 @@ snapshots:
       '@polkadot/util': 10.4.2
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-bridge@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
+  '@polkadot/wasm-bridge@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
   '@polkadot/wasm-bridge@7.5.4(@polkadot/util@13.5.9)(@polkadot/x-randomvalues@13.5.9(@polkadot/util@13.5.9)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.9)))':
@@ -19762,14 +19768,14 @@ snapshots:
       '@polkadot/wasm-crypto-wasm': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto-init@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
+  '@polkadot/wasm-crypto-init@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
+      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))
       '@polkadot/wasm-crypto-asmjs': 7.5.4(@polkadot/util@12.6.2)
       '@polkadot/wasm-crypto-wasm': 7.5.4(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-init@7.5.4(@polkadot/util@13.5.9)(@polkadot/x-randomvalues@13.5.9(@polkadot/util@13.5.9)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.9)))':
@@ -19837,15 +19843,15 @@ snapshots:
       '@polkadot/wasm-util': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))':
+  '@polkadot/wasm-crypto@7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
+      '@polkadot/wasm-bridge': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))
       '@polkadot/wasm-crypto-asmjs': 7.5.4(@polkadot/util@12.6.2)
-      '@polkadot/wasm-crypto-init': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3)))
+      '@polkadot/wasm-crypto-init': 7.5.4(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2)))
       '@polkadot/wasm-crypto-wasm': 7.5.4(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.5.4(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto@7.5.4(@polkadot/util@13.5.9)(@polkadot/x-randomvalues@13.5.9(@polkadot/util@13.5.9)(@polkadot/wasm-util@7.5.4(@polkadot/util@13.5.9)))':
@@ -19967,10 +19973,10 @@ snapshots:
       '@babel/runtime': 7.29.2
       '@polkadot/x-global': 10.4.2
 
-  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@14.0.3))':
+  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.5.4(@polkadot/util@12.6.2))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-util': 7.5.4(@polkadot/util@14.0.3)
+      '@polkadot/wasm-util': 7.5.4(@polkadot/util@12.6.2)
       '@polkadot/x-global': 12.6.2
       tslib: 2.8.1
 
@@ -21913,7 +21919,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@opentelemetry/api@1.8.0)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.12))(terser@5.46.2)(yaml@2.8.3))
+      vitest: 4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.12))(terser@5.46.2)(yaml@2.8.3))
 
   '@vitest/expect@4.1.5':
     dependencies:
@@ -25729,8 +25735,6 @@ snapshots:
 
   lodash.camelcase@4.3.0: {}
 
-  lodash.clonedeep@4.5.0: {}
-
   lodash.debounce@4.0.8: {}
 
   lodash.flatmap@4.5.0: {}
@@ -29154,6 +29158,35 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@opentelemetry/api': 1.8.0
+      '@types/node': 25.6.0
+      '@vitest/coverage-v8': 4.1.5(vitest@4.1.5)
+    transitivePeerDependencies:
+      - msw
+
+  vitest@4.1.5(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(vite@8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.12))(terser@5.46.2)(yaml@2.8.3)):
+    dependencies:
+      '@vitest/expect': 4.1.5
+      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.12))(terser@5.46.2)(yaml@2.8.3))
+      '@vitest/pretty-format': 4.1.5
+      '@vitest/runner': 4.1.5
+      '@vitest/snapshot': 4.1.5
+      '@vitest/spy': 4.1.5
+      '@vitest/utils': 4.1.5
+      es-module-lexer: 2.0.0
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      obug: 2.1.1
+      pathe: 2.0.3
+      picomatch: 4.0.4
+      std-env: 4.1.0
+      tinybench: 2.9.0
+      tinyexec: 1.1.1
+      tinyglobby: 0.2.16
+      tinyrainbow: 3.1.0
+      vite: 8.0.10(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.12))(terser@5.46.2)(yaml@2.8.3)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
       '@types/node': 25.6.0
       '@vitest/coverage-v8': 4.1.5(vitest@4.1.5)
     transitivePeerDependencies:

@@ -1,4 +1,7 @@
-import type { Asset, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk';
+import type { Asset } from '@galacticcouncil/sdk-next';
+import type { AssetClient } from '@galacticcouncil/sdk-next/client';
+import type { TradeRouter } from '@galacticcouncil/sdk-next/sor';
+import type { TxBuilderFactory } from '@galacticcouncil/sdk-next/tx';
 import {
   getAssetDecimals,
   getNativeAssetSymbol,
@@ -10,13 +13,14 @@ import {
 import { FEE_BUFFER_PCT } from '../../../consts';
 import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
-import { calculateTxFeePjs, pow10n } from '../../../utils';
+import { pow10n } from '../../../utils';
 import { getAssetInfo } from './utils';
 
 export const calculateFee = async <TApi, TRes, TSigner>(
   { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi, TRes, TSigner>,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
+  assetClient: AssetClient,
   currencyFromInfo: Asset,
   currencyToInfo: Asset,
   currencyFromDecimals: number,
@@ -29,7 +33,7 @@ export const calculateFee = async <TApi, TRes, TSigner>(
     amount.toString(),
   );
 
-  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
+  const nativeCurrencyInfo = await getAssetInfo(assetClient, {
     symbol: getNativeAssetSymbol(chain),
   });
 
@@ -51,7 +55,7 @@ export const calculateFee = async <TApi, TRes, TSigner>(
 
   const tx = substrateTx.get();
 
-  const swapFee = await calculateTxFeePjs(tx, feeCalcAddress);
+  const { partial_fee: swapFee } = await tx.getPaymentInfo(feeCalcAddress);
   const feeNative = swapFee + toDestTransactionFee + toDestTransactionFee;
 
   Logger.log('XCM to exch. fee:', toDestTransactionFee, nativeCurrencyInfo.symbol);
@@ -61,7 +65,7 @@ export const calculateFee = async <TApi, TRes, TSigner>(
 
   if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeNative;
 
-  const currencyFromPriceInfo = await tradeRouter.getBestSpotPrice(
+  const currencyFromPriceInfo = await tradeRouter.getSpotPrice(
     currencyFromInfo.id,
     nativeCurrencyInfo.id,
   );
@@ -70,7 +74,7 @@ export const calculateFee = async <TApi, TRes, TSigner>(
     throw new UnableToComputeError('Price not found');
   }
 
-  const currencyFromPrice = BigInt(currencyFromPriceInfo.amount.decimalPlaces(0).toString());
+  const currencyFromPrice = currencyFromPriceInfo.amount;
 
   const feeInCurrencyFrom =
     (feeNative * pow10n(currencyFromPriceInfo.decimals + currencyFromDecimals)) /

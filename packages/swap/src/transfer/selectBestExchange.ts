@@ -1,8 +1,11 @@
+import { convertBuilderConfig } from '@paraspell/sdk-core';
+
 import type ExchangeChain from '../exchanges/ExchangeChain';
-import type { TCommonRouterOptions, TTransformedOptions } from '../types';
+import type { TCommonRouterOptions, TExchangeInfo, TTransformedOptions } from '../types';
 import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
-import { determineFeeCalcAddress } from './utils';
+import { buildExchangeApiVariant, pickExchangeApiVariant } from './utils/buildExchangeApiVariant';
+import { determineFeeCalcAddress } from './utils/utils';
 
 export const selectBestExchange = async <TApi, TRes, TSigner>(
   options: TCommonRouterOptions<TApi, TRes, TSigner>,
@@ -10,10 +13,18 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
   isForFeeEstimation?: boolean,
 ): Promise<ExchangeChain> => {
   const { api } = options;
+  const exchangeConfig = convertBuilderConfig<TApi>(api.config);
   return selectBestExchangeCommon(
     options,
     originApi,
     async (dex, assetFromExchange, assetTo, options, parsedAmount) => {
+      const exchangeInfo: TExchangeInfo<TApi, TRes, TSigner> = {
+        ...(await buildExchangeApiVariant(dex, exchangeConfig)),
+        api: await api.createApiForChain(dex.chain),
+        chain: dex.chain,
+        assetFrom: assetFromExchange,
+        assetTo,
+      };
       const modifiedOptions: TTransformedOptions<
         TCommonRouterOptions<TApi, TRes, TSigner>,
         TApi,
@@ -22,14 +33,7 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
       > = {
         ...options,
         amount: BigInt(parsedAmount),
-        exchange: {
-          apiPjs: await dex.createApiInstance(),
-          apiPapi: await dex.createApiInstancePapi(),
-          api: await api.createApiForChain(dex.chain),
-          chain: dex.chain,
-          assetFrom: assetFromExchange,
-          assetTo,
-        },
+        exchange: exchangeInfo,
         feeCalcAddress: determineFeeCalcAddress(options.sender, options.recipient),
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
@@ -37,8 +41,8 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
       const { amountOut } = await dex.handleMultiSwap(
         {
           ...modifiedOptions,
+          ...pickExchangeApiVariant(modifiedOptions.exchange),
           api: modifiedOptions.exchange.api,
-          apiPjs: modifiedOptions.exchange.apiPjs,
           assetFrom: modifiedOptions.exchange.assetFrom,
           assetTo: modifiedOptions.exchange.assetTo,
           isForFeeEstimation,

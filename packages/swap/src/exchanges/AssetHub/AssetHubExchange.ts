@@ -1,3 +1,4 @@
+import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TLocation } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
@@ -7,21 +8,22 @@ import {
   Parents,
   RoutingResolutionError,
 } from '@paraspell/sdk-core';
-import type { ApiPromise } from '@polkadot/api';
 
 import { getExchangeAsset } from '../../assets';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import type {
   TDexConfigStored,
-  TGetAmountOutOptions,
+  TGenericGetAmountOutOptions,
+  TGenericSwapOptions,
   TMultiSwapResult,
   TSingleSwapResult,
-  TSwapOptions,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { getDexConfig } from './utils';
 
-class AssetHubExchange extends ExchangeChain {
+class AssetHubExchange extends ExchangeChain<'GENERIC'> {
+  readonly apiType = 'GENERIC';
+
   private async quoteOrThrow<TApi, TRes, TSigner>(
     api: PolkadotApi<TApi, TRes, TSigner>,
     fromLocation: TLocation,
@@ -51,7 +53,7 @@ class AssetHubExchange extends ExchangeChain {
   }
 
   async swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TGenericSwapOptions<TApi, TRes, TSigner>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
@@ -106,7 +108,7 @@ class AssetHubExchange extends ExchangeChain {
   }
 
   async handleMultiSwap<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TGenericSwapOptions<TApi, TRes, TSigner>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult<TRes>> {
     const { assetFrom, assetTo } = options;
@@ -135,7 +137,10 @@ class AssetHubExchange extends ExchangeChain {
       };
     } else {
       // Multi-hop: AssetA -> Native -> AssetB
-      const optionsHop1: TSwapOptions<TApi, TRes, TSigner> = { ...options, assetTo: nativeAsset };
+      const optionsHop1: TGenericSwapOptions<TApi, TRes, TSigner> = {
+        ...options,
+        assetTo: nativeAsset,
+      };
       const resultHop1 = await this.swapCurrency(optionsHop1, 0n);
 
       if (resultHop1.amountOut <= 0n) {
@@ -147,8 +152,8 @@ class AssetHubExchange extends ExchangeChain {
       const hop1Received = resultHop1.amountOut;
       const assumedInputForHop2 = padValueBy(hop1Received, -2);
 
-      const optionsHop2: TSwapOptions<TApi, TRes, TSigner> = {
-        apiPjs: options.apiPjs,
+      const optionsHop2: TGenericSwapOptions<TApi, TRes, TSigner> = {
+        apiType: 'GENERIC',
         api: options.api,
         slippagePct: options.slippagePct,
         sender: options.sender,
@@ -174,7 +179,9 @@ class AssetHubExchange extends ExchangeChain {
     }
   }
 
-  async getAmountOut<TApi, TRes, TSigner>(options: TGetAmountOutOptions<TApi, TRes, TSigner>) {
+  async getAmountOut<TApi, TRes, TSigner>(
+    options: TGenericGetAmountOutOptions<TApi, TRes, TSigner>,
+  ) {
     const { api, assetFrom, assetTo, amount, origin } = options;
 
     const nativeAsset = getExchangeAsset(this.chain, {
@@ -235,7 +242,7 @@ class AssetHubExchange extends ExchangeChain {
     }
   }
 
-  async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
+  async getDexConfig(api: TPapiApi): Promise<TDexConfigStored> {
     return getDexConfig(api, this.chain);
   }
 }

@@ -7,7 +7,7 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TSwapOptions } from '../../types';
+import type { TPjsSwapOptions } from '../../types';
 import BifrostExchange from './BifrostExchange';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
@@ -86,7 +86,7 @@ describe('BifrostExchange', () => {
       amount: 1000000n,
       sender: '5xxxxxx',
       slippagePct: '0.5',
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPjsSwapOptions<unknown, unknown, unknown>;
     const mockToDestTransactionFee = 1000n;
 
     beforeEach(() => {
@@ -209,7 +209,7 @@ describe('BifrostExchange', () => {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
-    } as TSwapOptions<unknown, unknown, unknown>;
+    } as TPjsSwapOptions<unknown, unknown, unknown>;
 
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);

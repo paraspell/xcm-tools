@@ -15,17 +15,19 @@ import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import Logger from '../../Logger/Logger';
 import type {
   TDexConfigStored,
-  TGetAmountOutOptions,
+  TPjsGetAmountOutOptions,
+  TPjsSwapOptions,
   TSingleSwapResult,
-  TSwapOptions,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 import { getDexConfig } from './utils/getDexConfig';
 
-class BifrostExchange extends ExchangeChain {
+class BifrostExchange extends ExchangeChain<'PJS'> {
+  readonly apiType = 'PJS';
+
   async swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptions<TApi, TRes, TSigner>,
+    options: TPjsSwapOptions<TApi, TRes, TSigner>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { apiPjs, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
@@ -106,7 +108,7 @@ class BifrostExchange extends ExchangeChain {
   }
 
   async getAmountOut<TApi, TRes, TSigner>(
-    options: TGetAmountOutOptions<TApi, TRes, TSigner>,
+    options: TPjsGetAmountOutOptions<TApi, TRes, TSigner>,
   ): Promise<bigint> {
     const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 

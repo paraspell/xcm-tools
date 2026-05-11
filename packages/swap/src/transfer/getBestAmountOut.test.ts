@@ -35,6 +35,7 @@ describe('getBestAmountOut', () => {
 
     const fakeDex = {
       exchangeChain: 'EXCHANGE_A_CHAIN',
+      apiType: 'PJS',
       createApiInstance: vi.fn().mockResolvedValue('api_instance'),
       createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi'),
       getAmountOut: vi.fn().mockResolvedValue(200),
@@ -86,6 +87,7 @@ describe('getBestAmountOut', () => {
 
     const fakeDex = {
       exchangeChain: 'EXCHANGE_CHAIN_B',
+      apiType: 'PJS',
       createApiInstance: vi.fn().mockResolvedValue('api_instance_b'),
       createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi_b'),
       getAmountOut: vi.fn().mockResolvedValue(75),

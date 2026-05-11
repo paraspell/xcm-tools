@@ -1,7 +1,7 @@
 import { createChainClient, type TChain } from '@paraspell/sdk-pjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TSwapOptions } from '../types';
+import type { TPjsSwapOptions } from '../types';
 import BifrostExchange from './Bifrost/BifrostExchange';
 import ExchangeChain from './ExchangeChain';
 
@@ -13,7 +13,8 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   };
 });
 
-class MockExchangeChain extends ExchangeChain {
+class MockExchangeChain extends ExchangeChain<'PJS'> {
+  readonly apiType = 'PJS';
   swapCurrency = vi.fn().mockResolvedValue({
     tx: 'mockTxHash',
     amountOut: 1000n,
@@ -32,7 +33,7 @@ describe('ExchangeChain', () => {
   });
 
   it('should return correct multi swap result using swapCurrency', async () => {
-    const mockOptions = {} as TSwapOptions<unknown, unknown, unknown>;
+    const mockOptions = {} as TPjsSwapOptions<unknown, unknown, unknown>;
     const mockFee = 0n;
 
     const chain = new MockExchangeChain('Acala');

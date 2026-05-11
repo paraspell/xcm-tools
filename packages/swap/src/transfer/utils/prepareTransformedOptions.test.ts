@@ -186,6 +186,7 @@ describe('prepareTransformedOptions', () => {
 
     const mockDexChain = {
       chain: 'Acala',
+      apiType: 'PJS',
       createApiInstance: vi.fn().mockResolvedValue({}),
       createApiInstancePapi: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeChain;
@@ -210,12 +211,13 @@ describe('prepareTransformedOptions', () => {
       assetFrom: mockOriginAsset,
     });
     expect(result.options.exchange).toEqual({
+      apiType: 'PJS',
       apiPjs: expect.any(Object),
-      apiPapi: expect.any(Object),
       api: expect.anything(),
       chain: mockDexChain.chain,
       assetFrom: acaAsset,
       assetTo: astrAsset,
+      feeAssetInfo: undefined,
     });
     expect(result.options.feeCalcAddress).toBe('feeCalcAddr');
   });
