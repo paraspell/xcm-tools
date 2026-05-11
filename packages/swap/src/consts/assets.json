@@ -699,6 +699,16 @@
       {
         "parents": 1,
         "interior": {
+          "X1": [
+            {
+              "Parachain": 3377
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X2": [
             {
               "Parachain": 2043

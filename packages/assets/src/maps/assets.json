@@ -6802,6 +6802,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "50000515",
+        "symbol": "WUD",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000515
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "WUD4"
+      },
+      {
         "assetId": "108",
         "symbol": "GAME",
         "decimals": 10,
@@ -7169,6 +7192,29 @@
         "alias": "PEPE2"
       },
       {
+        "assetId": "50000509",
+        "symbol": "WUD",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000509
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "WUD3"
+      },
+      {
         "assetId": "50000470",
         "symbol": "USDt",
         "decimals": 6,
@@ -7349,6 +7395,29 @@
           }
         },
         "existentialDeposit": "1000000"
+      },
+      {
+        "assetId": "50000516",
+        "symbol": "WUD",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000516
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "WUD5"
       },
       {
         "assetId": "31337",
