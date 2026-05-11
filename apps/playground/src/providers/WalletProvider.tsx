@@ -35,7 +35,7 @@ const formActions = createFormActions<{
   recipient: string;
 }>(MAIN_FORM_NAME);
 
-export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
+const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
 const STORAGE_API_TYPE_KEY = 'paraspell_api_type';
 const STORAGE_EXTENSION_KEY = 'paraspell_connected_extension';
 const STORAGE_EVM_ADDRESS_KEY = 'paraspell_evm_address';
