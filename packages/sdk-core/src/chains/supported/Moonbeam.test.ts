@@ -9,10 +9,6 @@ import type Moonbeam from './Moonbeam'
 
 vi.mock('../../pallets/polkadotXcm')
 
-type WithTransferToEthereum = Moonbeam<unknown, unknown, unknown> & {
-  transferToEthereum: Moonbeam<unknown, unknown, unknown>['transferToEthereum']
-}
-
 describe('Moonbeam', () => {
   let chain: Moonbeam<unknown, unknown, unknown>
 
@@ -48,11 +44,7 @@ describe('Moonbeam', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  it('should call transferToEthereum when destination is Ethereum', async () => {
-    const spyTransferToEth = vi
-      .spyOn(chain as WithTransferToEthereum, 'transferToEthereum')
-      .mockResolvedValue({})
-
+  it('delegates Ethereum destination to transferPolkadotXcm', async () => {
     const inputEth = {
       ...mockInput,
       destination: 'Ethereum',
@@ -61,10 +53,7 @@ describe('Moonbeam', () => {
 
     await chain.transferPolkadotXCM(inputEth)
 
-    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
-    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
-
-    expect(transferPolkadotXcm).not.toHaveBeenCalled()
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(inputEth)
   })
 
   describe('transferLocalNonNativeAsset', () => {

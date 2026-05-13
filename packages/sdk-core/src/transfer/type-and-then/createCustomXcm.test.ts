@@ -1,16 +1,28 @@
+import { isChainEvm } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
+import { getParaId } from '../../chains/config'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
-import { AmountTooLowError } from '../../errors'
+import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext } from '../../types'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
+import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createCustomXcm } from './createCustomXcm'
 
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  isChainEvm: vi.fn()
+}))
 vi.mock('@paraspell/sdk-common')
 vi.mock('../../utils/location')
+vi.mock('../../utils/ethereum/generateMessageId')
+vi.mock('../../chains/config', async importActual => ({
+  ...(await importActual()),
+  getParaId: vi.fn()
+}))
 
 describe('createCustomXcm', () => {
   const isDepositReserveInstruction = (
@@ -78,6 +90,7 @@ describe('createCustomXcm', () => {
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
     vi.mocked(isTrustedChain).mockReturnValue(false)
+    vi.mocked(isChainEvm).mockReturnValue(false)
   })
 
   describe('DepositReserveAsset (different chains)', () => {
@@ -102,7 +115,6 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
-        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -145,7 +157,6 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
-        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -181,7 +192,6 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
-        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -194,17 +204,10 @@ describe('createCustomXcm', () => {
     })
 
     it('excludes DOT from assetsFilter when asset location equals RELAY_LOCATION', async () => {
-      const result = await createCustomXcm(
-        mockContext,
-        1,
-        false,
-        mockContext.assetInfo.amount,
-        null,
-        {
-          hopFees: 100n,
-          destFee: 200n
-        }
-      )
+      const result = await createCustomXcm(mockContext, 1, false, mockContext.assetInfo.amount, {
+        hopFees: 100n,
+        destFee: 200n
+      })
 
       const depositReserveInstruction = result.find(isDepositReserveInstruction)
       expect(depositReserveInstruction).toBeDefined()
@@ -223,7 +226,6 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
-        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -249,7 +251,6 @@ describe('createCustomXcm', () => {
         2,
         false,
         mockContext.assetInfo.amount,
-        null,
         {
           hopFees: 100n,
           destFee: 200n
@@ -276,8 +277,7 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount,
-        null
+        mockContext.assetInfo.amount
       )
 
       const depositReserveInstruction = result.find(isDepositReserveInstruction)
@@ -305,7 +305,6 @@ describe('createCustomXcm', () => {
           1,
           false,
           20n,
-          null,
           {
             hopFees: 100n,
             destFee: 200n
@@ -336,8 +335,7 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount,
-        null
+        mockContext.assetInfo.amount
       )
 
       const depositAssetInstruction = result.find(isDepositAssetInstruction)
@@ -374,8 +372,7 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount,
-        null
+        mockContext.assetInfo.amount
       )
 
       const depositAssetInstruction = result.find(isDepositAssetInstruction)
@@ -406,12 +403,188 @@ describe('createCustomXcm', () => {
         },
         2,
         false,
-        mockContext.assetInfo.amount,
-        null
+        mockContext.assetInfo.amount
       )
 
       expect(result.find(isDepositAssetInstruction)).toBeDefined()
       expect(result.find(isDepositReserveInstruction)).toBeUndefined()
+    })
+  })
+
+  describe('refund instruction address resolution', () => {
+    const hopContext = {
+      ...mockContext,
+      origin: { chain: 'Hydration', api: mockApi },
+      dest: { chain: 'Acala', api: mockApi },
+      reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+      isRelayAsset: false
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+    const isRefundInstruction = (instruction: unknown): instruction is { SetAppendix: unknown[] } =>
+      typeof instruction === 'object' && instruction !== null && 'SetAppendix' in instruction
+
+    it('prefers ahAddress when provided', async () => {
+      vi.mocked(isChainEvm).mockReturnValue(true)
+
+      const result = await createCustomXcm(
+        {
+          ...hopContext,
+          options: {
+            ...hopContext.options,
+            sender: '0xsender',
+            ahAddress: 'ah-address'
+          }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(result.find(isRefundInstruction)).toBeDefined()
+      expect(createBeneficiaryLocation).toHaveBeenCalledWith(
+        expect.objectContaining({ address: 'ah-address' })
+      )
+    })
+
+    it('uses sender when origin is not EVM and ahAddress is missing', async () => {
+      vi.mocked(isChainEvm).mockReturnValue(false)
+
+      const result = await createCustomXcm(
+        {
+          ...hopContext,
+          options: { ...hopContext.options, sender: 'ss58-sender' }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(result.find(isRefundInstruction)).toBeDefined()
+      expect(createBeneficiaryLocation).toHaveBeenCalledWith(
+        expect.objectContaining({ address: 'ss58-sender' })
+      )
+    })
+
+    it('uses recipient when origin is EVM but destination is not EVM and ahAddress is missing', async () => {
+      vi.mocked(isChainEvm).mockImplementation(chain => chain === 'Moonbeam')
+
+      const result = await createCustomXcm(
+        {
+          ...hopContext,
+          origin: { chain: 'Moonbeam', api: mockApi },
+          options: {
+            ...hopContext.options,
+            sender: '0xsender',
+            recipient: 'ss58-recipient'
+          }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(result.find(isRefundInstruction)).toBeDefined()
+      expect(createBeneficiaryLocation).toHaveBeenCalledWith(
+        expect.objectContaining({ address: 'ss58-recipient' })
+      )
+    })
+
+    it('throws MissingParameterError when both origin and destination are EVM and ahAddress is missing', async () => {
+      vi.mocked(isChainEvm).mockReturnValue(true)
+
+      await expect(
+        createCustomXcm(
+          {
+            ...hopContext,
+            origin: { chain: 'Moonbeam', api: mockApi },
+            dest: { chain: 'Ethereum', api: mockApi },
+            options: {
+              ...hopContext.options,
+              sender: '0xsender'
+            }
+          },
+          2,
+          false,
+          mockContext.assetInfo.amount
+        )
+      ).rejects.toThrow(MissingParameterError)
+    })
+
+    it('does not emit refund instruction when sender is absent', async () => {
+      const result = await createCustomXcm(
+        {
+          ...hopContext,
+          options: { ...hopContext.options }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(result.find(isRefundInstruction)).toBeUndefined()
+    })
+  })
+
+  describe('snowbridge message id resolution', () => {
+    const isSetTopic = (instruction: unknown): instruction is { SetTopic: string } =>
+      typeof instruction === 'object' && instruction !== null && 'SetTopic' in instruction
+
+    it('generates a message id and emits SetTopic when isSnowbridge is true', async () => {
+      vi.mocked(generateMessageId).mockResolvedValue('0xmessage-id')
+      vi.mocked(getParaId).mockReturnValue(2034)
+
+      const snowbridgeContext = {
+        ...mockContext,
+        origin: { chain: 'Hydration', api: mockApi },
+        dest: { chain: 'Ethereum', api: mockApi },
+        reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+        isSnowbridge: true,
+        isRelayAsset: false,
+        assetInfo: {
+          amount: 1000000n,
+          location: {
+            parents: 2,
+            interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }] }
+          }
+        },
+        options: {
+          ...mockContext.options,
+          destination: 'Ethereum',
+          recipient: '0xrecipient',
+          sender: 'ss58-sender'
+        }
+      } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+      const result = await createCustomXcm(
+        snowbridgeContext,
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(generateMessageId).toHaveBeenCalledWith(
+        mockApi,
+        'ss58-sender',
+        2034,
+        JSON.stringify(snowbridgeContext.assetInfo.location),
+        JSON.stringify('0xrecipient'),
+        snowbridgeContext.assetInfo.amount
+      )
+      expect(result.find(isSetTopic)).toBeDefined()
+    })
+
+    it('does not generate a message id when isSnowbridge is false', async () => {
+      await createCustomXcm(
+        {
+          ...mockContext,
+          isSnowbridge: false
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount
+      )
+
+      expect(generateMessageId).not.toHaveBeenCalled()
     })
   })
 })

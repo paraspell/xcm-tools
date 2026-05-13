@@ -6,6 +6,7 @@ import {
   isExternalChain,
   isSnowbridge,
   isSubstrateBridge,
+  RELAYCHAINS,
   type TLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
@@ -24,13 +25,9 @@ export const getBridgeReserve = (
   destination: TChain,
   location: TLocation
 ): TChain => {
-  const isExternal = isExternalChain(destination)
-
-  const destRelay = isExternal ? destination : getRelayChainOf(destination).toLowerCase()
-
-  const expectedConsensus = isExternal
+  const expectedConsensus = isExternalChain(destination)
     ? getEthereumJunction(chain, false).GlobalConsensus
-    : { [destRelay]: null }
+    : { [getRelayChainOf(destination).toLowerCase()]: null }
 
   const isDestReserve = deepEqual(getJunctionValue(location, 'GlobalConsensus'), expectedConsensus)
 
@@ -42,10 +39,9 @@ const resolveReserveChain = (
   destination: TChain,
   assetLocation: TLocation,
   isSubBridge: boolean,
-  isSnowbridge: boolean,
   overrideReserve?: TSubstrateChain
 ): TChain => {
-  if (isSubBridge || isSnowbridge) {
+  if (isSubBridge) {
     return getBridgeReserve(chain, destination, assetLocation)
   }
 
@@ -53,7 +49,7 @@ const resolveReserveChain = (
     return overrideReserve
   }
 
-  return getAssetReserveChain(chain, assetLocation)
+  return getAssetReserveChain(chain, assetLocation, true)
 }
 
 export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
@@ -64,16 +60,14 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
 
   assertToIsString(destination)
 
-  const destinationChain = destination as TSubstrateChain
-  const isSubBridge = isSubstrateBridge(chain, destinationChain)
-  const isSb = isSnowbridge(chain, destinationChain)
+  const isSubBridge = isSubstrateBridge(chain, destination)
+  const isSb = isSnowbridge(chain, destination)
 
   const reserveChain = resolveReserveChain(
     chain,
-    destinationChain,
+    destination,
     assetInfo.location,
     isSubBridge,
-    isSb,
     overrides.reserveChain
   )
 
@@ -101,16 +95,36 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
 
   const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
 
+  const assetGlobalConsensus = getJunctionValue(assetInfo.location, 'GlobalConsensus')
+  const originRelayChain = getRelayChainOf(chain)
+  const isAssetHubToExternal = chain.startsWith('AssetHub') && isExternalChain(destination)
+  const isForeignRelayToExternal =
+    isExternalChain(destination) &&
+    !chain.startsWith('AssetHub') &&
+    assetInfo.location.parents === 2 &&
+    RELAYCHAINS.some(
+      relay =>
+        relay !== originRelayChain &&
+        deepEqual(assetGlobalConsensus, { [relay.toLowerCase()]: null })
+    )
+
   const isRelayAsset =
-    NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) ||
-    isSubBridge ||
-    (overrides.noFeeAsset ?? false)
+    !isForeignRelayToExternal &&
+    (isAssetHubToExternal ||
+      NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) ||
+      isSubBridge ||
+      (overrides.noFeeAsset ?? false))
+
+  const bridgeHopChain: TSubstrateChain | undefined =
+    !chain.startsWith('AssetHub') && assetGlobalConsensus !== undefined
+      ? `AssetHub${originRelayChain}`
+      : undefined
 
   const destApi = api.clone()
-  await destApi.init(destinationChain)
+  await destApi.init(destination)
 
   const reserveApi =
-    reserveChain === chain ? api : reserveChain === destinationChain ? destApi : api.clone()
+    reserveChain === chain ? api : reserveChain === destination ? destApi : api.clone()
 
   await reserveApi.init(reserveChain)
 
@@ -121,7 +135,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
     },
     dest: {
       api: destApi,
-      chain: destinationChain
+      chain: destination
     },
     reserve: {
       api: reserveApi,
@@ -132,6 +146,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
     isRelayAsset,
     assetInfo,
     options,
-    systemAsset
+    systemAsset,
+    bridgeHopChain
   }
 }

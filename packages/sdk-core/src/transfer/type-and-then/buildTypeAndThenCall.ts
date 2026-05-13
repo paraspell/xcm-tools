@@ -35,16 +35,17 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner>(
     reserve,
     dest,
     assetInfo,
+    bridgeHopChain,
     options: { version, pallet, method, overriddenAsset }
   } = context
 
   const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
 
-  const finalDest = origin.chain === reserve.chain ? dest.chain : reserve.chain
+  const finalDest = bridgeHopChain ?? (origin.chain === reserve.chain ? dest.chain : reserve.chain)
 
   const destLocation = createDestination(version, origin.chain, finalDest, getParaId(finalDest))
 
-  const transferType = resolveTransferType(context)
+  const transferType = bridgeHopChain ? 'DestinationReserve' : resolveTransferType(context)
 
   const feeAsset = Array.isArray(overriddenAsset) ? overriddenAsset.find(a => a.isFeeAsset) : null
 

@@ -212,6 +212,44 @@ describe('findAssetOnDest', () => {
     expect(result).toEqual(mockDestinationAsset)
   })
 
+  it('should find MYTH by symbol on Ethereum when origin is Mythos', () => {
+    const currencyInput: TCurrencyInput = { symbol: 'MYTH' }
+
+    const mythosNative: TAssetInfo = {
+      symbol: 'MYTH',
+      isNative: true,
+      decimals: 18,
+      location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
+    }
+    const ethereumMyth: TAssetInfo = {
+      symbol: 'MYTH',
+      assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+      decimals: 18,
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1n } } },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003'
+              }
+            }
+          ]
+        }
+      }
+    }
+
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mythosNative)
+    vi.mocked(findAssetInfo).mockReturnValueOnce(ethereumMyth)
+
+    const result = findAssetInfoOnDest('Mythos', 'Ethereum', currencyInput)
+
+    expect(findAssetInfo).toHaveBeenCalledWith('Ethereum', { symbol: 'MYTH' })
+    expect(result).toEqual(ethereumMyth)
+  })
+
   it('should use provided origin asset instead of resolving when available', () => {
     const currencyInput: TCurrencyInput = { symbol: mockAssetSymbol }
 

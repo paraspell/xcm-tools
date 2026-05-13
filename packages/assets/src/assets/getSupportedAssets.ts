@@ -35,7 +35,13 @@ export const getSupportedAssets = (origin: TChain, destination: TChain): TAssetI
       const stablecoinAssets = findStablecoinAssets(origin)
       return [...filteredSystemAssets, ...stablecoinAssets]
     } else {
-      return [...systemAssets, ...supportedAssets]
+      // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
+      // so it isn't matched by isAssetXcEqual. Include it explicitly.
+      const mythosNative =
+        origin === 'Mythos' && destination === 'Ethereum'
+          ? originAssets.filter(asset => asset.symbol === 'MYTH')
+          : []
+      return [...systemAssets, ...mythosNative, ...supportedAssets]
     }
   }
 

@@ -29,15 +29,7 @@ class Moonbeam<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  async transferPolkadotXCM(
-    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
-  ): Promise<TRes> {
-    const { destination } = options
-
-    if (destination === 'Ethereum') {
-      return this.transferToEthereum(options)
-    }
-
+  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
     return transferPolkadotXcm(options)
   }
 

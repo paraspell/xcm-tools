@@ -9,10 +9,6 @@ import type BifrostPolkadot from './BifrostPolkadot'
 
 vi.mock('../../pallets/polkadotXcm')
 
-type WithTransferToEthereum = BifrostPolkadot<unknown, unknown, unknown> & {
-  transferToEthereum: BifrostPolkadot<unknown, unknown, unknown>['transferToEthereum']
-}
-
 describe('BifrostPolkadot', () => {
   let chain: BifrostPolkadot<unknown, unknown, unknown>
 
@@ -45,11 +41,7 @@ describe('BifrostPolkadot', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  it('should call transferToEthereum when destination is Ethereum', async () => {
-    const spyTransferToEth = vi
-      .spyOn(chain as WithTransferToEthereum, 'transferToEthereum')
-      .mockResolvedValue({})
-
+  it('delegates Ethereum destination to transferPolkadotXcm', async () => {
     const inputEth = {
       ...mockInput,
       destination: 'Ethereum',
@@ -58,10 +50,7 @@ describe('BifrostPolkadot', () => {
 
     await chain.transferPolkadotXCM(inputEth)
 
-    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
-    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
-
-    expect(transferPolkadotXcm).not.toHaveBeenCalled()
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(inputEth)
   })
 
   describe('transferLocalNonNativeAsset', () => {

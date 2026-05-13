@@ -3,22 +3,15 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { hasJunction, Parents, Version } from '@paraspell/sdk-common'
+import { hasJunction, Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { DOT_LOCATION } from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TSerializedExtrinsics, TTransferLocalOptions } from '../../types'
+import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { addXcmVersionHeader, assertSender } from '../../utils'
-import { createAsset } from '../../utils/asset'
-import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import { createBeneficiaryLocation, createVersionedDestination } from '../../utils/location'
-import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import Chain from '../Chain'
-import { getParaId } from '../config'
 
 class AssetHubPolkadot<TApi, TRes, TSigner>
   extends Chain<TApi, TRes, TSigner>
@@ -31,65 +24,6 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
-  }
-
-  async handleEthBridgeNativeTransfer<TApi, TRes, TSigner>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
-  ): Promise<TRes> {
-    const { api, version, destination, sender, recipient, paraIdTo, assetInfo: asset } = input
-
-    assertSender(sender)
-
-    const messageId = await generateMessageId(
-      api,
-      sender,
-      getParaId(this.chain),
-      JSON.stringify(asset.location),
-      JSON.stringify(recipient),
-      asset.amount
-    )
-
-    const location = asset.symbol === this.getNativeAssetSymbol() ? DOT_LOCATION : asset.location
-
-    const call: TSerializedExtrinsics = {
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      params: {
-        dest: createVersionedDestination(
-          this.version,
-          this.chain,
-          destination,
-          paraIdTo,
-          getEthereumJunction(this.chain),
-          Parents.TWO
-        ),
-        assets: addXcmVersionHeader([createAsset(version, asset.amount, location)], version),
-        assets_transfer_type: 'LocalReserve',
-        remote_fees_id: addXcmVersionHeader(location, version),
-        fees_transfer_type: 'LocalReserve',
-        custom_xcm_on_dest: addXcmVersionHeader(
-          [
-            {
-              DepositAsset: {
-                assets: { Wild: { AllCounted: 1 } },
-                beneficiary: createBeneficiaryLocation({
-                  api,
-                  address: recipient,
-                  version
-                })
-              }
-            },
-            {
-              SetTopic: messageId
-            }
-          ],
-          version
-        ),
-        weight_limit: 'Unlimited'
-      }
-    }
-
-    return api.deserializeExtrinsics(call)
   }
 
   async transferPolkadotXCM(

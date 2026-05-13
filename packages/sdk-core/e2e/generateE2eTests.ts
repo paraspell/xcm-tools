@@ -328,6 +328,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   })
                   .recipient(recipient)
                   .sender(sender)
+                  .ahAddress(MOCK_ADDRESS)
 
                 await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
               } catch (error) {
@@ -374,6 +375,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 .currency({ symbol, amount: MOCK_AMOUNT })
                 .sender(sender)
                 .recipient(MOCK_ADDRESS)
+                .ahAddress(MOCK_ADDRESS)
               await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
             } catch (error) {
               if (error instanceof Error) {

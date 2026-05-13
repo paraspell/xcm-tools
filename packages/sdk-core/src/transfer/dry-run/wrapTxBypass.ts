@@ -14,12 +14,19 @@ import { Parents } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
-import { BYPASS_MINT_AMOUNT } from '../../constants'
+import {
+  BYPASS_MINT_AMOUNT,
+  HIGH_BYPASS_MINT_AMOUNT,
+  HIGH_BYPASS_MINT_CHAINS
+} from '../../constants'
 import { getPalletInstance } from '../../pallets'
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
 import { parseUnits } from '../../utils/unit'
+
+const resolveBypassMintAmount = (chain: TSubstrateChain): string =>
+  HIGH_BYPASS_MINT_CHAINS.includes(chain) ? HIGH_BYPASS_MINT_AMOUNT : BYPASS_MINT_AMOUNT
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   if (!asset.isNative && (!asset.assetId || asset.assetId.startsWith('0x'))) {
@@ -120,7 +127,7 @@ const mintBonusForSent = (
     })
 
   return preminted.some(a => isAssetXcEqual(a, sent))
-    ? parseUnits(BYPASS_MINT_AMOUNT, sent.decimals)
+    ? parseUnits(resolveBypassMintAmount(chain), sent.decimals)
     : 0n
 }
 
@@ -134,6 +141,8 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
   const { api, chain, address, asset, feeAsset, tx } = dryRunOptions
   const { mintFeeAssets } = options
 
+  const bypassMintAmount = resolveBypassMintAmount(chain)
+
   const relayCurrency: TCurrencyCore = {
     location: { parents: Parents.ONE, interior: { Here: null } }
   }
@@ -146,7 +155,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
     ? await createRequiredMintTxs(
         chain,
         findNativeAssetInfoOrThrow(chain),
-        BYPASS_MINT_AMOUNT,
+        bypassMintAmount,
         0n,
         address,
         api
@@ -155,13 +164,13 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
 
   const mintRelayAssetRes =
     mintFeeAssets && !sameNativeRelay
-      ? await createOptionalMintTxs(chain, relayCurrency, BYPASS_MINT_AMOUNT, 0n, address, api)
+      ? await createOptionalMintTxs(chain, relayCurrency, bypassMintAmount, 0n, address, api)
       : null
 
   // mint fee asset if exists
   let mintFeeAssetRes: TSetBalanceRes | undefined
   if (feeAsset && mintFeeAssets) {
-    const amount = parseUnits(BYPASS_MINT_AMOUNT, feeAsset.decimals)
+    const amount = parseUnits(bypassMintAmount, feeAsset.decimals)
     mintFeeAssetRes = await createMintTxs(chain, { ...feeAsset, amount }, 0n, address, api)
   }
 
@@ -176,7 +185,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
 
   let mintAmount: bigint | null
   if (options?.sentAssetMintMode === 'bypass') {
-    mintAmount = parseUnits(BYPASS_MINT_AMOUNT, asset.decimals) + asset.amount
+    mintAmount = parseUnits(bypassMintAmount, asset.decimals) + asset.amount
   } else {
     const missing = calcPreviewMintAmount(balance, asset.amount) ?? 0n
     const total = missing + bonus

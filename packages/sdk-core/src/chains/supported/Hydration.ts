@@ -37,10 +37,6 @@ class Hydration<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { destination, assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
 
-    if (destination === 'Ethereum') {
-      return this.transferToEthereum(input)
-    }
-
     if (feeAsset) {
       if (overriddenAsset) {
         throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')

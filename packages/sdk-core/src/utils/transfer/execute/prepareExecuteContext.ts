@@ -1,5 +1,5 @@
 import { isAssetEqual, type TAsset } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
 import type { TCreateBaseTransferXcmOptions } from '../../../types'
 import { createAsset } from '../../asset'
@@ -16,7 +16,7 @@ export type TExecuteContext = {
   feeAssetLocalized?: TAsset
   feeAssetLocalizedToDest?: TAsset
   feeAssetLocalizedToReserve?: TAsset
-  reserveChain: TSubstrateChain
+  reserveChain: TChain
 }
 
 export const prepareExecuteContext = <TRes>({

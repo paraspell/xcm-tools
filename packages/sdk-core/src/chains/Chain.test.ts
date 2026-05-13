@@ -1,10 +1,5 @@
 import type { WithAmount } from '@paraspell/assets'
-import {
-  findAssetInfoByLoc,
-  getNativeAssetSymbol,
-  InvalidCurrencyError,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -13,7 +8,6 @@ import type { PolkadotApi } from '../api'
 import type { chains } from '../constants'
 import { DOT_LOCATION, RELAY_LOCATION } from '../constants'
 import {
-  BridgeHaltedError,
   InvalidAddressError,
   NoXCMSupportImplementedError,
   RoutingResolutionError,
@@ -25,18 +19,13 @@ import {
 import { getPalletInstance } from '../pallets'
 import { handleTransactUsingSend } from '../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../transfer'
-import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { BaseAssetsPallet, TSerializedExtrinsics, TTransferLocalOptions } from '../types'
-import { type TPolkadotXCMTransferOptions, type TTransferInternalOptions } from '../types'
+import { type TTransferInternalOptions } from '../types'
 import { getChain, handleExecuteTransfer, resolveDestChain } from '../utils'
 import Chain from './Chain'
 
 vi.mock('../constants/chains')
 vi.mock('../utils/location')
-
-vi.mock('../transfer/getBridgeStatus', () => ({
-  getBridgeStatus: vi.fn().mockResolvedValue('Normal')
-}))
 
 vi.mock('../pallets/polkadotXcm')
 
@@ -69,8 +58,7 @@ vi.mock('@paraspell/assets', async () => {
   const actual = await vi.importActual('@paraspell/assets')
   return {
     ...actual,
-    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
-    findAssetInfoByLoc: vi.fn().mockReturnValue({ symbol: 'DOT' })
+    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT')
   }
 })
 
@@ -81,16 +69,7 @@ vi.mock('./config', () => ({
 }))
 
 vi.mock('../transfer', () => ({
-  createTypeAndThenCall: vi.fn(),
-  getParaEthTransferFees: vi.fn().mockReturnValue('fee')
-}))
-
-vi.mock('../utils/ethereum/createCustomXcmOnDest', () => ({
-  createCustomXcmOnDest: vi.fn(() => '0xmockedXcm')
-}))
-
-vi.mock('../utils/ethereum/generateMessageId', () => ({
-  generateMessageId: vi.fn().mockReturnValue('0xmessageId')
+  createTypeAndThenCall: vi.fn()
 }))
 
 class TestParachainBase extends Chain<unknown, unknown, unknown> {
@@ -104,13 +83,6 @@ class TestParachain extends TestParachainBase {
 
   transferPolkadotXCM() {
     return 'transferPolkadotXCM called'
-  }
-
-  exposeTransferToEthereum(
-    options: TPolkadotXCMTransferOptions<unknown, unknown, unknown>,
-    useOnlyDepositAsset = false
-  ) {
-    return this.transferToEthereum(options, useOnlyDepositAsset)
   }
 }
 
@@ -465,46 +437,6 @@ describe('Parachain', () => {
     expect(result).toBe('asset')
   })
 
-  it('should perform transfer to ethereum', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      sender: '0x456'
-    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
-    const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
-
-    vi.mocked(findAssetInfoByLoc).mockReturnValue({
-      symbol: 'WETH',
-      assetId: '123',
-      decimals: 18,
-      location: {
-        parents: 1,
-        interior: { X1: { Parachain: 2000 } }
-      }
-    })
-
-    await chain.exposeTransferToEthereum(options)
-
-    expect(spy).toHaveBeenCalledWith({
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      params: expect.any(Object)
-    })
-  })
-
-  it('should throw if the address is location', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      sender: '0x456',
-      recipient: DOT_LOCATION
-    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(
-      'Location address is not supported for this transfer type.'
-    )
-  })
-
   describe('transferLocal', () => {
     it('should throw an error if the address is location', async () => {
       const options = {
@@ -746,17 +678,5 @@ describe('Parachain', () => {
       expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignAsset)
       expect(result).toBe(22n)
     })
-  })
-
-  it('should throw BridgeHaltedError when bridge status is not normal', async () => {
-    const options = {
-      api,
-      assetInfo: { symbol: 'WETH', assetId: '', location: {}, amount: 100n },
-      sender: '0x456'
-    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
-    vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
-
-    await expect(chain.exposeTransferToEthereum(options)).rejects.toThrow(BridgeHaltedError)
   })
 })
