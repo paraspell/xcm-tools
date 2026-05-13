@@ -1,8 +1,7 @@
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
-  hasJunction,
   isRelayChain,
   Parents,
   type TLocation
@@ -13,9 +12,18 @@ import { RoutingResolutionError } from '../../errors'
 
 export const getAssetReserveChain = (
   chain: TSubstrateChain,
-  assetLocation: TLocation
-): TSubstrateChain => {
-  const hasGlobalConsensusJunction = hasJunction(assetLocation, 'GlobalConsensus')
+  assetLocation: TLocation,
+  resolveExternalReserve = false
+): TChain => {
+  const globalConsensus = getJunctionValue<Record<string, unknown>>(
+    assetLocation,
+    'GlobalConsensus'
+  )
+
+  if (resolveExternalReserve && globalConsensus && 'Ethereum' in globalConsensus) {
+    const relaychain = getRelayChainOf(chain)
+    return relaychain === 'Westend' || relaychain === 'Paseo' ? 'EthereumTestnet' : 'Ethereum'
+  }
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
@@ -23,7 +31,7 @@ export const getAssetReserveChain = (
     if (!resolvedChain) {
       throw new RoutingResolutionError(`Chain with paraId ${paraId} not found`)
     }
-    return resolvedChain as TSubstrateChain
+    return resolvedChain
   }
 
   if (isRelayChain(chain)) return chain
@@ -31,7 +39,7 @@ export const getAssetReserveChain = (
   const relaychain = getRelayChainOf(chain)
   const ahChain: TSubstrateChain = `AssetHub${relaychain}`
 
-  if (hasGlobalConsensusJunction) {
+  if (globalConsensus) {
     return ahChain
   }
 

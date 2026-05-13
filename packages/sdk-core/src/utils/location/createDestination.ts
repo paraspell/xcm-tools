@@ -1,3 +1,4 @@
+import type { TChain } from '@paraspell/sdk-common'
 import {
   isExternalChain,
   isSnowbridge,
@@ -19,7 +20,7 @@ import { getEthereumJunction } from './getEthereumJunction'
 
 export const createDestination = (
   version: Version,
-  origin: TSubstrateChain,
+  origin: TChain,
   destination: TDestination,
   chainId?: number,
   junction?: TJunction,

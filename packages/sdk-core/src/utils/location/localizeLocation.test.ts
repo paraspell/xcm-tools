@@ -392,6 +392,35 @@ describe('localizeLocation', () => {
       })
     })
 
+    it('should expand relay location to GlobalConsensus when localizing for external chain', () => {
+      const result = localizeLocation('Ethereum', RELAY_LOCATION, 'AssetHubPolkadot')
+
+      expect(result).toEqual({
+        parents: Parents.ONE,
+        interior: {
+          X1: [{ GlobalConsensus: { polkadot: null } }]
+        }
+      })
+    })
+
+    it('should bump parents to 1 for parents=2 GlobalConsensus location targeting external chain', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X1: [{ GlobalConsensus: { polkadot: null } }]
+        }
+      }
+
+      const result = localizeLocation('Ethereum', input)
+
+      expect(result).toEqual({
+        parents: Parents.ONE,
+        interior: {
+          X1: [{ GlobalConsensus: { polkadot: null } }]
+        }
+      })
+    })
+
     it('should keep Ethereum location unchanged when localizing for a Polkadot chain', () => {
       const input: TLocation = {
         parents: Parents.TWO,

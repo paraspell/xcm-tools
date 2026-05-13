@@ -1,14 +1,14 @@
-import { normalizeLocation } from '@paraspell/assets'
-import { isTrustedChain } from '@paraspell/sdk-common'
+import { isChainEvm, normalizeLocation } from '@paraspell/assets'
+import { deepEqual, getJunctionValue, isExternalChain, isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { AmountTooLowError } from '../../errors'
+import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSender, createAsset, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
-import type { createRefundInstruction } from './utils'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
 const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
   { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
@@ -25,21 +25,67 @@ const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
   return isRelayAsset ? assetInfo.amount - hopFees : destFee
 }
 
+const resolveSnowbridgeMessageId = <TApi, TRes, TSigner>({
+  origin,
+  isSnowbridge,
+  assetInfo,
+  options: { sender, recipient }
+}: TTypeAndThenCallContext<TApi, TRes, TSigner>) => {
+  if (!isSnowbridge) return Promise.resolve(null)
+  assertSender(sender)
+  return generateMessageId(
+    origin.api,
+    sender,
+    getParaId(origin.chain),
+    JSON.stringify(assetInfo.location),
+    JSON.stringify(recipient),
+    assetInfo.amount
+  )
+}
+
 export const createCustomXcm = async <TApi, TRes, TSigner>(
   context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   assetCount: number,
   isForFeeCalc: boolean,
   systemAssetAmount: bigint,
-  refundInstruction: ReturnType<typeof createRefundInstruction> | null,
   fees: TTypeAndThenFees = {
     hopFees: 0n,
     destFee: 0n
   }
 ) => {
-  const { origin, dest, reserve, isSubBridge, isSnowbridge, isRelayAsset, assetInfo, options } =
+  const { origin, dest, reserve, isSubBridge, isRelayAsset, assetInfo, bridgeHopChain, options } =
     context
-  const { destination, version, sender, recipient, paraIdTo } = options
+  const { destination, version, recipient, paraIdTo, sender, ahAddress } = options
+
+  const buildRefundInstruction = () => {
+    if (!sender || isSubBridge) return null
+
+    const resolveRefundAddress = () => {
+      if (ahAddress) return ahAddress
+      if (!isChainEvm(origin.chain)) return sender
+      if (!isChainEvm(dest.chain)) return recipient
+      throw new MissingParameterError('ahAddress')
+    }
+
+    return {
+      SetAppendix: [
+        {
+          DepositAsset: {
+            assets: { Wild: { AllCounted: assetCount } },
+            beneficiary: createBeneficiaryLocation({
+              api: origin.api,
+              address: resolveRefundAddress(),
+              version
+            })
+          }
+        }
+      ]
+    }
+  }
   const { hopFees, destFee } = fees
+
+  const messageId = await resolveSnowbridgeMessageId(context)
+  const setTopic = messageId ? [{ SetTopic: messageId }] : []
 
   const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
 
@@ -76,7 +122,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
 
   const assetsFilter = []
 
-  if (!isRelayAsset)
+  if (!isRelayAsset && !isExternalChain(dest.chain))
     assetsFilter.push(
       createAsset(version, hopFees + destFee, localizeLocation(reserve.chain, RELAY_LOCATION))
     )
@@ -89,13 +135,19 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
     )
   )
 
-  if (isSubBridge || (origin.chain !== reserve.chain && dest.chain !== reserve.chain)) {
-    const buyExecutionAmount = resolveBuyExecutionAmount(
-      context,
-      isForFeeCalc,
-      fees,
-      systemAssetAmount
-    )
+  const isAssetEthereumNative = deepEqual(
+    getJunctionValue(assetInfo.location, 'GlobalConsensus'),
+    getEthereumJunction(origin.chain, false).GlobalConsensus
+  )
+
+  if (
+    isSubBridge ||
+    bridgeHopChain ||
+    (origin.chain !== reserve.chain && dest.chain !== reserve.chain)
+  ) {
+    const buyExecutionAmount = isExternalChain(dest.chain)
+      ? 1n
+      : resolveBuyExecutionAmount(context, isForFeeCalc, fees, systemAssetAmount)
 
     if (buyExecutionAmount < 0n && !isForFeeCalc) throw new AmountTooLowError()
 
@@ -109,9 +161,13 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
           Definite: assetsFilter
         }
 
+    const buyExecutionAsset = isExternalChain(dest.chain)
+      ? createAsset(version, buyExecutionAmount, assetLocLocalized)
+      : createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized)
+
     const buyExecution = {
       BuyExecution: {
-        fees: createAsset(version, normalizeAmount(buyExecutionAmount), feeLocLocalized),
+        fees: buyExecutionAsset,
         weight_limit: 'Unlimited'
       }
     }
@@ -125,47 +181,59 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
     // If both reserve (B) and destination (C) are trusted chains,
     // use teleport instead of DepositReserveAsset
     if (isTrustedChain(reserve.chain) && isTrustedChain(dest.chain)) {
+      const refund = buildRefundInstruction()
       return [
-        ...(refundInstruction ? [refundInstruction] : []),
+        ...(refund ? [refund] : []),
         {
           InitiateTeleport: {
             assets: filter,
             dest: destLoc,
-            xcm: [buyExecution, depositInstruction]
+            xcm: [buyExecution, depositInstruction, ...setTopic]
           }
-        }
+        },
+        ...setTopic
       ]
     }
 
+    if (isExternalChain(dest.chain) && (isAssetEthereumNative || origin.chain === 'Mythos')) {
+      const buyExecutionAtReserve = {
+        BuyExecution: {
+          fees: buyExecutionAsset,
+          weight_limit: 'Unlimited'
+        }
+      }
+
+      const refund = buildRefundInstruction()
+      return [
+        ...(refund ? [refund] : []),
+        {
+          InitiateReserveWithdraw: {
+            assets: {
+              Wild: {
+                AllOf: { id: assetInfo.location, fun: 'Fungible' }
+              }
+            },
+            reserve: destLoc,
+            xcm: [buyExecutionAtReserve, depositInstruction, ...setTopic]
+          }
+        },
+        ...setTopic
+      ]
+    }
+
+    const refund = buildRefundInstruction()
     return [
-      ...(refundInstruction ? [refundInstruction] : []),
+      ...(refund ? [refund] : []),
       {
         DepositReserveAsset: {
           assets: filter,
           dest: destLoc,
-          xcm: [buyExecution, depositInstruction]
+          xcm: [buyExecution, depositInstruction, ...setTopic]
         }
-      }
+      },
+      ...setTopic
     ]
   }
 
-  if (isSnowbridge) {
-    assertSender(sender)
-    const messageId = await generateMessageId(
-      origin.api,
-      sender,
-      getParaId(origin.chain),
-      JSON.stringify(assetInfo.location),
-      JSON.stringify(recipient),
-      assetInfo.amount
-    )
-    return [
-      depositInstruction,
-      {
-        SetTopic: messageId
-      }
-    ]
-  }
-
-  return [depositInstruction]
+  return [depositInstruction, ...setTopic]
 }

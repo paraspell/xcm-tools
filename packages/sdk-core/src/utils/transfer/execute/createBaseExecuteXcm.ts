@@ -21,7 +21,7 @@ const getInstructionType = <TRes>(
   version: Version,
   origin: TSubstrateChain,
   destination: TChain,
-  reserveChain?: TSubstrateChain,
+  reserveChain?: TChain,
   transactOptions?: TTransactOptions<TRes>
 ) => {
   if (version >= Version.V5 && transactOptions?.call) {
@@ -54,7 +54,7 @@ const getInstructionType = <TRes>(
 const getInitiateTransferType = (
   origin: TSubstrateChain,
   destination: TChain,
-  reserveChain?: TSubstrateChain
+  reserveChain?: TChain
 ) => {
   if (isTrustedChain(origin) && isTrustedChain(destination)) {
     return 'Teleport'

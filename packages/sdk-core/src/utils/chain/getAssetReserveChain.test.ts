@@ -1,6 +1,6 @@
-import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TJunctionType, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
-import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
+import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getRelayChainOf, getTChain } from '../..'
@@ -9,13 +9,18 @@ import { getAssetReserveChain } from './getAssetReserveChain'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
-  hasJunction: vi.fn(),
   getJunctionValue: vi.fn(),
   deepEqual: vi.fn(),
   Parents: { ONE: 1 }
 }))
 
 vi.mock('../..')
+
+const mockJunctions = (values: Partial<Record<TJunctionType, unknown>>) => {
+  vi.mocked(getJunctionValue).mockImplementation(
+    (_, junctionType: TJunctionType) => values[junctionType]
+  )
+}
 
 describe('getAssetReserveChain', () => {
   const mockOrigin: TSubstrateChain = 'Acala'
@@ -29,8 +34,7 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns parachain when paraId is found', () => {
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(1000)
+    mockJunctions({ Parachain: 1000 })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTChain).mockReturnValue('Moonbeam')
 
@@ -41,8 +45,7 @@ describe('getAssetReserveChain', () => {
   })
 
   it('uses kusama when origin relay chain is Kusama', () => {
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(2000)
+    mockJunctions({ Parachain: 2000 })
     vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
     vi.mocked(getTChain).mockReturnValue('Karura')
 
@@ -52,8 +55,7 @@ describe('getAssetReserveChain', () => {
   })
 
   it('throws error when parachain not found', () => {
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(9999)
+    mockJunctions({ Parachain: 9999 })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTChain).mockReturnValue(null)
 
@@ -63,8 +65,35 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns AssetHubPolkadot when has GlobalConsensus junction', () => {
-    vi.mocked(hasJunction).mockReturnValue(true)
-    vi.mocked(getJunctionValue).mockReturnValue(null)
+    mockJunctions({ GlobalConsensus: { polkadot: null } })
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
+
+    expect(result).toBe('AssetHubPolkadot')
+  })
+
+  it('returns Ethereum when GlobalConsensus is Ethereum and resolveExternalReserve is true', () => {
+    mockJunctions({ GlobalConsensus: { Ethereum: { chainId: 1n } } })
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    const result = getAssetReserveChain(mockOrigin, mockAssetLocation, true)
+
+    expect(result).toBe('Ethereum')
+  })
+
+  it('returns EthereumTestnet when GlobalConsensus is Ethereum on Westend and resolveExternalReserve is true', () => {
+    mockJunctions({ GlobalConsensus: { Ethereum: { chainId: 11155111n } } })
+    vi.mocked(getRelayChainOf).mockReturnValue('Westend')
+
+    const result = getAssetReserveChain(mockOrigin, mockAssetLocation, true)
+
+    expect(result).toBe('EthereumTestnet')
+  })
+
+  it('returns AssetHubPolkadot when GlobalConsensus is Ethereum and resolveExternalReserve is false (default)', () => {
+    mockJunctions({ GlobalConsensus: { Ethereum: { chainId: 1n } } })
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
@@ -72,9 +101,9 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns AssetHubPolkadot for specific location pattern', () => {
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(null)
+    mockJunctions({})
     vi.mocked(deepEqual).mockReturnValue(true)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
@@ -87,8 +116,7 @@ describe('getAssetReserveChain', () => {
 
   it('returns origin when it is a relay chain', () => {
     const relayChain: TSubstrateChain = 'Polkadot'
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(null)
+    mockJunctions({})
     vi.mocked(deepEqual).mockReturnValue(false)
     vi.mocked(getRelayChainOf).mockReturnValue(relayChain)
 
@@ -98,8 +126,7 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns origin when no conditions match', () => {
-    vi.mocked(hasJunction).mockReturnValue(false)
-    vi.mocked(getJunctionValue).mockReturnValue(null)
+    mockJunctions({})
     vi.mocked(deepEqual).mockReturnValue(false)
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)

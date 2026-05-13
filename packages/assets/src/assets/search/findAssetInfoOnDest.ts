@@ -58,6 +58,13 @@ export const findAssetInfoOnDest = (
     if (match) return match
   }
 
+  // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
+  // so resolve by symbol for the Mythos -> Ethereum Snowbridge transfer.
+  if (isSb && origin === 'Mythos' && resolvedOriginAsset.symbol === 'MYTH') {
+    const match = findAssetInfo(destination, { symbol: 'MYTH' })
+    if (match) return match
+  }
+
   return findAssetInfo(destination, { location: resolvedOriginAsset.location })
 }
 

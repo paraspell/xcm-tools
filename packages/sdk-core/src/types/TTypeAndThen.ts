@@ -11,13 +11,14 @@ export type TChainWithApi<TApi, TRes, TSigner, T = TSubstrateChain> = {
 
 export type TTypeAndThenCallContext<TApi, TRes, TSigner> = {
   origin: TChainWithApi<TApi, TRes, TSigner>
-  dest: TChainWithApi<TApi, TRes, TSigner>
+  dest: TChainWithApi<TApi, TRes, TSigner, TChain>
   reserve: TChainWithApi<TApi, TRes, TSigner, TChain>
   isSubBridge: boolean
   isSnowbridge: boolean
   isRelayAsset: boolean
   assetInfo: WithAmount<TAssetInfo>
   systemAsset: TAssetInfo
+  bridgeHopChain?: TSubstrateChain
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
 }
 

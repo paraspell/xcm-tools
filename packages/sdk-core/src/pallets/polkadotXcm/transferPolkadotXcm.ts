@@ -1,7 +1,7 @@
 // Contains basic structure of polkadotXCM call
 
 import { getXcmPallet, type TPallet } from '@paraspell/pallets'
-import { isTLocation } from '@paraspell/sdk-common'
+import { isExternalChain, isTLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import { createTypeAndThenCall } from '../../transfer'
@@ -31,7 +31,8 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner>(
   } = options
 
   if (method === 'transfer_assets_using_type_and_then') {
-    return api.deserializeExtrinsics(await createTypeAndThenCall(options, { noFeeAsset: true }))
+    const noFeeAsset = !(typeof destination !== 'object' && isExternalChain(destination))
+    return api.deserializeExtrinsics(await createTypeAndThenCall(options, { noFeeAsset }))
   }
 
   const resolvedMultiAssets = maybeOverrideAssets(

@@ -1,5 +1,5 @@
 import { normalizeLocation, type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
+import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
@@ -10,13 +10,12 @@ import type {
   TTypeAndThenFees,
   TTypeAndThenOverrides
 } from '../../types'
-import { createAsset, localizeLocation, parseUnits, sortAssets } from '../../utils'
+import { createAsset, localizeLocation, normalizeAmount, parseUnits, sortAssets } from '../../utils'
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
-import { createRefundInstruction } from './utils'
 
 const buildAssets = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
@@ -58,30 +57,31 @@ export const resolveAssetCount = <TApi, TRes, TSigner>(
 }
 
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
+const DEFAULT_SYSTEM_ASSET_AMOUNT_EXTERNAL = '10'
 
 const resolveSystemAssetAmount = <TApi, TRes, TSigner>(
-  { systemAsset }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+  { systemAsset, dest }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   isForFeeCalc: boolean,
   fees: TTypeAndThenFees
 ) => {
   if (isForFeeCalc) {
-    return parseUnits(DEFAULT_SYSTEM_ASSET_AMOUNT, systemAsset.decimals)
+    const defaultAmount = isExternalChain(dest.chain)
+      ? DEFAULT_SYSTEM_ASSET_AMOUNT_EXTERNAL
+      : DEFAULT_SYSTEM_ASSET_AMOUNT
+    return parseUnits(defaultAmount, systemAsset.decimals)
   }
-  return fees.destFee + fees.hopFees
+  return normalizeAmount(fees.destFee + fees.hopFees)
 }
 
 export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
   context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
   fees: TTypeAndThenFees | null = null
 ): Promise<TSerializedExtrinsics> => {
-  const { origin, assetInfo, isSubBridge, isRelayAsset, options } = context
+  const { origin, assetInfo, isRelayAsset, options } = context
 
-  const { sender, version, overriddenAsset } = options
+  const { overriddenAsset } = options
 
   const assetCount = resolveAssetCount(overriddenAsset, isRelayAsset)
-
-  const refundInstruction =
-    sender && !isSubBridge ? createRefundInstruction(origin.api, sender, version, assetCount) : null
 
   const resolvedFees = fees ?? {
     hopFees: 0n,
@@ -97,7 +97,6 @@ export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
     assetCount,
     isForFeeCalc,
     systemAssetAmount,
-    refundInstruction,
     resolvedFees
   )
 

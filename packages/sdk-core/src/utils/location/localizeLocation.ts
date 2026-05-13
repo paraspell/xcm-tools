@@ -6,6 +6,7 @@ import {
   isExternalChain,
   isRelayChain,
   Parents,
+  RELAYCHAINS,
   type TLocation
 } from '@paraspell/sdk-common'
 
@@ -105,6 +106,34 @@ export const localizeLocation = (
   const isOriginRelayHere = deepEqual(location, RELAY_LOCATION)
 
   const hasGlobalConsensus = hasJunction(location, 'GlobalConsensus')
+
+  if (
+    origin &&
+    isExternalChain(chain) &&
+    originRelay !== undefined &&
+    isOriginRelayHere &&
+    !hasGlobalConsensus
+  ) {
+    return {
+      parents: Parents.ONE,
+      interior: {
+        X1: [{ GlobalConsensus: { [originRelay]: null } }]
+      }
+    }
+  }
+
+  if (
+    isExternalChain(chain) &&
+    location.parents === Parents.TWO &&
+    RELAYCHAINS.some(relay =>
+      deepEqual(getJunctionValue(location, 'GlobalConsensus'), { [relay.toLowerCase()]: null })
+    )
+  ) {
+    return {
+      ...location,
+      parents: Parents.ONE
+    }
+  }
 
   if (
     origin &&

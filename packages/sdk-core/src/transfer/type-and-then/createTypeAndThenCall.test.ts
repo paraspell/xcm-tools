@@ -8,7 +8,14 @@ import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION, RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { createAsset, getRelayChainOf, localizeLocation, parseUnits, sortAssets } from '../../utils'
+import {
+  createAsset,
+  getRelayChainOf,
+  localizeLocation,
+  normalizeAmount,
+  parseUnits,
+  sortAssets
+} from '../../utils'
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
@@ -19,13 +26,11 @@ import {
   createTypeAndThenCall,
   resolveAssetCount
 } from './createTypeAndThenCall'
-import { createRefundInstruction } from './utils'
 
 vi.mock('@paraspell/assets')
 
 vi.mock('./createContext')
 vi.mock('./createCustomXcm')
-vi.mock('./utils')
 vi.mock('./computeFees')
 vi.mock('./buildTypeAndThenCall')
 vi.mock('../../utils')
@@ -41,7 +46,6 @@ describe('createTypeAndThenCall', () => {
     params: {}
   }
   const mockCustomXcm: Awaited<ReturnType<typeof createCustomXcm>> = []
-  const mockRefundInstruction = { SetAppendix: [] } as ReturnType<typeof createRefundInstruction>
   const mockAsset: TAsset = { id: RELAY_LOCATION, fun: { Fungible: 1000n } }
   const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
@@ -82,7 +86,6 @@ describe('createTypeAndThenCall', () => {
     mockApi.clone = vi.fn().mockReturnValue(mockApi)
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockResolvedValue(mockCustomXcm)
-    vi.mocked(createRefundInstruction).mockReturnValue(mockRefundInstruction)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
@@ -90,6 +93,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(localizeLocation).mockImplementation((_, location) => location)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
+    vi.mocked(normalizeAmount).mockImplementation(value => value)
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
     vi.mocked(sortAssets).mockImplementation(assets => assets)
   })
@@ -121,7 +125,6 @@ describe('createTypeAndThenCall', () => {
       1,
       false,
       mockFees.destFee + mockFees.hopFees,
-      null,
       mockFees
     )
     expect(createCustomXcm).toHaveBeenCalledTimes(1)
@@ -182,7 +185,6 @@ describe('createTypeAndThenCall', () => {
       2,
       false,
       mockFees.hopFees + mockFees.destFee,
-      null,
       mockFees
     )
   })
@@ -207,7 +209,7 @@ describe('createTypeAndThenCall', () => {
 
     expect(result).toBe(mockSerializedCall)
     expect(parseUnits).toHaveBeenCalledWith('1', 12)
-    expect(createCustomXcm).toHaveBeenCalledWith(mockContext, 2, true, 1n, null, {
+    expect(createCustomXcm).toHaveBeenCalledWith(mockContext, 2, true, 1n, {
       hopFees: 0n,
       destFee: 0n
     })
@@ -240,28 +242,6 @@ describe('createTypeAndThenCall', () => {
       mockContext.assetInfo.location
     )
     expect(spy).toHaveBeenCalledWith(mockSerializedCall)
-  })
-
-  it('creates refund instruction when sender provided', async () => {
-    const contextWithSender = {
-      ...mockContext,
-      options: {
-        ...mockContext.options,
-        sender: 'refund-address'
-      }
-    }
-
-    await constructTypeAndThenCall(contextWithSender, mockFees)
-
-    expect(createRefundInstruction).toHaveBeenCalledWith(mockApi, 'refund-address', mockVersion, 2)
-    expect(createCustomXcm).toHaveBeenCalledWith(
-      contextWithSender,
-      2,
-      false,
-      mockFees.hopFees + mockFees.destFee,
-      mockRefundInstruction,
-      mockFees
-    )
   })
 
   it('should pass through overriddenAsset when it is an array', async () => {

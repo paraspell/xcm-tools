@@ -3,11 +3,9 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
   findAssetInfo,
-  findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
   getRelayChainSymbol,
-  isAssetEqual,
   isAssetXcEqual,
   isChainEvm,
   isSymbolMatch,
@@ -30,9 +28,8 @@ import {
 
 import type { PolkadotApi } from '../api'
 import { getAssetBalanceInternal } from '../balance'
-import { DOT_LOCATION, MIN_AMOUNT, RELAY_LOCATION } from '../constants'
+import { MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
-  BridgeHaltedError,
   FeatureTemporarilyDisabledError,
   InvalidAddressError,
   RoutingResolutionError,
@@ -45,21 +42,17 @@ import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedE
 import { getPalletInstance } from '../pallets'
 import { handleTransactUsingSend } from '../pallets/polkadotXcm'
 import { transferXTokens } from '../pallets/xTokens'
-import { createTypeAndThenCall, getParaEthTransferFees } from '../transfer'
-import { getBridgeStatus } from '../transfer/getBridgeStatus'
+import { createTypeAndThenCall } from '../transfer'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
   TPolkadotXCMTransferOptions,
   TScenario,
-  TSerializedExtrinsics,
   TTransferInternalOptions,
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
 import {
-  addXcmVersionHeader,
-  assertAddressIsString,
   assertHasId,
   assertSender,
   createBeneficiaryLocation,
@@ -69,12 +62,9 @@ import {
   resolveDestChain
 } from '../utils'
 import { createAsset } from '../utils/asset'
-import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
-import { generateMessageId } from '../utils/ethereum/generateMessageId'
-import { createVersionedDestination, localizeLocation } from '../utils/location'
+import { localizeLocation } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
-import { getParaId } from './config'
 
 const supportsXTokens = <TApi, TRes, TSigner>(
   obj: unknown
@@ -502,101 +492,6 @@ abstract class Chain<TApi, TRes, TSigner> {
         amount: asset.amount
       }
     })
-  }
-
-  protected async transferToEthereum<TApi, TRes, TSigner>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
-    useOnlyDepositInstruction = false
-  ): Promise<TRes> {
-    const { api, assetInfo: asset, version, sender, recipient, feeAssetInfo: feeAsset } = input
-
-    const bridgeStatus = await getBridgeStatus(api.clone())
-
-    if (bridgeStatus !== 'Normal') {
-      throw new BridgeHaltedError()
-    }
-
-    assertAddressIsString(recipient)
-    assertSender(sender)
-
-    const ethAsset = createAsset(version, asset.amount, asset.location)
-
-    const ahApi = await api.createApiForChain('AssetHubPolkadot')
-
-    const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
-
-    const PARA_TO_PARA_FEE_DOT = 5000000000n // 0.5 DOT
-
-    const fee = useOnlyDepositInstruction ? PARA_TO_PARA_FEE_DOT : bridgeFee + executionFee
-
-    const ethAssetInfo = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
-
-    const systemAssetInfo = findNativeAssetInfoOrThrow(getRelayChainOf(this.chain))
-    const shouldIncludeFeeAsset =
-      (feeAsset && !isAssetEqual(feeAsset, asset)) || !isAssetEqual(asset, systemAssetInfo)
-
-    let customXcmOnDest
-
-    if (useOnlyDepositInstruction) {
-      customXcmOnDest = addXcmVersionHeader(
-        [
-          {
-            DepositAsset: {
-              assets: { Wild: { AllCounted: 2 } },
-              beneficiary: createBeneficiaryLocation({
-                api,
-                address: recipient,
-                version
-              })
-            }
-          }
-        ],
-        version
-      )
-    } else {
-      assertHasId(ethAssetInfo)
-
-      const messageId = await generateMessageId(
-        api,
-        sender,
-        getParaId(this.chain),
-        ethAssetInfo.assetId,
-        recipient,
-        asset.amount
-      )
-
-      customXcmOnDest = createCustomXcmOnDest(input, this.chain, messageId, ethAssetInfo)
-    }
-
-    const hopDestination: TSubstrateChain = 'AssetHubPolkadot'
-
-    const call: TSerializedExtrinsics = {
-      module: 'PolkadotXcm',
-      method: 'transfer_assets_using_type_and_then',
-      params: {
-        dest: createVersionedDestination(
-          version,
-          this.chain,
-          hopDestination,
-          getParaId(hopDestination)
-        ),
-        assets: addXcmVersionHeader(
-          [...(shouldIncludeFeeAsset ? [createAsset(version, fee, DOT_LOCATION)] : []), ethAsset],
-          version
-        ),
-
-        assets_transfer_type: 'DestinationReserve',
-        remote_fees_id: addXcmVersionHeader(
-          feeAsset?.location ?? (shouldIncludeFeeAsset ? DOT_LOCATION : asset.location),
-          version
-        ),
-        fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: customXcmOnDest,
-        weight_limit: 'Unlimited'
-      }
-    }
-
-    return api.deserializeExtrinsics(call)
   }
 
   getBalanceNative(

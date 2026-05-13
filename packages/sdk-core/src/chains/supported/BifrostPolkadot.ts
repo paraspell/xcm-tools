@@ -48,12 +48,6 @@ class BifrostPolkadot<TApi, TRes, TSigner>
   }
 
   transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { destination } = options
-
-    if (destination === 'Ethereum') {
-      return this.transferToEthereum(options)
-    }
-
     return transferPolkadotXcm(options)
   }
 

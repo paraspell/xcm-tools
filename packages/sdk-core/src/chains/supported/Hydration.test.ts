@@ -26,16 +26,8 @@ vi.mock('@paraspell/assets', async importActual => ({
   findAssetInfoOrThrow: vi.fn()
 }))
 
-vi.mock('../../transfer/getBridgeStatus', () => ({
-  getBridgeStatus: vi.fn().mockResolvedValue('Normal')
-}))
-
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
-
-type WithTransferToEthereum = Hydration<unknown, unknown, unknown> & {
-  transferToEthereum: Hydration<unknown, unknown, unknown>['transferToEthereum']
-}
 
 describe('Hydration', () => {
   let hydration: Hydration<unknown, unknown, unknown>
@@ -109,11 +101,7 @@ describe('Hydration', () => {
       vi.mocked(findAssetInfoByLoc).mockReturnValue(undefined)
     })
 
-    it('should call api.deserializeExtrinsics with correct parameters', async () => {
-      const spy = vi
-        .spyOn(hydration as WithTransferToEthereum, 'transferToEthereum')
-        .mockResolvedValue('mocked-result')
-
+    it('delegates Ethereum destination to transferPolkadotXcm', async () => {
       vi.mocked(findAssetInfoByLoc).mockReturnValue({
         assetId: '0x1234567890abcdef',
         symbol: 'WETH',
@@ -124,12 +112,14 @@ describe('Hydration', () => {
         }
       })
 
-      await hydration.transferPolkadotXCM({
+      const input = {
         ...mockInput,
         sender: '5Gw3s7q'
-      })
+      }
 
-      expect(spy).toHaveBeenCalled()
+      await hydration.transferPolkadotXCM(input)
+
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
     })
 
     it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', async () => {
