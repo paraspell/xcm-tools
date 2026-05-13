@@ -125,7 +125,12 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
 
   accountToHex(address: string, isPrefixed = true) {
     if (isHex(address)) return address
-    const hex = toHex(AccountId().enc(address))
+    let hex
+    try {
+      hex = toHex(AccountId().enc(address))
+    } catch {
+      throw new InvalidAddressError(`Invalid address: ${address}`)
+    }
     return isPrefixed ? hex : hex.slice(2)
   }
 
