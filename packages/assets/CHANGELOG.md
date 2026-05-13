@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/assets-v13.4.1...assets-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **swap:** Extend builder methods support 🪄 ([22f893e](https://github.com/paraspell/xcm-tools/commit/22f893ef6cec8f2cbfa1d7124bd71140ab2f3222))
+
+
+### Code Refactoring
+
+* **sdk-core:** Use generic type-and-then function for Substrate -&gt; Ethereum 🪄 ([30c4e67](https://github.com/paraspell/xcm-tools/commit/30c4e67539b93bc5d3afb8f8b69dc9bf1fe9e9d6))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([261a38c](https://github.com/paraspell/xcm-tools/commit/261a38c0a45729e1ebec6d0c4ee05b45e698fba7))
+* **swap:** Update swap assets 📋 ([261a38c](https://github.com/paraspell/xcm-tools/commit/261a38c0a45729e1ebec6d0c4ee05b45e698fba7))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/assets-v13.4.0...assets-v13.4.1) (2026-04-30)
 
 

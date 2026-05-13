@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.4.1...sdk-dedot-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **swap:** Extend builder methods support 🪄 ([22f893e](https://github.com/paraspell/xcm-tools/commit/22f893ef6cec8f2cbfa1d7124bd71140ab2f3222))
+
+
+### Bug Fixes
+
+* **sdk-dedot:** Fix transact hex error 🔧 ([d3b0b2b](https://github.com/paraspell/xcm-tools/commit/d3b0b2be7892d734b22ee8128d0ceffb0da07ad0))
+
+
+### Documentation
+
+* Add swap helper queries ([c40a86a](https://github.com/paraspell/xcm-tools/commit/c40a86a0b032f630a11a40fe1497fb0acc75df46))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.4.0...sdk-dedot-v13.4.1) (2026-04-30)
 
 

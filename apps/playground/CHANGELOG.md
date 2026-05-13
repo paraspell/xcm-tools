@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.4.1...playground-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **xcm-api:** Add support for EVM transactions 🪄 ([cc62bb9](https://github.com/paraspell/xcm-tools/commit/cc62bb9c9d4a7493bf9d753a3c05d456e19a71fd))
+
+
+### Bug Fixes
+
+* **playground:** Fix fast refresh not working 🔧 ([8dfbbfe](https://github.com/paraspell/xcm-tools/commit/8dfbbfe39930fadf308610ea6d34e070ba19151c))
+
+
+### Tests
+
+* **playground:** Improve playground e2e tests 🧪 ([f94d8fa](https://github.com/paraspell/xcm-tools/commit/f94d8fa8c829fb8a573d7a469afc5bbe11c69e26))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/playground-v13.4.0...playground-v13.4.1) (2026-04-30)
 
 

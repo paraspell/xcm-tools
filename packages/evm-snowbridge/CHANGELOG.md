@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.4.1...evm-snowbridge-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **xcm-api:** Add support for EVM transactions 🪄 ([cc62bb9](https://github.com/paraspell/xcm-tools/commit/cc62bb9c9d4a7493bf9d753a3c05d456e19a71fd))
+
+
+### Bug Fixes
+
+* **evm-snowbridge:** Add viem client cache ✨ ([5675216](https://github.com/paraspell/xcm-tools/commit/567521640ba9a334cf0139ba2b93fa49a9af2918))
+
+
+### Documentation
+
+* Add EVM XCM Transfers ([635471b](https://github.com/paraspell/xcm-tools/commit/635471be47f97848a99ccadd5ff8f2eb1e084c82))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.4.0...evm-snowbridge-v13.4.1) (2026-04-30)
 
 
