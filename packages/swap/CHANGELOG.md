@@ -1,5 +1,33 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.4.1...swap-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **swap:** Extend builder methods support 🪄 ([22f893e](https://github.com/paraspell/xcm-tools/commit/22f893ef6cec8f2cbfa1d7124bd71140ab2f3222))
+
+
+### Bug Fixes
+
+* **sdk-core:** Do not use RefundSurplus before DepositReserve 🔧 ([f1624de](https://github.com/paraspell/xcm-tools/commit/f1624dede8a6b92ed0d375f30ad721c0e74a6841))
+
+
+### Tests
+
+* **swap:** Add missing tests 🧪 ([e046a03](https://github.com/paraspell/xcm-tools/commit/e046a03e1f1659bc95bd63cf449a9d20342e222e))
+
+
+### Build System
+
+* **swap:** Migrate Hydration SDK to PAPI 🪄 ([84669dc](https://github.com/paraspell/xcm-tools/commit/84669dce74f5fea92a6be1399462fdf3f934112a))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([261a38c](https://github.com/paraspell/xcm-tools/commit/261a38c0a45729e1ebec6d0c4ee05b45e698fba7))
+* **swap:** Update swap assets 📋 ([261a38c](https://github.com/paraspell/xcm-tools/commit/261a38c0a45729e1ebec6d0c4ee05b45e698fba7))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/swap-v13.4.0...swap-v13.4.1) (2026-04-30)
 
 

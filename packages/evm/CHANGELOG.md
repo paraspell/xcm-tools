@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/evm-v13.4.1...evm-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **xcm-api:** Add support for EVM transactions 🪄 ([cc62bb9](https://github.com/paraspell/xcm-tools/commit/cc62bb9c9d4a7493bf9d753a3c05d456e19a71fd))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/evm-v13.4.0...evm-v13.4.1) (2026-04-30)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-dedot",
-  "version": "13.4.1",
+  "version": "13.5.0",
   "description": "Dedot-based SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",

@@ -1,5 +1,20 @@
 # Changelog
 
+## [13.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.4.1...xcm-api-v13.5.0) (2026-05-13)
+
+
+### Features
+
+* **swap:** Extend builder methods support 🪄 ([22f893e](https://github.com/paraspell/xcm-tools/commit/22f893ef6cec8f2cbfa1d7124bd71140ab2f3222))
+* **xcm-api:** Add support for EVM transactions 🪄 ([cc62bb9](https://github.com/paraspell/xcm-tools/commit/cc62bb9c9d4a7493bf9d753a3c05d456e19a71fd))
+* **xcm-api:** Add swap supported assets API endpoints 🪄 ([7b0941c](https://github.com/paraspell/xcm-tools/commit/7b0941c7db9a37d377d2a496bd4b936dc131a5a9))
+
+
+### Documentation
+
+* Add EVM XCM Transfers ([635471b](https://github.com/paraspell/xcm-tools/commit/635471be47f97848a99ccadd5ff8f2eb1e084c82))
+* Add swap helper queries ([c40a86a](https://github.com/paraspell/xcm-tools/commit/c40a86a0b032f630a11a40fe1497fb0acc75df46))
+
 ## [13.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.4.0...xcm-api-v13.4.1) (2026-04-30)
 
 
