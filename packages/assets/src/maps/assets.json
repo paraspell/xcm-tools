@@ -7169,6 +7169,29 @@
         "alias": "VDOT1"
       },
       {
+        "assetId": "50000520",
+        "symbol": "DOT",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000520
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "DOT2"
+      },
+      {
         "assetId": "40",
         "symbol": "PEPE",
         "decimals": 10,
@@ -7484,7 +7507,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "alias": "DOT1"
       },
       {
         "assetId": "1337",
@@ -7578,6 +7602,29 @@
         },
         "existentialDeposit": "1",
         "alias": "ETH2"
+      },
+      {
+        "assetId": "50000523",
+        "symbol": "DED",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000523
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000",
+        "alias": "DED3"
       },
       {
         "assetId": "22222012",
