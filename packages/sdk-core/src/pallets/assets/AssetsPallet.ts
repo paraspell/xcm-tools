@@ -7,7 +7,8 @@ import { BaseAssetsPallet } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
 export class AssetsPallet extends BaseAssetsPallet {
-  mint(
+  mint<TApi, TRes, TSigner>(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,

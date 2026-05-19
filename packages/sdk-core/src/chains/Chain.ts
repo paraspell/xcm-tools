@@ -2,16 +2,14 @@
 
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
-  findAssetInfo,
-  findNativeAssetInfoOrThrow,
   getNativeAssetSymbol,
-  getRelayChainSymbol,
+  getRelayChainSymbolImpl,
   isAssetXcEqual,
   isChainEvm,
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
-import { getOtherAssetsPallets, hasPallet } from '@paraspell/pallets'
+import { getOtherAssetsPallets, hasPalletImpl } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import {
@@ -62,7 +60,7 @@ import {
   resolveDestChain
 } from '../utils'
 import { createAsset } from '../utils/asset'
-import { localizeLocation } from '../utils/location'
+import { localizeLocationImpl } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 
@@ -135,7 +133,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     } = transferOptions
     const scenario = resolveScenario(this.chain, destination)
     const paraId = resolveParaId(paraIdTo, destination)
-    const destChain = resolveDestChain(this.chain, paraId)
+    const destChain = resolveDestChain(api, this.chain, paraId)
 
     const isLocalTransfer = this.chain === destination
     if (isLocalTransfer) {
@@ -156,15 +154,15 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const isRelayAsset =
       deepEqual(asset.location, RELAY_LOCATION) &&
-      isSymbolMatch(getRelayChainSymbol(this.chain), asset.symbol)
+      isSymbolMatch(getRelayChainSymbolImpl(this.chain, api._customCtx), asset.symbol)
 
-    const mythAsset = findNativeAssetInfoOrThrow('Mythos')
+    const mythAsset = api.findNativeAssetInfoOrThrow('Mythos')
     const isMythAsset = isAssetXcEqual(mythAsset, asset)
 
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
 
     const supportsTypeThen = await api.hasMethod(
-      hasPallet(this.chain, 'XcmPallet') ? 'XcmPallet' : 'PolkadotXcm',
+      hasPalletImpl(this.chain, 'XcmPallet', api._customCtx) ? 'XcmPallet' : 'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 
@@ -196,7 +194,7 @@ abstract class Chain<TApi, TRes, TSigner> {
         }),
         sender,
         recipient,
-        asset: this.createAsset(asset, version),
+        asset: this.createAsset(api, asset, version),
         overriddenAsset,
         assetInfo: asset,
         currency,
@@ -358,6 +356,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   shouldUseNativeAssetTeleport({
+    api,
     assetInfo: asset,
     to
   }: TTransferInternalOptions<TApi, TRes, TSigner>): boolean {
@@ -379,14 +378,18 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
 
-    const isRegisteredOnAh = findAssetInfo(assetHubChain, { location: asset.location })
+    const isRegisteredOnAh = api.findAssetInfo(assetHubChain, { location: asset.location })
 
     return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
   }
 
-  createAsset(asset: WithAmount<TAssetInfo>, version: Version): TAsset {
+  createAsset(
+    api: PolkadotApi<TApi, TRes, TSigner>,
+    asset: WithAmount<TAssetInfo>,
+    version: Version
+  ): TAsset {
     const { amount, location } = asset
-    return createAsset(version, amount, localizeLocation(this.chain, location))
+    return createAsset(version, amount, localizeLocationImpl(api, this.chain, location))
   }
 
   getNativeAssetSymbol(): string {
@@ -512,7 +515,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     address: string,
     asset: TAssetInfo
   ) {
-    const pallets = getOtherAssetsPallets(this.chain)
+    const pallets = getOtherAssetsPallets(this.chain, api._customCtx)
     let lastError: unknown
 
     if (pallets.length === 0)

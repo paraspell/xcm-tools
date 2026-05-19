@@ -1,8 +1,9 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, isSymbolMatch } from '@paraspell/assets'
+import { isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
@@ -123,8 +124,14 @@ describe('Jamton', () => {
       location: {}
     } as TAssetInfo
 
+    const mockApi = {
+      findAssetInfoOrThrow: vi.fn().mockReturnValue(mockUsdtAsset)
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+    const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
+
     const input = {
       ...baseInput,
+      api: mockApi,
       assetInfo: {
         symbol: 'WUD',
         assetId: '456',
@@ -134,7 +141,6 @@ describe('Jamton', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isSymbolMatch).mockReturnValue(true)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockUsdtAsset)
     vi.mocked(createAsset)
       .mockReturnValueOnce({
         id: usdtAsset.location,
@@ -145,7 +151,7 @@ describe('Jamton', () => {
     await chain.transferPolkadotXCM(input)
 
     expect(isSymbolMatch).toHaveBeenCalledWith('WUD', 'WUD')
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' })
+    expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' })
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 180_000n, mockUsdtAsset.location)
     expect(createAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.assetInfo.location)
 
@@ -159,15 +165,20 @@ describe('Jamton', () => {
   })
 
   it('should not treat non-WUD symbols as WUD', async () => {
+    const mockApi = {
+      findAssetInfoOrThrow: vi.fn()
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+    const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
     const input = {
       ...baseInput,
+      api: mockApi,
       assetInfo: { ...usdtAsset, amount: 100n }
     }
     vi.mocked(isSymbolMatch).mockReturnValue(false)
 
     await chain.transferPolkadotXCM(input)
 
-    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrowSpy).not.toHaveBeenCalled()
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 })

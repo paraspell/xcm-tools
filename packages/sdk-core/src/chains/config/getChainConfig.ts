@@ -1,8 +1,22 @@
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { isCustomChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
+import { CustomChainInvalidError } from '../../errors'
 import configs from '../../maps/configs.json' with { type: 'json' }
-import type { TChainConfig } from '../../types'
+import type { TChainConfig, TFullCustomCtx } from '../../types'
+import { buildCustomChainConfig } from '../customChains'
 
-export const getChainConfig = (chain: TSubstrateChain): TChainConfig => {
+export const getChainConfigImpl = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  ctx?: TFullCustomCtx
+): TChainConfig => {
+  if (isCustomChain<TCustomChain>(chain)) {
+    const entry = ctx?.customChains?.[chain]
+    if (!entry) {
+      throw new CustomChainInvalidError(`Custom chain '${chain}' is not registered.`)
+    }
+    return buildCustomChainConfig(entry)
+  }
   return configs[chain]
 }
+
+export const getChainConfig = (chain: TSubstrateChain): TChainConfig => getChainConfigImpl(chain)

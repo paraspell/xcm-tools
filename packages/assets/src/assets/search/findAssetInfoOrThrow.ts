@@ -1,15 +1,16 @@
 import { replaceBigInt, type TChain } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
-import type { TAssetInfo, TCurrencyInput } from '../../types'
-import { findAssetInfo } from './findAssetInfo'
+import type { TAssetInfo, TCurrencyInput, TCustomCtx } from '../../types'
+import { findAssetInfoImpl } from './findAssetInfo'
 
-export const findAssetInfoOrThrow = (
+export const findAssetInfoOrThrowImpl = (
   chain: TChain,
   currency: TCurrencyInput,
-  destination?: TChain | null
+  destination?: TChain | null,
+  ctx?: TCustomCtx
 ): TAssetInfo => {
-  const asset = findAssetInfo(chain, currency, destination)
+  const asset = findAssetInfoImpl(chain, currency, destination, ctx)
 
   if (!asset) {
     throw new InvalidCurrencyError(
@@ -19,3 +20,9 @@ export const findAssetInfoOrThrow = (
 
   return asset
 }
+
+export const findAssetInfoOrThrow = (
+  chain: TChain,
+  currency: TCurrencyInput,
+  destination?: TChain | null
+): TAssetInfo => findAssetInfoOrThrowImpl(chain, currency, destination)

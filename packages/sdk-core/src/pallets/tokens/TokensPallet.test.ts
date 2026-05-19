@@ -1,8 +1,11 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { assertHasId, getChain } from '../../utils'
 import { TokensPallet } from './TokensPallet'
+
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 vi.mock('../../utils', () => {
   const selectionValue = { Token: 'BNC' }
@@ -27,7 +30,7 @@ describe('TokensPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledTimes(2)
     expect(getChain).not.toHaveBeenCalled()
@@ -48,7 +51,7 @@ describe('TokensPallet.setBalance', () => {
     const chain = 'BifrostKusama'
     const asset = { amount: 5n } as WithAmount<TAssetInfo>
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledTimes(1)

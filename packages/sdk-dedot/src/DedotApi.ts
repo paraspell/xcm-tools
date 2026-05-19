@@ -15,12 +15,15 @@ import type {
   TLocation,
   TModuleError,
   TPallet,
+  TPalletEntry,
   TPaymentInfo,
+  TRuntimeApi,
   TSender,
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
   TSubstrateChain,
+  TSystemProperties,
   TUrl,
   TWeight,
   Version,
@@ -34,7 +37,7 @@ import {
   EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
-  getChainProviders,
+  getChainProvidersImpl,
   getRelayChainOf,
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
@@ -247,6 +250,28 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     return Promise.resolve(
       this.api.tx[palletFormatted]?.[methodFormatted] !== undefined,
     );
+  }
+
+  hasRuntimeApi(runtimeApi: TRuntimeApi): Promise<boolean> {
+    return Promise.resolve(
+      this.api.call[lowercaseFirstLetter(runtimeApi)] !== undefined,
+    );
+  }
+
+  fetchPalletList(): Promise<TPalletEntry[]> {
+    const entries: TPalletEntry[] = this.api.metadata.latest.pallets.map(
+      (p) => ({
+        name: p.name,
+        index: p.index,
+        hasExtrinsics: p.calls !== undefined,
+      }),
+    );
+    return Promise.resolve(entries);
+  }
+
+  isEvmChain(): Promise<boolean> {
+    const path = this.api.metadata.latest.types[0]?.path;
+    return Promise.resolve(path?.includes("AccountId20") ?? false);
   }
 
   async getFromRpc(module: string, method: string, key: string) {
@@ -813,6 +838,22 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     return outboundOperatingMode as TBridgeStatus;
   }
 
+  async getSystemProperties(): Promise<TSystemProperties> {
+    const props = (await (this.api.rpc as any).system_properties()) as
+      | {
+          ss58Format?: number;
+          tokenSymbol?: string | string[];
+          tokenDecimals?: number | number[];
+        }
+      | undefined;
+    return {
+      ss58Format:
+        typeof props?.ss58Format === "number" ? props.ss58Format : undefined,
+      tokenSymbol: [props?.tokenSymbol].flat()[0],
+      tokenDecimals: [props?.tokenDecimals].flat()[0],
+    };
+  }
+
   disconnect(force = false) {
     if (!this._chain) return Promise.resolve();
     if (!force && !this.disconnectAllowed) return Promise.resolve();
@@ -831,7 +872,10 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
       if (force) {
         void this.api.disconnect();
       } else {
-        const key = api === undefined ? getChainProviders(this._chain) : api;
+        const key =
+          api === undefined
+            ? getChainProvidersImpl(this._chain, this._customCtx)
+            : api;
         releaseClient(key);
       }
     }

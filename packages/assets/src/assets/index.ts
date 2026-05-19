@@ -1,5 +1,6 @@
 export * from './assets'
 export * from './assetSelectors'
+export { normalizeCustomAssets } from './customAssets'
 export * from './getExistentialDeposit'
 export * from './getSupportedAssets'
 export * from './getSupportedDestinations'

@@ -36,3 +36,11 @@ export type ClientCache<T> = {
 
 export const API_TYPES = ['PAPI', 'PJS', 'DEDOT'] as const
 export type TApiType = (typeof API_TYPES)[number]
+
+export type TRuntimeApi = 'DryRunApi' | 'XcmPaymentApi'
+
+export type TSystemProperties = {
+  ss58Format?: number
+  tokenSymbol?: string
+  tokenDecimals?: number
+}

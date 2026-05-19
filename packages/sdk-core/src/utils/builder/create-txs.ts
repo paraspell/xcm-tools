@@ -1,5 +1,4 @@
 import type { TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
-import { findAssetInfoOrThrow } from '@paraspell/assets'
 
 import type { GeneralBuilder } from '../../builder'
 import { UnsupportedOperationError } from '../../errors'
@@ -30,7 +29,7 @@ export const computeOverridenAmount = <TApi, TRes, TSigner>(
     return Number(increaseAmount) + base
   } else {
     assertToIsString(to)
-    const asset = findAssetInfoOrThrow(from, currency, to)
+    const asset = api.findAssetInfoOrThrow(from, currency, to)
     const base = relative ? BigInt(amount) : 0n
     return parseUnits(increaseAmount, asset.decimals) + base
   }

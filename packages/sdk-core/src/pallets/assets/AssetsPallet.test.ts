@@ -8,6 +8,8 @@ import { AssetsPallet } from './AssetsPallet'
 vi.mock('@paraspell/assets')
 vi.mock('../../utils')
 
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
+
 describe('AssetsPallet.setBalance', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -22,7 +24,7 @@ describe('AssetsPallet.setBalance', () => {
     vi.mocked(isChainEvm).mockReturnValue(true)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(res.assetStatusTx?.module).toBe('Assets')
@@ -53,7 +55,7 @@ describe('AssetsPallet.setBalance', () => {
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(typeof res.assetStatusTx?.params.id).toBe('number')

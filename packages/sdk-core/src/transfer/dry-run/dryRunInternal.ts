@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { findAssetInfoOrThrow, hasDryRunSupport } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
@@ -41,10 +40,10 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
 
   assertCurrencyCore(currency)
 
-  const asset = findAssetInfoOrThrow(origin, currency, destination)
+  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   const amount = abstractDecimals(
@@ -53,7 +52,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     api
   )
 
-  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+  const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
   const originDryRun = await api.getDryRunCall({
     tx,
@@ -117,10 +116,10 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     })
 
     const hopAsset = isDestination
-      ? (inferFeeAsset(origin, destination, asset) ?? resolvedHopAsset)
+      ? (inferFeeAsset(origin, destination, asset, api) ?? resolvedHopAsset)
       : resolvedHopAsset
 
-    if (!hasDryRunSupport(currentChain)) {
+    if (!api.hasDryRunSupport(currentChain)) {
       return {
         success: false,
         asset: currentAsset,

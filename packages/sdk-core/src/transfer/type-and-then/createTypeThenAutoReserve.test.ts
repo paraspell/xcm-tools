@@ -27,7 +27,7 @@ describe('createTypeThenAutoReserve', () => {
     recipient: 'Alice',
     sender: 'Bob',
     currency: { symbol: 'DOT' }
-  } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+  } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   const ahCall: TSerializedExtrinsics = {
     module: 'XcmPallet',

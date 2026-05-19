@@ -1,9 +1,4 @@
-import {
-  findAssetInfoOrThrow,
-  getRelayChainSymbol,
-  isAssetEqual,
-  isChainEvm
-} from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 
 import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
@@ -27,19 +22,19 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
   feeAsset,
   version
 }: TGetTransferInfoOptions<TApi, TRes, TSigner>): Promise<TTransferInfo> => {
-  if (isChainEvm(origin) && !ahAddress) {
+  if (api.isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
   }
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   await api.init(origin)
   api.disconnectAllowed = false
 
   try {
-    const originAsset = findAssetInfoOrThrow(origin, currency, destination)
+    const originAsset = api.findAssetInfoOrThrow(origin, currency, destination)
 
     const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
 
@@ -122,7 +117,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
       chain: {
         origin,
         destination,
-        ecosystem: getRelayChainSymbol(origin)
+        ecosystem: api.getRelayChainSymbol(origin)
       },
       origin: originInfo,
       hops: builtHops,

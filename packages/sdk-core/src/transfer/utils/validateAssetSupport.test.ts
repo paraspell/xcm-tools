@@ -1,6 +1,4 @@
 import {
-  findAssetInfoOnDest,
-  findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
   isBridgedSystemAsset,
@@ -9,6 +7,7 @@ import {
 import { isExternalChain, isTLocation, Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import {
@@ -17,6 +16,14 @@ import {
   validateEthereumAsset
 } from './validateAssetSupport'
 
+const mockApi = {
+  findNativeAssetInfoOrThrow: vi.fn(),
+  findAssetInfoOnDest: vi.fn()
+} as unknown as PolkadotApi<unknown, unknown, unknown>
+
+const findNativeAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+const findAssetInfoOnDestSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest')
+
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
   isExternalChain: vi.fn(),
@@ -24,8 +31,6 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  findNativeAssetInfoOrThrow: vi.fn(),
-  findAssetInfoOnDest: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isAssetEqual: vi.fn(),
   isBridgedSystemAsset: vi.fn(),
@@ -40,13 +45,14 @@ describe('validateAssetSupport', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(isExternalChain).mockReturnValue(false)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
   })
 
   it('should not throw when bridged asset matches target relay consensus', () => {
     const options = {
+      api: mockApi,
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'BRIDGED' }
@@ -64,8 +70,8 @@ describe('validateAssetSupport', () => {
       }
     } as unknown as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue(asset)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    findAssetInfoOnDestSpy.mockReturnValue(asset)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(isBridgedSystemAsset).mockReturnValue(true)
 
@@ -75,6 +81,7 @@ describe('validateAssetSupport', () => {
 
   it('should throw when bridge asset is neither native nor bridged', () => {
     const options = {
+      api: mockApi,
       from: 'Astar',
       to: 'Acala',
       currency: { symbol: 'FOREIGN' }
@@ -92,9 +99,9 @@ describe('validateAssetSupport', () => {
       }
     } as unknown as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue({ symbol: 'FOREIGN' } as TAssetInfo)
+    findAssetInfoOnDestSpy.mockReturnValue({ symbol: 'FOREIGN' } as TAssetInfo)
 
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
 
@@ -108,6 +115,7 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination is not AssetHub', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'TEST' }
@@ -117,13 +125,14 @@ describe('validateAssetSupport', () => {
     const isBridge = false
     const asset = { symbol: 'TEST' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
+    findAssetInfoOnDestSpy.mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
 
   it('should not throw when origin is Bifrost', () => {
     const options = {
+      api: mockApi,
       from: 'BifrostPolkadot',
       to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
@@ -133,13 +142,14 @@ describe('validateAssetSupport', () => {
     const isBridge = false
     const asset = { symbol: 'TEST' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
+    findAssetInfoOnDestSpy.mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
 
   it('should throw InvalidCurrencyError when destination does not support asset', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNSUPPORTED' }
@@ -149,7 +159,7 @@ describe('validateAssetSupport', () => {
     const isBridge = false
     const asset = { symbol: 'UNSUPPORTED' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue(null)
+    findAssetInfoOnDestSpy.mockReturnValue(null)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       InvalidCurrencyError
@@ -161,6 +171,7 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination supports asset', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'SUPPORTED' }
@@ -170,13 +181,14 @@ describe('validateAssetSupport', () => {
     const isBridge = false
     const asset = { symbol: 'SUPPORTED' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValue({ symbol: 'SUPPORTED' } as TAssetInfo)
+    findAssetInfoOnDestSpy.mockReturnValue({ symbol: 'SUPPORTED' } as TAssetInfo)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
 
   it('should not throw when assetCheckEnabled is false', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'ANY' }
@@ -191,6 +203,7 @@ describe('validateAssetSupport', () => {
 
   it('should call throwUnsupportedCurrency when asset is null and assetCheckEnabled is true', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'UNKNOWN' }
@@ -207,6 +220,7 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination is a location object', () => {
     const options = {
+      api: mockApi,
       from: 'Acala',
       to: {} as TDestination,
       currency: { symbol: 'TEST' }
@@ -221,6 +235,7 @@ describe('validateAssetSupport', () => {
 
   it('should call validateEthereumAsset', () => {
     const options = {
+      api: mockApi,
       from: 'AssetHubPolkadot',
       to: 'Ethereum',
       currency: { symbol: 'DOT' }

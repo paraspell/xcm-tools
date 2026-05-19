@@ -14,12 +14,15 @@ import type {
   TLocation,
   TModuleError,
   TPallet,
+  TPalletEntry,
   TPaymentInfo,
+  TRuntimeApi,
   TSender,
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
   TSubstrateChain,
+  TSystemProperties,
   TUrl,
   TWeight,
   Version
@@ -33,7 +36,7 @@ import {
   EXTENSION_MS,
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
-  getChainProviders,
+  getChainProvidersImpl,
   getRelayChainOf,
   hasXcmPaymentApiSupport,
   isAssetXcEqual,
@@ -200,6 +203,28 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     const palletFormatted = lowercaseFirstLetter(pallet)
     const methodFormatted = snakeToCamel(method)
     return Promise.resolve(this.api.tx[palletFormatted]?.[methodFormatted] !== undefined)
+  }
+
+  hasRuntimeApi(runtimeApi: TRuntimeApi): Promise<boolean> {
+    return Promise.resolve(this.api.call[lowercaseFirstLetter(runtimeApi)] !== undefined)
+  }
+
+  fetchPalletList(): Promise<TPalletEntry[]> {
+    const entries: TPalletEntry[] = this.api.runtimeMetadata.asLatest.pallets.map(p => {
+      const name = p.name.toString()
+      return {
+        name,
+        index: p.index.toNumber(),
+        hasExtrinsics: this.api.tx[lowercaseFirstLetter(name)] !== undefined
+      }
+    })
+    return Promise.resolve(entries)
+  }
+
+  isEvmChain(): Promise<boolean> {
+    const types = this.api.runtimeMetadata.asLatest.lookup.types
+    const path = types[0]?.type.path.toJSON() as string[] | undefined
+    return Promise.resolve(path?.includes('AccountId20') ?? false)
   }
 
   async getFromRpc(module: string, method: string, key: string) {
@@ -731,6 +756,19 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     return outboundOperatingMode.toPrimitive() as TBridgeStatus
   }
 
+  async getSystemProperties(): Promise<TSystemProperties> {
+    const props = (await this.api.rpc.system.properties()).toPrimitive() as {
+      ss58Format: number | null
+      tokenSymbol: string[] | null
+      tokenDecimals: number[] | null
+    }
+    return {
+      ss58Format: props.ss58Format ?? undefined,
+      tokenSymbol: props.tokenSymbol?.[0],
+      tokenDecimals: props.tokenDecimals?.[0]
+    }
+  }
+
   disconnect(force = false) {
     if (!this._chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
@@ -747,7 +785,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       if (force) {
         void this.api.disconnect()
       } else {
-        const key = api === undefined ? getChainProviders(this._chain) : api
+        const key = api === undefined ? getChainProvidersImpl(this._chain, this._customCtx) : api
         releaseClient(key)
       }
     }

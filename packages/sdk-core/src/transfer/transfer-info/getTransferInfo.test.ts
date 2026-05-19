@@ -1,11 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getExistentialDepositOrThrow } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  getRelayChainSymbol,
-  isAssetEqual,
-  isChainEvm
-} from '@paraspell/assets'
+import { getExistentialDepositOrThrow, isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -28,12 +22,9 @@ import { getTransferInfo } from './getTransferInfo'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  findAssetInfoOrThrow: vi.fn(),
   getExistentialDepositOrThrow: vi.fn(),
-  getRelayChainSymbol: vi.fn(),
   isAssetXcEqual: vi.fn(),
-  isAssetEqual: vi.fn(),
-  isChainEvm: vi.fn()
+  isAssetEqual: vi.fn()
 }))
 
 vi.mock('../../errors')
@@ -45,8 +36,15 @@ vi.mock('../fees')
 vi.mock('./buildDestInfo')
 vi.mock('./buildHopInfo')
 
+const mkApiSpies = (api: PolkadotApi<unknown, unknown, unknown>) => ({
+  findAssetInfoOrThrow: vi.spyOn(api, 'findAssetInfoOrThrow'),
+  isChainEvm: vi.spyOn(api, 'isChainEvm'),
+  getRelayChainSymbol: vi.spyOn(api, 'getRelayChainSymbol')
+})
+
 describe('getTransferInfo', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
+  let apiSpies: ReturnType<typeof mkApiSpies>
   let mockTx: unknown
   let baseOptions: Omit<TGetTransferInfoOptions<unknown, unknown, unknown>, 'api' | 'tx'>
 
@@ -64,8 +62,12 @@ describe('getTransferInfo', () => {
     mockApi = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnectAllowed: vi.fn(),
-      disconnect: vi.fn().mockResolvedValue(undefined)
+      disconnect: vi.fn().mockResolvedValue(undefined),
+      findAssetInfoOrThrow: vi.fn(),
+      isChainEvm: vi.fn(),
+      getRelayChainSymbol: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
+    apiSpies = mkApiSpies(mockApi)
     mockTx = {}
 
     baseOptions = {
@@ -84,9 +86,9 @@ describe('getTransferInfo', () => {
       feeAsset: { symbol: 'DOT', type: 'NATIVE' } as TCurrencyCore
     }
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(dotAsset)
+    apiSpies.isChainEvm.mockReturnValue(false)
+    vi.mocked(resolveFeeAsset).mockImplementation((_api, feeAsset) => feeAsset as TAssetInfo)
+    apiSpies.findAssetInfoOrThrow.mockReturnValue(dotAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000000000n)
@@ -111,7 +113,7 @@ describe('getTransferInfo', () => {
       destination: { fee: 70000000n, asset: dotAsset }
     } as TGetXcmFeeResult)
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
+    apiSpies.getRelayChainSymbol.mockReturnValue('DOT')
     vi.mocked(buildHopInfo).mockResolvedValue({
       asset: dotAsset,
       xcmFee: {
@@ -148,7 +150,7 @@ describe('getTransferInfo', () => {
 
     expect(initSpy).toHaveBeenCalledWith(options.origin)
     expect(disconnectAllowedSpy).toHaveBeenCalledWith(false)
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(
+    expect(apiSpies.findAssetInfoOrThrow).toHaveBeenCalledWith(
       options.origin,
       options.currency,
       options.destination
@@ -265,7 +267,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should throw MissingParameterError if origin is EVM and ahAddress is not provided', async () => {
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    apiSpies.isChainEvm.mockReturnValue(true)
     const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
@@ -318,9 +320,9 @@ describe('getTransferInfo', () => {
       symbol: 'USDT',
       amount: 50000000n
     } as WithAmount<TCurrencyCore>
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    apiSpies.isChainEvm.mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    apiSpies.findAssetInfoOrThrow.mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
@@ -329,7 +331,7 @@ describe('getTransferInfo', () => {
         interior: { X1: [{ Parachain: 1000 }] }
       }
     })
-    vi.mocked(resolveFeeAsset).mockImplementation(feeAsset => feeAsset as TAssetInfo)
+    vi.mocked(resolveFeeAsset).mockImplementation((_api, feeAsset) => feeAsset as TAssetInfo)
     vi.mocked(getAssetBalanceInternal)
       .mockResolvedValueOnce(100000000n)
       .mockResolvedValueOnce(100000000n)
@@ -392,7 +394,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should call api.setDisconnectAllowed(true) and api.disconnect() in finally block even on error', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockImplementation(() => {
+    apiSpies.findAssetInfoOrThrow.mockImplementation(() => {
       throw new Error('Simulated error in findAssetInfoOrThrow')
     })
     const options = { ...baseOptions, api: mockApi }
@@ -411,7 +413,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    apiSpies.isChainEvm.mockReturnValue(true)
     const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,

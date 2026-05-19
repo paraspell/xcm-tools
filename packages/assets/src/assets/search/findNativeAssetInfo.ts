@@ -1,10 +1,10 @@
 import { isExternalChain, type TChain } from '@paraspell/sdk-common'
 
-import type { TCurrencyInput } from '../../types'
+import type { TCurrencyInput, TCustomCtx } from '../../types'
 import { getNativeAssetSymbol } from '../assets'
 import { Native } from '../assetSelectors'
-import { findAssetInfo } from './findAssetInfo'
-import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
+import { findAssetInfoImpl } from './findAssetInfo'
+import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
 
 const createSelection = (chain: TChain): TCurrencyInput => {
   const nativeSymbol = getNativeAssetSymbol(chain)
@@ -13,7 +13,12 @@ const createSelection = (chain: TChain): TCurrencyInput => {
   }
 }
 
-export const findNativeAssetInfo = (chain: TChain) => findAssetInfo(chain, createSelection(chain))
+export const findNativeAssetInfoImpl = (chain: TChain, ctx?: TCustomCtx) =>
+  findAssetInfoImpl(chain, createSelection(chain), null, ctx)
 
-export const findNativeAssetInfoOrThrow = (chain: TChain) =>
-  findAssetInfoOrThrow(chain, createSelection(chain))
+export const findNativeAssetInfo = (chain: TChain) => findNativeAssetInfoImpl(chain)
+
+export const findNativeAssetInfoOrThrowImpl = (chain: TChain, ctx?: TCustomCtx) =>
+  findAssetInfoOrThrowImpl(chain, createSelection(chain), null, ctx)
+
+export const findNativeAssetInfoOrThrow = (chain: TChain) => findNativeAssetInfoOrThrowImpl(chain)

@@ -25,9 +25,14 @@ import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchPenpalForeignAssets } from './fetchPenpalAssets'
-import { TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
-import { getChainProviders, getParaId, reverseTransformLocation } from '../../sdk-core/src'
-import { getRelayChainSymbolOf, isChainEvm } from './utils'
+import { DEFAULT_SS58_PREFIX, TJunction, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  getChainProviders,
+  getParaId,
+  getRelayChainSymbolOf,
+  reverseTransformLocation
+} from '../../sdk-core/src'
+import { isChainEvm } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchHydrationAssets } from './fetchHydrationAssets'
@@ -41,7 +46,6 @@ import {
 import { fetchBasiliskAssets } from './fetchBasiliskAssets'
 import { fetchAssetHubAssets } from './fetchAssetHubAssets'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
-import { DEFAULT_SS58_PREFIX } from './consts'
 import { fetchXodeOtherAssets } from './fetchXodeAssets'
 import { fetchEnergyWebXAssets } from './fetchEnergyWebXAssets'
 import { TAssetInfoNoLoc } from './types'
@@ -348,7 +352,7 @@ const fetchChainAssets = async (
   try {
     ss58Prefix = +api.consts.system.ss58Prefix.toString()
   } catch (e) {
-    console.warn(`[${chain}] ss58Prefix unavailable - using default 42`, e)
+    console.warn(`[${chain}] ss58Prefix unavailable - using default ${DEFAULT_SS58_PREFIX}`, e)
   }
 
   const paraId = getParaId(chain)

@@ -1,14 +1,51 @@
+import {
+  findAssetInfoImpl,
+  findAssetInfoOnDestImpl,
+  findAssetInfoOrThrowImpl,
+  findAssetOnDestOrThrowImpl,
+  findNativeAssetInfoImpl,
+  findNativeAssetInfoOrThrowImpl,
+  getAssetsImpl,
+  getAssetsObjectImpl,
+  getNativeAssetsImpl,
+  getNativeAssetSymbolImpl,
+  getOtherAssetsImpl,
+  getRelayChainSymbolImpl,
+  hasDryRunSupportImpl,
+  hasXcmPaymentApiSupportImpl,
+  isChainEvmImpl
+} from '@paraspell/assets'
+import type { TPalletEntry } from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DEFAULT_TTL_MS } from '../constants'
-import { ApiNotInitializedError } from '../errors'
+import { ApiNotInitializedError, UnsupportedOperationError } from '../errors'
 import type { TBridgeStatus, TBuilderOptions, TDryRunChainResult } from '../types'
 import { PolkadotApi } from './PolkadotApi'
 import { resolveChainApi } from './resolveChainApi'
 
 vi.mock('./resolveChainApi')
 
-class ConcreteApi extends PolkadotApi<unknown, unknown, unknown> {
+vi.mock('@paraspell/assets', async importOriginal => ({
+  ...(await importOriginal()),
+  getAssetsObjectImpl: vi.fn(),
+  getAssetsImpl: vi.fn(),
+  getNativeAssetsImpl: vi.fn(),
+  getOtherAssetsImpl: vi.fn(),
+  findAssetInfoImpl: vi.fn(),
+  findAssetInfoOrThrowImpl: vi.fn(),
+  findAssetInfoOnDestImpl: vi.fn(),
+  findAssetOnDestOrThrowImpl: vi.fn(),
+  findNativeAssetInfoImpl: vi.fn(),
+  findNativeAssetInfoOrThrowImpl: vi.fn(),
+  isChainEvmImpl: vi.fn(),
+  getNativeAssetSymbolImpl: vi.fn(),
+  getRelayChainSymbolImpl: vi.fn(),
+  hasDryRunSupportImpl: vi.fn(),
+  hasXcmPaymentApiSupportImpl: vi.fn()
+}))
+
+class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   readonly type = 'PAPI' as const
 
   leaseClient = () => Promise.resolve({})
@@ -27,7 +64,10 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown> {
   stringToUint8a = () => new Uint8Array()
   getMethod = () => ''
   getTypeThenAssetCount = () => undefined
-  hasMethod = () => Promise.resolve(false)
+  hasMethod = (_pallet: string, _method: string) => Promise.resolve(false)
+  hasRuntimeApi = (_runtimeApi: string) => Promise.resolve(false)
+  fetchPalletList = (): Promise<TPalletEntry[]> => Promise.resolve([])
+  isEvmChain = () => Promise.resolve(false)
   getPaymentInfo = () => Promise.resolve({ partialFee: 0n, weight: { refTime: 0n, proofSize: 0n } })
   getXcmWeight = () => Promise.resolve({ refTime: 0n, proofSize: 0n })
   getXcmPaymentApiFee = () => Promise.resolve(0n)
@@ -56,6 +96,7 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown> {
   deriveAddress = () => ''
   signAndSubmit = () => Promise.resolve('')
   signAndSubmitFinalized = () => Promise.resolve('')
+  getSystemProperties = () => Promise.resolve({})
 }
 
 describe('PolkadotApi', () => {
@@ -113,6 +154,138 @@ describe('PolkadotApi', () => {
     })
   })
 
+  describe('asset/chain query delegations', () => {
+    const ctx = expect.objectContaining({}) as unknown as Record<string, unknown>
+    const chain = 'Acala'
+
+    type Case = {
+      method: keyof PolkadotApi<unknown, unknown, unknown>
+      impl: ReturnType<typeof vi.fn>
+      args: unknown[]
+      expectedArgs: unknown[]
+      returnValue: unknown
+    }
+
+    const cases: Case[] = [
+      {
+        method: 'getAssetsObject',
+        impl: vi.mocked(getAssetsObjectImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: { assets: [] }
+      },
+      {
+        method: 'getAssets',
+        impl: vi.mocked(getAssetsImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: []
+      },
+      {
+        method: 'getNativeAssets',
+        impl: vi.mocked(getNativeAssetsImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: []
+      },
+      {
+        method: 'getOtherAssets',
+        impl: vi.mocked(getOtherAssetsImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: []
+      },
+      {
+        method: 'findAssetInfo',
+        impl: vi.mocked(findAssetInfoImpl),
+        args: [chain, { symbol: 'A' }, 'Polkadot'],
+        expectedArgs: [chain, { symbol: 'A' }, 'Polkadot', ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'findAssetInfoOrThrow',
+        impl: vi.mocked(findAssetInfoOrThrowImpl),
+        args: [chain, { symbol: 'A' }, 'Polkadot'],
+        expectedArgs: [chain, { symbol: 'A' }, 'Polkadot', ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'findAssetInfoOnDest',
+        impl: vi.mocked(findAssetInfoOnDestImpl),
+        args: [chain, 'Polkadot', { symbol: 'A' }, null],
+        expectedArgs: [chain, 'Polkadot', { symbol: 'A' }, null, ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'findAssetOnDestOrThrow',
+        impl: vi.mocked(findAssetOnDestOrThrowImpl),
+        args: [chain, 'Polkadot', { symbol: 'A' }],
+        expectedArgs: [chain, 'Polkadot', { symbol: 'A' }, ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'findNativeAssetInfo',
+        impl: vi.mocked(findNativeAssetInfoImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'findNativeAssetInfoOrThrow',
+        impl: vi.mocked(findNativeAssetInfoOrThrowImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: { symbol: 'A', decimals: 12 }
+      },
+      {
+        method: 'isChainEvm',
+        impl: vi.mocked(isChainEvmImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: false
+      },
+      {
+        method: 'getNativeAssetSymbol',
+        impl: vi.mocked(getNativeAssetSymbolImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: 'ACA'
+      },
+      {
+        method: 'getRelayChainSymbol',
+        impl: vi.mocked(getRelayChainSymbolImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: 'DOT'
+      },
+      {
+        method: 'hasDryRunSupport',
+        impl: vi.mocked(hasDryRunSupportImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: true
+      },
+      {
+        method: 'hasXcmPaymentApiSupport',
+        impl: vi.mocked(hasXcmPaymentApiSupportImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: true
+      }
+    ]
+
+    it.each(cases)(
+      'forwards $method to its impl with the custom ctx',
+      ({ method, impl, args, expectedArgs, returnValue }) => {
+        impl.mockReturnValue(returnValue)
+        const api = new ConcreteApi()
+        const result = (api[method] as (...a: unknown[]) => unknown)(...args)
+        expect(impl).toHaveBeenCalledWith(...expectedArgs)
+        expect(result).toBe(returnValue)
+      }
+    )
+  })
+
   describe('init', () => {
     it('should return early if chain is already set', async () => {
       const instance = new ConcreteApi()
@@ -160,6 +333,142 @@ describe('PolkadotApi', () => {
 
       expect(instance._chain).toBe('Acala')
       expect(resolveChainApi).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('maybeHydrateCustomChain', () => {
+    const buildInstance = (hasMethod: (pallet: string, method: string) => boolean) => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi({
+        customChains: {
+          MyCustom: {
+            paraId: 4242,
+            ecosystem: 'Polkadot',
+            providers: [{ name: 'rpc', endpoint: 'wss://example' }],
+            ss58Prefix: 42,
+            nativeAssetSymbol: 'CUS',
+            nativeAssetDecimals: 12
+          }
+        }
+      })
+      instance.hasMethod = vi.fn((pallet: string, method: string) =>
+        Promise.resolve(hasMethod(pallet, method))
+      )
+      instance.hasRuntimeApi = vi.fn(() => Promise.resolve(false))
+      instance.isEvmChain = vi.fn(() => Promise.resolve(false))
+      instance.fetchPalletList = vi.fn(() =>
+        Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
+      )
+      return instance
+    }
+
+    it('detects PolkadotXcm and stores it on the hydrated assets info', async () => {
+      const instance = buildInstance(
+        (pallet, method) => pallet === 'PolkadotXcm' && method === 'send'
+      )
+      await instance.init('MyCustom')
+      expect(instance.hasMethod).toHaveBeenCalledWith('PolkadotXcm', 'send')
+      expect(instance.hasMethod).toHaveBeenCalledWith('XcmPallet', 'send')
+    })
+
+    it('detects XcmPallet when PolkadotXcm is absent', async () => {
+      const instance = buildInstance(
+        (pallet, method) => pallet === 'XcmPallet' && method === 'send'
+      )
+      await expect(instance.init('MyCustom')).resolves.not.toThrow()
+    })
+
+    it('throws UnsupportedOperationError when neither pallet is present', async () => {
+      const instance = buildInstance(() => false)
+      await expect(instance.init('MyCustom')).rejects.toThrow(UnsupportedOperationError)
+    })
+
+    it('hydrates ss58 / native symbol / native decimals from system properties when omitted', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi({
+        customChains: {
+          MyCustom: {
+            paraId: 4242,
+            ecosystem: 'Polkadot',
+            providers: [{ name: 'rpc', endpoint: 'wss://example' }]
+          }
+        }
+      })
+      instance.hasMethod = vi.fn((pallet: string, method: string) =>
+        Promise.resolve(pallet === 'PolkadotXcm' && method === 'send')
+      )
+      instance.hasRuntimeApi = vi.fn(() => Promise.resolve(false))
+      instance.isEvmChain = vi.fn(() => Promise.resolve(false))
+      instance.fetchPalletList = vi.fn(() =>
+        Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
+      )
+      instance.getSystemProperties = vi.fn(() =>
+        Promise.resolve({ ss58Format: 7, tokenSymbol: 'CUS', tokenDecimals: 18 })
+      )
+
+      await instance.init('MyCustom')
+
+      expect(instance.getSystemProperties).toHaveBeenCalledOnce()
+      const entry = instance._customCtx.customChains?.MyCustom
+      expect(entry).toMatchObject({
+        ss58Prefix: 7,
+        nativeAssetSymbol: 'CUS',
+        nativeAssetDecimals: 18
+      })
+      expect(instance._customCtx.customChainAssets?.MyCustom).toBeDefined()
+    })
+
+    it('skips system-property fetching when all native props are already set', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi({
+        customChains: {
+          MyCustom: {
+            paraId: 4242,
+            ecosystem: 'Polkadot',
+            providers: [{ name: 'rpc', endpoint: 'wss://example' }],
+            ss58Prefix: 42,
+            nativeAssetSymbol: 'CUS',
+            nativeAssetDecimals: 12
+          }
+        }
+      })
+      instance.hasMethod = vi.fn((pallet: string, method: string) =>
+        Promise.resolve(pallet === 'PolkadotXcm' && method === 'send')
+      )
+      instance.hasRuntimeApi = vi.fn(() => Promise.resolve(false))
+      instance.isEvmChain = vi.fn(() => Promise.resolve(false))
+      instance.fetchPalletList = vi.fn(() =>
+        Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
+      )
+      const sysProps = vi.fn(() => Promise.resolve({}))
+      instance.getSystemProperties = sysProps
+
+      await instance.init('MyCustom')
+
+      expect(sysProps).not.toHaveBeenCalled()
+    })
+
+    it('returns early in maybeHydrateCustomChain when chain is not a custom chain', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi()
+      const sysProps = vi.fn(() => Promise.resolve({}))
+      instance.getSystemProperties = sysProps
+
+      await instance.init('Acala')
+
+      expect(sysProps).not.toHaveBeenCalled()
+    })
+
+    it('passes a leaseClient callback that forwards wsUrl + ttl', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi()
+      const leaseSpy = vi.spyOn(instance, 'leaseClient')
+
+      await instance.init('Acala', 12_345)
+
+      const cb = vi.mocked(resolveChainApi).mock.calls[0][2]
+      await cb('wss://endpoint')
+      expect(leaseSpy).toHaveBeenCalledWith('wss://endpoint', 12_345)
     })
   })
 })

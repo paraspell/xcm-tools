@@ -23,6 +23,16 @@ describe('isConfig', () => {
     expect(isConfig(input)).toBe(true)
   })
 
+  it('should return true for object with customAssets', () => {
+    const input = { customAssets: {} }
+    expect(isConfig(input)).toBe(true)
+  })
+
+  it('should return true for object with customChains', () => {
+    const input = { customChains: {} }
+    expect(isConfig(input)).toBe(true)
+  })
+
   it('should return false for null', () => {
     expect(isConfig(null)).toBe(false)
   })

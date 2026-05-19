@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetOnDestOrThrow, getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -23,8 +23,11 @@ describe('verifyEdOnDestinationInternal', () => {
     getMethod: vi.fn(),
     clone: () => ({
       init: vi.fn()
-    })
+    }),
+    findAssetOnDestOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const findAssetOnDestOrThrowSpy = vi.spyOn(mockApi, 'findAssetOnDestOrThrow')
 
   const mockOrigin = 'OriginChain' as TSubstrateChain
   const mockDestination = 'DestinationChain' as TChain
@@ -70,7 +73,7 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.resetAllMocks()
     buildTx.mockClear()
     vi.mocked(validateAddress).mockImplementation(() => {})
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue(asset)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue(xcmFeeRes)
@@ -131,7 +134,11 @@ describe('verifyEdOnDestinationInternal', () => {
     const result = await verifyEdOnDestinationInternal(defaultOptions)
 
     expect(result).toBe(true)
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(mockOrigin, mockDestination, mockCurrency)
+    expect(findAssetOnDestOrThrowSpy).toHaveBeenCalledWith(
+      mockOrigin,
+      mockDestination,
+      mockCurrency
+    )
     expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(asset)
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       address: mockAddress,
@@ -175,7 +182,7 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('throws if asset symbol and fee currency mismatch (normalizeSymbol)', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAssetInfo)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
       destination: { fee: 1000000000n, feeType: 'paymentInfo', asset }

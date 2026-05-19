@@ -1,5 +1,4 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -14,7 +13,8 @@ vi.mock('./padFee')
 
 describe('getMythosOriginFee', () => {
   const mockApi = {
-    clone: vi.fn()
+    clone: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockClone = {
@@ -30,7 +30,7 @@ describe('getMythosOriginFee', () => {
 
   it('returns padded fee when conversion succeeds', async () => {
     vi.mocked(getParaEthTransferFees).mockResolvedValue([100n, 50n]) // bridge + ah fee
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+    const findNativeSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'MYTH',
       decimals: 18,
       location: { parents: 1, interior: [] }
@@ -47,7 +47,7 @@ describe('getMythosOriginFee', () => {
     expect(cloneSpy).toHaveBeenCalled()
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockClone, false)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Mythos')
+    expect(findNativeSpy).toHaveBeenCalledWith('Mythos')
     expect(quoteSpy).toHaveBeenCalledWith({
       module: 'AssetConversionApi',
       method: 'quote_price_exact_tokens_for_tokens',
@@ -59,7 +59,7 @@ describe('getMythosOriginFee', () => {
 
   it('throws UnableToComputeError when fee conversion fails', async () => {
     vi.mocked(getParaEthTransferFees).mockResolvedValue([1n, 2n])
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+    vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'MYTH',
       decimals: 18,
       location: { parents: 1, interior: [] }

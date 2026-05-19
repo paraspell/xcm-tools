@@ -1,5 +1,5 @@
 import {
-  getRelayChainSymbol,
+  getRelayChainSymbolImpl,
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
@@ -15,6 +15,7 @@ import {
 } from '@paraspell/sdk-common'
 import { isHex } from 'viem'
 
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
@@ -37,7 +38,11 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
   }
 }
 
-export const validateDestination = (origin: TSubstrateChain, destination: TDestination) => {
+export const validateDestination = <TApi, TRes, TSigner>(
+  origin: TSubstrateChain,
+  destination: TDestination,
+  api: PolkadotApi<TApi, TRes, TSigner>
+) => {
   if (
     isRelayChain(origin) &&
     !isTLocation(destination) &&
@@ -74,8 +79,8 @@ export const validateDestination = (origin: TSubstrateChain, destination: TDesti
   const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
 
   if (!isRelayDestination && !isLocationDestination) {
-    const originRelayChainSymbol = getRelayChainSymbol(origin)
-    const destinationRelayChainSymbol = getRelayChainSymbol(destination)
+    const originRelayChainSymbol = getRelayChainSymbolImpl(origin, api._customCtx)
+    const destinationRelayChainSymbol = getRelayChainSymbolImpl(destination, api._customCtx)
     if (!isBridgeTransfer && originRelayChainSymbol !== destinationRelayChainSymbol) {
       throw new ScenarioNotSupportedError(
         'Origin and destination must share the same relay chain unless using a bridge.'

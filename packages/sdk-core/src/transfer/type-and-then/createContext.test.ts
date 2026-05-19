@@ -1,5 +1,4 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import {
   isExternalChain,
   isRelayChain,
@@ -135,8 +134,11 @@ describe('createTypeAndThenCallContext', () => {
 
   const mockApi = {
     clone: vi.fn().mockReturnValue(mockClonedApi),
-    init: vi.fn().mockResolvedValue(undefined)
+    init: vi.fn().mockResolvedValue(undefined),
+    findNativeAssetInfoOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const findNativeAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
 
   const mockOptions = {
     api: mockApi,
@@ -152,7 +154,7 @@ describe('createTypeAndThenCallContext', () => {
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(mockSystemAsset)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(mockSystemAsset)
   })
 
   it('should create context with relay chain as destination', async () => {

@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { findAssetOnDestOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { getNativeAssetSymbol } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -11,8 +11,7 @@ import { buildDestInfo } from './buildDestInfo'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  getNativeAssetSymbol: vi.fn(),
-  findAssetOnDestOrThrow: vi.fn()
+  getNativeAssetSymbol: vi.fn()
 }))
 
 vi.mock('../../../errors')
@@ -47,10 +46,9 @@ describe('buildDestInfo', () => {
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
-      clone: vi.fn().mockReturnValue(mockClonedApi)
+      clone: vi.fn().mockReturnValue(mockClonedApi),
+      findAssetOnDestOrThrow: vi.fn().mockReturnValue(glmrAsset)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(glmrAsset)
 
     baseOptions = {
       api: mockApi,
@@ -85,15 +83,13 @@ describe('buildDestInfo', () => {
     const cloneSpy = vi.spyOn(mockApi, 'clone')
     const clonedCloneSpy = vi.spyOn(mockClonedApi, 'init')
 
+    const spy = vi.spyOn(mockApi, 'findAssetOnDestOrThrow')
+
     const result = await buildDestInfo(options)
 
     expect(cloneSpy).toHaveBeenCalled()
     expect(clonedCloneSpy).toHaveBeenCalledWith(options.destination)
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
-      options.origin,
-      options.destination,
-      options.currency
-    )
+    expect(spy).toHaveBeenCalledWith(options.origin, options.destination, options.currency)
 
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       api: mockClonedApi,
@@ -150,7 +146,7 @@ describe('buildDestInfo', () => {
     } as TBuildDestInfoOptions<unknown, unknown, unknown>
 
     it('calculates receivedAmount for native asset transfer with bridgeFee', async () => {
-      vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+      vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue({
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
@@ -179,7 +175,7 @@ describe('buildDestInfo', () => {
     })
 
     it('returns UnableToComputeError for native asset transfer if bridgeFee is missing', async () => {
-      vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+      vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue({
         symbol: 'DOT',
         assetId: 'dotAssetId',
         decimals: 10,
@@ -210,7 +206,7 @@ describe('buildDestInfo', () => {
     })
 
     it('returns UnableToComputeError for non-native asset transfer on AH to AH route', async () => {
-      vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+      vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue({
         symbol: 'USDT',
         assetId: 'usdtAssetId',
         decimals: 6,
@@ -241,7 +237,7 @@ describe('buildDestInfo', () => {
   })
 
   it('should use destBalance for XCM fee balance if fee is not in native currency', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue({
       symbol: 'USDT',
       assetId: 'usdtId',
       decimals: 6,
@@ -290,7 +286,7 @@ describe('buildDestInfo', () => {
       decimals: 18,
       existentialDeposit: DEFAULT_ED
     } as TAssetInfo
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
+    vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue(asset)
     const options = {
       ...baseOptions,
       api: mockApi

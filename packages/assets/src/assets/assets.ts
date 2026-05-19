@@ -1,14 +1,34 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
 import type { TChain } from '@paraspell/sdk-common'
+import { isCustomChain } from '@paraspell/sdk-common'
 
+import { InvalidCurrencyError } from '../errors'
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
-import type { TAssetInfo } from '../types'
+import type { TAssetInfo, TCustomCtx } from '../types'
 import { type TAssetJsonMap, type TChainAssetsInfo } from '../types'
+import { mergeCustomAssets } from './customAssets'
 import { isSymbolMatch } from './isSymbolMatch'
-import { findNativeAssetInfoOrThrow } from './search'
+import { findNativeAssetInfoOrThrowImpl } from './search'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
+
+export const getAssetsObjectImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): TChainAssetsInfo => {
+  if (isCustomChain<TCustomChain>(chain)) {
+    const entry = ctx?.customChainAssets?.[chain]
+    if (!entry) {
+      throw new InvalidCurrencyError(`Custom chain '${chain}' is not registered.`)
+    }
+    return entry
+  }
+  const base = assetsMap[chain]
+  const overlay = ctx?.customAssets?.[chain]
+  if (!overlay || overlay.length === 0) return base
+  return { ...base, assets: mergeCustomAssets(base.assets, overlay) }
+}
 
 /**
  * Retrieves the assets object for a given chain containing the native and foreign assets.
@@ -16,9 +36,14 @@ const assetsMap = assetsMapJson as TAssetJsonMap
  * @param chain - The chain for which to retrieve the assets object.
  * @returns The assets object associated with the given chain.
  */
-export const getAssetsObject = (chain: TChain): TChainAssetsInfo => assetsMap[chain]
+export const getAssetsObject = (chain: TChain): TChainAssetsInfo => getAssetsObjectImpl(chain)
 
-export const isChainEvm = (chain: TChain): boolean => assetsMap[chain].isEVM
+export const isChainEvmImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): boolean => getAssetsObjectImpl<TCustomChain>(chain, ctx).isEVM
+
+export const isChainEvm = (chain: TChain): boolean => isChainEvmImpl(chain)
 
 /**
  * Retrieves the asset ID for a given symbol on a specified chain.
@@ -34,14 +59,24 @@ export const getAssetId = (chain: TChain, symbol: string): string | null => {
   return asset != null && asset.assetId ? asset.assetId : null
 }
 
+export const getRelayChainSymbolImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): string => getAssetsObjectImpl<TCustomChain>(chain, ctx).relaychainSymbol
+
 /**
  * Retrieves the relay chain asset symbol for a specified chain.
  *
  * @param chain - The chain for which to get the relay chain symbol.
  * @returns The relay chain asset symbol.
  */
-export const getRelayChainSymbol = (chain: TChain): string =>
-  getAssetsObject(chain).relaychainSymbol
+export const getRelayChainSymbol = (chain: TChain): string => getRelayChainSymbolImpl(chain)
+
+export const getNativeAssetsImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): TAssetInfo[] =>
+  getAssetsObjectImpl<TCustomChain>(chain, ctx).assets.filter(asset => asset.isNative)
 
 /**
  * Retrieves the list of native assets for a specified chain.
@@ -49,8 +84,13 @@ export const getRelayChainSymbol = (chain: TChain): string =>
  * @param chain - The chain for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (chain: TChain): TAssetInfo[] =>
-  getAssetsObject(chain).assets.filter(asset => asset.isNative)
+export const getNativeAssets = (chain: TChain): TAssetInfo[] => getNativeAssetsImpl(chain)
+
+export const getOtherAssetsImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): TAssetInfo[] =>
+  getAssetsObjectImpl<TCustomChain>(chain, ctx).assets.filter(asset => !asset.isNative)
 
 /**
  * Retrieves the list of other (non-native) assets for a specified chain.
@@ -58,8 +98,12 @@ export const getNativeAssets = (chain: TChain): TAssetInfo[] =>
  * @param chain - The chain for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (chain: TChain): TAssetInfo[] =>
-  getAssetsObject(chain).assets.filter(asset => !asset.isNative)
+export const getOtherAssets = (chain: TChain): TAssetInfo[] => getOtherAssetsImpl(chain)
+
+export const getAssetsImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): TAssetInfo[] => getAssetsObjectImpl<TCustomChain>(chain, ctx).assets
 
 /**
  * Retrieves the complete list of assets for a specified chain, including relay chain asset, native, and other assets.
@@ -67,10 +111,7 @@ export const getOtherAssets = (chain: TChain): TAssetInfo[] =>
  * @param chain - The chain for which to get the assets.
  * @returns An array of objects of all assets associated with the chain.
  */
-export const getAssets = (chain: TChain): TAssetInfo[] => {
-  const { assets } = getAssetsObject(chain)
-  return assets
-}
+export const getAssets = (chain: TChain): TAssetInfo[] => getAssetsImpl(chain)
 
 /**
  * Retrieves the symbols of all assets (relay chain, native, and other assets) for a specified chain.
@@ -83,14 +124,18 @@ export const getAllAssetsSymbols = (chain: TChain): string[] => {
   return assets.map(({ symbol }) => symbol)
 }
 
+export const getNativeAssetSymbolImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): string => getAssetsObjectImpl<TCustomChain>(chain, ctx).nativeAssetSymbol
+
 /**
  * Retrieves the symbol of the native asset for a specified chain.
  *
  * @param chain - The chain for which to get the native asset symbol.
  * @returns The symbol of the native asset.
  */
-export const getNativeAssetSymbol = (chain: TChain): string =>
-  getAssetsObject(chain).nativeAssetSymbol
+export const getNativeAssetSymbol = (chain: TChain): string => getNativeAssetSymbolImpl(chain)
 
 /**
  * Determines whether a specified chain supports an asset with the given symbol.
@@ -136,22 +181,39 @@ export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
 export const getAssetDecimals = (chain: TChain, symbol: string): number | null => {
   const { assets } = getAssetsObject(chain)
   const isMainNativeAsset = isSymbolMatch(symbol, getNativeAssetSymbol(chain))
-  if (isMainNativeAsset) return findNativeAssetInfoOrThrow(chain).decimals
+  if (isMainNativeAsset) return findNativeAssetInfoOrThrowImpl(chain).decimals
   const asset = assets.find(o => o.symbol === symbol)
   return asset?.decimals !== undefined ? asset.decimals : null
 }
 
-export const hasDryRunSupport = (chain: TChain): boolean => {
+export const hasDryRunSupportImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): boolean => {
   // These chains have DryRun but it's not working
   const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
-  return getAssetsObject(chain).supportsDryRunApi && !DISABLED_CHAINS.includes(chain)
+  return (
+    getAssetsObjectImpl<TCustomChain>(chain, ctx).supportsDryRunApi &&
+    !DISABLED_CHAINS.some(disabled => disabled === chain)
+  )
 }
 
-export const hasXcmPaymentApiSupport = (chain: TChain): boolean => {
+export const hasDryRunSupport = (chain: TChain): boolean => hasDryRunSupportImpl(chain)
+
+export const hasXcmPaymentApiSupportImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): boolean => {
   // These chains have XcmPaymentApi but it's not working
   const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
-  return getAssetsObject(chain).supportsXcmPaymentApi && !DISABLED_CHAINS.includes(chain)
+  return (
+    getAssetsObjectImpl<TCustomChain>(chain, ctx).supportsXcmPaymentApi &&
+    !DISABLED_CHAINS.some(disabled => disabled === chain)
+  )
 }
+
+export const hasXcmPaymentApiSupport = (chain: TChain): boolean =>
+  hasXcmPaymentApiSupportImpl(chain)
 
 export * from './getExistentialDeposit'
 export * from './getFeeAssets'

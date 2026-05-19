@@ -1,5 +1,6 @@
 import { isRelayChain, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { getChain } from '../getChain'
 
 /**
@@ -10,5 +11,15 @@ import { getChain } from '../getChain'
  */
 export const getRelayChainOf = (chain: TSubstrateChain): TRelaychain => {
   if (isRelayChain(chain)) return chain
+  return getChain(chain).ecosystem
+}
+
+export const getRelayChainOfImpl = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
+  chain: TSubstrateChain
+): TRelaychain => {
+  if (isRelayChain(chain)) return chain
+  const customEntry = api._customCtx.customChains?.[chain]
+  if (customEntry) return customEntry.ecosystem
   return getChain(chain).ecosystem
 }

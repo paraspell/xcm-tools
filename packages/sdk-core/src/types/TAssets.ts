@@ -14,11 +14,11 @@ export abstract class BaseAssetsPallet {
   constructor(protected palletName: TAssetsPallet) {}
 
   abstract mint<TApi, TRes, TSigner>(
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain,
-    api: PolkadotApi<TApi, TRes, TSigner>
+    chain: TSubstrateChain
   ): Promise<TSetBalanceRes>
 
   abstract getBalance<TApi, TRes, TSigner>(

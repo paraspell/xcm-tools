@@ -587,6 +587,96 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('hasRuntimeApi', () => {
+    it('resolves true when the runtime api is registered on api.call', async () => {
+      await expect(polkadotApi.hasRuntimeApi('DryRunApi')).resolves.toBe(true)
+      await expect(polkadotApi.hasRuntimeApi('XcmPaymentApi')).resolves.toBe(true)
+    })
+  })
+
+  describe('fetchPalletList', () => {
+    it('maps runtime metadata pallets into TPalletEntry records', async () => {
+      Object.assign(mockApiPromise, {
+        runtimeMetadata: {
+          asLatest: {
+            pallets: [
+              { name: { toString: () => 'Balances' }, index: { toNumber: () => 10 } },
+              { name: { toString: () => 'System' }, index: { toNumber: () => 0 } }
+            ]
+          }
+        },
+        tx: { balances: { transfer: vi.fn() } }
+      })
+
+      await expect(polkadotApi.fetchPalletList()).resolves.toEqual([
+        { name: 'Balances', index: 10, hasExtrinsics: true },
+        { name: 'System', index: 0, hasExtrinsics: false }
+      ])
+    })
+  })
+
+  describe('isEvmChain', () => {
+    const setupMetadata = (path: string[] | undefined) =>
+      Object.assign(mockApiPromise, {
+        runtimeMetadata: {
+          asLatest: {
+            lookup: { types: [{ type: { path: { toJSON: () => path } } }] }
+          }
+        }
+      })
+
+    it('resolves true when the lookup path contains AccountId20', async () => {
+      setupMetadata(['frame_system', 'AccountId20'])
+      await expect(polkadotApi.isEvmChain()).resolves.toBe(true)
+    })
+
+    it('resolves false when the lookup path does not contain AccountId20', async () => {
+      setupMetadata(['frame_system', 'AccountId32'])
+      await expect(polkadotApi.isEvmChain()).resolves.toBe(false)
+    })
+
+    it('resolves false when no path is present', async () => {
+      setupMetadata(undefined)
+      await expect(polkadotApi.isEvmChain()).resolves.toBe(false)
+    })
+  })
+
+  describe('getSystemProperties', () => {
+    const propertiesMock = vi.fn<() => Promise<{ toPrimitive: () => unknown }>>()
+
+    beforeEach(() => {
+      Object.assign(mockApiPromise.rpc, { system: { properties: propertiesMock } })
+    })
+
+    it('returns ss58Format and the first tokenSymbol/tokenDecimals array entry', async () => {
+      propertiesMock.mockResolvedValue({
+        toPrimitive: () => ({
+          ss58Format: 42,
+          tokenSymbol: ['DOT', 'KSM'],
+          tokenDecimals: [10, 12]
+        })
+      })
+
+      await expect(polkadotApi.getSystemProperties()).resolves.toEqual({
+        ss58Format: 42,
+        tokenSymbol: 'DOT',
+        tokenDecimals: 10
+      })
+    })
+
+    it('maps null/missing fields to undefined', async () => {
+      propertiesMock.mockResolvedValue({
+        toPrimitive: () => ({ ss58Format: null, tokenSymbol: null, tokenDecimals: null })
+      })
+
+      await expect(polkadotApi.getSystemProperties()).resolves.toEqual({
+        ss58Format: undefined,
+        tokenSymbol: undefined,
+        tokenDecimals: undefined
+      })
+    })
+  })
+
   describe('getXcmPaymentApiFee', () => {
     it('retries queryDeliveryFees with a 3rd argument when required', async () => {
       const xcm = { some: 'xcm_payload' }

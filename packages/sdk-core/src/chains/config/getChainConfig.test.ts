@@ -1,7 +1,10 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getChainConfig } from './getChainConfig'
+import { CustomChainInvalidError } from '../../errors'
+import type { TFullCustomCtx } from '../../types'
+import { getChainConfig, getChainConfigImpl } from './getChainConfig'
 
 vi.mock('../../maps/configs.json', () => ({
   default: {
@@ -75,5 +78,32 @@ describe('getChainConfig', () => {
       ]
     })
     expect(result.providers).toHaveLength(2)
+  })
+
+  it('builds a config from a registered custom chain entry', () => {
+    const ctx: TFullCustomCtx = {
+      customChains: {
+        MyCustom: {
+          name: 'MyCustom',
+          paraId: 4242,
+          ecosystem: 'Polkadot',
+          providers: [{ name: 'rpc', endpoint: 'wss://example' }],
+          xcmVersion: Version.V5,
+          assets: []
+        }
+      }
+    }
+
+    const result = getChainConfigImpl<'MyCustom'>('MyCustom', ctx)
+    expect(result).toEqual({
+      name: 'MyCustom',
+      info: 'MyCustom',
+      paraId: 4242,
+      providers: [{ name: 'rpc', endpoint: 'wss://example' }]
+    })
+  })
+
+  it('throws CustomChainInvalidError when a custom chain is not registered in the ctx', () => {
+    expect(() => getChainConfigImpl<'MyCustom'>('MyCustom', {})).toThrow(CustomChainInvalidError)
   })
 })

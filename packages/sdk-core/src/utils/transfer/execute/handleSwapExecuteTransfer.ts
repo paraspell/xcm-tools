@@ -1,8 +1,4 @@
-import {
-  findNativeAssetInfoOrThrow,
-  hasXcmPaymentApiSupport,
-  isAssetEqual
-} from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import {
   isExternalChain,
   type TChain,
@@ -179,7 +175,7 @@ const createXcmAndCall = async <TApi, TRes, TSigner>(
 
   const { api, chain, exchangeChain } = options
 
-  const hasApiSupport = hasXcmPaymentApiSupport(chain ?? exchangeChain)
+  const hasApiSupport = api.hasXcmPaymentApiSupport(chain ?? exchangeChain)
   const weight = hasApiSupport ? await api.getXcmWeight(xcm) : (dryRunWeight ?? MAX_WEIGHT)
 
   const call = createExecuteCall(chain ?? exchangeChain, xcm, weight)
@@ -210,7 +206,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
 
   validateAmount(assetFrom.amount, MIN_FEE)
 
-  const version = pickRouterCompatibleXcmVersion(chain, exchangeChain, destChain)
+  const version = pickRouterCompatibleXcmVersion(api, chain, exchangeChain, destChain)
 
   const isEthereumDest = destChain !== undefined && isExternalChain(destChain)
 
@@ -218,7 +214,10 @@ export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
   // (no separate fee asset needed). Only skip fee validation when currencies differ.
   const hasSeparateFeeAsset =
     isEthereumDest &&
-    !isAssetEqual(assetFrom, findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain)))
+    !isAssetEqual(
+      assetFrom,
+      api.findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain))
+    )
 
   const internalOptions = {
     ...options,

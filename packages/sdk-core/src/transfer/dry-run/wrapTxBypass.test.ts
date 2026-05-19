@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { findAssetInfo, findAssetInfoOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import { getNativeAssetSymbol } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -13,8 +12,6 @@ import { wrapTxBypass } from './wrapTxBypass'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  findAssetInfo: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
   isSymbolMatch: vi.fn((a: string, b: string) => a.toLowerCase() === b.toLowerCase())
 }))
@@ -23,19 +20,27 @@ vi.mock('@paraspell/pallets')
 
 vi.mock('../../pallets', () => ({
   getPalletInstance: vi.fn((pallet: string) => ({
-    mint: vi.fn((_address: string, assetWithAmount: { symbol?: string }, _chain: string) => {
-      const sym = assetWithAmount.symbol ?? 'Unknown'
-      const base = {
-        balanceTx: { module: pallet, method: `${pallet}:set_balance:${sym}` }
-      }
-      if (String(pallet).startsWith('Foreign')) {
-        return {
-          ...base,
-          assetStatusTx: { module: pallet, method: `${pallet}:status:${sym}` }
+    mint: vi.fn(
+      (
+        _api: unknown,
+        _address: string,
+        assetWithAmount: { symbol?: string },
+        _balance: bigint,
+        _chain: string
+      ) => {
+        const sym = assetWithAmount.symbol ?? 'Unknown'
+        const base = {
+          balanceTx: { module: pallet, method: `${pallet}:set_balance:${sym}` }
         }
+        if (String(pallet).startsWith('Foreign')) {
+          return {
+            ...base,
+            assetStatusTx: { module: pallet, method: `${pallet}:status:${sym}` }
+          }
+        }
+        return base
       }
-      return base
-    })
+    )
   }))
 }))
 
@@ -51,11 +56,21 @@ const mkApi = () => {
     (inner: unknown, addr: string) => `dispatchAs(${addr})->${String(inner)}`
   )
   const callBatchMethod = vi.fn((arr: unknown[], mode: unknown) => ({ arr, mode }))
-  return {
+  const api = {
     deserializeExtrinsics,
     callDispatchAsMethod,
-    callBatchMethod
+    callBatchMethod,
+    findAssetInfo: vi.fn(),
+    findNativeAssetInfo: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
+  const spies = {
+    callBatchMethod: vi.spyOn(api, 'callBatchMethod'),
+    findAssetInfo: vi.spyOn(api, 'findAssetInfo'),
+    findNativeAssetInfo: vi.spyOn(api, 'findNativeAssetInfo'),
+    findNativeAssetInfoOrThrow: vi.spyOn(api, 'findNativeAssetInfoOrThrow')
+  }
+  return { api, spies }
 }
 
 const version = Version.V5
@@ -70,7 +85,7 @@ describe('wrapTxBypass', () => {
   })
 
   it('batches native + relay + fee + main-asset mints in order, using ForeignAssets for foreign assets', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
@@ -78,6 +93,7 @@ describe('wrapTxBypass', () => {
     const nativeAsset: TAssetInfo = {
       symbol: 'ACA',
       decimals: 12,
+      isNative: true,
       location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
     }
 
@@ -100,8 +116,9 @@ describe('wrapTxBypass', () => {
       amount: 1000n
     }
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValueOnce(relayAsset).mockReturnValue(relayAsset)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValueOnce(relayAsset).mockReturnValue(relayAsset)
 
     const result = await wrapTxBypass({
       api,
@@ -123,7 +140,7 @@ describe('wrapTxBypass', () => {
       .map(([, d]) => d)
     expect(remainingDecs).toEqual(expect.arrayContaining([feeAsset.decimals, mainAsset.decimals]))
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual(
       expect.arrayContaining([
         'call:Balances:set_balance:ACA',
@@ -137,12 +154,17 @@ describe('wrapTxBypass', () => {
   })
 
   it('skips relay and fee when unavailable/undefined; still mints native + main asset and dispatches original tx', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeAsset = {
+      symbol: 'ACA',
+      decimals: 12,
+      isNative: true,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    } as TAssetInfo
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
@@ -150,8 +172,9 @@ describe('wrapTxBypass', () => {
       amount: 1000n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValue(null)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValue(null)
 
     const result = await wrapTxBypass({
       api,
@@ -165,7 +188,7 @@ describe('wrapTxBypass', () => {
 
     expect(parseUnits).toHaveBeenCalledTimes(2)
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual([
       'call:Balances:set_balance:ACA',
       'call:ForeignAssets:status:USDT',
@@ -175,14 +198,19 @@ describe('wrapTxBypass', () => {
   })
 
   it('uses first non-Foreign pallet from otherPallets when asset is non-native and not foreign', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
     vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12, isNative: true } as TAssetInfo
+    const nativeAsset = {
+      symbol: 'ACA',
+      decimals: 12,
+      isNative: true,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    } as TAssetInfo
     const mainAsset = {
       symbol: 'KSM',
       decimals: 1,
@@ -190,8 +218,9 @@ describe('wrapTxBypass', () => {
       amount: 1000n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValue(null)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValue(null)
 
     const result = await wrapTxBypass({
       api,
@@ -207,7 +236,7 @@ describe('wrapTxBypass', () => {
     expect(palletsUsed).toContain('Balances')
     expect(palletsUsed).toContain('Tokens')
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual([
       'call:Balances:set_balance:ACA',
       'call:Tokens:set_balance:KSM',
@@ -216,12 +245,17 @@ describe('wrapTxBypass', () => {
   })
 
   it('sentAssetMintMode="bypass" still reads balance once and mints +1000 preview amount', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeAsset = {
+      symbol: 'ACA',
+      decimals: 12,
+      isNative: true,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    } as TAssetInfo
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
@@ -229,8 +263,9 @@ describe('wrapTxBypass', () => {
       amount: 5n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValue(null)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValue(null)
 
     const result = await wrapTxBypass(
       { api, chain, address, version, asset: mainAsset, tx: originalTx },
@@ -244,7 +279,7 @@ describe('wrapTxBypass', () => {
 
     expect(getAssetBalanceInternal).toHaveBeenCalledOnce()
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual([
       'call:Balances:set_balance:ACA',
       'call:ForeignAssets:status:USDT',
@@ -264,12 +299,17 @@ describe('wrapTxBypass (new branches)', () => {
   })
 
   it('sentAssetMintMode="preview" reads balance and mints (missing + bonus) where applicable', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeAsset = {
+      symbol: 'ACA',
+      decimals: 12,
+      isNative: true,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    } as TAssetInfo
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
@@ -277,8 +317,9 @@ describe('wrapTxBypass (new branches)', () => {
       amount: 5n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValue(null)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValue(null)
 
     const res = await wrapTxBypass(
       { api, chain, address, version, asset: mainAsset, tx: originalTx },
@@ -289,18 +330,23 @@ describe('wrapTxBypass (new branches)', () => {
     expect(parseUnits).toHaveBeenNthCalledWith(1, '1000', nativeAsset.decimals)
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(1)
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toContain('dispatchAs(Alice)->ORIG_TX')
     expect(batched.join('|')).not.toMatch(/USDT/)
   })
 
   it('mintFeeAssets=false skips native/relay/fee mints and only mints main asset + dispatches original tx', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeAsset = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeAsset = {
+      symbol: 'ACA',
+      decimals: 12,
+      isNative: true,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
+    } as TAssetInfo
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
@@ -308,8 +354,12 @@ describe('wrapTxBypass (new branches)', () => {
       amount: 7n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'RelayDOT', decimals: 10 } as TAssetInfo)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
+    spies.findAssetInfo.mockReturnValue({
+      symbol: 'RelayDOT',
+      decimals: 10
+    } as TAssetInfo)
 
     const result = await wrapTxBypass(
       {
@@ -325,7 +375,7 @@ describe('wrapTxBypass (new branches)', () => {
     )
     expect(result).toBeDefined()
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched.join('|')).not.toMatch(/Balances:set_balance:ACA/)
     expect(batched.join('|')).not.toMatch(/RelayDOT/)
     expect(batched.join('|')).not.toMatch(/USDC/)
@@ -338,12 +388,12 @@ describe('wrapTxBypass (new branches)', () => {
   })
 
   it('does not mint relay twice when relay equals native (dedupe) and still mints main asset', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
 
-    const nativeRelay = { symbol: 'ACA', decimals: 12 } as TAssetInfo
+    const nativeRelay = { symbol: 'ACA', decimals: 12, isNative: true } as TAssetInfo
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
@@ -351,8 +401,9 @@ describe('wrapTxBypass (new branches)', () => {
       amount: 1000n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeRelay)
-    vi.mocked(findAssetInfo).mockReturnValue(nativeRelay)
+    spies.findNativeAssetInfo.mockReturnValue(nativeRelay)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeRelay)
+    spies.findAssetInfo.mockReturnValue(nativeRelay)
 
     const res = await wrapTxBypass({
       api,
@@ -364,7 +415,7 @@ describe('wrapTxBypass (new branches)', () => {
     })
     expect(res).toBeDefined()
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     const nativeMints = batched.filter(x => String(x).includes('Balances:set_balance:ACA'))
     const relayMints = batched.filter(x => String(x).includes('status:RelayDOT'))
     expect(nativeMints.length).toBe(1)
@@ -374,7 +425,7 @@ describe('wrapTxBypass (new branches)', () => {
   })
 
   it('preview mode adds +1000 bonus when the sent asset equals the pre-minted native asset', async () => {
-    const api = mkApi()
+    const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
     const originalTx = 'ORIG_TX'
@@ -387,10 +438,11 @@ describe('wrapTxBypass (new branches)', () => {
       amount: 5n
     } as WithAmount<TAssetInfo>
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
+    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
-    vi.mocked(findAssetInfo).mockImplementation(() => nativeAsset)
+    spies.findAssetInfo.mockImplementation(() => nativeAsset)
 
     const res = await wrapTxBypass(
       { api, chain, address, version, asset: mainAssetIsNative, tx: originalTx },
@@ -398,7 +450,7 @@ describe('wrapTxBypass (new branches)', () => {
     )
     expect(res).toBeDefined()
 
-    const [[batched]] = vi.mocked(api.callBatchMethod).mock.calls
+    const [[batched]] = spies.callBatchMethod.mock.calls
     const acaMints = batched.filter(x => String(x) === 'call:Balances:set_balance:ACA')
     expect(acaMints.length).toBeGreaterThanOrEqual(2)
     expect(batched).toContain('dispatchAs(Alice)->ORIG_TX')

@@ -1,9 +1,4 @@
 import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
-import {
-  findAssetInfoOnDest,
-  findAssetOnDestOrThrow,
-  findNativeAssetInfoOrThrow
-} from '@paraspell/assets'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -26,7 +21,10 @@ vi.mock('../../utils')
 
 describe('resolveHopAsset', () => {
   const mockApi = {
-    getTypeThenAssetCount: vi.fn()
+    getTypeThenAssetCount: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn(),
+    findAssetOnDestOrThrow: vi.fn(),
+    findAssetInfoOnDest: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'asset'> = {
@@ -49,14 +47,16 @@ describe('resolveHopAsset', () => {
   it('returns the relay native asset when the hop asset reserves are external', () => {
     const relayAsset = { symbol: 'KSM' } as TAssetInfo
     vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(relayAsset)
+    const findNativeSpy = vi
+      .spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+      .mockReturnValue(relayAsset)
 
     const asset = { symbol: 'DOT' } as TAssetInfo
 
     const result = resolveHopAsset({ ...baseParams, asset, destination: 'Ethereum' })
 
     expect(getRelayChainOf).toHaveBeenCalledWith(baseParams.currentChain)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Kusama')
+    expect(findNativeSpy).toHaveBeenCalledWith('Kusama')
     expect(result).toBe(relayAsset)
   })
 
@@ -64,7 +64,7 @@ describe('resolveHopAsset', () => {
     const spy = vi.spyOn(mockApi, 'getTypeThenAssetCount').mockReturnValue(2)
     const relayAsset = { symbol: 'DOT' } as TAssetInfo
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(relayAsset)
+    vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue(relayAsset)
 
     const asset = { symbol: 'DOT' } as TAssetInfo
 
@@ -81,7 +81,9 @@ describe('resolveHopAsset', () => {
       currencyTo: { symbol: 'USDT' }
     }
 
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(expectedAsset)
+    const findAssetOnDestSpy = vi
+      .spyOn(mockApi, 'findAssetOnDestOrThrow')
+      .mockReturnValue(expectedAsset)
 
     const asset = { symbol: 'DOT' } as TAssetInfo
 
@@ -93,7 +95,7 @@ describe('resolveHopAsset', () => {
       currentChain: 'Moonbeam'
     })
 
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
+    expect(findAssetOnDestSpy).toHaveBeenCalledWith(
       swapConfig.exchangeChain,
       'Moonbeam',
       swapConfig.currencyTo
@@ -105,13 +107,16 @@ describe('resolveHopAsset', () => {
     const asset = { symbol: 'DOT' } as TAssetInfo
     const destAsset = { symbol: 'DOT' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOnDest).mockReturnValueOnce(destAsset).mockReturnValueOnce(null)
+    const findAssetOnDestInfoSpy = vi
+      .spyOn(mockApi, 'findAssetInfoOnDest')
+      .mockReturnValueOnce(destAsset)
+      .mockReturnValueOnce(null)
 
     const resolved = resolveHopAsset({ ...baseParams, asset })
     const fallback = resolveHopAsset({ ...baseParams, asset })
 
-    expect(findAssetInfoOnDest).toHaveBeenNthCalledWith(1, 'Acala', 'Astar', baseParams.currency)
-    expect(findAssetInfoOnDest).toHaveBeenNthCalledWith(2, 'Acala', 'Astar', baseParams.currency)
+    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(1, 'Acala', 'Astar', baseParams.currency)
+    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(2, 'Acala', 'Astar', baseParams.currency)
     expect(resolved).toBe(destAsset)
     expect(fallback).toBe(asset)
   })

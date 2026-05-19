@@ -1,12 +1,14 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { UnsupportedOperationError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
 export class CurrenciesPallet extends BaseAssetsPallet {
-  mint(
+  mint<TApi, TRes, TSigner>(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,

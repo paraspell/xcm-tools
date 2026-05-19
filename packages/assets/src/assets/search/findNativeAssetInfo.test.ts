@@ -3,8 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TAssetInfo } from '../../types'
 import { getNativeAssetSymbol } from '../assets'
 import { Native } from '../assetSelectors'
-import { findAssetInfo } from './findAssetInfo'
-import { findAssetInfoOrThrow } from './findAssetInfoOrThrow'
+import { findAssetInfoImpl } from './findAssetInfo'
+import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
 import {
   findNativeAssetInfo,
   findNativeAssetInfoOrThrow as findNative
@@ -28,14 +28,14 @@ describe('findNativeAssetInfo helpers', () => {
       const chain = 'Ethereum'
       const mockInfo = { symbol: 'ETH' } as TAssetInfo
 
-      vi.mocked(findAssetInfo).mockReturnValue(mockInfo)
+      vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
 
       const res = findNativeAssetInfo(chain)
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).not.toHaveBeenCalled()
-      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: 'ETH' })
+      expect(findAssetInfoImpl).toHaveBeenCalledWith(chain, { symbol: 'ETH' }, null, undefined)
       expect(res).toEqual(mockInfo)
     })
 
@@ -43,15 +43,20 @@ describe('findNativeAssetInfo helpers', () => {
       const chain = 'Polkadot'
       const mockInfo = { symbol: 'DOT' } as TAssetInfo
 
-      vi.mocked(findAssetInfo).mockReturnValue(mockInfo)
+      vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-      vi.mocked(findAssetInfo).mockReturnValue(mockInfo)
+      vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
 
       const res = findNativeAssetInfo(chain)
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).toHaveBeenCalledWith('DOT')
-      expect(findAssetInfo).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } })
+      expect(findAssetInfoImpl).toHaveBeenCalledWith(
+        chain,
+        { symbol: { NATIVE: 'DOT' } },
+        null,
+        undefined
+      )
       expect(res).toEqual(mockInfo)
     })
   })
@@ -61,14 +66,19 @@ describe('findNativeAssetInfo helpers', () => {
       const chain = 'Polkadot'
       const mockInfo = { symbol: 'DOT' } as TAssetInfo
 
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockInfo)
+      vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue(mockInfo)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
       const res = findNative(chain)
 
       expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
       expect(Native).toHaveBeenCalledWith('DOT')
-      expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: { NATIVE: 'DOT' } })
+      expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
+        chain,
+        { symbol: { NATIVE: 'DOT' } },
+        null,
+        undefined
+      )
       expect(res).toEqual(mockInfo)
     })
   })

@@ -81,7 +81,8 @@ export class GeneralBuilder<
   TRes,
   TSigner,
   T extends Partial<TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>> =
-    object
+    object,
+  TCustomChain extends string = never
 > {
   readonly api: PolkadotApi<TApi, TRes, TSigner>
   readonly _options: T
@@ -101,8 +102,13 @@ export class GeneralBuilder<
    * @param chain - The chain from which the transaction originates.
    * @returns An instance of Builder
    */
-  from(chain: TChain): GeneralBuilder<TApi, TRes, TSigner, T & { from: TChain }> {
-    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: chain })
+  from(
+    chain: TChain | TCustomChain
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TChain }, TCustomChain> {
+    return new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      from: chain
+    })
   }
 
   /**
@@ -113,9 +119,9 @@ export class GeneralBuilder<
    * @returns An instance of Builder
    */
   to(
-    chain: TDestination,
+    chain: TDestination | TCustomChain,
     paraIdTo?: number
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { to: TDestination }> {
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { to: TDestination }, TCustomChain> {
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
       to: chain,
@@ -144,7 +150,7 @@ export class GeneralBuilder<
    */
   currency(
     currency: TCurrencyInputWithAmount
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { currency: TCurrencyInputWithAmount }> {
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { currency: TCurrencyInputWithAmount }, TCustomChain> {
     return new GeneralBuilder(this.api, this.batchManager, { ...this._options, currency })
   }
 
@@ -154,7 +160,9 @@ export class GeneralBuilder<
    * @param address - The recipient address on the destination chain.
    * @returns An instance of Builder
    */
-  recipient(address: TAddress): GeneralBuilder<TApi, TRes, TSigner, T & { recipient: TAddress }> {
+  recipient(
+    address: TAddress
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { recipient: TAddress }, TCustomChain> {
     const isPath = typeof address === 'string' && address.startsWith('//')
     const resolvedAddress = isPath ? this.api.deriveAddress(address) : address
     return new GeneralBuilder(this.api, this.batchManager, {
@@ -171,7 +179,7 @@ export class GeneralBuilder<
    */
   sender(
     sender: TSender<TSigner> | WalletClient
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { sender: string }> {
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { sender: string }, TCustomChain> {
     if (isViemSigner(sender)) {
       const address = sender.account?.address
       if (!address) {
@@ -278,7 +286,13 @@ export class GeneralBuilder<
    */
   swap(
     options: TSwapOptions<TApi, TRes, TSigner>
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { swapOptions: TSwapOptions<TApi, TRes, TSigner> }> {
+  ): GeneralBuilder<
+    TApi,
+    TRes,
+    TSigner,
+    T & { swapOptions: TSwapOptions<TApi, TRes, TSigner> },
+    TCustomChain
+  > {
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
       swapOptions: {
@@ -298,9 +312,10 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }> {
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }, TCustomChain> {
     const { from, senderSource } = this._options
     assertNotEvmTransfer(from, senderSource)
     this.batchManager.addTransaction({
@@ -310,7 +325,7 @@ export class GeneralBuilder<
       builder: this
     })
 
-    return new GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }>(
+    return new GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }, TCustomChain>(
       this.api,
       this.batchManager,
       { ...this._options, from } as T & { from: TSubstrateChain }
@@ -328,7 +343,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >,
     options?: TBatchOptions
   ) {
@@ -338,7 +354,7 @@ export class GeneralBuilder<
   }
 
   protected buildInternal<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
-    this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
+    this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
     return this.buildCommon<TOptions>(true)
   }
@@ -346,7 +362,7 @@ export class GeneralBuilder<
   private async prepareNormalizedOptions<
     TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>
   >(
-    this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     options: TOptions
   ): Promise<{
     normalizedOptions: TTransferOptions<TApi, TRes, TSigner> & TOptions
@@ -371,7 +387,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<TRes> {
     const { from, senderSource } = this._options
@@ -389,7 +406,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<TransactionSerializableEIP1559> {
     const { ext, options } = this.prepareEvmDispatch()
@@ -406,7 +424,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<TTransactionContext<TApi, TRes>[]> {
     const { from, senderSource } = this._options
@@ -424,7 +443,7 @@ export class GeneralBuilder<
   }
 
   private async buildCommon<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
-    this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     isCalledInternally = false
   ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
     this.validateBatchState(isCalledInternally)
@@ -442,7 +461,7 @@ export class GeneralBuilder<
   }
 
   private async buildCommonAll<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
-    this: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
+    this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     isCalledInternally = false
   ): Promise<TBuildAllInternalRes<TApi, TRes, TSigner, TOptions>> {
     this.validateBatchState(isCalledInternally)
@@ -494,7 +513,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<TDryRunResult> {
     const { from, senderSource, swapOptions } = this._options
@@ -515,7 +535,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >,
     dryRunOptions?: TDryRunPreviewOptions
   ): Promise<TDryRunResult> {
@@ -541,7 +562,7 @@ export class GeneralBuilder<
   }
 
   protected createTxFactory<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
-    this: GeneralBuilder<TApi, TRes, TSigner, TOptions>
+    this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>
   ): TTxFactory<TRes> {
     return (amount, relative) =>
       createTxOverrideAmount({ ...this._options, api: this.api }, this, amount, relative)
@@ -557,7 +578,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ): Promise<TGetXcmFeeResult<TDisableFallback>> {
@@ -603,7 +625,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
@@ -650,7 +673,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const { senderSource } = this._options
@@ -689,7 +713,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const { senderSource } = this._options
@@ -732,7 +757,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const { senderSource } = this._options
@@ -769,7 +795,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const { senderSource } = this._options
@@ -825,7 +852,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const {
@@ -846,7 +874,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSwap<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSwap<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ) {
     const { from, senderSource, swapOptions } = this._options
@@ -862,7 +891,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<string> {
     const { from, senderSource, swapOptions } = this._options
@@ -898,7 +928,8 @@ export class GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
     >
   ): Promise<string[]> {
     const { from, senderSource, swapOptions } = this._options
@@ -929,7 +960,13 @@ export class GeneralBuilder<
   }
 
   private async executeWithEvmSigner(
-    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptionsWithSender<TApi, TRes, TSigner>>,
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
+      TCustomChain
+    >,
     signer: WalletClient
   ): Promise<string> {
     const { ext, options } = this.prepareEvmDispatch()
@@ -937,7 +974,13 @@ export class GeneralBuilder<
   }
 
   private prepareEvmDispatch(
-    this: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptions<TApi, TRes, TSigner>,
+      TCustomChain
+    >
   ) {
     const { from, to, currency, recipient, ahAddress } = this._options
     assertToIsString(to)
@@ -978,5 +1021,7 @@ export class GeneralBuilder<
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = <TApi, TRes, TSigner>(api: PolkadotApi<TApi, TRes, TSigner>) =>
-  new GeneralBuilder(api, new BatchTransactionManager())
+export const Builder = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner>
+) =>
+  new GeneralBuilder<TApi, TRes, TSigner, object, TCustomChain>(api, new BatchTransactionManager())

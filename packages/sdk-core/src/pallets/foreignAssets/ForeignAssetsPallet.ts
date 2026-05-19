@@ -5,7 +5,8 @@ import type { PolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class ForeignAssetsPallet extends BaseAssetsPallet {
-  mint(
+  mint<TApi, TRes, TSigner>(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,

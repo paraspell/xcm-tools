@@ -5,7 +5,6 @@ import {
   isSymbolMatch,
   normalizeSymbol
 } from '@paraspell/assets'
-import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import { isExternalChain, isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -51,11 +50,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes, TSigner>(
   const destApi = api.clone()
   await destApi.init(destination)
 
-  const asset = findAssetOnDestOrThrow(origin, destination, currency)
+  const asset = api.findAssetOnDestOrThrow(origin, destination, currency)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
-  const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
+  const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
 
   const ed = getEdFromAssetOrThrow(destAsset)
 

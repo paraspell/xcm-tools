@@ -21,6 +21,7 @@ import {
 import { toHex } from 'polkadot-api/utils';
 import { serializeTransaction } from 'viem';
 
+import { assertChain, assertDestination } from '../utils/assertions.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
@@ -120,7 +121,11 @@ export class XTransferService {
       ahAddress,
       transactOptions,
       swapOptions,
+      options,
     } = transfer;
+
+    assertChain(from, options?.customChains);
+    assertDestination(to, options?.customChains);
 
     let finalBuilder = builder
       .from(from)

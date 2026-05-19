@@ -1,9 +1,12 @@
 import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { BalancesPallet } from './BalancesPallet'
 
 vi.mock('@paraspell/assets')
+
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('BalancesPallet.setBalance', () => {
   beforeEach(() => {
@@ -18,7 +21,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(res.balanceTx.module).toBe('Balances')
     expect(res.balanceTx.method).toBe('force_set_balance')
@@ -34,7 +37,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(res.balanceTx.params.who).toBe(address)
     expect(res.balanceTx.params.new_free).toBe(222n)
@@ -48,7 +51,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(true)
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(res.balanceTx.params.who).toBe(address)
     expect(res.balanceTx.params.new_free).toBe(333n)
@@ -62,7 +65,7 @@ describe('BalancesPallet.setBalance', () => {
 
     vi.mocked(isChainEvm).mockReturnValue(false)
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(res.balanceTx.params.who).toEqual({ Id: address })
     expect(res.balanceTx.params.new_free).toBe(444n)

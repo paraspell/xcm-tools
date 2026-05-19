@@ -8,12 +8,12 @@ import { isSubstrateBridge, Parents, type TLocation, Version } from '@paraspell/
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
+import { getChainImpl } from '../chains/getChainInstance'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSubstrateTransferOptions } from '../types'
 import {
   abstractDecimals,
-  getChain,
   pickCompatibleXcmVersion,
   validateAddress,
   validateDestinationAddress
@@ -37,6 +37,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 
 vi.mock('../utils')
 vi.mock('../utils/chain')
+vi.mock('../chains/getChainInstance')
 vi.mock('@paraspell/assets')
 vi.mock('./utils')
 
@@ -61,7 +62,7 @@ describe('send', () => {
       version: Version.V4
     } as unknown as AssetHubPolkadot<unknown, unknown, unknown>
 
-    vi.mocked(getChain).mockReturnValue(originChainMock)
+    vi.mocked(getChainImpl).mockReturnValue(originChainMock)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
@@ -89,7 +90,7 @@ describe('send', () => {
     const result = await createTransfer(options)
 
     expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.feeAsset)
-    expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
+    expect(validateDestination).toHaveBeenCalledWith(options.from, options.to, apiMock)
     expect(validateDestinationAddress).toHaveBeenCalledWith(options.recipient, options.to, apiMock)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
@@ -133,7 +134,7 @@ describe('send', () => {
 
     const result = await createTransfer(options)
 
-    expect(resolveFeeAsset).toHaveBeenCalledWith({ symbol: 'USDT' }, 'Acala', 'Astar', {
+    expect(resolveFeeAsset).toHaveBeenCalledWith(apiMock, { symbol: 'USDT' }, 'Acala', 'Astar', {
       symbol: 'DOT',
       amount: '100'
     })

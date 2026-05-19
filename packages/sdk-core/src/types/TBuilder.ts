@@ -1,9 +1,10 @@
-import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TCurrencyInputWithAmount, TCustomAssetsMap } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
 
 import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
+import type { TCustomChainsMap } from './TCustomChain'
 import type { TTransactionContext } from './TSwap'
 import type { TSubstrateTransferOptions, TTransferBaseOptions, TTransferOptions } from './TTransfer'
 
@@ -63,10 +64,16 @@ export type TBuilderOptions<TApi> = TApi | TBuilderConfig<TApi>
 
 export type TBuilderConfig<TApi> = Partial<{
   apiOverrides: Partial<Record<TChain, TApi>>
+  customAssets: TCustomAssetsMap
+  customChains: TCustomChainsMap
   development: boolean
   abstractDecimals: boolean
   xcmFormatCheck: boolean
 }>
+
+export type TCustomChainFrom<TOpts> = TOpts extends { customChains: infer C }
+  ? Extract<keyof C, string>
+  : never
 
 export type TCreateTxsOptions<TApi, TRes, TSigner> = Pick<
   TTransferOptions<TApi, TRes, TSigner>,

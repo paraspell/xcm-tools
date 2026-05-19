@@ -1,10 +1,13 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
 import { AssetManagerPallet } from './AssetManagerPallet'
 
 vi.mock('../../utils')
+
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('AssetManagerPallet.setBalance', () => {
   beforeEach(() => {
@@ -18,7 +21,7 @@ describe('AssetManagerPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n)
+    const res = await pallet.mint(apiMock, address, asset, 0n)
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(assertHasId).toHaveBeenCalledWith(asset)

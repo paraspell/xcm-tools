@@ -1,12 +1,14 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfo, isTAsset, type TCurrencyInput } from '@paraspell/assets'
+import { isTAsset, type TCurrencyInput } from '@paraspell/assets'
 import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 import { throwUnsupportedCurrency } from '../../utils'
 
-export const resolveFeeAsset = (
+export const resolveFeeAsset = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   feeAsset: TCurrencyInput,
   origin: TSubstrateChain,
   destination: TDestination,
@@ -16,7 +18,8 @@ export const resolveFeeAsset = (
     throw new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
   }
 
-  const asset = findAssetInfo(origin, feeAsset, !isTLocation(destination) ? destination : null)
+  const dest = !isTLocation(destination) ? destination : null
+  const asset = api.findAssetInfo(origin, feeAsset, dest)
 
   const usesRawOverriddenMultiAssets = Array.isArray(currency) && currency.every(isTAsset)
 

@@ -1,22 +1,11 @@
 import type { ApiPromise } from '@polkadot/api'
 import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails, TAssetsPallet } from '../src'
+import { NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
 import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
 import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
 import { getChainProviders } from '../../sdk-core/dist'
 
 const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTokens', 'PolkadotXcm']
-
-const nativeAssetPalletsByPriority: TAssetsPallet[] = ['Balances', 'Currencies', 'Tokens']
-
-const otherAssetPalletsByPriority: TAssetsPallet[] = [
-  'Currencies',
-  'Tokens',
-  'Assets',
-  'ForeignAssets',
-  'AssetManager',
-  'Fungibles',
-  'OrmlTokens'
-]
 
 const fetchPallets = async (api: ApiPromise) => {
   const res = await api.rpc.state.getMetadata()
@@ -51,9 +40,9 @@ const composePalletMapObject = async (
 
   const allPallets = [
     ...defaultPalletsByPriority,
-    ...nativeAssetPalletsByPriority,
-    ...otherAssetPalletsByPriority
-  ]
+    ...NATIVE_ASSETS_PALLET_PRIORITY,
+    ...OTHER_ASSETS_PALLET_PRIORITY
+  ] as readonly string[]
 
   const supportedPallets = palletDetails.filter(pallet => allPallets.includes(pallet.name))
 
@@ -61,17 +50,17 @@ const composePalletMapObject = async (
     supportedPallets.map(item => item.name).includes(pallet)
   ) as TPallet
 
-  const nativeAssetsPallet = nativeAssetPalletsByPriority.find(pallet =>
+  const nativeAssetsPallet = NATIVE_ASSETS_PALLET_PRIORITY.find(pallet =>
     palletDetails.map(item => item.name).includes(pallet)
   ) as TAssetsPallet
 
   const otherAssetsPallets = chain.startsWith('Moon')
     ? (['System'] as TAssetsPallet[])
-    : (otherAssetPalletsByPriority.filter(pallet =>
+    : (OTHER_ASSETS_PALLET_PRIORITY.filter(pallet =>
         palletDetails.map(item => item.name).includes(pallet)
       ) as TAssetsPallet[])
 
-  const additionalOtherPallets = otherAssetPalletsByPriority.filter(pallet =>
+  const additionalOtherPallets = OTHER_ASSETS_PALLET_PRIORITY.filter(pallet =>
     palletDetailsWithoutExtrinsics.map(item => item.name).includes(pallet)
   ) as TAssetsPallet[]
 

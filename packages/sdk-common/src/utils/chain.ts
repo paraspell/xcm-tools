@@ -1,5 +1,21 @@
-import { EXTERNAL_CHAINS, RELAYCHAINS } from '../constants'
-import type { TChain, TExternalChain, TRelaychain } from '../types'
+import { CHAINS, EXTERNAL_CHAINS, RELAYCHAINS, SUBSTRATE_CHAINS } from '../constants'
+import type { TChain, TExternalChain, TRelaychain, TSubstrateChain } from '../types'
+
+/** * Checks if a given string is a valid chain.
+ *
+ * @param chain - The string to check.
+ * @returns True if the string is a valid chain; otherwise, false.
+ */
+export const isChain = (chain: string): chain is TChain => CHAINS.some(c => c === chain)
+
+/**
+ * Checks if a given string is a valid substrate chain.
+ *
+ * @param chain - The string to check.
+ * @returns True if the string is a valid substrate chain; otherwise, false.
+ */
+export const isSubstrateChain = (chain: string): chain is TSubstrateChain =>
+  SUBSTRATE_CHAINS.some(c => c === chain)
 
 /**
  * Determines whether a given chain is a relaychain.
@@ -16,8 +32,19 @@ export const isRelayChain = (chain: TChain): chain is TRelaychain =>
  * @param chain - The chain to check.
  * @returns True if the chain is an external chain; otherwise, false.
  */
-export const isExternalChain = (chain: TChain): chain is TExternalChain =>
-  EXTERNAL_CHAINS.includes(chain as TExternalChain)
+export const isExternalChain = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): chain is TExternalChain => EXTERNAL_CHAINS.some(c => c === chain)
+
+/**
+ * Determines whether a given chain is a custom (user-registered) chain.
+ *
+ * @param chain - The chain to check.
+ * @returns True if the chain is a custom added chain; otherwise, false.
+ */
+export const isCustomChain = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): chain is TCustomChain => !CHAINS.some(c => c === chain)
 
 /**
  * Checks if a given chain is a system chain.

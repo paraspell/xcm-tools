@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 
 import { ASSETS_PALLETS, PALLETS } from '../constants'
 import { XcmPalletNotFoundError } from '../errors'
+import type { TCustomChainPallets, TPalletsCtx } from '../types'
 import { type TPallet } from '../types'
 import {
   getDefaultPallet,
@@ -15,7 +16,8 @@ import {
   getSupportedPallets,
   getSupportedPalletsDetails,
   getXcmPallet,
-  hasPallet
+  hasPallet,
+  hasPalletImpl
 } from '.'
 
 describe('getDefaultPallet', () => {
@@ -122,6 +124,48 @@ describe('XcmPalletNotFoundError', () => {
     expect(error.message).toBe('No XCM pallet found on chain Acala')
     expect(error.name).toBe('XcmPalletNotFoundError')
     expect(error).toBeInstanceOf(Error)
+  })
+})
+
+describe('custom chain branches', () => {
+  const customPallets: TCustomChainPallets = {
+    nativeAssets: 'Balances',
+    otherAssets: ['Assets', 'ForeignAssets'],
+    supportedPallets: [
+      { name: 'Balances', index: 10, hasExtrinsics: true },
+      { name: 'PolkadotXcm', index: 31, hasExtrinsics: true }
+    ]
+  }
+  const ctx: TPalletsCtx = { customChainPallets: { MyCustom: customPallets } }
+
+  it('getNativeAssetsPallet returns the registered native pallet for a custom chain', () => {
+    expect(getNativeAssetsPallet<'MyCustom'>('MyCustom', ctx)).toBe('Balances')
+  })
+
+  it('getNativeAssetsPallet throws when the custom chain is not registered in ctx', () => {
+    expect(() => getNativeAssetsPallet<'MyCustom'>('MyCustom')).toThrow(XcmPalletNotFoundError)
+  })
+
+  it('getOtherAssetsPallets returns the registered other pallets for a custom chain', () => {
+    expect(getOtherAssetsPallets<'MyCustom'>('MyCustom', ctx)).toEqual(['Assets', 'ForeignAssets'])
+  })
+
+  it('getOtherAssetsPallets throws when the custom chain is not registered in ctx', () => {
+    expect(() => getOtherAssetsPallets<'MyCustom'>('MyCustom')).toThrow(XcmPalletNotFoundError)
+  })
+
+  it('hasPalletImpl delegates to the static map for built-in chains', () => {
+    expect(hasPalletImpl('Acala', 'PolkadotXcm')).toBe(true)
+    expect(hasPalletImpl('Acala', 'XcmPallet')).toBe(false)
+  })
+
+  it('hasPalletImpl reads supportedPallets from ctx for custom chains', () => {
+    expect(hasPalletImpl<'MyCustom'>('MyCustom', 'PolkadotXcm', ctx)).toBe(true)
+    expect(hasPalletImpl<'MyCustom'>('MyCustom', 'XcmPallet', ctx)).toBe(false)
+  })
+
+  it('hasPalletImpl returns false for a custom chain not in ctx', () => {
+    expect(hasPalletImpl<'MyCustom'>('MyCustom', 'PolkadotXcm')).toBe(false)
   })
 })
 

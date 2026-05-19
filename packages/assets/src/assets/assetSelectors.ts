@@ -17,6 +17,9 @@ export const ForeignAbstract = (symbol: string): TSymbolSpecifier => ({
   value: symbol
 })
 
+/**
+ * @deprecated Use the `customAssets` Builder option to register the asset instead. Will be removed in v14.
+ */
 export const Override = (location: TLocation): TOverrideLocationSpecifier => ({
   type: 'Override',
   value: location

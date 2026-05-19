@@ -1,16 +1,17 @@
 import type { TChain } from '@paraspell/sdk-common'
 
 import { isOverrideLocationSpecifier } from '../../guards'
-import type { TAssetInfo, TCurrencyInput } from '../../types'
-import { getNativeAssets, getOtherAssets } from '../assets'
+import type { TAssetInfo, TCurrencyInput, TCustomCtx } from '../../types'
+import { getNativeAssetsImpl, getOtherAssetsImpl } from '../assets'
 import { findAssetInfoById } from './findAssetInfoById'
 import { findAssetInfoByLoc } from './findAssetInfoByLoc'
 import { findAssetInfoBySymbol } from './findAssetInfoBySymbol'
 
-export const findAssetInfo = (
+export const findAssetInfoImpl = (
   chain: TChain,
   currency: TCurrencyInput,
-  destination?: TChain | null
+  destination?: TChain | null,
+  ctx?: TCustomCtx
 ): TAssetInfo | null => {
   if (
     ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
@@ -19,8 +20,8 @@ export const findAssetInfo = (
     return null
   }
 
-  const otherAssets = getOtherAssets(chain)
-  const nativeAssets = getNativeAssets(chain)
+  const otherAssets = getOtherAssetsImpl(chain, ctx)
+  const nativeAssets = getNativeAssetsImpl(chain, ctx)
 
   const assets = [...nativeAssets, ...otherAssets]
 
@@ -40,3 +41,9 @@ export const findAssetInfo = (
 
   return asset ?? null
 }
+
+export const findAssetInfo = (
+  chain: TChain,
+  currency: TCurrencyInput,
+  destination?: TChain | null
+): TAssetInfo | null => findAssetInfoImpl(chain, currency, destination)

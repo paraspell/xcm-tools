@@ -1,4 +1,4 @@
-import type { TChain } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
@@ -10,9 +10,10 @@ import {
   type TLocation
 } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
-import { getRelayChainOf } from '../chain'
+import { getRelayChainOf, getRelayChainOfImpl } from '../chain'
 
 /**
  * This function localizes a location by removing the `Parachain` junction
@@ -23,15 +24,16 @@ import { getRelayChainOf } from '../chain'
  * @param location - The location to localize
  * @returns The localized location
  */
-export const localizeLocation = (
+const localizeLocationInner = (
   chain: TChain,
   location: TLocation,
-  origin?: TChain
+  origin: TChain | undefined,
+  resolveRelay: (chain: TSubstrateChain) => TRelaychain
 ): TLocation => {
-  const targetRelay = isExternalChain(chain) ? undefined : getRelayChainOf(chain).toLowerCase()
+  const targetRelay = isExternalChain(chain) ? undefined : resolveRelay(chain).toLowerCase()
 
   const originRelay =
-    origin && !isExternalChain(origin) ? getRelayChainOf(origin).toLowerCase() : undefined
+    origin && !isExternalChain(origin) ? resolveRelay(origin).toLowerCase() : undefined
 
   const locationConsensus = getJunctionValue<Record<string, unknown> | undefined>(
     location,
@@ -181,3 +183,13 @@ export const localizeLocation = (
     interior: newInterior
   }
 }
+
+export const localizeLocation = (chain: TChain, location: TLocation, origin?: TChain): TLocation =>
+  localizeLocationInner(chain, location, origin, c => getRelayChainOf(c))
+
+export const localizeLocationImpl = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
+  chain: TChain,
+  location: TLocation,
+  origin?: TChain
+): TLocation => localizeLocationInner(chain, location, origin, c => getRelayChainOfImpl(api, c))

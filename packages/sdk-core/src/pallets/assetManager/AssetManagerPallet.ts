@@ -1,11 +1,17 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
+import type { PolkadotApi } from '../../api'
 import { UnsupportedOperationError } from '../../errors'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
 export class AssetManagerPallet extends BaseAssetsPallet {
-  mint(address: string, asset: WithAmount<TAssetInfo>, balance: bigint): Promise<TSetBalanceRes> {
+  mint<TApi, TRes, TSigner>(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
+    address: string,
+    asset: WithAmount<TAssetInfo>,
+    balance: bigint
+  ): Promise<TSetBalanceRes> {
     assertHasId(asset)
 
     const { assetId, amount } = asset

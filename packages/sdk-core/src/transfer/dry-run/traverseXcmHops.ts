@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import { isExternalChain, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
@@ -33,10 +32,10 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
   let forwardedXcms = initialForwardedXcms
   let nextParaId = initialDestParaId
 
-  const asset = findAssetInfoOrThrow(origin, currency, destination)
+  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
   let currentAsset =
     origin === swapConfig?.exchangeChain
-      ? findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo)
+      ? api.findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo)
       : asset
 
   let hasPassedExchange = origin === swapConfig?.exchangeChain
@@ -99,7 +98,7 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
       // Update state for next iteration
       if (swapConfig && nextChain === swapConfig.exchangeChain) {
         hasPassedExchange = true
-        currentAsset = findAssetOnDestOrThrow(
+        currentAsset = api.findAssetOnDestOrThrow(
           swapConfig.exchangeChain,
           nextChain,
           swapConfig.currencyTo

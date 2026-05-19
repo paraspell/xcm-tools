@@ -1,9 +1,4 @@
-import {
-  findAssetInfoOrThrow,
-  findAssetOnDestOrThrow,
-  findNativeAssetInfoOrThrow,
-  isAssetEqual
-} from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -31,12 +26,12 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
   validateAddress(api, sender, chain, false)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, chain, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, chain, destination, currency)
     : undefined
 
-  const asset = findAssetInfoOrThrow(chain, currency)
+  const asset = api.findAssetInfoOrThrow(chain, currency)
 
-  const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
+  const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
 
   const destApi = api.clone()
   await destApi.init(destination)
@@ -50,7 +45,7 @@ export const getMinTransferableAmountInternal = async <TApi, TRes, TSigner>({
 
   const destEd = getEdFromAssetOrThrow(destAsset)
 
-  const nativeAssetInfo = findNativeAssetInfoOrThrow(chain)
+  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
   const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
 
   const paysOriginInSendingAsset =
