@@ -1,12 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import {
-  findAssetInfo,
-  findNativeAssetInfo,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  isAssetXcEqual,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, isAssetXcEqual, isSymbolMatch } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -43,8 +36,8 @@ const createMintTxs = <TApi, TRes, TSigner>(
   address: string,
   api: PolkadotApi<TApi, TRes, TSigner>
 ): Promise<TSetBalanceRes> => {
-  const nativePallet = getNativeAssetsPallet(chain)
-  const otherPallets = getOtherAssetsPallets(chain)
+  const nativePallet = getNativeAssetsPallet(chain, api._customCtx)
+  const otherPallets = getOtherAssetsPallets(chain, api._customCtx)
   const isMainNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(chain))
   const pallet =
     (!asset.isNative && chain !== 'Mythos') || !isMainNativeAsset
@@ -52,7 +45,7 @@ const createMintTxs = <TApi, TRes, TSigner>(
       : nativePallet
 
   const palletInstance = getPalletInstance(pallet)
-  return palletInstance.mint(address, asset, balance, chain, api)
+  return palletInstance.mint(api, address, asset, balance, chain)
 }
 
 const createRequiredMintTxs = <TApi, TRes, TSigner>(
@@ -75,7 +68,7 @@ const createOptionalMintTxs = <TApi, TRes, TSigner>(
   address: string,
   api: PolkadotApi<TApi, TRes, TSigner>
 ) => {
-  const asset = findAssetInfo(chain, currency)
+  const asset = api.findAssetInfo(chain, currency)
   if (!asset) return null
   const amount = parseUnits(amountHuman, asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
@@ -101,16 +94,17 @@ export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint 
   return missing > 0n ? missing : null
 }
 
-const mintBonusForSent = (
+const mintBonusForSent = <TApi, TRes, TSigner>(
   chain: TSubstrateChain,
   sent: TAssetInfo,
   feeAsset: TAssetInfo | undefined,
-  mintFeeAssets: boolean
+  mintFeeAssets: boolean,
+  api: PolkadotApi<TApi, TRes, TSigner>
 ): bigint => {
   if (!mintFeeAssets) return 0n
 
-  const native = findNativeAssetInfo(chain)
-  const relay = findAssetInfo(
+  const native = api.findNativeAssetInfo(chain)
+  const relay = api.findAssetInfo(
     chain,
     { location: { parents: Parents.ONE, interior: { Here: null } } },
     null
@@ -147,14 +141,14 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
     location: { parents: Parents.ONE, interior: { Here: null } }
   }
 
-  const nativeInfo = mintFeeAssets ? findNativeAssetInfo(chain) : null
-  const relayInfo = mintFeeAssets ? findAssetInfo(chain, relayCurrency) : null
+  const nativeInfo = mintFeeAssets ? api.findNativeAssetInfo(chain) : null
+  const relayInfo = mintFeeAssets ? api.findAssetInfo(chain, relayCurrency) : null
   const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetXcEqual(nativeInfo, relayInfo))
 
   const mintNativeAssetRes = mintFeeAssets
     ? await createRequiredMintTxs(
         chain,
-        findNativeAssetInfoOrThrow(chain),
+        api.findNativeAssetInfoOrThrow(chain),
         bypassMintAmount,
         0n,
         address,
@@ -181,7 +175,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner>(
     asset
   })
 
-  const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets)
+  const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets, api)
 
   let mintAmount: bigint | null
   if (options?.sentAssetMintMode === 'bypass') {

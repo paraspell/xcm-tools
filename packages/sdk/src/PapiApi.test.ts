@@ -13,7 +13,7 @@ import {
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
-  getChainProviders,
+  getChainProvidersImpl,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
   isAssetEqual,
@@ -44,6 +44,11 @@ vi.mock('polkadot-api')
 vi.mock('polkadot-api/utils')
 vi.mock('polkadot-api/ws')
 
+vi.mock('@polkadot-api/substrate-bindings', () => ({
+  decAnyMetadata: vi.fn(),
+  unifyMetadata: vi.fn()
+}))
+
 vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
@@ -62,7 +67,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   getAssetsObject: vi.fn(),
   hasXcmPaymentApiSupport: vi.fn(),
   isAssetEqual: vi.fn(),
-  getChainProviders: vi.fn(),
+  getChainProvidersImpl: vi.fn(),
   wrapTxBypass: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   findNativeAssetInfoOrThrow: vi.fn(),
@@ -457,13 +462,13 @@ describe('PapiApi', () => {
       papiApi = new PapiApi()
       await papiApi.init(mockChain)
 
-      const providersSpy = vi.mocked(getChainProviders).mockReturnValue(['ws://dummy:9944'])
+      const providersSpy = vi.mocked(getChainProvidersImpl).mockReturnValue(['ws://dummy:9944'])
 
       const destroySpy = spyDestroy()
 
       await papiApi.disconnect(false)
 
-      expect(providersSpy).toHaveBeenCalledWith('Acala')
+      expect(providersSpy).toHaveBeenCalledWith('Acala', expect.any(Object))
       expect(destroySpy).not.toHaveBeenCalled()
 
       providersSpy.mockRestore()
@@ -2609,6 +2614,156 @@ describe('PapiApi', () => {
     it('should return the bridge status', async () => {
       const status = await papiApi.getBridgeStatus()
       expect(status).toEqual('Normal')
+    })
+  })
+
+  describe('hasRuntimeApi', () => {
+    it('returns true when the runtime api responds', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.apis.DryRunApi = { dry_run_call: vi.fn().mockResolvedValue('ok') }
+
+      await expect(papiApi.hasRuntimeApi('DryRunApi')).resolves.toBe(true)
+      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledOnce()
+    })
+
+    it('returns false when the probe throws "not found"', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.apis.XcmPaymentApi = {
+        ...unsafeApi.apis.XcmPaymentApi,
+        query_xcm_weight: vi.fn().mockRejectedValue(new Error('Runtime entry not found'))
+      }
+
+      await expect(papiApi.hasRuntimeApi('XcmPaymentApi')).resolves.toBe(false)
+    })
+
+    it('returns true on unrelated errors', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.apis.XcmPaymentApi = {
+        ...unsafeApi.apis.XcmPaymentApi,
+        query_xcm_weight: vi.fn().mockRejectedValue(new Error('Decoding failed'))
+      }
+
+      await expect(papiApi.hasRuntimeApi('XcmPaymentApi')).resolves.toBe(true)
+    })
+
+    it('selects the correct probe method for XcmPaymentApi', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const probe = vi.fn().mockResolvedValue('ok')
+      unsafeApi.apis.XcmPaymentApi = {
+        ...unsafeApi.apis.XcmPaymentApi,
+        query_xcm_weight: probe
+      }
+
+      await papiApi.hasRuntimeApi('XcmPaymentApi')
+      expect(probe).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('isEvmChain', () => {
+    const buildApi = () =>
+      ({
+        getFinalizedBlock: vi.fn().mockResolvedValue({ hash: '0xabc' }),
+        getMetadata: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]))
+      }) as unknown as PolkadotClient
+
+    const setupMetadata = async (path: string[] | undefined) => {
+      const subs = await import('@polkadot-api/substrate-bindings')
+      vi.mocked(subs.decAnyMetadata).mockReturnValue({} as ReturnType<typeof subs.decAnyMetadata>)
+      vi.mocked(subs.unifyMetadata).mockReturnValue({
+        lookup: [path ? { path } : undefined]
+      } as ReturnType<typeof subs.unifyMetadata>)
+    }
+
+    it('returns true when the metadata path contains AccountId20', async () => {
+      await setupMetadata(['frame_system', 'AccountId20'])
+      const api = new PapiApi()
+      api._api = buildApi()
+      await expect(api.isEvmChain()).resolves.toBe(true)
+    })
+
+    it('returns false when the metadata path is missing AccountId20', async () => {
+      await setupMetadata(['frame_system', 'AccountId32'])
+      const api = new PapiApi()
+      api._api = buildApi()
+      await expect(api.isEvmChain()).resolves.toBe(false)
+    })
+
+    it('returns false when no path is present on the lookup entry', async () => {
+      await setupMetadata(undefined)
+      const api = new PapiApi()
+      api._api = buildApi()
+      await expect(api.isEvmChain()).resolves.toBe(false)
+    })
+  })
+
+  describe('fetchPalletList', () => {
+    it('maps unified metadata pallets into TPalletEntry records', async () => {
+      const subs = await import('@polkadot-api/substrate-bindings')
+      vi.mocked(subs.decAnyMetadata).mockReturnValue({} as ReturnType<typeof subs.decAnyMetadata>)
+      vi.mocked(subs.unifyMetadata).mockReturnValue({
+        pallets: [
+          { name: 'Balances', index: 10, calls: { type: 1 } },
+          { name: 'System', index: 0, calls: undefined }
+        ]
+      } as unknown as ReturnType<typeof subs.unifyMetadata>)
+
+      const api = new PapiApi()
+      api._api = {
+        getFinalizedBlock: vi.fn().mockResolvedValue({ hash: '0xabc' }),
+        getMetadata: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]))
+      } as unknown as PolkadotClient
+
+      await expect(api.fetchPalletList()).resolves.toEqual([
+        { name: 'Balances', index: 10, hasExtrinsics: true },
+        { name: 'System', index: 0, hasExtrinsics: false }
+      ])
+    })
+  })
+
+  describe('getSystemProperties', () => {
+    it('returns ss58Format / tokenSymbol / tokenDecimals from the chain spec', async () => {
+      const api = new PapiApi()
+      api._api = {
+        getChainSpecData: vi.fn().mockResolvedValue({
+          properties: { ss58Format: 42, tokenSymbol: 'DOT', tokenDecimals: 10 }
+        })
+      } as unknown as PolkadotClient
+
+      await expect(api.getSystemProperties()).resolves.toEqual({
+        ss58Format: 42,
+        tokenSymbol: 'DOT',
+        tokenDecimals: 10
+      })
+    })
+
+    it('takes the first element when tokenSymbol/tokenDecimals are arrays', async () => {
+      const api = new PapiApi()
+      api._api = {
+        getChainSpecData: vi.fn().mockResolvedValue({
+          properties: { ss58Format: 0, tokenSymbol: ['DOT', 'KSM'], tokenDecimals: [10, 12] }
+        })
+      } as unknown as PolkadotClient
+
+      await expect(api.getSystemProperties()).resolves.toEqual({
+        ss58Format: 0,
+        tokenSymbol: 'DOT',
+        tokenDecimals: 10
+      })
+    })
+
+    it('returns undefined fields when properties are missing or malformed', async () => {
+      const api = new PapiApi()
+      api._api = {
+        getChainSpecData: vi.fn().mockResolvedValue({
+          properties: { ss58Format: 'bad' }
+        })
+      } as unknown as PolkadotClient
+
+      await expect(api.getSystemProperties()).resolves.toEqual({
+        ss58Format: undefined,
+        tokenSymbol: undefined,
+        tokenDecimals: undefined
+      })
     })
   })
 

@@ -1,11 +1,14 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import type BifrostPolkadot from '../../chains/supported/BifrostPolkadot'
 import { assertHasId, getChain } from '../../utils'
 import { CurrenciesPallet } from './CurrenciesPallet'
 
 vi.mock('../../utils')
+
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('CurrenciesPallet.setBalance', () => {
   beforeEach(() => {
@@ -19,7 +22,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n, 'Hydration')
+    const res = await pallet.mint(apiMock, address, asset, 0n, 'Hydration')
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(assertHasId).toHaveBeenCalledWith(asset)
@@ -38,7 +41,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(address, asset, 0n, 'Hydration')
+    const res = await pallet.mint(apiMock, address, asset, 0n, 'Hydration')
 
     expect(res.balanceTx.params.who).toBe(address)
     expect(res.balanceTx.params.currency_id).toBe(7)
@@ -54,7 +57,7 @@ describe('CurrenciesPallet.setBalance', () => {
       getCustomCurrencyId: mockCustomCurrencyId
     } as unknown as BifrostPolkadot<unknown, unknown, unknown>)
 
-    const res = await pallet.mint(address, asset, 10n, 'Karura')
+    const res = await pallet.mint(apiMock, address, asset, 10n, 'Karura')
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Karura')
@@ -73,7 +76,7 @@ describe('CurrenciesPallet.setBalance', () => {
       getCustomCurrencyId: mockGetCustomCurrencyId
     } as unknown as BifrostPolkadot<unknown, unknown, unknown>)
 
-    const res = await pallet.mint(address, asset, 2n, 'Acala')
+    const res = await pallet.mint(apiMock, address, asset, 2n, 'Acala')
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Acala')

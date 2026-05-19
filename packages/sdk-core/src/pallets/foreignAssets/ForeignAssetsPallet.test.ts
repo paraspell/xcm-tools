@@ -1,7 +1,10 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { ForeignAssetsPallet } from './ForeignAssetsPallet'
+
+const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('ForeignAssetsPallet.setBalance', () => {
   beforeEach(() => {
@@ -15,7 +18,7 @@ describe('ForeignAssetsPallet.setBalance', () => {
     const asset = { location, amount: 123n } as WithAmount<TAssetInfo>
     const chain = 'Acala'
 
-    const res = await pallet.mint(address, asset, 0n, chain)
+    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
     expect(res.assetStatusTx?.module).toBe('ForeignAssets')
     expect(res.assetStatusTx?.method).toBe('force_asset_status')

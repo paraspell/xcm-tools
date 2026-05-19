@@ -4,11 +4,11 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { normalizeLocation } from '@paraspell/assets'
 import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
 
+import { getChainImpl } from '../chains/getChainInstance'
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSubstrateTransferOptions } from '../types'
 import {
   abstractDecimals,
-  getChain,
   pickCompatibleXcmVersion,
   validateAddress,
   validateDestinationAddress
@@ -39,8 +39,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
     sender
   } = options
 
-  validateCurrency(currency, feeAsset)
-  validateDestination(origin, destination)
+  validateDestination(origin, destination, api)
   validateTransact(options)
 
   validateDestinationAddress(address, destination, api)
@@ -51,10 +50,10 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
   const assetCheckEnabled = shouldPerformAssetCheck(origin, currency)
 
   validateAssetSpecifiers(assetCheckEnabled, currency)
-  const asset = resolveAsset(currency, origin, destination, assetCheckEnabled)
+  const asset = resolveAsset(currency, origin, destination, assetCheckEnabled, api)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
@@ -66,7 +65,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
   // Ensure amount is at least 2 to avoid Rust panic (only for non-array currencies)
   const finalAmount = !Array.isArray(currency) && amount < MIN_AMOUNT ? MIN_AMOUNT : amount
 
-  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+  const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
   const overriddenAsset = resolveOverriddenAsset(
     options,
@@ -134,12 +133,16 @@ export const createTransfer = async <TApi, TRes, TSigner>(
     keepAlive
   } = options
 
-  const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
-    resolveTransferParams(options)
+  validateCurrency(currency, feeAsset)
 
   await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
-  return getChain<TApi, TRes, TSigner, typeof origin>(origin).transfer({
+  const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
+    resolveTransferParams(options)
+
+  const customCtx = api?._customCtx
+  const chainInstance = getChainImpl<TApi, TRes, TSigner>(origin, customCtx)
+  return chainInstance.transfer({
     api,
     assetInfo: normalizedAsset,
     currency,

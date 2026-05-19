@@ -9,6 +9,7 @@ import {
 } from '@paraspell/sdk';
 import { toHex } from 'polkadot-api/utils';
 
+import { assertSubstrateChain } from '../utils/assertions.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
@@ -18,6 +19,7 @@ export class AssetClaimService {
    * @deprecated Asset claim functionality is deprecated and will be removed in v14.
    */
   async claimAssets({ from, currency, address, options }: AssetClaimDto) {
+    assertSubstrateChain(from, options?.customChains);
     const hasOptions = options && Object.keys(options).length > 0;
 
     let builder:

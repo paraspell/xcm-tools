@@ -1,4 +1,4 @@
-import { findAssetOnDestOrThrow, getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
+import { getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
 import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
@@ -22,7 +22,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner>({
 
   await destApi.init(destination)
 
-  const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
+  const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
 
   const edDest = getEdFromAssetOrThrow(destAsset)
 

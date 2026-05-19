@@ -1,7 +1,6 @@
 import { bridgeInfoFor } from '@snowbridge/registry'
 import type { TAssetInfo, TChainAssetsInfo } from '../src'
-import { DEFAULT_SS58_PREFIX } from './consts'
-import { Parents } from '@paraspell/sdk-common'
+import { DEFAULT_SS58_PREFIX, Parents } from '@paraspell/sdk-common'
 
 type SnowbridgeNetwork = Parameters<typeof bridgeInfoFor>[0]
 

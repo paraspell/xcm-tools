@@ -27,7 +27,7 @@ export const claimAssets = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Unsupported pallet for asset claim')
   }
 
-  const version = getChainVersion(chain)
+  const version = getChainVersion(api, chain)
 
   const assets = resolveAssets(options, version)
 

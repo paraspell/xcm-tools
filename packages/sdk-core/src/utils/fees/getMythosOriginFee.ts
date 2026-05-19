@@ -1,5 +1,3 @@
-import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
-
 import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { UnableToComputeError } from '../../errors'
@@ -14,7 +12,7 @@ export const getMythosOriginFee = async <TApi, TRes, TSigner>(
 
   const [bridgeFee, ahExecutionFee] = await getParaEthTransferFees(ahApi, false)
 
-  const nativeAsset = findNativeAssetInfoOrThrow('Mythos')
+  const nativeAsset = api.findNativeAssetInfoOrThrow('Mythos')
 
   const feeConvertedRes = await ahApi.queryRuntimeApi<bigint | null>({
     module: 'AssetConversionApi',

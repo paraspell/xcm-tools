@@ -2,11 +2,11 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { TChainConfig } from '../../types'
-import { getChainConfig } from './getChainConfig'
+import { getChainConfigImpl } from './getChainConfig'
 import { getChainProviders } from './getChainProviders'
 
 vi.mock('./getChainConfig', () => ({
-  getChainConfig: vi.fn()
+  getChainConfigImpl: vi.fn()
 }))
 
 describe('getChainProviders', () => {
@@ -31,22 +31,22 @@ describe('getChainProviders', () => {
         { name: 'Acala', endpoint: 'https://provider2.com' }
       ]
     }
-    vi.mocked(getChainConfig).mockReturnValue(chainConfig)
+    vi.mocked(getChainConfigImpl).mockReturnValue(chainConfig)
 
     const result = getChainProviders(mockChain)
     expect(result).toEqual(['https://provider1.com', 'https://provider2.com'])
-    expect(getChainConfig).toHaveBeenCalledWith(mockChain)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 
   it('should throw an error when no providers are found', () => {
     const mockChain: TSubstrateChain = 'Centrifuge'
-    vi.mocked(getChainConfig).mockReturnValue({
+    vi.mocked(getChainConfigImpl).mockReturnValue({
       ...chainConfig,
       providers: []
     })
 
     expect(() => getChainProviders(mockChain)).toThrow(`No providers found for chain ${mockChain}`)
-    expect(getChainConfig).toHaveBeenCalledWith(mockChain)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 
   it('should handle multiple providers correctly and still return the first one', () => {
@@ -60,7 +60,7 @@ describe('getChainProviders', () => {
       ]
     }
 
-    vi.mocked(getChainConfig).mockReturnValue(mockChainConfig)
+    vi.mocked(getChainConfigImpl).mockReturnValue(mockChainConfig)
 
     const result = getChainProviders(mockChain)
     expect(result).toEqual([
@@ -68,6 +68,6 @@ describe('getChainProviders', () => {
       'https://providerB.com',
       'https://providerC.com'
     ])
-    expect(getChainConfig).toHaveBeenCalledWith(mockChain)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 })

@@ -2,7 +2,8 @@
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
+import type { PolkadotApi } from '../../../api'
+import type { TPolkadotXCMTransferOptions } from '../../../types'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
@@ -25,20 +26,22 @@ describe('createExecuteExchangeXcm', () => {
   })
 
   it('should construct the correct call and return the api.deserializeExtrinsics result when version is provided', () => {
-    const fakeApi = {
-      deserializeExtrinsics: vi.fn().mockReturnValue('result')
-    }
+    const deserializeExtrinsics = vi
+      .fn<PolkadotApi<unknown, unknown, unknown>['deserializeExtrinsics']>()
+      .mockReturnValue('result')
+    const fakeApi = { deserializeExtrinsics } as unknown as PolkadotApi<unknown, unknown, unknown>
+
     const input = {
       api: fakeApi,
       version: Version.V4,
       assetInfo: {
-        location: { foo: 'bar' },
+        location: {},
         amount: 1000n
       },
-      destination: 'dest',
+      destination: 'Acala',
       paraIdTo: 200,
-      address: 'address'
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+      recipient: 'address'
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     const weight = {
       refTime: 123n,
       proofSize: 456n
@@ -49,9 +52,9 @@ describe('createExecuteExchangeXcm', () => {
     const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
 
     expect(result).toBe('result')
-    expect(fakeApi.deserializeExtrinsics).toHaveBeenCalledTimes(1)
+    expect(deserializeExtrinsics).toHaveBeenCalledTimes(1)
 
-    const callArg = fakeApi.deserializeExtrinsics.mock.calls[0][0] as TSerializedExtrinsics
+    const callArg = deserializeExtrinsics.mock.calls[0][0]
     expect(callArg.module).toBe('PolkadotXcm')
     expect(callArg.method).toBe('execute')
     expect(callArg.params.max_weight).toEqual({

@@ -15,12 +15,15 @@ import type {
   TDryRunXcmBaseOptions,
   TLocation,
   TPallet,
+  TPalletEntry,
   TPaymentInfo,
+  TRuntimeApi,
   TSender,
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
   TSubstrateChain,
+  TSystemProperties,
   TUrl,
   TWeight,
   Version
@@ -35,7 +38,7 @@ import {
   findAssetInfoOrThrow,
   findNativeAssetInfoOrThrow,
   getAssetsObject,
-  getChainProviders,
+  getChainProvidersImpl,
   getRelayChainOf,
   hasXcmPaymentApiSupport,
   InvalidAddressError,
@@ -56,6 +59,7 @@ import {
   SubmitTransactionError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
+import { decAnyMetadata, unifyMetadata } from '@polkadot-api/substrate-bindings'
 import type { TypedApi } from 'polkadot-api'
 import { AccountId, Binary, getSs58AddressInfo } from 'polkadot-api'
 import { toHex } from 'polkadot-api/utils'
@@ -234,6 +238,37 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       }
       return true
     }
+  }
+
+  async hasRuntimeApi(runtimeApi: TRuntimeApi): Promise<boolean> {
+    const probeMethod = runtimeApi === 'DryRunApi' ? 'dry_run_call' : 'query_xcm_weight'
+    try {
+      await this.untypedApi.apis[runtimeApi][probeMethod]()
+      return true
+    } catch (e) {
+      if (e instanceof Error && /not found/i.test(e.message)) {
+        return false
+      }
+      return true
+    }
+  }
+
+  async isEvmChain(): Promise<boolean> {
+    const { hash } = await this.api.getFinalizedBlock()
+    const bytes = await this.api.getMetadata(hash)
+    const path = unifyMetadata(decAnyMetadata(bytes)).lookup[0]?.path
+    return path?.includes('AccountId20') ?? false
+  }
+
+  async fetchPalletList(): Promise<TPalletEntry[]> {
+    const { hash } = await this.api.getFinalizedBlock()
+    const bytes = await this.api.getMetadata(hash)
+    const meta = unifyMetadata(decAnyMetadata(bytes))
+    return meta.pallets.map(p => ({
+      name: p.name,
+      index: p.index,
+      hasExtrinsics: p.calls !== undefined
+    }))
   }
 
   getMethod(tx: TPapiTransaction) {
@@ -834,6 +869,16 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     return mode.type
   }
 
+  async getSystemProperties(): Promise<TSystemProperties> {
+    const spec = await this.api.getChainSpecData()
+    const props = spec?.properties
+    return {
+      ss58Format: typeof props?.ss58Format === 'number' ? props.ss58Format : undefined,
+      tokenSymbol: [props?.tokenSymbol].flat()[0],
+      tokenDecimals: [props?.tokenDecimals].flat()[0]
+    }
+  }
+
   disconnect(force = false) {
     if (!this._chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
@@ -850,7 +895,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       if (force) {
         this.api.destroy()
       } else {
-        const key = api === undefined ? getChainProviders(this._chain) : api
+        const key = api === undefined ? getChainProvidersImpl(this._chain, this._customCtx) : api
         releaseClient(key)
       }
     }

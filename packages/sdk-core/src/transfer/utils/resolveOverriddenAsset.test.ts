@@ -4,12 +4,7 @@ import type {
   TAssetWithFee,
   TLocationValueWithOverride
 } from '@paraspell/assets'
-import {
-  findAssetInfo,
-  isAssetEqual,
-  isOverrideLocationSpecifier,
-  isTAsset
-} from '@paraspell/assets'
+import { isAssetEqual, isOverrideLocationSpecifier, isTAsset } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -26,7 +21,6 @@ vi.mock('./validateAssetSupport')
 
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
-  findAssetInfo: vi.fn(),
   isTAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   isOverrideLocationSpecifier: vi.fn(),
@@ -38,8 +32,12 @@ describe('resolveOverriddenAsset', () => {
   const mockOrigin = 'Acala'
   const mockDestination = {} as TLocation
 
+  const mockApi = {
+    findAssetInfo: vi.fn()
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
+
   const defaultOptions = {
-    api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
+    api: mockApi,
     currency: { symbol: 'TEST', amount: '1000' },
     from: mockOrigin,
     to: mockDestination
@@ -51,7 +49,7 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isTAsset).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(createAsset).mockReturnValue({} as TAsset)
-    vi.mocked(findAssetInfo).mockReturnValue({
+    vi.spyOn(mockApi, 'findAssetInfo').mockReturnValue({
       location: {}
     } as TAssetInfo)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
@@ -115,10 +113,12 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValueOnce(false).mockReturnValueOnce(true)
 
+    const spy = vi.spyOn(mockApi, 'findAssetInfo')
+
     const result = resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAssetInfo)
 
     expect(validateAssetSupport).toHaveBeenCalledTimes(2)
-    expect(findAssetInfo).toHaveBeenCalledTimes(assets.length)
+    expect(spy).toHaveBeenCalledTimes(assets.length)
     expect(createAsset).toHaveBeenCalledTimes(assets.length)
     expect(result).toEqual([
       {

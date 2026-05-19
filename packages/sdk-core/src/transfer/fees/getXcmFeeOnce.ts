@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -75,11 +74,11 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
 }: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
-  const asset = findAssetInfoOrThrow(origin, currency, destination)
+  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
-  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+  const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
   const {
     fee: originFeeRaw,
@@ -151,7 +150,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
-          asset: findNativeAssetInfoOrThrow(destination)
+          asset: api.findNativeAssetInfoOrThrow(destination)
         } as TXcmFeeDetail,
         hops: []
       }
@@ -202,7 +201,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
     })
 
     const hopAsset = isDestination
-      ? (inferFeeAsset(origin, destination, asset) ?? resolvedHopAsset)
+      ? (inferFeeAsset(origin, destination, asset, api) ?? resolvedHopAsset)
       : resolvedHopAsset
 
     const hopResult = await getDestXcmFee({
@@ -284,7 +283,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
       },
       sender,
       recipient,
-      asset: inferFeeAsset(origin, destination, asset) ?? asset,
+      asset: inferFeeAsset(origin, destination, asset, api) ?? asset,
       version: resolvedVersion,
       tx,
       originFee: originFee ?? 0n,
@@ -296,12 +295,12 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
     destFee = destFallback.fee
     destFeeType = destFallback.feeType
     destSufficient = destFallback.sufficient
-    destAsset = findNativeAssetInfoOrThrow(destination)
+    destAsset = api.findNativeAssetInfoOrThrow(destination)
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'
     destSufficient = true
-    destAsset = findNativeAssetInfoOrThrow(destination)
+    destAsset = api.findNativeAssetInfoOrThrow(destination)
   }
 
   // Process Ethereum bridge fees

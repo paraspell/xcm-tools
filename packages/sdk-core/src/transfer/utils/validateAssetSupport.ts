@@ -1,7 +1,5 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
-  findAssetInfoOnDest,
-  findNativeAssetInfoOrThrow,
   InvalidCurrencyError,
   isAssetEqual,
   isBridgedSystemAsset,
@@ -19,23 +17,25 @@ import {
   replaceBigInt
 } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
-const validateBridgeAsset = (
+const validateBridgeAsset = <TApi, TRes, TSigner>(
   origin: TSubstrateChain,
   destination: TDestination,
   asset: TAssetInfo | null,
   currency: TCurrencyInputWithAmount,
-  isBridge: boolean
+  isBridge: boolean,
+  api: PolkadotApi<TApi, TRes, TSigner>
 ) => {
   if (!asset || isTLocation(destination) || isExternalChain(destination) || !isBridge) {
     return
   }
 
-  const nativeAsset = findNativeAssetInfoOrThrow(origin)
+  const nativeAsset = api.findNativeAssetInfoOrThrow(origin)
   const isNativeAsset = isAssetEqual(asset, nativeAsset)
 
   const isBridgedStablecoin = isStableCoinAsset(asset)
@@ -112,7 +112,7 @@ export const validateEthereumAsset = (
 }
 
 export const validateAssetSupport = <TApi, TRes, TSigner>(
-  { from: origin, to: destination, currency }: TSubstrateTransferOptions<TApi, TRes, TSigner>,
+  { api, from: origin, to: destination, currency }: TSubstrateTransferOptions<TApi, TRes, TSigner>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAssetInfo | null
@@ -126,13 +126,13 @@ export const validateAssetSupport = <TApi, TRes, TSigner>(
   if (
     !isLocationDestination &&
     assetCheckEnabled &&
-    !findAssetInfoOnDest(origin, destination, currency, asset)
+    !api.findAssetInfoOnDest(origin, destination, currency, asset)
   ) {
     throw new InvalidCurrencyError(
       `Destination chain ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
   }
 
-  validateBridgeAsset(origin, destination, asset, currency, isBridge)
+  validateBridgeAsset(origin, destination, asset, currency, isBridge, api)
   validateEthereumAsset(origin, destination, asset)
 }

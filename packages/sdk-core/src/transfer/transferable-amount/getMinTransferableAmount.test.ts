@@ -1,11 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  findAssetOnDestOrThrow,
-  findNativeAssetInfoOrThrow,
-  getEdFromAssetOrThrow,
-  isAssetEqual
-} from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Version } from '../..'
@@ -41,12 +35,20 @@ describe('getMinTransferableAmountInternal', () => {
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
-    disconnect: vi.fn()
+    disconnect: vi.fn(),
+    findAssetInfoOrThrow: vi.fn(),
+    findAssetOnDestOrThrow: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
+  const findAssetInfoOrThrowSpy = vi.spyOn(api, 'findAssetInfoOrThrow')
+  const findAssetOnDestOrThrowSpy = vi.spyOn(api, 'findAssetOnDestOrThrow')
+  const findNativeAssetInfoOrThrowSpy = vi.spyOn(api, 'findNativeAssetInfoOrThrow')
+
+  const buildInternal = vi.fn().mockReturnValue({})
   const mockBuilder = {
     currency: vi.fn().mockReturnThis(),
-    buildInternal: vi.fn().mockReturnValue({})
+    buildInternal
   } as unknown as GeneralBuilder<
     unknown,
     unknown,
@@ -84,9 +86,9 @@ describe('getMinTransferableAmountInternal', () => {
     const destAsset = { symbol: 'ASSET', location: {} } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(asset)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(destAsset)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+    findAssetInfoOrThrowSpy.mockReturnValue(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue(destAsset)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
@@ -101,8 +103,7 @@ describe('getMinTransferableAmountInternal', () => {
     } as TGetXcmFeeResult)
 
     const currencySpy = vi.spyOn(mockBuilder, 'currency')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const buildSpy = vi.spyOn(mockBuilder as any, 'buildInternal').mockResolvedValue({})
+    buildInternal.mockResolvedValue({})
 
     const cloneSpy = vi.spyOn(api, 'clone')
     const destInitSpy = vi.spyOn(destApi, 'init')
@@ -133,7 +134,7 @@ describe('getMinTransferableAmountInternal', () => {
       })
     )
     expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 23n }))
-    expect(buildSpy).toHaveBeenCalled()
+    expect(buildInternal).toHaveBeenCalled()
     expect(dryRunInternal).toHaveBeenCalledWith(
       expect.objectContaining({
         currency: expect.objectContaining({ amount: 23n })
@@ -148,9 +149,9 @@ describe('getMinTransferableAmountInternal', () => {
     const nativeAsset = { symbol: 'B' } as TAssetInfo
     const resolvedFee = { symbol: 'A' } as TAssetInfo
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(asset)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(destAssetNoLoc)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+    findAssetInfoOrThrowSpy.mockReturnValue(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue(destAssetNoLoc)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue(resolvedFee)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(999n) // ignored due to balance>0
@@ -179,12 +180,12 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns 0n when dryRun reports failureReason', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    findAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'A' } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'A',
       location: {}
     } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
@@ -205,9 +206,9 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('skips unrelated fees when assets differ; only ED + 1 when dest balance is 0', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'B' } as TAssetInfo)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    findAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'A' } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'B' } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'B',
       location: {}
     } as TAssetInfo)
@@ -229,15 +230,15 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns 0n when createTx keeps failing with AmountTooLowError (even after padding)', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'ASSET',
       decimals: 12
     } as TAssetInfo)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'ASSET',
       location: {}
     } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'ASSET'
     } as TAssetInfo)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(0n)
@@ -249,8 +250,7 @@ describe('getMinTransferableAmountInternal', () => {
     } as unknown as TGetXcmFeeResult)
 
     const error = new AmountTooLowError()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.spyOn(mockBuilder as any, 'buildInternal').mockRejectedValue(error)
+    buildInternal.mockRejectedValue(error)
 
     const result = await mod.getMinTransferableAmountInternal(baseOptions)
 
@@ -261,12 +261,6 @@ describe('getMinTransferableAmountInternal', () => {
 
 describe('getMinTransferableAmount', () => {
   it('sets disconnectAllowed to false, then restores to true and disconnects', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ symbol: 'A', decimals: 10 } as TAssetInfo)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
-      symbol: 'A',
-      location: {}
-    } as TAssetInfo)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue({ symbol: 'A' } as TAssetInfo)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(0n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1n)
     vi.mocked(abstractDecimals).mockReturnValue(100n)
@@ -288,7 +282,13 @@ describe('getMinTransferableAmount', () => {
         disconnectAllowedValues.push(val)
       },
       clone: vi.fn(() => destApi),
-      disconnect: vi.fn()
+      disconnect: vi.fn(),
+      findAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A', decimals: 10 }),
+      findAssetOnDestOrThrow: vi.fn().mockReturnValue({
+        symbol: 'A',
+        location: {}
+      }),
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A' })
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')

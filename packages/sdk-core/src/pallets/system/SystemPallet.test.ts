@@ -39,7 +39,7 @@ describe('SystemPallet.setBalance', () => {
 
     const spy = vi.spyOn(api, 'getEvmStorage')
 
-    const res = await pallet.mint(address, asset, 0n, chain, api)
+    const res = await pallet.mint(api, address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledWith(asset)
     expect(formatAssetIdToERC20).toHaveBeenCalledWith('123')
@@ -65,7 +65,7 @@ describe('SystemPallet.setBalance', () => {
 
     const spy = vi.spyOn(api, 'getEvmStorage')
 
-    await pallet.mint(address, asset, 0n, chain, api)
+    await pallet.mint(api, address, asset, 0n, chain)
 
     const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:5:32`
     expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)

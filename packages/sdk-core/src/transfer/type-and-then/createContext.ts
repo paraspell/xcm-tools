@@ -1,4 +1,3 @@
-import { findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
@@ -93,7 +92,7 @@ export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
     }
   ]
 
-  const systemAsset = findNativeAssetInfoOrThrow(getRelayChainOf(chain))
+  const systemAsset = api.findNativeAssetInfoOrThrow(getRelayChainOf(chain))
 
   const assetGlobalConsensus = getJunctionValue(assetInfo.location, 'GlobalConsensus')
   const originRelayChain = getRelayChainOf(chain)

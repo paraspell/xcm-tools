@@ -1,23 +1,28 @@
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { isCustomChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
-import { getChainProviders } from '../chains/config'
+import { getChainProvidersImpl } from '../chains/config'
 import { MissingChainApiError } from '../errors'
-import type { TApiOrUrl, TBuilderOptions, TUrl } from '../types'
+import type { TApiOrUrl, TBuilderOptions, TFullCustomCtx, TUrl } from '../types'
 import { isConfig } from '../utils'
 
-export const resolveChainApi = <TApi>(
+export const resolveChainApi = <TApi, TCustomChain extends string = never>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined,
-  chain: TSubstrateChain,
-  createApiInstance: (wsUrl: TUrl) => Promise<TApi>
+  chain: TSubstrateChain | TCustomChain,
+  createApiInstance: (wsUrl: TUrl) => Promise<TApi>,
+  ctx?: TFullCustomCtx
 ): Promise<TApi> => {
-  const apiConfig = isConfig(config) ? config.apiOverrides?.[chain] : config
+  const apiConfig = isConfig(config)
+    ? isCustomChain<TCustomChain>(chain)
+      ? undefined
+      : config.apiOverrides?.[chain]
+    : config
 
   if (isConfig(config) && config.development && !apiConfig) {
-    throw new MissingChainApiError(chain)
+    throw new MissingChainApiError<TCustomChain>(chain)
   }
 
   if (!apiConfig) {
-    return createApiInstance(getChainProviders(chain))
+    return createApiInstance(getChainProvidersImpl<TCustomChain>(chain, ctx))
   }
 
   if (typeof apiConfig === 'string' || apiConfig instanceof Array) {

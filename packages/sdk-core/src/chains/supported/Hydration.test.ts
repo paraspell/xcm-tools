@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { findAssetInfoByLoc, findAssetInfoOrThrow, InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetInfoByLoc, InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -22,8 +22,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  findAssetInfoByLoc: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
+  findAssetInfoByLoc: vi.fn()
 }))
 
 vi.mock('../../pallets/polkadotXcm')
@@ -63,7 +62,8 @@ describe('Hydration', () => {
         stringToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
         hexToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
         blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000'),
-        clone: vi.fn()
+        clone: vi.fn(),
+        findAssetInfoOrThrow: vi.fn()
       } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       mockInput = {
@@ -164,9 +164,10 @@ describe('Hydration', () => {
         location: { parents: 1, interior: 'Here' }
       } as WithAmount<TAssetInfo>
 
-      vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockGlmrAsset)
+      vi.spyOn(mockApi, 'findAssetInfoOrThrow').mockReturnValue(mockGlmrAsset)
 
       const mockInput = {
+        api: mockApi,
         assetInfo: mockAsset
       } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 

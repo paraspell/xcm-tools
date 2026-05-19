@@ -1,38 +1,77 @@
-import type { TAssetInfo } from '@paraspell/assets'
-import type { TPallet } from '@paraspell/pallets'
+import type { TAssetInfo, TChainAssetsInfo, TCurrencyInput } from '@paraspell/assets'
+import {
+  findAssetInfoImpl,
+  findAssetInfoOnDestImpl,
+  findAssetInfoOrThrowImpl,
+  findAssetOnDestOrThrowImpl,
+  findNativeAssetInfoImpl,
+  findNativeAssetInfoOrThrowImpl,
+  getAssetsImpl,
+  getAssetsObjectImpl,
+  getNativeAssetsImpl,
+  getNativeAssetSymbolImpl,
+  getOtherAssetsImpl,
+  getRelayChainSymbolImpl,
+  hasDryRunSupportImpl,
+  hasXcmPaymentApiSupportImpl,
+  isChainEvmImpl,
+  normalizeCustomAssets
+} from '@paraspell/assets'
+import type { TPallet, TPalletEntry } from '@paraspell/pallets'
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isExternalChain } from '@paraspell/sdk-common'
 
+import {
+  buildCustomChainAssetsInfo,
+  normalizeCustomChains,
+  resolveCustomChainAssetPallets
+} from '../chains/customChains'
 import { DEFAULT_TTL_MS } from '../constants'
-import { ApiNotInitializedError } from '../errors'
+import { ApiNotInitializedError, UnsupportedOperationError } from '../errors'
 import type {
   BatchMode,
   TApiOrUrl,
   TApiType,
   TBridgeStatus,
   TBuilderOptions,
+  TCustomChainEntryHydrated,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
+  TFullCustomCtx,
+  TRuntimeApi,
   TSender,
   TSerializedExtrinsics,
   TSerializedRuntimeApiQuery,
   TSerializedStateQuery,
+  TSystemProperties,
   TUrl,
   TWeight
 } from '../types'
+import { isConfig } from '../utils'
 import { resolveChainApi } from './resolveChainApi'
 
-export abstract class PolkadotApi<TApi, TRes, TSigner> {
+export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends string = never> {
   _api?: TApi
-  _chain?: TSubstrateChain
+  _chain?: TSubstrateChain | TCustomChain
   readonly _config?: TBuilderOptions<TApiOrUrl<TApi>>
+  readonly _customCtx: TFullCustomCtx
   _ttlMs = DEFAULT_TTL_MS
   _disconnectAllowed = true
   abstract readonly type: TApiType
 
   constructor(config?: TBuilderOptions<TApiOrUrl<TApi>>) {
     this._config = config
+    if (!isConfig(config)) {
+      this._customCtx = {}
+      return
+    }
+    this._customCtx = {
+      customAssets: normalizeCustomAssets(config.customAssets),
+      customChainAssets: {},
+      customChains: normalizeCustomChains(config.customChains),
+      customChainPallets: {}
+    }
   }
 
   get api(): TApi {
@@ -54,7 +93,84 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
     return this._config
   }
 
-  async init(chain: TChain, clientTtlMs: number = DEFAULT_TTL_MS): Promise<void> {
+  getAssetsObject(chain: TChain): TChainAssetsInfo {
+    return getAssetsObjectImpl(chain, this._customCtx)
+  }
+
+  getAssets(chain: TChain): TAssetInfo[] {
+    return getAssetsImpl(chain, this._customCtx)
+  }
+
+  getNativeAssets(chain: TChain): TAssetInfo[] {
+    return getNativeAssetsImpl(chain, this._customCtx)
+  }
+
+  getOtherAssets(chain: TChain): TAssetInfo[] {
+    return getOtherAssetsImpl(chain, this._customCtx)
+  }
+
+  findAssetInfo(
+    chain: TChain,
+    currency: TCurrencyInput,
+    destination?: TChain | null
+  ): TAssetInfo | null {
+    return findAssetInfoImpl(chain, currency, destination, this._customCtx)
+  }
+
+  findAssetInfoOrThrow(
+    chain: TChain,
+    currency: TCurrencyInput,
+    destination?: TChain | null
+  ): TAssetInfo {
+    return findAssetInfoOrThrowImpl(chain, currency, destination, this._customCtx)
+  }
+
+  findAssetInfoOnDest(
+    origin: TChain,
+    destination: TChain,
+    currency: TCurrencyInput,
+    originAsset?: TAssetInfo | null
+  ): TAssetInfo | null {
+    return findAssetInfoOnDestImpl(origin, destination, currency, originAsset, this._customCtx)
+  }
+
+  findAssetOnDestOrThrow(
+    origin: TChain,
+    destination: TChain,
+    currency: TCurrencyInput
+  ): TAssetInfo {
+    return findAssetOnDestOrThrowImpl(origin, destination, currency, this._customCtx)
+  }
+
+  findNativeAssetInfo(chain: TChain): TAssetInfo | null {
+    return findNativeAssetInfoImpl(chain, this._customCtx)
+  }
+
+  findNativeAssetInfoOrThrow(chain: TChain): TAssetInfo {
+    return findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
+  }
+
+  isChainEvm(chain: TChain): boolean {
+    return isChainEvmImpl(chain, this._customCtx)
+  }
+
+  getNativeAssetSymbol(chain: TChain): string {
+    return getNativeAssetSymbolImpl(chain, this._customCtx)
+  }
+
+  getRelayChainSymbol(chain: TChain): string {
+    return getRelayChainSymbolImpl(chain, this._customCtx)
+  }
+
+  hasDryRunSupport(chain: TChain): boolean {
+    return hasDryRunSupportImpl(chain, this._customCtx)
+  }
+
+  hasXcmPaymentApiSupport(chain: TChain): boolean {
+    return hasXcmPaymentApiSupportImpl(chain, this._customCtx)
+  }
+
+  async init(chain: TChain | TCustomChain, clientTtlMs: number = DEFAULT_TTL_MS): Promise<void> {
     if (this._chain !== undefined || isExternalChain(chain)) {
       return
     }
@@ -62,9 +178,14 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
     this._ttlMs = clientTtlMs
     this._chain = chain
 
-    this._api = await resolveChainApi(this._config, chain, wsUrl =>
-      this.leaseClient(wsUrl, this._ttlMs)
+    this._api = await resolveChainApi(
+      this._config,
+      chain,
+      wsUrl => this.leaseClient(wsUrl, this._ttlMs),
+      this._customCtx
     )
+
+    await this.maybeHydrateCustomChain(chain)
   }
 
   abstract leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TApi>
@@ -84,6 +205,9 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   abstract getMethod(tx: TRes): string
   abstract getTypeThenAssetCount(tx: TRes): number | undefined
   abstract hasMethod(pallet: TPallet, method: string): Promise<boolean>
+  abstract hasRuntimeApi(runtimeApi: TRuntimeApi): Promise<boolean>
+  abstract fetchPalletList(): Promise<TPalletEntry[]>
+  abstract isEvmChain(): Promise<boolean>
   abstract getPaymentInfo(
     tx: TRes,
     address: string
@@ -103,8 +227,10 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   abstract getEvmStorage(contract: string, slot: string): Promise<string>
   abstract getFromRpc(module: string, method: string, key: string): Promise<string>
   abstract blake2AsHex(data: Uint8Array): string
-  abstract clone(): PolkadotApi<TApi, TRes, TSigner>
-  abstract createApiForChain(chain: TSubstrateChain): Promise<PolkadotApi<TApi, TRes, TSigner>>
+  abstract clone(): PolkadotApi<TApi, TRes, TSigner, TCustomChain>
+  abstract createApiForChain(
+    chain: TSubstrateChain
+  ): Promise<PolkadotApi<TApi, TRes, TSigner, TCustomChain>>
   abstract getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResult>
   abstract getDryRunXcm(options: TDryRunXcmBaseOptions<TRes>): Promise<TDryRunChainResult>
   abstract getBridgeStatus(): Promise<TBridgeStatus>
@@ -114,4 +240,62 @@ export abstract class PolkadotApi<TApi, TRes, TSigner> {
   abstract deriveAddress(sender: TSender<TSigner>): string
   abstract signAndSubmit(tx: TRes, sender: TSender<TSigner>): Promise<string>
   abstract signAndSubmitFinalized(tx: TRes, sender: TSender<TSigner>): Promise<string>
+  abstract getSystemProperties(): Promise<TSystemProperties>
+
+  private async maybeHydrateCustomChain(chain: TChain | TCustomChain): Promise<void> {
+    const entry = this._customCtx.customChains?.[chain]
+    if (!entry) return
+    const needsProps =
+      entry.ss58Prefix === undefined ||
+      entry.nativeAssetSymbol === undefined ||
+      entry.nativeAssetDecimals === undefined
+    if (needsProps) {
+      const props = await this.getSystemProperties()
+      if (entry.ss58Prefix === undefined && typeof props.ss58Format === 'number') {
+        entry.ss58Prefix = props.ss58Format
+      }
+      if (entry.nativeAssetSymbol === undefined && props.tokenSymbol) {
+        entry.nativeAssetSymbol = props.tokenSymbol
+      }
+      if (entry.nativeAssetDecimals === undefined && typeof props.tokenDecimals === 'number') {
+        entry.nativeAssetDecimals = props.tokenDecimals
+      }
+    }
+    const [
+      supportsDryRunApi,
+      supportsXcmPaymentApi,
+      isEVM,
+      hasPolkadotXcm,
+      hasXcmPallet,
+      palletList
+    ] = await Promise.all([
+      this.hasRuntimeApi('DryRunApi'),
+      this.hasRuntimeApi('XcmPaymentApi'),
+      this.isEvmChain(),
+      this.hasMethod('PolkadotXcm', 'send'),
+      this.hasMethod('XcmPallet', 'send'),
+      this.fetchPalletList()
+    ])
+    if (!hasPolkadotXcm && !hasXcmPallet) {
+      throw new UnsupportedOperationError(
+        `Custom chain '${entry.name}' does not expose a 'PolkadotXcm' or 'XcmPallet' pallet.`
+      )
+    }
+    const xcmPallet = hasPolkadotXcm ? 'PolkadotXcm' : 'XcmPallet'
+    const pallets = resolveCustomChainAssetPallets(entry.name, palletList, entry.pallets)
+    const hydrated: TCustomChainEntryHydrated = {
+      ...entry,
+      xcmPallet,
+      isEVM,
+      supportsDryRunApi,
+      supportsXcmPaymentApi,
+      pallets
+    }
+    if (this._customCtx.customChainAssets) {
+      this._customCtx.customChainAssets[chain] = buildCustomChainAssetsInfo(hydrated)
+    }
+    if (this._customCtx.customChainPallets) {
+      this._customCtx.customChainPallets[chain] = pallets
+    }
+  }
 }

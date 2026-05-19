@@ -1,8 +1,9 @@
 import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
 import {
+  ASSETS_PALLETS,
   CHAINS,
   EXCHANGE_CHAINS,
-  SUBSTRATE_CHAINS,
+  RELAYCHAINS,
   TRANSACT_ORIGINS,
   Version,
 } from '@paraspell/sdk';
@@ -42,6 +43,50 @@ export const AssetSchema = z.union([AssetSchemaV3, AssetSchemaV4]);
 
 export type TAsset = z.infer<typeof AssetSchema>;
 
+const ProviderEntrySchema = z.object({
+  name: z.string().min(1),
+  endpoint: z.string().min(1),
+});
+
+export const CustomAssetInfoSchema = z.object({
+  symbol: z.string().min(1),
+  decimals: z.number().int().nonnegative(),
+  location: LocationSchema,
+  assetId: z.string().optional(),
+  existentialDeposit: z.string().optional(),
+  isFeeAsset: z.boolean().optional(),
+  isNative: z.boolean().optional(),
+  alias: z.string().optional(),
+  forceOverride: z.boolean().optional(),
+});
+
+export const CustomChainPalletsInputSchema = z.object({
+  nativeAssets: z.enum(ASSETS_PALLETS).optional(),
+  otherAssets: z.array(z.enum(ASSETS_PALLETS)).optional(),
+});
+
+export const CustomChainInputSchema = z.object({
+  paraId: z.number().int().nonnegative(),
+  ecosystem: z.enum(RELAYCHAINS),
+  providers: z.array(ProviderEntrySchema).min(1),
+  xcmVersion: z.nativeEnum(Version),
+  ss58Prefix: z.number().int().nonnegative().optional(),
+  nativeAssetSymbol: z.string().optional(),
+  nativeAssetDecimals: z.number().int().nonnegative().optional(),
+  assets: z.array(CustomAssetInfoSchema).optional(),
+  pallets: CustomChainPalletsInputSchema.optional(),
+});
+
+export const CustomAssetsMapSchema = z.record(
+  z.enum(CHAINS),
+  z.array(CustomAssetInfoSchema),
+);
+
+export const CustomChainsMapSchema = z.record(
+  z.string().min(1),
+  CustomChainInputSchema,
+);
+
 export const BuilderOptionsSchema = z
   .object({
     apiOverrides: z
@@ -50,6 +95,8 @@ export const BuilderOptionsSchema = z
     development: z.boolean().optional(),
     abstractDecimals: z.boolean().optional(),
     xcmFormatCheck: z.boolean().optional(),
+    customAssets: CustomAssetsMapSchema.optional(),
+    customChains: CustomChainsMapSchema.optional(),
   })
   .strip();
 
@@ -147,8 +194,8 @@ const versionValues = Object.values(Version) as [Version, ...Version[]];
 
 export const XTransferDtoSchema = z
   .object({
-    from: z.enum(SUBSTRATE_CHAINS),
-    to: z.union([z.enum(CHAINS), LocationSchema]),
+    from: z.string().min(1),
+    to: z.union([z.string().min(1), LocationSchema]),
     recipient: z.union([z.string(), LocationSchema]),
     currency: CurrencySchema,
     feeAsset: CurrencyCoreSchema.optional(),

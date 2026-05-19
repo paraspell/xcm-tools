@@ -5,6 +5,11 @@ export * from './api'
 export * from './balance'
 export * from './builder'
 export * from './chains/config'
+export {
+  buildCustomChainAssetsInfo,
+  buildCustomChainConfig,
+  normalizeCustomChains
+} from './chains/customChains'
 export * from './chains/getTChain'
 export {
   DEFAULT_TTL_MS,

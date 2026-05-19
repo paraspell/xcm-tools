@@ -67,7 +67,7 @@ export const buildMoonbeamToEth = async <TApi, TRes, TSigner>(
     amount
   )
 
-  const version = pickCompatibleXcmVersion(from, to)
+  const version = pickCompatibleXcmVersion(api, from, to)
   const customXcm = createCustomXcmOnDest(
     {
       api,

@@ -3,16 +3,24 @@
 import { CHAINS, isExternalChain } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
+import { InvalidCurrencyError } from '../errors'
+import type { TAssetInfo, TChainAssetsInfo, TCustomCtx } from '../types'
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
+  getAssetsImpl,
   getAssetsObject,
+  getAssetsObjectImpl,
   getNativeAssets,
+  getNativeAssetsImpl,
   getOtherAssets,
+  getOtherAssetsImpl,
   getRelayChainSymbol,
   hasDryRunSupport,
-  hasXcmPaymentApiSupport
+  hasDryRunSupportImpl,
+  hasXcmPaymentApiSupport,
+  hasXcmPaymentApiSupportImpl
 } from './assets'
 
 describe('getAssetsObject', () => {
@@ -131,5 +139,64 @@ describe('hasXcmPaymentApiSupport', () => {
   it('should return false for chains without XCM payment API support', () => {
     const hasSupport = hasXcmPaymentApiSupport('Peaq')
     expect(hasSupport).toBe(false)
+  })
+})
+
+describe('getAssetsObjectImpl with custom ctx', () => {
+  const customNative: TAssetInfo = {
+    symbol: 'CUS',
+    decimals: 12,
+    location: { parents: 0, interior: 'Here' },
+    isNative: true
+  }
+
+  const customChainAssets: TChainAssetsInfo = {
+    relaychainSymbol: 'DOT',
+    nativeAssetSymbol: 'CUS',
+    isEVM: false,
+    ss58Prefix: 42,
+    supportsDryRunApi: true,
+    supportsXcmPaymentApi: true,
+    assets: [customNative]
+  }
+
+  it('returns customChainAssets entry for a custom chain name', () => {
+    const ctx: TCustomCtx = { customChainAssets: { MyCustom: customChainAssets } }
+    expect(getAssetsObjectImpl<'MyCustom'>('MyCustom', ctx)).toBe(customChainAssets)
+  })
+
+  it('throws InvalidCurrencyError when a custom chain is not registered in the ctx', () => {
+    expect(() => getAssetsObjectImpl<'MyCustom'>('MyCustom', {})).toThrow(InvalidCurrencyError)
+    expect(() => getAssetsObjectImpl<'MyCustom'>('MyCustom')).toThrow(InvalidCurrencyError)
+  })
+
+  it('merges customAssets overlay into the base when present', () => {
+    const overlay: TAssetInfo = {
+      symbol: 'EXTRA',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { GeneralIndex: '9999' } } }
+    }
+    const ctx: TCustomCtx = { customAssets: { Acala: [overlay] } }
+    const result = getAssetsObjectImpl('Acala', ctx)
+    expect(result.assets.find(a => a.symbol === 'EXTRA')).toEqual(overlay)
+  })
+
+  it('returns the base unchanged when the overlay is an empty array', () => {
+    const base = getAssetsObject('Acala')
+    const ctx: TCustomCtx = { customAssets: { Acala: [] } }
+    expect(getAssetsObjectImpl('Acala', ctx)).toBe(base)
+  })
+
+  it('threads ctx into getAssetsImpl / getNativeAssetsImpl / getOtherAssetsImpl for custom chains', () => {
+    const ctx: TCustomCtx = { customChainAssets: { MyCustom: customChainAssets } }
+    expect(getAssetsImpl<'MyCustom'>('MyCustom', ctx)).toEqual([customNative])
+    expect(getNativeAssetsImpl<'MyCustom'>('MyCustom', ctx)).toEqual([customNative])
+    expect(getOtherAssetsImpl<'MyCustom'>('MyCustom', ctx)).toEqual([])
+  })
+
+  it('threads ctx into hasDryRunSupportImpl / hasXcmPaymentApiSupportImpl for custom chains', () => {
+    const ctx: TCustomCtx = { customChainAssets: { MyCustom: customChainAssets } }
+    expect(hasDryRunSupportImpl<'MyCustom'>('MyCustom', ctx)).toBe(true)
+    expect(hasXcmPaymentApiSupportImpl<'MyCustom'>('MyCustom', ctx)).toBe(true)
   })
 })

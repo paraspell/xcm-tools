@@ -1,11 +1,4 @@
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  isAssetEqual,
-  Native,
-  type TAsset
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, isAssetEqual, Native, type TAsset } from '@paraspell/assets'
 import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
@@ -29,6 +22,7 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   hasSeparateFeeAsset: boolean
 ) => {
   const {
+    api,
     chain,
     exchangeChain,
     assetInfoFrom,
@@ -41,7 +35,7 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
-  const nativeAsset = findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) })
+  const nativeAsset = api.findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) })
 
   if (!needsMultiHop) {
     return [
@@ -138,7 +132,9 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
   // Whether main asset IS DOT — no separate fee asset needed
   let isMainAssetDot = false
   if (isEthereumDest) {
-    const nativeFeeAssetInfo = findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain))
+    const nativeFeeAssetInfo = api.findNativeAssetInfoOrThrow(
+      getRelayChainOf(chain ?? exchangeChain)
+    )
     const ahApi = await api.createApiForChain('AssetHubPolkadot')
     const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
     ethBridgeFee = bridgeFee + executionFee
@@ -183,7 +179,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
   let exchangeToDestXcm: unknown[]
 
   if (isEthereumDest) {
-    const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol })
+    const ethAsset = api.findAssetInfoOrThrow('Ethereum', { symbol: assetInfoTo.symbol })
 
     const messageId = await generateMessageId(
       api,

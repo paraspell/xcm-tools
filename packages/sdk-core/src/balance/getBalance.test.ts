@@ -1,4 +1,4 @@
-import { findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/assets'
+import { type TAssetInfo } from '@paraspell/assets'
 import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -19,7 +19,9 @@ vi.mock('./getEthErc20Balance')
 const createMockApi = () =>
   ({
     init: vi.fn().mockResolvedValue(undefined),
-    disconnect: vi.fn().mockResolvedValue(undefined)
+    disconnect: vi.fn().mockResolvedValue(undefined),
+    findAssetInfoOrThrow: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseCurrency = { symbol: 'UNIT' }
@@ -114,8 +116,10 @@ describe('getBalanceInternal', () => {
 
   it('looks up asset info before delegating', async () => {
     const api = createMockApi()
+    const findAssetInfoOrThrowSpy = vi
+      .spyOn(api, 'findAssetInfoOrThrow')
+      .mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockResolvedValueOnce(77n)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(baseAsset)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
     vi.mocked(getChain).mockReturnValueOnce({
       getBalance: chainGetBalance
@@ -128,7 +132,7 @@ describe('getBalanceInternal', () => {
       currency: baseCurrency
     })
 
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Astar', baseCurrency)
+    expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Astar', baseCurrency)
     expect(chainGetBalance).toHaveBeenCalledWith(api, 'addr', baseAsset)
     expect(result).toBe(77n)
   })
@@ -141,8 +145,8 @@ describe('getBalance', () => {
 
   it('disconnects the api after a successful call', async () => {
     const api = createMockApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockResolvedValueOnce(100n)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(baseAsset)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
     vi.mocked(getChain).mockReturnValueOnce({
       getBalance: chainGetBalance
@@ -163,8 +167,8 @@ describe('getBalance', () => {
 
   it('still disconnects the api when the call fails', async () => {
     const api = createMockApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockRejectedValueOnce(new Error('failure'))
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(baseAsset)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
     vi.mocked(getChain).mockReturnValueOnce({
       getBalance: chainGetBalance

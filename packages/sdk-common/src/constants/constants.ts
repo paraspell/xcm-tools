@@ -83,6 +83,11 @@ export const SUBSTRATE_CHAINS = [...PARACHAINS, ...RELAYCHAINS] as const
 export const EXTERNAL_CHAINS = ['Ethereum', 'EthereumTestnet'] as const
 
 /**
+ * Default SS58 address prefix.
+ */
+export const DEFAULT_SS58_PREFIX = 42
+
+/**
  * All supported chains.
  */
 export const CHAINS = [...PARACHAINS, ...RELAYCHAINS, ...EXTERNAL_CHAINS] as const

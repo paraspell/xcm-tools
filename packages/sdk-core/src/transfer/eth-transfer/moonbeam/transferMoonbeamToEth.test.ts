@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
-import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
+import { isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { Address, WalletClient } from 'viem'
 import { getContract } from 'viem'
@@ -82,8 +82,11 @@ describe('transferMoonbeamToEth', () => {
           toU8a: () => new Uint8Array([1, 2, 3])
         }))
       }))
-    }))
+    })),
+    findAssetInfoOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
 
   const address: Address = '0xviem'
 
@@ -114,7 +117,7 @@ describe('transferMoonbeamToEth', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(findAssetInfoOrThrow).mockImplementation(chain => {
+    findAssetInfoOrThrowSpy.mockImplementation(chain => {
       if (chain === 'Ethereum') return ethereumAsset
       return moonbeamAsset
     })
@@ -151,7 +154,7 @@ describe('transferMoonbeamToEth', () => {
   })
 
   it('should throw error when Ethereum asset not found', async () => {
-    vi.mocked(findAssetInfoOrThrow)
+    findAssetInfoOrThrowSpy
       .mockImplementationOnce(() => moonbeamAsset)
       .mockImplementationOnce(() => {
         throw new Error('Asset {"symbol":"WETH"} not found on Ethereum')

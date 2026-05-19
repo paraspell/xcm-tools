@@ -1,5 +1,5 @@
 import {
-  getRelayChainSymbol,
+  getRelayChainSymbolImpl,
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
@@ -33,7 +33,7 @@ vi.mock('viem')
 vi.mock('@paraspell/pallets')
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
-  getRelayChainSymbol: vi.fn(),
+  getRelayChainSymbolImpl: vi.fn(),
   getNativeAssets: vi.fn(),
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
@@ -95,6 +95,7 @@ describe('validateCurrency', () => {
 describe('validateDestination', () => {
   let origin: TSubstrateChain
   let destination: TDestination
+  const api = { _customCtx: {} } as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -107,35 +108,35 @@ describe('validateDestination', () => {
 
     vi.mocked(isExternalChain).mockReturnValue(true)
 
-    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when destination is Ethereum and origin is AssetHubPolkadot', () => {
     origin = 'AssetHubPolkadot'
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should not throw when destination is Ethereum and origin is Hydration', () => {
     origin = 'Hydration'
     destination = 'Ethereum'
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should not throw when destination is undefined (relay destination)', () => {
     origin = 'AssetHubPolkadot'
     destination = 'Polkadot'
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should not throw when destination is a Location object', () => {
     origin = 'AssetHubPolkadot'
     destination = {} as TDestination
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should throw ScenarioNotSupportedError when relay chain symbols do not match and not a bridge transfer', () => {
@@ -143,9 +144,9 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
-    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when relay chain symbols match and not a bridge transfer', () => {
@@ -153,9 +154,9 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should not throw when it is a bridge transfer regardless of relay chain symbols', () => {
@@ -163,9 +164,9 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isBridge).mockReturnValue(true)
-    vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
   it('should not throw when destination is a location object and other conditions are met', () => {
@@ -175,8 +176,8 @@ describe('validateDestination', () => {
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     // Relay chain symbols should not be fetched in this case
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
-    expect(getRelayChainSymbol).not.toHaveBeenCalled()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
+    expect(getRelayChainSymbolImpl).not.toHaveBeenCalled()
   })
 
   it('should throw ScenarioNotSupportedError when origin is undefined and destination is Ethereum', () => {
@@ -185,7 +186,7 @@ describe('validateDestination', () => {
 
     vi.mocked(isExternalChain).mockReturnValue(true)
 
-    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {
@@ -195,8 +196,8 @@ describe('validateDestination', () => {
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
 
-    expect(() => validateDestination(origin, destination)).not.toThrow()
-    expect(getRelayChainSymbol).not.toHaveBeenCalled()
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
+    expect(getRelayChainSymbolImpl).not.toHaveBeenCalled()
   })
 
   it('should throw when origin and destination are relay chains', () => {
@@ -206,7 +207,7 @@ describe('validateDestination', () => {
     vi.mocked(isRelayChain).mockReturnValue(true)
     vi.mocked(isTLocation).mockReturnValue(false)
 
-    expect(() => validateDestination(origin, destination)).toThrow()
+    expect(() => validateDestination(origin, destination, api)).toThrow()
     expect(isRelayChain).toHaveBeenCalled()
   })
 
@@ -221,7 +222,7 @@ describe('validateDestination', () => {
       isRelayToParaEnabled: () => false
     } as unknown as ReturnType<typeof getChain>)
 
-    expect(() => validateDestination(origin, destination)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
     expect(getChain).toHaveBeenCalledWith(destination)
   })
 })

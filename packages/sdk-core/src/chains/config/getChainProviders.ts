@@ -1,10 +1,14 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { ProviderUnavailableError } from '../../errors'
-import { getChainConfig } from './getChainConfig'
+import type { TFullCustomCtx } from '../../types'
+import { getChainConfigImpl } from './getChainConfig'
 
-export const getChainProviders = (chain: TSubstrateChain): string[] => {
-  const { providers } = getChainConfig(chain)
+export const getChainProvidersImpl = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  ctx?: TFullCustomCtx
+): string[] => {
+  const { providers } = getChainConfigImpl(chain, ctx)
 
   if (providers.length === 0) {
     throw new ProviderUnavailableError(`No providers found for chain ${chain}`)
@@ -15,3 +19,5 @@ export const getChainProviders = (chain: TSubstrateChain): string[] => {
 
   return providers.map(p => p.endpoint)
 }
+
+export const getChainProviders = (chain: TSubstrateChain): string[] => getChainProvidersImpl(chain)

@@ -3,13 +3,13 @@ import type { TChain } from '@paraspell/sdk-common'
 /**
  * Error development mode is on and no API override is provided for a specific chain.
  */
-export class MissingChainApiError extends Error {
+export class MissingChainApiError<TCustomChain extends string = never> extends Error {
   /**
    * Constructs a new MissingChainApiError.
    *
    * @param chain - The chain for which the API is missing.
    */
-  constructor(chain: TChain) {
+  constructor(chain: TChain | TCustomChain) {
     super(
       `Development mode requires an API override for ${chain}. ` +
         `Please provide an API client or WebSocket URL in the apiOverrides configuration.`

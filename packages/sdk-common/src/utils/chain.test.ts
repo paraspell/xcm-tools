@@ -2,7 +2,69 @@ import { describe, expect, it } from 'vitest'
 
 import { EXTERNAL_CHAINS, PARACHAINS, RELAYCHAINS } from '../constants'
 import type { TChain } from '../types'
-import { isExternalChain, isRelayChain, isSystemChain, isTrustedChain } from './chain'
+import {
+  isChain,
+  isCustomChain,
+  isExternalChain,
+  isRelayChain,
+  isSubstrateChain,
+  isSystemChain,
+  isTrustedChain
+} from './chain'
+
+describe('isChain', () => {
+  PARACHAINS.forEach(parachain => {
+    it(`should return true for ${parachain}`, () => {
+      expect(isChain(parachain)).toBe(true)
+    })
+  })
+
+  RELAYCHAINS.forEach(relaychain => {
+    it(`should return true for ${relaychain}`, () => {
+      expect(isChain(relaychain)).toBe(true)
+    })
+  })
+
+  EXTERNAL_CHAINS.forEach(externalChain => {
+    it(`should return true for ${externalChain}`, () => {
+      expect(isChain(externalChain)).toBe(true)
+    })
+  })
+
+  it.each(['', 'NotAChain', 'polkadot', 'Acalaa'])(
+    'should return false for invalid string %j',
+    invalid => {
+      expect(isChain(invalid)).toBe(false)
+    }
+  )
+})
+
+describe('isSubstrateChain', () => {
+  PARACHAINS.forEach(parachain => {
+    it(`should return true for ${parachain}`, () => {
+      expect(isSubstrateChain(parachain)).toBe(true)
+    })
+  })
+
+  RELAYCHAINS.forEach(relaychain => {
+    it(`should return true for ${relaychain}`, () => {
+      expect(isSubstrateChain(relaychain)).toBe(true)
+    })
+  })
+
+  EXTERNAL_CHAINS.forEach(externalChain => {
+    it(`should return false for external chain ${externalChain}`, () => {
+      expect(isSubstrateChain(externalChain)).toBe(false)
+    })
+  })
+
+  it.each(['', 'NotAChain', 'polkadot', 'Acalaa'])(
+    'should return false for invalid string %j',
+    invalid => {
+      expect(isSubstrateChain(invalid)).toBe(false)
+    }
+  )
+})
 
 describe('isRelayChain', () => {
   RELAYCHAINS.forEach(relaychain => {
@@ -25,6 +87,33 @@ describe('isRelayChain', () => {
       expect(result).toBe(false)
     })
   })
+})
+
+describe('isCustomChain', () => {
+  PARACHAINS.forEach(parachain => {
+    it(`should return false for built-in parachain ${parachain}`, () => {
+      expect(isCustomChain(parachain)).toBe(false)
+    })
+  })
+
+  RELAYCHAINS.forEach(relaychain => {
+    it(`should return false for built-in relaychain ${relaychain}`, () => {
+      expect(isCustomChain(relaychain)).toBe(false)
+    })
+  })
+
+  EXTERNAL_CHAINS.forEach(externalChain => {
+    it(`should return false for built-in external chain ${externalChain}`, () => {
+      expect(isCustomChain(externalChain)).toBe(false)
+    })
+  })
+
+  it.each(['MyCustom', 'AnotherCustom', 'Foo'] as const)(
+    'returns true for unknown name %j',
+    name => {
+      expect(isCustomChain<'MyCustom' | 'AnotherCustom' | 'Foo'>(name)).toBe(true)
+    }
+  )
 })
 
 describe('isExternalChain', () => {

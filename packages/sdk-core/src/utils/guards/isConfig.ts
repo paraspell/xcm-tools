@@ -8,6 +8,8 @@ export const isConfig = <TApi>(value: any): value is TBuilderConfig<TApi> =>
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   (Object.keys(value).length < 3 ||
     'apiOverrides' in value ||
+    'customAssets' in value ||
+    'customChains' in value ||
     'development' in value ||
     'abstractDecimals' in value ||
     'xcmFormatCheck' in value)

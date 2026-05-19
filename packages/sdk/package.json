@@ -38,6 +38,7 @@
   "dependencies": {
     "@noble/hashes": "^2.2.0",
     "@paraspell/sdk-core": "workspace:*",
+    "@polkadot-api/substrate-bindings": "^0.20.0",
     "@polkadot-labs/hdkd": "^0.0.28",
     "@polkadot-labs/hdkd-helpers": "^0.0.30",
     "viem": "^2.48.4"

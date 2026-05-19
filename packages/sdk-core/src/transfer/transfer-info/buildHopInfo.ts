@@ -1,5 +1,3 @@
-import { findAssetOnDestOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
-
 import type { BuildHopInfoOptions } from '../../types'
 
 export const buildHopInfo = async <TApi, TRes, TSigner>({
@@ -23,13 +21,13 @@ export const buildHopInfo = async <TApi, TRes, TSigner>({
     const isBridgeHub = chain.includes('BridgeHub')
 
     if (isBridgeHub) {
-      const nativeAsset = findNativeAssetInfoOrThrow(chain)
+      const nativeAsset = api.findNativeAssetInfoOrThrow(chain)
       return {
         asset: nativeAsset,
         xcmFee: xcmFeeDetails
       }
     } else {
-      const hopAsset = findAssetOnDestOrThrow(originChain, chain, currency)
+      const hopAsset = api.findAssetOnDestOrThrow(originChain, chain, currency)
 
       return {
         asset: hopAsset,

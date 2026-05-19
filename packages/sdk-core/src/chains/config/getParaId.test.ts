@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
 import type { TChainConfig } from '../../types'
-import { getChainConfig } from './getChainConfig'
+import { getChainConfigImpl } from './getChainConfig'
 import { getParaId } from './getParaId'
 
 vi.mock('./getChainConfig')
@@ -12,31 +12,31 @@ describe('getParaId', () => {
   it('should return the correct paraId for a valid chain', () => {
     const mockChain: TChain = 'Acala'
     const mockConfig = { paraId: 2000 } as TChainConfig
-    vi.mocked(getChainConfig).mockReturnValue(mockConfig)
+    vi.mocked(getChainConfigImpl).mockReturnValue(mockConfig)
 
     const result = getParaId(mockChain)
     expect(result).toBe(2000)
-    expect(getChainConfig).toHaveBeenCalledWith(mockChain)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 
   it('should return the correct paraId for another valid chain', () => {
     const mockChain: TChain = 'Astar'
     const mockConfig = { paraId: 2015 } as TChainConfig
-    vi.mocked(getChainConfig).mockReturnValue(mockConfig)
+    vi.mocked(getChainConfigImpl).mockReturnValue(mockConfig)
 
     const result = getParaId(mockChain)
     expect(result).toBe(2015)
-    expect(getChainConfig).toHaveBeenCalledWith(mockChain)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 
   it('should handle chains with a paraId of 0', () => {
     const mockChains: TChain = 'Polkadot'
     const mockConfig = { paraId: 0 } as TChainConfig
-    vi.mocked(getChainConfig).mockReturnValue(mockConfig)
+    vi.mocked(getChainConfigImpl).mockReturnValue(mockConfig)
 
     const result = getParaId(mockChains)
     expect(result).toBe(0)
-    expect(getChainConfig).toHaveBeenCalledWith(mockChains)
+    expect(getChainConfigImpl).toHaveBeenCalledWith(mockChains, undefined)
   })
 
   it('should return Ethereum paraId', () => {

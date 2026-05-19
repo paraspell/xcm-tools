@@ -45,7 +45,8 @@ describe('buildMoonbeamToEth', () => {
     init: vi.fn(),
     clone: vi.fn(),
     objectToHex: vi.fn().mockResolvedValue('0xmockedXcm'),
-    createApiForChain: vi.fn().mockResolvedValue({})
+    createApiForChain: vi.fn().mockResolvedValue({}),
+    _customCtx: {}
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const moonbeamAsset: TAssetInfo = {

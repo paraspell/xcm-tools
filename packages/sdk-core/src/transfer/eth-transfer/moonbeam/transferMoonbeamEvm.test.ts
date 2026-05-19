@@ -1,9 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  isOverrideLocationSpecifier
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -17,7 +13,6 @@ import { transferMoonbeamEvm } from './transferMoonbeamEvm'
 import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 vi.mock('@paraspell/assets', () => ({
-  findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
   getNativeAssetSymbol: vi.fn(),
   isOverrideLocationSpecifier: vi.fn().mockReturnValue(false)
@@ -30,8 +25,11 @@ vi.mock('../../../utils')
 
 const mockApi = {
   init: vi.fn(),
-  deserializeExtrinsics: vi.fn()
+  deserializeExtrinsics: vi.fn(),
+  findAssetInfoOrThrow: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
 
 describe('transferMoonbeamEvm', () => {
   const mockViemContract = {
@@ -56,7 +54,7 @@ describe('transferMoonbeamEvm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getContract).mockReturnValue(mockViemContract)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockForeignAsset)
+    findAssetInfoOrThrowSpy.mockReturnValue(mockForeignAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
     vi.mocked(formatAssetIdToERC20).mockReturnValue('0xformattedAsset')
     vi.mocked(getDestinationLocation).mockReturnValue(['someDestination'] as unknown as ReturnType<
@@ -68,7 +66,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('uses native asset ID if found asset is the native symbol', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({ symbol: 'GLMR' } as TAssetInfo)
+    findAssetInfoOrThrowSpy.mockReturnValueOnce({ symbol: 'GLMR' } as TAssetInfo)
     await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,
@@ -87,7 +85,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('throws InvalidCurrencyError if asset is not foreign and missing valid assetId', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
+    findAssetInfoOrThrowSpy.mockReturnValueOnce({
       symbol: 'NOT_NATIVE',
       assetId: undefined
     } as TAssetInfo)
@@ -105,7 +103,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('formats foreign asset ID if the asset is foreign', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(mockForeignAsset)
+    findAssetInfoOrThrowSpy.mockReturnValueOnce(mockForeignAsset)
     await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,
@@ -118,7 +116,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('calls transferMultiCurrencies if useMultiAssets is true', async () => {
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({
+    findAssetInfoOrThrowSpy.mockReturnValueOnce({
       symbol: 'xcPINK',
       assetId: '100000000'
     } as TAssetInfo)
@@ -202,7 +200,7 @@ describe('transferMoonbeamEvm', () => {
 
   it('delegates to transferMoonbeamLocal when from === to', async () => {
     const localAsset = { symbol: 'xcDOT', assetId: '0xABCDEF', decimals: 10 } as TAssetInfo
-    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(localAsset)
+    findAssetInfoOrThrowSpy.mockReturnValueOnce(localAsset)
 
     const options = {
       api: mockApi,

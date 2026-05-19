@@ -11,7 +11,7 @@ const fakeApi: object = { type: 'api', connected: true, version: '1.0' }
 const createApiInstance = vi.fn<() => Promise<object>>().mockResolvedValue(fakeApi)
 
 vi.mock('../chains/config', () => ({
-  getChainProviders: vi.fn(() => 'wss://default-provider')
+  getChainProvidersImpl: vi.fn(() => 'wss://default-provider')
 }))
 
 describe('resolveChainApi', () => {
@@ -102,5 +102,27 @@ describe('resolveChainApi', () => {
 
     expect(createApiInstance).toHaveBeenCalledWith(WS_URL)
     expect(result).toBe(fakeApi)
+  })
+
+  it('ignores apiOverrides for custom chains and uses the providers from the ctx', async () => {
+    const config: TBuilderConfig<string> = {
+      apiOverrides: { Acala: WS_URL }
+    }
+
+    const result = await resolveChainApi<object, 'MyCustom'>(config, 'MyCustom', createApiInstance)
+
+    expect(createApiInstance).toHaveBeenCalledWith('wss://default-provider')
+    expect(result).toBe(fakeApi)
+  })
+
+  it('throws MissingChainApiError in development mode for custom chains too', () => {
+    const config: TBuilderConfig<object | string> = {
+      development: true,
+      apiOverrides: { Acala: WS_URL }
+    }
+
+    expect(() =>
+      resolveChainApi<object, 'MyCustom'>(config, 'MyCustom', createApiInstance)
+    ).toThrow(MissingChainApiError)
   })
 })

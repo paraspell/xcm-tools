@@ -1,9 +1,4 @@
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  getEdFromAssetOrThrow,
-  isAssetEqual
-} from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -26,10 +21,10 @@ export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
   validateAddress(api, sender, chain, false)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, chain, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, chain, destination, currency)
     : undefined
 
-  const asset = findAssetInfoOrThrow(chain, currency)
+  const asset = api.findAssetInfoOrThrow(chain, currency)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
@@ -42,7 +37,7 @@ export const getTransferableAmountInternal = async <TApi, TRes, TSigner>({
 
   const ed = getEdFromAssetOrThrow(asset)
 
-  const nativeAssetInfo = findNativeAssetInfoOrThrow(chain)
+  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
   const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
 
   const paysOriginInSendingAsset =

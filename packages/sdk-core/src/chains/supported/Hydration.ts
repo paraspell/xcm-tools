@@ -1,11 +1,6 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import {
-  findAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  InvalidCurrencyError,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -60,9 +55,9 @@ class Hydration<TApi, TRes, TSigner>
   transferMoonbeamWhAsset<TApi, TRes, TSigner>(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { assetInfo, version } = input
+    const { api, assetInfo, version } = input
 
-    const glmr = findAssetInfoOrThrow(this.chain, { symbol: getNativeAssetSymbol('Moonbeam') })
+    const glmr = api.findAssetInfoOrThrow(this.chain, { symbol: getNativeAssetSymbol('Moonbeam') })
     const FEE_AMOUNT = 150000000000000000n // 0.15 GLMR
 
     return transferPolkadotXcm({

@@ -1,10 +1,11 @@
 // Script that pulls XCM Pallets for selected Parachain
 
 import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { isCustomChain } from '@paraspell/sdk-common'
 
 import { XcmPalletNotFoundError } from '../errors'
 import * as palletsMapJson from '../maps/pallets.json' with { type: 'json' }
-import type { TAssetsPallet, TPalletDetails } from '../types'
+import type { TAssetsPallet, TPalletDetails, TPalletsCtx } from '../types'
 import { type TPallet, type TPalletJsonMap } from '../types'
 
 const palletsMap = palletsMapJson as TPalletJsonMap
@@ -32,14 +33,50 @@ export const getSupportedPalletsDetails = (chain: TSubstrateChain): TPalletDetai
 export const getPalletIndex = (chain: TSubstrateChain, pallet: TPallet): number | undefined =>
   palletsMap[chain].supportedPallets.find(p => p.name === pallet)?.index
 
-export const getNativeAssetsPallet = (chain: TSubstrateChain): TAssetsPallet =>
-  palletsMap[chain].nativeAssets
+export const getNativeAssetsPallet = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  ctx?: TPalletsCtx
+): TAssetsPallet => {
+  if (isCustomChain<TCustomChain>(chain)) {
+    const entry = ctx?.customChainPallets?.[chain]
+    if (!entry) {
+      // TODO: Fix this cast
+      throw new XcmPalletNotFoundError(chain as TSubstrateChain)
+    }
+    return entry.nativeAssets
+  }
+  return palletsMap[chain].nativeAssets
+}
 
-export const getOtherAssetsPallets = (chain: TSubstrateChain): TAssetsPallet[] =>
-  palletsMap[chain].otherAssets
+export const getOtherAssetsPallets = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  ctx?: TPalletsCtx
+): TAssetsPallet[] => {
+  if (isCustomChain<TCustomChain>(chain)) {
+    const entry = ctx?.customChainPallets?.[chain]
+    if (!entry) {
+      // TODO: Fix this cast
+      throw new XcmPalletNotFoundError(chain as TSubstrateChain)
+    }
+    return entry.otherAssets
+  }
+  return palletsMap[chain].otherAssets
+}
 
 export const hasPallet = (chain: TSubstrateChain, pallet: TPallet): boolean =>
   palletsMap[chain].supportedPallets.some(p => p.name === pallet)
+
+export const hasPalletImpl = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  pallet: TPallet,
+  ctx?: TPalletsCtx
+): boolean => {
+  if (isCustomChain<TCustomChain>(chain)) {
+    const entry = ctx?.customChainPallets?.[chain]
+    return entry?.supportedPallets?.some(p => p.name === pallet) ?? false
+  }
+  return palletsMap[chain].supportedPallets.some(p => p.name === pallet)
+}
 
 /**
  * Retrieves the XCM pallet for a specified chain.

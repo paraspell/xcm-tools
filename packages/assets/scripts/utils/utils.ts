@@ -1,23 +1,5 @@
-import { isRelayChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
-import { getChain } from '../../../sdk-core/src'
 import { ApiPromise } from '@polkadot/api'
 import { normalizeLocation } from '../../src'
-
-export const getRelayChainSymbolOf = (chain: TSubstrateChain): string => {
-  const symbolMap: Record<TRelaychain, string> = {
-    Polkadot: 'DOT',
-    Kusama: 'KSM',
-    Westend: 'WND',
-    Paseo: 'PAS'
-  }
-
-  // Check if chain itself is a relay chain
-  if (isRelayChain(chain)) return symbolMap[chain]
-
-  const ecosystem = getChain(chain).ecosystem
-
-  return symbolMap[ecosystem]
-}
 
 export const isChainEvm = (api: ApiPromise) => {
   const types = api.runtimeMetadata.asLatest.lookup.types

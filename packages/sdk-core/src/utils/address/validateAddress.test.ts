@@ -1,4 +1,4 @@
-import { isChainEvm } from '@paraspell/assets'
+import { isChainEvmImpl } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -31,7 +31,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    vi.mocked(isChainEvmImpl).mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -41,7 +41,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    vi.mocked(isChainEvmImpl).mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).toThrow(InvalidAddressError)
@@ -54,7 +54,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'some-non-ethereum-address'
     const chain: TChain = 'Acala'
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -64,7 +64,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain)).toThrow(InvalidAddressError)
@@ -77,7 +77,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    vi.mocked(isChainEvmImpl).mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain, false)).toThrow(InvalidAddressError)
@@ -90,7 +90,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain, false)).toThrow(InvalidAddressError)
@@ -103,7 +103,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -118,7 +118,7 @@ describe('validateAddress', () => {
 
     const validateSpy = vi.spyOn(mockApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain, true)).not.toThrow()
@@ -134,7 +134,7 @@ describe('validateAddress', () => {
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(invalidApi, address, chain, true)).toThrow(InvalidAddressError)
@@ -153,7 +153,7 @@ describe('validateAddress', () => {
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.mocked(isChainEvmImpl).mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(invalidApi, address, chain, true)).toThrow(InvalidAddressError)

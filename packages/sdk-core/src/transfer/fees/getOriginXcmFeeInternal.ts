@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  hasDryRunSupport
-} from '@paraspell/assets'
-
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals, pickCompatibleXcmVersion } from '../../utils'
@@ -30,17 +24,17 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
     destParaId?: number
   }
 > => {
-  const asset = findAssetInfoOrThrow(origin, currency, destination)
+  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-  if (!hasDryRunSupport(origin)) {
+  if (!api.hasDryRunSupport(origin)) {
     const { partialFee: rawFee } = await api.getPaymentInfo(tx, sender)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
     const sufficient = await isSufficientOrigin(
@@ -59,13 +53,13 @@ export const getOriginXcmFeeInternal = async <TApi, TRes, TSigner>({
 
     return {
       fee: paddedFee,
-      asset: resolvedFeeAsset ?? findNativeAssetInfoOrThrow(origin),
+      asset: resolvedFeeAsset ?? api.findNativeAssetInfoOrThrow(origin),
       feeType: 'paymentInfo',
       sufficient
     }
   }
 
-  const resolvedVersion = pickCompatibleXcmVersion(origin, destination, version)
+  const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
   const dryRunResult = await api.getDryRunCall({
     tx,

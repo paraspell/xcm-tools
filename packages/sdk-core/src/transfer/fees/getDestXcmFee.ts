@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { TCurrencyCore } from '@paraspell/assets'
-import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isExternalChain, isRelayChain, Parents } from '@paraspell/sdk-common'
 
@@ -51,7 +51,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
   } = options
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   const calcPaymentInfoFee = async (): Promise<bigint> => {
@@ -60,7 +60,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
     }
 
     const attempt = async (chain: TChain, curr: TCurrencyCore, amt: bigint) => {
-      const assetInfo = findAssetInfoOrThrow(chain, curr, destination)
+      const assetInfo = api.findAssetInfoOrThrow(chain, curr, destination)
 
       try {
         return await getReverseTxFee(
@@ -89,7 +89,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
     }
   }
 
-  if (!hasDryRunSupport(destination) || !forwardedXcms || isExternalChain(destination)) {
+  if (!api.hasDryRunSupport(destination) || !forwardedXcms || isExternalChain(destination)) {
     const fee = await calcPaymentInfoFee()
 
     const sufficient = await isSufficientDestination(

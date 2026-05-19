@@ -1,10 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import {
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
-  getNativeAssetSymbol,
-  hasDryRunSupport
-} from '@paraspell/assets'
+import { getNativeAssetSymbol } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -41,8 +36,15 @@ describe('getOriginXcmFeeInternal', () => {
   const api = {
     getPaymentInfo: vi.fn(),
     getDryRunCall: vi.fn(),
-    init: vi.fn()
+    init: vi.fn(),
+    findAssetInfoOrThrow: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn(),
+    hasDryRunSupport: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const findAssetInfoOrThrowSpy = vi.spyOn(api, 'findAssetInfoOrThrow')
+  const findNativeAssetInfoOrThrowSpy = vi.spyOn(api, 'findNativeAssetInfoOrThrow')
+  const hasDryRunSupportSpy = vi.spyOn(api, 'hasDryRunSupport')
 
   const baseOptions: TGetOriginXcmFeeInternalOptions<unknown, unknown, unknown> = {
     api,
@@ -59,8 +61,8 @@ describe('getOriginXcmFeeInternal', () => {
     vi.resetAllMocks()
     vi.mocked(getNativeAssetSymbol).mockReturnValue(mockSymbol)
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockAsset)
-    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+    findAssetInfoOrThrowSpy.mockReturnValue(mockAsset)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.spyOn(api, 'getPaymentInfo').mockResolvedValue({
       partialFee: 100n,
       weight: {
@@ -72,7 +74,7 @@ describe('getOriginXcmFeeInternal', () => {
   })
 
   it('returns padded paymentInfo fee when dry-run is NOT supported', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    hasDryRunSupportSpy.mockReturnValue(false)
     vi.mocked(padFee).mockReturnValue(150n)
 
     const dryRunCallSpy = vi.spyOn(api, 'getDryRunCall')
@@ -101,7 +103,7 @@ describe('getOriginXcmFeeInternal', () => {
   })
 
   it('returns dryRun fee, forwardedXcms & destParaId when dry-run succeeds', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    hasDryRunSupportSpy.mockReturnValue(true)
 
     vi.spyOn(api, 'getPaymentInfo').mockResolvedValue({
       partialFee: 0n,
@@ -137,7 +139,7 @@ describe('getOriginXcmFeeInternal', () => {
   })
 
   it('returns error variant when dry-run fails and fallback is disabled', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    hasDryRunSupportSpy.mockReturnValue(true)
 
     vi.spyOn(api, 'getPaymentInfo').mockResolvedValue({
       partialFee: 123n,
@@ -167,7 +169,7 @@ describe('getOriginXcmFeeInternal', () => {
   })
 
   it('falls back to padded paymentInfo when dry-run fails', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    hasDryRunSupportSpy.mockReturnValue(true)
 
     vi.spyOn(api, 'getPaymentInfo').mockResolvedValue({
       partialFee: 888n,

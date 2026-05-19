@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -34,7 +32,8 @@ vi.mock('../swap')
 
 const makeApi = (config: TBuilderConfig<unknown>) =>
   ({
-    config
+    config,
+    findAssetInfoOrThrow: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
@@ -53,59 +52,64 @@ describe('computeOverridenAmount', () => {
 
   it('adds increase (as BigInt) when config.abstractDecimals is true', () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: true }) }
+    const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
     vi.mocked(isConfig).mockReturnValue(true)
 
     const out = computeOverridenAmount(options, '100')
     expect(out).toBe(223) // 123 + 100
     expect(assertToIsString).not.toHaveBeenCalled()
-    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrowSpy).not.toHaveBeenCalled()
     expect(parseUnits).not.toHaveBeenCalled()
   })
 
   it('uses findAssetInfoOrThrow + parseUnits (increase) and adds to current amount when abstractDecimals is false', () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: false }) }
+    const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
     vi.mocked(isConfig).mockReturnValue(true)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 12 } as TAssetInfo)
+    findAssetInfoOrThrowSpy.mockReturnValue({ decimals: 12 } as TAssetInfo)
     vi.mocked(parseUnits).mockReturnValue(999n)
 
     const out = computeOverridenAmount(options, '100')
     expect(assertToIsString).toHaveBeenCalledWith('Hydration')
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
+    expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
     expect(parseUnits).toHaveBeenCalledWith('100', 12)
     expect(out).toBe(1122n) // 999n + 123n
   })
 
   it('treats non-config objects as supporting abstractDecimals by default', () => {
     const options = { ...baseOptions, api: makeApi({}) }
+    const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
     vi.mocked(isConfig).mockReturnValue(false)
 
     const out = computeOverridenAmount(options, '7')
     expect(out).toBe(130) // 123 + 7
     expect(assertToIsString).not.toHaveBeenCalled()
-    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrowSpy).not.toHaveBeenCalled()
     expect(parseUnits).not.toHaveBeenCalled()
   })
 
   it('when relative=false with abstractDecimals=true, ignores existing amount and returns only the increase (number path)', () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: true }) }
+    const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
     vi.mocked(isConfig).mockReturnValue(true)
 
     const out = computeOverridenAmount(options, '100', /* relative */ false)
     expect(out).toBe(100) // not 223
     expect(assertToIsString).not.toHaveBeenCalled()
-    expect(findAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(findAssetInfoOrThrowSpy).not.toHaveBeenCalled()
     expect(parseUnits).not.toHaveBeenCalled()
   })
 
   it('when relative=false with abstractDecimals=false, ignores existing amount and returns only the parsed increase (bigint path)', () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: false }) }
+    const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
     vi.mocked(isConfig).mockReturnValue(true)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ decimals: 12 } as TAssetInfo)
+    findAssetInfoOrThrowSpy.mockReturnValue({ decimals: 12 } as TAssetInfo)
     vi.mocked(parseUnits).mockReturnValue(999n)
 
     const out = computeOverridenAmount(options, '100', /* relative */ false)
     expect(assertToIsString).toHaveBeenCalledWith('Hydration')
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
+    expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Acala', options.currency, 'Hydration')
     expect(parseUnits).toHaveBeenCalledWith('100', 12)
     expect(out).toBe(999n) // not 1122n
   })
@@ -131,9 +135,11 @@ describe('overrideTxAmount', () => {
       TTransferBaseOptionsWithSender<unknown, unknown, unknown>
     >
 
+    const currencySpy = vi.spyOn(builder, 'currency')
+
     const out = await overrideTxAmount(options, builder, '50')
 
-    expect(builder.currency).toHaveBeenCalledWith(
+    expect(currencySpy).toHaveBeenCalledWith(
       expect.objectContaining({
         amount: 173 // 123 + 50
       })
@@ -149,10 +155,9 @@ describe('createTx', () => {
 
   it('when amount is undefined, builds real tx only (no override)', async () => {
     const realTx = { kind: 'realTx' }
-    const builder = {
-      currency: vi.fn().mockReturnThis(),
-      buildInternal: vi.fn().mockResolvedValue({ tx: realTx, options: {} })
-    } as unknown as GeneralBuilder<
+    const currency = vi.fn().mockReturnThis()
+    const buildInternal = vi.fn().mockResolvedValue({ tx: realTx, options: {} })
+    const builder = { currency, buildInternal } as unknown as GeneralBuilder<
       unknown,
       unknown,
       unknown,
@@ -161,8 +166,8 @@ describe('createTx', () => {
 
     const res = await createTxOverrideAmount(baseOptions, builder, undefined)
 
-    expect(builder['buildInternal']).toHaveBeenCalledTimes(1)
-    expect(builder.currency).not.toHaveBeenCalled()
+    expect(buildInternal).toHaveBeenCalledTimes(1)
+    expect(currency).not.toHaveBeenCalled()
     expect(res).toBe(realTx)
   })
 
@@ -171,10 +176,9 @@ describe('createTx', () => {
     vi.mocked(isConfig).mockReturnValue(true)
 
     const tx = { kind: 'overrideTx' }
-    const builder = {
-      currency: vi.fn().mockReturnThis(),
-      buildInternal: vi.fn().mockResolvedValue({ tx, options: {} })
-    } as unknown as GeneralBuilder<
+    const currency = vi.fn().mockReturnThis()
+    const buildInternal = vi.fn().mockResolvedValue({ tx, options: {} })
+    const builder = { currency, buildInternal } as unknown as GeneralBuilder<
       unknown,
       unknown,
       unknown,
@@ -183,10 +187,10 @@ describe('createTx', () => {
 
     const res = await createTxOverrideAmount(options, builder, '200')
 
-    expect(builder.currency).toHaveBeenCalledWith(
+    expect(currency).toHaveBeenCalledWith(
       expect.objectContaining({ amount: 323 }) // 123 + 200
     )
-    expect(builder['buildInternal']).toHaveBeenCalledTimes(1)
+    expect(buildInternal).toHaveBeenCalledTimes(1)
     expect(res).toBe(tx)
   })
 })

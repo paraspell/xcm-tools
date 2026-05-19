@@ -1,5 +1,4 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,8 +16,7 @@ import type Mythos from './Mythos'
 import { createTypeAndThenTransfer } from './Mythos'
 
 vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  findAssetInfoOrThrow: vi.fn()
+  ...(await importActual())
 }))
 
 vi.mock('../../pallets/polkadotXcm')
@@ -46,7 +44,6 @@ describe('Mythos', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mythos = getChain<unknown, unknown, unknown, 'Mythos'>('Mythos')
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
   })
 
   it('should initialize with correct values', () => {
@@ -113,7 +110,8 @@ describe('Mythos', () => {
       clone: vi.fn(),
       init: vi.fn(),
       queryRuntimeApi: vi.fn(),
-      deserializeExtrinsics: vi.fn()
+      deserializeExtrinsics: vi.fn(),
+      findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const mockEthereumInput = {
@@ -191,7 +189,11 @@ describe('Mythos', () => {
 })
 
 describe('createTypeAndThenTransfer', () => {
-  const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>
+  const mockApi = {
+    findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset)
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
 
   const mockOptions = {
     api: mockApi,
@@ -211,7 +213,7 @@ describe('createTypeAndThenTransfer', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
+    findAssetInfoOrThrowSpy.mockReturnValue(ethAsset)
     vi.mocked(getMythosOriginFee).mockResolvedValue(ORIGIN_FEE)
   })
 

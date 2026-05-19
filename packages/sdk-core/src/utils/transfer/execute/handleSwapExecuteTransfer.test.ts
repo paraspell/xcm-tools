@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/unbound-method */
 import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -34,13 +33,17 @@ vi.mock('./isMultiHopSwap', () => ({
 vi.mock('../../../chains/config')
 
 vi.mock('@paraspell/assets', () => ({
-  hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true)
+  hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
+  findNativeAssetInfoOrThrow: vi.fn(),
+  isAssetEqual: vi.fn().mockReturnValue(true)
 }))
 
 const mockApi = {
   init: vi.fn(),
   getXcmWeight: vi.fn(),
-  deserializeExtrinsics: vi.fn()
+  deserializeExtrinsics: vi.fn(),
+  hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true),
+  findNativeAssetInfoOrThrow: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const baseOptions = {
@@ -144,10 +147,12 @@ describe('handleSwapExecuteTransfer', () => {
       .mockResolvedValueOnce(mockDryRunResult(true, true))
       .mockResolvedValueOnce(mockDryRunResult(true, true))
 
+    const initSpy = vi.spyOn(mockApi, 'init')
+
     const result = await handleSwapExecuteTransfer(baseOptions)
 
     expect(result).toMatch(/^tx:/)
-    expect(mockApi.init).toHaveBeenCalled()
+    expect(initSpy).toHaveBeenCalled()
     expect(baseOptions.calculateMinAmountOut).toHaveBeenCalledWith(1680n)
   })
 

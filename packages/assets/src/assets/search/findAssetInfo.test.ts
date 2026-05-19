@@ -4,7 +4,7 @@ import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../../types'
-import { getNativeAssets, getOtherAssets } from '../assets'
+import { getNativeAssetsImpl, getOtherAssetsImpl } from '../assets'
 import { Foreign, ForeignAbstract, Native } from '../assetSelectors'
 import { findAssetInfo } from './findAssetInfo'
 
@@ -92,13 +92,13 @@ describe('findAssetInfo', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getNativeAssets).mockReturnValue([])
-    vi.mocked(getOtherAssets).mockReturnValue([])
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([])
   })
 
   it('finds asset by explicit id', () => {
-    vi.mocked(getNativeAssets).mockReturnValue([ztgAsset])
-    vi.mocked(getOtherAssets).mockReturnValue([])
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([ztgAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([])
 
     const result = findAssetInfo('Polkadot', { id: '2' })
 
@@ -106,21 +106,21 @@ describe('findAssetInfo', () => {
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([ksmAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([ksmAsset])
     const asset = findAssetInfo('AssetHubKusama', { symbol: Foreign('KSM') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([ztgAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([ztgAsset])
     const asset = findAssetInfo('Moonbeam', { symbol: 'xcZTG' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...ztgAsset,
         symbol: 'xcZTG'
@@ -132,7 +132,7 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...wethAsset,
         symbol: 'WETH.e'
@@ -144,7 +144,7 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...wethAsset,
         symbol: 'WETH.e'
@@ -156,77 +156,77 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH.e' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum when entered without suffix', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find asset without .e to match e', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([ztgAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([ztgAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('ZTG.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum when entered without suffix', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: Foreign('WETH') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH.e') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find weth with suffix on Ethereum', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('Ethereum', { symbol: Foreign('WETH') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot with duplicates', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...ztgAsset,
         assetId: '1'
@@ -242,7 +242,7 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot ', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...ztgAsset,
         assetId: '1',
@@ -260,7 +260,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1'
@@ -270,7 +270,7 @@ describe('findAssetInfo', () => {
         assetId: '2'
       }
     ])
-    vi.mocked(getNativeAssets).mockReturnValue([
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         isNative: true
@@ -280,7 +280,7 @@ describe('findAssetInfo', () => {
   })
 
   it('Should throw error when duplicate dot asset on Hydration', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1'
@@ -294,7 +294,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1'
@@ -308,7 +308,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...glmrAsset,
         assetId: '1',
@@ -324,7 +324,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1',
@@ -340,7 +340,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should find asset with xc prefix on Acala', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '2',
@@ -353,14 +353,14 @@ describe('findAssetInfo', () => {
   })
 
   it('Should find ethereum assets', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([wethAsset])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethAsset])
     const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('should find native asset on Acala', () => {
-    vi.mocked(getNativeAssets).mockReturnValue([
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         isNative: true
@@ -372,7 +372,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should find foreign abstract asset on Acala', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1',
@@ -390,7 +390,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should throw error when multiple matches in native and foreign assets', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         assetId: '1',
@@ -402,7 +402,7 @@ describe('findAssetInfo', () => {
         alias: 'DOT2'
       }
     ])
-    vi.mocked(getNativeAssets).mockReturnValue([
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([
       {
         ...dotAsset,
         isNative: true
@@ -412,7 +412,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should find asset with lowercase matching', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...glmrAsset,
         assetId: '2',
@@ -425,8 +425,8 @@ describe('findAssetInfo', () => {
   })
 
   it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([])
-    vi.mocked(getNativeAssets).mockReturnValue([])
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([])
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([])
     const asset = findAssetInfo('Acala', { symbol: 'dot' })
     expect(asset).toBeNull()
   })
@@ -450,7 +450,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency that is present', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         assetId: '2',
         symbol: 'dot',
@@ -470,7 +470,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency that is present', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         assetId: '2',
         symbol: 'dot',
@@ -490,7 +490,7 @@ describe('findAssetInfo', () => {
   })
 
   it('should return asset when passing a location currency with commas that is present', () => {
-    vi.mocked(getOtherAssets).mockReturnValue([
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         assetId: '2',
         symbol: 'dot',

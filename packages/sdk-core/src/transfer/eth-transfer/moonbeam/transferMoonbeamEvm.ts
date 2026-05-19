@@ -1,5 +1,4 @@
 import {
-  findAssetInfoOrThrow,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isOverrideLocationSpecifier
@@ -34,7 +33,7 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
-  const foundAsset = findAssetInfoOrThrow(from, currency, to)
+  const foundAsset = api.findAssetInfoOrThrow(from, currency, to)
 
   const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
@@ -83,7 +82,7 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
     to === 'AssetHubPolkadot' &&
     multiCurrencySymbols.includes(foundAsset.symbol)
 
-  const usdtAsset = findAssetInfoOrThrow(from, { symbol: 'xcUSDT' }, to)
+  const usdtAsset = api.findAssetInfoOrThrow(from, { symbol: 'xcUSDT' }, to)
   assertHasId(usdtAsset)
 
   const tx = useMultiAssets

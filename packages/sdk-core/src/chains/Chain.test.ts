@@ -103,7 +103,9 @@ describe('Parachain', () => {
     createApiForChain: vi.fn(),
     deserializeExtrinsics: vi.fn(),
     getFromRpc: vi.fn(),
-    clone: vi.fn()
+    clone: vi.fn(),
+    findAssetInfo: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'MYTH', location: {} })
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
@@ -424,6 +426,7 @@ describe('Parachain', () => {
 
   it('should create xcm asset', () => {
     const result = chain.createAsset(
+      api,
       {
         symbol: 'DOT',
         decimals: 10,

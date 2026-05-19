@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -14,7 +14,9 @@ vi.mock('./isSufficient')
 
 const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
-    getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
+    getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {}),
+    findAssetInfoOrThrow: vi.fn(),
+    hasDryRunSupport: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getDestXcmFee', () => {
@@ -38,15 +40,15 @@ describe('getDestXcmFee', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(unitAsset)
     vi.mocked(isSufficientDestination).mockResolvedValue(true)
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
     const api = createApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
       api,
@@ -76,11 +78,11 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns 0n when paymentInfo attempt throws a non-InvalidCurrencyError', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(unitAsset)
     vi.mocked(getReverseTxFee).mockRejectedValue(new Error('boom'))
 
     const api = createApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
       api,
@@ -111,11 +113,11 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has location', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(unitAsset)
 
     const api = createApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
       api,
@@ -145,12 +147,12 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported, and fails with ML', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockRejectedValueOnce(new InvalidCurrencyError(''))
     vi.mocked(getReverseTxFee).mockResolvedValueOnce(130n)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue(unitAsset)
 
     const api = createApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
       api,
@@ -180,7 +182,6 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const dryRunObj: TDryRunChainResult = {
       success: true,
       fee: 200n,
@@ -189,6 +190,8 @@ describe('getDestXcmFee', () => {
       asset: dotAsset
     }
     const api = createApi(dryRunObj)
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     const res = await getDestXcmFee({
       api,
@@ -215,12 +218,13 @@ describe('getDestXcmFee', () => {
   })
 
   it('falls back to “paymentInfo” and returns `dryRunError` when dry-run fails', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const api = createApi({
       success: false,
       failureReason: 'fail',
       asset: dotAsset
     })
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
@@ -253,12 +257,13 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns error variant (only `dryRunError`) when fallback is disabled', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const api = createApi({
       success: false,
       failureReason: 'boom',
       asset: dotAsset
     })
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     const res = await getDestXcmFee({
       api,
@@ -293,10 +298,10 @@ describe('getDestXcmFee', () => {
       }
     }
 
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
     const api = createApi()
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
-    vi.mocked(findAssetInfoOrThrow)
+    vi.spyOn(api, 'findAssetInfoOrThrow')
       .mockImplementationOnce(() => {
         throw new InvalidCurrencyError('nope')
       })
@@ -336,8 +341,9 @@ describe('getDestXcmFee', () => {
   })
 
   it('returns 0n when destination is Ethereum', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
     const api = createApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
+    vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
     const options = {
       api,
       forwardedXcms: undefined,

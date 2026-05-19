@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
-import { findAssetInfoOrThrow } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 
@@ -28,7 +27,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
 ): Promise<TSerializedExtrinsics> => {
   const { api, assetInfo: asset, sender, recipient } = options
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
+  const ethAsset = api.findAssetInfoOrThrow('Ethereum', { symbol: asset.symbol })
 
   assertHasId(ethAsset)
   assertAddressIsString(recipient)

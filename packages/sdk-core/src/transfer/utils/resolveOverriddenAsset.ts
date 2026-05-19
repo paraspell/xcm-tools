@@ -1,7 +1,6 @@
 import type { TAmount } from '@paraspell/assets'
 import {
   extractAssetLocation,
-  findAssetInfo,
   InvalidCurrencyError,
   isAssetEqual,
   isOverrideLocationSpecifier,
@@ -65,7 +64,11 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
         throw new InvalidCurrencyError('Multi assets cannot use amount all. Please specify amount.')
       }
 
-      const asset = findAssetInfo(origin, currency, !isTLocation(destination) ? destination : null)
+      const asset = api.findAssetInfo(
+        origin,
+        currency,
+        !isTLocation(destination) ? destination : null
+      )
 
       if (!asset) {
         throw new InvalidCurrencyError(
@@ -79,7 +82,7 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
 
       validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-      const version = getChainVersion(origin)
+      const version = getChainVersion(api, origin)
 
       const abstractedAmount = abstractDecimals(currency.amount, asset.decimals, api)
 

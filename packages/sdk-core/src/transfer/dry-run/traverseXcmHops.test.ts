@@ -1,5 +1,3 @@
-import type { TAssetInfo } from '@paraspell/assets'
-import { findAssetInfoOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -35,13 +33,13 @@ describe('traverseXcmHops', () => {
       api: { disconnect: vi.fn() },
       clone: vi.fn(),
       init: vi.fn(),
-      disconnect: vi.fn()
+      disconnect: vi.fn(),
+      findAssetInfoOrThrow: vi.fn().mockReturnValue({ assetId: 'asset1' }),
+      findAssetOnDestOrThrow: vi.fn().mockReturnValue({ assetId: 'asset2' })
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({ assetId: 'asset1' } as TAssetInfo)
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAssetInfo)
   })
 
   it('should process a single hop successfully', async () => {

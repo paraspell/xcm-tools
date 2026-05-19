@@ -1,5 +1,4 @@
 import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
-import { findAssetOnDestOrThrow, findNativeAssetInfoOrThrow } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,19 +6,16 @@ import type { PolkadotApi } from '../../api'
 import type { BuildHopInfoOptions } from '../../types'
 import { buildHopInfo } from './buildHopInfo'
 
-vi.mock('@paraspell/assets', async () => {
-  const actual = await import('@paraspell/assets')
-  return {
-    ...actual,
-    findAssetOnDestOrThrow: vi.fn(),
-    findNativeAssetInfoOrThrow: vi.fn()
-  }
+const mkSpies = (api: PolkadotApi<unknown, unknown, unknown>) => ({
+  findNativeAssetInfoOrThrow: vi.spyOn(api, 'findNativeAssetInfoOrThrow'),
+  findAssetOnDestOrThrow: vi.spyOn(api, 'findAssetOnDestOrThrow')
 })
 
 describe('buildHopInfo', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
   let mockHopApi: PolkadotApi<unknown, unknown, unknown>
   let baseOptions: BuildHopInfoOptions<unknown, unknown, unknown>
+  let spies: ReturnType<typeof mkSpies>
 
   const DEFAULT_HOP_FEE = 100000000n
 
@@ -33,7 +29,9 @@ describe('buildHopInfo', () => {
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
-      clone: vi.fn().mockReturnValue(mockHopApi)
+      clone: vi.fn().mockReturnValue(mockHopApi),
+      findNativeAssetInfoOrThrow: vi.fn(),
+      findAssetOnDestOrThrow: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     baseOptions = {
@@ -47,12 +45,13 @@ describe('buildHopInfo', () => {
       ahAddress: 'ahBobForEvm'
     }
 
-    vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(chain => {
+    spies = mkSpies(mockApi)
+    spies.findNativeAssetInfoOrThrow.mockImplementation(chain => {
       if (chain.includes('Polkadot')) return { symbol: 'DOT' } as TAssetInfo
       if (chain.includes('Kusama')) return { symbol: 'KSM' } as TAssetInfo
       return { symbol: 'HOPNATIVE' } as TAssetInfo
     })
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
+    spies.findAssetOnDestOrThrow.mockReturnValue({
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
@@ -73,7 +72,7 @@ describe('buildHopInfo', () => {
     expect(cloneSpy).toHaveBeenCalledTimes(1)
     expect(initSpy).toHaveBeenCalledWith(options.chain)
     expect(setDisconnectAllowedSpy).toHaveBeenCalledWith(false)
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
+    expect(spies.findAssetOnDestOrThrow).toHaveBeenCalledWith(
       options.originChain,
       options.chain,
       options.currency
@@ -106,8 +105,8 @@ describe('buildHopInfo', () => {
     const result = await buildHopInfo(options)
 
     expect(initSpy).toHaveBeenCalledWith(chain)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith(chain)
-    expect(findAssetOnDestOrThrow).not.toHaveBeenCalled()
+    expect(spies.findNativeAssetInfoOrThrow).toHaveBeenCalledWith(chain)
+    expect(spies.findAssetOnDestOrThrow).not.toHaveBeenCalled()
 
     expect(result).toEqual({
       asset: {
@@ -136,12 +135,12 @@ describe('buildHopInfo', () => {
         interior: 'Here'
       }
     }
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(asset)
+    spies.findAssetOnDestOrThrow.mockReturnValue(asset)
     const options = { ...baseOptions }
 
     const result = await buildHopInfo(options)
 
-    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(
+    expect(spies.findAssetOnDestOrThrow).toHaveBeenCalledWith(
       options.originChain,
       options.chain,
       options.currency
@@ -156,7 +155,7 @@ describe('buildHopInfo', () => {
   })
 
   it('should call finally block (disconnect) even if an earlier call fails', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockImplementation(() => {
+    spies.findAssetOnDestOrThrow.mockImplementation(() => {
       throw new Error('Network error')
     })
     const options = { ...baseOptions }

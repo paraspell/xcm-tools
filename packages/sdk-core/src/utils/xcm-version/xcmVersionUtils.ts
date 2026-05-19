@@ -1,6 +1,7 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { isTLocation, type TSubstrateChain, type Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import type { OneKey, TDestination } from '../../types'
 import { getChainVersion } from '../chain'
 
@@ -19,24 +20,26 @@ export const selectXcmVersion = (
   return destVersion < originVersion ? destVersion : originVersion
 }
 
-export const pickCompatibleXcmVersion = (
+export const pickCompatibleXcmVersion = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   destination: TDestination,
   override?: Version
 ) => {
-  const originVersion = getChainVersion(origin)
-  const destVersion = !isTLocation(destination) ? getChainVersion(destination) : undefined
+  const originVersion = getChainVersion(api, origin)
+  const destVersion = !isTLocation(destination) ? getChainVersion(api, destination) : undefined
   return selectXcmVersion(override, originVersion, destVersion)
 }
 
-export const pickRouterCompatibleXcmVersion = (
+export const pickRouterCompatibleXcmVersion = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   origin: TSubstrateChain | undefined,
   exchangeChain: TSubstrateChain,
   destination: TChain | undefined
 ): Version => {
-  const exchangeVersion = getChainVersion(exchangeChain)
-  const originVersion = origin ? getChainVersion(origin) : undefined
-  const destVersion = destination ? getChainVersion(destination) : undefined
+  const exchangeVersion = getChainVersion(api, exchangeChain)
+  const originVersion = origin ? getChainVersion(api, origin) : undefined
+  const destVersion = destination ? getChainVersion(api, destination) : undefined
 
   // Find minimum compatible version across all defined chains
   const minWithOrigin = selectXcmVersion(undefined, exchangeVersion, originVersion)

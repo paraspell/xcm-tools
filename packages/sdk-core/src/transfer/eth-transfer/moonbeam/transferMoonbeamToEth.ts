@@ -1,5 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
-import { findAssetInfoOrThrow, isOverrideLocationSpecifier } from '@paraspell/assets'
+import { isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
@@ -47,11 +47,11 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
-  const foundAsset = findAssetInfoOrThrow(from, currency, to)
+  const foundAsset = api.findAssetInfoOrThrow(from, currency, to)
 
   const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', { symbol: foundAsset.symbol })
+  const ethAsset = api.findAssetInfoOrThrow('Ethereum', { symbol: foundAsset.symbol })
 
   const contract = getContract({
     abi,
