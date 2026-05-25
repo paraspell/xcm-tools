@@ -174,6 +174,98 @@ const response = await fetch('http://localhost:3001/v1/x-transfer-batch', {
 
 ```
 
+### Adding chain and/or assets
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#adding-chain-and-or-assets).
+
+Possible parameters:
+- Inherited from concrete endpoint
+
+```ts
+const response = await fetch("http://localhost:3001/v1/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+    
+    // Custom chains can be fitted into both from and to parameters
+    "from": "MyChain", 
+    "to": "AssetHubPolkadot",
+    "address": "address",
+    "currency": { "symbol": "USDC", "amount": "1000000" },
+    "options": {
+
+      // Adding custom chain
+      "customChains": {
+        "MyChain": {
+          "paraId": 4242,
+          "ecosystem": "Polkadot",
+          "xcmVersion": "V5",
+          "providers": [
+            { "name": "Primary", "endpoint": "wss://rpc.mychain.example/ws" }
+          ],
+          // Everything below is optional — auto-fetched from runtime `system.properties` when omitted
+          "nativeAssetSymbol": "MYC",
+          "nativeAssetDecimals": 12,
+          "ss58Prefix": 42,
+          "pallets”: {
+              "nativeAssets": "Balances”,
+              "otherAssets": "Assets",
+          },
+          "assets": [
+            {
+              "symbol": "USDC",
+              "decimals": 6,
+              "assetId": "1337",
+              "location": {
+                "parents": 1,
+                "interior": {
+                  "X3": [
+                    { "Parachain": 1000 },
+                    { "PalletInstance": 50 },
+                    { "GeneralIndex": 1337 }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+
+      // Adding assets to existing chains
+      "customAssets": {
+        "AssetHubPolkadot": [
+          {
+            "symbol": "MYNEWUSD",
+            "decimals": 6,
+            "assetId": "9999",
+            "location": {
+              "parents": 0,
+              "interior": {
+                "X2": [{ "PalletInstance": 50 }, { "GeneralIndex": 9999 }]
+              }
+            }
+          },
+          // Replace an existing registry asset that shares the same location
+          {
+            "symbol": "USDT",
+            "decimals": 6,
+            "assetId": "1984",
+            "location": {
+              "parents": 0,
+              "interior": {
+                "X2": [{ "PalletInstance": 50 }, { "GeneralIndex": 1984 }]
+              }
+            },
+            "forceOverride": true
+          }
+        ]
+      }
+    }
+  })
+});
+```
+
 ### Localhost testing setup
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#localhost-testing-setup).
