@@ -23,8 +23,9 @@ export const isSubstrateChain = (chain: string): chain is TSubstrateChain =>
  * @param chain - The chain to check.
  * @returns True if the chain is a relaychain; otherwise, false.
  */
-export const isRelayChain = (chain: TChain): chain is TRelaychain =>
-  RELAYCHAINS.includes(chain as TRelaychain)
+export const isRelayChain = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): chain is TRelaychain => RELAYCHAINS.some(c => c === chain)
 
 /**
  * Determines whether a given chain is an external chain.
@@ -52,7 +53,9 @@ export const isCustomChain = <TCustomChain extends string = never>(
  * @param chain - The chain to check.
  * @returns True if the chain is a system chain; otherwise, false.
  */
-export const isSystemChain = (chain: TChain): boolean => {
+export const isSystemChain = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): boolean => {
   const systemChains: TChain[] = [
     'AssetHubPolkadot',
     'AssetHubKusama',
@@ -75,11 +78,12 @@ export const isSystemChain = (chain: TChain): boolean => {
     'CollectivesWestend'
   ]
 
-  return systemChains.includes(chain) || isRelayChain(chain)
+  return systemChains.some(c => c === chain) || isRelayChain(chain)
 }
 
-export const isTrustedChain = (chain: TChain): boolean => {
-  const trusted: TChain[] = ['Mythos', 'Encointer']
-  const isTrustedByAh = (chain: TChain) => trusted.includes(chain)
-  return isTrustedByAh(chain) || isSystemChain(chain)
+export const isTrustedChain = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): boolean => {
+  const isTrustedByAh: TChain[] = ['Mythos', 'Encointer']
+  return isTrustedByAh.some(t => t === chain) || isSystemChain(chain)
 }

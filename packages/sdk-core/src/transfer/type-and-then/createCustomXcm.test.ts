@@ -8,7 +8,7 @@ import { getParaId } from '../../chains/config'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext } from '../../types'
-import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
+import { createBeneficiaryLocation, createDestination, localizeLocationImpl } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createCustomXcm } from './createCustomXcm'
 
@@ -88,7 +88,7 @@ describe('createCustomXcm', () => {
     vi.resetAllMocks()
     vi.mocked(createDestination).mockReturnValue(mockDestination)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
-    vi.mocked(localizeLocation).mockImplementation((_, location) => location)
+    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
     vi.mocked(isTrustedChain).mockReturnValue(false)
     vi.mocked(isChainEvm).mockReturnValue(false)
   })

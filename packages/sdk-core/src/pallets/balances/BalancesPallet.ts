@@ -1,4 +1,4 @@
-import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
+import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
@@ -6,7 +6,7 @@ import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class BalancesPallet extends BaseAssetsPallet {
   mint<TApi, TRes, TSigner>(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
@@ -15,7 +15,7 @@ export class BalancesPallet extends BaseAssetsPallet {
     const { amount } = assetInfo
 
     const noIdPrefixes = ['Hydration', 'NeuroWeb', 'Basilisk', 'Darwinia']
-    const notUseId = noIdPrefixes.some(prefix => chain.startsWith(prefix)) || isChainEvm(chain)
+    const notUseId = noIdPrefixes.some(prefix => chain.startsWith(prefix)) || api.isChainEvm(chain)
 
     return Promise.resolve({
       balanceTx: {

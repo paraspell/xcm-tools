@@ -141,6 +141,7 @@ describe('createExecuteExchangeXcm', () => {
     const result = createExecuteExchangeXcm(input, mockOrigin, weight, originFee, destFee)
     expect(result).toBe('defaultResult')
     expect(createDestination).toHaveBeenCalledWith(
+      input.api,
       Version.V4,
       mockOrigin,
       input.destination,

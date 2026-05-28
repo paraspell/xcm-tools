@@ -17,7 +17,7 @@ const resolveId = <TApi, TRes, TSigner>(
       ? api.findAssetInfoOrThrow(chain, { location: asset.location })
       : asset
 
-    return getChain(chain).getCustomCurrencyId(resolvedAsset)
+    return getChain(chain).getCustomCurrencyId(api, resolvedAsset)
   } else {
     assertHasId(asset)
     return asset.assetId

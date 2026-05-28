@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../../types'
-import { getNativeAssetSymbol } from '../assets'
+import { getNativeAssetSymbolImpl } from '../assets'
 import { Native } from '../assetSelectors'
 import { findAssetInfoImpl } from './findAssetInfo'
 import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
@@ -29,11 +29,11 @@ describe('findNativeAssetInfo helpers', () => {
       const mockInfo = { symbol: 'ETH' } as TAssetInfo
 
       vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
+      vi.mocked(getNativeAssetSymbolImpl).mockReturnValue('ETH')
 
       const res = findNativeAssetInfo(chain)
 
-      expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
+      expect(getNativeAssetSymbolImpl).toHaveBeenCalledWith(chain, undefined)
       expect(Native).not.toHaveBeenCalled()
       expect(findAssetInfoImpl).toHaveBeenCalledWith(chain, { symbol: 'ETH' }, null, undefined)
       expect(res).toEqual(mockInfo)
@@ -44,12 +44,12 @@ describe('findNativeAssetInfo helpers', () => {
       const mockInfo = { symbol: 'DOT' } as TAssetInfo
 
       vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+      vi.mocked(getNativeAssetSymbolImpl).mockReturnValue('DOT')
       vi.mocked(findAssetInfoImpl).mockReturnValue(mockInfo)
 
       const res = findNativeAssetInfo(chain)
 
-      expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
+      expect(getNativeAssetSymbolImpl).toHaveBeenCalledWith(chain, undefined)
       expect(Native).toHaveBeenCalledWith('DOT')
       expect(findAssetInfoImpl).toHaveBeenCalledWith(
         chain,
@@ -67,11 +67,11 @@ describe('findNativeAssetInfo helpers', () => {
       const mockInfo = { symbol: 'DOT' } as TAssetInfo
 
       vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue(mockInfo)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+      vi.mocked(getNativeAssetSymbolImpl).mockReturnValue('DOT')
 
       const res = findNative(chain)
 
-      expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
+      expect(getNativeAssetSymbolImpl).toHaveBeenCalledWith(chain, undefined)
       expect(Native).toHaveBeenCalledWith('DOT')
       expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
         chain,

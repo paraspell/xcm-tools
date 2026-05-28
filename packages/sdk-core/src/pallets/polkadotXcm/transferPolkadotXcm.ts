@@ -42,7 +42,7 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner>(
     overriddenAsset
   )
 
-  const destLocation = createDestination(version, chain, destination, paraIdTo)
+  const destLocation = createDestination(api, version, chain, destination, paraIdTo)
 
   const feeAssetIndex =
     overriddenAsset === undefined || isTLocation(overriddenAsset)

@@ -1,14 +1,16 @@
-import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
+import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
 import { AssetsPallet } from './AssetsPallet'
 
-vi.mock('@paraspell/assets')
 vi.mock('../../utils')
 
-const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
+const createApiMock = (isEvm: boolean) =>
+  ({
+    isChainEvm: vi.fn().mockReturnValue(isEvm)
+  }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('AssetsPallet.setBalance', () => {
   beforeEach(() => {
@@ -21,10 +23,9 @@ describe('AssetsPallet.setBalance', () => {
     const chain = 'Moonbeam'
     const asset = { assetId: '123', amount: 999n } as WithAmount<TAssetInfo>
 
-    vi.mocked(isChainEvm).mockReturnValue(true)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
+    const res = await pallet.mint(createApiMock(true), address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(res.assetStatusTx?.module).toBe('Assets')
@@ -52,10 +53,9 @@ describe('AssetsPallet.setBalance', () => {
     const chain = 'Acala'
     const asset = { assetId: '45', amount: 500n } as WithAmount<TAssetInfo>
 
-    vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const res = await pallet.mint(apiMock, address, asset, 0n, chain)
+    const res = await pallet.mint(createApiMock(false), address, asset, 0n, chain)
 
     expect(assertHasId).toHaveBeenCalledTimes(1)
     expect(typeof res.assetStatusTx?.params.id).toBe('number')

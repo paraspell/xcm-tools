@@ -3,6 +3,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IXTokensTransfer,
@@ -22,16 +23,16 @@ class Pendulum<TApi, TRes, TSigner>
     super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo): TXcmAsset {
-    if (asset.symbol === this.getNativeAssetSymbol()) return { Native: null }
+  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo): TXcmAsset {
+    if (asset.symbol === this.getNativeAssetSymbol(api)) return { Native: null }
     assertHasId(asset)
     return { XCM: Number(asset.assetId) }
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
-    const { asset } = input
+    const { asset, api } = input
 
-    const currencySelection = this.getCustomCurrencyId(asset)
+    const currencySelection = this.getCustomCurrencyId(api, asset)
 
     return transferXTokens(
       {
@@ -52,7 +53,7 @@ class Pendulum<TApi, TRes, TSigner>
       method: 'transfer',
       params: {
         dest: { Id: recipient },
-        currency_id: this.getCustomCurrencyId(asset),
+        currency_id: this.getCustomCurrencyId(api, asset),
         amount
       }
     })

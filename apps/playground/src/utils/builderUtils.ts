@@ -11,12 +11,12 @@ import {
   ForeignAbstract,
   type GeneralBuilder,
   Native,
-  Override,
   type TBuilderConfig,
   type TCurrencyCore,
   type TCurrencyInput,
+  type TCustomAssetsMap,
+  type TCustomChainsMap,
   type TUrl,
-  type WithComplexAmount,
 } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
@@ -26,10 +26,10 @@ import type {
   TAdvancedOptions,
   TCurrencyEntryBase,
   TCurrencyEntryBaseTransformed,
+  TCurrencyType,
   TFormValuesTransformed,
   TSwapOptions,
   TSymbolType,
-  TTransferCurrencyType,
 } from '../types';
 
 export const isSwapActive = (swapOptions: TSwapOptions): boolean =>
@@ -48,16 +48,22 @@ export const transformApiOverrides = (
       .map(({ chain, endpoints }) => [chain, endpoints.map((e) => e.url)]),
   );
 
-export const createBuilderOptions = ({
-  apiOverrides,
-  development,
-  abstractDecimals,
-  xcmFormatCheck,
-}: TAdvancedOptions): TBuilderConfig<TUrl> => ({
+export const createBuilderOptions = (
+  {
+    apiOverrides,
+    development,
+    abstractDecimals,
+    xcmFormatCheck,
+  }: TAdvancedOptions,
+  customChains?: TCustomChainsMap,
+  customAssets?: TCustomAssetsMap,
+): TBuilderConfig<TUrl> => ({
   apiOverrides: transformApiOverrides(apiOverrides),
   development,
   abstractDecimals,
   xcmFormatCheck,
+  ...(customChains && Object.keys(customChains).length > 0 && { customChains }),
+  ...(customAssets && Object.keys(customAssets).length > 0 && { customAssets }),
 });
 
 export const resolveCurrencyAsset = <T extends TCurrencyEntryBase>(
@@ -74,7 +80,7 @@ export const resolveCurrencyAsset = <T extends TCurrencyEntryBase>(
 
 export const resolveCustomCurrencyCore = (
   currency: string,
-  currencyType?: TTransferCurrencyType,
+  currencyType?: TCurrencyType,
   currencySymbolSpecifier?: TSymbolType,
 ): TCurrencyCore => {
   if (currencyType === 'id') {
@@ -102,7 +108,7 @@ export const resolveCustomCurrencyCore = (
   };
 };
 
-export const determineCurrencyCore = ({
+export const determineCurrency = ({
   isCustomCurrency,
   customCurrency,
   customCurrencyType,
@@ -122,20 +128,6 @@ export const determineCurrencyCore = ({
   } else {
     throw Error('Currency is required');
   }
-};
-
-export const determineCurrency = (
-  entry: TCurrencyEntryBaseTransformed,
-): TCurrencyInput => {
-  if (
-    entry.isCustomCurrency &&
-    entry.customCurrencyType === 'overridenLocation'
-  ) {
-    return {
-      location: Override(JSON.parse(entry.customCurrency) as TLocation),
-    };
-  }
-  return determineCurrencyCore(entry);
 };
 
 export const determineFeeAsset = (
@@ -208,7 +200,7 @@ export const addSwapToBuilder = <
   return builder
     .sender({ ...signer, address: sender } as unknown as PolkadotSigner)
     .swap({
-      currencyTo: determineCurrencyCore(transformedCurrencyTo),
+      currencyTo: determineCurrency(transformedCurrencyTo),
       exchange,
       slippage: Number(slippage),
       evmSigner,
@@ -231,11 +223,7 @@ export const setupEvmBuilder = (
   return builder
     .from(from)
     .to(to)
-    .currency(
-      currencyInputs.length === 1
-        ? currencyInputs[0]
-        : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-    )
+    .currency(currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs)
     .recipient(recipient)
     .ahAddress(ahAddress)
     .sender(walletClient);
@@ -268,11 +256,7 @@ export const setupBaseBuilder = (
   let finalBuilder = builder
     .from(from)
     .to(to)
-    .currency(
-      currencyInputs.length === 1
-        ? currencyInputs[0]
-        : (currencyInputs as WithComplexAmount<TCurrencyCore>[]),
-    )
+    .currency(currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs)
     .feeAsset(determineFeeAsset(transformedFeeAsset))
     .sender(sender)
     .recipient(recipient)

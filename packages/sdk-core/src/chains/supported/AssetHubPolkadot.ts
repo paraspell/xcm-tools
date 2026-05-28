@@ -40,8 +40,8 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
         return transferPolkadotXcm(options)
       }
 
-      const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol())
-      const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol())
+      const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol(api))
+      const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol(api))
 
       if (!isNativeAsset || !isNativeFeeAsset) {
         return api.deserializeExtrinsics(await handleExecuteTransfer(options))

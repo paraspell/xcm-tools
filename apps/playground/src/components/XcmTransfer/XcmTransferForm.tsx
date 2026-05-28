@@ -11,7 +11,13 @@ import {
   useComputedColorScheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { CHAINS, isChainEvm, isExternalChain } from '@paraspell/sdk';
+import { useDisclosure } from '@mantine/hooks';
+import {
+  CHAINS,
+  hydrateCustomChain,
+  isChainEvmImpl,
+  isExternalChain,
+} from '@paraspell/sdk';
 import {
   IconCurrencyEthereum,
   IconPlus,
@@ -38,7 +44,10 @@ import {
 } from '../../constants';
 import {
   useActiveCurrencyOptions,
+  useCustomAssets,
+  useCustomChains,
   useFeeCurrencyOptions,
+  useMergedCurrencyOptions,
   useWallet,
 } from '../../hooks';
 import {
@@ -71,6 +80,10 @@ import {
   useTransferWarning,
 } from '../common/TransferWarningModal';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { CustomAssetModal } from '../CustomAsset/CustomAssetModal';
+import { formToCustomAssetInfo } from '../CustomAsset/formToCustomAssetInfo';
+import { CustomChainModal } from '../ParachainSelect/CustomChainModal';
+import { formToCustomChainInput } from '../ParachainSelect/formToCustomChainInput';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
@@ -104,6 +117,21 @@ export const XcmTransferForm: FC<Props> = ({
 
   const { warningOpened, warningOnClose, warningOnConfirm, guardTransfer } =
     useTransferWarning();
+
+  const [
+    customChainModalOpened,
+    { open: openCustomChainModal, close: closeCustomChainModal },
+  ] = useDisclosure(false);
+
+  const [
+    customAssetModalOpened,
+    { open: openCustomAssetModal, close: closeCustomAssetModal },
+  ] = useDisclosure(false);
+
+  const { customChains, customChainAssets, addCustomChain } = useCustomChains();
+  const { customAssets, addCustomAsset } = useCustomAssets();
+
+  const chainOptions = [...CHAINS, ...Object.keys(customChains)];
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(CHAINS).withDefault('Astar'),
@@ -203,6 +231,9 @@ export const XcmTransferForm: FC<Props> = ({
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
     useFeeCurrencyOptions(from);
 
+  const { options: mergedCurrencyOptions, map: mergedCurrencyMap } =
+    useMergedCurrencyOptions(from, activeCurrencyOptions, activeCurrencyMap);
+
   const resolveAndSubmit = useCallback(
     (values: TFormValues, submitType: TSubmitType) => {
       // If MAX is selected for a local transfer, convert amount to 'ALL'
@@ -215,7 +246,7 @@ export const XcmTransferForm: FC<Props> = ({
 
       // Transform each currency entry
       const transformedCurrencies = normalizedValues.currencies.map((entry) =>
-        resolveCurrencyAsset(entry, activeCurrencyMap),
+        resolveCurrencyAsset(entry, mergedCurrencyMap),
       );
 
       const transformedFeeAsset =
@@ -356,7 +387,10 @@ export const XcmTransferForm: FC<Props> = ({
     from !== 'AssetHubPolkadot' &&
     from !== 'Hydration';
 
-  const showAhAddress = isChainEvm(from) && isChainEvm(to) && from !== to;
+  const showAhAddress =
+    isChainEvmImpl(from, { customChainAssets }) &&
+    isChainEvmImpl(to, { customChainAssets }) &&
+    from !== to;
 
   const isLocalTransfer = from === to;
 
@@ -397,6 +431,27 @@ export const XcmTransferForm: FC<Props> = ({
         onClose={warningOnClose}
         onConfirm={warningOnConfirm}
       />
+      <CustomChainModal
+        opened={customChainModalOpened}
+        onClose={closeCustomChainModal}
+        onSubmit={async (values) => {
+          const name = values.name.trim();
+          const input = formToCustomChainInput(values);
+          const assetsInfo = await hydrateCustomChain(name, input);
+          addCustomChain(name, input, assetsInfo);
+        }}
+      />
+      <CustomAssetModal
+        opened={customAssetModalOpened}
+        onClose={closeCustomAssetModal}
+        chain={from}
+        overrideAssetOptions={mergedCurrencyOptions}
+        overrideAssetMap={mergedCurrencyMap}
+        existingAssets={customAssets[from] ?? []}
+        onSubmit={(values) =>
+          addCustomAsset(from, formToCustomAssetInfo(values))
+        }
+      />
       {isEvmMode && (
         <Badge
           variant="light"
@@ -418,8 +473,9 @@ export const XcmTransferForm: FC<Props> = ({
             label="Origin"
             placeholder="Pick value"
             description="Select the origin chain"
-            data={CHAINS}
+            data={chainOptions}
             data-testid="select-origin"
+            onAddCustom={openCustomChainModal}
             {...form.getInputProps('from')}
           />
 
@@ -438,8 +494,9 @@ export const XcmTransferForm: FC<Props> = ({
             label="Destination"
             placeholder="Pick value"
             description="Select the destination chain"
-            data={CHAINS}
+            data={chainOptions}
             data-testid="select-destination"
+            onAddCustom={openCustomChainModal}
             {...form.getInputProps('to')}
           />
 
@@ -459,9 +516,9 @@ export const XcmTransferForm: FC<Props> = ({
                       form={form}
                       fieldPath={`currencies.${index}`}
                       fieldValue={currencies[index]}
-                      showOverrideLocation={currencies.length === 1}
                       size={currencies.length > 1 ? 'xs' : 'sm'}
-                      currencyOptions={activeCurrencyOptions}
+                      currencyOptions={mergedCurrencyOptions}
+                      onAddCustom={from ? openCustomAssetModal : undefined}
                     />
                     <Group gap="xs" wrap="nowrap">
                       <TextInput

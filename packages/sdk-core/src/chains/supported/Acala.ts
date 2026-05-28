@@ -80,13 +80,16 @@ class Acala<TApi, TRes, TSigner>
       method: 'transfer',
       params: {
         dest: { Id: recipient },
-        currency_id: this.getCustomCurrencyId(asset),
+        currency_id: this.getCustomCurrencyId(api, asset),
         amount
       }
     })
   }
 
-  getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
+  getCustomCurrencyId(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
+    asset: TAssetInfo
+  ): TForeignOrTokenAsset {
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
     return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
   }

@@ -3,6 +3,7 @@
 import { type TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
@@ -21,8 +22,11 @@ class CrustShadow<TApi, TRes, TSigner>
     super('CrustShadow', 'shadow', 'Kusama', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAssetInfo): TReserveAsset {
-    if (asset.symbol === this.getNativeAssetSymbol()) {
+  private getCurrencySelection(
+    api: PolkadotApi<TApi, TRes, TSigner>,
+    asset: TAssetInfo
+  ): TReserveAsset {
+    if (asset.symbol === this.getNativeAssetSymbol(api)) {
       return 'SelfReserve'
     }
 
@@ -32,8 +36,8 @@ class CrustShadow<TApi, TRes, TSigner>
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
-    const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
+    const { asset, api } = input
+    const currencySelection = this.getCurrencySelection(api, asset)
     return transferXTokens(input, currencySelection)
   }
 

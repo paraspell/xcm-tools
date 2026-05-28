@@ -21,13 +21,16 @@ class Interlay<TApi, TRes, TSigner>
     super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo): TForeignOrTokenAsset {
+  getCustomCurrencyId(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
+    asset: TAssetInfo
+  ): TForeignOrTokenAsset {
     return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
-    const { asset } = input
-    const currencySelection = this.getCustomCurrencyId(asset)
+    const { asset, api } = input
+    const currencySelection = this.getCustomCurrencyId(api, asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -38,7 +41,7 @@ class Interlay<TApi, TRes, TSigner>
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
-    const currencyId = this.getCustomCurrencyId(asset)
+    const currencyId = this.getCustomCurrencyId(api, asset)
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({

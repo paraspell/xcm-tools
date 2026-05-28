@@ -12,17 +12,17 @@ export const resolveChainApi = <TApi, TCustomChain extends string = never>(
   ctx?: TFullCustomCtx
 ): Promise<TApi> => {
   const apiConfig = isConfig(config)
-    ? isCustomChain<TCustomChain>(chain)
+    ? isCustomChain(chain)
       ? undefined
       : config.apiOverrides?.[chain]
     : config
 
   if (isConfig(config) && config.development && !apiConfig) {
-    throw new MissingChainApiError<TCustomChain>(chain)
+    throw new MissingChainApiError(chain)
   }
 
   if (!apiConfig) {
-    return createApiInstance(getChainProvidersImpl<TCustomChain>(chain, ctx))
+    return createApiInstance(getChainProvidersImpl(chain, ctx))
   }
 
   if (typeof apiConfig === 'string' || apiConfig instanceof Array) {

@@ -3,6 +3,7 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
+  getNativeAssetSymbolImpl,
   getRelayChainSymbolImpl,
   isAssetXcEqual,
   isChainEvm,
@@ -25,7 +26,6 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
-import { getAssetBalanceInternal } from '../balance'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../constants'
 import {
   FeatureTemporarilyDisabledError,
@@ -76,8 +76,8 @@ const supportsPolkadotXCM = <TApi, TRes, TSigner>(
   return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
-abstract class Chain<TApi, TRes, TSigner> {
-  private readonly _chain: TSubstrateChain
+abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
+  private readonly _chain: TSubstrateChain | TCustomChain
 
   // Property _info maps our chain names to names which polkadot libs are using
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
@@ -89,7 +89,12 @@ abstract class Chain<TApi, TRes, TSigner> {
 
   private readonly _version: Version
 
-  constructor(chain: TSubstrateChain, info: string, ecosystem: TRelaychain, version: Version) {
+  constructor(
+    chain: TSubstrateChain | TCustomChain,
+    info: string,
+    ecosystem: TRelaychain,
+    version: Version
+  ) {
     this._info = info
     this._ecosystem = ecosystem
     this._chain = chain
@@ -104,8 +109,9 @@ abstract class Chain<TApi, TRes, TSigner> {
     return this._ecosystem
   }
 
+  // TODO: Fix this type cast in a subsequent refactor
   get chain(): TSubstrateChain {
-    return this._chain
+    return this._chain as TSubstrateChain
   }
 
   get version(): Version {
@@ -133,7 +139,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     } = transferOptions
     const scenario = resolveScenario(this.chain, destination)
     const paraId = resolveParaId(paraIdTo, destination)
-    const destChain = resolveDestChain(api, this.chain, paraId)
+    const destChain = resolveDestChain<TApi, TRes, TSigner, TCustomChain>(api, this.chain, paraId)
 
     const isLocalTransfer = this.chain === destination
     if (isLocalTransfer) {
@@ -233,7 +239,8 @@ abstract class Chain<TApi, TRes, TSigner> {
 
       const isOtherParaToAh = destChain?.startsWith('AssetHub') && !isTrustedChain(this.chain)
 
-      const isAllowedAhTransfer = (chain: TChain | undefined) => chain?.startsWith('Integritee')
+      const isAllowedAhTransfer = (chain: TChain | TCustomChain | undefined) =>
+        chain?.startsWith('Integritee')
 
       if (
         (isAhToOtherPara || isOtherParaToAh) &&
@@ -350,7 +357,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     return false
   }
 
-  canReceiveFrom(_origin: TChain): boolean {
+  canReceiveFrom(_origin: TChain | TCustomChain): boolean {
     // Default: destination accepts from any origin
     return true
   }
@@ -366,7 +373,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
 
     const nativeSymbols = PARACHAINS.filter(
-      chain => getRelayChainOf(chain) === getRelayChainOf(this.chain) && !isTrustedChain(chain)
+      chain => getRelayChainOf(chain) === this.ecosystem && !isTrustedChain(chain)
     ).map(chain => getNativeAssetSymbol(chain))
 
     const isSomeChainNativeAsset = nativeSymbols.some(symbol => isSymbolMatch(asset.symbol, symbol))
@@ -376,7 +383,7 @@ abstract class Chain<TApi, TRes, TSigner> {
       ((isAHPOrigin && !asset.isNative && isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
         (isAHPDest && isSomeChainNativeAsset))
 
-    const assetHubChain = `AssetHub${getRelayChainOf(this.chain)}` as TParachain
+    const assetHubChain = `AssetHub${this.ecosystem}` as TParachain
 
     const isRegisteredOnAh = api.findAssetInfo(assetHubChain, { location: asset.location })
 
@@ -389,11 +396,15 @@ abstract class Chain<TApi, TRes, TSigner> {
     version: Version
   ): TAsset {
     const { amount, location } = asset
-    return createAsset(version, amount, localizeLocationImpl(api, this.chain, location))
+    return createAsset(
+      version,
+      amount,
+      localizeLocationImpl<TApi, TRes, TSigner, TCustomChain>(api, this.chain, location)
+    )
   }
 
-  getNativeAssetSymbol(): string {
-    return getNativeAssetSymbol(this.chain)
+  getNativeAssetSymbol(api: PolkadotApi<TApi, TRes, TSigner>): string {
+    return getNativeAssetSymbolImpl(this.chain, api._customCtx)
   }
 
   async transferLocal(options: TTransferInternalOptions<TApi, TRes, TSigner>): Promise<TRes> {
@@ -409,17 +420,12 @@ abstract class Chain<TApi, TRes, TSigner> {
 
     const validatedOptions = { ...options, recipient }
 
-    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && asset.isNative
+    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol(api) && asset.isNative
 
     let balance: bigint
     if (isAmountAll) {
       assertSender(sender)
-      balance = await getAssetBalanceInternal({
-        api,
-        chain: this.chain,
-        address: sender,
-        asset
-      })
+      balance = await this.getBalance(api, sender, asset)
     } else {
       balance = MIN_AMOUNT
     }
@@ -506,11 +512,11 @@ abstract class Chain<TApi, TRes, TSigner> {
     return palletInstance.getBalance(api, address, asset)
   }
 
-  getCustomCurrencyId(_asset: TAssetInfo): unknown {
+  getCustomCurrencyId(_api: PolkadotApi<TApi, TRes, TSigner>, _asset: TAssetInfo): unknown {
     return undefined
   }
 
-  async getBalanceForeign<TApi, TRes, TSigner>(
+  async getBalanceForeign(
     api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: TAssetInfo
@@ -521,7 +527,7 @@ abstract class Chain<TApi, TRes, TSigner> {
     if (pallets.length === 0)
       throw new RoutingResolutionError(`No foreign asset pallets found for ${this.chain}`)
 
-    const customCurrencyId = this.getCustomCurrencyId(asset)
+    const customCurrencyId = this.getCustomCurrencyId(api, asset)
 
     for (const pallet of pallets) {
       const instance = getPalletInstance(pallet)
@@ -537,7 +543,7 @@ abstract class Chain<TApi, TRes, TSigner> {
   }
 
   getBalance(api: PolkadotApi<TApi, TRes, TSigner>, address: string, asset: TAssetInfo) {
-    const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
+    const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
     if (isNativeAsset) return this.getBalanceNative(api, address, asset)
     return this.getBalanceForeign(api, address, asset)
   }

@@ -18,7 +18,6 @@ import type {
   CURRENCY_TYPES,
   PALLETS_QUERIES,
   SYMBOL_TYPES,
-  TRANSFER_CURRENCY_TYPES,
 } from './constants';
 
 export type TApiTransaction = Omit<
@@ -114,15 +113,13 @@ export type TTransactFields = {
 
 export type TCurrencyType = (typeof CURRENCY_TYPES)[number];
 
-export type TTransferCurrencyType = (typeof TRANSFER_CURRENCY_TYPES)[number];
-
 export type TSymbolType = (typeof SYMBOL_TYPES)[number];
 
 export type TCurrencyEntryBase = {
   currencyOptionId: string;
   customCurrency: string;
   isCustomCurrency: boolean;
-  customCurrencyType?: TTransferCurrencyType;
+  customCurrencyType?: TCurrencyType;
   customCurrencySymbolSpecifier?: TSymbolType;
 };
 

@@ -3,6 +3,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
@@ -17,15 +18,15 @@ class Centrifuge<TApi, TRes, TSigner>
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo) {
-    if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
+  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
+    if (asset.symbol === this.getNativeAssetSymbol(api)) return 'Native'
     assertHasId(asset)
     return { ForeignAsset: Number(asset.assetId) }
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
-    const { asset } = input
-    const currencySelection = this.getCustomCurrencyId(asset)
+    const { asset, api } = input
+    const currencySelection = this.getCustomCurrencyId(api, asset)
     return transferXTokens(input, currencySelection)
   }
 
@@ -33,7 +34,7 @@ class Centrifuge<TApi, TRes, TSigner>
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     const dest = { Id: recipient }
-    const currencyId = this.getCustomCurrencyId(asset)
+    const currencyId = this.getCustomCurrencyId(api, asset)
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({

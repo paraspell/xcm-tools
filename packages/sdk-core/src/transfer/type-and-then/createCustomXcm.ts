@@ -1,4 +1,4 @@
-import { isChainEvm, normalizeLocation } from '@paraspell/assets'
+import { isChainEvmImpl, normalizeLocation } from '@paraspell/assets'
 import { deepEqual, getJunctionValue, isExternalChain, isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
@@ -6,7 +6,7 @@ import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSender, createAsset, normalizeAmount } from '../../utils'
-import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../utils'
+import { createBeneficiaryLocation, createDestination, localizeLocationImpl } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
@@ -62,8 +62,8 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
 
     const resolveRefundAddress = () => {
       if (ahAddress) return ahAddress
-      if (!isChainEvm(origin.chain)) return sender
-      if (!isChainEvm(dest.chain)) return recipient
+      if (!isChainEvmImpl(origin.chain, origin.api._customCtx)) return sender
+      if (!isChainEvmImpl(dest.chain, dest.api._customCtx)) return recipient
       throw new MissingParameterError('ahAddress')
     }
 
@@ -89,9 +89,19 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
 
   const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
 
-  const feeLocLocalized = localizeLocation(dest.chain, feeAssetLocation, origin.chain)
+  const feeLocLocalized = localizeLocationImpl(
+    origin.api,
+    dest.chain,
+    feeAssetLocation,
+    origin.chain
+  )
 
-  const assetLocLocalized = localizeLocation(dest.chain, assetInfo.location, origin.chain)
+  const assetLocLocalized = localizeLocationImpl(
+    origin.api,
+    dest.chain,
+    assetInfo.location,
+    origin.chain
+  )
 
   const asset = createAsset(version, assetInfo.amount, assetLocLocalized)
 
@@ -124,20 +134,27 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
 
   if (!isRelayAsset && !isExternalChain(dest.chain))
     assetsFilter.push(
-      createAsset(version, hopFees + destFee, localizeLocation(reserve.chain, RELAY_LOCATION))
+      createAsset(
+        version,
+        hopFees + destFee,
+        localizeLocationImpl(origin.api, reserve.chain, RELAY_LOCATION)
+      )
     )
 
   assetsFilter.push(
     createAsset(
       version,
       assetInfo.amount,
-      normalizeLocation(localizeLocation(reserve.chain, assetInfo.location), version)
+      normalizeLocation(
+        localizeLocationImpl(origin.api, reserve.chain, assetInfo.location),
+        version
+      )
     )
   )
 
   const isAssetEthereumNative = deepEqual(
     getJunctionValue(assetInfo.location, 'GlobalConsensus'),
-    getEthereumJunction(origin.chain, false).GlobalConsensus
+    getEthereumJunction(origin.api, origin.chain, false).GlobalConsensus
   )
 
   if (
@@ -176,7 +193,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner>(
       return [buyExecution, depositInstruction]
     }
 
-    const destLoc = createDestination(version, origin.chain, destination, paraIdTo)
+    const destLoc = createDestination(origin.api, version, origin.chain, destination, paraIdTo)
 
     // If both reserve (B) and destination (C) are trusted chains,
     // use teleport instead of DepositReserveAsset

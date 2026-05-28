@@ -37,8 +37,8 @@ class Hydration<TApi, TRes, TSigner>
         throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')
       }
 
-      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
-      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
+      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
+      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol(api))
 
       if (!isNativeAsset || !isNativeFeeAsset) {
         return api.deserializeExtrinsics(await handleExecuteTransfer(input))

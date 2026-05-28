@@ -50,7 +50,13 @@ export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
     module: 'PolkadotXcm',
     method: 'transfer_assets_using_type_and_then',
     params: {
-      dest: createVersionedDestination(version, chain, hopDestination, getParaId(hopDestination)),
+      dest: createVersionedDestination(
+        api,
+        version,
+        chain,
+        hopDestination,
+        getParaId(hopDestination)
+      ),
       assets: {
         [version]: [
           createAsset(version, nativeMythAmount, {

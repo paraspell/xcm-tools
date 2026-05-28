@@ -209,6 +209,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
       exchangeChain === resolvedDestChain
         ? snowbridgeInstructions
         : createBaseExecuteXcm({
+            api,
             chain: exchangeChain,
             destChain: resolvedDestChain!,
             assetInfo: assetInfoTo,
@@ -226,6 +227,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
           })
   } else if (destChain) {
     exchangeToDestXcm = createBaseExecuteXcm({
+      api,
       chain: exchangeChain,
       destChain,
       assetInfo: assetInfoTo,
@@ -243,6 +245,7 @@ export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
 
   const finalXcm = chain
     ? createBaseExecuteXcm({
+        api,
         chain,
         destChain: exchangeChain,
         assetInfo: assetInfoFrom,

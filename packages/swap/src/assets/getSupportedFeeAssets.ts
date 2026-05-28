@@ -1,15 +1,37 @@
 import {
   EXCHANGE_CHAINS,
-  getAssets,
+  getAssetsImpl,
   isAssetEqual,
   normalizeExchange,
   type TAssetInfo,
   type TChain,
+  type TCustomCtx,
   type TExchangeInput,
 } from '@paraspell/sdk-core';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
+import { getSupportedAssetsFromImpl } from './getSupportedAssetsFrom';
+
+export const getSupportedFeeAssetsImpl = <TCustomChain extends string = never>(
+  from: TChain | TCustomChain | undefined,
+  exchangeInput: TExchangeInput,
+  ctx?: TCustomCtx,
+): TAssetInfo[] => {
+  const exchange = normalizeExchange(exchangeInput);
+  const supportedAssets = getSupportedAssetsFromImpl(from, exchange, ctx);
+
+  const chains = from
+    ? [from]
+    : (exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange])
+        .map((ex) => createExchangeInstance(ex).chain)
+        .filter((chain, i, arr) => arr.indexOf(chain) === i);
+
+  const chainAssets = chains.flatMap((chain) => getAssetsImpl(chain, ctx));
+
+  return supportedAssets.filter((asset) =>
+    chainAssets.some((chainAsset) => chainAsset.isFeeAsset && isAssetEqual(asset, chainAsset)),
+  );
+};
 
 /**
  * Retrieves the list of assets that can be used to pay for fees on the origin chain.
@@ -21,19 +43,4 @@ import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 export const getSupportedFeeAssets = (
   from: TChain | undefined,
   exchangeInput: TExchangeInput,
-): TAssetInfo[] => {
-  const exchange = normalizeExchange(exchangeInput);
-  const supportedAssets = getSupportedAssetsFrom(from, exchange);
-
-  const chains = from
-    ? [from]
-    : (exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange])
-        .map((ex) => createExchangeInstance(ex).chain)
-        .filter((chain, i, arr) => arr.indexOf(chain) === i);
-
-  const chainAssets = chains.flatMap((chain) => getAssets(chain));
-
-  return supportedAssets.filter((asset) =>
-    chainAssets.some((chainAsset) => chainAsset.isFeeAsset && isAssetEqual(asset, chainAsset)),
-  );
-};
+): TAssetInfo[] => getSupportedFeeAssetsImpl(from, exchangeInput);

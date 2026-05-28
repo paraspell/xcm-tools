@@ -61,7 +61,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Karura')
-    expect(mockCustomCurrencyId).toHaveBeenCalledWith(asset)
+    expect(mockCustomCurrencyId).toHaveBeenCalledWith(apiMock, asset)
     expect(res.balanceTx.params.who).toEqual({ Id: address })
     expect(res.balanceTx.params.currency_id).toBe('KAR_ID')
     expect(res.balanceTx.params.amount).toBe(15n)
@@ -80,7 +80,7 @@ describe('CurrenciesPallet.setBalance', () => {
 
     expect(assertHasId).not.toHaveBeenCalled()
     expect(getChain).toHaveBeenCalledWith('Acala')
-    expect(mockGetCustomCurrencyId).toHaveBeenCalledWith(asset)
+    expect(mockGetCustomCurrencyId).toHaveBeenCalledWith(apiMock, asset)
     expect(res.balanceTx.params.who).toEqual({ Id: address })
     expect(res.balanceTx.params.currency_id).toBe('ACA_ID')
     expect(res.balanceTx.params.amount).toBe(22n)

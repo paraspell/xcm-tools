@@ -4,7 +4,10 @@ import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
 import type { TFullCustomCtx } from '../../types'
 import { getChainConfigImpl } from './getChainConfig'
 
-export const getParaIdImpl = (chain: TChain, ctx?: TFullCustomCtx): number => {
+export const getParaIdImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TFullCustomCtx
+): number => {
   if (chain === 'Ethereum') {
     return ETH_MAINNET_PARA_ID
   } else if (chain === 'EthereumTestnet') {
@@ -20,4 +23,6 @@ export const getParaIdImpl = (chain: TChain, ctx?: TFullCustomCtx): number => {
  * @param chain - The chain for which to get the paraId.
  * @returns The parachain ID of the chain.
  */
-export const getParaId = (chain: TChain): number => getParaIdImpl(chain)
+export const getParaId = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): number => getParaIdImpl(chain)

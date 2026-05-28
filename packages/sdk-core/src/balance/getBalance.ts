@@ -1,8 +1,9 @@
 import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 
+import { getChainImpl } from '../chains/getChainInstance'
 import { getPalletInstance } from '../pallets'
 import type { TGetAssetBalanceOptions, TGetBalanceOptions } from '../types'
-import { getChain, validateAddress } from '../utils'
+import { validateAddress } from '../utils'
 import { getEthErc20Balance } from './getEthErc20Balance'
 
 export const getAssetBalanceInternal = async <TApi, TRes, TSigner>({
@@ -24,7 +25,7 @@ export const getAssetBalanceInternal = async <TApi, TRes, TSigner>({
     return pallet.getBalance(api, address, asset)
   }
 
-  const chainInstance = getChain(chain)
+  const chainInstance = getChainImpl<TApi, TRes, TSigner>(chain, api._customCtx)
   return chainInstance.getBalance(api, address, asset)
 }
 

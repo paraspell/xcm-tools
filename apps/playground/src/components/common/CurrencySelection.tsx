@@ -13,6 +13,7 @@ import { useEffect, useRef } from 'react';
 
 import { MAIN_FORM_NAME } from '../../constants';
 import type { TCurrencyEntryBase } from '../../types';
+import { ComboboxSelect } from './ComboboxSelect';
 
 const { setFieldValue } = createFormActions(MAIN_FORM_NAME);
 
@@ -21,13 +22,13 @@ type Props<T extends object> = {
   fieldPath: string;
   fieldValue: TCurrencyEntryBase;
   currencyOptions: ComboboxItem[];
-  showOverrideLocation?: boolean;
   size?: MantineSize;
   required?: boolean;
   disabled?: boolean;
   label?: string;
   description?: string;
   onClear?: () => void;
+  onAddCustom?: () => void;
   dataTestId?: string;
 };
 
@@ -36,13 +37,13 @@ export const CurrencySelection = <T extends object>({
   fieldPath,
   fieldValue,
   currencyOptions,
-  showOverrideLocation = false,
   size = 'sm',
   required = false,
   disabled,
   label = 'Currency',
   description,
   onClear,
+  onAddCustom,
   dataTestId,
 }: Props<T>) => {
   const isCustomCurrency = fieldValue.isCustomCurrency;
@@ -61,9 +62,6 @@ export const CurrencySelection = <T extends object>({
     { label: 'Asset ID', value: 'id' },
     { label: 'Symbol', value: 'symbol' },
     { label: 'Location', value: 'location' },
-    ...(showOverrideLocation
-      ? [{ label: 'Override location', value: 'overridenLocation' }]
-      : []),
   ];
 
   const symbolSpecifierOptions = [
@@ -97,34 +95,40 @@ export const CurrencySelection = <T extends object>({
         />
       )}
 
-      {isCustomCurrency && customCurrencyType === 'overridenLocation' && (
-        <JsonInput
-          size={size}
-          placeholder="Provide the JSON location to override the default configuration"
-          formatOnBlur
-          autosize
-          minRows={10}
-          {...form.getInputProps(`${fieldPath}.customCurrency`)}
-        />
-      )}
-
-      {!isCustomCurrency && (
-        <Select
-          size={size}
-          label={label}
-          description={description}
-          placeholder="Pick value"
-          data={currencyOptions}
-          allowDeselect={false}
-          searchable
-          required={required}
-          disabled={disabled}
-          clearable={!!onClear}
-          onClear={onClear}
-          data-testid={dataTestId || 'select-currency'}
-          {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
-        />
-      )}
+      {!isCustomCurrency &&
+        (onAddCustom ? (
+          <ComboboxSelect
+            size={size}
+            label={label}
+            description={description}
+            required={required}
+            disabled={disabled}
+            data={currencyOptions}
+            data-testid={dataTestId || 'select-currency'}
+            onAddCustom={onAddCustom}
+            addCustomLabel="Add custom asset"
+            addCustomTestId="button-add-custom-asset"
+            onClear={onClear}
+            clearable={!!onClear}
+            {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
+          />
+        ) : (
+          <Select
+            size={size}
+            label={label}
+            description={description}
+            placeholder="Pick value"
+            data={currencyOptions}
+            allowDeselect={false}
+            searchable
+            required={required}
+            disabled={disabled}
+            clearable={!!onClear}
+            onClear={onClear}
+            data-testid={dataTestId || 'select-currency'}
+            {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
+          />
+        ))}
 
       <Group>
         <Group>

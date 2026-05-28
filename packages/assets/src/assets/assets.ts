@@ -17,7 +17,7 @@ export const getAssetsObjectImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
 ): TChainAssetsInfo => {
-  if (isCustomChain<TCustomChain>(chain)) {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChainAssets?.[chain]
     if (!entry) {
       throw new InvalidCurrencyError(`Custom chain '${chain}' is not registered.`)
@@ -41,9 +41,11 @@ export const getAssetsObject = (chain: TChain): TChainAssetsInfo => getAssetsObj
 export const isChainEvmImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): boolean => getAssetsObjectImpl<TCustomChain>(chain, ctx).isEVM
+): boolean => getAssetsObjectImpl(chain, ctx).isEVM
 
-export const isChainEvm = (chain: TChain): boolean => isChainEvmImpl(chain)
+export const isChainEvm = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): boolean => isChainEvmImpl(chain)
 
 /**
  * Retrieves the asset ID for a given symbol on a specified chain.
@@ -62,7 +64,7 @@ export const getAssetId = (chain: TChain, symbol: string): string | null => {
 export const getRelayChainSymbolImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): string => getAssetsObjectImpl<TCustomChain>(chain, ctx).relaychainSymbol
+): string => getAssetsObjectImpl(chain, ctx).relaychainSymbol
 
 /**
  * Retrieves the relay chain asset symbol for a specified chain.
@@ -75,8 +77,7 @@ export const getRelayChainSymbol = (chain: TChain): string => getRelayChainSymbo
 export const getNativeAssetsImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): TAssetInfo[] =>
-  getAssetsObjectImpl<TCustomChain>(chain, ctx).assets.filter(asset => asset.isNative)
+): TAssetInfo[] => getAssetsObjectImpl(chain, ctx).assets.filter(asset => asset.isNative)
 
 /**
  * Retrieves the list of native assets for a specified chain.
@@ -89,8 +90,7 @@ export const getNativeAssets = (chain: TChain): TAssetInfo[] => getNativeAssetsI
 export const getOtherAssetsImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): TAssetInfo[] =>
-  getAssetsObjectImpl<TCustomChain>(chain, ctx).assets.filter(asset => !asset.isNative)
+): TAssetInfo[] => getAssetsObjectImpl(chain, ctx).assets.filter(asset => !asset.isNative)
 
 /**
  * Retrieves the list of other (non-native) assets for a specified chain.
@@ -98,12 +98,14 @@ export const getOtherAssetsImpl = <TCustomChain extends string = never>(
  * @param chain - The chain for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (chain: TChain): TAssetInfo[] => getOtherAssetsImpl(chain)
+export const getOtherAssets = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): TAssetInfo[] => getOtherAssetsImpl(chain)
 
 export const getAssetsImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): TAssetInfo[] => getAssetsObjectImpl<TCustomChain>(chain, ctx).assets
+): TAssetInfo[] => getAssetsObjectImpl(chain, ctx).assets
 
 /**
  * Retrieves the complete list of assets for a specified chain, including relay chain asset, native, and other assets.
@@ -127,7 +129,7 @@ export const getAllAssetsSymbols = (chain: TChain): string[] => {
 export const getNativeAssetSymbolImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
-): string => getAssetsObjectImpl<TCustomChain>(chain, ctx).nativeAssetSymbol
+): string => getAssetsObjectImpl(chain, ctx).nativeAssetSymbol
 
 /**
  * Retrieves the symbol of the native asset for a specified chain.
@@ -135,7 +137,9 @@ export const getNativeAssetSymbolImpl = <TCustomChain extends string = never>(
  * @param chain - The chain for which to get the native asset symbol.
  * @returns The symbol of the native asset.
  */
-export const getNativeAssetSymbol = (chain: TChain): string => getNativeAssetSymbolImpl(chain)
+export const getNativeAssetSymbol = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): string => getNativeAssetSymbolImpl(chain)
 
 /**
  * Determines whether a specified chain supports an asset with the given symbol.
@@ -193,7 +197,7 @@ export const hasDryRunSupportImpl = <TCustomChain extends string = never>(
   // These chains have DryRun but it's not working
   const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
   return (
-    getAssetsObjectImpl<TCustomChain>(chain, ctx).supportsDryRunApi &&
+    getAssetsObjectImpl(chain, ctx).supportsDryRunApi &&
     !DISABLED_CHAINS.some(disabled => disabled === chain)
   )
 }
@@ -207,7 +211,7 @@ export const hasXcmPaymentApiSupportImpl = <TCustomChain extends string = never>
   // These chains have XcmPaymentApi but it's not working
   const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
   return (
-    getAssetsObjectImpl<TCustomChain>(chain, ctx).supportsXcmPaymentApi &&
+    getAssetsObjectImpl(chain, ctx).supportsXcmPaymentApi &&
     !DISABLED_CHAINS.some(disabled => disabled === chain)
   )
 }

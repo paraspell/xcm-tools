@@ -4,6 +4,7 @@ import { type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -28,7 +29,10 @@ class Zeitgeist<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo): TZeitgeistAsset | TXcmForeignAsset {
+  getCustomCurrencyId(
+    _api: PolkadotApi<TApi, TRes, TSigner>,
+    asset: TAssetInfo
+  ): TZeitgeistAsset | TXcmForeignAsset {
     if (asset.isNative) return 'Ztg'
     assertHasId(asset)
     return { ForeignAsset: Number(asset.assetId) }
@@ -54,7 +58,7 @@ class Zeitgeist<TApi, TRes, TSigner>
       method: 'transfer',
       params: {
         dest: { Id: recipient },
-        currency_id: this.getCustomCurrencyId(asset),
+        currency_id: this.getCustomCurrencyId(api, asset),
         amount
       }
     })

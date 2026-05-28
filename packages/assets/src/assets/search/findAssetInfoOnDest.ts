@@ -1,16 +1,23 @@
-import { isSnowbridge, isSubstrateBridge, replaceBigInt, type TChain } from '@paraspell/sdk-common'
+import {
+  isCustomChain,
+  isSnowbridge,
+  isSubstrateBridge,
+  replaceBigInt,
+  type TChain
+} from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput, TCustomCtx } from '../../types'
 import { Foreign, Native } from '../assetSelectors'
+import { isCustomAsset } from '../customAssets'
 import { isStableCoinAsset } from '../isStableCoinAsset'
 import { isSystemAsset } from '../isSystemAsset'
 import { findAssetInfoImpl } from './findAssetInfo'
 import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
 import { findStablecoinAssets } from './findStablecoinAssets'
 
-const findAssetInfoOnSubBridgeDest = (
-  destination: TChain,
+const findAssetInfoOnSubBridgeDest = <TCustomChain extends string = never>(
+  destination: TChain | TCustomChain,
   resolvedOriginAsset: TAssetInfo,
   ctx?: TCustomCtx
 ): TAssetInfo | null => {
@@ -41,22 +48,17 @@ const findAssetInfoOnSubBridgeDest = (
   return null
 }
 
-export const findAssetInfoOnDestImpl = (
-  origin: TChain,
-  destination: TChain,
-  currency: TCurrencyInput,
-  originAsset?: TAssetInfo | null,
+const resolveAssetOnDest = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain,
+  resolvedOriginAsset: TAssetInfo,
   ctx?: TCustomCtx
 ): TAssetInfo | null => {
-  const isSubBridge = isSubstrateBridge(origin, destination)
-  const isSb = isSnowbridge(origin, destination)
-
-  const resolvedOriginAsset =
-    originAsset ?? findAssetInfoOrThrowImpl(origin, currency, destination, ctx)
-
-  if (isSubBridge) {
+  if (isSubstrateBridge(origin, destination)) {
     return findAssetInfoOnSubBridgeDest(destination, resolvedOriginAsset, ctx)
   }
+
+  const isSb = isSnowbridge(origin, destination)
 
   if (isSb && isSystemAsset(resolvedOriginAsset)) {
     const match = findAssetInfoImpl(destination, { symbol: resolvedOriginAsset.symbol }, null, ctx)
@@ -73,6 +75,26 @@ export const findAssetInfoOnDestImpl = (
   return findAssetInfoImpl(destination, { location: resolvedOriginAsset.location }, null, ctx)
 }
 
+export const findAssetInfoOnDestImpl = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain,
+  currency: TCurrencyInput,
+  originAsset?: TAssetInfo | null,
+  ctx?: TCustomCtx
+): TAssetInfo | null => {
+  const resolvedOriginAsset =
+    originAsset ?? findAssetInfoOrThrowImpl(origin, currency, destination, ctx)
+
+  const result = resolveAssetOnDest(origin, destination, resolvedOriginAsset, ctx)
+  if (result) return result
+
+  if (!isCustomChain<TCustomChain>(origin) && isCustomAsset(origin, resolvedOriginAsset, ctx)) {
+    return resolvedOriginAsset
+  }
+
+  return null
+}
+
 export const findAssetInfoOnDest = (
   origin: TChain,
   destination: TChain,
@@ -80,9 +102,9 @@ export const findAssetInfoOnDest = (
   originAsset?: TAssetInfo | null
 ): TAssetInfo | null => findAssetInfoOnDestImpl(origin, destination, currency, originAsset)
 
-export const findAssetOnDestOrThrowImpl = (
-  origin: TChain,
-  destination: TChain,
+export const findAssetOnDestOrThrowImpl = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain,
   currency: TCurrencyInput,
   ctx?: TCustomCtx
 ): TAssetInfo => {

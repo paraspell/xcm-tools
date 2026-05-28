@@ -3,9 +3,10 @@ import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getRelayChainOf, getTChain } from '../..'
+import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import { getAssetReserveChain } from './getAssetReserveChain'
+import { getRelayChainOf } from './getRelayChainOf'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
@@ -14,7 +15,8 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
   Parents: { ONE: 1 }
 }))
 
-vi.mock('../..')
+vi.mock('../../chains/getTChain')
+vi.mock('./getRelayChainOf')
 
 const mockJunctions = (values: Partial<Record<TJunctionType, unknown>>) => {
   vi.mocked(getJunctionValue).mockImplementation(

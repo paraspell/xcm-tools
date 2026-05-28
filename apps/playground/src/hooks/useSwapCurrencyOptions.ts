@@ -2,11 +2,13 @@ import type { TExchangeInput, TLocation } from '@paraspell/sdk';
 import { isRelayChain, type TAssetInfo, type TChain } from '@paraspell/sdk';
 import { getExchangePairs } from '@paraspell/swap';
 import {
-  getSupportedAssetsFrom,
-  getSupportedAssetsTo,
-  getSupportedFeeAssets,
+  getSupportedAssetsFromImpl,
+  getSupportedAssetsToImpl,
+  getSupportedFeeAssetsImpl,
 } from '@paraspell/swap';
 import { useMemo } from 'react';
+
+import { useCustomChains } from './useCustomChains';
 
 const getAssetKey = (asset: TAssetInfo) =>
   `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? (asset.assetId ?? 'NO-ID') : 'NO_ID'}`;
@@ -28,14 +30,17 @@ export const useSwapCurrencyOptions = (
   selectedFrom?: string,
   selectedTo?: string,
 ) => {
+  const { customChainAssets } = useCustomChains();
+
   const supportedAssetsFrom = useMemo(
-    () => getSupportedAssetsFrom(from, exchangeChain),
-    [from, exchangeChain],
+    () =>
+      getSupportedAssetsFromImpl(from, exchangeChain, { customChainAssets }),
+    [from, exchangeChain, customChainAssets],
   );
 
   const supportedAssetsTo = useMemo(
-    () => getSupportedAssetsTo(exchangeChain, to),
-    [exchangeChain, to],
+    () => getSupportedAssetsToImpl(exchangeChain, to, { customChainAssets }),
+    [exchangeChain, to, customChainAssets],
   );
 
   const currencyFromMap = useMemo(
@@ -122,8 +127,8 @@ export const useSwapCurrencyOptions = (
   }, [currencyToMap, selectedFrom, selectedTo, adjacency]);
 
   const supportedFeeAssets = useMemo(
-    () => getSupportedFeeAssets(from, exchangeChain),
-    [from, exchangeChain],
+    () => getSupportedFeeAssetsImpl(from, exchangeChain, { customChainAssets }),
+    [from, exchangeChain, customChainAssets],
   );
 
   const feeCurrencyMap = useMemo(

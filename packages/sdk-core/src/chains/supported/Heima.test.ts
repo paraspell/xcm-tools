@@ -2,6 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type TPolkadotXCMTransferOptions } from '../../types'
@@ -9,6 +10,8 @@ import { getChain } from '../../utils'
 import Heima from './Heima'
 
 vi.mock('../../pallets/polkadotXcm')
+
+const apiMock = { _customCtx: {} } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('Heima', () => {
   let chain: Heima<unknown, unknown, unknown>
@@ -40,7 +43,8 @@ describe('Heima', () => {
   it('should only support native currency', () => {
     const input = {
       scenario: 'ParaToPara',
-      assetInfo: { symbol: 'XYZ' }
+      assetInfo: { symbol: 'XYZ' },
+      api: apiMock
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     expect(() => chain.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
   })
@@ -48,7 +52,8 @@ describe('Heima', () => {
   it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
     const input = {
       scenario: 'ParaToPara',
-      assetInfo: { symbol: 'HEI' }
+      assetInfo: { symbol: 'HEI' },
+      api: apiMock
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     await chain.transferPolkadotXCM(input)

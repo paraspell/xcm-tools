@@ -11,7 +11,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { getParaId } from '../../chains/config'
+import { getParaId, getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { getRelayChainOf, getRelayChainOfImpl } from '../chain'
 
@@ -24,11 +24,12 @@ import { getRelayChainOf, getRelayChainOfImpl } from '../chain'
  * @param location - The location to localize
  * @returns The localized location
  */
-const localizeLocationInner = (
-  chain: TChain,
+const localizeLocationInner = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
   location: TLocation,
-  origin: TChain | undefined,
-  resolveRelay: (chain: TSubstrateChain) => TRelaychain
+  origin: TChain | TCustomChain | undefined,
+  resolveRelay: (chain: TSubstrateChain | TCustomChain) => TRelaychain,
+  resolveParaId: (chain: TChain | TCustomChain) => number
 ): TLocation => {
   const targetRelay = isExternalChain(chain) ? undefined : resolveRelay(chain).toLowerCase()
 
@@ -78,7 +79,7 @@ const localizeLocationInner = (
   let parachainRemoved = false
 
   if (location.interior !== 'Here') {
-    const paraId = getParaId(chain)
+    const paraId = resolveParaId(chain)
 
     const filteredJunctions = junctions.filter(junction => {
       if (
@@ -147,7 +148,7 @@ const localizeLocationInner = (
     return {
       parents: Parents.TWO,
       interior: {
-        X2: [{ GlobalConsensus: { [originRelay]: null } }, { Parachain: getParaId(origin) }]
+        X2: [{ GlobalConsensus: { [originRelay]: null } }, { Parachain: resolveParaId(origin) }]
       }
     }
   }
@@ -185,11 +186,24 @@ const localizeLocationInner = (
 }
 
 export const localizeLocation = (chain: TChain, location: TLocation, origin?: TChain): TLocation =>
-  localizeLocationInner(chain, location, origin, c => getRelayChainOf(c))
+  localizeLocationInner<never>(
+    chain,
+    location,
+    origin,
+    c => getRelayChainOf(c),
+    c => getParaId(c)
+  )
 
-export const localizeLocationImpl = <TApi, TRes, TSigner>(
+export const localizeLocationImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner>,
-  chain: TChain,
+  chain: TChain | TCustomChain,
   location: TLocation,
-  origin?: TChain
-): TLocation => localizeLocationInner(chain, location, origin, c => getRelayChainOfImpl(api, c))
+  origin?: TChain | TCustomChain
+): TLocation =>
+  localizeLocationInner(
+    chain,
+    location,
+    origin,
+    c => getRelayChainOfImpl(api, c),
+    c => getParaIdImpl(c, api._customCtx)
+  )

@@ -6,7 +6,9 @@ import type { TAssetInfo } from '../../types'
 import { getOtherAssets } from '../assets'
 import { isStableCoinAsset } from '../isStableCoinAsset'
 
-export const findStablecoinAssets = (chain: TChain): TAssetInfo[] => {
+export const findStablecoinAssets = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain
+): TAssetInfo[] => {
   const assets = getOtherAssets(chain)
 
   return STABLECOIN_IDS.map(id => {

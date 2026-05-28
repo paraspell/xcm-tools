@@ -11,10 +11,10 @@ import {
 import z from 'zod';
 
 import {
+  CURRENCY_TYPES,
   DEFAULT_SWAP_OPTIONS,
   DEFAULT_TRANSACT_OPTIONS,
   SYMBOL_TYPES,
-  TRANSFER_CURRENCY_TYPES,
 } from '../constants';
 import { CustomEndpointSchema, isValidWalletAddress } from '../utils';
 
@@ -24,7 +24,7 @@ export const CurrencyEntrySchema = z.object({
   amount: z.string(),
   isCustomCurrency: z.boolean(),
   isMax: z.boolean().optional(),
-  customCurrencyType: z.enum(TRANSFER_CURRENCY_TYPES).optional(),
+  customCurrencyType: z.enum(CURRENCY_TYPES).optional(),
   customCurrencySymbolSpecifier: z.enum(SYMBOL_TYPES).optional(),
 });
 

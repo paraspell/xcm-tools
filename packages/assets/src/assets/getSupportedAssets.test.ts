@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../types'
-import { getAssets, getNativeAssetSymbol } from './assets'
+import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
@@ -51,12 +51,12 @@ describe('getSupportedAssets', () => {
   }
 
   it('should return native system assets and stablecoins for substrate bridge transfers', () => {
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return [dotAsset, ksmAsset, ajunAsset]
       if (chain === 'AssetHubKusama') return [dotAsset, ksmAsset]
       return []
     })
-    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+    vi.mocked(getNativeAssetSymbolImpl).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
       if (chain === 'AssetHubKusama') return 'KSM'
       return ''
@@ -70,7 +70,7 @@ describe('getSupportedAssets', () => {
   it('should return common assets between origin and destination', () => {
     const mockOriginAssets = [ajunAsset, dotAsset]
     const mockDestinationAssets = [{ ...ajunAsset, assetId: '400' }]
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'Ajuna') return mockOriginAssets
       if (chain === 'Polkadot') return mockDestinationAssets
       return []
@@ -84,7 +84,7 @@ describe('getSupportedAssets', () => {
   it('should return system assets and supported assets for snowbridge transfers', () => {
     const mockOriginAssets = [dotAsset, ajunAsset]
     const mockDestinationAssets = [{ ...ajunAsset, assetId: '400' }]
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return mockOriginAssets
       if (chain === 'Ethereum') return mockDestinationAssets
       return []
@@ -121,7 +121,7 @@ describe('getSupportedAssets', () => {
         }
       }
     }
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'Mythos') return [mythosNative]
       if (chain === 'Ethereum') return [ethereumMyth]
       return []
@@ -139,7 +139,7 @@ describe('getSupportedAssets', () => {
       decimals: 18,
       location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
     }
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'Hydration') return [dummyAsset]
       if (chain === 'Ethereum') return []
       return []
@@ -153,7 +153,7 @@ describe('getSupportedAssets', () => {
   it('should return empty array if no common assets between origin and destination', () => {
     const mockOriginAssets = [ajunAsset]
     const mockDestinationAssets = [dotAsset]
-    vi.mocked(getAssets).mockImplementation(chain => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
       if (chain === 'Ajuna') return mockOriginAssets
       if (chain === 'Polkadot') return mockDestinationAssets
       return []

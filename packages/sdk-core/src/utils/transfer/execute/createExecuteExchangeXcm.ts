@@ -14,7 +14,7 @@ export const createExecuteExchangeXcm = <TApi, TRes, TSigner>(
 ): TRes => {
   const { api, version, assetInfo: asset, destination, paraIdTo, recipient } = input
 
-  const dest = createDestination(version, origin, destination, paraIdTo)
+  const dest = createDestination(api, version, origin, destination, paraIdTo)
 
   const beneficiary = createBeneficiaryLocation({
     api,

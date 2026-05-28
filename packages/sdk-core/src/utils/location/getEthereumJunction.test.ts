@@ -1,10 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
-import { getRelayChainOf } from '../chain'
+import { getRelayChainOfImpl } from '../chain'
 import { getEthereumJunction } from './getEthereumJunction'
 
 vi.mock('../chain')
+
+const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
 describe('getEthereumJunction', () => {
   beforeEach(() => {
@@ -12,9 +15,9 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns mainnet chainId as bigint by default', () => {
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
 
-    const result = getEthereumJunction('AssetHubPolkadot')
+    const result = getEthereumJunction(mockApi, 'AssetHubPolkadot')
 
     expect(result).toEqual({
       GlobalConsensus: {
@@ -24,9 +27,9 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns testnet chainId for Westend/Paseo', () => {
-    vi.mocked(getRelayChainOf).mockReturnValue('Westend')
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Westend')
 
-    const result = getEthereumJunction('AssetHubWestend')
+    const result = getEthereumJunction(mockApi, 'AssetHubWestend')
 
     expect(result).toEqual({
       GlobalConsensus: {
@@ -36,9 +39,9 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns chainId as number when useBigInt is false', () => {
-    vi.mocked(getRelayChainOf).mockReturnValue('Paseo')
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Paseo')
 
-    const result = getEthereumJunction('AssetHubPaseo', false)
+    const result = getEthereumJunction(mockApi, 'AssetHubPaseo', false)
 
     expect(result).toEqual({
       GlobalConsensus: {

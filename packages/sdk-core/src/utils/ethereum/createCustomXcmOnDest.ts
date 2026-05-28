@@ -3,6 +3,7 @@ import { getNativeAssetSymbol, isChainEvm } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, Parents, RELAYCHAINS } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { MissingParameterError, UnsupportedOperationError } from '../../errors'
 import type { TAddress, TCreateEthBridgeInstructionsOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
@@ -10,7 +11,8 @@ import { assertHasId, assertSender } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 import { getEthereumJunction } from '../location/getEthereumJunction'
 
-const createMainInstruction = (
+const createMainInstruction = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   asset: TAssetInfo,
   ethAsset: TAssetInfo,
@@ -71,7 +73,7 @@ const createMainInstruction = (
     }
   ]
 
-  const ethJunction = getEthereumJunction(origin)
+  const ethJunction = getEthereumJunction(api, origin)
 
   if (isAssetNativeToPolkadot) {
     const assetEcosystem = RELAYCHAINS.find(chain =>
@@ -157,7 +159,7 @@ export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
               }
             ]
     },
-    createMainInstruction(origin, assetInfo, ethAsset, recipient, messageId),
+    createMainInstruction(api, origin, assetInfo, ethAsset, recipient, messageId),
     {
       SetTopic: messageId
     }

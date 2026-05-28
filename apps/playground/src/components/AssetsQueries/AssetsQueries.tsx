@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
-import { determineCurrencyCore, fetchFromApi } from '../../utils';
+import { determineCurrency, fetchFromApi } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';
@@ -70,7 +70,7 @@ export const AssetsQueries = () => {
       : !!currency.currencyOptionId;
 
     const resolvedCurrency = hasCurrency
-      ? determineCurrencyCore(currency)
+      ? determineCurrency(currency)
       : undefined;
 
     if (useApi) {

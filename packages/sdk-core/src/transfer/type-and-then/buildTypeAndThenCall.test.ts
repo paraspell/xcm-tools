@@ -6,7 +6,7 @@ import type { PolkadotApi } from '../../api'
 import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { createDestination, localizeLocation } from '../../utils'
+import { createDestination, localizeLocationImpl } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
 vi.mock('../../chains/config')
@@ -53,7 +53,7 @@ describe('buildTypeAndThenCall', () => {
     vi.resetAllMocks()
     vi.mocked(getParaId).mockReturnValue(mockParaId)
     vi.mocked(createDestination).mockReturnValue(mockDestination)
-    vi.mocked(localizeLocation).mockImplementation((_, location) => location)
+    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
   })
 
   it('should build correct call when chain equals reserveChain and asset location is not RELAY_LOCATION', () => {
@@ -61,6 +61,7 @@ describe('buildTypeAndThenCall', () => {
 
     expect(getParaId).toHaveBeenCalledWith(mockContext.dest.chain)
     expect(createDestination).toHaveBeenCalledWith(
+      mockContext.origin.api,
       mockVersion,
       mockContext.origin.chain,
       mockContext.dest.chain,
@@ -100,6 +101,7 @@ describe('buildTypeAndThenCall', () => {
 
     expect(getParaId).toHaveBeenCalledWith(differentReserve.chain)
     expect(createDestination).toHaveBeenCalledWith(
+      mockContext.origin.api,
       mockVersion,
       mockContext.origin.chain,
       differentReserve.chain,

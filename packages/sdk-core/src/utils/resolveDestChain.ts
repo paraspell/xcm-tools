@@ -4,9 +4,9 @@ import type { PolkadotApi } from '../api'
 import { getTChain } from '../chains/getTChain'
 import { getRelayChainOfImpl } from './chain'
 
-export const resolveDestChain = <TApi, TRes, TSigner>(
+export const resolveDestChain = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner>,
-  originChain: TSubstrateChain,
+  originChain: TSubstrateChain | TCustomChain,
   paraId: number | undefined
 ) => {
   return paraId !== undefined

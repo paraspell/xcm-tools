@@ -1,5 +1,10 @@
 import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk-core';
-import { EXCHANGE_CHAINS, getAssets, isExternalChain, isSystemAsset } from '@paraspell/sdk-core';
+import {
+  EXCHANGE_CHAINS,
+  getAssetsImpl,
+  isExternalChain,
+  isSystemAsset,
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -9,7 +14,7 @@ import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  getAssets: vi.fn(),
+  getAssetsImpl: vi.fn(),
   isExternalChain: vi.fn(),
   isSystemAsset: vi.fn(),
 }));
@@ -60,11 +65,11 @@ describe('getSupportedAssetsTo', () => {
     const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
     const toChain: TChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([abcAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
 
     const result = getSupportedAssetsTo(mockExchange, toChain);
 
-    expect(getAssets).toHaveBeenCalledWith(toChain);
+    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
     expect(result).toEqual([abcAsset]);
   });
 
@@ -75,13 +80,13 @@ describe('getSupportedAssetsTo', () => {
     const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
     const toChain: TChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([abcAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
     vi.mocked(isExternalChain).mockReturnValue(true);
     vi.mocked(isSystemAsset).mockImplementation((asset) => asset.symbol === 'DEF');
 
     const result = getSupportedAssetsTo(mockExchange, toChain);
 
-    expect(getAssets).toHaveBeenCalledWith(toChain);
+    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
     expect(isExternalChain).toHaveBeenCalledWith(toChain);
     expect(isSystemAsset).toHaveBeenCalledTimes(exchangeAssets.length);
     expect(result).toEqual([abcAsset, defAsset]);
@@ -132,11 +137,11 @@ describe('getSupportedAssetsTo', () => {
     });
 
     const toChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([defAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([defAsset]);
 
     const result = getSupportedAssetsTo(exchange, toChain);
 
-    expect(getAssets).toHaveBeenCalledWith(toChain);
+    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
     expect(result).toEqual([defAsset]);
   });
 
@@ -152,13 +157,13 @@ describe('getSupportedAssetsTo', () => {
     });
 
     const toChain: TChain = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([abcAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
     vi.mocked(isExternalChain).mockReturnValue(true);
     vi.mocked(isSystemAsset).mockImplementation((asset) => asset.symbol === 'DEF');
 
     const result = getSupportedAssetsTo(exchange, toChain);
 
-    expect(getAssets).toHaveBeenCalledWith(toChain);
+    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
     expect(isExternalChain).toHaveBeenCalledWith(toChain);
     expect(isSystemAsset).toHaveBeenCalledTimes(assets1.length + assets2.length);
     expect(result).toEqual([abcAsset, defAsset]);

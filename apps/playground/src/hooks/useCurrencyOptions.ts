@@ -1,13 +1,17 @@
 import type { TAssetInfo, TChain } from '@paraspell/sdk';
-import { getSupportedAssets, isRelayChain } from '@paraspell/sdk';
+import { getSupportedAssetsImpl, isRelayChain } from '@paraspell/sdk';
 import { useMemo } from 'react';
+
+import { useCustomChains } from './useCustomChains';
 
 export const useCurrencyOptions = (from: TChain, to: TChain) => {
   const isNotParaToPara = isRelayChain(from) || isRelayChain(to);
 
+  const { customChainAssets } = useCustomChains();
+
   const supportedAssets = useMemo(
-    () => getSupportedAssets(from, to),
-    [from, to],
+    () => getSupportedAssetsImpl(from, to, { customChainAssets }),
+    [from, to, customChainAssets],
   );
 
   const currencyMap = useMemo(

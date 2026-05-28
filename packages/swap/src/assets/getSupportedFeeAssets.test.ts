@@ -1,14 +1,14 @@
 import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { getAssets, isAssetEqual } from '@paraspell/sdk-core';
+import { getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
+import { getSupportedAssetsFromImpl } from './getSupportedAssetsFrom';
 import { getSupportedFeeAssets } from './getSupportedFeeAssets';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  getAssets: vi.fn(),
+  getAssetsImpl: vi.fn(),
   isAssetEqual: vi.fn(),
 }));
 
@@ -50,22 +50,22 @@ describe('getSupportedFeeAssets', () => {
     const from: TSubstrateChain = 'AssetHubPolkadot';
     const exchange: TExchangeChain = 'Hydration';
 
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([feeAsset, nonFeeAsset, anotherFeeAsset]);
-    vi.mocked(getAssets).mockReturnValue([feeAsset, nonFeeAsset, anotherFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([feeAsset, nonFeeAsset, anotherFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([feeAsset, nonFeeAsset, anotherFeeAsset]);
 
     const result = getSupportedFeeAssets(from, exchange);
 
     expect(result).toEqual([feeAsset, anotherFeeAsset]);
-    expect(getSupportedAssetsFrom).toHaveBeenCalledWith(from, exchange);
-    expect(getAssets).toHaveBeenCalledWith(from);
+    expect(getSupportedAssetsFromImpl).toHaveBeenCalledWith(from, exchange, undefined);
+    expect(getAssetsImpl).toHaveBeenCalledWith(from, undefined);
   });
 
   it('should return empty array when no supported assets are fee assets', () => {
     const from: TSubstrateChain = 'Acala';
     const exchange: TExchangeChain = 'Hydration';
 
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([nonFeeAsset]);
-    vi.mocked(getAssets).mockReturnValue([nonFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([nonFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([nonFeeAsset]);
 
     const result = getSupportedFeeAssets(from, exchange);
 
@@ -76,14 +76,14 @@ describe('getSupportedFeeAssets', () => {
     const exchange: TExchangeChain = 'Hydration';
 
     vi.mocked(createExchangeInstance).mockReturnValue({ chain: 'Hydration' } as never);
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([feeAsset, nonFeeAsset]);
-    vi.mocked(getAssets).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([feeAsset, nonFeeAsset]);
 
     const result = getSupportedFeeAssets(undefined, exchange);
 
     expect(result).toEqual([feeAsset]);
     expect(createExchangeInstance).toHaveBeenCalledWith('Hydration');
-    expect(getAssets).toHaveBeenCalledWith('Hydration');
+    expect(getAssetsImpl).toHaveBeenCalledWith('Hydration', undefined);
   });
 
   it('should gather assets from all EXCHANGE_CHAINS when both from and exchange are undefined', () => {
@@ -93,13 +93,13 @@ describe('getSupportedFeeAssets', () => {
           chain: ex === 'Hydration' ? 'Hydration' : ex === 'Acala' ? 'Acala' : 'AssetHubPolkadot',
         }) as never,
     );
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([feeAsset]);
-    vi.mocked(getAssets).mockReturnValue([feeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([feeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([feeAsset]);
 
     const result = getSupportedFeeAssets(undefined, undefined);
 
     expect(result).toEqual([feeAsset]);
-    expect(getSupportedAssetsFrom).toHaveBeenCalledWith(undefined, undefined);
+    expect(getSupportedAssetsFromImpl).toHaveBeenCalledWith(undefined, undefined, undefined);
   });
 
   it('should gather assets from multiple exchanges when exchange is array and from undefined', () => {
@@ -108,8 +108,8 @@ describe('getSupportedFeeAssets', () => {
     vi.mocked(createExchangeInstance).mockImplementation(
       (ex) => ({ chain: ex === 'Hydration' ? 'Hydration' : 'Acala' }) as never,
     );
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([feeAsset, nonFeeAsset]);
-    vi.mocked(getAssets).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([feeAsset, nonFeeAsset]);
 
     const result = getSupportedFeeAssets(undefined, exchanges);
 
@@ -123,9 +123,9 @@ describe('getSupportedFeeAssets', () => {
     const exchange: TExchangeChain = 'Hydration';
 
     // Supported assets from router perspective
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([feeAsset, nonFeeAsset]);
     // Chain assets with fee flag - only feeAsset is marked
-    vi.mocked(getAssets).mockReturnValue([feeAsset, nonFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([feeAsset, nonFeeAsset]);
 
     const result = getSupportedFeeAssets(from, exchange);
 
@@ -135,8 +135,8 @@ describe('getSupportedFeeAssets', () => {
   it('should return empty array when exchange is auto select and from has no fee assets', () => {
     const from: TSubstrateChain = 'Acala';
 
-    vi.mocked(getSupportedAssetsFrom).mockReturnValue([nonFeeAsset]);
-    vi.mocked(getAssets).mockReturnValue([nonFeeAsset]);
+    vi.mocked(getSupportedAssetsFromImpl).mockReturnValue([nonFeeAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([nonFeeAsset]);
 
     const result = getSupportedFeeAssets(from, undefined);
 

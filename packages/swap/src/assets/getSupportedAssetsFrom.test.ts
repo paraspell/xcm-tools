@@ -1,5 +1,5 @@
 import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { getAssets, isAssetEqual } from '@paraspell/sdk-core';
+import { getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -9,7 +9,7 @@ import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  getAssets: vi.fn(),
+  getAssetsImpl: vi.fn(),
   isAssetEqual: vi.fn(),
 }));
 
@@ -63,7 +63,7 @@ describe('getSupportedAssetsFrom', () => {
 
     vi.mocked(getExchangeAssets).mockReturnValue([hdxAsset, wudAsset]);
 
-    vi.mocked(getAssets).mockReturnValue([wudAsset, acaAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([wudAsset, acaAsset]);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -74,7 +74,7 @@ describe('getSupportedAssetsFrom', () => {
     const fromChain: TSubstrateChain = 'Acala';
     const exchange = undefined;
     const fromAssets = [acaAsset];
-    vi.mocked(getAssets).mockReturnValue(fromAssets);
+    vi.mocked(getAssetsImpl).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
     expect(result).toEqual(fromAssets);
@@ -94,7 +94,7 @@ describe('getSupportedAssetsFrom', () => {
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
     expect(result).toEqual(exchangeAssets);
-    expect(getAssets).not.toHaveBeenCalled();
+    expect(getAssetsImpl).not.toHaveBeenCalled();
   });
 
   it('should return exchange assets when from is undefined', () => {
@@ -123,7 +123,7 @@ describe('getSupportedAssetsFrom', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([{ ...usdtAsset, symbol: 'usdt' }]);
 
     const fromAssets = [usdtAsset];
-    vi.mocked(getAssets).mockReturnValue(fromAssets);
+    vi.mocked(getAssetsImpl).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -140,7 +140,7 @@ describe('getSupportedAssetsFrom', () => {
 
     vi.mocked(getExchangeAssets).mockReturnValue([hdxAsset]);
 
-    vi.mocked(getAssets).mockReturnValue([acaAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([acaAsset]);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -152,6 +152,6 @@ describe('getSupportedAssetsFrom', () => {
     const result = getSupportedAssetsFrom(undefined, exchange);
 
     expect(result).toEqual([]);
-    expect(getAssets).not.toHaveBeenCalled();
+    expect(getAssetsImpl).not.toHaveBeenCalled();
   });
 });

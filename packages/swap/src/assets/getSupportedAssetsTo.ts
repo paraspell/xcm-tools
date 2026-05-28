@@ -1,7 +1,7 @@
-import type { TAssetInfo, TExchangeInput } from '@paraspell/sdk-core';
+import type { TAssetInfo, TCustomCtx, TExchangeInput } from '@paraspell/sdk-core';
 import {
   EXCHANGE_CHAINS,
-  getAssets,
+  getAssetsImpl,
   isAssetEqual,
   isExternalChain,
   isSystemAsset,
@@ -11,17 +11,10 @@ import {
 
 import { getExchangeAssets } from './getExchangeConfig';
 
-/**
- * Retrieves the list of assets supported for transfer to the destination chain.
- *
- * @param origin - The origin chain.
- * @param exchange - The exchange chain or 'Auto select'.
- * @param to - The destination chain.
- * @returns An array of supported assets.
- */
-export const getSupportedAssetsTo = (
+export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
   exchangeInput: TExchangeInput,
-  to: TChain | undefined,
+  to: TChain | TCustomChain | undefined,
+  ctx?: TCustomCtx,
 ): TAssetInfo[] => {
   const exchange = normalizeExchange(exchangeInput);
   if (exchange === undefined) {
@@ -29,7 +22,7 @@ export const getSupportedAssetsTo = (
       getExchangeAssets(exchangeChain),
     ).flat();
     if (to) {
-      const toAssets = getAssets(to);
+      const toAssets = getAssetsImpl(to, ctx);
 
       const filteredExchangeAssets = allExchangeAssets.filter((asset) =>
         toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
@@ -47,7 +40,7 @@ export const getSupportedAssetsTo = (
     : getExchangeAssets(exchange);
 
   if (to) {
-    const toAssets = getAssets(to);
+    const toAssets = getAssetsImpl(to, ctx);
     const filteredExchangeAssets = exchangeAssets.filter((asset) =>
       toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
     );
@@ -59,3 +52,16 @@ export const getSupportedAssetsTo = (
 
   return exchangeAssets;
 };
+
+/**
+ * Retrieves the list of assets supported for transfer to the destination chain.
+ *
+ * @param origin - The origin chain.
+ * @param exchange - The exchange chain or 'Auto select'.
+ * @param to - The destination chain.
+ * @returns An array of supported assets.
+ */
+export const getSupportedAssetsTo = (
+  exchangeInput: TExchangeInput,
+  to: TChain | undefined,
+): TAssetInfo[] => getSupportedAssetsToImpl(exchangeInput, to);

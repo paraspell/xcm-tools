@@ -15,7 +15,7 @@ import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { EVM_CHAINS, QUERY_CONFIG } from '../../constants';
-import { useWallet } from '../../hooks';
+import { useCustomAssets, useCustomChains, useWallet } from '../../hooks';
 import type {
   TApiTransaction,
   TFormValuesTransformed,
@@ -63,6 +63,9 @@ export const XcmTransfer = () => {
     selectedEvmAccount,
     getEvmWalletClient,
   } = useWallet();
+
+  const { customChains } = useCustomChains();
+  const { customAssets } = useCustomAssets();
 
   const [
     outputAlertOpened,
@@ -150,7 +153,11 @@ export const XcmTransfer = () => {
 
     const { createChainClient, Builder } = await importSdk(apiType);
 
-    const builderOptions = createBuilderOptions(firstItem);
+    const builderOptions = createBuilderOptions(
+      firstItem,
+      customChains,
+      customAssets,
+    );
 
     const sender = firstItem.localAccount || selectedAccount.address;
 
@@ -293,7 +300,11 @@ export const XcmTransfer = () => {
     submitType: TQuerySubmitType,
   ) => {
     const { endpoint, message } = QUERY_CONFIG[submitType];
-    const builderOptions = createBuilderOptions(formValues);
+    const builderOptions = createBuilderOptions(
+      formValues,
+      customChains,
+      customAssets,
+    );
 
     const result = formValues.useApi
       ? await fetchFromApi(
@@ -403,7 +414,11 @@ export const XcmTransfer = () => {
       );
 
       try {
-        const builderOptions = createBuilderOptions(formValues);
+        const builderOptions = createBuilderOptions(
+          formValues,
+          customChains,
+          customAssets,
+        );
         let hash: string;
 
         if (formValues.useApi) {
@@ -466,7 +481,11 @@ export const XcmTransfer = () => {
         return;
       }
 
-      const builderOptions = createBuilderOptions(formValues);
+      const builderOptions = createBuilderOptions(
+        formValues,
+        customChains,
+        customAssets,
+      );
       const { createChainClient, Builder } = await importSdk(apiType);
 
       let api;

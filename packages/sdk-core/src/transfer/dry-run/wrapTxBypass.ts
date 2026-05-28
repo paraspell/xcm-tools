@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol, isAssetXcEqual, isSymbolMatch } from '@paraspell/assets'
+import { getNativeAssetSymbolImpl, isAssetXcEqual, isSymbolMatch } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
@@ -38,7 +38,10 @@ const createMintTxs = <TApi, TRes, TSigner>(
 ): Promise<TSetBalanceRes> => {
   const nativePallet = getNativeAssetsPallet(chain, api._customCtx)
   const otherPallets = getOtherAssetsPallets(chain, api._customCtx)
-  const isMainNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(chain))
+  const isMainNativeAsset = isSymbolMatch(
+    asset.symbol,
+    getNativeAssetSymbolImpl(chain, api._customCtx)
+  )
   const pallet =
     (!asset.isNative && chain !== 'Mythos') || !isMainNativeAsset
       ? pickOtherPallet(asset, otherPallets)

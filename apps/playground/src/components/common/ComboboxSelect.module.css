@@ -1,0 +1,21 @@
+.footer {
+  padding: 6px 4px;
+}
+
+.addCustomButton {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: var(--mantine-radius-sm);
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-blue-6);
+  font-weight: 500;
+  transition: background-color 100ms ease;
+}
+
+.addCustomButton:hover {
+  background-color: light-dark(
+    var(--mantine-color-gray-1),
+    var(--mantine-color-dark-5)
+  );
+}

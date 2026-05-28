@@ -5,7 +5,7 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 
 import { UnsupportedOperationError } from '../../../errors'
 import { createPayFees } from '../../../pallets/polkadotXcm'
-import type { TCreateBaseTransferXcmOptions, TTransactOptions } from '../../../types'
+import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
@@ -65,12 +65,13 @@ const getInitiateTransferType = (
   return 'ReserveWithdraw'
 }
 
-export const createBaseExecuteXcm = <TRes>(
-  options: TCreateBaseTransferXcmOptions<TRes> & {
+export const createBaseExecuteXcm = <TApi, TRes, TSigner>(
+  options: TCreateTransferXcmOptions<TApi, TRes, TSigner> & {
     suffixXcm?: unknown[]
   }
 ) => {
   const {
+    api,
     chain,
     destChain,
     fees: { originFee, reserveFee },
@@ -100,7 +101,7 @@ export const createBaseExecuteXcm = <TRes>(
   // currency and must not be subtracted from the transfer amount.
   const originFeeDeduction = feeAsset ? 0n : originFee
 
-  const destLocation = createDestination(version, chain, destChain, paraIdTo)
+  const destLocation = createDestination(api, version, chain, destChain, paraIdTo)
 
   if (chain !== 'AssetHubPolkadot' && reserveChain === undefined) {
     throw new UnsupportedOperationError(
@@ -122,7 +123,7 @@ export const createBaseExecuteXcm = <TRes>(
         {
           DepositReserveAsset: {
             assets: createAssetsFilter(assetLocalizedToReserve, version),
-            dest: createDestination(version, reserveChain ?? chain, destChain, paraIdTo),
+            dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
               ...createPayFees(
                 version,

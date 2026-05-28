@@ -11,6 +11,7 @@ import {
   type Version
 } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import type { TDestination, TXcmVersioned } from '../../types'
 import { getRelayChainOf } from '../chain'
 import { resolveScenario } from '../transfer/resolveScenario'
@@ -18,9 +19,10 @@ import { addXcmVersionHeader } from '../xcm-version'
 import { createX1Payload } from './createX1Payload'
 import { getEthereumJunction } from './getEthereumJunction'
 
-export const createDestination = (
+export const createDestination = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   version: Version,
-  origin: TChain,
+  origin: TChain | TCustomChain,
   destination: TDestination,
   chainId?: number,
   junction?: TJunction,
@@ -51,7 +53,7 @@ export const createDestination = (
     return {
       parents: Parents.TWO,
       interior: {
-        X1: [getEthereumJunction(origin)]
+        X1: [getEthereumJunction(api, origin)]
       }
     }
   }
@@ -66,7 +68,8 @@ export const createDestination = (
   return isLocDestination ? destination : { parents: parentsResolved, interior }
 }
 
-export const createVersionedDestination = (
+export const createVersionedDestination = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   version: Version,
   origin: TSubstrateChain,
   destination: TDestination,
@@ -75,6 +78,7 @@ export const createVersionedDestination = (
   parents?: Parents
 ): TXcmVersioned<TLocation> => {
   const plainDestination = createDestination(
+    api,
     version,
     origin,
     destination,

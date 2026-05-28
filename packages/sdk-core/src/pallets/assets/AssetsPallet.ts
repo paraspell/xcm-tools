@@ -1,4 +1,4 @@
-import { isChainEvm, type TAssetInfo, type WithAmount } from '@paraspell/assets'
+import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
@@ -8,7 +8,7 @@ import { assertHasId } from '../../utils'
 
 export class AssetsPallet extends BaseAssetsPallet {
   mint<TApi, TRes, TSigner>(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,
@@ -32,7 +32,7 @@ export class AssetsPallet extends BaseAssetsPallet {
     const id = useBigInt ? BigInt(assetId) : Number(assetId)
 
     const notUseId =
-      notUseAddressIdChains.some(prefix => chain.startsWith(prefix)) || isChainEvm(chain)
+      notUseAddressIdChains.some(prefix => chain.startsWith(prefix)) || api.isChainEvm(chain)
 
     const addr = notUseId ? address : { Id: address }
 

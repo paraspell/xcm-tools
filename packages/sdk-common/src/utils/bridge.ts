@@ -5,7 +5,10 @@ const COMPATIBLE_BRIDGES: [TSubstrateChain, TSubstrateChain][] = [
   ['AssetHubPolkadot', 'AssetHubKusama']
 ]
 
-export const isSubstrateBridge = (origin: TChain, destination: TChain): boolean => {
+export const isSubstrateBridge = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain
+): boolean => {
   if (isExternalChain(origin) || isExternalChain(destination)) return false
   if (!origin.startsWith('AssetHub') || !destination.startsWith('AssetHub')) return false
 
@@ -14,10 +17,16 @@ export const isSubstrateBridge = (origin: TChain, destination: TChain): boolean 
   )
 }
 
-export const isSnowbridge = (_origin: TChain, destination: TChain): boolean => {
+export const isSnowbridge = <TCustomChain extends string = never>(
+  _origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain
+): boolean => {
   return isExternalChain(destination)
 }
 
-export const isBridge = (origin: TChain, destination: TChain): boolean => {
+export const isBridge = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TChain | TCustomChain
+): boolean => {
   return isSubstrateBridge(origin, destination) || isSnowbridge(origin, destination)
 }

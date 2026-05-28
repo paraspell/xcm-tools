@@ -1,68 +1,78 @@
-import type { SelectProps } from '@mantine/core';
-import { Group, Image, Select } from '@mantine/core';
-import type { TSubstrateChain } from '@paraspell/sdk';
+import type { ComboboxItem } from '@mantine/core';
+import { Group, Image } from '@mantine/core';
+import { isChain } from '@paraspell/sdk';
 import { IconCheck } from '@tabler/icons-react';
 import type { FC } from 'react';
 
 import { getParachainIcon } from '../../utils/getParachainIcon';
+import type { ComboboxSelectProps } from '../common/ComboboxSelect';
+import { ComboboxSelect } from '../common/ComboboxSelect';
 
-const iconProps = {
-  stroke: 1.5,
-  color: 'currentColor',
-  opacity: 0.6,
-  size: 18,
+const getIconFor = (chain?: string | null) => {
+  if (!chain) return null;
+  if (!isChain(chain)) return '/circle.svg';
+  return getParachainIcon(chain);
 };
 
-const renderSelectOption: SelectProps['renderOption'] = ({
-  option,
-  checked,
+const ChainIcon: FC<{ chain?: string | null; alt?: string }> = ({
+  chain,
+  alt,
 }) => {
-  const icon = getParachainIcon(option.value as TSubstrateChain);
+  const src = getIconFor(chain);
+  if (!src) return null;
   return (
-    <Group flex="1" gap="xs">
-      <Image
-        src={icon}
-        style={{
-          width: '16px',
-          height: '16px',
-        }}
-        radius="xl"
-        alt={option.label}
-      />
-      {option.label}
-      {checked && (
-        <IconCheck style={{ marginInlineStart: 'auto' }} {...iconProps} />
-      )}
-    </Group>
-  );
-};
-
-type Props = SelectProps;
-
-export const ParachainSelect: FC<Props> = (props) => {
-  const { value } = props;
-  const icon = getParachainIcon(value as TSubstrateChain);
-  return (
-    <Select
-      placeholder="Pick value"
-      renderOption={renderSelectOption}
-      leftSection={
-        icon ? (
-          <Image
-            src={icon}
-            style={{
-              width: '16px',
-              height: '16px',
-            }}
-            radius="xl"
-          />
-        ) : null
-      }
-      nothingFoundMessage="Nothing found..."
-      allowDeselect={false}
-      searchable
-      required
-      {...props}
+    <Image
+      src={src}
+      style={{ width: '16px', height: '16px' }}
+      radius="xl"
+      alt={alt}
     />
   );
 };
+
+const renderChainOption = ({
+  option,
+  checked,
+}: {
+  option: ComboboxItem;
+  checked?: boolean;
+}) => (
+  <Group flex="1" gap="xs">
+    <ChainIcon chain={option.value} alt={option.label} />
+    {option.label}
+    {checked && (
+      <IconCheck
+        style={{ marginInlineStart: 'auto' }}
+        stroke={1.5}
+        color="currentColor"
+        opacity={0.6}
+        size={18}
+      />
+    )}
+  </Group>
+);
+
+type Props = Omit<
+  ComboboxSelectProps,
+  'addCustomLabel' | 'addCustomTestId' | 'withAsterisk'
+>;
+
+export const ParachainSelect: FC<Props> = ({
+  value,
+  leftSection,
+  ...props
+}) => (
+  <ComboboxSelect
+    {...props}
+    value={value}
+    leftSection={
+      leftSection ?? (
+        <ChainIcon chain={typeof value === 'string' ? value : null} />
+      )
+    }
+    renderOption={renderChainOption}
+    withAsterisk={false}
+    addCustomLabel="Add custom chain"
+    addCustomTestId="button-add-custom-chain"
+  />
+);
