@@ -4,8 +4,9 @@ import type { TAsset } from '@paraspell/assets'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../../api'
 import { UnsupportedOperationError } from '../../../errors'
-import type { TCreateBaseTransferXcmOptions } from '../../../types'
+import type { TCreateTransferXcmOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
@@ -29,7 +30,10 @@ describe('createBaseExecuteXcm', () => {
 
   const mockVersion = Version.V3
 
+  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+
   const mockBaseOptions = {
+    api: mockApi,
     chain: 'AssetHubPolkadot',
     destChain: 'AssetHubKusama',
     fees: {
@@ -38,7 +42,7 @@ describe('createBaseExecuteXcm', () => {
     },
     version: mockVersion,
     paraIdTo: 1000
-  } as TCreateBaseTransferXcmOptions<unknown>
+  } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
   const mockPrepareExecuteContext = {
     amount: 10000n,
@@ -364,6 +368,7 @@ describe('createBaseExecuteXcm', () => {
     createBaseExecuteXcm(mockBaseOptions)
 
     expect(createDestination).toHaveBeenCalledWith(
+      mockApi,
       mockVersion,
       'AssetHubPolkadot',
       'AssetHubKusama',

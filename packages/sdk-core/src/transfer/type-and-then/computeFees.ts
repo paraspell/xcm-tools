@@ -1,9 +1,4 @@
-import {
-  hasDryRunSupport,
-  isAssetEqual,
-  type TCurrencyCore,
-  type WithAmount
-} from '@paraspell/assets'
+import { isAssetEqual, type TCurrencyCore, type WithAmount } from '@paraspell/assets'
 
 import type {
   TGetXcmFeeResult,
@@ -41,7 +36,7 @@ export const computeAllFees = async <TApi, TRes, TSigner>(
   assertSender(sender)
   assertAddressIsString(recipient)
 
-  if (!hasDryRunSupport(context.origin.chain)) {
+  if (!origin.api.hasDryRunSupport(context.origin.chain)) {
     return null
   }
 

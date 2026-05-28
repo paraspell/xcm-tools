@@ -21,9 +21,9 @@ class Darwinia<TApi, TRes, TSigner>
   }
 
   transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    const { scenario, assetInfo: asset } = input
+    const { scenario, assetInfo: asset, api } = input
 
-    if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
+    if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol(api)) {
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 

@@ -271,7 +271,7 @@ describe('validateAssetSupport', () => {
 
 describe('validateEthereumAsset', () => {
   it('should return early when asset is null', () => {
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', null)).not.toThrow()
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', null)).not.toThrow()
   })
 
   it('should return early when destination is not Ethereum', () => {
@@ -283,7 +283,7 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Acala', asset)).not.toThrow()
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Acala', asset)).not.toThrow()
   })
 
   it('should return early when origin is Mythos', () => {
@@ -295,7 +295,7 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('Mythos', 'Ethereum', asset)).not.toThrow()
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', 'Ethereum', asset)).not.toThrow()
   })
 
   it('should not throw for asset with Ethereum GlobalConsensus location', () => {
@@ -312,7 +312,9 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+    expect(() =>
+      validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)
+    ).not.toThrow()
   })
 
   it('should not throw for asset with RELAY_LOCATION (DOT)', () => {
@@ -324,7 +326,9 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+    expect(() =>
+      validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)
+    ).not.toThrow()
   })
 
   it('should not throw for asset with Kusama GlobalConsensus location', () => {
@@ -336,7 +340,9 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).not.toThrow()
+    expect(() =>
+      validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)
+    ).not.toThrow()
   })
 
   it('should throw InvalidCurrencyError for non-Ethereum-compatible asset', () => {
@@ -350,10 +356,10 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError
     )
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       'is not transferable to Ethereum'
     )
   })
@@ -370,10 +376,10 @@ describe('validateEthereumAsset', () => {
       }
     }
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError
     )
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       'is not transferable to Ethereum'
     )
   })
@@ -388,10 +394,10 @@ describe('validateEthereumAsset', () => {
       }
     }
 
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       InvalidCurrencyError
     )
-    expect(() => validateEthereumAsset('AssetHubPolkadot', 'Ethereum', asset)).toThrow(
+    expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Ethereum', asset)).toThrow(
       'is not transferable to Ethereum'
     )
   })

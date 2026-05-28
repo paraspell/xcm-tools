@@ -1,24 +1,31 @@
 import { isExternalChain, type TChain } from '@paraspell/sdk-common'
 
 import type { TCurrencyInput, TCustomCtx } from '../../types'
-import { getNativeAssetSymbol } from '../assets'
+import { getNativeAssetSymbolImpl } from '../assets'
 import { Native } from '../assetSelectors'
 import { findAssetInfoImpl } from './findAssetInfo'
 import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
 
-const createSelection = (chain: TChain): TCurrencyInput => {
-  const nativeSymbol = getNativeAssetSymbol(chain)
+const createSelection = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+): TCurrencyInput => {
+  const nativeSymbol = getNativeAssetSymbolImpl(chain, ctx)
   return {
     symbol: isExternalChain(chain) ? nativeSymbol : Native(nativeSymbol)
   }
 }
 
-export const findNativeAssetInfoImpl = (chain: TChain, ctx?: TCustomCtx) =>
-  findAssetInfoImpl(chain, createSelection(chain), null, ctx)
+export const findNativeAssetInfoImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+) => findAssetInfoImpl(chain, createSelection(chain, ctx), null, ctx)
 
 export const findNativeAssetInfo = (chain: TChain) => findNativeAssetInfoImpl(chain)
 
-export const findNativeAssetInfoOrThrowImpl = (chain: TChain, ctx?: TCustomCtx) =>
-  findAssetInfoOrThrowImpl(chain, createSelection(chain), null, ctx)
+export const findNativeAssetInfoOrThrowImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx
+) => findAssetInfoOrThrowImpl(chain, createSelection(chain, ctx), null, ctx)
 
 export const findNativeAssetInfoOrThrow = (chain: TChain) => findNativeAssetInfoOrThrowImpl(chain)

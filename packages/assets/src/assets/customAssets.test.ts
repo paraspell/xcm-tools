@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { CustomAssetConflictError } from '../errors'
-import type { TAssetInfo, TCustomAssetInfo } from '../types'
-import { mergeCustomAssets, normalizeCustomAssets } from './customAssets'
+import type { TAssetInfo, TCustomAssetInfo, TCustomCtx } from '../types'
+import { isCustomAsset, mergeCustomAssets, normalizeCustomAssets } from './customAssets'
 
 vi.mock('../maps/assets.json', () => ({
   default: {
@@ -119,5 +119,46 @@ describe('mergeCustomAssets', () => {
     ]
     const result = mergeCustomAssets(base, overlay)
     expect(result).toEqual([base[1], overlay[0]])
+  })
+})
+
+describe('isCustomAsset', () => {
+  const customLocation = {
+    parents: 0,
+    interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: '9999' }] }
+  }
+  const asset: TAssetInfo = {
+    symbol: 'CUST',
+    decimals: 6,
+    location: customLocation
+  }
+
+  it('returns false when ctx is undefined', () => {
+    expect(isCustomAsset('Acala', asset, undefined)).toBe(false)
+  })
+
+  it('returns false when customAssets has no entry for the chain', () => {
+    const ctx: TCustomCtx = { customAssets: {} }
+    expect(isCustomAsset('Acala', asset, ctx)).toBe(false)
+  })
+
+  it('returns false when chain entry is empty', () => {
+    const ctx: TCustomCtx = { customAssets: { Acala: [] } }
+    expect(isCustomAsset('Acala', asset, ctx)).toBe(false)
+  })
+
+  it('returns true when an overlay entry matches the asset by location', () => {
+    const ctx: TCustomCtx = { customAssets: { Acala: [asset] } }
+    expect(isCustomAsset('Acala', asset, ctx)).toBe(true)
+  })
+
+  it('returns false when no overlay entry matches the asset by location', () => {
+    const otherAsset: TAssetInfo = {
+      symbol: 'OTHER',
+      decimals: 6,
+      location: { parents: 0, interior: { X1: { GeneralIndex: '1' } } }
+    }
+    const ctx: TCustomCtx = { customAssets: { Acala: [otherAsset] } }
+    expect(isCustomAsset('Acala', asset, ctx)).toBe(false)
   })
 })

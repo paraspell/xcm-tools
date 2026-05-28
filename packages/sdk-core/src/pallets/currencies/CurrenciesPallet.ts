@@ -8,7 +8,7 @@ import { assertHasId, getChain } from '../../utils'
 
 export class CurrenciesPallet extends BaseAssetsPallet {
   mint<TApi, TRes, TSigner>(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,
@@ -19,7 +19,7 @@ export class CurrenciesPallet extends BaseAssetsPallet {
     const isAcalaLike = isKarura || isAcala
 
     const id = isAcalaLike
-      ? getChain(isKarura ? 'Karura' : 'Acala').getCustomCurrencyId(asset)
+      ? getChain(isKarura ? 'Karura' : 'Acala').getCustomCurrencyId(api, asset)
       : (assertHasId(asset), Number(asset.assetId))
 
     const { amount } = asset

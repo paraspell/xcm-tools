@@ -73,7 +73,8 @@ export const validateEcosystems = (origin: TSubstrateChain, destination: TDestin
   }
 }
 
-export const validateEthereumAsset = (
+export const validateEthereumAsset = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   origin: TSubstrateChain,
   destination: TDestination,
   asset: TAssetInfo | null
@@ -100,7 +101,7 @@ export const validateEthereumAsset = (
     (asset.location.parents === Parents.TWO &&
       deepEqual(
         getJunctionValue(asset.location, 'GlobalConsensus'),
-        getEthereumJunction(origin, false).GlobalConsensus
+        getEthereumJunction(api, origin, false).GlobalConsensus
       )) ||
     ADDITIONAL_ALLOWED_LOCATIONS.some(loc => deepEqual(asset.location, loc))
 
@@ -134,5 +135,5 @@ export const validateAssetSupport = <TApi, TRes, TSigner>(
   }
 
   validateBridgeAsset(origin, destination, asset, currency, isBridge, api)
-  validateEthereumAsset(origin, destination, asset)
+  validateEthereumAsset(api, origin, destination, asset)
 }

@@ -4,6 +4,7 @@ import { type TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -25,8 +26,8 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo) {
-    const nativeAssetSymbol = this.getNativeAssetSymbol()
+  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
+    const nativeAssetSymbol = this.getNativeAssetSymbol(api)
 
     if (asset.symbol === nativeAssetSymbol) {
       return { Native: nativeAssetSymbol }
@@ -55,7 +56,7 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     const dest = { Id: recipient }
-    const currencyId = this.getCustomCurrencyId(asset)
+    const currencyId = this.getCustomCurrencyId(api, asset)
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({

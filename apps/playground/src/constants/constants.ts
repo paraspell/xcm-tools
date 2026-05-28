@@ -111,11 +111,6 @@ export const PALLETS_QUERIES = [
 
 export const CURRENCY_TYPES = ['id', 'symbol', 'location'] as const;
 
-export const TRANSFER_CURRENCY_TYPES = [
-  ...CURRENCY_TYPES,
-  'overridenLocation',
-] as const;
-
 export const SYMBOL_TYPES = [
   'auto',
   'native',

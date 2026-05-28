@@ -121,7 +121,6 @@ export const Swap = ({ form }: Props) => {
                 form={form}
                 fieldPath="swapOptions.currencyTo"
                 fieldValue={currencyTo}
-                showOverrideLocation={true}
                 required
                 currencyOptions={currencyToOptions}
               />

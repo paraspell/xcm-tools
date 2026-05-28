@@ -1,10 +1,17 @@
 import { isExternalChain, type TChain, type TJunctionGlobalConsensus } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
-import { getRelayChainOf } from '../chain'
+import { getRelayChainOfImpl } from '../chain'
 
-export const getEthereumJunction = (chain: TChain, useBigInt = true): TJunctionGlobalConsensus => {
-  const relayChain = !isExternalChain(chain) ? getRelayChainOf(chain) : undefined
+export const getEthereumJunction = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
+  chain: TChain | TCustomChain,
+  useBigInt = true
+): TJunctionGlobalConsensus => {
+  const relayChain = isExternalChain(chain)
+    ? undefined
+    : getRelayChainOfImpl<TApi, TRes, TSigner, TCustomChain>(api, chain)
   const isTestnet = relayChain === 'Westend' || relayChain === 'Paseo'
   const chainId = isTestnet ? ETH_TESTNET_PARA_ID : ETH_MAINNET_PARA_ID
   return {

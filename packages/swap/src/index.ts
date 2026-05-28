@@ -9,8 +9,11 @@ export {
   getExchangeConfig,
   getExchangePairs,
   getSupportedAssetsFrom,
+  getSupportedAssetsFromImpl,
   getSupportedAssetsTo,
+  getSupportedAssetsToImpl,
   getSupportedFeeAssets,
+  getSupportedFeeAssetsImpl,
 } from './assets';
 export * from './builder/SwapBuilder';
 export * from './consts';

@@ -1,4 +1,4 @@
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
@@ -7,27 +7,29 @@ import {
   type TLocation
 } from '@paraspell/sdk-common'
 
-import { getRelayChainOf, getTChain } from '../..'
+import type { PolkadotApi } from '../../api'
+import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
-
-export const getAssetReserveChain = (
-  chain: TSubstrateChain,
+import { getRelayChainOf, getRelayChainOfImpl } from './getRelayChainOf'
+const getAssetReserveChainInner = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   assetLocation: TLocation,
-  resolveExternalReserve = false
-): TChain => {
+  resolveExternalReserve: boolean,
+  resolveRelay: (chain: TSubstrateChain | TCustomChain) => TRelaychain
+): TChain | TCustomChain => {
   const globalConsensus = getJunctionValue<Record<string, unknown>>(
     assetLocation,
     'GlobalConsensus'
   )
 
   if (resolveExternalReserve && globalConsensus && 'Ethereum' in globalConsensus) {
-    const relaychain = getRelayChainOf(chain)
+    const relaychain = resolveRelay(chain)
     return relaychain === 'Westend' || relaychain === 'Paseo' ? 'EthereumTestnet' : 'Ethereum'
   }
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
-    const resolvedChain = getTChain(paraId, getRelayChainOf(chain))
+    const resolvedChain = getTChain(paraId, resolveRelay(chain))
     if (!resolvedChain) {
       throw new RoutingResolutionError(`Chain with paraId ${paraId} not found`)
     }
@@ -36,7 +38,7 @@ export const getAssetReserveChain = (
 
   if (isRelayChain(chain)) return chain
 
-  const relaychain = getRelayChainOf(chain)
+  const relaychain = resolveRelay(chain)
   const ahChain: TSubstrateChain = `AssetHub${relaychain}`
 
   if (globalConsensus) {
@@ -54,3 +56,22 @@ export const getAssetReserveChain = (
 
   return chain
 }
+
+export const getAssetReserveChain = (
+  chain: TSubstrateChain,
+  assetLocation: TLocation,
+  resolveExternalReserve = false
+): TChain =>
+  getAssetReserveChainInner<never>(chain, assetLocation, resolveExternalReserve, c =>
+    getRelayChainOf(c)
+  )
+
+export const getAssetReserveChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
+  chain: TSubstrateChain | TCustomChain,
+  assetLocation: TLocation,
+  resolveExternalReserve = false
+): TChain | TCustomChain =>
+  getAssetReserveChainInner<TCustomChain>(chain, assetLocation, resolveExternalReserve, c =>
+    getRelayChainOfImpl(api, c)
+  )

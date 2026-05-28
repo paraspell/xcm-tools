@@ -1,11 +1,18 @@
 import type { TAssetInfo, TChain } from '@paraspell/sdk';
-import { getAssets } from '@paraspell/sdk';
+import { getAssetsImpl } from '@paraspell/sdk';
 import { useMemo } from 'react';
 
+import { useCustomChains } from './useCustomChains';
+
 export const useFeeCurrencyOptions = (from: TChain) => {
+  const { customChainAssets } = useCustomChains();
+
   const supportedAssets = useMemo(
-    () => getAssets(from).filter((asset) => asset.isFeeAsset),
-    [from],
+    () =>
+      getAssetsImpl(from, { customChainAssets }).filter(
+        (asset) => asset.isFeeAsset,
+      ),
+    [from, customChainAssets],
   );
 
   const currencyMap = useMemo(

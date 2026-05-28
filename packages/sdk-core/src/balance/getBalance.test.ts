@@ -3,9 +3,10 @@ import { isExternalChain, isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
+import { getChainImpl } from '../chains/getChainInstance'
 import { getPalletInstance } from '../pallets'
 import type { BaseAssetsPallet } from '../types'
-import { getChain, validateAddress } from '../utils'
+import { validateAddress } from '../utils'
 import * as getBalanceModule from './getBalance'
 import { getEthErc20Balance } from './getEthErc20Balance'
 
@@ -14,6 +15,7 @@ vi.mock('@paraspell/sdk-common')
 
 vi.mock('../pallets')
 vi.mock('../utils')
+vi.mock('../chains/getChainInstance')
 vi.mock('./getEthErc20Balance')
 
 const createMockApi = () =>
@@ -53,7 +55,7 @@ describe('getAssetBalanceInternal', () => {
     expect(getEthErc20Balance).toHaveBeenCalledWith('Ethereum', asset, '0x123')
     expect(isRelayChain).not.toHaveBeenCalled()
     expect(getPalletInstance).not.toHaveBeenCalled()
-    expect(getChain).not.toHaveBeenCalled()
+    expect(getChainImpl).not.toHaveBeenCalled()
     expect(result).toBe(123n)
   })
 
@@ -79,7 +81,7 @@ describe('getAssetBalanceInternal', () => {
     expect(isRelayChain).toHaveBeenCalledWith('Polkadot')
     expect(getPalletInstance).toHaveBeenCalledWith('System')
     expect(palletGetBalance).toHaveBeenCalledWith(api, 'relay-account', baseAsset)
-    expect(getChain).not.toHaveBeenCalled()
+    expect(getChainImpl).not.toHaveBeenCalled()
     expect(result).toBe(55n)
   })
 
@@ -87,9 +89,9 @@ describe('getAssetBalanceInternal', () => {
     const api = createMockApi()
     const chainGetBalance = vi.fn().mockResolvedValueOnce(88n)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
-    vi.mocked(getChain).mockReturnValueOnce({
+    vi.mocked(getChainImpl).mockReturnValueOnce({
       getBalance: chainGetBalance
-    } as unknown as ReturnType<typeof getChain>)
+    } as unknown as ReturnType<typeof getChainImpl>)
 
     const initSpy = vi.spyOn(api, 'init')
 
@@ -103,7 +105,7 @@ describe('getAssetBalanceInternal', () => {
     expect(validateAddress).toHaveBeenCalledWith(api, 'parachain-account', 'Astar', false)
     expect(initSpy).toHaveBeenCalledWith('Astar')
     expect(isRelayChain).toHaveBeenCalledWith('Astar')
-    expect(getChain).toHaveBeenCalledWith('Astar')
+    expect(getChainImpl).toHaveBeenCalledWith('Astar', undefined)
     expect(chainGetBalance).toHaveBeenCalledWith(api, 'parachain-account', baseAsset)
     expect(result).toBe(88n)
   })
@@ -121,9 +123,9 @@ describe('getBalanceInternal', () => {
       .mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockResolvedValueOnce(77n)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
-    vi.mocked(getChain).mockReturnValueOnce({
+    vi.mocked(getChainImpl).mockReturnValueOnce({
       getBalance: chainGetBalance
-    } as unknown as ReturnType<typeof getChain>)
+    } as unknown as ReturnType<typeof getChainImpl>)
 
     const result = await getBalanceModule.getBalanceInternal({
       api,
@@ -148,9 +150,9 @@ describe('getBalance', () => {
     vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockResolvedValueOnce(100n)
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
-    vi.mocked(getChain).mockReturnValueOnce({
+    vi.mocked(getChainImpl).mockReturnValueOnce({
       getBalance: chainGetBalance
-    } as unknown as ReturnType<typeof getChain>)
+    } as unknown as ReturnType<typeof getChainImpl>)
 
     const disconnectSpy = vi.spyOn(api, 'disconnect')
 
@@ -170,9 +172,9 @@ describe('getBalance', () => {
     vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValueOnce(baseAsset)
     const chainGetBalance = vi.fn().mockRejectedValueOnce(new Error('failure'))
     vi.mocked(isRelayChain).mockReturnValueOnce(false)
-    vi.mocked(getChain).mockReturnValueOnce({
+    vi.mocked(getChainImpl).mockReturnValueOnce({
       getBalance: chainGetBalance
-    } as unknown as ReturnType<typeof getChain>)
+    } as unknown as ReturnType<typeof getChainImpl>)
 
     const disconnectSpy = vi.spyOn(api, 'disconnect')
 

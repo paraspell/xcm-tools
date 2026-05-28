@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { getAssetReserveChain, getRelayChainOf } from '../../utils'
+import { getAssetReserveChainImpl, getRelayChainOf, getRelayChainOfImpl } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { createTypeAndThenCallContext, getBridgeReserve } from './createContext'
 
@@ -39,6 +39,7 @@ vi.mock('../../constants', () => ({
 describe('getBridgeReserve', () => {
   const originChain: TSubstrateChain = 'BridgeHubPolkadot'
   const destinationChain: TSubstrateChain = 'BridgeHubKusama'
+  const bridgeMockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -52,7 +53,7 @@ describe('getBridgeReserve', () => {
   })
 
   it('returns the origin chain when asset location is relay', () => {
-    const result = getBridgeReserve(originChain, destinationChain, RELAY_LOCATION)
+    const result = getBridgeReserve(bridgeMockApi, originChain, destinationChain, RELAY_LOCATION)
 
     expect(result).toBe(originChain)
   })
@@ -63,7 +64,7 @@ describe('getBridgeReserve', () => {
       interior: { X1: { Parachain: 2000 } }
     }
 
-    const result = getBridgeReserve(originChain, destinationChain, parachainLocation)
+    const result = getBridgeReserve(bridgeMockApi, originChain, destinationChain, parachainLocation)
 
     expect(result).toBe(originChain)
   })
@@ -78,7 +79,7 @@ describe('getBridgeReserve', () => {
       }
     }
 
-    const result = getBridgeReserve(originChain, 'Ethereum', ethLocation)
+    const result = getBridgeReserve(bridgeMockApi, originChain, 'Ethereum', ethLocation)
 
     expect(result).toBe('Ethereum')
   })
@@ -93,7 +94,7 @@ describe('getBridgeReserve', () => {
       }
     }
 
-    const result = getBridgeReserve(originChain, 'Ethereum', mismatchLocation)
+    const result = getBridgeReserve(bridgeMockApi, originChain, 'Ethereum', mismatchLocation)
 
     expect(result).toBe(originChain)
   })
@@ -104,7 +105,7 @@ describe('getBridgeReserve', () => {
       interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
     }
 
-    const result = getBridgeReserve(originChain, destinationChain, relayLocation)
+    const result = getBridgeReserve(bridgeMockApi, originChain, destinationChain, relayLocation)
 
     expect(result).toBe(destinationChain)
   })
@@ -150,10 +151,11 @@ describe('createTypeAndThenCallContext', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
     vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getAssetReserveChain).mockReturnValue(mockReserveChain)
+    vi.mocked(getAssetReserveChainImpl).mockReturnValue(mockReserveChain)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(mockSystemAsset)
   })
 
@@ -168,7 +170,7 @@ describe('createTypeAndThenCallContext', () => {
 
     const result = await createTypeAndThenCallContext(options, {})
 
-    expect(getAssetReserveChain).toHaveBeenCalled()
+    expect(getAssetReserveChainImpl).toHaveBeenCalled()
     expect(mockClonedApi.init).toHaveBeenCalledTimes(2)
 
     expect(result).toEqual({
@@ -187,7 +189,12 @@ describe('createTypeAndThenCallContext', () => {
   it('should create context with non-relay chain as destination', async () => {
     const result = await createTypeAndThenCallContext(mockOptions, {})
 
-    expect(getAssetReserveChain).toHaveBeenCalledWith(mockChain, mockAsset.location, true)
+    expect(getAssetReserveChainImpl).toHaveBeenCalledWith(
+      mockApi,
+      mockChain,
+      mockAsset.location,
+      true
+    )
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(1, mockDestChain)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(2, mockReserveChain)
 
@@ -205,7 +212,7 @@ describe('createTypeAndThenCallContext', () => {
   })
 
   it('should use origin api for reserve when reserveChain equals origin chain', async () => {
-    vi.mocked(getAssetReserveChain).mockReturnValue(mockChain)
+    vi.mocked(getAssetReserveChainImpl).mockReturnValue(mockChain)
 
     const destApiClone = { init: vi.fn().mockResolvedValue(undefined) } as unknown as PolkadotApi<
       unknown,
@@ -248,7 +255,7 @@ describe('createTypeAndThenCallContext', () => {
 
     const result = await createTypeAndThenCallContext(mockOptions, {})
 
-    expect(getAssetReserveChain).not.toHaveBeenCalled()
+    expect(getAssetReserveChainImpl).not.toHaveBeenCalled()
     expect(result.isSubBridge).toBe(true)
     expect(result.isRelayAsset).toBe(true)
     expect(result.reserve.chain).toBe(mockChain)
@@ -261,7 +268,7 @@ describe('createTypeAndThenCallContext', () => {
       reserveChain: overrideChain
     })
 
-    expect(getAssetReserveChain).not.toHaveBeenCalled()
+    expect(getAssetReserveChainImpl).not.toHaveBeenCalled()
     expect(result.reserve.chain).toBe(overrideChain)
   })
 

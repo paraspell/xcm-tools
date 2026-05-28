@@ -46,7 +46,6 @@ export const ApiOverridesFieldset = <T extends TAdvancedOptions>({
               <Group align="center">
                 <ParachainSelect
                   data={CHAINS}
-                  searchable
                   flex={1}
                   data-testid="select-chain"
                   {...form.getInputProps(`apiOverrides.${chainIndex}.chain`)}

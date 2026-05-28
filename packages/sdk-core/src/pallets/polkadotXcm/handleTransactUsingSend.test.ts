@@ -144,6 +144,7 @@ describe('handleTransactUsingSend', () => {
       await handleTransactUsingSend(options)
 
       expect(createDestination).toHaveBeenCalledWith(
+        options.api,
         options.version,
         options.chain,
         options.destination,

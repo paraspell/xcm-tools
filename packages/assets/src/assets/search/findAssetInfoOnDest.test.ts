@@ -2,11 +2,16 @@ import type { TChain, TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../../errors'
-import type { TAssetInfo, TCurrencyInput } from '../../types'
+import type { TAssetInfo, TCurrencyInput, TCustomCtx } from '../../types'
 import { Foreign, Native } from '../assetSelectors'
 import { isStableCoinAsset } from '../isStableCoinAsset'
 import { findAssetInfoImpl } from './findAssetInfo'
-import { findAssetInfoOnDest, findAssetOnDestOrThrow } from './findAssetInfoOnDest'
+import {
+  findAssetInfoOnDest,
+  findAssetInfoOnDestImpl,
+  findAssetOnDestOrThrow,
+  findAssetOnDestOrThrowImpl
+} from './findAssetInfoOnDest'
 import { findAssetInfoOrThrowImpl } from './findAssetInfoOrThrow'
 import { findStablecoinAssets } from './findStablecoinAssets'
 
@@ -331,5 +336,111 @@ describe('findAssetOnDestOrThrow', () => {
     expect(() =>
       findAssetOnDestOrThrow(mockOriginChain, mockDestinationChain, currencyInput)
     ).toThrow(expectedError)
+  })
+})
+
+describe('custom asset auto-mirror on destination', () => {
+  const customLocation: TLocation = {
+    parents: 0,
+    interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: '9999' }] }
+  }
+  const customAsset: TAssetInfo = {
+    symbol: 'MYNEWUSD',
+    decimals: 6,
+    assetId: '9999',
+    location: customLocation
+  }
+  const customCtx: TCustomCtx = {
+    customAssets: { AssetHubPolkadot: [customAsset] }
+  }
+
+  beforeEach(() => {
+    vi.resetAllMocks()
+    vi.mocked(isStableCoinAsset).mockReturnValue(false)
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
+  })
+
+  it('mirrors origin custom asset onto destination when destination has no match', () => {
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(null)
+
+    const result = findAssetInfoOnDestImpl(
+      'AssetHubPolkadot',
+      'Hydration',
+      { symbol: 'MYNEWUSD' },
+      customAsset,
+      customCtx
+    )
+
+    expect(result).toEqual(customAsset)
+  })
+
+  it('prefers registry destination asset over mirrored custom asset when location matches', () => {
+    const registryDest: TAssetInfo = { ...customAsset, assetId: 'dest-id' }
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(registryDest)
+
+    const result = findAssetInfoOnDestImpl(
+      'AssetHubPolkadot',
+      'Hydration',
+      { symbol: 'MYNEWUSD' },
+      customAsset,
+      customCtx
+    )
+
+    expect(result).toEqual(registryDest)
+  })
+
+  it('does not mirror when origin asset is not custom', () => {
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(null)
+
+    const result = findAssetInfoOnDestImpl(
+      'AssetHubPolkadot',
+      'Hydration',
+      { symbol: 'MYNEWUSD' },
+      customAsset,
+      { customAssets: { Acala: [customAsset] } }
+    )
+
+    expect(result).toBeNull()
+  })
+
+  it('does not mirror when ctx is undefined', () => {
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(null)
+
+    const result = findAssetInfoOnDestImpl(
+      'AssetHubPolkadot',
+      'Hydration',
+      { symbol: 'MYNEWUSD' },
+      customAsset
+    )
+
+    expect(result).toBeNull()
+  })
+
+  it('mirrors origin custom asset across Snowbridge when destination has no match', () => {
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(null)
+
+    const result = findAssetInfoOnDestImpl(
+      'AssetHubPolkadot',
+      'Ethereum',
+      { symbol: 'MYNEWUSD' },
+      customAsset,
+      customCtx
+    )
+
+    expect(result).toEqual(customAsset)
+  })
+
+  it('findAssetOnDestOrThrowImpl returns mirrored custom asset instead of throwing', () => {
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValueOnce(customAsset)
+    vi.mocked(findAssetInfoImpl).mockReturnValueOnce(null)
+
+    const result = findAssetOnDestOrThrowImpl(
+      'AssetHubPolkadot',
+      'Hydration',
+      { symbol: 'MYNEWUSD' },
+      customCtx
+    )
+
+    expect(result).toEqual(customAsset)
   })
 })

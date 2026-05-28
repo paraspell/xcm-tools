@@ -3,7 +3,10 @@ import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
 
 import type { TDestination, TScenario } from '../../types'
 
-export const resolveScenario = (origin: TChain, destination: TDestination): TScenario => {
+export const resolveScenario = <TCustomChain extends string = never>(
+  origin: TChain | TCustomChain,
+  destination: TDestination
+): TScenario => {
   if (isRelayChain(origin)) return 'RelayToPara'
 
   const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)

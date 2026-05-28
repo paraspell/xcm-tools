@@ -9,7 +9,7 @@ export const getChainConfigImpl = <TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   ctx?: TFullCustomCtx
 ): TChainConfig => {
-  if (isCustomChain<TCustomChain>(chain)) {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChains?.[chain]
     if (!entry) {
       throw new CustomChainInvalidError(`Custom chain '${chain}' is not registered.`)

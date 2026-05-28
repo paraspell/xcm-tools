@@ -9,13 +9,17 @@ import CustomChain from './CustomChain'
 export const getChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   ctx?: TFullCustomCtx
-): Chain<TApi, TRes, TSigner> => {
-  if (isCustomChain<TCustomChain>(chain)) {
+): Chain<TApi, TRes, TSigner, TCustomChain> => {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChains?.[chain]
     if (!entry) {
       throw new CustomChainInvalidError(`Custom chain '${chain}' is not registered.`)
     }
-    return new CustomChain<TApi, TRes, TSigner>(entry.name, entry.ecosystem, entry.xcmVersion)
+    return new CustomChain<TApi, TRes, TSigner, TCustomChain>(
+      chain,
+      entry.ecosystem,
+      entry.xcmVersion
+    )
   }
   const map = chains<TApi, TRes, TSigner>()
   return map[chain]

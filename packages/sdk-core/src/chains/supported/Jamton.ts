@@ -4,6 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
@@ -18,7 +19,7 @@ class Jamton<TApi, TRes, TSigner>
     super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }
 
-  getCustomCurrencyId(asset: TAssetInfo) {
+  getCustomCurrencyId(_api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
     const assetId = Number(asset.assetId)
     return asset.isNative ? { Native: assetId } : { ForeignAsset: assetId }
   }

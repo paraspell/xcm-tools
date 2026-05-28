@@ -7,10 +7,10 @@ import { findAssetInfoById } from './findAssetInfoById'
 import { findAssetInfoByLoc } from './findAssetInfoByLoc'
 import { findAssetInfoBySymbol } from './findAssetInfoBySymbol'
 
-export const findAssetInfoImpl = (
-  chain: TChain,
+export const findAssetInfoImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
   currency: TCurrencyInput,
-  destination?: TChain | null,
+  destination?: TChain | TCustomChain | null,
   ctx?: TCustomCtx
 ): TAssetInfo | null => {
   if (

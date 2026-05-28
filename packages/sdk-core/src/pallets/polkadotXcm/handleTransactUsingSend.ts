@@ -22,7 +22,7 @@ export const handleTransactUsingSend = async <TApi, TRes, TSigner>({
   asset,
   transactOptions
 }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TSerializedExtrinsics> => {
-  const dest = createDestination(version, chain, destination, paraIdTo)
+  const dest = createDestination(api, version, chain, destination, paraIdTo)
 
   if (!transactOptions?.call) {
     throw new UnsupportedOperationError(

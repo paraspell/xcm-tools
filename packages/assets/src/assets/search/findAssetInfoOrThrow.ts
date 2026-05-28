@@ -4,10 +4,10 @@ import { InvalidCurrencyError } from '../../errors'
 import type { TAssetInfo, TCurrencyInput, TCustomCtx } from '../../types'
 import { findAssetInfoImpl } from './findAssetInfo'
 
-export const findAssetInfoOrThrowImpl = (
-  chain: TChain,
+export const findAssetInfoOrThrowImpl = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
   currency: TCurrencyInput,
-  destination?: TChain | null,
+  destination?: TChain | TCustomChain | null,
   ctx?: TCustomCtx
 ): TAssetInfo => {
   const asset = findAssetInfoImpl(chain, currency, destination, ctx)

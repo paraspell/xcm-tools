@@ -1,4 +1,4 @@
-import { hasDryRunSupport, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,7 +17,10 @@ vi.mock('../fees')
 describe('computeAllFees', () => {
   let buildTx: TTxFactory<unknown>
 
-  const api = {} as PolkadotApi<unknown, unknown, unknown>
+  const hasDryRunSupportMock = vi.fn().mockReturnValue(true)
+  const api = {
+    hasDryRunSupport: hasDryRunSupportMock
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const context = {
     origin: { api, chain: 'Polkadot' },
@@ -47,13 +50,13 @@ describe('computeAllFees', () => {
 
     vi.mocked(assertSender).mockImplementation(() => {})
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
-    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    hasDryRunSupportMock.mockReturnValue(true)
     vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(padValueBy).mockImplementation(value => value)
   })
 
   it('returns null fees when dry run is not supported', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    hasDryRunSupportMock.mockReturnValue(false)
 
     const result = await computeAllFees(context, buildTx)
 

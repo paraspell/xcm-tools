@@ -1,4 +1,4 @@
-import { deepEqual, isChain } from '@paraspell/sdk-common'
+import { deepEqual, isChain, type TChain } from '@paraspell/sdk-common'
 
 import { CustomAssetConflictError } from '../errors'
 import assetsMapJson from '../maps/assets.json' with { type: 'json' }
@@ -6,7 +6,8 @@ import type {
   TAssetInfo,
   TAssetJsonMap,
   TCustomAssetsMap,
-  TCustomAssetsMapNormalized
+  TCustomAssetsMapNormalized,
+  TCustomCtx
 } from '../types'
 
 const baseAssetsMap = assetsMapJson as TAssetJsonMap
@@ -40,4 +41,14 @@ export const mergeCustomAssets = (
   if (!overlay || overlay.length === 0) return [...base]
   const kept = base.filter(b => !overlay.some(o => deepEqual(o.location, b.location)))
   return [...kept, ...overlay]
+}
+
+export const isCustomAsset = (
+  chain: TChain,
+  asset: TAssetInfo,
+  ctx?: Pick<TCustomCtx, 'customAssets'>
+): boolean => {
+  const overlay = ctx?.customAssets?.[chain]
+  if (!overlay || overlay.length === 0) return false
+  return overlay.some(a => deepEqual(a.location, asset.location))
 }

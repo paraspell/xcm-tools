@@ -37,7 +37,7 @@ export const getNativeAssetsPallet = <TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   ctx?: TPalletsCtx
 ): TAssetsPallet => {
-  if (isCustomChain<TCustomChain>(chain)) {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChainPallets?.[chain]
     if (!entry) {
       // TODO: Fix this cast
@@ -52,7 +52,7 @@ export const getOtherAssetsPallets = <TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   ctx?: TPalletsCtx
 ): TAssetsPallet[] => {
-  if (isCustomChain<TCustomChain>(chain)) {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChainPallets?.[chain]
     if (!entry) {
       // TODO: Fix this cast
@@ -63,15 +63,17 @@ export const getOtherAssetsPallets = <TCustomChain extends string = never>(
   return palletsMap[chain].otherAssets
 }
 
-export const hasPallet = (chain: TSubstrateChain, pallet: TPallet): boolean =>
-  palletsMap[chain].supportedPallets.some(p => p.name === pallet)
+export const hasPallet = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  pallet: TPallet
+): boolean => hasPalletImpl(chain, pallet)
 
 export const hasPalletImpl = <TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   pallet: TPallet,
   ctx?: TPalletsCtx
 ): boolean => {
-  if (isCustomChain<TCustomChain>(chain)) {
+  if (isCustomChain(chain)) {
     const entry = ctx?.customChainPallets?.[chain]
     return entry?.supportedPallets?.some(p => p.name === pallet) ?? false
   }
@@ -85,10 +87,17 @@ export const hasPalletImpl = <TCustomChain extends string = never>(
  * @returns The XCM pallet found on the chain (XcmPallet or PolkadotXcm).
  * @throws {@link XcmPalletNotFoundError} If no XCM pallet is found on the chain.
  */
-export const getXcmPallet = (chain: TSubstrateChain): TPallet => {
+export const getXcmPallet = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain
+): TPallet => getXcmPalletImpl(chain)
+
+export const getXcmPalletImpl = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
+  ctx?: TPalletsCtx
+): TPallet => {
   const candidates: TPallet[] = ['XcmPallet', 'PolkadotXcm']
   for (const pallet of candidates) {
-    if (hasPallet(chain, pallet)) return pallet
+    if (hasPalletImpl(chain, pallet, ctx)) return pallet
   }
   throw new XcmPalletNotFoundError(chain)
 }

@@ -25,6 +25,7 @@ import { getChain, handleExecuteTransfer, resolveDestChain } from '../utils'
 import Chain from './Chain'
 
 vi.mock('../constants/chains')
+vi.mock('./getChainInstance', () => ({ getChainImpl: vi.fn() }))
 vi.mock('../utils/location')
 
 vi.mock('../pallets/polkadotXcm')
@@ -58,7 +59,8 @@ vi.mock('@paraspell/assets', async () => {
   const actual = await vi.importActual('@paraspell/assets')
   return {
     ...actual,
-    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT')
+    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
+    getNativeAssetSymbolImpl: vi.fn().mockReturnValue('DOT')
   }
 })
 
@@ -576,7 +578,8 @@ describe('Parachain', () => {
   describe('getCustomCurrencyId', () => {
     it('returns undefined by default', () => {
       const dummyAsset = { symbol: 'USDT' } as TAssetInfo
-      expect(chain.getCustomCurrencyId(dummyAsset)).toBeUndefined()
+      const dummyApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>
+      expect(chain.getCustomCurrencyId(dummyApi, dummyAsset)).toBeUndefined()
     })
   })
 

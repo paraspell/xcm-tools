@@ -1,6 +1,7 @@
 import { normalizeLocation, type TAssetInfo, type WithAmount } from '@paraspell/assets'
 import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import type {
@@ -10,7 +11,13 @@ import type {
   TTypeAndThenFees,
   TTypeAndThenOverrides
 } from '../../types'
-import { createAsset, localizeLocation, normalizeAmount, parseUnits, sortAssets } from '../../utils'
+import {
+  createAsset,
+  localizeLocationImpl,
+  normalizeAmount,
+  parseUnits,
+  sortAssets
+} from '../../utils'
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
@@ -18,6 +25,7 @@ import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 
 const buildAssets = <TApi, TRes, TSigner>(
+  api: PolkadotApi<TApi, TRes, TSigner>,
   chain: TSubstrateChain,
   asset: WithAmount<TAssetInfo>,
   feeAmount: bigint,
@@ -39,7 +47,7 @@ const buildAssets = <TApi, TRes, TSigner>(
     createAsset(
       version,
       asset.amount,
-      normalizeLocation(localizeLocation(chain, asset.location), version)
+      normalizeLocation(localizeLocationImpl(api, chain, asset.location), version)
     )
   )
 
@@ -100,7 +108,14 @@ export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
     resolvedFees
   )
 
-  const assets = buildAssets(origin.chain, assetInfo, systemAssetAmount, isRelayAsset, options)
+  const assets = buildAssets(
+    origin.api,
+    origin.chain,
+    assetInfo,
+    systemAssetAmount,
+    isRelayAsset,
+    options
+  )
 
   return buildTypeAndThenCall(context, isRelayAsset, customXcm, assets)
 }

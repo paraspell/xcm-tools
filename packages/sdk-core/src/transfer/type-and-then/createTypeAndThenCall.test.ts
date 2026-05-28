@@ -11,7 +11,7 @@ import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees }
 import {
   createAsset,
   getRelayChainOf,
-  localizeLocation,
+  localizeLocationImpl,
   normalizeAmount,
   parseUnits,
   sortAssets
@@ -90,7 +90,7 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(createAsset).mockReturnValue(mockAsset)
-    vi.mocked(localizeLocation).mockImplementation((_, location) => location)
+    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
     vi.mocked(normalizeAmount).mockImplementation(value => value)
@@ -263,7 +263,7 @@ describe('createTypeAndThenCall', () => {
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockClear()
-    vi.mocked(localizeLocation).mockClear()
+    vi.mocked(localizeLocationImpl).mockClear()
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
@@ -277,7 +277,7 @@ describe('createTypeAndThenCall', () => {
       overriddenAssets
     )
     expect(createAsset).not.toHaveBeenCalled()
-    expect(localizeLocation).not.toHaveBeenCalled()
+    expect(localizeLocationImpl).not.toHaveBeenCalled()
     expect(sortAssets).not.toHaveBeenCalled()
   })
 
@@ -296,7 +296,7 @@ describe('createTypeAndThenCall', () => {
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     vi.mocked(createAsset).mockClear()
-    vi.mocked(localizeLocation).mockClear()
+    vi.mocked(localizeLocationImpl).mockClear()
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
@@ -311,7 +311,7 @@ describe('createTypeAndThenCall', () => {
       mockCustomXcm,
       [mockAsset]
     )
-    expect(localizeLocation).not.toHaveBeenCalled()
+    expect(localizeLocationImpl).not.toHaveBeenCalled()
     expect(sortAssets).not.toHaveBeenCalled()
   })
 })

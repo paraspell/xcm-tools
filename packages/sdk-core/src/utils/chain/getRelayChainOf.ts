@@ -1,6 +1,12 @@
-import { isRelayChain, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  isCustomChain,
+  isRelayChain,
+  type TRelaychain,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
+import { CustomChainInvalidError } from '../../errors'
 import { getChain } from '../getChain'
 
 /**
@@ -14,12 +20,15 @@ export const getRelayChainOf = (chain: TSubstrateChain): TRelaychain => {
   return getChain(chain).ecosystem
 }
 
-export const getRelayChainOfImpl = <TApi, TRes, TSigner>(
+export const getRelayChainOfImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner>,
-  chain: TSubstrateChain
+  chain: TSubstrateChain | TCustomChain
 ): TRelaychain => {
   if (isRelayChain(chain)) return chain
-  const customEntry = api._customCtx.customChains?.[chain]
-  if (customEntry) return customEntry.ecosystem
+  if (isCustomChain(chain)) {
+    const customEntry = api._customCtx.customChains?.[chain]
+    if (customEntry) return customEntry.ecosystem
+    throw new CustomChainInvalidError(`Custom chain '${chain}' is not registered.`)
+  }
   return getChain(chain).ecosystem
 }
