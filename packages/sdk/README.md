@@ -385,7 +385,7 @@ SDK features ability to add custom chain and/or custom assets simply by adding i
     .from('MyChain') // custom chain name — TS-autocompletes
     .to('AssetHubPolkadot') // could be any of the existing or also the new ones added
     .currency({ symbol: 'USDC', amount: amount })
-    .address(address)
+    .recipient(address)
     .build()
 ```
 

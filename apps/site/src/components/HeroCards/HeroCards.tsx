@@ -30,7 +30,7 @@ const codeForSdk = `
         symbol : 'BNC',
         amount : 100000000000 
       })
-      .address(address)    
+      .recipient(address)    
       .build()   
     `;
 

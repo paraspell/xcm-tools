@@ -191,7 +191,7 @@ const response = await fetch("http://localhost:3001/v1/x-transfer", {
     // Custom chains can be fitted into both from and to parameters
     "from": "MyChain", 
     "to": "AssetHubPolkadot",
-    "address": "address",
+    "recipient": "address",
     "currency": { "symbol": "USDC", "amount": "1000000" },
     "options": {
 
