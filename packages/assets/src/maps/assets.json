@@ -16648,8 +16648,8 @@
     "nativeAssetSymbol": "EWT",
     "isEVM": false,
     "ss58Prefix": 42,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "EWT",
@@ -16686,7 +16686,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "stEWT",
