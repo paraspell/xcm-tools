@@ -9,10 +9,6 @@
         "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://statemint-rpc-tn.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://asset-hub-polkadot.ibp.network"
       },
@@ -118,10 +114,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://bridge-hub-polkadot-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://polkadot-bridge-hub-rpc-tn.dwellir.com"
       },
       {
         "name": "IBP1",
@@ -326,10 +318,6 @@
         "endpoint": "wss://collectives-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://polkadot-collectives-rpc-tn.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://collectives-polkadot.ibp.network"
       },
@@ -497,10 +485,6 @@
         "endpoint": "wss://asset-hub-kusama-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://statemine-rpc-tn.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://asset-hub-kusama.ibp.network"
       },
@@ -534,10 +518,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://bridge-hub-kusama-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://kusama-bridge-hub-rpc-tn.dwellir.com"
       },
       {
         "name": "IBP1",
@@ -760,17 +740,6 @@
       }
     ]
   },
-  "Laos": {
-    "name": "Laos",
-    "info": "laos",
-    "paraId": 3370,
-    "providers": [
-      {
-        "name": "laosfoundation.io",
-        "endpoint": "wss://rpc.laos.laosfoundation.io"
-      }
-    ]
-  },
   "Quartz": {
     "name": "QUARTZ by UNIQUE",
     "info": "quartz",
@@ -876,10 +845,6 @@
         "endpoint": "wss://asset-hub-westend-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://westmint-rpc-tn.dwellir.com"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-asset-hub-rpc.polkadot.io"
       }
@@ -895,10 +860,6 @@
         "endpoint": "wss://bridge-hub-westend-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://westend-bridge-hub-rpc-tn.dwellir.com"
-      },
-      {
         "name": "Parity",
         "endpoint": "wss://westend-bridge-hub-rpc.polkadot.io"
       }
@@ -912,10 +873,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://collectives-westend-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://westend-collectives-rpc-tn.dwellir.com"
       },
       {
         "name": "Parity",
@@ -1076,17 +1033,6 @@
       }
     ]
   },
-  "LaosPaseo": {
-    "name": "Laos Sigma",
-    "info": "laos-sigma",
-    "paraId": 4006,
-    "providers": [
-      {
-        "name": "freeverse.io",
-        "endpoint": "wss://rpc.laossigma.laosfoundation.io"
-      }
-    ]
-  },
   "NeuroWebPaseo": {
     "name": "NeuroWeb Testnet",
     "info": "NeuroWeb",
@@ -1142,10 +1088,6 @@
         "endpoint": "wss://polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://polkadot-rpc-tn.dwellir.com"
-      },
-      {
         "name": "Helixstreet",
         "endpoint": "wss://rpc-polkadot.helixstreet.io"
       },
@@ -1197,10 +1139,6 @@
         "endpoint": "wss://kusama-rpc.n.dwellir.com"
       },
       {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://kusama-rpc-tn.dwellir.com"
-      },
-      {
         "name": "Helixstreet",
         "endpoint": "wss://rpc-kusama.helixstreet.io"
       },
@@ -1242,10 +1180,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://westend-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Dwellir Tunisia",
-        "endpoint": "wss://westend-rpc-tn.dwellir.com"
       },
       {
         "name": "OnFinality",

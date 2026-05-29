@@ -37,8 +37,6 @@ import Jamton from '../chains/supported/Jamton'
 import Karura from '../chains/supported/Karura'
 import Kintsugi from '../chains/supported/Kintsugi'
 import Kusama from '../chains/supported/Kusama'
-import Laos from '../chains/supported/Laos'
-import LaosPaseo from '../chains/supported/LaosPaseo'
 import Moonbeam from '../chains/supported/Moonbeam'
 import Moonriver from '../chains/supported/Moonriver'
 import Mythos from '../chains/supported/Mythos'
@@ -104,7 +102,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Karura: new Karura<TApi, TRes, TSigner>(),
   Kintsugi: new Kintsugi<TApi, TRes, TSigner>(),
   Moonriver: new Moonriver<TApi, TRes, TSigner>(),
-  Laos: new Laos<TApi, TRes, TSigner>(),
   Quartz: new Quartz<TApi, TRes, TSigner>(),
   PeopleKusama: new PeopleKusama<TApi, TRes, TSigner>(),
   Shiden: new Shiden<TApi, TRes, TSigner>(),
@@ -130,7 +127,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   BifrostPaseo: new BifrostPaseo<TApi, TRes, TSigner>(),
   HeimaPaseo: new HeimaPaseo<TApi, TRes, TSigner>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes, TSigner>(),
-  LaosPaseo: new LaosPaseo<TApi, TRes, TSigner>(),
   NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes, TSigner>(),
   ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes, TSigner>()
 })
