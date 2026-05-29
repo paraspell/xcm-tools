@@ -39,7 +39,6 @@ export const PARACHAINS = [
   'BifrostKusama',
   'CrustShadow',
   'Crab',
-  'Laos',
   'Quartz',
   'RobonomicsPolkadot',
   'PeopleKusama',
@@ -61,7 +60,6 @@ export const PARACHAINS = [
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
-  'LaosPaseo',
   'NeuroWebPaseo',
   'PeoplePaseo',
   'ZeitgeistPaseo'

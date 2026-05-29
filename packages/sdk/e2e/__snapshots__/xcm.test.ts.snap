@@ -2465,30 +2465,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHu
 }
 `;
 
-exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPaseo - (SIGMA) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "ForeignAssets",
-  "params": {
-    "amount": 5000000000000000000n,
-    "id": {
-      "interior": {
-        "type": "X1",
-        "value": {
-          "type": "Parachain",
-          "value": 4006,
-        },
-      },
-      "parents": 1,
-    },
-    "target": {
-      "type": "Id",
-      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPaseo - (TMOS) 1`] = `
 {
   "method": "transfer_keep_alive",
@@ -3314,30 +3290,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHu
         },
       },
       "parents": 2,
-    },
-    "target": {
-      "type": "Id",
-      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (LAOS) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "ForeignAssets",
-  "params": {
-    "amount": 5000000000000000000n,
-    "id": {
-      "interior": {
-        "type": "X1",
-        "value": {
-          "type": "Parachain",
-          "value": 3370,
-        },
-      },
-      "parents": 1,
     },
     "target": {
       "type": "Id",
@@ -7214,18 +7166,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
 }
 `;
 
-exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (LAOS) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Tokens",
-  "params": {
-    "amount": 5000000000000000000n,
-    "currency_id": 3370,
-    "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-  },
-}
-`;
-
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (LBTC) 1`] = `
 {
   "method": "transfer_keep_alive",
@@ -8252,18 +8192,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
   "params": {
     "amount": 5000000000000n,
     "currency_id": 1000771,
-    "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfer > should create local transfer tx on HydrationPaseo - (LAOS) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Tokens",
-  "params": {
-    "amount": 5000000000000000000n,
-    "currency_id": 3370,
     "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
   },
 }
@@ -9397,17 +9325,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Kusama 
       "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "value": 5000000000000n,
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfer > should create local transfer tx on Laos - (LAOS) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Balances",
-  "params": {
-    "dest": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
-    "value": 5000000000000000000n,
   },
 }
 `;
@@ -47054,101 +46971,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Laos - (LAOS) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 5000000000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X1",
-              "value": {
-                "type": "Parachain",
-                "value": 3370,
-              },
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "DestinationReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V4",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 3370,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "DestinationReserve",
-    },
-    "remote_fees_id": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 3370,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Moonbeam - (HDX) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -54368,191 +54190,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Kusama > should create transf
 }
 `;
 
-exports[`XCM - e2e > Transfer scenarios for origin Laos > ParaToPara > should create transfer tx from Laos to Hydration - (LAOS) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 5000000000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 0,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V4",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountId32",
-                  "value": {
-                    "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2034,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "remote_fees_id": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 0,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Laos > ParaToPara > should create transfer tx from Laos to Laos - (LAOS) 1`] = `
-{
-  "method": "transfer_keep_alive",
-  "module": "Balances",
-  "params": {
-    "dest": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
-    "value": 5000000000000000000n,
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Laos > ParaToPara > should create transfer tx from Laos to Moonbeam - (LAOS) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 5000000000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "Here",
-            },
-            "parents": 0,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V4",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 2004,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "LocalReserve",
-    },
-    "remote_fees_id": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "Here",
-        },
-        "parents": 0,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
 exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Acala - (GLMR) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -56248,101 +55885,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > shoul
               "value": 1984n,
             },
           ],
-        },
-        "parents": 1,
-      },
-    },
-    "weight_limit": {
-      "type": "Unlimited",
-    },
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Moonbeam > ParaToPara > should create transfer tx from Moonbeam to Laos - (xcLAOS) 1`] = `
-{
-  "method": "transfer_assets_using_type_and_then",
-  "module": "PolkadotXcm",
-  "params": {
-    "assets": {
-      "type": "V4",
-      "value": [
-        {
-          "fun": {
-            "type": "Fungible",
-            "value": 5000000000000000000n,
-          },
-          "id": {
-            "interior": {
-              "type": "X1",
-              "value": {
-                "type": "Parachain",
-                "value": 3370,
-              },
-            },
-            "parents": 1,
-          },
-        },
-      ],
-    },
-    "assets_transfer_type": {
-      "type": "DestinationReserve",
-    },
-    "custom_xcm_on_dest": {
-      "type": "V4",
-      "value": [
-        {
-          "type": "DepositAsset",
-          "value": {
-            "assets": {
-              "type": "Wild",
-              "value": {
-                "type": "AllCounted",
-                "value": 1,
-              },
-            },
-            "beneficiary": {
-              "interior": {
-                "type": "X1",
-                "value": {
-                  "type": "AccountKey20",
-                  "value": {
-                    "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
-                    "network": undefined,
-                  },
-                },
-              },
-              "parents": 0,
-            },
-          },
-        },
-      ],
-    },
-    "dest": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 3370,
-          },
-        },
-        "parents": 1,
-      },
-    },
-    "fees_transfer_type": {
-      "type": "DestinationReserve",
-    },
-    "remote_fees_id": {
-      "type": "V4",
-      "value": {
-        "interior": {
-          "type": "X1",
-          "value": {
-            "type": "Parachain",
-            "value": 3370,
-          },
         },
         "parents": 1,
       },

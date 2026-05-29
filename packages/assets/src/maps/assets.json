@@ -4052,23 +4052,6 @@
         "isFeeAsset": true
       },
       {
-        "assetId": "3370",
-        "symbol": "LAOS",
-        "decimals": 18,
-        "existentialDeposit": "1",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3370
-              }
-            ]
-          }
-        },
-        "isFeeAsset": true
-      },
-      {
         "assetId": "1003",
         "symbol": "aUSDC",
         "decimals": 6,
@@ -9442,32 +9425,6 @@
       }
     ]
   },
-  "Laos": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "LAOS",
-    "isEVM": true,
-    "ss58Prefix": 42,
-    "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": true,
-    "assets": [
-      {
-        "symbol": "LAOS",
-        "isNative": true,
-        "decimals": 18,
-        "existentialDeposit": "0",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3370
-              }
-            ]
-          }
-        }
-      }
-    ]
-  },
   "Encointer": {
     "relaychainSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
@@ -13917,6 +13874,58 @@
         }
       },
       {
+        "symbol": "NEXO",
+        "assetId": "0xb62132e35a6c13ee1ee0f84dc5d40bad8d815206",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xb62132e35a6c13ee1ee0f84dc5d40bad8d815206"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "sUSDat",
+        "assetId": "0xd166337499e176bbc38a1fbd113ab144e5bd2df7",
+        "decimals": 18,
+        "existentialDeposit": "1",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xd166337499e176bbc38a1fbd113ab144e5bd2df7"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "SKY",
         "assetId": "0x56072c95faa701256059aa122697b133aded9279",
         "decimals": 18,
@@ -16648,8 +16657,8 @@
     "nativeAssetSymbol": "EWT",
     "isEVM": false,
     "ss58Prefix": 42,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "EWT",
@@ -16686,7 +16695,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "stEWT",
@@ -18606,32 +18616,6 @@
         },
         "isFeeAsset": true,
         "alias": "WETH1"
-      }
-    ]
-  },
-  "LaosPaseo": {
-    "relaychainSymbol": "PAS",
-    "nativeAssetSymbol": "SIGMA",
-    "isEVM": true,
-    "ss58Prefix": 42,
-    "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": true,
-    "assets": [
-      {
-        "symbol": "SIGMA",
-        "isNative": true,
-        "decimals": 18,
-        "existentialDeposit": "0",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 4006
-              }
-            ]
-          }
-        }
       }
     ]
   },

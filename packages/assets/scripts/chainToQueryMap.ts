@@ -48,8 +48,6 @@ export const chainToQuery: Record<TSubstrateChain, string[]> = {
   Jamton: ['assetRegistry.metadata'],
   Karura: ['assetRegistry.assetMetadatas'],
   Kintsugi: ['assetRegistry.metadata'],
-  Laos: [], // No assets metadata query
-  LaosPaseo: [], // No assets metadata query
   Moonbeam: ['evmForeignAssets.assetsById'],
   Moonriver: ['evmForeignAssets.assetsById'],
   Mythos: [], // No assets metadata query

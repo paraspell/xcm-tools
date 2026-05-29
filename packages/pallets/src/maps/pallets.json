@@ -788,21 +788,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets"]
   },
-  "Laos": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "Jamton": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -1099,21 +1084,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
-  },
-  "LaosPaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
   },
   "NeuroWebPaseo": {
     "defaultPallet": "PolkadotXcm",
