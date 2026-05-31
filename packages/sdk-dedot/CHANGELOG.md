@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.5.0...sdk-dedot-v13.6.0) (2026-05-31)
+
+
+### Features
+
+* Support custom chains & Custom assets support in builder config 🪄 ([079dc0e](https://github.com/paraspell/xcm-tools/commit/079dc0e73e5a46d3cfd2c4e34be335171fc67d31))
+
+
+### Documentation
+
+* Push override feature documentation ([213dfa6](https://github.com/paraspell/xcm-tools/commit/213dfa60a064e6d6c606fa95639212a497e0f4d1))
+* Update address to recipient ([32f4520](https://github.com/paraspell/xcm-tools/commit/32f45206e981f0b9c85aa53cff5bd4d13a0c0574))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+
 ## [13.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.4.1...sdk-dedot-v13.5.0) (2026-05-13)
 
 
