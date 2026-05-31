@@ -14,7 +14,12 @@ import {
   TextInput,
 } from '@mantine/core';
 import { isNotEmpty, useForm } from '@mantine/form';
-import { ASSETS_PALLETS, RELAYCHAINS, Version } from '@paraspell/sdk';
+import {
+  ASSETS_PALLETS,
+  deepEqual,
+  RELAYCHAINS,
+  Version,
+} from '@paraspell/sdk';
 import { IconAlertCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import type { FC } from 'react';
 import { useState } from 'react';
@@ -70,7 +75,20 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
       assets: {
         symbol: isNotEmpty('Symbol is required'),
         decimals: isNotEmpty('Decimals required'),
-        location: validateLocation,
+        location: (value, values, path) => {
+          const err = validateLocation(value);
+          if (err) return err;
+          const index = Number(path.split('.')[1]);
+          const isDuplicate = values.assets.some(
+            (asset, i) =>
+              i !== index &&
+              !validateLocation(asset.location) &&
+              deepEqual(JSON.parse(asset.location), JSON.parse(value)),
+          );
+          return isDuplicate
+            ? 'A custom asset with this location already exists on this chain'
+            : null;
+        },
       },
     },
   });

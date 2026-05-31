@@ -1,8 +1,14 @@
+import type { TLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import { CustomAssetConflictError } from '../errors'
 import type { TAssetInfo, TCustomAssetInfo, TCustomCtx } from '../types'
 import { isCustomAsset, mergeCustomAssets, normalizeCustomAssets } from './customAssets'
+import { canonicalizeLocation } from './normalizeLocation'
+
+vi.mock('./normalizeLocation', () => ({
+  canonicalizeLocation: vi.fn((location: TLocation) => location)
+}))
 
 vi.mock('../maps/assets.json', () => ({
   default: {
@@ -45,6 +51,12 @@ describe('normalizeCustomAssets', () => {
     const entry = overlayAsset()
     const result = normalizeCustomAssets({ Acala: [entry] })
     expect(result).toEqual({ Acala: [entry] })
+  })
+
+  it('canonicalizes each entry location', () => {
+    const entry = overlayAsset()
+    normalizeCustomAssets({ Acala: [entry] })
+    expect(canonicalizeLocation).toHaveBeenCalledWith(entry.location)
   })
 
   it('throws CustomAssetConflictError on location clash with registry asset', () => {

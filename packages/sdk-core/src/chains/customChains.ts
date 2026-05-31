@@ -1,4 +1,4 @@
-import type { TAssetInfo, TChainAssetsInfo } from '@paraspell/assets'
+import { canonicalizeLocation, type TAssetInfo, type TChainAssetsInfo } from '@paraspell/assets'
 import type { TAssetsPallet, TCustomChainPallets, TPalletEntry } from '@paraspell/pallets'
 import {
   ASSETS_PALLETS,
@@ -91,7 +91,11 @@ export const normalizeCustomChains = (map: TCustomChainsMap | undefined): TCusto
   if (!map) return {}
   const result: TCustomChainsCtx = {}
   for (const [name, input] of Object.entries(map)) {
-    validate(name, input)
+    const assets = (input.assets ?? []).map(asset => ({
+      ...asset,
+      location: canonicalizeLocation(asset.location)
+    }))
+    validate(name, { ...input, assets })
     result[name] = {
       name,
       paraId: input.paraId,
@@ -101,7 +105,7 @@ export const normalizeCustomChains = (map: TCustomChainsMap | undefined): TCusto
       ss58Prefix: input.ss58Prefix,
       nativeAssetSymbol: input.nativeAssetSymbol,
       nativeAssetDecimals: input.nativeAssetDecimals,
-      assets: input.assets ?? [],
+      assets,
       pallets: normalizePalletsInput(input.pallets)
     }
   }

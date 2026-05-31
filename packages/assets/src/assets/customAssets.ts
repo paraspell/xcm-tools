@@ -9,6 +9,7 @@ import type {
   TCustomAssetsMapNormalized,
   TCustomCtx
 } from '../types'
+import { canonicalizeLocation } from './normalizeLocation'
 
 const baseAssetsMap = assetsMapJson as TAssetJsonMap
 
@@ -20,16 +21,20 @@ export const normalizeCustomAssets = (
   for (const [chain, entries] of Object.entries(map)) {
     if (!isChain(chain) || !entries || entries.length === 0) continue
     const base = baseAssetsMap[chain]?.assets ?? []
-    for (const entry of entries) {
+    const normalized = entries.map(entry => ({
+      ...entry,
+      location: canonicalizeLocation(entry.location)
+    }))
+    for (const entry of normalized) {
       if (entry.forceOverride) continue
-      const clash = base.find(a => deepEqual(a.location, entry.location))
+      const clash = base.find(a => deepEqual(canonicalizeLocation(a.location), entry.location))
       if (clash) {
         throw new CustomAssetConflictError(
           `Custom asset '${entry.symbol}' on chain '${chain}' collides on location with registry asset '${clash.symbol}'. Set 'forceOverride: true' to replace it.`
         )
       }
     }
-    result[chain] = entries
+    result[chain] = normalized
   }
   return result
 }

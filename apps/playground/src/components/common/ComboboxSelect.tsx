@@ -68,8 +68,7 @@ export const ComboboxSelect = ({
 
   const items = toItems(data);
   const selected = items.find((i) => i.value === value);
-  const selectedLabel =
-    selected?.label ?? (typeof value === 'string' ? value : '');
+  const selectedLabel = selected?.label ?? '';
 
   const [search, setSearch] = useState(selectedLabel);
 
