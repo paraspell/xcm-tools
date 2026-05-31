@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { isJSONString, isNotEmpty, useForm } from '@mantine/form';
+import { isNotEmpty, useForm } from '@mantine/form';
 import { ASSETS_PALLETS, RELAYCHAINS, Version } from '@paraspell/sdk';
 import { IconAlertCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import type { FC } from 'react';
@@ -23,6 +23,7 @@ import type {
   TCustomChainAssetEntry,
   TCustomChainFormValues,
 } from '../../types/TCustomChain';
+import { validateLocation } from '../../utils/validationUtils';
 import { CustomAssetEntry } from '../common/CustomAssetEntry';
 
 const DEFAULT_ASSET: TCustomChainAssetEntry = {
@@ -69,9 +70,7 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
       assets: {
         symbol: isNotEmpty('Symbol is required'),
         decimals: isNotEmpty('Decimals required'),
-        location: (value) =>
-          isNotEmpty('Location is required')(value) ??
-          isJSONString('Location must be valid JSON')(value),
+        location: validateLocation,
       },
     },
   });

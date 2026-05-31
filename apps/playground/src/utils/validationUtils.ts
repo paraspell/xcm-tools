@@ -1,4 +1,6 @@
+import { isJSONString, isNotEmpty } from '@mantine/form';
 import { CHAINS } from '@paraspell/sdk';
+import { LocationSchema } from '@paraspell/xcm-analyser';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
@@ -52,6 +54,16 @@ export const isValidWsEndpoint = (value: string): boolean => {
 
 export const validateCustomEndpoint = (value: string) =>
   isValidWsEndpoint(value) ? null : 'Endpoint is not valid';
+
+export const validateLocation = (value: string) => {
+  const baseError =
+    isNotEmpty('Location is required')(value) ??
+    isJSONString('Location must be valid JSON')(value);
+  if (baseError) return baseError;
+
+  const result = LocationSchema.safeParse(JSON.parse(value));
+  return result.success ? null : z.prettifyError(result.error);
+};
 
 export const CustomEndpointSchema = z.object({
   chain: z.enum(CHAINS),

@@ -3,11 +3,16 @@ import { z } from 'zod';
 const NetworkId = z.string().nullable();
 const BodyId = z.string().nullable();
 const BodyPart = z.string().nullable();
-const StringOrNumber = z
-  .string()
-  .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
-  .transform((s) => s.replace(/,/g, ''))
-  .or(z.number());
+const StringOrNumber = z.union(
+  [
+    z
+      .string()
+      .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
+      .transform((s) => s.replace(/,/g, '')),
+    z.number(),
+  ],
+  { error: 'Expected a number or numeric string' },
+);
 const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
 const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
   message:
@@ -54,18 +59,24 @@ export const GlobalConsensusNetworkSchema = z.union([
 
 export const JunctionGlobalConsensus = z.object({ GlobalConsensus: GlobalConsensusNetworkSchema });
 
-export const JunctionSchema = z.union([
-  JunctionParachain,
-  JunctionAccountId32,
-  JunctionAccountIndex64,
-  JunctionAccountKey20,
-  JunctionPalletInstance,
-  JunctionGeneralIndex,
-  JunctionGeneralKey,
-  JunctionOnlyChild,
-  JunctionPlurality,
-  JunctionGlobalConsensus,
-]);
+export const JunctionSchema = z.union(
+  [
+    JunctionParachain,
+    JunctionAccountId32,
+    JunctionAccountIndex64,
+    JunctionAccountKey20,
+    JunctionPalletInstance,
+    JunctionGeneralIndex,
+    JunctionGeneralKey,
+    JunctionOnlyChild,
+    JunctionPlurality,
+    JunctionGlobalConsensus,
+  ],
+  {
+    error:
+      'Expected a valid junction (Parachain, AccountId32, AccountIndex64, AccountKey20, PalletInstance, GeneralIndex, GeneralKey, OnlyChild, Plurality or GlobalConsensus)',
+  },
+);
 
 const Junctions = z.lazy(() =>
   z
@@ -111,14 +122,16 @@ const Junctions = z.lazy(() =>
         ])
         .optional(),
     })
-    .strict(),
+    .strict()
+    .refine((obj) => Object.keys(obj).length === 1, {
+      error: 'Expected exactly one junction (X1–X8)',
+    }),
 );
 
-export const InteriorSchema = z.union([
-  z.literal('Here'),
-  z.object({ Here: z.literal(null) }),
-  Junctions,
-]);
+export const InteriorSchema = z.union(
+  [z.literal('Here'), z.object({ Here: z.literal(null) }), Junctions],
+  { error: "Expected 'Here' or junctions (X1–X8)" },
+);
 
 export const LocationSchema = z.object({
   parents: StringOrNumber,

@@ -10,12 +10,13 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { isJSONString, isNotEmpty, useForm } from '@mantine/form';
+import { isNotEmpty, useForm } from '@mantine/form';
 import type { TAssetInfo, TCustomAssetInfo, TLocation } from '@paraspell/sdk';
 import { deepEqual } from '@paraspell/sdk';
 import type { FC } from 'react';
 
 import type { TCustomAssetFormValues } from '../../types/TCustomAsset';
+import { validateLocation } from '../../utils/validationUtils';
 import { CustomAssetEntry } from '../common/CustomAssetEntry';
 
 const DEFAULT_VALUES: TCustomAssetFormValues = {
@@ -71,10 +72,8 @@ export const CustomAssetModal: FC<Props> = ({
             ? duplicateMsg
             : null;
         }
-        const baseErr =
-          isNotEmpty('Location is required')(value) ??
-          isJSONString('Location must be valid JSON')(value);
-        if (baseErr) return baseErr;
+        const err = validateLocation(value);
+        if (err) return err;
         return isDuplicateLocation(value, existingAssets) ? duplicateMsg : null;
       },
       overrideAssetKey: (value, values) =>
