@@ -1,7 +1,7 @@
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { normalizeLocation } from './normalizeLocation'
+import { canonicalizeLocation, normalizeLocation } from './normalizeLocation'
 
 describe('normalizeLocation', () => {
   it('returns the original object when interior is "Here"', () => {
@@ -107,6 +107,22 @@ describe('normalizeLocation', () => {
     expect(ml).toEqual({
       parents: 6,
       interior: { X1: { Parachain: 6000 } }
+    })
+  })
+})
+
+describe('canonicalizeLocation', () => {
+  it('converts the "Here" shorthand to { Here: null }', () => {
+    expect(canonicalizeLocation({ parents: 1, interior: 'Here' })).toEqual({
+      parents: 1,
+      interior: { Here: null }
+    })
+  })
+
+  it('applies normalizeLocation, wrapping a single-object X1 in an array', () => {
+    expect(canonicalizeLocation({ parents: 1, interior: { X1: { Parachain: 2000 } } })).toEqual({
+      parents: 1,
+      interior: { X1: [{ Parachain: 2000 }] }
     })
   })
 })

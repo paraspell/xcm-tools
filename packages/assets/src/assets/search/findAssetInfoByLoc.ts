@@ -2,7 +2,7 @@ import { deepEqual, type TLocation } from '@paraspell/sdk-common'
 
 import { compareLocations } from '../../location'
 import type { TAssetInfo } from '../../types'
-import { normalizeLocation } from '../normalizeLocation'
+import { canonicalizeLocation } from '../normalizeLocation'
 
 export const findAssetInfoByLoc = (
   foreignAssets: TAssetInfo[],
@@ -10,11 +10,10 @@ export const findAssetInfoByLoc = (
 ): TAssetInfo | undefined => {
   if (typeof location === 'string') {
     return foreignAssets.find(asset => compareLocations(location, asset))
-  } else {
-    const normalizedLocation = normalizeLocation(location)
-    return foreignAssets.find(asset => {
-      const normalizedAssetML = asset.location && normalizeLocation(asset.location)
-      return deepEqual(normalizedLocation, normalizedAssetML)
-    })
   }
+
+  const normalizedLocation = canonicalizeLocation(location)
+  return foreignAssets.find(
+    asset => asset.location && deepEqual(normalizedLocation, canonicalizeLocation(asset.location))
+  )
 }

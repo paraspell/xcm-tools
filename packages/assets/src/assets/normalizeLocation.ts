@@ -42,3 +42,10 @@ export const normalizeLocation = (
     }
   }
 }
+
+export const canonicalizeLocation = (location: TLocation): TLocation => {
+  const normalized = normalizeLocation(location)
+  return normalized.interior === 'Here'
+    ? { parents: normalized.parents, interior: { Here: null } }
+    : normalized
+}

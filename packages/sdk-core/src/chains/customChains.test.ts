@@ -1,8 +1,13 @@
-import type { TAssetInfo, TCustomAssetInfo } from '@paraspell/assets'
+import { canonicalizeLocation, type TAssetInfo, type TCustomAssetInfo } from '@paraspell/assets'
 import type { TPalletEntry } from '@paraspell/pallets'
-import type { TRelaychain } from '@paraspell/sdk-common'
+import type { TLocation, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('@paraspell/assets', async importActual => ({
+  ...(await importActual()),
+  canonicalizeLocation: vi.fn((location: TLocation) => location)
+}))
 
 import { CustomChainConflictError, CustomChainInvalidError } from '../errors'
 import type {
@@ -68,6 +73,16 @@ describe('normalizeCustomChains', () => {
       nativeAssetDecimals: 12,
       assets: [asset]
     })
+  })
+
+  it('canonicalizes each asset location', () => {
+    const asset: TCustomAssetInfo = {
+      symbol: 'NAT',
+      decimals: 12,
+      location: { parents: 1, interior: 'Here' }
+    }
+    normalizeCustomChains({ MyCustom: baseInput({ assets: [asset] }) })
+    expect(canonicalizeLocation).toHaveBeenCalledWith(asset.location)
   })
 
   it('throws CustomChainConflictError when name collides with a built-in chain', () => {
