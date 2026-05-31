@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.6.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.5.0...playground-v13.6.0) (2026-05-31)
+
+
+### Features
+
+* **playground:** Add UI for customChains & customAssets feature 🔧 ([faed715](https://github.com/paraspell/xcm-tools/commit/faed715a05cf2951da43cd53a40f3301b5255ef0))
+
+
+### Bug Fixes
+
+* **playground:** Add location field zod validation 🔧 ([410347e](https://github.com/paraspell/xcm-tools/commit/410347ee32bbf784a7b8ed54818503ce56d05cbf))
+* **playground:** Fix currency field not clearing 🔧 ([ab0f569](https://github.com/paraspell/xcm-tools/commit/ab0f569130557876c3aa43badf664f61373d6f1c))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+
 ## [13.5.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.4.1...playground-v13.5.0) (2026-05-13)
 
 

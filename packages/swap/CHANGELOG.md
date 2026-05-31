@@ -1,5 +1,23 @@
 # Changelog
 
+## [13.6.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.5.0...swap-v13.6.0) (2026-05-31)
+
+
+### Features
+
+* **playground:** Add UI for customChains & customAssets feature 🔧 ([faed715](https://github.com/paraspell/xcm-tools/commit/faed715a05cf2951da43cd53a40f3301b5255ef0))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([0ab78f6](https://github.com/paraspell/xcm-tools/commit/0ab78f6cfc1f9367da13a60f35880353e586c9c2))
+* **swap:** Update swap assets 📋 ([0ab78f6](https://github.com/paraspell/xcm-tools/commit/0ab78f6cfc1f9367da13a60f35880353e586c9c2))
+
 ## [13.5.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.4.1...swap-v13.5.0) (2026-05-13)
 
 

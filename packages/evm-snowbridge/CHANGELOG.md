@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.6.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.5.0...evm-snowbridge-v13.6.0) (2026-05-31)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+
 ## [13.5.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.4.1...evm-snowbridge-v13.5.0) (2026-05-13)
 
 
