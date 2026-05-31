@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.8...xcm-analyser-v3.0.9) (2026-05-31)
+
+
+### Bug Fixes
+
+* **playground:** Add location field zod validation 🔧 ([410347e](https://github.com/paraspell/xcm-tools/commit/410347ee32bbf784a7b8ed54818503ce56d05cbf))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+
 ## [3.0.8](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.7...xcm-analyser-v3.0.8) (2026-04-30)
 
 
