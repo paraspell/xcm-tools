@@ -84,13 +84,10 @@ describe('InteriorSchema', () => {
   });
 
   describe('Junctions', () => {
-    it('should pass for an empty object (all Junctions optional)', () => {
+    it('should fail for an empty object (interior must be "Here" or exactly one junction)', () => {
       const data = {};
       const result = InteriorSchema.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toEqual({});
-      }
+      expect(result.success).toBe(false);
     });
 
     describe('X1 Junction', () => {
@@ -238,7 +235,7 @@ describe('InteriorSchema', () => {
       });
     });
 
-    it('should pass for multiple X levels defined correctly', () => {
+    it('should fail for multiple X levels (interior must hold exactly one junction)', () => {
       const data = {
         X1: mockParachain,
         X2: [mockAccountId32, mockAccountIndex64],
@@ -254,10 +251,7 @@ describe('InteriorSchema', () => {
         ],
       };
       const result = InteriorSchema.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toEqual(data);
-      }
+      expect(result.success).toBe(false);
     });
 
     it('should fail if an unknown key is present alongside X keys', () => {

@@ -79,6 +79,7 @@ export const CustomAssetEntry = <T,>({
           <JsonInput
             label="Location"
             placeholder='{ "parents": 1, "interior": "Here" }'
+            validationError="Location must be valid JSON"
             formatOnBlur
             autosize
             minRows={3}
