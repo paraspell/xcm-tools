@@ -5,6 +5,7 @@ import type {
   InputBaseProps,
 } from '@mantine/core';
 import {
+  ActionIcon,
   CloseButton,
   Combobox,
   Group,
@@ -13,7 +14,7 @@ import {
   UnstyledButton,
   useCombobox,
 } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -35,6 +36,9 @@ export type ComboboxSelectProps = Omit<
   onAddCustom?: () => void;
   addCustomLabel?: string;
   addCustomTestId?: string;
+  isCustomOption?: (value: string) => boolean;
+  onEditCustom?: (value: string) => void;
+  onRemoveCustom?: (value: string) => void;
   'data-testid'?: string;
 };
 
@@ -58,6 +62,9 @@ export const ComboboxSelect = ({
   onAddCustom,
   addCustomLabel,
   addCustomTestId,
+  isCustomOption,
+  onEditCustom,
+  onRemoveCustom,
   'data-testid': dataTestId,
   ...inputBaseProps
 }: ComboboxSelectProps) => {
@@ -142,15 +149,60 @@ export const ComboboxSelect = ({
             {filtered.length > 0 ? (
               filtered.map((option) => {
                 const checked = option.value === value;
+                const isCustom = isCustomOption?.(option.value) ?? false;
+                const showActions =
+                  isCustom && (!!onEditCustom || !!onRemoveCustom);
                 return (
                   <Combobox.Option
                     key={option.value}
                     value={option.value}
                     active={checked}
+                    aria-label={showActions ? option.label : undefined}
                   >
-                    {renderOption
-                      ? renderOption({ option, checked })
-                      : option.label}
+                    {showActions ? (
+                      <Group gap="xs" wrap="nowrap">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          {renderOption
+                            ? renderOption({ option, checked })
+                            : option.label}
+                        </div>
+                        {onEditCustom && (
+                          <ActionIcon
+                            variant="subtle"
+                            color="gray"
+                            size="sm"
+                            aria-label="Edit custom item"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              combobox.closeDropdown();
+                              onEditCustom(option.value);
+                            }}
+                          >
+                            <IconPencil size={14} />
+                          </ActionIcon>
+                        )}
+                        {onRemoveCustom && (
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            size="sm"
+                            aria-label="Remove custom item"
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onRemoveCustom(option.value);
+                            }}
+                          >
+                            <IconTrash size={14} />
+                          </ActionIcon>
+                        )}
+                      </Group>
+                    ) : renderOption ? (
+                      renderOption({ option, checked })
+                    ) : (
+                      option.label
+                    )}
                   </Combobox.Option>
                 );
               })

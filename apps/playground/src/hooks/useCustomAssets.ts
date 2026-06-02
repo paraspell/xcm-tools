@@ -24,6 +24,19 @@ export const useCustomAssets = () => {
     [setCustomAssets],
   );
 
+  const updateCustomAsset = useCallback(
+    (chain: TChain, index: number, asset: TCustomAssetInfo) => {
+      setCustomAssets((current) => {
+        const list = current[chain] ?? [];
+        const next = list.map((existing, i) =>
+          i === index ? asset : existing,
+        );
+        return { ...current, [chain]: next };
+      });
+    },
+    [setCustomAssets],
+  );
+
   const removeCustomAsset = useCallback(
     (chain: TChain, index: number) => {
       setCustomAssets((current) => {
@@ -41,5 +54,18 @@ export const useCustomAssets = () => {
     [setCustomAssets],
   );
 
-  return { customAssets, addCustomAsset, removeCustomAsset };
+  const setAllCustomAssets = useCallback(
+    (next: TCustomAssetsMap) => {
+      setCustomAssets(next);
+    },
+    [setCustomAssets],
+  );
+
+  return {
+    customAssets,
+    addCustomAsset,
+    updateCustomAsset,
+    removeCustomAsset,
+    setAllCustomAssets,
+  };
 };

@@ -50,10 +50,19 @@ export const useCustomChains = () => {
     [setStored],
   );
 
+  const setAllCustomChains = useCallback(
+    (next: TStoredCustomChains) => {
+      setStored(next);
+    },
+    [setStored],
+  );
+
   return {
+    storedChains: stored,
     customChains,
     customChainAssets,
     addCustomChain,
     removeCustomChain,
+    setAllCustomChains,
   };
 };

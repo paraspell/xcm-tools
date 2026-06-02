@@ -29,6 +29,9 @@ type Props<T extends object> = {
   description?: string;
   onClear?: () => void;
   onAddCustom?: () => void;
+  customAssetKeys?: Set<string>;
+  onEditCustomAsset?: (key: string) => void;
+  onRemoveCustomAsset?: (key: string) => void;
   dataTestId?: string;
 };
 
@@ -44,6 +47,9 @@ export const CurrencySelection = <T extends object>({
   description,
   onClear,
   onAddCustom,
+  customAssetKeys,
+  onEditCustomAsset,
+  onRemoveCustomAsset,
   dataTestId,
 }: Props<T>) => {
   const isCustomCurrency = fieldValue.isCustomCurrency;
@@ -108,6 +114,9 @@ export const CurrencySelection = <T extends object>({
             onAddCustom={onAddCustom}
             addCustomLabel="Add custom asset"
             addCustomTestId="button-add-custom-asset"
+            isCustomOption={(v) => customAssetKeys?.has(v) ?? false}
+            onEditCustom={onEditCustomAsset}
+            onRemoveCustom={onRemoveCustomAsset}
             onClear={onClear}
             clearable={!!onClear}
             {...form.getInputProps(`${fieldPath}.currencyOptionId`)}

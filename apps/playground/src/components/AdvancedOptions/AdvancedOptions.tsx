@@ -1,10 +1,12 @@
 import {
   Accordion,
+  Divider,
   Group,
   Select,
   SimpleGrid,
   Stack,
   Switch,
+  Text,
   TextInput,
 } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
@@ -13,6 +15,7 @@ import { useEffect, useState } from 'react';
 
 import { LOCAL_ACCOUNTS } from '../../constants';
 import type { TAdvancedOptions } from '../../types';
+import { CustomConfigMenu } from '../CustomConfig/CustomConfigMenu';
 import classes from './AdvancedOptions.module.css';
 import { ApiOverridesFieldset } from './ApiOverridesFieldset';
 
@@ -130,6 +133,20 @@ export const AdvancedOptions = <T extends TAdvancedOptions>({
             )}
 
             <ApiOverridesFieldset form={form} />
+
+            <Divider />
+
+            <Group justify="space-between" align="center" wrap="nowrap">
+              <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+                <Text size="sm" fw={500}>
+                  Custom chains &amp; assets
+                </Text>
+                <Text size="xs" c="dimmed">
+                  Import or export your locally saved custom chains and assets.
+                </Text>
+              </Stack>
+              <CustomConfigMenu />
+            </Group>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>

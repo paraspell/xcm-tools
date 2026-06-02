@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
+import type { TChain } from '@paraspell/sdk';
 import {
   CHAINS,
   hydrateCustomChain,
@@ -33,7 +34,7 @@ import {
   useQueryStates,
 } from 'nuqs';
 import type { FC, FormEvent } from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   DEFAULT_ADDRESS,
@@ -43,6 +44,7 @@ import {
   MAIN_FORM_NAME,
 } from '../../constants';
 import {
+  customAssetKey,
   useActiveCurrencyOptions,
   useCustomAssets,
   useCustomChains,
@@ -64,6 +66,8 @@ import type {
   TQuerySubmitType,
   TSubmitType,
 } from '../../types';
+import type { TCustomAssetFormValues } from '../../types/TCustomAsset';
+import type { TCustomChainFormValues } from '../../types/TCustomChain';
 import {
   isSwapActive,
   isValidPolkadotAddress,
@@ -80,10 +84,12 @@ import {
   useTransferWarning,
 } from '../common/TransferWarningModal';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { customAssetInfoToForm } from '../CustomAsset/customAssetInfoToForm';
 import { CustomAssetModal } from '../CustomAsset/CustomAssetModal';
 import { formToCustomAssetInfo } from '../CustomAsset/formToCustomAssetInfo';
 import { CustomChainModal } from '../ParachainSelect/CustomChainModal';
 import { formToCustomChainInput } from '../ParachainSelect/formToCustomChainInput';
+import { inputToCustomChainForm } from '../ParachainSelect/inputToCustomChainForm';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { Swap } from '../Swap/Swap';
 import { AddressTooltip } from '../Tooltip';
@@ -128,10 +134,19 @@ export const XcmTransferForm: FC<Props> = ({
     { open: openCustomAssetModal, close: closeCustomAssetModal },
   ] = useDisclosure(false);
 
-  const { customChains, customChainAssets, addCustomChain } = useCustomChains();
-  const { customAssets, addCustomAsset } = useCustomAssets();
+  const { customChains, customChainAssets, addCustomChain, removeCustomChain } =
+    useCustomChains();
+  const { customAssets, addCustomAsset, updateCustomAsset, removeCustomAsset } =
+    useCustomAssets();
 
   const chainOptions = [...CHAINS, ...Object.keys(customChains)];
+  const customChainNames = Object.keys(customChains);
+
+  const [editingChainName, setEditingChainName] = useState<string | null>(null);
+  const [editingAsset, setEditingAsset] = useState<{
+    key: string;
+    index: number;
+  } | null>(null);
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(CHAINS).withDefault('Astar'),
@@ -233,6 +248,77 @@ export const XcmTransferForm: FC<Props> = ({
 
   const { options: mergedCurrencyOptions, map: mergedCurrencyMap } =
     useMergedCurrencyOptions(from, activeCurrencyOptions, activeCurrencyMap);
+
+  const fromCustomAssets = customAssets[from] ?? [];
+  const customAssetKeys = new Set(fromCustomAssets.map(customAssetKey));
+
+  const handleAddCustomChain = () => {
+    setEditingChainName(null);
+    openCustomChainModal();
+  };
+
+  const handleEditCustomChain = (name: string) => {
+    if (!customChains[name]) return;
+    setEditingChainName(name);
+    openCustomChainModal();
+  };
+
+  const handleRemoveCustomChain = (name: string) => {
+    removeCustomChain(name);
+    if (form.getValues().from === name)
+      form.setFieldValue('from', '' as TChain);
+    if (form.getValues().to === name) form.setFieldValue('to', '' as TChain);
+  };
+
+  const handleChainSubmit = async (values: TCustomChainFormValues) => {
+    const name = values.name.trim();
+    const input = formToCustomChainInput(values);
+    const assetsInfo = await hydrateCustomChain(name, input);
+    if (editingChainName && editingChainName !== name) {
+      removeCustomChain(editingChainName);
+      if (form.getValues().from === editingChainName)
+        form.setFieldValue('from', name as TChain);
+      if (form.getValues().to === editingChainName)
+        form.setFieldValue('to', name as TChain);
+    }
+    addCustomChain(name, input, assetsInfo);
+  };
+
+  const handleAddCustomAsset = () => {
+    setEditingAsset(null);
+    openCustomAssetModal();
+  };
+
+  const handleEditCustomAsset = (key: string) => {
+    const index = fromCustomAssets.findIndex(
+      (asset) => customAssetKey(asset) === key,
+    );
+    if (index === -1) return;
+    setEditingAsset({ key, index });
+    openCustomAssetModal();
+  };
+
+  const handleRemoveCustomAsset = (key: string) => {
+    const index = fromCustomAssets.findIndex(
+      (asset) => customAssetKey(asset) === key,
+    );
+    if (index === -1) return;
+    removeCustomAsset(from, index);
+    form.getValues().currencies.forEach((currency, i) => {
+      if (currency.currencyOptionId === key) {
+        form.setFieldValue(`currencies.${i}.currencyOptionId`, '');
+      }
+    });
+  };
+
+  const handleAssetSubmit = (values: TCustomAssetFormValues) => {
+    const asset = formToCustomAssetInfo(values);
+    if (editingAsset) {
+      updateCustomAsset(from, editingAsset.index, asset);
+    } else {
+      addCustomAsset(from, asset);
+    }
+  };
 
   const resolveAndSubmit = useCallback(
     (values: TFormValues, submitType: TSubmitType) => {
@@ -434,12 +520,16 @@ export const XcmTransferForm: FC<Props> = ({
       <CustomChainModal
         opened={customChainModalOpened}
         onClose={closeCustomChainModal}
-        onSubmit={async (values) => {
-          const name = values.name.trim();
-          const input = formToCustomChainInput(values);
-          const assetsInfo = await hydrateCustomChain(name, input);
-          addCustomChain(name, input, assetsInfo);
-        }}
+        mode={editingChainName ? 'edit' : 'add'}
+        initialValues={
+          editingChainName && customChains[editingChainName]
+            ? inputToCustomChainForm(
+                editingChainName,
+                customChains[editingChainName],
+              )
+            : undefined
+        }
+        onSubmit={handleChainSubmit}
       />
       <CustomAssetModal
         opened={customAssetModalOpened}
@@ -447,10 +537,16 @@ export const XcmTransferForm: FC<Props> = ({
         chain={from}
         overrideAssetOptions={mergedCurrencyOptions}
         overrideAssetMap={mergedCurrencyMap}
-        existingAssets={customAssets[from] ?? []}
-        onSubmit={(values) =>
-          addCustomAsset(from, formToCustomAssetInfo(values))
+        existingAssets={fromCustomAssets.filter(
+          (_, i) => i !== editingAsset?.index,
+        )}
+        mode={editingAsset ? 'edit' : 'add'}
+        initialValues={
+          editingAsset && fromCustomAssets[editingAsset.index]
+            ? customAssetInfoToForm(fromCustomAssets[editingAsset.index])
+            : undefined
         }
+        onSubmit={handleAssetSubmit}
       />
       {isEvmMode && (
         <Badge
@@ -475,7 +571,10 @@ export const XcmTransferForm: FC<Props> = ({
             description="Select the origin chain"
             data={chainOptions}
             data-testid="select-origin"
-            onAddCustom={openCustomChainModal}
+            onAddCustom={handleAddCustomChain}
+            customChainNames={customChainNames}
+            onEditCustomChain={handleEditCustomChain}
+            onRemoveCustomChain={handleRemoveCustomChain}
             {...form.getInputProps('from')}
           />
 
@@ -496,7 +595,10 @@ export const XcmTransferForm: FC<Props> = ({
             description="Select the destination chain"
             data={chainOptions}
             data-testid="select-destination"
-            onAddCustom={openCustomChainModal}
+            onAddCustom={handleAddCustomChain}
+            customChainNames={customChainNames}
+            onEditCustomChain={handleEditCustomChain}
+            onRemoveCustomChain={handleRemoveCustomChain}
             {...form.getInputProps('to')}
           />
 
@@ -518,7 +620,10 @@ export const XcmTransferForm: FC<Props> = ({
                       fieldValue={currencies[index]}
                       size={currencies.length > 1 ? 'xs' : 'sm'}
                       currencyOptions={mergedCurrencyOptions}
-                      onAddCustom={from ? openCustomAssetModal : undefined}
+                      onAddCustom={from ? handleAddCustomAsset : undefined}
+                      customAssetKeys={customAssetKeys}
+                      onEditCustomAsset={handleEditCustomAsset}
+                      onRemoveCustomAsset={handleRemoveCustomAsset}
                     />
                     <Group gap="xs" wrap="nowrap">
                       <TextInput

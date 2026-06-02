@@ -22,7 +22,7 @@ import {
 } from '@paraspell/sdk';
 import { IconAlertCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type {
   TCustomChainAssetEntry,
@@ -56,12 +56,22 @@ const DEFAULT_VALUES: TCustomChainFormValues = {
 type Props = {
   opened: boolean;
   onClose: () => void;
+  mode?: 'add' | 'edit';
+  initialValues?: TCustomChainFormValues;
   onSubmit?: (values: TCustomChainFormValues) => Promise<void> | void;
 };
 
-export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
+export const CustomChainModal: FC<Props> = ({
+  opened,
+  onClose,
+  mode = 'add',
+  initialValues,
+  onSubmit,
+}) => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const isEdit = mode === 'edit';
 
   const form = useForm<TCustomChainFormValues>({
     initialValues: DEFAULT_VALUES,
@@ -92,6 +102,13 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
       },
     },
   });
+
+  useEffect(() => {
+    if (!opened) return;
+    setSubmitError(null);
+    form.setValues(initialValues ?? DEFAULT_VALUES);
+    form.resetDirty(initialValues ?? DEFAULT_VALUES);
+  }, [opened]);
 
   const handleClose = () => {
     if (submitting) return;
@@ -182,7 +199,7 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Add custom chain"
+      title={isEdit ? 'Edit custom chain' : 'Add custom chain'}
       size="lg"
       centered
       padding="xl"
@@ -191,8 +208,9 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <Text size="sm" c="dimmed">
-            Register a chain that is not in the built-in list. It will be saved
-            locally and available in the chain pickers.
+            {isEdit
+              ? 'Update this custom chain. Changes are saved locally and reflected in the chain pickers.'
+              : 'Register a chain that is not in the built-in list. It will be saved locally and available in the chain pickers.'}
           </Text>
 
           <Group grow align="flex-start">
@@ -298,7 +316,9 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
             <Alert
               color="red"
               icon={<IconAlertCircle size={16} />}
-              title="Could not register chain"
+              title={
+                isEdit ? 'Could not save chain' : 'Could not register chain'
+              }
             >
               {submitError}
             </Alert>
@@ -313,7 +333,7 @@ export const CustomChainModal: FC<Props> = ({ opened, onClose, onSubmit }) => {
               Cancel
             </Button>
             <Button type="submit" loading={submitting}>
-              Save
+              {isEdit ? 'Save changes' : 'Save'}
             </Button>
           </Group>
         </Stack>
