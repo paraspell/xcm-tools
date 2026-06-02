@@ -54,25 +54,43 @@ const renderChainOption = ({
 
 type Props = Omit<
   ComboboxSelectProps,
-  'addCustomLabel' | 'addCustomTestId' | 'withAsterisk'
->;
+  | 'addCustomLabel'
+  | 'addCustomTestId'
+  | 'withAsterisk'
+  | 'isCustomOption'
+  | 'onEditCustom'
+  | 'onRemoveCustom'
+> & {
+  customChainNames?: string[];
+  onEditCustomChain?: (name: string) => void;
+  onRemoveCustomChain?: (name: string) => void;
+};
 
 export const ParachainSelect: FC<Props> = ({
   value,
   leftSection,
+  customChainNames,
+  onEditCustomChain,
+  onRemoveCustomChain,
   ...props
-}) => (
-  <ComboboxSelect
-    {...props}
-    value={value}
-    leftSection={
-      leftSection ?? (
-        <ChainIcon chain={typeof value === 'string' ? value : null} />
-      )
-    }
-    renderOption={renderChainOption}
-    withAsterisk={false}
-    addCustomLabel="Add custom chain"
-    addCustomTestId="button-add-custom-chain"
-  />
-);
+}) => {
+  const customNames = new Set(customChainNames ?? []);
+  return (
+    <ComboboxSelect
+      {...props}
+      value={value}
+      leftSection={
+        leftSection ?? (
+          <ChainIcon chain={typeof value === 'string' ? value : null} />
+        )
+      }
+      renderOption={renderChainOption}
+      withAsterisk={false}
+      addCustomLabel="Add custom chain"
+      addCustomTestId="button-add-custom-chain"
+      isCustomOption={(v) => customNames.has(v)}
+      onEditCustom={onEditCustomChain}
+      onRemoveCustom={onRemoveCustomChain}
+    />
+  );
+};

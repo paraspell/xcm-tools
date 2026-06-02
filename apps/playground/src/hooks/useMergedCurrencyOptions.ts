@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { useCustomAssets } from './useCustomAssets';
 
-const customAssetKey = (asset: { symbol: string; assetId?: string }) =>
+export const customAssetKey = (asset: { symbol: string; assetId?: string }) =>
   `${asset.symbol}-${asset.assetId ?? 'NO_ID'}`;
 
 export const useMergedCurrencyOptions = (

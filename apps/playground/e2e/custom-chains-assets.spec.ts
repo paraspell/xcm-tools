@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+
 import { expect, Locator, Page } from '@playwright/test';
 
 import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
@@ -13,6 +15,29 @@ const DUPLICATE_LOCATION_ERROR =
 const SAME_LOCATION = JSON.stringify({ parents: 1, interior: 'Here' });
 
 const DOT_LOCATION = JSON.stringify({ parents: 1, interior: { Here: null } });
+
+const uniqueLocation = (paraId: number) =>
+  JSON.stringify({ parents: 1, interior: { X1: { Parachain: paraId } } });
+
+const seededCustomChain = (name: string, paraId: number) => ({
+  [name]: {
+    input: {
+      paraId,
+      ecosystem: 'Polkadot',
+      providers: [{ name: 'Seed', endpoint: 'wss://seed.example/ws' }],
+      xcmVersion: 'V5',
+    },
+    assetsInfo: {
+      relaychainSymbol: 'DOT',
+      nativeAssetSymbol: name,
+      isEVM: false,
+      ss58Prefix: 42,
+      supportsDryRunApi: false,
+      supportsXcmPaymentApi: false,
+      assets: [],
+    },
+  },
+});
 
 type TAssetEntry = {
   symbol: string;
@@ -40,6 +65,47 @@ const openCustomChainModal = async (page: Page): Promise<Locator> => {
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   return modal;
+};
+
+const registerCustomAsset = async (page: Page, entry: TAssetEntry) => {
+  const modal = await openCustomAssetModal(page);
+  await fillAssetEntry(modal, 0, entry);
+  await modal.getByPlaceholder('DOT').first().click();
+  await modal.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(modal).not.toBeVisible();
+};
+
+const seedCustomChains = async (page: Page, seed: Record<string, unknown>) => {
+  await page.evaluate((value) => {
+    localStorage.setItem(
+      'paraspell_playground_custom_chains',
+      JSON.stringify(value),
+    );
+  }, seed);
+  await page.reload();
+  await expect(page.getByTestId('select-origin')).toBeVisible();
+};
+
+const seedCustomConfig = async (
+  page: Page,
+  chains: Record<string, unknown>,
+  assets: Record<string, unknown>,
+) => {
+  await page.evaluate(
+    ({ chains: c, assets: a }) => {
+      localStorage.setItem(
+        'paraspell_playground_custom_chains',
+        JSON.stringify(c),
+      );
+      localStorage.setItem(
+        'paraspell_playground_custom_assets',
+        JSON.stringify(a),
+      );
+    },
+    { chains, assets },
+  );
+  await page.reload();
+  await expect(page.getByTestId('select-origin')).toBeVisible();
 };
 
 const fillAssetEntry = async (
@@ -167,6 +233,205 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
       await appPage.getByTestId('select-origin').fill('MyAssetHub');
       await expect(
         appPage.getByRole('option', { name: createName('MyAssetHub') }),
+      ).toBeVisible();
+    },
+  );
+
+  basePjsTest(
+    'Should edit a custom asset and reflect the new symbol in the currency picker',
+    async () => {
+      await selectOrigin(appPage, 'Astar');
+
+      await registerCustomAsset(appPage, {
+        symbol: 'EDITME',
+        decimals: 12,
+        location: uniqueLocation(2001),
+      });
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('EDITME');
+      const customOption = appPage.getByRole('option', {
+        name: 'EDITME (custom)',
+      });
+      await expect(customOption).toBeVisible();
+      await customOption
+        .getByRole('button', { name: 'Edit custom item' })
+        .click();
+
+      const modal = appPage.getByRole('dialog');
+      await expect(modal).toBeVisible();
+      await expect(modal).toContainText('Edit custom asset');
+      await expect(modal.getByPlaceholder('DOT')).toHaveValue('EDITME');
+      await expect(modal.getByPlaceholder('10')).toHaveValue('12');
+
+      await modal.getByPlaceholder('DOT').fill('EDITED');
+      await modal.getByRole('button', { name: 'Save changes' }).click();
+      await expect(modal).not.toBeVisible();
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('EDITED');
+      await expect(
+        appPage.getByRole('option', { name: /EDITED \(custom\)/ }),
+      ).toBeVisible();
+
+      await appPage.getByTestId('select-currency').first().fill('EDITME');
+      await expect(
+        appPage.getByRole('option', { name: /EDITME \(custom\)/ }),
+      ).toHaveCount(0);
+    },
+  );
+
+  basePjsTest(
+    'Should remove a custom asset from the currency picker',
+    async () => {
+      await selectOrigin(appPage, 'Astar');
+
+      await registerCustomAsset(appPage, {
+        symbol: 'REMOVEME',
+        decimals: 10,
+        location: uniqueLocation(2002),
+      });
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('REMOVEME');
+      const customOption = appPage.getByRole('option', {
+        name: 'REMOVEME (custom)',
+      });
+      await expect(customOption).toBeVisible();
+      await customOption
+        .getByRole('button', { name: 'Remove custom item' })
+        .click();
+
+      await expect(
+        appPage.getByRole('option', { name: /REMOVEME \(custom\)/ }),
+      ).toHaveCount(0);
+    },
+  );
+
+  basePjsTest(
+    'Should remove a custom chain from the origin picker',
+    async () => {
+      await seedCustomChains(
+        appPage,
+        seededCustomChain('SeedRemoveChain', 4801),
+      );
+
+      await appPage.getByTestId('select-origin').click();
+      await appPage.getByTestId('select-origin').fill('SeedRemoveChain');
+      const customOption = appPage.getByRole('option', {
+        name: createName('SeedRemoveChain'),
+      });
+      await expect(customOption).toBeVisible();
+      await customOption
+        .getByRole('button', { name: 'Remove custom item' })
+        .click();
+
+      await expect(
+        appPage.getByRole('option', { name: createName('SeedRemoveChain') }),
+      ).toHaveCount(0);
+    },
+  );
+
+  basePjsTest(
+    'Should open a custom chain in the edit modal prefilled with its values',
+    async () => {
+      await seedCustomChains(appPage, seededCustomChain('SeedEditChain', 7777));
+
+      await appPage.getByTestId('select-origin').click();
+      await appPage.getByTestId('select-origin').fill('SeedEditChain');
+      const customOption = appPage.getByRole('option', {
+        name: createName('SeedEditChain'),
+      });
+      await expect(customOption).toBeVisible();
+      await customOption
+        .getByRole('button', { name: 'Edit custom item' })
+        .click();
+
+      const modal = appPage.getByRole('dialog');
+      await expect(modal).toBeVisible();
+      await expect(modal).toContainText('Edit custom chain');
+      await expect(modal.getByPlaceholder('MyChain')).toHaveValue(
+        'SeedEditChain',
+      );
+      await expect(modal.getByPlaceholder('2000')).toHaveValue('7777');
+      await expect(modal.getByPlaceholder('wss://...')).toHaveValue(
+        'wss://seed.example/ws',
+      );
+
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+      await expect(modal).not.toBeVisible();
+    },
+  );
+
+  basePjsTest(
+    'Should export custom chains and assets as a single JSON config',
+    async () => {
+      await seedCustomConfig(appPage, seededCustomChain('ExportChain', 5100), {
+        Astar: [
+          {
+            symbol: 'EXPASSET',
+            decimals: 8,
+            location: { parents: 1, interior: { X1: { Parachain: 5101 } } },
+          },
+        ],
+      });
+
+      await appPage.getByTestId('advanced-options-toggle').click();
+
+      const downloadPromise = appPage.waitForEvent('download');
+      await appPage.getByTestId('button-custom-config').click();
+      await appPage.getByTestId('button-export-config').click();
+      const download = await downloadPromise;
+
+      expect(download.suggestedFilename()).toBe('paraspell-custom-config.json');
+
+      const path = await download.path();
+      const content = JSON.parse(await readFile(path, 'utf-8'));
+      expect(content.customChains).toHaveProperty('ExportChain');
+      expect(content.customAssets.Astar[0].symbol).toBe('EXPASSET');
+    },
+  );
+
+  basePjsTest(
+    'Should import a JSON config and surface its chains and assets',
+    async () => {
+      await seedCustomConfig(appPage, {}, {});
+
+      const config = {
+        version: 1,
+        customChains: seededCustomChain('ImportChain', 6100),
+        customAssets: {
+          Astar: [
+            {
+              symbol: 'IMPASSET',
+              decimals: 9,
+              location: { parents: 1, interior: { X1: { Parachain: 6101 } } },
+            },
+          ],
+        },
+      };
+
+      await appPage.getByTestId('advanced-options-toggle').click();
+      await appPage.getByTestId('button-custom-config').click();
+      await appPage.locator('input[type="file"]').setInputFiles({
+        name: 'paraspell-custom-config.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(JSON.stringify(config)),
+      });
+
+      await expect(appPage.getByText('Config imported')).toBeVisible();
+
+      await appPage.getByTestId('select-origin').click();
+      await appPage.getByTestId('select-origin').fill('ImportChain');
+      await expect(
+        appPage.getByRole('option', { name: createName('ImportChain') }),
+      ).toBeVisible();
+
+      await selectOrigin(appPage, 'Astar');
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('IMPASSET');
+      await expect(
+        appPage.getByRole('option', { name: /IMPASSET \(custom\)/ }),
       ).toBeVisible();
     },
   );

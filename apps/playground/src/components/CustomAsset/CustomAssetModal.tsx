@@ -14,6 +14,7 @@ import { isNotEmpty, useForm } from '@mantine/form';
 import type { TAssetInfo, TCustomAssetInfo, TLocation } from '@paraspell/sdk';
 import { deepEqual } from '@paraspell/sdk';
 import type { FC } from 'react';
+import { useEffect } from 'react';
 
 import type { TCustomAssetFormValues } from '../../types/TCustomAsset';
 import { validateLocation } from '../../utils/validationUtils';
@@ -36,6 +37,8 @@ type Props = {
   overrideAssetOptions: ComboboxItem[];
   overrideAssetMap: Record<string, TAssetInfo>;
   existingAssets: TCustomAssetInfo[];
+  mode?: 'add' | 'edit';
+  initialValues?: TCustomAssetFormValues;
   onSubmit?: (values: TCustomAssetFormValues) => void;
 };
 
@@ -58,8 +61,12 @@ export const CustomAssetModal: FC<Props> = ({
   overrideAssetOptions,
   overrideAssetMap,
   existingAssets,
+  mode = 'add',
+  initialValues,
   onSubmit,
 }) => {
+  const isEdit = mode === 'edit';
+
   const form = useForm<TCustomAssetFormValues>({
     initialValues: DEFAULT_VALUES,
     validate: {
@@ -67,7 +74,7 @@ export const CustomAssetModal: FC<Props> = ({
       decimals: isNotEmpty('Decimals required'),
       location: (value, values) => {
         const duplicateMsg = 'A custom asset with this location already exists';
-        if (values.forceOverride) {
+        if (values.forceOverride && mode === 'add') {
           return value && isDuplicateLocation(value, existingAssets)
             ? duplicateMsg
             : null;
@@ -82,6 +89,12 @@ export const CustomAssetModal: FC<Props> = ({
           : null,
     },
   });
+
+  useEffect(() => {
+    if (!opened) return;
+    form.setValues(initialValues ?? DEFAULT_VALUES);
+    form.resetDirty(initialValues ?? DEFAULT_VALUES);
+  }, [opened]);
 
   const handleClose = () => {
     form.reset();
@@ -120,7 +133,7 @@ export const CustomAssetModal: FC<Props> = ({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Add custom asset"
+      title={isEdit ? 'Edit custom asset' : 'Add custom asset'}
       size="lg"
       centered
       padding="xl"
@@ -129,22 +142,25 @@ export const CustomAssetModal: FC<Props> = ({
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <Text size="sm" c="dimmed">
-            Register a custom asset for the origin chain. It will be saved
-            locally and appear in the currency picker when {chain} is selected.
+            {isEdit
+              ? `Update this custom asset. Changes are saved locally and reflected in the currency picker when ${chain} is selected.`
+              : `Register a custom asset for the origin chain. It will be saved locally and appear in the currency picker when ${chain} is selected.`}
           </Text>
 
           <TextInput label="Chain" value={chain} readOnly />
 
-          <Switch
-            label="Force override existing asset"
-            description="Override an existing asset's metadata (symbol, decimals, …) keyed by its location."
-            checked={forceOverride}
-            onChange={(event) =>
-              handleForceOverrideToggle(event.currentTarget.checked)
-            }
-          />
+          {!isEdit && (
+            <Switch
+              label="Force override existing asset"
+              description="Override an existing asset's metadata (symbol, decimals, …) keyed by its location."
+              checked={forceOverride}
+              onChange={(event) =>
+                handleForceOverrideToggle(event.currentTarget.checked)
+              }
+            />
+          )}
 
-          {forceOverride && (
+          {!isEdit && forceOverride && (
             <Select
               label="Asset to override"
               placeholder="Pick an asset"
@@ -165,14 +181,14 @@ export const CustomAssetModal: FC<Props> = ({
             onNativeToggle={(checked) =>
               form.setFieldValue('isNative', checked)
             }
-            hideLocation={forceOverride}
+            hideLocation={!isEdit && forceOverride}
           />
 
           <Group justify="flex-end" mt="md">
             <Button variant="default" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit">{isEdit ? 'Save changes' : 'Save'}</Button>
           </Group>
         </Stack>
       </form>
