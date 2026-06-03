@@ -15,6 +15,7 @@ import { useDisclosure } from '@mantine/hooks';
 import type { TChain } from '@paraspell/sdk';
 import {
   CHAINS,
+  formatUnits,
   hydrateCustomChain,
   isChainEvmImpl,
   isExternalChain,
@@ -147,6 +148,8 @@ export const XcmTransferForm: FC<Props> = ({
     key: string;
     index: number;
   } | null>(null);
+  const [overrideInitialValues, setOverrideInitialValues] =
+    useState<TCustomAssetFormValues | null>(null);
 
   const [queryState, setQueryState] = useQueryStates({
     from: parseAsStringLiteral(CHAINS).withDefault('Astar'),
@@ -286,6 +289,7 @@ export const XcmTransferForm: FC<Props> = ({
 
   const handleAddCustomAsset = () => {
     setEditingAsset(null);
+    setOverrideInitialValues(null);
     openCustomAssetModal();
   };
 
@@ -294,7 +298,27 @@ export const XcmTransferForm: FC<Props> = ({
       (asset) => customAssetKey(asset) === key,
     );
     if (index === -1) return;
+    setOverrideInitialValues(null);
     setEditingAsset({ key, index });
+    openCustomAssetModal();
+  };
+
+  const handleOverrideAsset = (key: string) => {
+    const asset = mergedCurrencyMap[key];
+    if (!asset) return;
+    setEditingAsset(null);
+    setOverrideInitialValues({
+      symbol: asset.symbol,
+      decimals: asset.decimals,
+      assetId: asset.assetId ?? '',
+      location: JSON.stringify(asset.location, null, 2),
+      existentialDeposit: asset.existentialDeposit
+        ? formatUnits(BigInt(asset.existentialDeposit), asset.decimals)
+        : '',
+      isNative: asset.isNative ?? false,
+      forceOverride: true,
+      overrideAssetKey: key,
+    });
     openCustomAssetModal();
   };
 
@@ -542,9 +566,10 @@ export const XcmTransferForm: FC<Props> = ({
         )}
         mode={editingAsset ? 'edit' : 'add'}
         initialValues={
-          editingAsset && fromCustomAssets[editingAsset.index]
+          overrideInitialValues ??
+          (editingAsset && fromCustomAssets[editingAsset.index]
             ? customAssetInfoToForm(fromCustomAssets[editingAsset.index])
-            : undefined
+            : undefined)
         }
         onSubmit={handleAssetSubmit}
       />
@@ -624,6 +649,7 @@ export const XcmTransferForm: FC<Props> = ({
                       customAssetKeys={customAssetKeys}
                       onEditCustomAsset={handleEditCustomAsset}
                       onRemoveCustomAsset={handleRemoveCustomAsset}
+                      onOverrideAsset={handleOverrideAsset}
                     />
                     <Group gap="xs" wrap="nowrap">
                       <TextInput

@@ -2,7 +2,7 @@ import { normalizeLocation, type TAsset } from '@paraspell/assets'
 import { getXcmPalletImpl, type TPallet } from '@paraspell/pallets'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../chains/config'
+import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
 import { addXcmVersionHeader, createAsset } from '../../utils'
@@ -48,7 +48,7 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner>(
     version,
     origin.chain,
     finalDest,
-    getParaId(finalDest)
+    getParaIdImpl(finalDest, origin.api._customCtx)
   )
 
   const transferType = bridgeHopChain ? 'DestinationReserve' : resolveTransferType(context)

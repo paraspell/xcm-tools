@@ -35,11 +35,11 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
+  findAssetInfoOrThrowImpl,
+  findNativeAssetInfoOrThrowImpl,
   getChainProvidersImpl,
-  getRelayChainOf,
-  hasXcmPaymentApiSupport,
+  getRelayChainOfImpl,
+  hasXcmPaymentApiSupportImpl,
   isAssetXcEqual,
   isConfig,
   isSenderSigner,
@@ -52,7 +52,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
-import { getAssetsObject, resolveModuleError } from "@paraspell/sdk-core";
+import { hasDryRunSupportImpl, resolveModuleError } from "@paraspell/sdk-core";
 import { DedotClient, WsProvider } from "dedot";
 import {
   blake2AsHex,
@@ -247,9 +247,13 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
   hasMethod(pallet: TPallet, method: string): Promise<boolean> {
     const palletFormatted = lowercaseFirstLetter(pallet);
     const methodFormatted = snakeToCamel(method);
-    return Promise.resolve(
-      this.api.tx[palletFormatted]?.[methodFormatted] !== undefined,
-    );
+    try {
+      return Promise.resolve(
+        this.api.tx[palletFormatted]?.[methodFormatted] !== undefined,
+      );
+    } catch {
+      return Promise.resolve(false);
+    }
   }
 
   hasRuntimeApi(runtimeApi: TRuntimeApi): Promise<boolean> {
@@ -302,7 +306,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     chain,
     feeAsset,
   }: TDryRunCallBaseOptions<TDedotExtrinsic>) {
-    return feeAsset ?? findNativeAssetInfoOrThrow(chain);
+    return feeAsset ?? findNativeAssetInfoOrThrowImpl(chain, this._customCtx);
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TDedotExtrinsic>) {
@@ -327,7 +331,12 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId }),
+      asset: findAssetInfoOrThrowImpl(
+        chain,
+        { id: assetId },
+        undefined,
+        this._customCtx,
+      ),
     };
   }
 
@@ -345,7 +354,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
       bypassOptions,
     } = options;
 
-    const { supportsDryRunApi } = getAssetsObject(chain);
+    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx);
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, "DryRunApi");
@@ -513,7 +522,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ["Astar"];
 
     if (
-      (hasXcmPaymentApiSupport(chain) &&
+      (hasXcmPaymentApiSupportImpl(chain, this._customCtx) &&
         localXcm &&
         (feeAsset ||
           USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
@@ -664,7 +673,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     const deliveryFeeResolved =
       deliveryFeeRes && assets?.length > 0 ? (assets[0]?.fun?.value ?? 0n) : 0n;
 
-    const nativeAsset = findNativeAssetInfoOrThrow(chain);
+    const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx);
 
     if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved;
@@ -714,7 +723,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     }
 
     const ahApi = this.clone();
-    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(chain)}`;
+    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(this, chain)}`;
 
     await ahApi.init(assetHubChain);
 
@@ -762,7 +771,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     chain,
     version,
   }: TDryRunXcmBaseOptions<TDedotExtrinsic>): Promise<TDryRunChainResult> {
-    const { supportsDryRunApi } = getAssetsObject(chain);
+    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx);
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, "DryRunApi");
@@ -797,7 +806,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
 
     const destParaId = this.extractDestParaId(forwardedXcms);
 
-    if (hasXcmPaymentApiSupport(chain)) {
+    if (hasXcmPaymentApiSupportImpl(chain, this._customCtx)) {
       const fee = await this.getXcmPaymentApiFee(
         chain,
         xcm,
@@ -836,6 +845,23 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     const outboundOperatingMode =
       await this.api.query.ethereumOutboundQueue.operatingMode();
     return outboundOperatingMode as TBridgeStatus;
+  }
+
+  getConstant<T = unknown>(
+    pallet: string,
+    name: string,
+  ): Promise<T | undefined> {
+    try {
+      const palletConsts = (this.api.consts as any)[
+        lowercaseFirstLetter(pallet)
+      ];
+      const value = palletConsts
+        ? palletConsts[lowercaseFirstLetter(name)]
+        : undefined;
+      return Promise.resolve(value as T | undefined);
+    } catch {
+      return Promise.resolve(undefined);
+    }
   }
 
   async getSystemProperties(): Promise<TSystemProperties> {

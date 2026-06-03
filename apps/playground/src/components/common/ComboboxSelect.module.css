@@ -19,3 +19,13 @@
     var(--mantine-color-dark-5)
   );
 }
+
+.rowAction {
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+
+.option:hover .rowAction,
+.option:focus-within .rowAction {
+  opacity: 1;
+}

@@ -16,6 +16,7 @@ export type TCustomChainAssetEntry = {
   decimals: number | '';
   assetId: string;
   location: string;
+  existentialDeposit: string;
   isNative: boolean;
 };
 

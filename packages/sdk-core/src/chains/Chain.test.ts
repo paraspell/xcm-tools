@@ -67,7 +67,8 @@ vi.mock('@paraspell/assets', async () => {
 vi.mock('../pallets')
 
 vi.mock('./config', () => ({
-  getParaId: vi.fn().mockReturnValue(1000)
+  getParaId: vi.fn().mockReturnValue(1000),
+  getParaIdImpl: vi.fn().mockReturnValue(1000)
 }))
 
 vi.mock('../transfer', () => ({

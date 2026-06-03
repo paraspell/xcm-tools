@@ -3,7 +3,7 @@ import { isTrustedChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { getParaId } from '../../chains/config'
+import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
 import { createDestination, localizeLocationImpl } from '../../utils'
@@ -51,7 +51,7 @@ describe('buildTypeAndThenCall', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(getParaId).mockReturnValue(mockParaId)
+    vi.mocked(getParaIdImpl).mockReturnValue(mockParaId)
     vi.mocked(createDestination).mockReturnValue(mockDestination)
     vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
   })
@@ -59,7 +59,7 @@ describe('buildTypeAndThenCall', () => {
   it('should build correct call when chain equals reserveChain and asset location is not RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
 
-    expect(getParaId).toHaveBeenCalledWith(mockContext.dest.chain)
+    expect(getParaIdImpl).toHaveBeenCalledWith(mockContext.dest.chain, undefined)
     expect(createDestination).toHaveBeenCalledWith(
       mockContext.origin.api,
       mockVersion,
@@ -99,7 +99,7 @@ describe('buildTypeAndThenCall', () => {
       mockAssets
     )
 
-    expect(getParaId).toHaveBeenCalledWith(differentReserve.chain)
+    expect(getParaIdImpl).toHaveBeenCalledWith(differentReserve.chain, undefined)
     expect(createDestination).toHaveBeenCalledWith(
       mockContext.origin.api,
       mockVersion,

@@ -23,8 +23,11 @@ export const useMergedCurrencyOptions = (
     const customMap = Object.fromEntries(
       list.map((asset) => [customAssetKey(asset), asset]),
     );
+    const optionsByKey = new Map<string, ComboboxItem>();
+    for (const option of baseOptions) optionsByKey.set(option.value, option);
+    for (const option of customOptions) optionsByKey.set(option.value, option);
     return {
-      options: [...baseOptions, ...customOptions],
+      options: [...optionsByKey.values()],
       map: { ...baseMap, ...customMap },
     };
   }, [customAssets, chain, baseOptions, baseMap]);

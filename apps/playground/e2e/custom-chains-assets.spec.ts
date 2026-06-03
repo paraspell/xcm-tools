@@ -44,6 +44,7 @@ type TAssetEntry = {
   decimals: number;
   location: string;
   isNative?: boolean;
+  existentialDeposit?: string;
 };
 
 const selectOrigin = async (page: Page, chain: string) => {
@@ -111,7 +112,7 @@ const seedCustomConfig = async (
 const fillAssetEntry = async (
   scope: Locator,
   index: number,
-  { symbol, decimals, location, isNative }: TAssetEntry,
+  { symbol, decimals, location, isNative, existentialDeposit }: TAssetEntry,
 ) => {
   await scope.getByPlaceholder('DOT').nth(index).fill(symbol);
   await scope.getByPlaceholder('10').nth(index).fill(String(decimals));
@@ -119,6 +120,9 @@ const fillAssetEntry = async (
     .getByPlaceholder('{ "parents": 1, "interior": "Here" }')
     .nth(index)
     .fill(location);
+  if (existentialDeposit !== undefined) {
+    await scope.getByPlaceholder('0.01').nth(index).fill(existentialDeposit);
+  }
   if (isNative) {
     await scope
       .getByRole('checkbox', { name: 'Native', exact: true })
@@ -158,6 +162,48 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
       await expect(
         appPage.getByRole('option', { name: /XCTEST \(custom\)/ }),
       ).toBeVisible();
+    },
+  );
+
+  basePjsTest(
+    'Should store a human-readable existential deposit as plancks and prefill it on edit',
+    async () => {
+      await selectOrigin(appPage, 'Astar');
+
+      const modal = await openCustomAssetModal(appPage);
+      await fillAssetEntry(modal, 0, {
+        symbol: 'EDASSET',
+        decimals: 10,
+        location: uniqueLocation(2050),
+        existentialDeposit: '0.01',
+      });
+      await modal.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(modal).not.toBeVisible();
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('EDASSET');
+      const customOption = appPage.getByRole('option', {
+        name: 'EDASSET (custom)',
+      });
+      await expect(customOption).toBeVisible();
+
+      const stored = await appPage.evaluate(() =>
+        JSON.parse(
+          localStorage.getItem('paraspell_playground_custom_assets') ?? '{}',
+        ),
+      );
+      const edAsset = (stored.Astar ?? []).find(
+        (asset: { symbol: string }) => asset.symbol === 'EDASSET',
+      );
+      expect(edAsset?.existentialDeposit).toBe('100000000');
+
+      await customOption
+        .getByRole('button', { name: 'Edit custom item' })
+        .click();
+
+      const editModal = appPage.getByRole('dialog');
+      await expect(editModal).toContainText('Edit custom asset');
+      await expect(editModal.getByPlaceholder('0.01')).toHaveValue('0.01');
     },
   );
 
@@ -304,6 +350,44 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
 
       await expect(
         appPage.getByRole('option', { name: /REMOVEME \(custom\)/ }),
+      ).toHaveCount(0);
+    },
+  );
+
+  basePjsTest(
+    'Should override a built-in asset and surface it as a custom asset',
+    async () => {
+      await selectOrigin(appPage, 'Astar');
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('ASTR');
+      const builtInOption = appPage.getByRole('option', {
+        name: 'ASTR - Native',
+        exact: true,
+      });
+      await expect(builtInOption).toBeVisible();
+      await builtInOption
+        .getByRole('button', { name: 'Override asset' })
+        .click();
+
+      const modal = appPage.getByRole('dialog');
+      await expect(modal).toBeVisible();
+      await expect(modal).toContainText('Add custom asset');
+      await expect(modal.getByText('Asset to override')).toBeVisible();
+      await expect(modal.getByPlaceholder('DOT').first()).toHaveValue('ASTR');
+      await expect(modal.getByPlaceholder('10').first()).toHaveValue('18');
+
+      await modal.getByPlaceholder('10').first().fill('7');
+      await modal.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(modal).not.toBeVisible();
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage.getByTestId('select-currency').first().fill('ASTR');
+      await expect(
+        appPage.getByRole('option', { name: 'ASTR (custom)', exact: true }),
+      ).toBeVisible();
+      await expect(
+        appPage.getByRole('option', { name: 'ASTR - Native', exact: true }),
       ).toHaveCount(0);
     },
   );
@@ -510,3 +594,191 @@ basePjsTest.describe('Custom chain transfer wallet signing', () => {
     },
   );
 });
+
+basePjsTest.describe('Custom chain destination transfer wallet signing', () => {
+  let appPage: Page;
+  let extensionPage: PolkadotjsExtensionPage;
+
+  basePjsTest.beforeAll(async ({ context }) => {
+    ({ appPage, extensionPage } = await setupPolkadotExtension(context));
+    await appPage.goto(TRANSFER_ROUTE);
+  });
+
+  basePjsTest(
+    'Should open the wallet when transferring from AssetHubPolkadot to a custom destination chain',
+    async () => {
+      basePjsTest.setTimeout(300_000);
+
+      const modal = await openCustomChainModal(appPage);
+      await modal.getByPlaceholder('MyChain').fill('CustomDestination');
+      await modal.getByPlaceholder('2000').fill('2034');
+
+      await modal.getByPlaceholder('e.g. Parity').nth(0).fill('IBP');
+      await modal
+        .getByPlaceholder('wss://...')
+        .nth(0)
+        .fill('wss://hydration.ibp.network');
+      await modal.getByRole('button', { name: 'Add provider' }).click();
+      await modal.getByPlaceholder('e.g. Parity').nth(1).fill('Helikon');
+      await modal
+        .getByPlaceholder('wss://...')
+        .nth(1)
+        .fill('wss://rpc.helikon.io/hydradx');
+
+      await modal.getByRole('button', { name: 'Add asset' }).click();
+      await fillAssetEntry(modal, 0, {
+        symbol: 'DOT',
+        decimals: 10,
+        location: DOT_LOCATION,
+      });
+
+      await modal.getByPlaceholder('MyChain').click();
+      await modal.getByRole('button', { name: 'Save' }).click();
+      await expect(modal).not.toBeVisible({ timeout: 60_000 });
+
+      await selectOrigin(appPage, 'AssetHubPolkadot');
+
+      await appPage.getByTestId('select-destination').fill('CustomDestination');
+      await appPage
+        .getByRole('option', { name: createName('CustomDestination') })
+        .click();
+
+      await appPage.getByTestId('select-currency').first().click();
+      await appPage
+        .getByRole('option', { name: /^DOT\b/ })
+        .first()
+        .click();
+      await appPage.getByTestId('input-amount-0').fill('10');
+
+      await appPage.getByTestId('submit').click();
+      await acknowledgeTransferWarningIfOpened(appPage);
+
+      const error = appPage.getByTestId('error');
+      await expect(
+        error,
+        (await error.isVisible()) ? await error.innerText() : '',
+      ).not.toBeVisible();
+
+      await extensionPage.navigate();
+      await extensionPage.isPopupOpen();
+      await extensionPage.close();
+      await extensionPage.close();
+    },
+  );
+});
+
+const BOMBOKLA_IMPORT_CONFIG = {
+  version: 1,
+  customChains: {
+    Bombokla: {
+      input: {
+        paraId: 213489,
+        ecosystem: 'Polkadot',
+        providers: [
+          {
+            name: 'Parity',
+            endpoint: 'wss://polkadot-asset-hub-rpc.polkadot.io',
+          },
+        ],
+        xcmVersion: 'V5',
+        ss58Prefix: 34,
+        assets: [
+          {
+            symbol: 'BOMBO',
+            decimals: 10,
+            location: { parents: 1, interior: 'Here' },
+            existentialDeposit: '100000000',
+          },
+        ],
+        pallets: {
+          nativeAssets: 'Balances',
+        },
+      },
+      assetsInfo: {
+        relaychainSymbol: 'DOT',
+        nativeAssetSymbol: 'DOT',
+        isEVM: false,
+        ss58Prefix: 34,
+        supportsDryRunApi: true,
+        supportsXcmPaymentApi: true,
+        assets: [
+          {
+            symbol: 'DOT',
+            decimals: 10,
+            location: {
+              parents: 1,
+              interior: { X1: [{ Parachain: 213489 }] },
+            },
+            isNative: true,
+          },
+          {
+            symbol: 'BOMBO',
+            decimals: 10,
+            location: { parents: 1, interior: { Here: null } },
+            existentialDeposit: '100000000',
+          },
+        ],
+      },
+    },
+  },
+  customAssets: {},
+};
+
+basePjsTest.describe(
+  'Custom chain native existential deposit auto-fetch',
+  () => {
+    let appPage: Page;
+    let extensionPage: PolkadotjsExtensionPage;
+
+    basePjsTest.beforeAll(async ({ context }) => {
+      ({ appPage, extensionPage } = await setupPolkadotExtension(context));
+      await appPage.goto(TRANSFER_ROUTE);
+    });
+
+    basePjsTest(
+      'Should auto-fetch the native ED and not throw when transferring DOT from Astar to a custom Bombokla chain',
+      async () => {
+        basePjsTest.setTimeout(300_000);
+
+        await appPage.getByTestId('advanced-options-toggle').click();
+        await appPage.getByTestId('button-custom-config').click();
+        await appPage.locator('input[type="file"]').setInputFiles({
+          name: 'paraspell-custom-config.json',
+          mimeType: 'application/json',
+          buffer: Buffer.from(JSON.stringify(BOMBOKLA_IMPORT_CONFIG)),
+        });
+        await expect(appPage.getByText('Config imported')).toBeVisible();
+
+        await selectOrigin(appPage, 'Astar');
+
+        await appPage.getByTestId('select-destination').fill('Bombokla');
+        await appPage
+          .getByRole('option', { name: createName('Bombokla') })
+          .click();
+
+        await appPage.getByTestId('select-currency').first().click();
+        await appPage
+          .getByRole('option', { name: /^DOT\b/ })
+          .first()
+          .click();
+        await appPage.getByTestId('input-amount-0').fill('10');
+
+        await appPage.getByTestId('submit').click();
+        await acknowledgeTransferWarningIfOpened(appPage);
+
+        // The bug surfaced as an error toast/box; assert it never appears
+        // (in particular not the existential-deposit error).
+        const error = appPage.getByTestId('error');
+        await expect(
+          error,
+          (await error.isVisible()) ? await error.innerText() : '',
+        ).not.toBeVisible();
+
+        await extensionPage.navigate();
+        await extensionPage.isPopupOpen();
+        await extensionPage.close();
+        await extensionPage.close();
+      },
+    );
+  },
+);

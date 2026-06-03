@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Checkbox,
+  Grid,
   Group,
   JsonInput,
   NumberInput,
@@ -32,49 +33,71 @@ export const CustomAssetEntry = <T,>({
   return (
     <Paper withBorder p="sm">
       <Stack gap="xs">
-        <Group align="flex-end" wrap="nowrap">
-          <TextInput
-            label="Symbol"
-            placeholder="DOT"
-            flex={1}
-            key={form.key(`${prefix}symbol`)}
-            {...form.getInputProps(`${prefix}symbol`)}
-          />
-          <NumberInput
-            label="Decimals"
-            placeholder="10"
-            hideControls
-            min={0}
-            max={36}
-            w={90}
-            key={form.key(`${prefix}decimals`)}
-            {...form.getInputProps(`${prefix}decimals`)}
-          />
-          <TextInput
-            label="Asset ID (optional)"
-            placeholder="—"
-            flex={1}
-            key={form.key(`${prefix}assetId`)}
-            {...form.getInputProps(`${prefix}assetId`)}
-          />
-          <Checkbox
-            label="Native"
-            checked={isNative}
-            onChange={(event) => onNativeToggle(event.currentTarget.checked)}
-            styles={{ root: { paddingBottom: 8 } }}
-          />
-          {onRemove && (
-            <ActionIcon
-              variant="subtle"
-              color="red"
-              size="lg"
-              onClick={onRemove}
-              aria-label="Remove asset"
+        <Grid gap="xs" align="flex-end">
+          <Grid.Col span={6}>
+            <TextInput
+              label="Symbol"
+              placeholder="DOT"
+              key={form.key(`${prefix}symbol`)}
+              {...form.getInputProps(`${prefix}symbol`)}
+            />
+          </Grid.Col>
+          <Grid.Col span={3}>
+            <NumberInput
+              label="Decimals"
+              placeholder="10"
+              hideControls
+              min={0}
+              max={36}
+              key={form.key(`${prefix}decimals`)}
+              {...form.getInputProps(`${prefix}decimals`)}
+            />
+          </Grid.Col>
+          <Grid.Col span={3}>
+            <Group
+              justify="space-between"
+              wrap="nowrap"
+              align="center"
+              h="var(--input-height-sm)"
+              mb={2}
             >
-              <IconTrash size={16} />
-            </ActionIcon>
-          )}
-        </Group>
+              <Checkbox
+                label="Native"
+                checked={isNative}
+                onChange={(event) =>
+                  onNativeToggle(event.currentTarget.checked)
+                }
+              />
+              {onRemove && (
+                <ActionIcon
+                  variant="subtle"
+                  color="red"
+                  size="lg"
+                  onClick={onRemove}
+                  aria-label="Remove asset"
+                >
+                  <IconTrash size={16} />
+                </ActionIcon>
+              )}
+            </Group>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <TextInput
+              label="Asset ID (optional)"
+              placeholder="—"
+              key={form.key(`${prefix}assetId`)}
+              {...form.getInputProps(`${prefix}assetId`)}
+            />
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <TextInput
+              label="Existential deposit (optional)"
+              placeholder="0.01"
+              key={form.key(`${prefix}existentialDeposit`)}
+              {...form.getInputProps(`${prefix}existentialDeposit`)}
+            />
+          </Grid.Col>
+        </Grid>
         {!hideLocation && (
           <JsonInput
             label="Location"

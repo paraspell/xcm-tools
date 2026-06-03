@@ -868,6 +868,14 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
     return mode.type
   }
 
+  async getConstant<T = unknown>(pallet: string, name: string): Promise<T | undefined> {
+    try {
+      return (await this.untypedApi.constants[pallet][name]()) as T
+    } catch {
+      return undefined
+    }
+  }
+
   async getSystemProperties(): Promise<TSystemProperties> {
     const spec = await this.api.getChainSpecData()
     const props = spec?.properties

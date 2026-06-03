@@ -15,11 +15,12 @@ import {
   hasDryRunSupportImpl,
   hasXcmPaymentApiSupportImpl,
   isChainEvmImpl,
+  isSymbolMatch,
   normalizeCustomAssets
 } from '@paraspell/assets'
 import type { TPallet, TPalletEntry } from '@paraspell/pallets'
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
-import { isExternalChain } from '@paraspell/sdk-common'
+import { isCustomChain, isExternalChain } from '@paraspell/sdk-common'
 
 import {
   buildCustomChainAssetsInfo,
@@ -27,7 +28,11 @@ import {
   resolveCustomChainAssetPallets
 } from '../chains/customChains'
 import { DEFAULT_TTL_MS } from '../constants'
-import { ApiNotInitializedError, UnsupportedOperationError } from '../errors'
+import {
+  ApiNotInitializedError,
+  CustomChainInvalidError,
+  UnsupportedOperationError
+} from '../errors'
 import type {
   BatchMode,
   TApiOrUrl,
@@ -35,6 +40,7 @@ import type {
   TBridgeStatus,
   TBuilderOptions,
   TCustomChainEntryHydrated,
+  TDestination,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
@@ -55,7 +61,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   _api?: TApi
   _chain?: TSubstrateChain | TCustomChain
   readonly _config?: TBuilderOptions<TApiOrUrl<TApi>>
-  readonly _customCtx: TFullCustomCtx
+  _customCtx: TFullCustomCtx
   _ttlMs = DEFAULT_TTL_MS
   _disconnectAllowed = true
   abstract readonly type: TApiType
@@ -170,7 +176,11 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     return hasXcmPaymentApiSupportImpl(chain, this._customCtx)
   }
 
-  async init(chain: TChain | TCustomChain, clientTtlMs: number = DEFAULT_TTL_MS): Promise<void> {
+  async init(
+    chain: TChain | TCustomChain,
+    clientTtlMs: number = DEFAULT_TTL_MS,
+    destination?: TDestination
+  ): Promise<void> {
     if (this._chain !== undefined || isExternalChain(chain)) {
       return
     }
@@ -186,6 +196,25 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     )
 
     await this.maybeHydrateCustomChain(chain)
+
+    if (typeof destination === 'string' && isCustomChain(destination)) {
+      await this.hydrateCustomChain(destination)
+    }
+  }
+
+  setCustomCtx(ctx: TFullCustomCtx): void {
+    this._customCtx = ctx
+  }
+
+  private async hydrateCustomChain(chain: TChain | TCustomChain): Promise<void> {
+    if (!this._customCtx.customChains?.[chain] || this._customCtx.customChainAssets?.[chain]) {
+      return
+    }
+
+    const childApi = this.clone()
+    childApi.setCustomCtx(this._customCtx)
+    await childApi.init(chain, this._ttlMs)
+    this.setCustomCtx(childApi._customCtx)
   }
 
   abstract leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TApi>
@@ -241,10 +270,17 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   abstract signAndSubmit(tx: TRes, sender: TSender<TSigner>): Promise<string>
   abstract signAndSubmitFinalized(tx: TRes, sender: TSender<TSigner>): Promise<string>
   abstract getSystemProperties(): Promise<TSystemProperties>
+  abstract getConstant<T = unknown>(pallet: string, name: string): Promise<T | undefined>
+
+  private async getNativeExistentialDeposit(): Promise<bigint | undefined> {
+    const ed = await this.getConstant<bigint>('Balances', 'ExistentialDeposit')
+    return ed !== undefined ? BigInt(ed) : undefined
+  }
 
   private async maybeHydrateCustomChain(chain: TChain | TCustomChain): Promise<void> {
     const entry = this._customCtx.customChains?.[chain]
     if (!entry) return
+
     const needsProps =
       entry.ss58Prefix === undefined ||
       entry.nativeAssetSymbol === undefined ||
@@ -260,6 +296,18 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
       if (entry.nativeAssetDecimals === undefined && typeof props.tokenDecimals === 'number') {
         entry.nativeAssetDecimals = props.tokenDecimals
       }
+
+      const declaredNativeAsset = entry.assets.find(asset => asset.isNative)
+      if (
+        declaredNativeAsset &&
+        props.tokenSymbol &&
+        !isSymbolMatch(declaredNativeAsset.symbol, props.tokenSymbol)
+      ) {
+        throw new CustomChainInvalidError(
+          `Custom chain '${entry.name}' declares '${declaredNativeAsset.symbol}' as its native asset, ` +
+            `but the chain's native asset is '${props.tokenSymbol}'.`
+        )
+      }
     }
     const [
       supportsDryRunApi,
@@ -267,14 +315,16 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
       isEVM,
       hasPolkadotXcm,
       hasXcmPallet,
-      palletList
+      palletList,
+      nativeExistentialDeposit
     ] = await Promise.all([
       this.hasRuntimeApi('DryRunApi'),
       this.hasRuntimeApi('XcmPaymentApi'),
       this.isEvmChain(),
       this.hasMethod('PolkadotXcm', 'send'),
       this.hasMethod('XcmPallet', 'send'),
-      this.fetchPalletList()
+      this.fetchPalletList(),
+      this.getNativeExistentialDeposit()
     ])
     if (!hasPolkadotXcm && !hasXcmPallet) {
       throw new UnsupportedOperationError(
@@ -289,6 +339,8 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
       isEVM,
       supportsDryRunApi,
       supportsXcmPaymentApi,
+      nativeExistentialDeposit:
+        nativeExistentialDeposit !== undefined ? nativeExistentialDeposit.toString() : undefined,
       pallets
     }
     if (this._customCtx.customChainAssets) {

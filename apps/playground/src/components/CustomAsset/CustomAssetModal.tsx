@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { isNotEmpty, useForm } from '@mantine/form';
+import { isNotEmpty, matches, useForm } from '@mantine/form';
 import type { TAssetInfo, TCustomAssetInfo, TLocation } from '@paraspell/sdk';
 import { deepEqual } from '@paraspell/sdk';
 import type { FC } from 'react';
@@ -25,6 +25,7 @@ const DEFAULT_VALUES: TCustomAssetFormValues = {
   decimals: '',
   assetId: '',
   location: '',
+  existentialDeposit: '',
   isNative: false,
   forceOverride: false,
   overrideAssetKey: '',
@@ -72,6 +73,10 @@ export const CustomAssetModal: FC<Props> = ({
     validate: {
       symbol: isNotEmpty('Symbol is required'),
       decimals: isNotEmpty('Decimals required'),
+      existentialDeposit: matches(
+        /^(\d+(\.\d+)?)?$/,
+        'Existential deposit must be a valid amount',
+      ),
       location: (value, values) => {
         const duplicateMsg = 'A custom asset with this location already exists';
         if (values.forceOverride && mode === 'add') {

@@ -3,6 +3,7 @@ import type {
   TCustomChainInput,
   TLocation,
 } from '@paraspell/sdk';
+import { parseUnits } from '@paraspell/sdk';
 
 import type { TCustomChainFormValues } from '../../types/TCustomChain';
 
@@ -20,6 +21,12 @@ export const formToCustomChainInput = (
       decimals: Number(a.decimals),
       location: JSON.parse(a.location.trim()) as TLocation,
       ...(a.assetId.trim() && { assetId: a.assetId.trim() }),
+      ...(a.existentialDeposit.trim() && {
+        existentialDeposit: parseUnits(
+          a.existentialDeposit.trim(),
+          Number(a.decimals),
+        ).toString(),
+      }),
       ...(a.isNative && { isNative: true }),
     }));
 

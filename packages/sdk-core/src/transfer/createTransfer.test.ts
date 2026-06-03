@@ -95,7 +95,7 @@ describe('send', () => {
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
 
-    expect(apiSpy).toHaveBeenCalledWith(options.from, TX_CLIENT_TIMEOUT_MS)
+    expect(apiSpy).toHaveBeenCalledWith(options.from, TX_CLIENT_TIMEOUT_MS, options.to)
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
