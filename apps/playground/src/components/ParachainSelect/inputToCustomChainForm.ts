@@ -1,4 +1,5 @@
 import type { TCustomChainInput } from '@paraspell/sdk';
+import { formatUnits } from '@paraspell/sdk';
 
 import type {
   TCustomChainAssetEntry,
@@ -20,6 +21,9 @@ export const inputToCustomChainForm = (
       decimals: asset.decimals,
       assetId: asset.assetId ?? '',
       location: JSON.stringify(asset.location, null, 2),
+      existentialDeposit: asset.existentialDeposit
+        ? formatUnits(BigInt(asset.existentialDeposit), asset.decimals)
+        : '',
       isNative: asset.isNative ?? false,
     }),
   );

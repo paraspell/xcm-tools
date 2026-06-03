@@ -138,7 +138,7 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
       transactOptions
     } = transferOptions
     const scenario = resolveScenario(this.chain, destination)
-    const paraId = resolveParaId(paraIdTo, destination)
+    const paraId = resolveParaId(paraIdTo, destination, api)
     const destChain = resolveDestChain<TApi, TRes, TSigner, TCustomChain>(api, this.chain, paraId)
 
     const isLocalTransfer = this.chain === destination
@@ -380,7 +380,9 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
 
     const isNativeAsset =
       !isTLocation(to) &&
-      ((isAHPOrigin && !asset.isNative && isSymbolMatch(asset.symbol, getNativeAssetSymbol(to))) ||
+      ((isAHPOrigin &&
+        !asset.isNative &&
+        isSymbolMatch(asset.symbol, getNativeAssetSymbolImpl(to, api._customCtx))) ||
         (isAHPDest && isSomeChainNativeAsset))
 
     const assetHubChain = `AssetHub${this.ecosystem}` as TParachain

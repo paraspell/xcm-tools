@@ -34,11 +34,11 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  findAssetInfoOrThrow,
-  findNativeAssetInfoOrThrow,
+  findAssetInfoOrThrowImpl,
+  findNativeAssetInfoOrThrowImpl,
   getChainProvidersImpl,
-  getRelayChainOf,
-  hasXcmPaymentApiSupport,
+  getRelayChainOfImpl,
+  hasXcmPaymentApiSupportImpl,
   isAssetXcEqual,
   isConfig,
   isSenderSigner,
@@ -52,7 +52,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { getAssetsObject, resolveModuleError } from '@paraspell/sdk-core'
+import { hasDryRunSupportImpl, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
@@ -251,7 +251,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   resolveDefaultFeeAsset({ chain, feeAsset }: TDryRunCallBaseOptions<Extrinsic>) {
-    return feeAsset ?? findNativeAssetInfoOrThrow(chain)
+    return feeAsset ?? findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<Extrinsic>) {
@@ -270,7 +270,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrow(chain, { id: assetId })
+      asset: findAssetInfoOrThrowImpl(chain, { id: assetId }, undefined, this._customCtx)
     }
   }
 
@@ -285,7 +285,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       useRootOrigin = false,
       bypassOptions
     } = options
-    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
+    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
@@ -443,7 +443,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
           )
 
     if (
-      (hasXcmPaymentApiSupport(chain) &&
+      (hasXcmPaymentApiSupportImpl(chain, this._customCtx) &&
         resultJson.ok.local_xcm &&
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
@@ -575,7 +575,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
         ? BigInt((deliveryFeeResJson?.ok?.v4 ?? deliveryFeeResJson?.ok?.v3)?.[0]?.fun?.fungible)
         : 0n
 
-    const nativeAsset = findNativeAssetInfoOrThrow(chain)
+    const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
 
     if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved
@@ -623,7 +623,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     }
 
     const ahApi = this.clone()
-    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(chain)}`
+    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(this, chain)}`
 
     await ahApi.init(assetHubChain)
 
@@ -656,7 +656,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
     version,
     origin
   }: TDryRunXcmBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
-    const supportsDryRunApi = getAssetsObject(chain).supportsDryRunApi
+    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
@@ -695,7 +695,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
-    if (hasXcmPaymentApiSupport(chain) && asset) {
+    if (hasXcmPaymentApiSupportImpl(chain, this._customCtx) && asset) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
@@ -754,6 +754,12 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   async getBridgeStatus() {
     const outboundOperatingMode = await this.api.query.ethereumOutboundQueue.operatingMode()
     return outboundOperatingMode.toPrimitive() as TBridgeStatus
+  }
+
+  getConstant<T = unknown>(pallet: string, name: string): Promise<T | undefined> {
+    const palletConsts = this.api.consts[lowercaseFirstLetter(pallet)]
+    const value = palletConsts ? palletConsts[lowercaseFirstLetter(name)] : undefined
+    return Promise.resolve(value !== undefined ? (value.toJSON() as T) : undefined)
   }
 
   async getSystemProperties(): Promise<TSystemProperties> {

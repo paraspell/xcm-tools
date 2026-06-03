@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { isNotEmpty, useForm } from '@mantine/form';
+import { isNotEmpty, matches, useForm } from '@mantine/form';
 import {
   ASSETS_PALLETS,
   deepEqual,
@@ -36,6 +36,7 @@ const DEFAULT_ASSET: TCustomChainAssetEntry = {
   decimals: '',
   assetId: '',
   location: '',
+  existentialDeposit: '',
   isNative: false,
 };
 
@@ -85,6 +86,10 @@ export const CustomChainModal: FC<Props> = ({
       assets: {
         symbol: isNotEmpty('Symbol is required'),
         decimals: isNotEmpty('Decimals required'),
+        existentialDeposit: matches(
+          /^(\d+(\.\d+)?)?$/,
+          'Existential deposit must be a valid amount',
+        ),
         location: (value, values, path) => {
           const err = validateLocation(value);
           if (err) return err;

@@ -3,6 +3,7 @@ export type TCustomAssetFormValues = {
   decimals: number | '';
   assetId: string;
   location: string;
+  existentialDeposit: string;
   isNative: boolean;
   forceOverride: boolean;
   overrideAssetKey: string;

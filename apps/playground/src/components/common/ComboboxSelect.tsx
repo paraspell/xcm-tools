@@ -39,6 +39,7 @@ export type ComboboxSelectProps = Omit<
   isCustomOption?: (value: string) => boolean;
   onEditCustom?: (value: string) => void;
   onRemoveCustom?: (value: string) => void;
+  onOverrideOption?: (value: string) => void;
   'data-testid'?: string;
 };
 
@@ -65,6 +66,7 @@ export const ComboboxSelect = ({
   isCustomOption,
   onEditCustom,
   onRemoveCustom,
+  onOverrideOption,
   'data-testid': dataTestId,
   ...inputBaseProps
 }: ComboboxSelectProps) => {
@@ -152,12 +154,16 @@ export const ComboboxSelect = ({
                 const isCustom = isCustomOption?.(option.value) ?? false;
                 const showActions =
                   isCustom && (!!onEditCustom || !!onRemoveCustom);
+                const showOverride = !isCustom && !!onOverrideOption;
                 return (
                   <Combobox.Option
                     key={option.value}
+                    className={classes.option}
                     value={option.value}
                     active={checked}
-                    aria-label={showActions ? option.label : undefined}
+                    aria-label={
+                      showActions || showOverride ? option.label : undefined
+                    }
                   >
                     {showActions ? (
                       <Group gap="xs" wrap="nowrap">
@@ -168,6 +174,7 @@ export const ComboboxSelect = ({
                         </div>
                         {onEditCustom && (
                           <ActionIcon
+                            className={classes.rowAction}
                             variant="subtle"
                             color="gray"
                             size="sm"
@@ -184,6 +191,7 @@ export const ComboboxSelect = ({
                         )}
                         {onRemoveCustom && (
                           <ActionIcon
+                            className={classes.rowAction}
                             variant="subtle"
                             color="red"
                             size="sm"
@@ -197,6 +205,29 @@ export const ComboboxSelect = ({
                             <IconTrash size={14} />
                           </ActionIcon>
                         )}
+                      </Group>
+                    ) : showOverride ? (
+                      <Group gap="xs" wrap="nowrap">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          {renderOption
+                            ? renderOption({ option, checked })
+                            : option.label}
+                        </div>
+                        <ActionIcon
+                          className={classes.rowAction}
+                          variant="subtle"
+                          color="gray"
+                          size="sm"
+                          aria-label="Override asset"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            combobox.closeDropdown();
+                            onOverrideOption(option.value);
+                          }}
+                        >
+                          <IconPencil size={14} />
+                        </ActionIcon>
                       </Group>
                     ) : renderOption ? (
                       renderOption({ option, checked })

@@ -1,8 +1,8 @@
 import type { TAssetInfo, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import {
   getEdFromAssetOrThrow,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol,
+  getExistentialDepositOrThrowImpl,
+  getNativeAssetSymbolImpl,
   isSymbolMatch
 } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
@@ -22,7 +22,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
 ): Promise<boolean | undefined> => {
   if (feeAsset) return undefined
 
-  const edNative = getExistentialDepositOrThrow(origin)
+  const edNative = getExistentialDepositOrThrowImpl(origin, undefined, api._customCtx)
 
   const balanceNative = await getBalanceInternal({
     api,
@@ -30,8 +30,14 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
     address: sender
   })
 
-  const isNativeAssetToOrigin = isSymbolMatch(asset.symbol, getNativeAssetSymbol(origin))
-  const isNativeAssetToDest = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))
+  const isNativeAssetToOrigin = isSymbolMatch(
+    asset.symbol,
+    getNativeAssetSymbolImpl(origin, api._customCtx)
+  )
+  const isNativeAssetToDest = isSymbolMatch(
+    asset.symbol,
+    getNativeAssetSymbolImpl(destination, api._customCtx)
+  )
 
   if (isNativeAssetToOrigin && isNativeAssetToDest) {
     return balanceNative - edNative - feeNative - BigInt(currency.amount) > 0n
@@ -65,11 +71,18 @@ export const isSufficientDestination = async <TApi, TRes, TSigner>(
   asset: TAssetInfo,
   feeNative: bigint
 ): Promise<boolean | undefined> => {
-  const isNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))
+  const isNativeAsset = isSymbolMatch(
+    asset.symbol,
+    getNativeAssetSymbolImpl(destination, api._customCtx)
+  )
 
   if (!isNativeAsset) return undefined
 
-  const existentialDeposit = getExistentialDepositOrThrow(destination)
+  const existentialDeposit = getExistentialDepositOrThrowImpl(
+    destination,
+    undefined,
+    api._customCtx
+  )
 
   const nativeBalance = await getBalanceInternal({
     api,

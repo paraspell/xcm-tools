@@ -41,6 +41,7 @@ export type TCustomChainEntryHydrated = TCustomChainEntry & {
   isEVM: boolean
   supportsDryRunApi: boolean
   supportsXcmPaymentApi: boolean
+  nativeExistentialDeposit?: string
   pallets: TCustomChainPallets
 }
 

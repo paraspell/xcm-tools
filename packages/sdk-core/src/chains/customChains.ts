@@ -141,12 +141,25 @@ const buildAutoNativeAsset = (entry: TCustomChainEntryHydrated): TAssetInfo => {
     symbol,
     decimals,
     location: buildNativeLocation(entry.paraId),
-    isNative: true
+    isNative: true,
+    ...(entry.nativeExistentialDeposit !== undefined && {
+      existentialDeposit: entry.nativeExistentialDeposit
+    })
   }
 }
 
 const resolveAssets = (entry: TCustomChainEntryHydrated): TAssetInfo[] => {
-  if (entry.assets.some(asset => asset.isNative)) return entry.assets
+  const declaredNativeAsset = entry.assets.find(asset => asset.isNative)
+  if (declaredNativeAsset) {
+    if (declaredNativeAsset.existentialDeposit === undefined && entry.nativeExistentialDeposit) {
+      return entry.assets.map(asset =>
+        asset === declaredNativeAsset
+          ? { ...asset, existentialDeposit: entry.nativeExistentialDeposit }
+          : asset
+      )
+    }
+    return entry.assets
+  }
   return [buildAutoNativeAsset(entry), ...entry.assets]
 }
 

@@ -3,13 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TCurrencyCore } from '../types'
-import { getNativeAssetSymbol } from './assets'
+import { getNativeAssetSymbolImpl } from './assets'
 import {
   getEdFromAssetOrThrow,
   getExistentialDeposit,
   getExistentialDepositOrThrow
 } from './getExistentialDeposit'
-import { findAssetInfo, findAssetInfoOrThrow } from './search'
+import { findAssetInfoImpl, findAssetInfoOrThrowImpl } from './search'
 
 vi.mock('./assets')
 vi.mock('./search')
@@ -19,46 +19,55 @@ describe('getExistentialDeposit', () => {
     vi.clearAllMocks()
   })
 
-  it('returns ED of native asset when currency is not provided and findAssetInfo succeeds', () => {
+  it('returns ED of native asset when currency is not provided and findAssetInfoImpl succeeds', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
     const ed = 1_000_000_000n
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
-    vi.mocked(findAssetInfo).mockReturnValue({
+    vi.mocked(getNativeAssetSymbolImpl).mockReturnValue(nativeSymbol)
+    vi.mocked(findAssetInfoImpl).mockReturnValue({
       symbol: nativeSymbol,
       existentialDeposit: ed.toString()
     } as TAssetInfo)
 
     const result = getExistentialDeposit(chain)
 
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith(chain)
-    expect(findAssetInfo).toHaveBeenCalledWith(
+    expect(getNativeAssetSymbolImpl).toHaveBeenCalledWith(chain, undefined)
+    expect(findAssetInfoImpl).toHaveBeenCalledWith(
       chain,
-      expect.objectContaining({ symbol: expect.anything() })
+      expect.objectContaining({ symbol: expect.anything() }),
+      undefined,
+      undefined
     )
     expect(result).toBe(ed)
   })
 
-  it('falls back to findAssetInfoOrThrow when currency is not provided and findAssetInfo returns null', () => {
+  it('falls back to findAssetInfoOrThrowImpl when currency is not provided and findAssetInfoImpl returns null', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
     const ed = 1_000_000_000n
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
-    vi.mocked(findAssetInfo).mockReturnValue(null)
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    vi.mocked(getNativeAssetSymbolImpl).mockReturnValue(nativeSymbol)
+    vi.mocked(findAssetInfoImpl).mockReturnValue(null)
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue({
       symbol: nativeSymbol,
       existentialDeposit: ed.toString()
     } as TAssetInfo)
 
     const result = getExistentialDeposit(chain)
 
-    expect(findAssetInfo).toHaveBeenCalledWith(
+    expect(findAssetInfoImpl).toHaveBeenCalledWith(
       chain,
-      expect.objectContaining({ symbol: expect.anything() })
+      expect.objectContaining({ symbol: expect.anything() }),
+      undefined,
+      undefined
     )
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, { symbol: nativeSymbol })
+    expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
+      chain,
+      { symbol: nativeSymbol },
+      undefined,
+      undefined
+    )
     expect(result).toBe(ed)
   })
 
@@ -66,8 +75,8 @@ describe('getExistentialDeposit', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
-    vi.mocked(findAssetInfo).mockReturnValue({
+    vi.mocked(getNativeAssetSymbolImpl).mockReturnValue(nativeSymbol)
+    vi.mocked(findAssetInfoImpl).mockReturnValue({
       symbol: nativeSymbol
     } as TAssetInfo)
 
@@ -80,7 +89,7 @@ describe('getExistentialDeposit', () => {
     const currency: TCurrencyCore = { symbol: 'KSM' }
     const ed = 500_000_000n
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue({
       symbol: 'KSM',
       assetId: '1',
       existentialDeposit: ed.toString()
@@ -88,7 +97,7 @@ describe('getExistentialDeposit', () => {
 
     const result = getExistentialDeposit(chain, currency)
 
-    expect(findAssetInfoOrThrow).toHaveBeenCalledWith(chain, currency)
+    expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(chain, currency, undefined, undefined)
     expect(result).toBe(ed)
   })
 
@@ -96,7 +105,7 @@ describe('getExistentialDeposit', () => {
     const chain: TChain = 'Karura'
     const currency: TCurrencyCore = { symbol: 'KSM' }
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue({
       symbol: 'KSM'
     } as TAssetInfo)
 
@@ -112,7 +121,7 @@ describe('getExistentialDepositOrThrow', () => {
     const chain: TChain = 'Acala'
     const currency: TCurrencyCore = { symbol: 'KSM' }
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue({
       symbol: 'KSM'
     } as TAssetInfo)
 
@@ -127,7 +136,7 @@ describe('getExistentialDepositOrThrow', () => {
     const currency: TCurrencyCore = { symbol: 'ACA' }
     const ed = '1000000000'
 
-    vi.mocked(findAssetInfoOrThrow).mockReturnValue({
+    vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue({
       symbol: 'ACA',
       existentialDeposit: ed
     } as TAssetInfo)
@@ -141,8 +150,8 @@ describe('getExistentialDepositOrThrow', () => {
     const nativeSymbol = 'ACA'
     const ed = '1000000000'
 
-    vi.mocked(getNativeAssetSymbol).mockReturnValue(nativeSymbol)
-    vi.mocked(findAssetInfo).mockReturnValue({
+    vi.mocked(getNativeAssetSymbolImpl).mockReturnValue(nativeSymbol)
+    vi.mocked(findAssetInfoImpl).mockReturnValue({
       symbol: nativeSymbol,
       existentialDeposit: ed
     } as TAssetInfo)

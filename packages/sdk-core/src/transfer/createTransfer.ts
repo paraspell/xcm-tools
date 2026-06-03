@@ -135,7 +135,7 @@ export const createTransfer = async <TApi, TRes, TSigner>(
 
   validateCurrency(currency, feeAsset)
 
-  await api.init(origin, TX_CLIENT_TIMEOUT_MS)
+  await api.init(origin, TX_CLIENT_TIMEOUT_MS, destination)
 
   const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
     resolveTransferParams(options)

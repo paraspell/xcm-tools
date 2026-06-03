@@ -1,12 +1,17 @@
 import { isTLocation } from '@paraspell/sdk-common'
 
-import { getParaId } from '../chains/config'
+import type { PolkadotApi } from '../api'
+import { getParaIdImpl } from '../chains/config'
 import type { TDestination } from '../types'
 
-export const resolveParaId = (paraId: number | undefined, destination: TDestination) => {
+export const resolveParaId = <TApi, TRes, TSigner>(
+  paraId: number | undefined,
+  destination: TDestination,
+  api: PolkadotApi<TApi, TRes, TSigner>
+) => {
   if (isTLocation(destination)) {
     return undefined
   }
 
-  return paraId !== undefined ? paraId : getParaId(destination)
+  return paraId !== undefined ? paraId : getParaIdImpl(destination, api._customCtx)
 }
