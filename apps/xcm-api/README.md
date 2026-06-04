@@ -217,6 +217,7 @@ const response = await fetch("http://localhost:3001/v1/x-transfer", {
               "symbol": "USDC",
               "decimals": 6,
               "assetId": "1337",
+              "existentialDeposit": "0.1",
               "location": {
                 "parents": 1,
                 "interior": {
@@ -239,6 +240,7 @@ const response = await fetch("http://localhost:3001/v1/x-transfer", {
             "symbol": "MYNEWUSD",
             "decimals": 6,
             "assetId": "9999",
+            "existentialDeposit": "0.1",
             "location": {
               "parents": 0,
               "interior": {
@@ -251,6 +253,7 @@ const response = await fetch("http://localhost:3001/v1/x-transfer", {
             "symbol": "USDT",
             "decimals": 6,
             "assetId": "1984",
+            "existentialDeposit": "0.1",
             "location": {
               "parents": 0,
               "interior": {

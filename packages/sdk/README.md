@@ -345,6 +345,7 @@ SDK features ability to add custom chain and/or custom assets simply by adding i
           {
             symbol: 'USDC',
             decimals: 6,
+            existentialDeposit: 0.1,
             location: {
               parents: 1,
               interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, {
@@ -363,6 +364,7 @@ SDK features ability to add custom chain and/or custom assets simply by adding i
           symbol: 'MYNEWUSD',
           decimals: 6,
           assetId: '9999',
+          existentialDeposit: 0.1,
           location: {
             parents: 0,
             interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 9999 }] }
@@ -373,6 +375,7 @@ SDK features ability to add custom chain and/or custom assets simply by adding i
           symbol: 'USDT',
           decimals: 6,
           assetId: '1984',
+          existentialDeposit: 0.1,
           location: {
             parents: 0,
             interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }

@@ -173,74 +173,6 @@ await builder.disconnect()
 */
 ```
 
-#### Adding chain and/or assets
-SDK features ability to add custom chain and/or custom assets simply by adding its config to the Builder.
-
-```ts
-  const tx = await Builder({
-    // Adding custom chain
-    customChains: {
-      MyChain: {
-        paraId: 4242,
-        ecosystem: 'Polkadot',
-        xcmVersion: Version.V5,
-        providers: [{ name: 'Primary', endpoint: 'wss://rpc.mychain.example/ws' }],
-        // Everything below is optional — auto-fetched from runtime `system.properties` when omitted
-        nativeAssetSymbol: 'MYC',
-        nativeAssetDecimals: 12,
-        ss58Prefix: 42,
-        pallets: {
-            nativeAssets: "Balances”,
-            otherAssets: "Assets",
-        }
-        assets: [
-          {
-            symbol: 'USDC',
-            decimals: 6,
-            location: {
-              parents: 1,
-              interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, {
-  GeneralIndex: 1337 }] }
-            },
-            assetId: '1337'
-          }
-        ]
-      }
-    },
-
-    // Adding assets to existing chains
-    customAssets: {
-      AssetHubPolkadot: [
-        {
-          symbol: 'MYNEWUSD',
-          decimals: 6,
-          assetId: '9999',
-          location: {
-            parents: 0,
-            interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 9999 }] }
-          }
-        },
-        {
-          // Replace an existing registry asset that shares the same location
-          symbol: 'USDT',
-          decimals: 6,
-          assetId: '1984',
-          location: {
-            parents: 0,
-            interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }
-          },
-          forceOverride: true
-        }
-      ]
-    }
-  })
-    .from('MyChain') // custom chain name — TS-autocompletes
-    .to('AssetHubPolkadot') // could be any of the existing or also the new ones added
-    .currency({ symbol: 'USDC', amount: amount })
-    .recipient(address)
-    .build()
-```
-
 #### Local transfers
 
 ```ts
@@ -383,6 +315,77 @@ const tx = await builder.buildBatch({
 
 //Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
+```
+
+#### Adding chain and/or assets
+SDK features ability to add custom chain and/or custom assets simply by adding its config to the Builder.
+
+```ts
+  const tx = await Builder({
+    // Adding custom chain
+    customChains: {
+      MyChain: {
+        paraId: 4242,
+        ecosystem: 'Polkadot',
+        xcmVersion: Version.V5,
+        providers: [{ name: 'Primary', endpoint: 'wss://rpc.mychain.example/ws' }],
+        // Everything below is optional — auto-fetched from runtime `system.properties` when omitted
+        nativeAssetSymbol: 'MYC',
+        nativeAssetDecimals: 12,
+        ss58Prefix: 42,
+        pallets: {
+            nativeAssets: "Balances”,
+            otherAssets: "Assets",
+        }
+        assets: [
+          {
+            symbol: 'USDC',
+            decimals: 6,
+            existentialDeposit: 0.1,
+            location: {
+              parents: 1,
+              interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, {
+  GeneralIndex: 1337 }] }
+            },
+            assetId: '1337'
+          }
+        ]
+      }
+    },
+
+    // Adding assets to existing chains
+    customAssets: {
+      AssetHubPolkadot: [
+        {
+          symbol: 'MYNEWUSD',
+          decimals: 6,
+          assetId: '9999',
+          existentialDeposit: 0.1,
+          location: {
+            parents: 0,
+            interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 9999 }] }
+          }
+        },
+        {
+          // Replace an existing registry asset that shares the same location
+          symbol: 'USDT',
+          decimals: 6,
+          assetId: '1984',
+          existentialDeposit: 0.1,
+          location: {
+            parents: 0,
+            interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+          },
+          forceOverride: true
+        }
+      ]
+    }
+  })
+    .from('MyChain') // custom chain name — TS-autocompletes
+    .to('AssetHubPolkadot') // could be any of the existing or also the new ones added
+    .currency({ symbol: 'USDC', amount: amount })
+    .recipient(address)
+    .build()
 ```
 
 ### Localhost test setup
