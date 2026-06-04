@@ -18,7 +18,10 @@ class Centrifuge<TApi, TRes, TSigner>
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
 
-  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ) {
     if (asset.symbol === this.getNativeAssetSymbol(api)) return 'Native'
     assertHasId(asset)
     return { ForeignAsset: Number(asset.assetId) }

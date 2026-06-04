@@ -21,7 +21,7 @@ import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 export const Builder = <const TOpts extends TBuilderOptions<TApiOrUrl<TPjsApi>>>(
   options?: TOpts
 ) => {
-  const pjsApi = new PolkadotJsApi(options)
+  const pjsApi = new PolkadotJsApi<TCustomChainFrom<TOpts>>(options)
   return BuilderImpl<TPjsApi, Extrinsic, TPjsSigner, TCustomChainFrom<TOpts>>(pjsApi)
 }
 
@@ -36,5 +36,5 @@ export const EvmBuilder = (
   api?: TBuilderOptions<TApiOrUrl<TPjsApi>>
 ) => {
   const pjsApi = new PolkadotJsApi(api)
-  return EvmBuilderImpl<TPjsApi, Extrinsic, TPjsSigner>(pjsApi, provider)
+  return EvmBuilderImpl(pjsApi, provider)
 }

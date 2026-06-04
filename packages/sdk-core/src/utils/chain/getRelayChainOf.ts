@@ -21,7 +21,7 @@ export const getRelayChainOf = (chain: TSubstrateChain): TRelaychain => {
 }
 
 export const getRelayChainOfImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   chain: TSubstrateChain | TCustomChain
 ): TRelaychain => {
   if (isRelayChain(chain)) return chain

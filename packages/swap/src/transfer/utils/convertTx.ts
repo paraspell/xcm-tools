@@ -6,9 +6,9 @@ import { isPapiTransaction, isPjsExtrinsic } from '../../utils';
 
 const stripHeaderBytes = (hex: string, byteCount: number) => '0x' + hex.slice(2 + byteCount * 2);
 
-export const convertTxToTarget = async <TApi, TRes, TSigner>(
+export const convertTxToTarget = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   tx: TExtrinsic<TRes>,
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<TRes> => {
   const isPjsTx = isPjsExtrinsic(tx);
 

@@ -27,7 +27,7 @@ export const dryRunOrigin = createPapiApiCall(
 export const getParaEthTransferFees = async (ahApi?: TApiOrUrl<TPapiApi>) => {
   const papiApi = new PapiApi(ahApi)
   await papiApi.init('AssetHubPolkadot')
-  return getEthFeesImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
+  return getEthFeesImpl(papiApi)
 }
 
 /**
@@ -35,7 +35,7 @@ export const getParaEthTransferFees = async (ahApi?: TApiOrUrl<TPapiApi>) => {
  */
 export const getBridgeStatus = async (ahApi?: TApiOrUrl<TPapiApi>) => {
   const papiApi = new PapiApi(ahApi)
-  return getBridgeStatusImpl<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi)
+  return getBridgeStatusImpl(papiApi)
 }
 
 export const getOriginXcmFee = createPapiApiCall(
@@ -58,7 +58,7 @@ export const handleSwapExecuteTransfer = (
   builderOptions?: TBuilderOptions<TApiOrUrl<TPapiApi>>
 ) => {
   const api = new PapiApi(builderOptions)
-  return handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction, TPapiSigner>({
+  return handleSwapExecuteTransferImpl({
     ...options,
     api
   })

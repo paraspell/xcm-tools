@@ -7,22 +7,27 @@ import type { TCreateBeneficiaryOptions, TCreateBeneficiaryXTokensOptions } from
 import { resolveScenario } from '../transfer/resolveScenario'
 import { createX1Payload } from './createX1Payload'
 
-const createAccountPayload = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+const createAccountPayload = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   address: string
 ): TJunction =>
   isAddress(address)
     ? { AccountKey20: { key: address } }
     : { AccountId32: { id: api.accountToHex(address) } }
 
-export const createBeneficiaryLocXTokens = <TApi, TRes, TSigner>({
+export const createBeneficiaryLocXTokens = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>({
   api,
   recipient,
   origin,
   destination,
   version,
   paraId
-}: TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner>): TLocation => {
+}: TCreateBeneficiaryXTokensOptions<TApi, TRes, TSigner, TCustomChain>): TLocation => {
   if (isTLocation(recipient)) {
     return recipient
   }
@@ -55,11 +60,16 @@ export const createBeneficiaryLocXTokens = <TApi, TRes, TSigner>({
   }
 }
 
-export const createBeneficiaryLocation = <TApi, TRes, TSigner>({
+export const createBeneficiaryLocation = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>({
   api,
   address,
   version
-}: TCreateBeneficiaryOptions<TApi, TRes, TSigner>): TLocation => {
+}: TCreateBeneficiaryOptions<TApi, TRes, TSigner, TCustomChain>): TLocation => {
   if (isTLocation(address)) return address
 
   const accountPayload = createAccountPayload(api, address)

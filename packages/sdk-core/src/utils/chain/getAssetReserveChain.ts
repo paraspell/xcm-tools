@@ -67,7 +67,7 @@ export const getAssetReserveChain = (
   )
 
 export const getAssetReserveChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   chain: TSubstrateChain | TCustomChain,
   assetLocation: TLocation,
   resolveExternalReserve = false

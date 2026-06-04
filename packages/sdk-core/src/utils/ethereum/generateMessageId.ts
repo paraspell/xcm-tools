@@ -2,8 +2,8 @@ import type { TAmount } from '@paraspell/assets'
 
 import type { PolkadotApi } from '../../api'
 
-export const generateMessageId = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const generateMessageId = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   senderAddress: string,
   sourceParaId: number,
   tokenAddress: string,

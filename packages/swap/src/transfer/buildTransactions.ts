@@ -4,9 +4,15 @@ import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TRouterPlan, TTransformedOptions } from '../types';
 import { prepareExtrinsics } from './prepareExtrinsics';
 
-export const buildTransactions = async <TApi, TRes, TSigner>(
+export const buildTransactions = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<TRouterPlan<TApi, TRes>> => {
   const { origin, exchange, destination } = options;
 

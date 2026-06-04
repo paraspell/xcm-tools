@@ -7,12 +7,12 @@ import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
 export class CurrenciesPallet extends BaseAssetsPallet {
-  mint<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain
+    chain: TSubstrateChain | TCustomChain
   ): Promise<TSetBalanceRes> {
     const isKarura = chain.startsWith('Karura')
     const isAcala = chain.startsWith('Acala')

@@ -17,14 +17,19 @@ import type { PublicClient, TransactionSerializableEIP1559 } from 'viem'
 import { createEnvironment } from './createEnvironment'
 import { ETHEREUM_WS_URLS, leaseClient, releaseClient } from './viemClientCache'
 
-export const buildSnowbridgeTransfer = async <TApi, TRes, TSigner>(
+export const buildSnowbridgeTransfer = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
   {
     api,
     to,
     currency,
     recipient,
     sender: senderAddress
-  }: TBuildEvmTransferOptions<TApi, TRes, TSigner>,
+  }: TBuildEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   client?: PublicClient
 ) => {
   if (Array.isArray(currency)) {

@@ -40,8 +40,7 @@ export const getNativeAssetsPallet = <TCustomChain extends string = never>(
   if (isCustomChain(chain)) {
     const entry = ctx?.customChainPallets?.[chain]
     if (!entry) {
-      // TODO: Fix this cast
-      throw new XcmPalletNotFoundError(chain as TSubstrateChain)
+      throw new XcmPalletNotFoundError(chain)
     }
     return entry.nativeAssets
   }
@@ -55,8 +54,7 @@ export const getOtherAssetsPallets = <TCustomChain extends string = never>(
   if (isCustomChain(chain)) {
     const entry = ctx?.customChainPallets?.[chain]
     if (!entry) {
-      // TODO: Fix this cast
-      throw new XcmPalletNotFoundError(chain as TSubstrateChain)
+      throw new XcmPalletNotFoundError(chain)
     }
     return entry.otherAssets
   }

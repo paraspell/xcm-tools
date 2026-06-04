@@ -39,10 +39,10 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
   }
 }
 
-export const validateDestination = <TApi, TRes, TSigner>(
+export const validateDestination = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   origin: TSubstrateChain,
   destination: TDestination,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => {
   if (
     isRelayChain(origin) &&
@@ -100,14 +100,14 @@ export const validateAssetSpecifiers = (assetCheckEnabled: boolean, currency: TC
   }
 }
 
-export const validateTransact = <TApi, TRes, TSigner>({
+export const validateTransact = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   from,
   to,
   sender,
   recipient: address,
   transactOptions
-}: TSubstrateTransferOptions<TApi, TRes, TSigner>) => {
+}: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>) => {
   const call = transactOptions?.call
 
   if (!call) return

@@ -25,12 +25,12 @@ import {
 } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
-export const getBridgeReserve = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  chain: TSubstrateChain,
+export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  chain: TSubstrateChain | TCustomChain,
   destination: TChain,
   location: TLocation
-): TChain => {
+): TChain | TCustomChain => {
   const expectedConsensus = isExternalChain(destination)
     ? getEthereumJunction(api, chain, false).GlobalConsensus
     : { [getRelayChainOf(destination).toLowerCase()]: null }
@@ -40,14 +40,14 @@ export const getBridgeReserve = <TApi, TRes, TSigner>(
   return isDestReserve ? destination : chain
 }
 
-const resolveReserveChain = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  chain: TSubstrateChain,
+const resolveReserveChain = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  chain: TSubstrateChain | TCustomChain,
   destination: TChain,
   assetLocation: TLocation,
   isSubBridge: boolean,
   overrideReserve?: TSubstrateChain
-): TChain => {
+): TChain | TCustomChain => {
   if (isSubBridge) {
     return getBridgeReserve(api, chain, destination, assetLocation)
   }
@@ -59,10 +59,15 @@ const resolveReserveChain = <TApi, TRes, TSigner>(
   return getAssetReserveChainImpl(api, chain, assetLocation, true)
 }
 
-export const createTypeAndThenCallContext = async <TApi, TRes, TSigner>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+export const createTypeAndThenCallContext = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TTypeAndThenOverrides
-): Promise<TTypeAndThenCallContext<TApi, TRes, TSigner>> => {
+): Promise<TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>> => {
   const { api, chain, destination, assetInfo } = options
 
   assertToIsString(destination)

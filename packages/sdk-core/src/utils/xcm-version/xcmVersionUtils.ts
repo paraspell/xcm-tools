@@ -20,9 +20,9 @@ export const selectXcmVersion = (
   return destVersion < originVersion ? destVersion : originVersion
 }
 
-export const pickCompatibleXcmVersion = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  origin: TSubstrateChain,
+export const pickCompatibleXcmVersion = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  origin: TSubstrateChain | TCustomChain,
   destination: TDestination,
   override?: Version
 ) => {
@@ -31,8 +31,13 @@ export const pickCompatibleXcmVersion = <TApi, TRes, TSigner>(
   return selectXcmVersion(override, originVersion, destVersion)
 }
 
-export const pickRouterCompatibleXcmVersion = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const pickRouterCompatibleXcmVersion = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain | undefined,
   exchangeChain: TSubstrateChain,
   destination: TChain | undefined

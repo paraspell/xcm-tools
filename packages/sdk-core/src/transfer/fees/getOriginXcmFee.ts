@@ -7,9 +7,10 @@ export const getOriginXcmFee = async <
   TApi,
   TRes,
   TSigner,
-  TDisableFallback extends boolean = boolean
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
 >(
-  options: TGetOriginXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>
+  options: TGetOriginXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>
 ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
   const { buildTx } = options
 

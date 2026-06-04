@@ -5,7 +5,7 @@ import type { TDestination, TScenario } from '../../types'
 
 export const resolveScenario = <TCustomChain extends string = never>(
   origin: TChain | TCustomChain,
-  destination: TDestination
+  destination: TDestination | TCustomChain
 ): TScenario => {
   if (isRelayChain(origin)) return 'RelayToPara'
 

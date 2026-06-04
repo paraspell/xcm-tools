@@ -29,8 +29,13 @@ export const calculateTotalXcmFee = (
   return totalHopFee + destFee
 }
 
-export const verifyEdOnDestinationInternal = async <TApi, TRes, TSigner>(
-  options: TVerifyEdOnDestinationOptions<TApi, TRes, TSigner>
+export const verifyEdOnDestinationInternal = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TVerifyEdOnDestinationOptions<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const { api, buildTx, origin, destination, currency, sender, recipient, feeAsset, version } =
     options

@@ -15,13 +15,14 @@ export const normalizeAmountAll = async <
   TApi,
   TRes,
   TSigner,
-  TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>
+  TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>,
+  TCustomChain extends string = never
 >(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  builder: GeneralBuilder<TApi, TRes, TSigner, TOptions>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  builder: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
   options: TOptions
 ): Promise<{
-  options: TTransferOptions<TApi, TRes, TSigner> & TOptions
+  options: TTransferOptions<TApi, TRes, TSigner, TCustomChain> & TOptions
   buildTx: TTxFactory<TRes>
 }> => {
   const { currency, swapOptions, from } = options

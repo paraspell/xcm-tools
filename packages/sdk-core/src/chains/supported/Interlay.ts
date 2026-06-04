@@ -21,8 +21,8 @@ class Interlay<TApi, TRes, TSigner>
     super('Interlay', 'interlay', 'Polkadot', Version.V3)
   }
 
-  getCustomCurrencyId(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TForeignOrTokenAsset {
     return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }

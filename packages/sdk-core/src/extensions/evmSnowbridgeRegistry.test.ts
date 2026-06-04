@@ -19,8 +19,9 @@ describe('evmSnowbridgeRegistry', () => {
   })
 
   it('returns the registered extension', () => {
-    const executeTransfer = (_: TEvmTransferOptions<unknown, unknown, unknown>) =>
-      Promise.resolve('0xdeadbeef')
+    const executeTransfer = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+      _: TEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>
+    ) => Promise.resolve('0xdeadbeef')
     const buildTransfer = () => Promise.resolve({ type: 'eip1559', chainId: 1 } as const)
     registerEvmSnowbridgeExtension({ executeTransfer, buildTransfer })
 

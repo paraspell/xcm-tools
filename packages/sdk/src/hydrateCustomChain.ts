@@ -1,16 +1,15 @@
-import type { TChain, TChainAssetsInfo } from '@paraspell/sdk-core'
+import type { TChainAssetsInfo } from '@paraspell/sdk-core'
 import { CustomChainInvalidError, type TCustomChainInput } from '@paraspell/sdk-core'
 
 import PapiApi from './PapiApi'
 
-export const hydrateCustomChain = async (
-  name: string,
+export const hydrateCustomChain = async <TCustomChain extends string>(
+  name: TCustomChain,
   input: TCustomChainInput
 ): Promise<TChainAssetsInfo> => {
-  const api = new PapiApi({ customChains: { [name]: input } })
+  const api = new PapiApi<TCustomChain>({ customChains: { [name]: input } })
   try {
-    // TODO: drop the cast once PapiApi propagates a TCustomChain generic
-    await api.init(name as TChain)
+    await api.init(name)
     const info = api._customCtx.customChainAssets?.[name]
     if (!info) {
       throw new CustomChainInvalidError(

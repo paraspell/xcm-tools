@@ -42,6 +42,7 @@ import {
   hasXcmPaymentApiSupportImpl,
   isAssetXcEqual,
   isConfig,
+  isCustomChain,
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
@@ -115,7 +116,12 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   );
 };
 
-class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
+class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
+  TDedotApi,
+  TDedotExtrinsic,
+  TDedotSigner,
+  TCustomChain
+> {
   readonly type = "DEDOT";
 
   leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TDedotApi> {
@@ -293,11 +299,15 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
   }
 
   clone() {
-    return new DedotApi(isConfig(this._config) ? this._config : undefined);
+    return new DedotApi<TCustomChain>(
+      isConfig(this._config) ? this._config : undefined,
+    );
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new DedotApi(isConfig(this._config) ? this._config : undefined);
+    const api = new DedotApi<TCustomChain>(
+      isConfig(this._config) ? this._config : undefined,
+    );
     await api.init(chain);
     return api;
   }
@@ -368,7 +378,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
     };
 
     const resolvedTx = useRootOrigin
-      ? await wrapTxBypass<TDedotApi, TDedotExtrinsic, TDedotSigner>(
+      ? await wrapTxBypass(
           {
             ...options,
             api: this,
@@ -881,11 +891,14 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
   }
 
   disconnect(force = false) {
-    if (!this._chain) return Promise.resolve();
+    const chain = this._chain;
+    if (!chain) return Promise.resolve();
     if (!force && !this.disconnectAllowed) return Promise.resolve();
 
     const api = isConfig(this._config)
-      ? this._config.apiOverrides?.[this._chain]
+      ? isCustomChain(chain)
+        ? undefined
+        : this._config.apiOverrides?.[chain]
       : this._config;
 
     // Own client provided, destroy only if force true
@@ -900,7 +913,7 @@ class DedotApi extends PolkadotApi<TDedotApi, TDedotExtrinsic, TDedotSigner> {
       } else {
         const key =
           api === undefined
-            ? getChainProvidersImpl(this._chain, this._customCtx)
+            ? getChainProvidersImpl(chain, this._customCtx)
             : api;
         releaseClient(key);
       }

@@ -86,8 +86,8 @@ class Acala<TApi, TRes, TSigner>
     })
   }
 
-  getCustomCurrencyId(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TForeignOrTokenAsset {
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol

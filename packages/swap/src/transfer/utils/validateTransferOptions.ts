@@ -4,8 +4,8 @@ import { ethers } from 'ethers-v6';
 import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
 
-export const validateTransferOptions = <TApi, TRes, TSigner>(
-  options: TBuildTransactionsOptions<TApi, TRes, TSigner>,
+export const validateTransferOptions = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
 ) => {
   const { from, exchange, evmSenderAddress, sender, recipient, to } = options;
 

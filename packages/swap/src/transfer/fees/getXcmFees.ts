@@ -4,8 +4,14 @@ import type { TBuildTransactionsOptions } from '../../types';
 import { getRouterFees } from '../getRouterFees';
 import { prepareTransformedOptions, validateTransferOptions } from '../utils';
 
-export const getXcmFees = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
-  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner>,
+export const getXcmFees = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never,
+>(
+  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
   disableFallback: TDisableFallback,
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   validateTransferOptions(initialOptions);

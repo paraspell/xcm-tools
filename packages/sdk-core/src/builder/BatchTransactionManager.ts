@@ -8,10 +8,10 @@ import { BatchMode, type TBatchOptions } from '../types'
 import { assertSubstrateOrigin, createTransferOrSwap } from '../utils'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
-class BatchTransactionManager<TApi, TRes, TSigner> {
-  transactionOptions: TBatchedTransferOptions<TApi, TRes, TSigner>[] = []
+class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string = never> {
+  transactionOptions: TBatchedTransferOptions<TApi, TRes, TSigner, TCustomChain>[] = []
 
-  addTransaction(options: TBatchedTransferOptions<TApi, TRes, TSigner>) {
+  addTransaction(options: TBatchedTransferOptions<TApi, TRes, TSigner, TCustomChain>) {
     this.transactionOptions.push(options)
   }
 
@@ -20,7 +20,7 @@ class BatchTransactionManager<TApi, TRes, TSigner> {
   }
 
   async buildBatch(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     from: TSubstrateChain,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {

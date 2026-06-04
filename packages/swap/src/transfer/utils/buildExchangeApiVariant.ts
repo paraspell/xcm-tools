@@ -22,8 +22,8 @@ export const buildExchangeApiVariant = async (
   return { apiType: 'GENERIC' };
 };
 
-export const pickExchangeApiVariant = <TApi, TRes, TSigner>(
-  exchange: TExchangeInfo<TApi, TRes, TSigner>,
+export const pickExchangeApiVariant = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>,
 ): TExchangeApiVariant => {
   if (exchange.apiType === 'PAPI') {
     return { apiType: 'PAPI', apiPapi: exchange.apiPapi };

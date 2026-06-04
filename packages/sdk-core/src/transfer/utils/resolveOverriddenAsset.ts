@@ -15,8 +15,8 @@ import type { TSubstrateTransferOptions } from '../../types'
 import { abstractDecimals, createAsset, getChainVersion } from '../../utils'
 import { validateAssetSupport } from './validateAssetSupport'
 
-export const resolveOverriddenAsset = <TApi, TRes, TSigner>(
-  options: TSubstrateTransferOptions<TApi, TRes, TSigner>,
+export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
   resolvedFeeAsset: TAssetInfo | undefined

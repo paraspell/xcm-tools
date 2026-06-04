@@ -7,8 +7,8 @@ import type {
 } from '@paraspell/sdk-core';
 import { buildHopInfo } from '@paraspell/sdk-core';
 
-type TBuildExecuteSwapHopsOptions<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>;
+type TBuildExecuteSwapHopsOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
   hops: TGetXcmFeeResult['hops'];
   originChain: TSubstrateChain;
   exchangeChain: TSubstrateChain;
@@ -17,7 +17,12 @@ type TBuildExecuteSwapHopsOptions<TApi, TRes, TSigner> = {
   sender: string;
 };
 
-export const buildExecuteSwapHops = async <TApi, TRes, TSigner>({
+export const buildExecuteSwapHops = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>({
   api,
   hops,
   originChain,
@@ -25,7 +30,9 @@ export const buildExecuteSwapHops = async <TApi, TRes, TSigner>({
   currencyFrom,
   currencyTo,
   sender,
-}: TBuildExecuteSwapHopsOptions<TApi, TRes, TSigner>): Promise<THopTransferInfo[]> => {
+}: TBuildExecuteSwapHopsOptions<TApi, TRes, TSigner, TCustomChain>): Promise<
+  THopTransferInfo[]
+> => {
   const exchangeHopIdx = hops.findIndex((h) => h.chain === exchangeChain);
 
   return Promise.all(

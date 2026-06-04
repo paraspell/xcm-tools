@@ -3,7 +3,7 @@ import { getExistentialDepositOrThrow } from '@paraspell/assets'
 import { getAssetBalanceInternal } from '../../balance'
 import type { TBuildOriginInfoOptions, TTransferInfo } from '../../types'
 
-export const buildOriginInfo = async <TApi, TRes, TSigner>({
+export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   origin,
   sender,
@@ -13,7 +13,9 @@ export const buildOriginInfo = async <TApi, TRes, TSigner>({
   originFee,
   originFeeAsset,
   isFeeAssetAh
-}: TBuildOriginInfoOptions<TApi, TRes, TSigner>): Promise<TTransferInfo['origin']> => {
+}: TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<
+  TTransferInfo['origin']
+> => {
   const originBalance = await getAssetBalanceInternal({
     api,
     address: sender,

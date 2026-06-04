@@ -39,7 +39,9 @@ const validateAmount = (amount: bigint, requiredFee: bigint): void => {
 const calculateTotalFees = (chain: TSubstrateChain | undefined, fees: TSwapFeeEstimates): bigint =>
   chain ? fees.originReserveFee + fees.exchangeFee : 0n
 
-const executeDryRun = async <TApi, TRes, TSigner>(params: TDryRunOptions<TApi, TRes, TSigner>) => {
+const executeDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  params: TDryRunOptions<TApi, TRes, TSigner, TCustomChain>
+) => {
   const result = await dryRunInternal(params)
 
   if (!result.origin.success) {
@@ -167,8 +169,8 @@ const extractFeesFromDryRun = (
   return fees
 }
 
-const createXcmAndCall = async <TApi, TRes, TSigner>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>,
+const createXcmAndCall = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner, TCustomChain>,
   dryRunWeight?: TWeight
 ) => {
   const xcm = await createSwapExecuteXcm(options)
@@ -183,8 +185,13 @@ const createXcmAndCall = async <TApi, TRes, TSigner>(
   return { xcm, weight, call }
 }
 
-export const handleSwapExecuteTransfer = async <TApi, TRes, TSigner>(
-  options: TCreateSwapXcmOptions<TApi, TRes, TSigner>
+export const handleSwapExecuteTransfer = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TCreateSwapXcmOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TRes> => {
   const {
     api,

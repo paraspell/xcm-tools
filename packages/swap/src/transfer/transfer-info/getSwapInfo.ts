@@ -20,8 +20,8 @@ import {
 } from '../utils';
 import { getExecuteSwapInfo } from './getExecuteSwapInfo';
 
-export const buildExchangeOriginInfo = <TApi, TRes, TSigner>(
-  exchange: TExchangeInfo<TApi, TRes, TSigner>,
+export const buildExchangeOriginInfo = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>,
   sender: string,
   amount: bigint,
   swapFee: TXcmFeeDetailSuccess,
@@ -38,8 +38,8 @@ export const buildExchangeOriginInfo = <TApi, TRes, TSigner>(
     isFeeAssetAh: false,
   });
 
-export const buildExchangeDestInfo = <TApi, TRes, TSigner>(
-  exchange: TExchangeInfo<TApi, TRes, TSigner>,
+export const buildExchangeDestInfo = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>,
   recipient: string,
   amountOut: bigint,
   currencyTo: TCurrencyCore,
@@ -56,8 +56,8 @@ export const buildExchangeDestInfo = <TApi, TRes, TSigner>(
     totalHopFee: 0n,
   });
 
-export const getSwapInfo = async <TApi, TRes, TSigner>(
-  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner>,
+export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<TTransferInfo> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions, true);

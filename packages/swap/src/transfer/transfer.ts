@@ -6,8 +6,8 @@ import { executeRouterPlan } from './executeRouterPlan';
 import { maybePerformXcmFormatCheck, prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-export const transfer = async <TApi, TRes, TSigner>(
-  initialOptions: TTransferOptions<TApi, TRes, TSigner>,
+export const transfer = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  initialOptions: TTransferOptions<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<string[]> => {
   const {
     api,

@@ -25,8 +25,8 @@ import {
   validateTransact
 } from './utils'
 
-export const resolveTransferParams = <TApi, TRes, TSigner>(
-  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
+export const resolveTransferParams = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const {
     api,
@@ -113,8 +113,8 @@ export const resolveTransferParams = <TApi, TRes, TSigner>(
   }
 }
 
-export const createTransfer = async <TApi, TRes, TSigner>(
-  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
+export const createTransfer = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TRes> => {
   const {
     api,
@@ -141,7 +141,7 @@ export const createTransfer = async <TApi, TRes, TSigner>(
     resolveTransferParams(options)
 
   const customCtx = api?._customCtx
-  const chainInstance = getChainImpl<TApi, TRes, TSigner>(origin, customCtx)
+  const chainInstance = getChainImpl<TApi, TRes, TSigner, TCustomChain>(origin, customCtx)
   return chainInstance.transfer({
     api,
     assetInfo: normalizedAsset,

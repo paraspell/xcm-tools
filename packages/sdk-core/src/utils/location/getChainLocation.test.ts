@@ -1,11 +1,11 @@
 import { Parents } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getParaId } from '../../chains/config'
+import { getParaIdImpl } from '../../chains/config'
 import { getChainLocation } from './getChainLocation'
 
 vi.mock('../../chains/config', () => ({
-  getParaId: vi.fn()
+  getParaIdImpl: vi.fn()
 }))
 
 describe('getChainLocation', () => {
@@ -17,14 +17,14 @@ describe('getChainLocation', () => {
   })
 
   it('returns correct location for relay → parachain', () => {
-    vi.mocked(getParaId).mockReturnValue(2000)
+    vi.mocked(getParaIdImpl).mockReturnValue(2000)
 
     expect(getChainLocation('Polkadot', 'Moonbeam')).toEqual({
       parents: Parents.ZERO,
       interior: { X1: [{ Parachain: 2000 }] }
     })
 
-    expect(getParaId).toHaveBeenCalledWith('Moonbeam')
+    expect(getParaIdImpl).toHaveBeenCalledWith('Moonbeam', undefined)
   })
 
   it('returns correct location for parachain → relay', () => {
@@ -35,14 +35,14 @@ describe('getChainLocation', () => {
   })
 
   it('returns correct location for parachain → parachain', () => {
-    vi.mocked(getParaId).mockReturnValue(2001)
+    vi.mocked(getParaIdImpl).mockReturnValue(2001)
 
     expect(getChainLocation('Moonbeam', 'Acala')).toEqual({
       parents: Parents.ONE,
       interior: { X1: [{ Parachain: 2001 }] }
     })
 
-    expect(getParaId).toHaveBeenCalledWith('Acala')
+    expect(getParaIdImpl).toHaveBeenCalledWith('Acala', undefined)
   })
 
   it('handles Kusama relay chain', () => {

@@ -10,7 +10,7 @@ import type {
   TGetXcmFeeOptions,
   TXcmFeeHopResult
 } from '../../types'
-import { getRelayChainOf } from '../../utils'
+import { getRelayChainOf, getRelayChainOfImpl } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
@@ -70,6 +70,7 @@ describe('getXcmFeeOnce', () => {
 
   beforeEach(() => {
     defaultApi = createApi()
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
   })
 
   afterEach(() => vi.resetAllMocks())

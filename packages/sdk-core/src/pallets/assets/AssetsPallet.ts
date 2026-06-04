@@ -9,7 +9,10 @@ import { assertHasId } from '../../utils'
 const LOCATION_ID_CHAINS: TSubstrateChain[] = ['EnergyWebX']
 const BIGINT_ID_CHAINS: TSubstrateChain[] = ['Astar', 'Shiden', 'Moonbeam', 'NeuroWeb', 'Darwinia']
 
-const resolveAssetId = (asset: WithAmount<TAssetInfo>, chain: TSubstrateChain): unknown => {
+const resolveAssetId = <TCustomChain extends string = never>(
+  asset: WithAmount<TAssetInfo>,
+  chain: TSubstrateChain | TCustomChain
+): unknown => {
   if (LOCATION_ID_CHAINS.some(prefix => chain.startsWith(prefix))) {
     return asset.location
   }
@@ -21,12 +24,12 @@ const resolveAssetId = (asset: WithAmount<TAssetInfo>, chain: TSubstrateChain): 
 }
 
 export class AssetsPallet extends BaseAssetsPallet {
-  mint<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,
-    chain: TSubstrateChain
+    chain: TSubstrateChain | TCustomChain
   ): Promise<TSetBalanceRes> {
     const { amount } = asset
 
@@ -66,8 +69,8 @@ export class AssetsPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

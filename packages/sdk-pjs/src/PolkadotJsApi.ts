@@ -41,6 +41,7 @@ import {
   hasXcmPaymentApiSupportImpl,
   isAssetXcEqual,
   isConfig,
+  isCustomChain,
   isSenderSigner,
   localizeLocation,
   MAX_CLIENTS,
@@ -80,7 +81,12 @@ const createPolkadotJsClient = async (ws: TUrl): Promise<TPjsApi> => {
 
 const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, createPolkadotJsClient)
 
-class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
+class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
+  TPjsApi,
+  Extrinsic,
+  TPjsSigner,
+  TCustomChain
+> {
   readonly type = 'PJS'
 
   leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TPjsApi> {
@@ -241,11 +247,11 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   clone() {
-    return new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
+    return new PolkadotJsApi<TCustomChain>(isConfig(this._config) ? this._config : undefined)
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PolkadotJsApi(isConfig(this._config) ? this._config : undefined)
+    const api = new PolkadotJsApi<TCustomChain>(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
@@ -776,10 +782,15 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
   }
 
   disconnect(force = false) {
-    if (!this._chain) return Promise.resolve()
+    const chain = this._chain
+    if (!chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
-    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
+    const api = isConfig(this._config)
+      ? isCustomChain(chain)
+        ? undefined
+        : this._config.apiOverrides?.[chain]
+      : this._config
 
     // Own client provided, destroy only if force true
     if (force && typeof api === 'object') {
@@ -791,7 +802,7 @@ class PolkadotJsApi extends PolkadotApi<TPjsApi, Extrinsic, TPjsSigner> {
       if (force) {
         void this.api.disconnect()
       } else {
-        const key = api === undefined ? getChainProvidersImpl(this._chain, this._customCtx) : api
+        const key = api === undefined ? getChainProvidersImpl(chain, this._customCtx) : api
         releaseClient(key)
       }
     }

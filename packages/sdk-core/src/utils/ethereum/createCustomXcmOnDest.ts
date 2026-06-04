@@ -11,8 +11,8 @@ import { assertHasId, assertSender } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
 import { getEthereumJunction } from '../location/getEthereumJunction'
 
-const createMainInstruction = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+const createMainInstruction = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   asset: TAssetInfo,
   ethAsset: TAssetInfo,
@@ -122,7 +122,12 @@ const createMainInstruction = <TApi, TRes, TSigner>(
   }
 }
 
-export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
+export const createEthereumBridgeInstructions = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
   {
     api,
     sender,
@@ -130,7 +135,7 @@ export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
     assetInfo,
     ahAddress,
     version
-  }: TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner>,
+  }: TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   messageId: string,
   ethAsset: TAssetInfo
@@ -166,8 +171,8 @@ export const createEthereumBridgeInstructions = <TApi, TRes, TSigner>(
   ]
 }
 
-export const createCustomXcmOnDest = <TApi, TRes, TSigner>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+export const createCustomXcmOnDest = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   messageId: string,
   ethAsset: TAssetInfo

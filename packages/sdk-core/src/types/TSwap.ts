@@ -96,6 +96,6 @@ export interface TSwapBuilder<TApi, TRes, TSigner> {
   signAndSubmit(): Promise<string[]>
 }
 
-export type TSwapBuilderFactory = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type TSwapBuilderFactory = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => TSwapBuilder<TApi, TRes, TSigner>

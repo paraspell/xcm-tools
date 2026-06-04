@@ -5,8 +5,8 @@ import type { TransactionSerializableEIP1559 } from 'viem'
 import { buildMoonbeamEvm } from './moonbeam/buildMoonbeamEvm'
 import { buildMoonbeamToEth } from './moonbeam/buildMoonbeamToEth'
 
-export const buildEvmTransfer = async <TApi, TRes, TSigner>(
-  options: TBuildEvmTransferOptions<TApi, TRes, TSigner>
+export const buildEvmTransfer = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TBuildEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TransactionSerializableEIP1559> => {
   const { from, to } = options
 

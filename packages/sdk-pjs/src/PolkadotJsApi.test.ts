@@ -1194,6 +1194,34 @@ describe('PolkadotJsApi', () => {
 
       mockDisconnect.mockRestore()
     })
+
+    it('resolves the client from apiOverrides for a non-custom chain when _config is a builder config', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi = new PolkadotJsApi({ apiOverrides: { Acala: 'ws://override:9944' } })
+      polkadotApi._chain = 'Acala'
+      polkadotApi._api = mockApiPromise
+
+      await polkadotApi.disconnect(true)
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('skips apiOverrides for a custom chain when _config is a builder config', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      const customApi = new PolkadotJsApi<'MyCustom'>({ apiOverrides: {} })
+      customApi._chain = 'MyCustom'
+      customApi._api = mockApiPromise
+
+      await customApi.disconnect(true)
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
   })
 
   describe('getDryRunCall', () => {

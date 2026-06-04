@@ -6,32 +6,39 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isExternalChain, isRelayChain, Parents } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../chains/config'
+import { getParaIdImpl } from '../../chains/config'
 import { DOT_LOCATION } from '../../constants'
-import type { TXcmFeeDetailWithForwardedXcm } from '../../types'
+import type { TFullCustomCtx, TXcmFeeDetailWithForwardedXcm } from '../../types'
 import { type TGetFeeForDestChainOptions } from '../../types'
 import { addXcmVersionHeader, createX1Payload, normalizeAmount } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
 
-export const createOriginLocation = (
-  origin: TSubstrateChain,
+export const createOriginLocation = <TCustomChain extends string = never>(
+  origin: TSubstrateChain | TCustomChain,
   destination: TChain,
-  version: Version
+  version: Version,
+  customCtx?: TFullCustomCtx
 ): TLocation => {
   if (isRelayChain(origin)) return DOT_LOCATION
 
   return {
     parents: isRelayChain(destination) ? Parents.ZERO : Parents.ONE,
     interior: createX1Payload(version, {
-      Parachain: getParaId(origin)
+      Parachain: getParaIdImpl(origin, customCtx)
     })
   }
 }
 
-export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
-  options: TGetFeeForDestChainOptions<TApi, TRes, TSigner>
+export const getDestXcmFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never
+>(
+  options: TGetFeeForDestChainOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
   const {
     api,
@@ -59,7 +66,7 @@ export const getDestXcmFee = async <TApi, TRes, TSigner, TDisableFallback extend
       return 0n
     }
 
-    const attempt = async (chain: TChain, curr: TCurrencyCore, amt: bigint) => {
+    const attempt = async (chain: TChain | TCustomChain, curr: TCurrencyCore, amt: bigint) => {
       const assetInfo = api.findAssetInfoOrThrow(chain, curr, destination)
 
       try {

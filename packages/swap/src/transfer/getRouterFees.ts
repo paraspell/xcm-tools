@@ -11,9 +11,21 @@ import {
   isFilteredError,
 } from './utils';
 
-export const getRouterFees = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+export const getRouterFees = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never,
+>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   disableFallback: TDisableFallback,
 ): Promise<TGetXcmFeeResult> => {
   const { api, origin, exchange, destination, sender } = options;

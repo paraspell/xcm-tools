@@ -10,7 +10,7 @@ import {
   abstractDecimals,
   addXcmVersionHeader,
   assertCurrencyCore,
-  getRelayChainOf,
+  getRelayChainOfImpl,
   pickCompatibleXcmVersion
 } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
@@ -21,8 +21,8 @@ import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getFailureInfo } from './getFailureInfo'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-export const dryRunInternal = async <TApi, TRes, TSigner>(
-  options: TDryRunOptions<TApi, TRes, TSigner>
+export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TDryRunOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TDryRunResult> => {
   const {
     api,
@@ -91,7 +91,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryModified
 
   const processHop = async (
-    params: HopProcessParams<TApi, TRes, TSigner>
+    params: HopProcessParams<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TDryRunChainResult> => {
     const {
       api: hopApi,
@@ -129,7 +129,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
 
     const hopDryRun = await hopApi.getDryRunXcm({
       originLocation: addXcmVersionHeader(
-        createOriginLocation(currentOrigin, currentChain, resolvedVersion),
+        createOriginLocation(currentOrigin, currentChain, resolvedVersion, api._customCtx),
         resolvedVersion
       ),
       tx,
@@ -146,7 +146,13 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
     return { ...hopDryRun, asset: hopAsset }
   }
 
-  const traversalResult = await traverseXcmHops({
+  const traversalResult = await traverseXcmHops<
+    TApi,
+    TRes,
+    TSigner,
+    TDryRunChainResult,
+    TCustomChain
+  >({
     api,
     origin,
     destination,
@@ -163,8 +169,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner>(
   })
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOf(origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(origin)}`
+  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
+  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(api, origin)}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 

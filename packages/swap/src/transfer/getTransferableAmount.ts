@@ -15,9 +15,20 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const computeLocalTransferableAmount = async <TApi, TRes, TSigner>(
+const computeLocalTransferableAmount = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<bigint> => {
   const { exchange, sender } = options;
 
@@ -46,8 +57,19 @@ const computeLocalTransferableAmount = async <TApi, TRes, TSigner>(
   return transferable > 0n ? transferable : 0n;
 };
 
-export const getTransferableAmount = async <TApi, TRes, TSigner>(
-  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const getTransferableAmount = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  initialOptions: WithApi<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<bigint> => {
   validateTransferOptions(initialOptions);
 

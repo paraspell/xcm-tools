@@ -14,8 +14,8 @@ import { isConfig } from '../guards'
 import { executeWithSwap } from '../swap'
 import { parseUnits } from '../unit'
 
-export const computeOverridenAmount = <TApi, TRes, TSigner>(
-  options: TCreateTxsOptions<TApi, TRes, TSigner>,
+export const computeOverridenAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner, TCustomChain>,
   increaseAmount: string,
   relative: boolean = true
 ) => {
@@ -35,9 +35,15 @@ export const computeOverridenAmount = <TApi, TRes, TSigner>(
   }
 }
 
-export const overrideTxAmount = async <TApi, TRes, TSigner>(
-  options: TCreateTxsOptions<TApi, TRes, TSigner>,
-  builder: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
+export const overrideTxAmount = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner, TCustomChain>,
+  builder: GeneralBuilder<
+    TApi,
+    TRes,
+    TSigner,
+    TTransferBaseOptions<TApi, TRes, TSigner>,
+    TCustomChain
+  >,
   amount: string,
   relative?: boolean
 ) => {
@@ -50,9 +56,20 @@ export const overrideTxAmount = async <TApi, TRes, TSigner>(
   return tx
 }
 
-export const createTxOverrideAmount = async <TApi, TRes, TSigner>(
-  options: TCreateTxsOptions<TApi, TRes, TSigner>,
-  builder: GeneralBuilder<TApi, TRes, TSigner, TTransferBaseOptions<TApi, TRes, TSigner>>,
+export const createTxOverrideAmount = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TCreateTxsOptions<TApi, TRes, TSigner, TCustomChain>,
+  builder: GeneralBuilder<
+    TApi,
+    TRes,
+    TSigner,
+    TTransferBaseOptions<TApi, TRes, TSigner>,
+    TCustomChain
+  >,
   amount?: string,
   relative?: boolean
 ): Promise<TRes> => {
@@ -64,8 +81,13 @@ export const createTxOverrideAmount = async <TApi, TRes, TSigner>(
   return await overrideTxAmount(options, builder, amount, relative)
 }
 
-export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
-  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
+export const createTransferOrSwapAll = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TTransactionContext<TApi, TRes>[]> => {
   const { api, from, swapOptions } = options
 
@@ -78,8 +100,13 @@ export const createTransferOrSwapAll = async <TApi, TRes, TSigner>(
   return [{ type: 'TRANSFER', api: api.api, chain: from, tx }]
 }
 
-export const createTransferOrSwap = async <TApi, TRes, TSigner>(
-  options: TSubstrateTransferOptions<TApi, TRes, TSigner>
+export const createTransferOrSwap = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TRes> => {
   const res = await createTransferOrSwapAll(options)
 

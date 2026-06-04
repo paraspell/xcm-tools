@@ -4,8 +4,19 @@ import type { TGetBestAmountOutOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 import { buildExchangeApiVariant } from './utils/buildExchangeApiVariant';
 
-export const selectBestExchangeAmountOut = async <TApi, TRes, TSigner>(
-  options: WithApi<TGetBestAmountOutOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const selectBestExchangeAmountOut = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  options: WithApi<
+    TGetBestAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   originApi: TApi | undefined,
 ) => {
   const exchangeConfig = convertBuilderConfig<TApi>(options.api.config);

@@ -31,7 +31,7 @@ class CoretimePolkadot<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  canReceiveFrom(origin: TChain): boolean {
+  canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
     return origin !== 'Hydration' && origin !== 'Moonbeam'
   }
 }

@@ -23,7 +23,10 @@ class Pendulum<TApi, TRes, TSigner>
     super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }
 
-  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo): TXcmAsset {
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ): TXcmAsset {
     if (asset.symbol === this.getNativeAssetSymbol(api)) return { Native: null }
     assertHasId(asset)
     return { XCM: Number(asset.assetId) }

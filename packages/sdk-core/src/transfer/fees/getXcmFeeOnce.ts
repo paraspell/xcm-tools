@@ -13,7 +13,7 @@ import type {
   TXcmFeeHopInfo,
   TXcmFeeHopResult
 } from '../../types'
-import { abstractDecimals, getRelayChainOf, pickCompatibleXcmVersion } from '../../utils'
+import { abstractDecimals, getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { inferFeeAsset } from '../utils/inferFeeAsset'
@@ -57,7 +57,13 @@ const getFailureInfo = (
   return {}
 }
 
-export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extends boolean>({
+export const getXcmFeeOnce = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never
+>({
   api,
   tx,
   origin,
@@ -71,7 +77,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
   swapConfig,
   useRootOrigin,
   skipReverseFeeCalculation
-}: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback>): Promise<
+}: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
   const asset = api.findAssetInfoOrThrow(origin, currency, destination)
@@ -176,7 +182,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
   }
 
   const processHop = async (
-    params: HopProcessParams<TApi, TRes, TSigner>
+    params: HopProcessParams<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TXcmFeeHopResult> => {
     const {
       api: hopApi,
@@ -230,7 +236,13 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
     return hopResult
   }
 
-  const traversalResult = await traverseXcmHops({
+  const traversalResult = await traverseXcmHops<
+    TApi,
+    TRes,
+    TSigner,
+    TXcmFeeHopResult,
+    TCustomChain
+  >({
     api,
     origin,
     destination,
@@ -304,8 +316,8 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
   }
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOf(origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOf(origin)}`
+  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
+  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(api, origin)}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 
@@ -315,7 +327,7 @@ export const getXcmFeeOnce = async <TApi, TRes, TSigner, TDisableFallback extend
 
   // Update bridge hub fee in hops if needed
   if (processedBridgeHub && bridgeHubHop && processedBridgeHub.fee !== bridgeHubHop.result.fee) {
-    const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOf(origin)}`
+    const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
     const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1) {
       traversalResult.hops[bridgeHubHopIndex].result = {

@@ -18,8 +18,13 @@ const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
 
 const FEE_PADDING_PERCENTAGE = 40
 
-export const handleExecuteTransfer = async <TApi, TRes, TSigner>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
+export const handleExecuteTransfer = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TSerializedExtrinsics> => {
   const {
     api,

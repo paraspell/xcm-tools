@@ -1,16 +1,19 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { isCustomChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, getChain } from '../../utils'
 
-const resolveId = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+const resolveId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   asset: TAssetInfo,
-  chain: TSubstrateChain
+  chain: TSubstrateChain | TCustomChain
 ) => {
-  if (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo') {
+  if (
+    !isCustomChain(chain) &&
+    (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo')
+  ) {
     const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
 
     const resolvedAsset = isEthAsset
@@ -25,12 +28,12 @@ const resolveId = <TApi, TRes, TSigner>(
 }
 
 export class TokensPallet extends BaseAssetsPallet {
-  mint<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain
+    chain: TSubstrateChain | TCustomChain
   ): Promise<TSetBalanceRes> {
     const isBifrost = chain.startsWith('Bifrost')
 
@@ -54,8 +57,8 @@ export class TokensPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo,
     customCurrencyId?: unknown

@@ -1,19 +1,23 @@
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain } from '@paraspell/sdk-common'
 
-const isAssetHub = (chain: TChain) => chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama'
+const isAssetHub = <TCustomChain extends string = never>(chain: TChain | TCustomChain) =>
+  chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama'
 
-const isBridgeHub = (chain: TChain) => chain === 'BridgeHubPolkadot' || chain === 'BridgeHubKusama'
+const isBridgeHub = <TCustomChain extends string = never>(chain: TChain | TCustomChain) =>
+  chain === 'BridgeHubPolkadot' || chain === 'BridgeHubKusama'
 
-const isPeople = (chain: TChain) => chain === 'PeoplePolkadot' || chain === 'PeopleKusama'
+const isPeople = <TCustomChain extends string = never>(chain: TChain | TCustomChain) =>
+  chain === 'PeoplePolkadot' || chain === 'PeopleKusama'
 
-const isSystemPara = (chain: TChain) => isAssetHub(chain) || isBridgeHub(chain) || isPeople(chain)
+const isSystemPara = <TCustomChain extends string = never>(chain: TChain | TCustomChain) =>
+  isAssetHub(chain) || isBridgeHub(chain) || isPeople(chain)
 
 const mul = (v: bigint, num: bigint, den: bigint = 1n): bigint => (v * num) / den
 
-export const padFee = (
+export const padFee = <TCustomChain extends string = never>(
   raw: bigint,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   dest: TChain,
   side: 'origin' | 'destination'
 ): bigint => {

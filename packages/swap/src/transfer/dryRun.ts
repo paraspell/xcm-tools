@@ -21,9 +21,15 @@ import type {
 import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
-const assignIsExchange = <TApi, TRes, TSigner>(
+const assignIsExchange = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   result: TDryRunResult,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ) => {
   const { origin, exchange, destination } = options;
 
@@ -50,8 +56,14 @@ const assignIsExchange = <TApi, TRes, TSigner>(
   return result;
 };
 
-const dryRunTransaction = async <TApi, TRes, TSigner>(
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+const dryRunTransaction = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   transaction: TTransaction<TApi, TRes>,
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
@@ -83,8 +95,14 @@ const dryRunTransaction = async <TApi, TRes, TSigner>(
   });
 };
 
-const mergeDryRunResults = <TApi, TRes, TSigner>(
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+const mergeDryRunResults = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   originResult: TDryRunResult,
   exchangeResult: TDryRunResult,
 ): TDryRunResult => {
@@ -106,8 +124,14 @@ const mergeDryRunResults = <TApi, TRes, TSigner>(
   };
 };
 
-const dryRun2Transactions = async <TApi, TRes, TSigner>(
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+const dryRun2Transactions = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   transactions: TRouterPlan<TApi, TRes>,
   originBypass?: TBypassOptions,
   exchangeBypass?: TBypassOptions,
@@ -134,9 +158,15 @@ const dryRun2Transactions = async <TApi, TRes, TSigner>(
   return mergeDryRunResults(options, firstRes, secondRes);
 };
 
-export const dryRunTransactions = <TApi, TRes, TSigner>(
+export const dryRunTransactions = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   transactions: TRouterPlan<TApi, TRes>,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   originBypass?: TBypassOptions,
   exchangeBypass?: TBypassOptions,
 ) => {
@@ -151,8 +181,14 @@ export const dryRunTransactions = <TApi, TRes, TSigner>(
   throw new UnsupportedOperationError('Router dry run supports up to two transactions per flow.');
 };
 
-const runDryRun = async <TApi, TRes, TSigner>(
-  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+const runDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  initialOptions: WithApi<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   originBypassOptions?: TBypassOptions,
 ): Promise<TDryRunResult> => {
   validateTransferOptions(initialOptions);
@@ -164,12 +200,24 @@ const runDryRun = async <TApi, TRes, TSigner>(
   return assignIsExchange(result, options);
 };
 
-export const dryRunRouter = <TApi, TRes, TSigner>(
-  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const dryRunRouter = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  initialOptions: WithApi<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<TDryRunResult> => runDryRun(initialOptions);
 
-export const dryRunRouterPreview = <TApi, TRes, TSigner>(
-  initialOptions: WithApi<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const dryRunRouterPreview = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  initialOptions: WithApi<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   previewOptions?: TDryRunPreviewOptions,
 ): Promise<TDryRunResult> =>
   runDryRun(initialOptions, {

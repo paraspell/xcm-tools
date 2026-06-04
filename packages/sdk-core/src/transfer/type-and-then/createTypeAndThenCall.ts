@@ -24,13 +24,13 @@ import { computeAllFees } from './computeFees'
 import { createTypeAndThenCallContext } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 
-const buildAssets = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  chain: TSubstrateChain,
+const buildAssets = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  chain: TSubstrateChain | TCustomChain,
   asset: WithAmount<TAssetInfo>,
   feeAmount: bigint,
   isRelayAsset: boolean,
-  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
+  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ) => {
   if (overriddenAsset) {
     if (Array.isArray(overriddenAsset)) return overriddenAsset
@@ -67,8 +67,8 @@ export const resolveAssetCount = <TApi, TRes, TSigner>(
 const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
 const DEFAULT_SYSTEM_ASSET_AMOUNT_EXTERNAL = '10'
 
-const resolveSystemAssetAmount = <TApi, TRes, TSigner>(
-  { systemAsset, dest }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+const resolveSystemAssetAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  { systemAsset, dest }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   isForFeeCalc: boolean,
   fees: TTypeAndThenFees
 ) => {
@@ -81,8 +81,13 @@ const resolveSystemAssetAmount = <TApi, TRes, TSigner>(
   return normalizeAmount(fees.destFee + fees.hopFees)
 }
 
-export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
-  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+export const constructTypeAndThenCall = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   fees: TTypeAndThenFees | null = null
 ): Promise<TSerializedExtrinsics> => {
   const { origin, assetInfo, isRelayAsset, options } = context
@@ -123,8 +128,13 @@ export const constructTypeAndThenCall = async <TApi, TRes, TSigner>(
 /**
  * Creates a type and then call for transferring assets using XCM. Works only for DOT and snowbridge assets so far.
  */
-export const createTypeAndThenCall = async <TApi, TRes, TSigner>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+export const createTypeAndThenCall = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TTypeAndThenOverrides = {
     reserveChain: undefined,
     noFeeAsset: false

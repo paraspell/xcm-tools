@@ -195,7 +195,7 @@ export const localizeLocation = (chain: TChain, location: TLocation, origin?: TC
   )
 
 export const localizeLocationImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   chain: TChain | TCustomChain,
   location: TLocation,
   origin?: TChain | TCustomChain

@@ -19,7 +19,10 @@ class Jamton<TApi, TRes, TSigner>
     super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }
 
-  getCustomCurrencyId(_api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ) {
     const assetId = Number(asset.assetId)
     return asset.isNative ? { Native: assetId } : { ForeignAsset: assetId }
   }

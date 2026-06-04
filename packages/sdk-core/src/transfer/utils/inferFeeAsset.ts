@@ -11,11 +11,11 @@ export const isMoonbeamWhAsset = (location: TLocation | undefined): boolean =>
   hasJunction(location, 'Parachain', getParaId('Moonbeam')) &&
   hasJunction(location, 'PalletInstance', 110)
 
-export const inferFeeAsset = <TApi, TRes, TSigner>(
-  origin: TSubstrateChain,
+export const inferFeeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  origin: TSubstrateChain | TCustomChain,
   destination: TDestination,
   asset: TAssetInfo,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ): TAssetInfo | undefined => {
   if (origin === 'Hydration' && destination === 'Moonbeam' && isMoonbeamWhAsset(asset.location)) {
     return api.findNativeAssetInfoOrThrow(destination)

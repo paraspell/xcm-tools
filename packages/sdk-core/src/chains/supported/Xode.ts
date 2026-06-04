@@ -28,7 +28,7 @@ class Xode<TApi, TRes, TSigner>
     return transferPolkadotXcm(options)
   }
 
-  canReceiveFrom(origin: TChain): boolean {
+  canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
     return origin === 'AssetHubPolkadot'
   }
 }

@@ -7,8 +7,8 @@ import { createBeneficiaryLocation } from '../../location'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-export const prepareCommonExecuteXcm = <TApi, TRes, TSigner>(
-  options: TCreateTransferXcmOptions<TApi, TRes, TSigner>,
+export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>,
   assetToDeposit?: TAsset
 ) => {
   const {

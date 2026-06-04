@@ -23,17 +23,18 @@ export const selectBestExchangeCommon = async <
   TApi,
   TRes,
   TSigner,
+  TCustomChain extends string,
   T extends
-    | TCommonRouterOptions<TApi, TRes, TSigner>
-    | TGetBestAmountOutOptions<TApi, TRes, TSigner>,
+    | TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain>
+    | TGetBestAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
 >(
-  options: WithApi<T, TApi, TRes, TSigner>,
+  options: WithApi<T, TApi, TRes, TSigner, TCustomChain>,
   originApi: TApi | undefined,
   computeAmountOut: (
     dex: ExchangeChain,
     assetFromExchange: TAssetInfo,
     assetTo: TAssetInfo,
-    options: WithApi<T, TApi, TRes, TSigner>,
+    options: WithApi<T, TApi, TRes, TSigner, TCustomChain>,
     parsedAmount: string,
   ) => Promise<bigint>,
 ): Promise<ExchangeChain> => {

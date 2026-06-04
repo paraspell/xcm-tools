@@ -8,8 +8,8 @@ import type { TBypassOptions, TSubstrateTransferBaseOptionsWithSender } from '..
 /**
  * Helper function to run a dry run on a transaction used by the Builder class.
  */
-export const buildDryRun = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const buildDryRun = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   tx: TRes,
   options: TSubstrateTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
   bypassOptions?: TBypassOptions

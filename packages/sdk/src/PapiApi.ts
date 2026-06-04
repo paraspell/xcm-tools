@@ -45,6 +45,7 @@ import {
   isAssetEqual,
   isAssetXcEqual,
   isConfig,
+  isCustomChain,
   isRelayChain,
   isSenderSigner,
   localizeLocation,
@@ -113,7 +114,12 @@ const extractDryRunXcmFailureReason = (result: any): string => {
   return JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
 }
 
-class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
+class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
+  TPapiApi,
+  TPapiTransaction,
+  TPapiSigner,
+  TCustomChain
+> {
   readonly type = 'PAPI'
 
   leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TPapiApi> {
@@ -307,11 +313,11 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   clone() {
-    return new PapiApi(isConfig(this._config) ? this._config : undefined)
+    return new PapiApi<TCustomChain>(isConfig(this._config) ? this._config : undefined)
   }
 
   async createApiForChain(chain: TSubstrateChain) {
-    const api = new PapiApi(isConfig(this._config) ? this._config : undefined)
+    const api = new PapiApi<TCustomChain>(isConfig(this._config) ? this._config : undefined)
     await api.init(chain)
     return api
   }
@@ -887,10 +893,15 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
   }
 
   disconnect(force = false) {
-    if (!this._chain) return Promise.resolve()
+    const chain = this._chain
+    if (!chain) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
-    const api = isConfig(this._config) ? this._config.apiOverrides?.[this._chain] : this._config
+    const api = isConfig(this._config)
+      ? isCustomChain(chain)
+        ? undefined
+        : this._config.apiOverrides?.[chain]
+      : this._config
 
     // Own client provided, destroy only if force true
     if (force && typeof api === 'object') {
@@ -902,7 +913,7 @@ class PapiApi extends PolkadotApi<TPapiApi, TPapiTransaction, TPapiSigner> {
       if (force) {
         this.api.destroy()
       } else {
-        const key = api === undefined ? getChainProvidersImpl(this._chain, this._customCtx) : api
+        const key = api === undefined ? getChainProvidersImpl(chain, this._customCtx) : api
         releaseClient(key)
       }
     }

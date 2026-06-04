@@ -21,8 +21,8 @@ import { getDestinationLocation } from './getDestinationLocation'
 const CONTRACT_ADDRESS: Address = '0x0000000000000000000000000000000000000804'
 const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 
-export const buildMoonbeamEvm = <TApi, TRes, TSigner>(
-  options: TBuildEvmTransferOptions<TApi, TRes, TSigner>
+export const buildMoonbeamEvm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TBuildEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): TransactionSerializableEIP1559 => {
   const { api, from, to, recipient, currency } = options
 

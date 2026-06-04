@@ -10,9 +10,9 @@ import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 
-export const isSufficientOrigin = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  origin: TSubstrateChain,
+export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  origin: TSubstrateChain | TCustomChain,
   destination: TChain,
   sender: string,
   feeNative: bigint,
@@ -63,8 +63,13 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner>(
   }
 }
 
-export const isSufficientDestination = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const isSufficientDestination = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   destination: TChain,
   address: string,
   amount: bigint,

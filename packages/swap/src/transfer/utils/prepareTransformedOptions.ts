@@ -13,12 +13,23 @@ import { buildExchangeApiVariant } from './buildExchangeApiVariant';
 import { resolveAssets } from './resolveAssets';
 import { determineFeeCalcAddress } from './utils';
 
-export const prepareTransformedOptions = async <TApi, TRes, TSigner>(
-  options: TCommonRouterOptions<TApi, TRes, TSigner>,
+export const prepareTransformedOptions = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  options: TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain>,
   isForFeeEstimation = false,
 ): Promise<{
   dex: ExchangeChain;
-  options: TTransformedOptions<TCommonRouterOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>;
+  options: TTransformedOptions<
+    TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >;
 }> => {
   const { api, from, to, exchange, sender, recipient, amount } = options;
 
