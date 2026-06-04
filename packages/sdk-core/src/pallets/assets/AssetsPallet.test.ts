@@ -47,6 +47,23 @@ describe('AssetsPallet.setBalance', () => {
     expect(res.balanceTx.params.amount).toBe(999n)
   })
 
+  it('uses the asset location as id for Energy Web chains and skips assertHasId', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const address = '5FbrsAddr'
+    const chain = 'EnergyWebX'
+    const location = { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
+    const asset = { location, amount: 500n } as unknown as WithAmount<TAssetInfo>
+
+    const res = await pallet.mint(createApiMock(false), address, asset, 0n, chain)
+
+    expect(assertHasId).not.toHaveBeenCalled()
+    expect(res.assetStatusTx?.params.id).toEqual(location)
+    expect(res.assetStatusTx?.params.owner).toEqual({ Id: address })
+    expect(res.balanceTx.params.id).toEqual(location)
+    expect(res.balanceTx.params.beneficiary).toEqual({ Id: address })
+    expect(res.balanceTx.params.amount).toBe(500n)
+  })
+
   it('uses Number id and { Id: address } on non-EVM chains and returns correct txs', async () => {
     const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'
