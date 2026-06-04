@@ -15,8 +15,13 @@ import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
-export const createExchangeInstructions = async <TApi, TRes, TSigner>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>,
+export const createExchangeInstructions = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner, TCustomChain>,
   assetFrom: TAsset,
   assetTo: TAsset,
   hasSeparateFeeAsset: boolean
@@ -80,8 +85,13 @@ export const createExchangeInstructions = async <TApi, TRes, TSigner>(
   ]
 }
 
-export const createSwapExecuteXcm = async <TApi, TRes, TSigner>(
-  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner>
+export const createSwapExecuteXcm = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const {
     api,

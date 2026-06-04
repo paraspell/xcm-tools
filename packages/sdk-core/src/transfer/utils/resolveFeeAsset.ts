@@ -7,10 +7,10 @@ import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 import { throwUnsupportedCurrency } from '../../utils'
 
-export const resolveFeeAsset = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const resolveFeeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   feeAsset: TCurrencyInput,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   destination: TDestination,
   currency: TCurrencyInput
 ): TAssetInfo | undefined => {

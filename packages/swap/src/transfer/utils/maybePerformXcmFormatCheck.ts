@@ -6,9 +6,20 @@ import { dryRunTransactions } from '../dryRun';
 
 const BYPASS: TBypassOptions = { sentAssetMintMode: 'bypass' };
 
-export const maybePerformXcmFormatCheck = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const maybePerformXcmFormatCheck = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   routerPlan: TRouterPlan<TApi, TRes>,
 ) => {
   const { config } = api;

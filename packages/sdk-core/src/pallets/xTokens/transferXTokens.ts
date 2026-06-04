@@ -5,8 +5,8 @@ import type { TXTokensCurrencySelection, TXTokensTransferOptions } from '../../t
 import { assertToIsString } from '../../utils'
 import { buildXTokensCall } from './utils'
 
-export const transferXTokens = <TApi, TRes, TSigner>(
-  input: TXTokensTransferOptions<TApi, TRes, TSigner>,
+export const transferXTokens = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   currencySelection: TXTokensCurrencySelection,
   fees: string | number = DEFAULT_FEE
 ): TRes => {

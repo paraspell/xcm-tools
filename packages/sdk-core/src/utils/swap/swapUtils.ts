@@ -53,8 +53,8 @@ export const convertBuilderConfig = <TApi>(
   }
 }
 
-export const createSwapBuilder = <TApi, TRes, TSigner>(
-  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>
+export const createSwapBuilder = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const { api } = options
 
@@ -81,7 +81,7 @@ export const createSwapBuilder = <TApi, TRes, TSigner>(
     throw new UnsupportedOperationError('Swaps with multiple currencies are not supported.')
   }
 
-  let builder = SwapBuilder<TApi, TRes, TSigner>(api)
+  let builder = SwapBuilder(api)
     .from(from)
     .exchange(exchange)
     .to(to)
@@ -100,8 +100,8 @@ export const createSwapBuilder = <TApi, TRes, TSigner>(
   return builder
 }
 
-export const executeWithSwap = async <TApi, TRes, TSigner, T>(
-  options: TTransferOptionsWithSwap<TApi, TRes, TSigner>,
+export const executeWithSwap = async <TApi, TRes, TSigner, T, TCustomChain extends string = never>(
+  options: TTransferOptionsWithSwap<TApi, TRes, TSigner, TCustomChain>,
   executor: (builder: TSwapBuilder<TApi, TRes, TSigner>) => Promise<T>
 ) => {
   const swapBuilder = createSwapBuilder(options)

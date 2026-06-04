@@ -5,12 +5,12 @@ import type { PolkadotApi } from '../../api'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class BalancesPallet extends BaseAssetsPallet {
-  mint<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain
+    chain: TSubstrateChain | TCustomChain
   ): Promise<TSetBalanceRes> {
     const { amount } = assetInfo
 
@@ -29,8 +29,8 @@ export class BalancesPallet extends BaseAssetsPallet {
     })
   }
 
-  async getBalance<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string
   ): Promise<bigint> {
     const balance = await api.queryState<{ free: bigint }>({

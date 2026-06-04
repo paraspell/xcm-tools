@@ -7,8 +7,8 @@ import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 import { buildExchangeApiVariant, pickExchangeApiVariant } from './utils/buildExchangeApiVariant';
 import { determineFeeCalcAddress } from './utils/utils';
 
-export const selectBestExchange = async <TApi, TRes, TSigner>(
-  options: TCommonRouterOptions<TApi, TRes, TSigner>,
+export const selectBestExchange = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain>,
   originApi: TApi | undefined,
   isForFeeEstimation?: boolean,
 ): Promise<ExchangeChain> => {
@@ -18,7 +18,7 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
     options,
     originApi,
     async (dex, assetFromExchange, assetTo, options, parsedAmount) => {
-      const exchangeInfo: TExchangeInfo<TApi, TRes, TSigner> = {
+      const exchangeInfo: TExchangeInfo<TApi, TRes, TSigner, TCustomChain> = {
         ...(await buildExchangeApiVariant(dex, exchangeConfig)),
         api: await api.createApiForChain(dex.chain),
         chain: dex.chain,
@@ -26,10 +26,11 @@ export const selectBestExchange = async <TApi, TRes, TSigner>(
         assetTo,
       };
       const modifiedOptions: TTransformedOptions<
-        TCommonRouterOptions<TApi, TRes, TSigner>,
+        TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain>,
         TApi,
         TRes,
-        TSigner
+        TSigner,
+        TCustomChain
       > = {
         ...options,
         amount: BigInt(parsedAmount),

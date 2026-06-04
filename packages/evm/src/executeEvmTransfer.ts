@@ -3,8 +3,8 @@ import { MissingParameterError } from '@paraspell/sdk-core'
 
 import { buildEvmTransfer } from './buildEvmTransfer'
 
-export const executeEvmTransfer = async <TApi, TRes, TSigner>(
-  options: TEvmTransferOptions<TApi, TRes, TSigner>
+export const executeEvmTransfer = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<string> => {
   const { signer } = options
   const account = signer.account

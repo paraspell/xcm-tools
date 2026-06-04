@@ -27,8 +27,8 @@ import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils'
 class AcalaExchange extends ExchangeChain<'PJS'> {
   readonly apiType = 'PJS';
 
-  async swapCurrency<TApi, TRes, TSigner>(
-    options: TPjsSwapOptions<TApi, TRes, TSigner>,
+  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
@@ -112,7 +112,9 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     return { tx, amountOut };
   }
 
-  async getAmountOut<TApi, TRes, TSigner>(options: TPjsGetAmountOutOptions<TApi, TRes, TSigner>) {
+  async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TPjsGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
+  ) {
     const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 
     const wallet = new Wallet(apiPjs);

@@ -6,8 +6,8 @@ import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
 export class AssetManagerPallet extends BaseAssetsPallet {
-  mint<TApi, TRes, TSigner>(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+  mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint

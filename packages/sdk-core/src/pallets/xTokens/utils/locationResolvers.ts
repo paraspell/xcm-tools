@@ -21,10 +21,10 @@ const resolveLocationFromDest = (destination: TDestination, asset: TAssetInfo) =
   return assetHubAsset.location
 }
 
-export const buildLocation = <TApi, TRes, TSigner>({
+export const buildLocation = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   asset,
   destination
-}: TXTokensTransferOptions<TApi, TRes, TSigner>): TLocation => {
+}: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>): TLocation => {
   if (asset.isNative) {
     return resolveLocationFromDest(destination, asset)
   }

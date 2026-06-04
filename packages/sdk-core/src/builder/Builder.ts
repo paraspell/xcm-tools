@@ -84,12 +84,12 @@ export class GeneralBuilder<
     object,
   TCustomChain extends string = never
 > {
-  readonly api: PolkadotApi<TApi, TRes, TSigner>
+  readonly api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   readonly _options: T
 
   constructor(
-    api: PolkadotApi<TApi, TRes, TSigner>,
-    readonly batchManager: BatchTransactionManager<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    readonly batchManager: BatchTransactionManager<TApi, TRes, TSigner, TCustomChain>,
     options?: T
   ) {
     this.api = api
@@ -137,9 +137,12 @@ export class GeneralBuilder<
    * @returns An instance of Builder
    */
   claimFrom(chain: TSubstrateChain) {
-    return new AssetClaimBuilder<TApi, TRes, TSigner, { chain: TSubstrateChain }>(this.api, {
-      chain
-    })
+    return new AssetClaimBuilder<TApi, TRes, TSigner, { chain: TSubstrateChain }, TCustomChain>(
+      this.api,
+      {
+        chain
+      }
+    )
   }
 
   /**
@@ -355,7 +358,7 @@ export class GeneralBuilder<
 
   protected buildInternal<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>
-  ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
+  ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions, TCustomChain>> {
     return this.buildCommon<TOptions>(true)
   }
 
@@ -365,7 +368,7 @@ export class GeneralBuilder<
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     options: TOptions
   ): Promise<{
-    normalizedOptions: TTransferOptions<TApi, TRes, TSigner> & TOptions
+    normalizedOptions: TTransferOptions<TApi, TRes, TSigner, TCustomChain> & TOptions
     buildTx: TTxFactory<TRes>
   }> {
     const { options: normalizedOptions, buildTx } = await normalizeAmountAll(
@@ -445,7 +448,7 @@ export class GeneralBuilder<
   private async buildCommon<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     isCalledInternally = false
-  ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions>> {
+  ): Promise<TBuildInternalRes<TApi, TRes, TSigner, TOptions, TCustomChain>> {
     this.validateBatchState(isCalledInternally)
 
     const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
@@ -463,7 +466,7 @@ export class GeneralBuilder<
   private async buildCommonAll<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>,
     isCalledInternally = false
-  ): Promise<TBuildAllInternalRes<TApi, TRes, TSigner, TOptions>> {
+  ): Promise<TBuildAllInternalRes<TApi, TRes, TSigner, TOptions, TCustomChain>> {
     this.validateBatchState(isCalledInternally)
 
     const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
@@ -1022,6 +1025,6 @@ export class GeneralBuilder<
  * @returns A new Builder instance.
  */
 export const Builder = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) =>
   new GeneralBuilder<TApi, TRes, TSigner, object, TCustomChain>(api, new BatchTransactionManager())

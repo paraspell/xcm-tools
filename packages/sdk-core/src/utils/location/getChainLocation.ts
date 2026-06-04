@@ -1,15 +1,20 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, type TLocation } from '@paraspell/sdk-common'
 
-import { getParaId } from '../../chains/config'
+import { getParaIdImpl } from '../../chains/config'
+import type { TFullCustomCtx } from '../../types'
 
-export const getChainLocation = (chain: TChain, destChain: TChain): TLocation => {
+export const getChainLocation = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  destChain: TChain | TCustomChain,
+  customCtx?: TFullCustomCtx
+): TLocation => {
   const fromRelay = isRelayChain(chain)
   const toRelay = isRelayChain(destChain)
 
   const parents = fromRelay ? Parents.ZERO : Parents.ONE
 
-  const interior = toRelay ? 'Here' : { X1: [{ Parachain: getParaId(destChain) }] }
+  const interior = toRelay ? 'Here' : { X1: [{ Parachain: getParaIdImpl(destChain, customCtx) }] }
 
   return { parents, interior }
 }

@@ -13,17 +13,17 @@ import {
 
 import type { PolkadotApi } from '../../api'
 import type { TDestination, TXcmVersioned } from '../../types'
-import { getRelayChainOf } from '../chain'
+import { getRelayChainOfImpl } from '../chain'
 import { resolveScenario } from '../transfer/resolveScenario'
 import { addXcmVersionHeader } from '../xcm-version'
 import { createX1Payload } from './createX1Payload'
 import { getEthereumJunction } from './getEthereumJunction'
 
 export const createDestination = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   version: Version,
   origin: TChain | TCustomChain,
-  destination: TDestination,
+  destination: TDestination | TCustomChain,
   chainId?: number,
   junction?: TJunction,
   parents?: Parents
@@ -38,7 +38,7 @@ export const createDestination = <TApi, TRes, TSigner, TCustomChain extends stri
       parents: Parents.TWO,
       interior: {
         X2: [
-          { GlobalConsensus: getRelayChainOf(destination) },
+          { GlobalConsensus: getRelayChainOfImpl(api, destination) },
           {
             Parachain: chainId
           }

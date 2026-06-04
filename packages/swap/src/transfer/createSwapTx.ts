@@ -6,8 +6,19 @@ import { buildFromExchangeExtrinsic, convertTxToTarget, pickExchangeApiVariant }
 
 const FEE_ESTIMATION_UNITS = '100';
 
-export const calculateFromExchangeFee = async <TApi, TRes, TSigner>(
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+export const calculateFromExchangeFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ) => {
   const { exchange, destination, feeCalcAddress, sender, api } = options;
   if (!destination || destination.chain === exchange.chain) return 0n;
@@ -23,9 +34,15 @@ export const calculateFromExchangeFee = async <TApi, TRes, TSigner>(
   return partialFee;
 };
 
-export const createSwapTx = async <TApi, TRes, TSigner>(
+export const createSwapTx = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   exchange: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   isForFeeEstimation = false,
 ) => {
   const toDestTxFee = await calculateFromExchangeFee(options);

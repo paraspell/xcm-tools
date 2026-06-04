@@ -3,8 +3,14 @@ import type { TGetXcmFeeOptions, TGetXcmFeeResult } from '../../types'
 import { getBypassResultWithRetries } from './getBypassResult'
 import { getXcmFeeOnce } from './getXcmFeeOnce'
 
-export const getXcmFeeInternal = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
-  options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>
+export const getXcmFeeInternal = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never
+>(
+  options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   const { buildTx } = options
 
@@ -39,8 +45,14 @@ export const getXcmFeeInternal = async <TApi, TRes, TSigner, TDisableFallback ex
   }
 }
 
-export const getXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
-  options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>
+export const getXcmFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never
+>(
+  options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>
 ): Promise<TGetXcmFeeResult<TDisableFallback>> => {
   const { api } = options
   try {

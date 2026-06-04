@@ -13,9 +13,15 @@ import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types
 import { getSwapExecuteXcmFee } from '../utils';
 import { buildExecuteSwapHops } from './buildExecuteSwapHops';
 
-export const getExecuteSwapInfo = async <TApi, TRes, TSigner>(
+export const getExecuteSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<TTransferInfo> => {
   const {
     api,

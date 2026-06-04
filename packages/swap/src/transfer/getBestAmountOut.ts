@@ -11,8 +11,8 @@ import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { buildExchangeApiVariant } from './utils/buildExchangeApiVariant';
 import { resolveAssets } from './utils/resolveAssets';
 
-export const getBestAmountOut = async <TApi, TRes, TSigner>(
-  options: TGetBestAmountOutOptions<TApi, TRes, TSigner>,
+export const getBestAmountOut = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TGetBestAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<TGetBestAmountOutResult> => {
   const { api, exchange, amount, from } = options;
 

@@ -24,8 +24,8 @@ import { getDexConfig } from './utils';
 class AssetHubExchange extends ExchangeChain<'GENERIC'> {
   readonly apiType = 'GENERIC';
 
-  private async quoteOrThrow<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  private async quoteOrThrow<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     fromLocation: TLocation,
     toLocation: TLocation,
     amount: bigint,
@@ -52,8 +52,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     return BigInt(quoted);
   }
 
-  async swapCurrency<TApi, TRes, TSigner>(
-    options: TGenericSwapOptions<TApi, TRes, TSigner>,
+  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
@@ -107,8 +107,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     };
   }
 
-  async handleMultiSwap<TApi, TRes, TSigner>(
-    options: TGenericSwapOptions<TApi, TRes, TSigner>,
+  async handleMultiSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult<TRes>> {
     const { assetFrom, assetTo } = options;
@@ -137,7 +137,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
       };
     } else {
       // Multi-hop: AssetA -> Native -> AssetB
-      const optionsHop1: TGenericSwapOptions<TApi, TRes, TSigner> = {
+      const optionsHop1: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain> = {
         ...options,
         assetTo: nativeAsset,
       };
@@ -152,7 +152,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
       const hop1Received = resultHop1.amountOut;
       const assumedInputForHop2 = padValueBy(hop1Received, -2);
 
-      const optionsHop2: TGenericSwapOptions<TApi, TRes, TSigner> = {
+      const optionsHop2: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain> = {
         apiType: 'GENERIC',
         api: options.api,
         slippagePct: options.slippagePct,
@@ -179,8 +179,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     }
   }
 
-  async getAmountOut<TApi, TRes, TSigner>(
-    options: TGenericGetAmountOutOptions<TApi, TRes, TSigner>,
+  async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TGenericGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
   ) {
     const { api, assetFrom, assetTo, amount, origin } = options;
 

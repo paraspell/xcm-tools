@@ -1,20 +1,24 @@
 import type { TCurrencyInput, WithAmount } from '@paraspell/assets'
 import { isChainEvm } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions } from '../../types'
 import { padFee } from '../../utils/fees'
 
-const determineAddress = (chain: TSubstrateChain, recipient: string, sender: string): string => {
+const determineAddress = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  recipient: string,
+  sender: string
+): string => {
   if (isChainEvm(chain)) {
     return isAddress(recipient) ? recipient : sender
   }
   return isAddress(recipient) ? sender : recipient
 }
 
-export const getReverseTxFee = async <TApi, TRes, TSigner>(
+export const getReverseTxFee = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   {
     api,
     origin,
@@ -22,7 +26,7 @@ export const getReverseTxFee = async <TApi, TRes, TSigner>(
     sender,
     recipient,
     skipReverseFeeCalculation
-  }: TGetReverseTxFeeOptions<TApi, TRes, TSigner>,
+  }: TGetReverseTxFeeOptions<TApi, TRes, TSigner, TCustomChain>,
   currencyInput: WithAmount<TCurrencyInput>
 ) => {
   if (skipReverseFeeCalculation) return 0n

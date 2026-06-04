@@ -16,9 +16,9 @@ export type TSwapConfig = {
   exchangeChain: TParachain
 }
 
-export type TDryRunBaseOptions<TRes> = {
+export type TDryRunBaseOptions<TRes, TCustomChain extends string = never> = {
   tx: TRes
-  origin: TSubstrateChain
+  origin: TSubstrateChain | TCustomChain
   destination: TChain
   sender: string
   currency: TCurrencyInputWithAmount
@@ -30,14 +30,15 @@ export type TDryRunBaseOptions<TRes> = {
   bypassOptions?: TBypassOptions
 }
 
-export type TDryRunOptions<TApi, TRes, TSigner> = WithApi<
-  TDryRunBaseOptions<TRes>,
+export type TDryRunOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
+  TDryRunBaseOptions<TRes, TCustomChain>,
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
 
-export type TDryRunCallBaseOptions<TRes> = {
+export type TDryRunCallBaseOptions<TRes, TCustomChain extends string = never> = {
   /**
    * The transaction to dry-run
    */
@@ -45,7 +46,7 @@ export type TDryRunCallBaseOptions<TRes> = {
   /**
    * The chain to dry-run on
    */
-  chain: TSubstrateChain
+  chain: TSubstrateChain | TCustomChain
   /**
    * The destination chain
    */
@@ -67,21 +68,28 @@ export type TDryRunCallBaseOptions<TRes> = {
   feeAsset?: TAssetInfo
 }
 
-export type TDryRunBypassOptions<TApi, TRes, TSigner> = WithApi<
-  Omit<TDryRunCallBaseOptions<TRes>, 'useRootOrigin' | 'destination'>,
+export type TDryRunBypassOptions<
   TApi,
   TRes,
-  TSigner
->
-
-export type TDryRunCallOptions<TApi, TRes, TSigner> = WithApi<
-  TDryRunCallBaseOptions<TRes>,
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<
+  Omit<TDryRunCallBaseOptions<TRes, TCustomChain>, 'useRootOrigin' | 'destination'>,
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
 
-export type TDryRunXcmBaseOptions<TRes> = {
+export type TDryRunCallOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
+  TDryRunCallBaseOptions<TRes, TCustomChain>,
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+>
+
+export type TDryRunXcmBaseOptions<TRes, TCustomChain extends string = never> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   originLocation: any
   /**
@@ -98,7 +106,7 @@ export type TDryRunXcmBaseOptions<TRes> = {
   /**
    * The origin chain
    */
-  origin: TSubstrateChain
+  origin: TSubstrateChain | TCustomChain
   asset: TAssetInfo
   version: Version
   feeAsset?: TAssetInfo
@@ -106,11 +114,12 @@ export type TDryRunXcmBaseOptions<TRes> = {
   originFee: bigint
 }
 
-export type TDryRunXcmOptions<TApi, TRes, TSigner> = WithApi<
-  TDryRunXcmBaseOptions<TRes>,
+export type TDryRunXcmOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
+  TDryRunXcmBaseOptions<TRes, TCustomChain>,
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
 
 export type TDryRunResBase = {
@@ -151,10 +160,10 @@ export type TDryRunResult = {
   hops: THopInfo[]
 }
 
-export type TResolveHopParams<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type TResolveHopParams<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   tx: TRes
-  originChain: TSubstrateChain
+  originChain: TSubstrateChain | TCustomChain
   currentChain: TSubstrateChain
   destination: TDestination
   asset: TAssetInfo
@@ -165,10 +174,10 @@ export type TResolveHopParams<TApi, TRes, TSigner> = {
 
 // XCM hop traversal types
 
-export type HopProcessParams<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type HopProcessParams<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   currentChain: TSubstrateChain
-  currentOrigin: TSubstrateChain
+  currentOrigin: TSubstrateChain | TCustomChain
   currentAsset: TAssetInfo
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   forwardedXcms: any
@@ -176,16 +185,22 @@ export type HopProcessParams<TApi, TRes, TSigner> = {
   isDestination: boolean
 }
 
-export type HopTraversalConfig<TApi, TRes, TSigner, THopResult> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
-  origin: TSubstrateChain
+export type HopTraversalConfig<
+  TApi,
+  TRes,
+  TSigner,
+  THopResult,
+  TCustomChain extends string = never
+> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
+  origin: TSubstrateChain | TCustomChain
   destination: TChain
   currency: TCurrencyCore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialForwardedXcms: any
   initialDestParaId: number | undefined
   swapConfig?: TSwapConfig
-  processHop: (params: HopProcessParams<TApi, TRes, TSigner>) => Promise<THopResult>
+  processHop: (params: HopProcessParams<TApi, TRes, TSigner, TCustomChain>) => Promise<THopResult>
   shouldContinue: (hopResult: THopResult) => boolean
   extractNextHopData: (hopResult: THopResult) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -194,13 +209,13 @@ export type HopTraversalConfig<TApi, TRes, TSigner, THopResult> = {
   }
 }
 
-export type HopTraversalResult<THopResult> = {
+export type HopTraversalResult<THopResult, TCustomChain extends string = never> = {
   hops: Array<{
     chain: TSubstrateChain
     result: THopResult
   }>
   destination?: THopResult
-  lastProcessedChain?: TSubstrateChain
+  lastProcessedChain?: TSubstrateChain | TCustomChain
 }
 
 export type TBypassOptions = {

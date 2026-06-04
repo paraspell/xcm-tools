@@ -564,6 +564,30 @@ describe('PapiApi', () => {
 
       expect(destroySpy).not.toHaveBeenCalled()
     })
+
+    it('resolves the client from apiOverrides for a non-custom chain when _config is a builder config', async () => {
+      const destroySpy = spyDestroy()
+
+      papiApi = new PapiApi({ apiOverrides: { Acala: 'ws://override:9944' } })
+      papiApi._chain = 'Acala'
+      papiApi._api = mockPolkadotClient
+
+      await papiApi.disconnect(true)
+
+      expect(destroySpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('skips apiOverrides for a custom chain when _config is a builder config', async () => {
+      const destroySpy = spyDestroy()
+
+      const customApi = new PapiApi<'MyCustom'>({ apiOverrides: {} })
+      customApi._chain = 'MyCustom'
+      customApi._api = mockPolkadotClient
+
+      await customApi.disconnect(true)
+
+      expect(destroySpy).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('getDeliveryFee', () => {

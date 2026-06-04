@@ -52,8 +52,8 @@ export type TTransferInfo = {
   }
 }
 
-export type TBuildOriginInfoOptions<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   origin: TSubstrateChain
   sender: string
   currency: TCurrencyCore
@@ -64,8 +64,8 @@ export type TBuildOriginInfoOptions<TApi, TRes, TSigner> = {
   isFeeAssetAh: boolean
 }
 
-export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type BuildHopInfoOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   chain: TChain
   fee: bigint
   originChain: TSubstrateChain
@@ -75,8 +75,8 @@ export type BuildHopInfoOptions<TApi, TRes, TSigner> = {
   ahAddress?: string
 }
 
-export type TBuildDestInfoOptions<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>
+export type TBuildDestInfoOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   origin: TSubstrateChain
   destination: TChain
   recipient: string
@@ -105,9 +105,9 @@ export type TGetTransferInfoOptionsBase<TRes> = {
   feeAsset?: TCurrencyCore
 }
 
-export type TGetTransferInfoOptions<TApi, TRes, TSigner> = WithApi<
-  TGetTransferInfoOptionsBase<TRes>,
+export type TGetTransferInfoOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TGetTransferInfoOptionsBase<TRes>, TApi, TRes, TSigner, TCustomChain>

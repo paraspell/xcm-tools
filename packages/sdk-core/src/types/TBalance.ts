@@ -6,7 +6,7 @@ import type { WithApi } from './TApi'
 import type { TTransferBaseOptionsWithSender } from './TTransfer'
 import type { TTxFactory } from './TXcmFee'
 
-export type TGetBalanceCommonOptions = {
+export type TGetBalanceCommonOptions<TCustomChain extends string = never> = {
   /**
    * The address of the account.
    */
@@ -14,41 +14,44 @@ export type TGetBalanceCommonOptions = {
   /**
    * The chain on which to query the balance.
    */
-  chain: TChain
+  chain: TChain | TCustomChain
 }
 
 /**
  * Retrieves the asset balance for a given account on a specified chain.
  */
-export type TGetAssetBalanceOptionsBase = TGetBalanceCommonOptions & {
-  /**
-   * The resolved asset to query balance for.
-   */
-  asset: TAssetInfo
-}
+export type TGetAssetBalanceOptionsBase<TCustomChain extends string = never> =
+  TGetBalanceCommonOptions<TCustomChain> & {
+    /**
+     * The resolved asset to query balance for.
+     */
+    asset: TAssetInfo
+  }
 
 /**
  * Retrieves the currency balance for a given account on a specified chain.
  */
-export type TGetBalanceOptionsBase = TGetBalanceCommonOptions & {
-  /**
-   * The currency to query.
-   */
-  currency?: TCurrencyCore
-}
+export type TGetBalanceOptionsBase<TCustomChain extends string = never> =
+  TGetBalanceCommonOptions<TCustomChain> & {
+    /**
+     * The currency to query.
+     */
+    currency?: TCurrencyCore
+  }
 
-export type TGetBalanceOptions<TApi, TRes, TSigner> = WithApi<
-  TGetBalanceOptionsBase,
+export type TGetBalanceOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
+  TGetBalanceOptionsBase<TCustomChain>,
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
-export type TGetAssetBalanceOptions<TApi, TRes, TSigner> = WithApi<
-  TGetAssetBalanceOptionsBase,
+export type TGetAssetBalanceOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TGetAssetBalanceOptionsBase<TCustomChain>, TApi, TRes, TSigner, TCustomChain>
 
 export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
@@ -72,26 +75,33 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   feeAsset?: TCurrencyInput
 }
 
-export type TGetTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
-  TGetTransferableAmountOptionsBase<TRes>,
+export type TGetTransferableAmountOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TGetTransferableAmountOptionsBase<TRes>, TApi, TRes, TSigner, TCustomChain>
 
-export type TGetMinTransferableAmountOptions<TApi, TRes, TSigner> = WithApi<
+export type TGetMinTransferableAmountOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<
   TGetTransferableAmountOptionsBase<TRes> & {
     recipient: string
     builder: GeneralBuilder<
       TApi,
       TRes,
       TSigner,
-      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
+      TCustomChain
     >
   },
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
 
 export type TVerifyEdOnDestinationOptionsBase<TRes> = {
@@ -120,9 +130,9 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   feeAsset?: TCurrencyInput
 }
 
-export type TVerifyEdOnDestinationOptions<TApi, TRes, TSigner> = WithApi<
-  TVerifyEdOnDestinationOptionsBase<TRes>,
+export type TVerifyEdOnDestinationOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TVerifyEdOnDestinationOptionsBase<TRes>, TApi, TRes, TSigner, TCustomChain>

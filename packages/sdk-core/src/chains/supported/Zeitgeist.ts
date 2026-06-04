@@ -29,8 +29,8 @@ class Zeitgeist<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TZeitgeistAsset | TXcmForeignAsset {
     if (asset.isNative) return 'Ztg'
@@ -42,7 +42,7 @@ class Zeitgeist<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  canReceiveFrom(origin: TChain): boolean {
+  canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
     return origin !== 'Astar'
   }
 

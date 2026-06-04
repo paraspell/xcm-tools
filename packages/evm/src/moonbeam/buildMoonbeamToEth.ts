@@ -27,9 +27,9 @@ import abi from './abi-xcm.json' with { type: 'json' }
 const xcmInterfacePrecompile: Address = '0x000000000000000000000000000000000000081A'
 const XCDOT = '0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080'
 
-export const buildMoonbeamToEth = async <TApi, TRes, TSigner>(
+export const buildMoonbeamToEth = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   from: TSubstrateChain,
-  options: TBuildEvmTransferOptions<TApi, TRes, TSigner>
+  options: TBuildEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TransactionSerializableEIP1559> => {
   const { api, to, sender, recipient, ahAddress, currency } = options
 

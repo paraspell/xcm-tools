@@ -3,9 +3,14 @@ import { isChainEvm } from '@paraspell/sdk-core';
 import type { TExecuteRouterPlanOptions } from '../types';
 import { type TRouterPlan } from '../types';
 
-export const executeRouterPlan = async <TApi, TRes, TSigner>(
+export const executeRouterPlan = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   plan: TRouterPlan<TApi, TRes>,
-  { signer, evmSigner, onStatusChange, api }: TExecuteRouterPlanOptions<TApi, TRes, TSigner>,
+  {
+    signer,
+    evmSigner,
+    onStatusChange,
+    api,
+  }: TExecuteRouterPlanOptions<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<string[]> => {
   const txHashes: string[] = [];
 

@@ -11,13 +11,18 @@ import { createBeneficiaryLocXTokens } from '../../../utils'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParams } from './getXTokensParams'
 
-export const shouldUseMultiAssetTransfer = <TApi, TRes, TSigner>({
+export const shouldUseMultiAssetTransfer = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>({
   origin,
   destination,
   scenario,
   overriddenAsset,
   useMultiAssetTransfer
-}: TXTokensTransferOptions<TApi, TRes, TSigner>) => {
+}: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) => {
   const isAstarOrShidenToRelay =
     scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
   const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
@@ -43,8 +48,8 @@ export const getXTokensMethod = <TApi, TRes, TSigner>(
   return isOverriddenMultiAssets ? 'transfer_multiassets' : 'transfer_multiasset'
 }
 
-export const buildXTokensCall = <TApi, TRes, TSigner>(
-  input: TXTokensTransferOptions<TApi, TRes, TSigner>,
+export const buildXTokensCall = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
 ): TSerializedExtrinsics => {

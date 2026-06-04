@@ -5,9 +5,21 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../../types';
 import { createSwapTx } from '../createSwapTx';
 
-export const getSwapFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean = false>(
+export const getSwapFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean = false,
+  TCustomChain extends string = never,
+>(
   exchange: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
   disableFallback?: TDisableFallback,
 ): Promise<{ result: TConditionalXcmFeeDetail<TDisableFallback>; amountOut: bigint }> => {
   const {

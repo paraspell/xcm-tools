@@ -16,8 +16,8 @@ import type { TSwapOptions } from '../../../types';
 import { pow10n } from '../../../utils';
 import { getAssetInfo } from './utils';
 
-export const calculateFee = async <TApi, TRes, TSigner>(
-  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi, TRes, TSigner>,
+export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi, TRes, TSigner, TCustomChain>,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
   assetClient: AssetClient,

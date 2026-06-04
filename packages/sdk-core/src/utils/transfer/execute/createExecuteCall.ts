@@ -3,8 +3,8 @@ import { type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { TSerializedExtrinsics, TWeight, TXcmVersioned } from '../../../types'
 
-export const createExecuteCall = (
-  chain: TSubstrateChain,
+export const createExecuteCall = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   xcm: TXcmVersioned<any>,
   maxWeight: TWeight

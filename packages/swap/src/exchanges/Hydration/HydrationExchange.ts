@@ -28,8 +28,8 @@ import { calculateFee, getAssetInfo } from './utils';
 class HydrationExchange extends ExchangeChain<'PAPI'> {
   readonly apiType = 'PAPI';
 
-  async swapCurrency<TApi, TRes, TSigner>(
-    options: TPapiSwapOptions<TApi, TRes, TSigner>,
+  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TPapiSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
     const { apiPapi, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
@@ -128,8 +128,8 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
     return { tx, amountOut: amountOutModified };
   }
 
-  async getAmountOut<TApi, TRes, TSigner>(
-    options: TPapiGetAmountOutOptions<TApi, TRes, TSigner>,
+  async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TPapiGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
   ): Promise<bigint> {
     const { apiPapi, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 

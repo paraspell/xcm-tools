@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { HopProcessParams, HopTraversalResult, TDryRunOptions } from '../../types'
-import { getRelayChainOf } from '../../utils'
+import { getRelayChainOf, getRelayChainOfImpl } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { resolveHopAsset } from '../utils'
 import { dryRunInternal } from './dryRunInternal'
@@ -540,6 +540,7 @@ describe('dryRunInternal', () => {
         return 'ACA'
       })
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+      vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
 
       const originOk = {
         success: true,

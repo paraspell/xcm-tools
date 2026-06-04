@@ -17,11 +17,11 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
   }
 })
 
-const getInstructionType = <TRes>(
+const getInstructionType = <TRes, TCustomChain extends string = never>(
   version: Version,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   destination: TChain,
-  reserveChain?: TChain,
+  reserveChain?: TChain | TCustomChain,
   transactOptions?: TTransactOptions<TRes>
 ) => {
   if (version >= Version.V5 && transactOptions?.call) {
@@ -51,10 +51,10 @@ const getInstructionType = <TRes>(
   return 'DepositAsset'
 }
 
-const getInitiateTransferType = (
-  origin: TSubstrateChain,
+const getInitiateTransferType = <TCustomChain extends string = never>(
+  origin: TSubstrateChain | TCustomChain,
   destination: TChain,
-  reserveChain?: TChain
+  reserveChain?: TChain | TCustomChain
 ) => {
   if (isTrustedChain(origin) && isTrustedChain(destination)) {
     return 'Teleport'
@@ -65,8 +65,8 @@ const getInitiateTransferType = (
   return 'ReserveWithdraw'
 }
 
-export const createBaseExecuteXcm = <TApi, TRes, TSigner>(
-  options: TCreateTransferXcmOptions<TApi, TRes, TSigner> & {
+export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain> & {
     suffixXcm?: unknown[]
   }
 ) => {
@@ -200,7 +200,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner>(
         {
           InitiateTeleport: {
             assets: routingAssetsFilter,
-            dest: getChainLocation(chain, reserveChain),
+            dest: getChainLocation(chain, reserveChain, api._customCtx),
             xcm: [
               ...createPayFees(
                 version,
@@ -224,7 +224,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner>(
         {
           InitiateReserveWithdraw: {
             assets: routingAssetsFilter,
-            reserve: getChainLocation(chain, reserveChain),
+            reserve: getChainLocation(chain, reserveChain, api._customCtx),
             xcm: [
               ...createPayFees(
                 version,

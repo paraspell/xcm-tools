@@ -10,7 +10,11 @@ export type TXcmFeeSwapConfig = TSwapConfig & { amountOut: bigint }
 
 export type TTxFactory<TRes> = (amount?: string, relative?: boolean) => Promise<TRes>
 
-export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
+export type TGetXcmFeeBaseOptions<
+  TRes,
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = {
   /**
    * The transaction factory
    */
@@ -18,7 +22,7 @@ export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boole
   /**
    * The origin chain
    */
-  origin: TSubstrateChain
+  origin: TSubstrateChain | TCustomChain
   /**
    * The destination chain
    */
@@ -41,15 +45,23 @@ export type TGetXcmFeeOptions<
   TApi,
   TRes,
   TSigner,
-  TDisableFallback extends boolean = boolean
-> = WithApi<TGetXcmFeeBaseOptions<TRes, TDisableFallback>, TApi, TRes, TSigner>
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = WithApi<
+  TGetXcmFeeBaseOptions<TRes, TDisableFallback, TCustomChain>,
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+>
 
 export type TGetXcmFeeInternalOptions<
   TApi,
   TRes,
   TSigner,
-  TDisableFallback extends boolean = boolean
-> = Omit<TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback>, 'buildTx'> & {
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = Omit<TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>, 'buildTx'> & {
   tx: TRes
   useRootOrigin: boolean
 }
@@ -58,9 +70,13 @@ export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
 
-export type TGetOriginXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
+export type TGetOriginXcmFeeBaseOptions<
+  TRes,
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = {
   buildTx: TTxFactory<TRes>
-  origin: TSubstrateChain
+  origin: TSubstrateChain | TCustomChain
   destination: TChain
   sender: string
   currency: WithAmount<TCurrencyCore>
@@ -74,19 +90,28 @@ export type TGetOriginXcmFeeOptions<
   TApi,
   TRes,
   TSigner,
-  TDisableFallback extends boolean = boolean
-> = WithApi<TGetOriginXcmFeeBaseOptions<TRes, TDisableFallback>, TApi, TRes, TSigner>
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = WithApi<
+  TGetOriginXcmFeeBaseOptions<TRes, TDisableFallback, TCustomChain>,
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+>
 
-export type TGetOriginXcmFeeInternalOptions<TApi, TRes, TSigner> = Omit<
-  TGetOriginXcmFeeOptions<TApi, TRes, TSigner>,
-  'buildTx'
-> & {
+export type TGetOriginXcmFeeInternalOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+> = Omit<TGetOriginXcmFeeOptions<TApi, TRes, TSigner, boolean, TCustomChain>, 'buildTx'> & {
   tx: TRes
 }
 
-export type TGetFeeForDestChainBaseOptions<TRes> = {
-  prevChain: TSubstrateChain
-  origin: TSubstrateChain
+export type TGetFeeForDestChainBaseOptions<TRes, TCustomChain extends string = never> = {
+  prevChain: TSubstrateChain | TCustomChain
+  origin: TSubstrateChain | TCustomChain
   destination: TChain
   sender: string
   recipient: string
@@ -103,15 +128,20 @@ export type TGetFeeForDestChainBaseOptions<TRes> = {
   skipReverseFeeCalculation?: boolean
 }
 
-export type TGetFeeForDestChainOptions<TApi, TRes, TSigner> = WithApi<
-  TGetFeeForDestChainBaseOptions<TRes>,
+export type TGetFeeForDestChainOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TGetFeeForDestChainBaseOptions<TRes, TCustomChain>, TApi, TRes, TSigner, TCustomChain>
 
-export type TGetReverseTxFeeOptions<TApi, TRes, TSigner> = Omit<
-  TGetFeeForDestChainOptions<TApi, TRes, TSigner>,
+export type TGetReverseTxFeeOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+> = Omit<
+  TGetFeeForDestChainOptions<TApi, TRes, TSigner, TCustomChain>,
   | 'destination'
   | 'disableFallback'
   | 'forwardedXcms'

@@ -26,7 +26,10 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner>, asset: TAssetInfo) {
+  getCustomCurrencyId<TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ) {
     const nativeAssetSymbol = this.getNativeAssetSymbol(api)
 
     if (asset.symbol === nativeAssetSymbol) {

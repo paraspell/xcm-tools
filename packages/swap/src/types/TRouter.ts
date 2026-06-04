@@ -29,8 +29,8 @@ export type TGetDexConfigApi<TApiType extends TExchangeApiType> = TApiType exten
 type WithApiVariant<TBase, TApiType extends TExchangeApiType = TExchangeApiType> = TBase &
   Extract<TExchangeApiVariant, { apiType: TApiType }>;
 
-type TSwapOptionsCommon<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>;
+type TSwapOptionsCommon<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   amount: bigint;
@@ -41,8 +41,8 @@ type TSwapOptionsCommon<TApi, TRes, TSigner> = {
   isForFeeEstimation?: boolean;
 };
 
-export type TSwapOptions<TApi, TRes, TSigner> = WithApiVariant<
-  TSwapOptionsCommon<TApi, TRes, TSigner>
+export type TSwapOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApiVariant<
+  TSwapOptionsCommon<TApi, TRes, TSigner, TCustomChain>
 >;
 
 export type TSwapOptionsFor<
@@ -50,19 +50,30 @@ export type TSwapOptionsFor<
   TRes,
   TSigner,
   TApiType extends TExchangeApiType,
-> = WithApiVariant<TSwapOptionsCommon<TApi, TRes, TSigner>, TApiType>;
+  TCustomChain extends string = never,
+> = WithApiVariant<TSwapOptionsCommon<TApi, TRes, TSigner, TCustomChain>, TApiType>;
 
-export type TPjsSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<TApi, TRes, TSigner, 'PJS'>;
-export type TPapiSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<TApi, TRes, TSigner, 'PAPI'>;
-export type TGenericSwapOptions<TApi, TRes, TSigner> = TSwapOptionsFor<
+export type TPjsSwapOptions<
   TApi,
   TRes,
   TSigner,
-  'GENERIC'
->;
+  TCustomChain extends string = never,
+> = TSwapOptionsFor<TApi, TRes, TSigner, 'PJS', TCustomChain>;
+export type TPapiSwapOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+> = TSwapOptionsFor<TApi, TRes, TSigner, 'PAPI', TCustomChain>;
+export type TGenericSwapOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+> = TSwapOptionsFor<TApi, TRes, TSigner, 'GENERIC', TCustomChain>;
 
-type TGetAmountOutOptionsCommon<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>;
+type TGetAmountOutOptionsCommon<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
   origin?: TOriginInfo<TApi>;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
@@ -70,35 +81,39 @@ type TGetAmountOutOptionsCommon<TApi, TRes, TSigner> = {
   slippagePct?: string;
 };
 
-export type TGetAmountOutOptions<TApi, TRes, TSigner> = WithApiVariant<
-  TGetAmountOutOptionsCommon<TApi, TRes, TSigner>
->;
+export type TGetAmountOutOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+> = WithApiVariant<TGetAmountOutOptionsCommon<TApi, TRes, TSigner, TCustomChain>>;
 
 export type TGetAmountOutOptionsFor<
   TApi,
   TRes,
   TSigner,
   TApiType extends TExchangeApiType,
-> = WithApiVariant<TGetAmountOutOptionsCommon<TApi, TRes, TSigner>, TApiType>;
+  TCustomChain extends string = never,
+> = WithApiVariant<TGetAmountOutOptionsCommon<TApi, TRes, TSigner, TCustomChain>, TApiType>;
 
-export type TPjsGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+export type TPjsGetAmountOutOptions<
   TApi,
   TRes,
   TSigner,
-  'PJS'
->;
-export type TPapiGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+  TCustomChain extends string = never,
+> = TGetAmountOutOptionsFor<TApi, TRes, TSigner, 'PJS', TCustomChain>;
+export type TPapiGetAmountOutOptions<
   TApi,
   TRes,
   TSigner,
-  'PAPI'
->;
-export type TGenericGetAmountOutOptions<TApi, TRes, TSigner> = TGetAmountOutOptionsFor<
+  TCustomChain extends string = never,
+> = TGetAmountOutOptionsFor<TApi, TRes, TSigner, 'PAPI', TCustomChain>;
+export type TGenericGetAmountOutOptions<
   TApi,
   TRes,
   TSigner,
-  'GENERIC'
->;
+  TCustomChain extends string = never,
+> = TGetAmountOutOptionsFor<TApi, TRes, TSigner, 'GENERIC', TCustomChain>;
 
 export type TExtrinsic<TRes> = Extrinsic | TPapiTransaction | TRes;
 
@@ -177,11 +192,12 @@ export type TTransferBaseOptions<TApi, TRes, TSigner> = {
   onStatusChange?: TStatusChangeCallback<TApi, TRes>;
 };
 
-export type TTransferOptions<TApi, TRes, TSigner> = WithApi<
+export type TTransferOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
   TTransferBaseOptions<TApi, TRes, TSigner>,
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >;
 
 export type TGetBestAmountOutBaseOptions<TApi, TRes, TSigner> = Omit<
@@ -195,12 +211,12 @@ export type TGetBestAmountOutBaseOptions<TApi, TRes, TSigner> = Omit<
   | 'evmSenderAddress'
 >;
 
-export type TGetBestAmountOutOptions<TApi, TRes, TSigner> = WithApi<
-  TGetBestAmountOutBaseOptions<TApi, TRes, TSigner>,
+export type TGetBestAmountOutOptions<
   TApi,
   TRes,
-  TSigner
->;
+  TSigner,
+  TCustomChain extends string = never,
+> = WithApi<TGetBestAmountOutBaseOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner, TCustomChain>;
 
 export type TGetBestAmountOutResult = {
   exchange: TExchangeChain;
@@ -212,19 +228,28 @@ export type TBuildTransactionsBaseOptions<TApi, TRes, TSigner> = Omit<
   'onStatusChange' | 'signer' | 'evmSigner'
 >;
 
-export type TBuildTransactionsOptions<TApi, TRes, TSigner> = WithApi<
-  TBuildTransactionsBaseOptions<TApi, TRes, TSigner>,
+export type TBuildTransactionsOptions<
   TApi,
   TRes,
-  TSigner
->;
+  TSigner,
+  TCustomChain extends string = never,
+> = WithApi<TBuildTransactionsBaseOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner, TCustomChain>;
 
-export type TCommonRouterOptions<TApi, TRes, TSigner> =
-  | TTransferOptions<TApi, TRes, TSigner>
-  | TBuildTransactionsOptions<TApi, TRes, TSigner>;
+export type TCommonRouterOptions<TApi, TRes, TSigner, TCustomChain extends string = never> =
+  | TTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  | TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>;
 
-export type TTransformedOptions<T, TApi, TRes, TSigner> = Omit<T, 'exchange' | 'amount'> &
-  WithApi<TAdditionalTransferOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>;
+export type TTransformedOptions<T, TApi, TRes, TSigner, TCustomChain extends string = never> = Omit<
+  T,
+  'exchange' | 'amount'
+> &
+  WithApi<
+    TAdditionalTransferOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >;
 
 export type TOriginInfo<TApi> = {
   api: TApi;
@@ -233,24 +258,28 @@ export type TOriginInfo<TApi> = {
   feeAssetInfo?: TAssetInfo;
 };
 
-type TExchangeInfoCommon<TApi, TRes, TSigner> = {
-  api: PolkadotApi<TApi, TRes, TSigner>;
+type TExchangeInfoCommon<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
   chain: TExchangeChain;
   assetFrom: TAssetInfo;
   assetTo: TAssetInfo;
   feeAssetInfo?: TAssetInfo;
 };
 
-export type TExchangeInfo<TApi, TRes, TSigner> = WithApiVariant<
-  TExchangeInfoCommon<TApi, TRes, TSigner>
->;
+export type TExchangeInfo<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+> = WithApiVariant<TExchangeInfoCommon<TApi, TRes, TSigner, TCustomChain>>;
 
 export type TExchangeInfoFor<
   TApi,
   TRes,
   TSigner,
   TApiType extends TExchangeApiType,
-> = WithApiVariant<TExchangeInfoCommon<TApi, TRes, TSigner>, TApiType>;
+  TCustomChain extends string = never,
+> = WithApiVariant<TExchangeInfoCommon<TApi, TRes, TSigner, TCustomChain>, TApiType>;
 
 export type TPjsExchangeInfo<TApi, TRes, TSigner> = TExchangeInfoFor<TApi, TRes, TSigner, 'PJS'>;
 export type TPapiExchangeInfo<TApi, TRes, TSigner> = TExchangeInfoFor<TApi, TRes, TSigner, 'PAPI'>;
@@ -266,10 +295,10 @@ export type TDestinationInfo = {
   address: string;
 };
 
-export type TAdditionalTransferOptions<TApi, TRes, TSigner> = {
+export type TAdditionalTransferOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
   amount: bigint;
   origin?: TOriginInfo<TApi>;
-  exchange: TExchangeInfo<TApi, TRes, TSigner>;
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>;
   destination?: TDestinationInfo;
   feeCalcAddress: string;
 };
@@ -318,14 +347,14 @@ export type TTransaction<TApi, TRes> =
 
 export type TRouterPlan<TApi, TRes> = TTransaction<TApi, TRes>[];
 
-export type TExecuteRouterPlanOptions<TApi, TRes, TSigner> = {
+export type TExecuteRouterPlanOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
   signer: TSigner;
   sender: string;
   destination?: TChain;
   evmSigner?: TSigner;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback<TApi, TRes>;
-  api: PolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
 };
 
 export type TPreparedExtrinsics<TRes> = {
@@ -336,28 +365,39 @@ export type TPreparedExtrinsics<TRes> = {
   amountOut: bigint;
 };
 
-export type TBuildToExchangeTxOptions<TApi, TRes, TSigner> = {
+export type TBuildToExchangeTxOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
   origin: TOriginInfo<TApi>;
-  exchange: TExchangeInfo<TApi, TRes, TSigner>;
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>;
   sender: string;
   evmSenderAddress?: string;
   amount: bigint;
-  api: PolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
 };
 
-export type TBuildFromExchangeTxOptions<TApi, TRes, TSigner> = {
-  exchange: TExchangeInfo<TApi, TRes, TSigner>;
+export type TBuildFromExchangeTxOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+> = {
+  exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>;
   destination: TDestinationInfo;
   amount: bigint;
   sender: string;
-  api: PolkadotApi<TApi, TRes, TSigner>;
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>;
 };
 
-export type TSwapTransformedOptions<TApi, TRes, TSigner> = TTransformedOptions<
-  TBuildTransactionsOptions<TApi, TRes, TSigner>,
+export type TSwapTransformedOptions<
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain extends string = never,
+> = TTransformedOptions<
+  TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
 >;
 
 export type TCallDexAmountOutOverrides = {

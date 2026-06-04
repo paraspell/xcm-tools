@@ -10,9 +10,15 @@ import {
   validateTransferOptions,
 } from './utils';
 
-const computeExchangeMinAmount = async <TApi, TRes, TSigner>(
+const computeExchangeMinAmount = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TTransformedOptions<TBuildTransactionsOptions<TApi, TRes, TSigner>, TApi, TRes, TSigner>,
+  options: TTransformedOptions<
+    TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain
+  >,
 ): Promise<bigint> => {
   const { exchange } = options;
 
@@ -33,8 +39,13 @@ const computeExchangeMinAmount = async <TApi, TRes, TSigner>(
   return existentialDeposit + swapFee + 1n;
 };
 
-export const getMinTransferableAmount = async <TApi, TRes, TSigner>(
-  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner>,
+export const getMinTransferableAmount = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
+  initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
 ): Promise<bigint> => {
   validateTransferOptions(initialOptions);
 

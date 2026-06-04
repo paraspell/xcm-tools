@@ -17,12 +17,13 @@ export class AssetClaimBuilder<
   TApi,
   TRes,
   TSigner,
-  T extends Partial<TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>> = object
+  T extends Partial<TAssetClaimOptionsBase & TBuilderInternalOptions<TSigner>> = object,
+  TCustomChain extends string = never
 > {
-  readonly api: PolkadotApi<TApi, TRes, TSigner>
+  readonly api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   readonly _options: T
 
-  constructor(api: PolkadotApi<TApi, TRes, TSigner>, options?: T) {
+  constructor(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>, options?: T) {
     this.api = api
     this._options = options ?? ({} as T)
   }
@@ -35,7 +36,13 @@ export class AssetClaimBuilder<
    */
   currency(
     currency: TAssetClaimOptionsBase['currency']
-  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { currency: TAssetClaimOptionsBase['currency'] }> {
+  ): AssetClaimBuilder<
+    TApi,
+    TRes,
+    TSigner,
+    T & { currency: TAssetClaimOptionsBase['currency'] },
+    TCustomChain
+  > {
     return new AssetClaimBuilder(this.api, { ...this._options, currency })
   }
 
@@ -45,7 +52,9 @@ export class AssetClaimBuilder<
    * @param address - The sender address.
    * @returns
    */
-  sender(sender: TSender<TSigner>): AssetClaimBuilder<TApi, TRes, TSigner, T & { sender: string }> {
+  sender(
+    sender: TSender<TSigner>
+  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { sender: string }, TCustomChain> {
     const isPath = typeof sender === 'string' && sender.startsWith('//')
     const isPathOrSigner = isPath || isSenderSigner(sender)
     const address = isPathOrSigner ? this.api.deriveAddress(sender) : sender
@@ -62,7 +71,9 @@ export class AssetClaimBuilder<
    * @param address - The destination account address.
    * @returns An instance of Builder
    */
-  address(address: TAddress): AssetClaimBuilder<TApi, TRes, TSigner, T & { address: TAddress }> {
+  address(
+    address: TAddress
+  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { address: TAddress }, TCustomChain> {
     const isPath = typeof address === 'string' && address.startsWith('//')
     const resolvedAddress = isPath ? this.api.deriveAddress(address) : address
     return new AssetClaimBuilder(this.api, { ...this._options, address: resolvedAddress })
@@ -74,7 +85,9 @@ export class AssetClaimBuilder<
    * @param version - The XCM version.
    * @returns An instance of Builder
    */
-  xcmVersion(version: Version): AssetClaimBuilder<TApi, TRes, TSigner, T & { version: Version }> {
+  xcmVersion(
+    version: Version
+  ): AssetClaimBuilder<TApi, TRes, TSigner, T & { version: Version }, TCustomChain> {
     return new AssetClaimBuilder(this.api, { ...this._options, version })
   }
 

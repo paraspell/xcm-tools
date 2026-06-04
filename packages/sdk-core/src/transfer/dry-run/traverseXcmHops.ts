@@ -9,12 +9,18 @@ import { getTChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
-import { getRelayChainOf } from '../../utils'
+import { getRelayChainOfImpl } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
 
-export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
-  config: HopTraversalConfig<TApi, TRes, TSigner, THopResult>
-): Promise<HopTraversalResult<THopResult>> => {
+export const traverseXcmHops = async <
+  TApi,
+  TRes,
+  TSigner,
+  THopResult,
+  TCustomChain extends string = never
+>(
+  config: HopTraversalConfig<TApi, TRes, TSigner, THopResult, TCustomChain>
+): Promise<HopTraversalResult<THopResult, TCustomChain>> => {
   const {
     api,
     origin,
@@ -52,7 +58,7 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTChain(nextParaId, getRelayChainOf(origin))
+    const nextChain = getTChain(nextParaId, getRelayChainOfImpl(api, origin))
 
     if (!nextChain) {
       throw new RoutingResolutionError(`Unable to find TChain for paraId ${nextParaId}`)
@@ -121,8 +127,14 @@ export const traverseXcmHops = async <TApi, TRes, TSigner, THopResult>(
   }
 }
 
-export const addEthereumBridgeFees = async <TApi, TRes, TSigner, TResult extends { fee?: bigint }>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const addEthereumBridgeFees = async <
+  TApi,
+  TRes,
+  TSigner,
+  TResult extends { fee?: bigint },
+  TCustomChain extends string = never
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   bridgeHubResult: TResult | undefined,
   destination: TChain,
   assetHubChain: TSubstrateChain

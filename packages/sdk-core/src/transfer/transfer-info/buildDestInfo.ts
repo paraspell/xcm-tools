@@ -6,7 +6,7 @@ import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
 import { UnableToComputeError } from '../../errors'
 import type { TBuildDestInfoOptions } from '../../types'
 
-export const buildDestInfo = async <TApi, TRes, TSigner>({
+export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   origin,
   destination,
@@ -17,7 +17,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner>({
   destFeeDetail,
   totalHopFee,
   bridgeFee
-}: TBuildDestInfoOptions<TApi, TRes, TSigner>) => {
+}: TBuildDestInfoOptions<TApi, TRes, TSigner, TCustomChain>) => {
   const destApi = api.clone()
 
   await destApi.init(destination)

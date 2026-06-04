@@ -16,19 +16,20 @@ export type TEvmTransferOptionsBase = {
   ahAddress?: string
 }
 
-export type TEvmTransferOptions<TApi, TRes, TSigner> = WithApi<
+export type TEvmTransferOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
   TEvmTransferOptionsBase & { signer: WalletClient },
   TApi,
   TRes,
-  TSigner
+  TSigner,
+  TCustomChain
 >
 
-export type TBuildEvmTransferOptions<TApi, TRes, TSigner> = WithApi<
-  TEvmTransferOptionsBase & { sender: string },
+export type TBuildEvmTransferOptions<
   TApi,
   TRes,
-  TSigner
->
+  TSigner,
+  TCustomChain extends string = never
+> = WithApi<TEvmTransferOptionsBase & { sender: string }, TApi, TRes, TSigner, TCustomChain>
 
 /**
  * The options for the batch builder.
@@ -75,20 +76,23 @@ export type TCustomChainFrom<TOpts> = TOpts extends { customChains: infer C }
   ? Extract<keyof C, string>
   : never
 
-export type TCreateTxsOptions<TApi, TRes, TSigner> = Pick<
-  TTransferOptions<TApi, TRes, TSigner>,
+export type TCreateTxsOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = Pick<
+  TTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   'api' | 'from' | 'to' | 'currency'
 >
 
-export type TBatchedTransferOptions<TApi, TRes, TSigner> = Omit<
-  TSubstrateTransferOptions<TApi, TRes, TSigner>,
-  'isAmountAll'
-> & {
+export type TBatchedTransferOptions<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+> = Omit<TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>, 'isAmountAll'> & {
   builder: GeneralBuilder<
     TApi,
     TRes,
     TSigner,
-    TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>
+    TTransferBaseOptions<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+    TCustomChain
   >
 }
 
@@ -100,9 +104,10 @@ export type TBuildInternalResBase<
     TApi,
     TRes,
     TSigner
-  >
+  >,
+  TCustomChain extends string = never
 > = {
-  options: TTransferOptions<TApi, TRes, TSigner> & TOptions
+  options: TTransferOptions<TApi, TRes, TSigner, TCustomChain> & TOptions
 }
 
 export type TBuildInternalRes<
@@ -113,8 +118,9 @@ export type TBuildInternalRes<
     TApi,
     TRes,
     TSigner
-  >
-> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
+  >,
+  TCustomChain extends string = never
+> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions, TCustomChain> & {
   tx: TRes
 }
 
@@ -126,8 +132,9 @@ export type TBuildAllInternalRes<
     TApi,
     TRes,
     TSigner
-  >
-> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions> & {
+  >,
+  TCustomChain extends string = never
+> = TBuildInternalResBase<TApi, TRes, TSigner, TOptions, TCustomChain> & {
   txContexts: TTransactionContext<TApi, TRes>[]
 }
 

@@ -4,16 +4,16 @@ import { Version } from '@paraspell/sdk-common'
 import type { PolkadotApi } from '../../api'
 import type { TTransactOptions, TWeight } from '../../types'
 
-const resolveTx = async <TApi, TRes, TSigner>(
-  destApi: PolkadotApi<TApi, TRes, TSigner>,
+const resolveTx = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  destApi: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   { call }: TTransactOptions<TRes>
 ) => {
   if (typeof call !== 'string') return call
   return destApi.txFromHex(call)
 }
 
-const resolveMaxWeight = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+const resolveMaxWeight = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   version: Version,
   destChain: TChain,
   address: string,
@@ -45,8 +45,13 @@ const convertWeight = (weight: TWeight | undefined) => {
   return undefined
 }
 
-export const createTransactInstructions = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const createTransactInstructions = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   options: TTransactOptions<TRes>,
   version: Version,
   destChain: TChain,

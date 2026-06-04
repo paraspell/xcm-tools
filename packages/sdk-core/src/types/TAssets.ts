@@ -13,16 +13,16 @@ export type TSetBalanceRes = {
 export abstract class BaseAssetsPallet {
   constructor(protected palletName: TAssetsPallet) {}
 
-  abstract mint<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  abstract mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain
+    chain: TSubstrateChain | TCustomChain
   ): Promise<TSetBalanceRes>
 
-  abstract getBalance<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  abstract getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo,
     customCurrencyId?: unknown

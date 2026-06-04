@@ -21,7 +21,7 @@ export const Builder = <
 >(
   options?: TOpts,
 ) => {
-  const dedotApi = new DedotApi(options);
+  const dedotApi = new DedotApi<TCustomChainFrom<TOpts>>(options);
   return BuilderImpl<
     TDedotApi,
     TDedotExtrinsic,

@@ -4,8 +4,8 @@ import type { PolkadotApi } from '../../api'
 import { AssetsPallet } from '../assets'
 
 export class FungiblesPallet extends AssetsPallet {
-  async getBalance<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

@@ -4,8 +4,8 @@ import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
 import { padValueBy } from './padFee'
 
-export const getMythosOriginFee = async <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>
+export const getMythosOriginFee = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ): Promise<bigint> => {
   const ahApi = api.clone()
   await ahApi.init('AssetHubPolkadot')

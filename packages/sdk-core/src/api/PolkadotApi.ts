@@ -116,7 +116,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   }
 
   findAssetInfo(
-    chain: TChain,
+    chain: TChain | TCustomChain,
     currency: TCurrencyInput,
     destination?: TChain | null
   ): TAssetInfo | null {
@@ -124,7 +124,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   }
 
   findAssetInfoOrThrow(
-    chain: TChain,
+    chain: TChain | TCustomChain,
     currency: TCurrencyInput,
     destination?: TChain | null
   ): TAssetInfo {
@@ -132,7 +132,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   }
 
   findAssetInfoOnDest(
-    origin: TChain,
+    origin: TChain | TCustomChain,
     destination: TChain,
     currency: TCurrencyInput,
     originAsset?: TAssetInfo | null
@@ -148,31 +148,31 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     return findAssetOnDestOrThrowImpl(origin, destination, currency, this._customCtx)
   }
 
-  findNativeAssetInfo(chain: TChain): TAssetInfo | null {
+  findNativeAssetInfo(chain: TChain | TCustomChain): TAssetInfo | null {
     return findNativeAssetInfoImpl(chain, this._customCtx)
   }
 
-  findNativeAssetInfoOrThrow(chain: TChain): TAssetInfo {
+  findNativeAssetInfoOrThrow(chain: TChain | TCustomChain): TAssetInfo {
     return findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
   }
 
-  isChainEvm(chain: TChain): boolean {
+  isChainEvm(chain: TChain | TCustomChain): boolean {
     return isChainEvmImpl(chain, this._customCtx)
   }
 
-  getNativeAssetSymbol(chain: TChain): string {
+  getNativeAssetSymbol(chain: TChain | TCustomChain): string {
     return getNativeAssetSymbolImpl(chain, this._customCtx)
   }
 
-  getRelayChainSymbol(chain: TChain): string {
+  getRelayChainSymbol(chain: TChain | TCustomChain): string {
     return getRelayChainSymbolImpl(chain, this._customCtx)
   }
 
-  hasDryRunSupport(chain: TChain): boolean {
+  hasDryRunSupport(chain: TChain | TCustomChain): boolean {
     return hasDryRunSupportImpl(chain, this._customCtx)
   }
 
-  hasXcmPaymentApiSupport(chain: TChain): boolean {
+  hasXcmPaymentApiSupport(chain: TChain | TCustomChain): boolean {
     return hasXcmPaymentApiSupportImpl(chain, this._customCtx)
   }
 
@@ -260,8 +260,12 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   abstract createApiForChain(
     chain: TSubstrateChain
   ): Promise<PolkadotApi<TApi, TRes, TSigner, TCustomChain>>
-  abstract getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunChainResult>
-  abstract getDryRunXcm(options: TDryRunXcmBaseOptions<TRes>): Promise<TDryRunChainResult>
+  abstract getDryRunCall(
+    options: TDryRunCallBaseOptions<TRes, TCustomChain>
+  ): Promise<TDryRunChainResult>
+  abstract getDryRunXcm(
+    options: TDryRunXcmBaseOptions<TRes, TCustomChain>
+  ): Promise<TDryRunChainResult>
   abstract getBridgeStatus(): Promise<TBridgeStatus>
   abstract disconnect(force?: boolean): Promise<void>
   abstract validateSubstrateAddress(address: string): boolean

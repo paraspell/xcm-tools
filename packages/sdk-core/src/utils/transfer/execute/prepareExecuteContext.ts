@@ -1,12 +1,12 @@
 import { isAssetEqual, type TAsset } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 
-import type { TCreateBaseTransferXcmOptions } from '../../../types'
+import type { TCreateTransferXcmOptions } from '../../../types'
 import { createAsset } from '../../asset'
-import { getAssetReserveChain } from '../../chain'
-import { localizeLocation } from '../../location'
+import { getAssetReserveChainImpl } from '../../chain'
+import { localizeLocation, localizeLocationImpl } from '../../location'
 
-export type TExecuteContext = {
+export type TExecuteContext<TCustomChain extends string = never> = {
   amount: bigint
   asset: TAsset
   assetLocalized: TAsset
@@ -16,23 +16,28 @@ export type TExecuteContext = {
   feeAssetLocalized?: TAsset
   feeAssetLocalizedToDest?: TAsset
   feeAssetLocalizedToReserve?: TAsset
-  reserveChain: TChain
+  reserveChain: TChain | TCustomChain
 }
 
-export const prepareExecuteContext = <TRes>({
+export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends string = never>({
+  api,
   chain,
   destChain,
   assetInfo,
   feeAssetInfo,
   fees: { originFee },
   version
-}: TCreateBaseTransferXcmOptions<TRes>): TExecuteContext => {
+}: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>): TExecuteContext<TCustomChain> => {
   const amount = assetInfo.amount
-  const reserveChain = getAssetReserveChain(chain, assetInfo.location)
+  const reserveChain = getAssetReserveChainImpl(api, chain, assetInfo.location)
 
   const asset = createAsset(version, amount, assetInfo.location)
 
-  const assetLocalized = createAsset(version, amount, localizeLocation(chain, assetInfo.location))
+  const assetLocalized = createAsset(
+    version,
+    amount,
+    localizeLocationImpl(api, chain, assetInfo.location)
+  )
   const assetLocalizedToDest = createAsset(
     version,
     amount,
@@ -41,7 +46,7 @@ export const prepareExecuteContext = <TRes>({
   const assetLocalizedToReserve = createAsset(
     version,
     amount,
-    localizeLocation(reserveChain ?? chain, assetInfo.location)
+    localizeLocationImpl(api, reserveChain ?? chain, assetInfo.location)
   )
 
   const feeAsset =
@@ -51,7 +56,7 @@ export const prepareExecuteContext = <TRes>({
 
   const feeAssetLocalized =
     feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(version, originFee, localizeLocation(chain, feeAssetInfo.location))
+      ? createAsset(version, originFee, localizeLocationImpl(api, chain, feeAssetInfo.location))
       : undefined
 
   const feeAssetLocalizedToDest =
@@ -64,7 +69,7 @@ export const prepareExecuteContext = <TRes>({
       ? createAsset(
           version,
           originFee,
-          localizeLocation(reserveChain ?? chain, feeAssetInfo.location)
+          localizeLocationImpl(api, reserveChain ?? chain, feeAssetInfo.location)
         )
       : undefined
 

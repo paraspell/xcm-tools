@@ -1,13 +1,13 @@
 import type { BuildHopInfoOptions } from '../../types'
 
-export const buildHopInfo = async <TApi, TRes, TSigner>({
+export const buildHopInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   chain,
   fee,
   originChain,
   asset,
   currency
-}: BuildHopInfoOptions<TApi, TRes, TSigner>) => {
+}: BuildHopInfoOptions<TApi, TRes, TSigner, TCustomChain>) => {
   const hopApi = api.clone()
   await hopApi.init(chain)
   hopApi.disconnectAllowed = false

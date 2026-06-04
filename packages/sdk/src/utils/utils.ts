@@ -14,7 +14,7 @@ export const createChainClient = (
   api?: TBuilderOptions<TApiOrUrl<TPapiApi>>
 ) => {
   const papiApi = new PapiApi(api)
-  return createChainClientInternal<TPapiApi, TPapiTransaction, TPapiSigner>(papiApi, chain)
+  return createChainClientInternal(papiApi, chain)
 }
 
 export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult>(

@@ -10,8 +10,8 @@ import { createBeneficiaryLocation, createDestination, localizeLocationImpl } fr
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
-const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
-  { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+const resolveBuyExecutionAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   isForFeeCalc: boolean,
   { hopFees, destFee }: TTypeAndThenFees,
   systemAssetAmount: bigint
@@ -25,12 +25,12 @@ const resolveBuyExecutionAmount = <TApi, TRes, TSigner>(
   return isRelayAsset ? assetInfo.amount - hopFees : destFee
 }
 
-const resolveSnowbridgeMessageId = <TApi, TRes, TSigner>({
+const resolveSnowbridgeMessageId = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   origin,
   isSnowbridge,
   assetInfo,
   options: { sender, recipient }
-}: TTypeAndThenCallContext<TApi, TRes, TSigner>) => {
+}: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>) => {
   if (!isSnowbridge) return Promise.resolve(null)
   assertSender(sender)
   return generateMessageId(
@@ -43,8 +43,8 @@ const resolveSnowbridgeMessageId = <TApi, TRes, TSigner>({
   )
 }
 
-export const createCustomXcm = async <TApi, TRes, TSigner>(
-  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   assetCount: number,
   isForFeeCalc: boolean,
   systemAssetAmount: bigint,

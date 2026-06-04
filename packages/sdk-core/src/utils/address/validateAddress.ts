@@ -6,10 +6,10 @@ import type { PolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
 import type { TAddress } from '../../types'
 
-export const validateAddress = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const validateAddress = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   address: TAddress,
-  chain: TChain,
+  chain: TChain | TCustomChain,
   isDestination = true
 ) => {
   if (isTLocation(address)) return

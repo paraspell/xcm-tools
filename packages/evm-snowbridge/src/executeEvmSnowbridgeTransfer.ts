@@ -4,13 +4,18 @@ import { createPublicClient, custom } from 'viem'
 
 import { buildSnowbridgeTransfer } from './buildSnowbridgeTransfer'
 
-export const executeEvmSnowbridgeTransfer = async <TApi, TRes, TSigner>({
+export const executeEvmSnowbridgeTransfer = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>({
   api,
   signer,
   recipient,
   to,
   currency
-}: TEvmTransferOptions<TApi, TRes, TSigner>): Promise<string> => {
+}: TEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>): Promise<string> => {
   const publicClient = createPublicClient({
     transport: custom(signer.transport),
     chain: signer.chain

@@ -23,13 +23,13 @@ import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
-const validateBridgeAsset = <TApi, TRes, TSigner>(
+const validateBridgeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   origin: TSubstrateChain,
   destination: TDestination,
   asset: TAssetInfo | null,
   currency: TCurrencyInputWithAmount,
   isBridge: boolean,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => {
   if (!asset || isTLocation(destination) || isExternalChain(destination) || !isBridge) {
     return
@@ -73,8 +73,8 @@ export const validateEcosystems = (origin: TSubstrateChain, destination: TDestin
   }
 }
 
-export const validateEthereumAsset = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const validateEthereumAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   destination: TDestination,
   asset: TAssetInfo | null
@@ -112,8 +112,13 @@ export const validateEthereumAsset = <TApi, TRes, TSigner>(
   }
 }
 
-export const validateAssetSupport = <TApi, TRes, TSigner>(
-  { api, from: origin, to: destination, currency }: TSubstrateTransferOptions<TApi, TRes, TSigner>,
+export const validateAssetSupport = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  {
+    api,
+    from: origin,
+    to: destination,
+    currency
+  }: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAssetInfo | null

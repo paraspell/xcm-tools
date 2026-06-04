@@ -10,7 +10,7 @@ import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { buildOriginInfo } from './buildOriginInfo'
 
-export const getTransferInfo = async <TApi, TRes, TSigner>({
+export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   buildTx,
   origin,
@@ -21,7 +21,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner>({
   currency,
   feeAsset,
   version
-}: TGetTransferInfoOptions<TApi, TRes, TSigner>): Promise<TTransferInfo> => {
+}: TGetTransferInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<TTransferInfo> => {
   if (api.isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
   }

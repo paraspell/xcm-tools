@@ -28,13 +28,13 @@ abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiTyp
 
   abstract readonly apiType: TApiType;
 
-  abstract swapCurrency<TApi, TRes, TSigner>(
-    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType>,
+  abstract swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>>;
 
-  async handleMultiSwap<TApi, TRes, TSigner>(
-    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType>,
+  async handleMultiSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TMultiSwapResult<TRes>> {
     const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
@@ -44,8 +44,8 @@ abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiTyp
     };
   }
 
-  abstract getAmountOut<TApi, TRes, TSigner>(
-    options: TGetAmountOutOptionsFor<TApi, TRes, TSigner, TApiType>,
+  abstract getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TGetAmountOutOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
   ): Promise<bigint>;
 
   abstract getDexConfig(api: TGetDexConfigApi<TApiType>): Promise<TDexConfigStored>;

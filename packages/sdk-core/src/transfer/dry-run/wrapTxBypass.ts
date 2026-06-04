@@ -18,8 +18,10 @@ import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
 import { parseUnits } from '../../utils/unit'
 
-const resolveBypassMintAmount = (chain: TSubstrateChain): string =>
-  HIGH_BYPASS_MINT_CHAINS.includes(chain) ? HIGH_BYPASS_MINT_AMOUNT : BYPASS_MINT_AMOUNT
+const resolveBypassMintAmount = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain
+): string =>
+  HIGH_BYPASS_MINT_CHAINS.some(c => c === chain) ? HIGH_BYPASS_MINT_AMOUNT : BYPASS_MINT_AMOUNT
 
 const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   if (!asset.isNative && (!asset.assetId || asset.assetId.startsWith('0x'))) {
@@ -29,12 +31,12 @@ const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
   return pallets[0]
 }
 
-const createMintTxs = <TApi, TRes, TSigner>(
-  chain: TSubstrateChain,
+const createMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   asset: WithAmount<TAssetInfo>,
   balance: bigint,
   address: string,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TSetBalanceRes> => {
   const nativePallet = getNativeAssetsPallet(chain, api._customCtx)
   const otherPallets = getOtherAssetsPallets(chain, api._customCtx)
@@ -51,25 +53,25 @@ const createMintTxs = <TApi, TRes, TSigner>(
   return palletInstance.mint(api, address, asset, balance, chain)
 }
 
-const createRequiredMintTxs = <TApi, TRes, TSigner>(
-  chain: TSubstrateChain,
+const createRequiredMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   asset: TAssetInfo,
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const amount = parseUnits(amountHuman, asset.decimals)
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
-const createOptionalMintTxs = <TApi, TRes, TSigner>(
-  chain: TSubstrateChain,
+const createOptionalMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   currency: TCurrencyCore,
   amountHuman: string,
   balance: bigint,
   address: string,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => {
   const asset = api.findAssetInfo(chain, currency)
   if (!asset) return null
@@ -77,8 +79,8 @@ const createOptionalMintTxs = <TApi, TRes, TSigner>(
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
-const resultToExtrinsics = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+const resultToExtrinsics = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   address: string,
   { assetStatusTx, balanceTx }: TSetBalanceRes
 ): TRes[] => {
@@ -97,12 +99,12 @@ export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint 
   return missing > 0n ? missing : null
 }
 
-const mintBonusForSent = <TApi, TRes, TSigner>(
-  chain: TSubstrateChain,
+const mintBonusForSent = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   sent: TAssetInfo,
   feeAsset: TAssetInfo | undefined,
   mintFeeAssets: boolean,
-  api: PolkadotApi<TApi, TRes, TSigner>
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ): bigint => {
   if (!mintFeeAssets) return 0n
 
@@ -128,8 +130,8 @@ const mintBonusForSent = <TApi, TRes, TSigner>(
     : 0n
 }
 
-export const wrapTxBypass = async <TApi, TRes, TSigner>(
-  dryRunOptions: TDryRunBypassOptions<TApi, TRes, TSigner>,
+export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  dryRunOptions: TDryRunBypassOptions<TApi, TRes, TSigner, TCustomChain>,
   options: TBypassOptions = {
     mintFeeAssets: true,
     sentAssetMintMode: 'bypass'

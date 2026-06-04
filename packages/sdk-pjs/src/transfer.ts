@@ -19,11 +19,10 @@ export const dryRunOrigin = createPolkadotJsApiCall(
 )
 export const transferEthToPolkadot = (
   options: Omit<TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'>
-): ReturnType<typeof transferEthToPolkadotImpl> =>
-  transferEthToPolkadotImpl({
-    ...options,
-    api: new PolkadotJsApi()
-  })
+): ReturnType<typeof transferEthToPolkadotImpl> => {
+  const api = new PolkadotJsApi()
+  return transferEthToPolkadotImpl({ ...options, api })
+}
 
 export const getParaEthTransferFees = async (api?: TApiOrUrl<TPjsApi>) => {
   const pjsApi = new PolkadotJsApi(api)

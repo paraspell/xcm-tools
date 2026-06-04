@@ -5,13 +5,11 @@ import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
 import { getRelayChainOfImpl } from '../chain'
 
 export const getEthereumJunction = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   chain: TChain | TCustomChain,
   useBigInt = true
 ): TJunctionGlobalConsensus => {
-  const relayChain = isExternalChain(chain)
-    ? undefined
-    : getRelayChainOfImpl<TApi, TRes, TSigner, TCustomChain>(api, chain)
+  const relayChain = isExternalChain(chain) ? undefined : getRelayChainOfImpl(api, chain)
   const isTestnet = relayChain === 'Westend' || relayChain === 'Paseo'
   const chainId = isTestnet ? ETH_TESTNET_PARA_ID : ETH_MAINNET_PARA_ID
   return {

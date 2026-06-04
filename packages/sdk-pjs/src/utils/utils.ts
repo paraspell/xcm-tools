@@ -11,7 +11,7 @@ export const createChainClient = (
   builderOptions?: TBuilderOptions<TApiOrUrl<TPjsApi>>
 ) => {
   const pjsApi = new PolkadotJsApi(builderOptions)
-  return createChainClientInternal<TPjsApi, Extrinsic, TPjsSigner>(pjsApi, chain)
+  return createChainClientInternal(pjsApi, chain)
 }
 
 export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, TResult>(

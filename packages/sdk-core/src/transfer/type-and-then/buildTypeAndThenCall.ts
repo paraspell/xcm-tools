@@ -8,12 +8,12 @@ import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types
 import { addXcmVersionHeader, createAsset } from '../../utils'
 import { createDestination, localizeLocationImpl } from '../../utils/location'
 
-export const resolveTransferType = <TApi, TRes, TSigner>({
+export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   origin,
   reserve,
   dest,
   isSubBridge
-}: TTypeAndThenCallContext<TApi, TRes, TSigner>) => {
+}: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>) => {
   // Direct A → C: when origin is reserve OR dest is reserve, check origin <-> dest trust
   // Hop A → B → C: when reserve differs from both, check origin <-> reserve trust
   const isDirect = origin.chain === reserve.chain || dest.chain === reserve.chain
@@ -24,8 +24,8 @@ export const resolveTransferType = <TApi, TRes, TSigner>({
   return 'DestinationReserve'
 }
 
-export const buildTypeAndThenCall = <TApi, TRes, TSigner>(
-  context: TTypeAndThenCallContext<TApi, TRes, TSigner>,
+export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   isDotAsset: boolean,
   customXcm: unknown[],
   assets: TAsset[]

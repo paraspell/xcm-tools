@@ -23,9 +23,9 @@ import type {
 } from '../../types';
 import { pickExchangeApiVariant } from './buildExchangeApiVariant';
 
-export const callDexAmountOut = <TApi, TRes, TSigner>(
+export const callDexAmountOut = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+  options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TCallDexAmountOutOverrides = {},
 ) =>
   dex.getAmountOut({
@@ -38,9 +38,9 @@ export const callDexAmountOut = <TApi, TRes, TSigner>(
     ...(overrides.slippagePct !== undefined && { slippagePct: overrides.slippagePct }),
   });
 
-export const buildSwapExecuteTx = async <TApi, TRes, TSigner>(
+export const buildSwapExecuteTx = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+  options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TBuildSwapExecuteOverrides = {},
 ): Promise<{ tx: TRes; amountOut: bigint }> => {
   const {
@@ -83,9 +83,9 @@ export const buildSwapExecuteTx = async <TApi, TRes, TSigner>(
 };
 
 export const createSwapExecuteBuildTx =
-  <TApi, TRes, TSigner>(
+  <TApi, TRes, TSigner, TCustomChain extends string = never>(
     dex: ExchangeChain,
-    options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+    options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   ) =>
   async (overrideAmount?: string) => {
     const amt =
@@ -96,9 +96,9 @@ export const createSwapExecuteBuildTx =
     return tx;
   };
 
-export const canUseExecuteTransfer = <TApi, TRes, TSigner>(
+export const canUseExecuteTransfer = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   dex: ExchangeChain,
-  options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+  options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
 ): boolean =>
   Boolean(options.origin || options.destination) &&
   (dex.chain.includes('AssetHub') || dex.chain === 'Hydration');
@@ -108,9 +108,15 @@ export const isFilteredError = (error: unknown): boolean =>
   error.dryRunType === 'origin' &&
   error.reason === 'Filtered';
 
-export const getSwapExecuteXcmFee = async <TApi, TRes, TSigner, TDisableFallback extends boolean>(
+export const getSwapExecuteXcmFee = async <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never,
+>(
   dex: ExchangeChain,
-  options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+  options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   disableFallback: TDisableFallback,
 ): Promise<{ result: TGetXcmFeeResult<TDisableFallback>; amountOut: bigint }> => {
   const {
@@ -163,9 +169,10 @@ export const getSwapExecuteOriginXcmFee = async <
   TRes,
   TSigner,
   TDisableFallback extends boolean,
+  TCustomChain extends string = never,
 >(
   dex: ExchangeChain,
-  options: TSwapTransformedOptions<TApi, TRes, TSigner>,
+  options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   disableFallback: TDisableFallback,
 ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
   const {
