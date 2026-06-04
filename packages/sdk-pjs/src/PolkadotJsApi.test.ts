@@ -594,6 +594,36 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('getConstant', () => {
+    it('returns the JSON-decoded constant value when it exists', async () => {
+      const toJSON = vi.fn().mockReturnValue('0x2540be400')
+      Object.assign(mockApiPromise, {
+        consts: { balances: { existentialDeposit: { toJSON } as unknown as Codec } }
+      })
+
+      await expect(polkadotApi.getConstant('Balances', 'ExistentialDeposit')).resolves.toBe(
+        '0x2540be400'
+      )
+      expect(toJSON).toHaveBeenCalledTimes(1)
+    })
+
+    it('resolves undefined when the pallet is missing', async () => {
+      Object.assign(mockApiPromise, { consts: {} })
+
+      await expect(
+        polkadotApi.getConstant('Balances', 'ExistentialDeposit')
+      ).resolves.toBeUndefined()
+    })
+
+    it('resolves undefined when the constant is missing on an existing pallet', async () => {
+      Object.assign(mockApiPromise, { consts: { balances: {} } })
+
+      await expect(
+        polkadotApi.getConstant('Balances', 'ExistentialDeposit')
+      ).resolves.toBeUndefined()
+    })
+  })
+
   describe('fetchPalletList', () => {
     it('maps runtime metadata pallets into TPalletEntry records', async () => {
       Object.assign(mockApiPromise, {

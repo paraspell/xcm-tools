@@ -372,6 +372,46 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('getConstant', () => {
+    it('returns the decoded constant value when it exists', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const existentialDeposit = vi.fn().mockResolvedValue(10000000000n)
+
+      unsafeApi.constants = {
+        Balances: { ExistentialDeposit: existentialDeposit }
+      }
+
+      const res = await papiApi.getConstant<bigint>('Balances', 'ExistentialDeposit')
+
+      expect(res).toBe(10000000000n)
+      expect(existentialDeposit).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns undefined when the pallet is missing', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+
+      unsafeApi.constants = {}
+
+      const res = await papiApi.getConstant('Balances', 'ExistentialDeposit')
+
+      expect(res).toBeUndefined()
+    })
+
+    it('returns undefined when the constant accessor rejects', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const existentialDeposit = vi.fn().mockRejectedValue(new Error('boom'))
+
+      unsafeApi.constants = {
+        Balances: { ExistentialDeposit: existentialDeposit }
+      }
+
+      const res = await papiApi.getConstant('Balances', 'ExistentialDeposit')
+
+      expect(res).toBeUndefined()
+      expect(existentialDeposit).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('callBatchMethod', () => {
     it('should call the batch method with the provided calls and BATCH mode', () => {
       const calls = [mockTransaction, mockTransaction]
