@@ -24,7 +24,7 @@ describe('EnergyWebX', () => {
     expect(chain.chain).toBe('EnergyWebX')
     expect(chain.info).toBe('ewx')
     expect(chain.ecosystem).toBe('Polkadot')
-    expect(chain.version).toBe(Version.V3)
+    expect(chain.version).toBe(Version.V5)
   })
 
   it('should handle ParaToPara transfers correctly', async () => {

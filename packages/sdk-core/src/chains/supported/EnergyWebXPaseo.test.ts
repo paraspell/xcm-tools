@@ -17,6 +17,6 @@ describe('EnergyWebXPaseo', () => {
     expect(chain.chain).toBe('EnergyWebXPaseo')
     expect(chain.info).toBe('paseoEwx')
     expect(chain.ecosystem).toBe('Paseo')
-    expect(chain.version).toBe(Version.V3)
+    expect(chain.version).toBe(Version.V5)
   })
 })
