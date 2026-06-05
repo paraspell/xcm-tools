@@ -7,6 +7,7 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
+  ETHEREUM_BRIDGE_ORIGINS,
   isBridge,
   isExternalChain,
   isRelayChain,
@@ -54,23 +55,13 @@ export const validateDestination = <TApi, TRes, TSigner>(
     )
   }
 
-  const allowedChainsToEthereum = [
-    'AssetHubPolkadot',
-    'AssetHubPaseo',
-    'AssetHubWestend',
-    'Hydration',
-    'BifrostPolkadot',
-    'Moonbeam',
-    'Mythos'
-  ]
-
   if (
     typeof destination === 'string' &&
     isExternalChain(destination) &&
-    !allowedChainsToEthereum.includes(origin)
+    !ETHEREUM_BRIDGE_ORIGINS.includes(origin)
   ) {
     throw new ScenarioNotSupportedError(
-      `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
+      `Transfers to Ethereum are only supported from: ${ETHEREUM_BRIDGE_ORIGINS.join(', ')}`
     )
   }
 
