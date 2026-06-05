@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.6.0...swap-v13.7.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Prioritize selecting by location when TAssetInfo passed 🪄 ([17f4d4a](https://github.com/paraspell/xcm-tools/commit/17f4d4af81d62e9c68f5c8c20c0aaf20d6e00587))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.5.0...swap-v13.6.0) (2026-05-31)
 
 

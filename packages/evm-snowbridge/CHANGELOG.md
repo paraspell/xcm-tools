@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.6.0...evm-snowbridge-v13.7.0) (2026-06-05)
+
+
+### Miscellaneous Chores
+
+* **evm-snowbridge:** Synchronize main versions
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.5.0...evm-snowbridge-v13.6.0) (2026-05-31)
 
 

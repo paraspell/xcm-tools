@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.6.0...xcm-api-v13.7.0) (2026-06-05)
+
+
+### Documentation
+
+* Add ed ([a2f0f5c](https://github.com/paraspell/xcm-tools/commit/a2f0f5c105d468603aea3453db5a22be6b61a1d9))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.5.0...xcm-api-v13.6.0) (2026-05-31)
 
 
