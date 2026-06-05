@@ -1,5 +1,14 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.6.0...sdk-core-v13.7.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* **assets:** Improve getSupportedDestinations function ✨ ([6a91533](https://github.com/paraspell/xcm-tools/commit/6a91533c8f54d8c287f26da7ac0a5d808d9537e3))
+* **sdk-core:** Fix asset minting for EnergyWebXPaseo 🔧 ([7ddeb00](https://github.com/paraspell/xcm-tools/commit/7ddeb006186e386b7b458428a75902c86c5f7782))
+* **sdk-core:** Fix errors when setting custom chain as destination 🔧 ([0fbc1af](https://github.com/paraspell/xcm-tools/commit/0fbc1afea5e1ed7c556438e1a4ea24360abc0dc7))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.5.0...sdk-core-v13.6.0) (2026-05-31)
 
 

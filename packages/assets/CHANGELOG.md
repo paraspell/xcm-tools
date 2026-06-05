@@ -1,5 +1,14 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/assets-v13.6.0...assets-v13.7.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* **assets:** Improve getSupportedDestinations function ✨ ([6a91533](https://github.com/paraspell/xcm-tools/commit/6a91533c8f54d8c287f26da7ac0a5d808d9537e3))
+* **sdk-core:** Fix errors when setting custom chain as destination 🔧 ([0fbc1af](https://github.com/paraspell/xcm-tools/commit/0fbc1afea5e1ed7c556438e1a4ea24360abc0dc7))
+* **sdk-core:** Prioritize selecting by location when TAssetInfo passed 🪄 ([17f4d4a](https://github.com/paraspell/xcm-tools/commit/17f4d4af81d62e9c68f5c8c20c0aaf20d6e00587))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/assets-v13.5.0...assets-v13.6.0) (2026-05-31)
 
 

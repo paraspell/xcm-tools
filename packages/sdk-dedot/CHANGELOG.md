@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.6.0...sdk-dedot-v13.7.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix errors when setting custom chain as destination 🔧 ([0fbc1af](https://github.com/paraspell/xcm-tools/commit/0fbc1afea5e1ed7c556438e1a4ea24360abc0dc7))
+
+
+### Documentation
+
+* Add ed ([a2f0f5c](https://github.com/paraspell/xcm-tools/commit/a2f0f5c105d468603aea3453db5a22be6b61a1d9))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.5.0...sdk-dedot-v13.6.0) (2026-05-31)
 
 

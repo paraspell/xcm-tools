@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.6.0...playground-v13.7.0) (2026-06-05)
+
+
+### Features
+
+* **playground:** Add import/export support 🔧 ([b395d66](https://github.com/paraspell/xcm-tools/commit/b395d66d21d70fcee1d0f4ad57e0f8e67f488f67))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix errors when setting custom chain as destination 🔧 ([0fbc1af](https://github.com/paraspell/xcm-tools/commit/0fbc1afea5e1ed7c556438e1a4ea24360abc0dc7))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.5.0...playground-v13.6.0) (2026-05-31)
 
 

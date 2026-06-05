@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.6.0...sdk-common-v13.7.0) (2026-06-05)
+
+
+### Bug Fixes
+
+* **assets:** Improve getSupportedDestinations function ✨ ([6a91533](https://github.com/paraspell/xcm-tools/commit/6a91533c8f54d8c287f26da7ac0a5d808d9537e3))
+
 ## [13.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.5.0...sdk-common-v13.6.0) (2026-05-31)
 
 
