@@ -5,6 +5,16 @@ const COMPATIBLE_BRIDGES: [TSubstrateChain, TSubstrateChain][] = [
   ['AssetHubPolkadot', 'AssetHubKusama']
 ]
 
+export const ETHEREUM_BRIDGE_ORIGINS: TSubstrateChain[] = [
+  'AssetHubPolkadot',
+  'AssetHubPaseo',
+  'AssetHubWestend',
+  'Hydration',
+  'BifrostPolkadot',
+  'Moonbeam',
+  'Mythos'
+]
+
 export const isSubstrateBridge = <TCustomChain extends string = never>(
   origin: TChain | TCustomChain,
   destination: TChain | TCustomChain
