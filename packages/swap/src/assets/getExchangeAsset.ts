@@ -32,7 +32,9 @@ export const getExchangeAsset = (
   const otherAssets = assets.filter((asset) => !asset.isNative);
 
   let asset: TAssetInfo | undefined;
-  if ('symbol' in currency) {
+  if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
+    asset = findAssetInfoByLoc(assets, currency.location);
+  } else if ('symbol' in currency) {
     if (!isSymbolSpecifier(currency.symbol)) {
       const matches = findBestMatches(assets, currency.symbol);
 
@@ -44,8 +46,6 @@ export const getExchangeAsset = (
     }
 
     asset = findAssetInfoBySymbol(otherAssets, nativeAssets, currency.symbol);
-  } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
-    asset = findAssetInfoByLoc(assets, currency.location);
   } else if ('id' in currency) {
     asset = findAssetInfoById(otherAssets, currency.id);
   } else {

@@ -489,6 +489,17 @@ describe('findAssetInfo', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('should prioritize location over symbol when both are present (e.g. a full TAssetInfo)', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([dotAsset, ksmAsset])
+
+    const asset = findAssetInfo('Polkadot', {
+      symbol: dotAsset.symbol,
+      location: ksmAsset.location
+    })
+
+    expect(asset).toBe(ksmAsset)
+  })
+
   it('should return asset when passing a location currency with commas that is present', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {

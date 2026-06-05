@@ -26,15 +26,15 @@ export const findAssetInfoImpl = <TCustomChain extends string = never>(
   const assets = [...nativeAssets, ...otherAssets]
 
   let asset: TAssetInfo | undefined
-  if ('symbol' in currency) {
+  if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
+    asset = findAssetInfoByLoc(assets, currency.location)
+  } else if ('symbol' in currency) {
     asset = findAssetInfoBySymbol(
       otherAssets,
       nativeAssets,
       currency.symbol,
       destination ?? undefined
     )
-  } else if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
-    asset = findAssetInfoByLoc(assets, currency.location)
   } else if ('id' in currency) {
     asset = findAssetInfoById(assets, currency.id)
   }
