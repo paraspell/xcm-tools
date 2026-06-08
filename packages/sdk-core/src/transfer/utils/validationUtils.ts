@@ -67,9 +67,8 @@ export const validateDestination = <TApi, TRes, TSigner>(
 
   const isLocationDestination = typeof destination === 'object'
   const isBridgeTransfer = !isTLocation(destination) && isBridge(origin, destination)
-  const isRelayDestination = !isTLocation(destination) && isRelayChain(destination)
 
-  if (!isRelayDestination && !isLocationDestination) {
+  if (!isLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbolImpl(origin, api._customCtx)
     const destinationRelayChainSymbol = getRelayChainSymbolImpl(destination, api._customCtx)
     if (!isBridgeTransfer && originRelayChainSymbol !== destinationRelayChainSymbol) {
