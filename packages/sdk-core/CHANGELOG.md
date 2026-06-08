@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.7.0...sdk-core-v13.7.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix cross-ecosystem transfers validation 🔧 ([b7e9fa2](https://github.com/paraspell/xcm-tools/commit/b7e9fa2b3995e7433f7e19eacbdeb6f1c2e0d7e3))
+
 ## [13.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.6.0...sdk-core-v13.7.0) (2026-06-05)
 
 
