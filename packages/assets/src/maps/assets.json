@@ -8383,6 +8383,22 @@
         "existentialDeposit": "1"
       },
       {
+        "symbol": "MOS",
+        "decimals": 18,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3377
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "100000000000000000",
+        "isFeeAsset": true
+      },
+      {
         "symbol": "ETH",
         "decimals": 18,
         "location": {
