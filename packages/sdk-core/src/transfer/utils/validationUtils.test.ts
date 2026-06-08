@@ -189,15 +189,76 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
 
-  it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {
+  it('should not throw when origin and destination relay chain symbols match for a para to relay transfer', () => {
     origin = 'Acala'
     destination = 'Polkadot'
 
-    vi.mocked(isSubstrateBridge).mockReturnValue(false)
+    vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
-    expect(getRelayChainSymbolImpl).not.toHaveBeenCalled()
+    expect(getRelayChainSymbolImpl).toHaveBeenCalled()
+  })
+
+  it('should throw ScenarioNotSupportedError for a cross-ecosystem para to relay transfer (AssetHubPolkadot -> Paseo)', () => {
+    origin = 'AssetHubPolkadot'
+    destination = 'Paseo'
+
+    vi.mocked(isBridge).mockReturnValue(false)
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
+
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+  })
+
+  it('should not throw when origin and destination are the same relay chain', () => {
+    origin = 'Polkadot'
+    destination = 'Polkadot'
+
+    vi.mocked(isBridge).mockReturnValue(false)
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    vi.mocked(getChain).mockReturnValue({
+      isRelayToParaEnabled: () => true
+    } as unknown as ReturnType<typeof getChain>)
+
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
+  })
+
+  it('should not throw for a custom chain transferring to its own relay chain and forward the custom context', () => {
+    const customOrigin = 'MyCustomChain' as TSubstrateChain
+    destination = 'Polkadot'
+
+    const customApi = {
+      _customCtx: { customChainAssets: { MyCustomChain: {} } }
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    vi.mocked(isBridge).mockReturnValue(false)
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+
+    expect(() => validateDestination(customOrigin, destination, customApi)).not.toThrow()
+    expect(getRelayChainSymbolImpl).toHaveBeenCalledWith(customOrigin, customApi._customCtx)
+    expect(getRelayChainSymbolImpl).toHaveBeenCalledWith(destination, customApi._customCtx)
+  })
+
+  it('should throw ScenarioNotSupportedError for a custom chain transferring to a foreign relay chain', () => {
+    const customOrigin = 'MyCustomChain' as TSubstrateChain
+    destination = 'Paseo'
+
+    const customApi = {
+      _customCtx: { customChainAssets: { MyCustomChain: {} } }
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    vi.mocked(isBridge).mockReturnValue(false)
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
+    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
+
+    expect(() => validateDestination(customOrigin, destination, customApi)).toThrow(
+      ScenarioNotSupportedError
+    )
   })
 
   it('should throw when origin and destination are relay chains', () => {
