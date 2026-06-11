@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.7.1...sdk-core-v13.7.2) (2026-06-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use new formula for System balance 🪄 ([2afd6a2](https://github.com/paraspell/xcm-tools/commit/2afd6a22b36f260bbb22fdbc94ce10c88b5f9288))
+
+
+### Code Refactoring
+
+* **sdk-core:** Make custom chains fully type safe 🔧 ([9447cb6](https://github.com/paraspell/xcm-tools/commit/9447cb6636a8759c39cfea0d7300d41c5a57aefe))
+
 ## [13.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.7.0...sdk-core-v13.7.1) (2026-06-08)
 
 
