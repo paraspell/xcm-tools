@@ -47,14 +47,28 @@ export class SystemPallet extends BaseAssetsPallet {
 
   async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-    address: string
+    address: string,
+    asset: TAssetInfo
   ): Promise<bigint> {
-    const balance = await api.queryState<{ data: { free: bigint } }>({
+    const account = await api.queryState<{
+      data: { free: bigint; reserved: bigint; frozen: bigint }
+    }>({
       module: this.palletName,
       method: 'Account',
       params: [address]
     })
-    const value = balance?.data?.free
-    return value !== undefined ? BigInt(value) : 0n
+
+    if (account?.data === undefined) return 0n
+
+    const free = BigInt(account.data.free)
+    const reserved = BigInt(account.data.reserved)
+    const frozen = BigInt(account.data.frozen)
+    const ed = BigInt(asset.existentialDeposit ?? 0)
+
+    const frozenUntouchable = frozen - reserved
+    const untouchable = frozenUntouchable > ed ? frozenUntouchable : ed
+    const spendable = free - untouchable
+
+    return spendable > 0n ? spendable : 0n
   }
 }
