@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.7.1...sdk-pjs-v13.7.2) (2026-06-11)
+
+
+### Code Refactoring
+
+* **sdk-core:** Make custom chains fully type safe 🔧 ([9447cb6](https://github.com/paraspell/xcm-tools/commit/9447cb6636a8759c39cfea0d7300d41c5a57aefe))
+
 ## [13.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.7.0...sdk-pjs-v13.7.1) (2026-06-08)
 
 
