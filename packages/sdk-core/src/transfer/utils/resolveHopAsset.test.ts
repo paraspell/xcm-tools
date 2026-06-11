@@ -27,12 +27,13 @@ describe('resolveHopAsset', () => {
     findAssetInfoOnDest: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
-  const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'asset'> = {
+  const baseParams: Omit<TResolveHopParams<unknown, unknown, unknown>, 'currentAsset'> = {
     api: mockApi,
     tx: {},
     originChain: 'Acala',
     currentChain: 'Astar',
     destination: 'Moonbeam',
+    asset: { symbol: 'ORIGIN' } as TAssetInfo,
     currency: {} as TCurrencyInputWithAmount,
     hasPassedExchange: false
   }
@@ -51,9 +52,9 @@ describe('resolveHopAsset', () => {
       .spyOn(mockApi, 'findNativeAssetInfoOrThrow')
       .mockReturnValue(relayAsset)
 
-    const asset = { symbol: 'DOT' } as TAssetInfo
+    const currentAsset = { symbol: 'DOT' } as TAssetInfo
 
-    const result = resolveHopAsset({ ...baseParams, asset, destination: 'Ethereum' })
+    const result = resolveHopAsset({ ...baseParams, currentAsset, destination: 'Ethereum' })
 
     expect(getRelayChainOf).toHaveBeenCalledWith(baseParams.currentChain)
     expect(findNativeSpy).toHaveBeenCalledWith('Kusama')
@@ -66,9 +67,9 @@ describe('resolveHopAsset', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue(relayAsset)
 
-    const asset = { symbol: 'DOT' } as TAssetInfo
+    const currentAsset = { symbol: 'DOT' } as TAssetInfo
 
-    const result = resolveHopAsset({ ...baseParams, asset })
+    const result = resolveHopAsset({ ...baseParams, currentAsset })
 
     expect(spy).toHaveBeenCalledWith(baseParams.tx)
     expect(result).toBe(relayAsset)
@@ -85,11 +86,11 @@ describe('resolveHopAsset', () => {
       .spyOn(mockApi, 'findAssetOnDestOrThrow')
       .mockReturnValue(expectedAsset)
 
-    const asset = { symbol: 'DOT' } as TAssetInfo
+    const currentAsset = { symbol: 'DOT' } as TAssetInfo
 
     const result = resolveHopAsset({
       ...baseParams,
-      asset,
+      currentAsset,
       hasPassedExchange: true,
       swapConfig,
       currentChain: 'Moonbeam'
@@ -103,8 +104,8 @@ describe('resolveHopAsset', () => {
     expect(result).toBe(expectedAsset)
   })
 
-  it('returns asset info on destination or falls back to the original asset', () => {
-    const asset = { symbol: 'DOT' } as TAssetInfo
+  it('returns asset info on destination or falls back to the current asset', () => {
+    const currentAsset = { symbol: 'DOT' } as TAssetInfo
     const destAsset = { symbol: 'DOT' } as TAssetInfo
 
     const findAssetOnDestInfoSpy = vi
@@ -112,12 +113,24 @@ describe('resolveHopAsset', () => {
       .mockReturnValueOnce(destAsset)
       .mockReturnValueOnce(null)
 
-    const resolved = resolveHopAsset({ ...baseParams, asset })
-    const fallback = resolveHopAsset({ ...baseParams, asset })
+    const resolved = resolveHopAsset({ ...baseParams, currentAsset })
+    const fallback = resolveHopAsset({ ...baseParams, currentAsset })
 
-    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(1, 'Acala', 'Astar', baseParams.currency)
-    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(2, 'Acala', 'Astar', baseParams.currency)
+    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(
+      1,
+      'Acala',
+      'Astar',
+      baseParams.currency,
+      baseParams.asset
+    )
+    expect(findAssetOnDestInfoSpy).toHaveBeenNthCalledWith(
+      2,
+      'Acala',
+      'Astar',
+      baseParams.currency,
+      baseParams.asset
+    )
     expect(resolved).toBe(destAsset)
-    expect(fallback).toBe(asset)
+    expect(fallback).toBe(currentAsset)
   })
 })

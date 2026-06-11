@@ -1,29 +1,44 @@
-import { getExistentialDepositOrThrow } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
-import type { TBuildOriginInfoOptions, TTransferInfo } from '../../types'
+import type { TBuildOriginInfoOptions, TOriginXcmFeeInfo, TSelectedCurrencyInfo } from '../../types'
 
 export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
   api,
   origin,
   sender,
-  currency,
-  originAsset,
+  assets,
   amount,
   originFee,
   originFeeAsset,
   isFeeAssetAh
-}: TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<
-  TTransferInfo['origin']
-> => {
-  const originBalance = await getAssetBalanceInternal({
-    api,
-    address: sender,
-    chain: origin,
-    asset: originAsset
-  })
+}: TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<{
+  selectedCurrency: TSelectedCurrencyInfo[]
+  xcmFee: TOriginXcmFeeInfo
+}> => {
+  const buildSelectedCurrency = async ({
+    amount: assetAmount,
+    ...asset
+  }: WithAmount<TAssetInfo>): Promise<TSelectedCurrencyInfo> => {
+    const balance = await getAssetBalanceInternal({
+      api,
+      address: sender,
+      chain: origin,
+      asset
+    })
 
-  const edOrigin = getExistentialDepositOrThrow(origin, currency)
+    const balanceAfter = balance - assetAmount
+
+    return {
+      sufficient: balanceAfter >= getEdFromAssetOrThrow(asset),
+      balance,
+      balanceAfter,
+      asset
+    }
+  }
+
+  const selectedCurrency = await Promise.all(assets.map(buildSelectedCurrency))
 
   const originBalanceFee = await getAssetBalanceInternal({
     api,
@@ -32,24 +47,14 @@ export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends 
     asset: originFeeAsset
   })
 
-  const originBalanceAfter = originBalance - amount
-
   const originBalanceFeeAfter = isFeeAssetAh
     ? originBalanceFee - amount
     : originBalanceFee - originFee
 
-  const originBalanceNativeSufficient = originBalanceFee >= originFee
-  const originBalanceSufficient = originBalanceAfter >= edOrigin
-
   return {
-    selectedCurrency: {
-      sufficient: originBalanceSufficient,
-      balance: originBalance,
-      balanceAfter: originBalanceAfter,
-      asset: originAsset
-    },
+    selectedCurrency,
     xcmFee: {
-      sufficient: originBalanceNativeSufficient,
+      sufficient: originBalanceFee >= originFee,
       fee: originFee,
       balance: originBalanceFee,
       balanceAfter: originBalanceFeeAfter,

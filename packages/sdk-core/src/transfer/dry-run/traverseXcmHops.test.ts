@@ -1,3 +1,4 @@
+import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -19,6 +20,12 @@ vi.mock('../../constants', async importOriginal => ({
 
 describe('traverseXcmHops', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
+
+  const asset: TAssetInfo = {
+    symbol: 'ASSET1',
+    decimals: 12,
+    location: { parents: 0, interior: 'Here' }
+  }
 
   const baseConfig = {
     processHop: vi.fn(),
@@ -51,7 +58,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'AssetHubPolkadot',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: destParaId
     }
@@ -84,7 +91,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       currentChain: 'AssetHubPolkadot',
       currentOrigin: 'Polkadot',
-      currentAsset: { assetId: 'asset1' },
+      currentAsset: asset,
       forwardedXcms,
       hasPassedExchange: false,
       isDestination: true
@@ -101,7 +108,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'AssetHubPolkadot',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: forwardedXcms1,
       initialDestParaId: 1000,
       swapConfig: {
@@ -156,7 +163,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'AssetHubPolkadot',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
     }
@@ -174,7 +181,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'Acala',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
     }
@@ -198,7 +205,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'AssetHubPolkadot',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: [[], []],
       initialDestParaId: 1000
     }
@@ -222,7 +229,7 @@ describe('traverseXcmHops', () => {
       api: mockApi,
       origin: 'Polkadot',
       destination: 'AssetHubPolkadot',
-      currency: { id: 'DOT' },
+      asset,
       initialForwardedXcms: forwardedXcms,
       initialDestParaId: 1000
     }

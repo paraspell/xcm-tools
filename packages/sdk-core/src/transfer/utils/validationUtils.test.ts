@@ -3,6 +3,7 @@ import {
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
+  isTAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -79,13 +80,23 @@ describe('validateCurrency', () => {
     )
   })
 
-  it('should not throw when currency has multiasset with length >1 and valid feeAsset', () => {
+  it('should not throw when currency is an array with length >1 and valid feeAsset', () => {
     const currency = [{}, {}] as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).not.toThrow()
   })
 
-  it('should throw when currency has multiasset with length 1 or less', () => {
+  it('should throw when using raw TAsset overrides', () => {
+    const currency = [{}, {}] as TCurrencyInput
+
+    vi.mocked(isTAsset).mockReturnValue(true)
+
+    expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(
+      'Raw asset overrides are no longer supported. Please use custom assets instead.'
+    )
+  })
+
+  it('should throw when currency is an array with length 1 or less', () => {
     const currency = [{}] as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
@@ -375,6 +386,20 @@ describe('validateTransact', () => {
         transactOptions: { call: '0x123' }
       })
     ).toThrowError(UnsupportedOperationError)
+  })
+
+  it('throws UnsupportedOperationError for currency arrays', () => {
+    vi.mocked(isHex).mockReturnValue(true)
+
+    expect(() =>
+      validateTransact({
+        ...baseOptions,
+        currency: [
+          { symbol: 'USDT', amount: 1n },
+          { symbol: 'USDC', amount: 2n }
+        ]
+      })
+    ).toThrowError('Cannot use transact options with multiple currencies.')
   })
 
   it('throws ValidationError for non-hex call string', () => {

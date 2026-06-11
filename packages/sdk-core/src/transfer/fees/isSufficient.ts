@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
   getEdFromAssetOrThrow,
   getExistentialDepositOrThrowImpl,
@@ -16,8 +16,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
   destination: TChain,
   sender: string,
   feeNative: bigint,
-  currency: WithComplexAmount<TCurrencyCore>,
-  asset: TAssetInfo,
+  asset: WithAmount<TAssetInfo>,
   feeAsset: TAssetInfo | undefined
 ): Promise<boolean | undefined> => {
   if (feeAsset) return undefined
@@ -40,7 +39,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
   )
 
   if (isNativeAssetToOrigin && isNativeAssetToDest) {
-    return balanceNative - edNative - feeNative - BigInt(currency.amount) > 0n
+    return balanceNative - edNative - feeNative - asset.amount > 0n
   }
 
   if (!isNativeAssetToOrigin) {
@@ -59,7 +58,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
 
     return isSufficientNative && isSufficientAsset
   } else {
-    return balanceNative - edNative - feeNative - BigInt(currency.amount) > 0n
+    return balanceNative - edNative - feeNative - asset.amount > 0n
   }
 }
 
@@ -72,8 +71,7 @@ export const isSufficientDestination = async <
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   destination: TChain,
   address: string,
-  amount: bigint,
-  asset: TAssetInfo,
+  asset: WithAmount<TAssetInfo>,
   feeNative: bigint
 ): Promise<boolean | undefined> => {
   const isNativeAsset = isSymbolMatch(
@@ -95,5 +93,5 @@ export const isSufficientDestination = async <
     address
   })
 
-  return nativeBalance + amount - existentialDeposit - feeNative > 0n
+  return nativeBalance + asset.amount - existentialDeposit - feeNative > 0n
 }

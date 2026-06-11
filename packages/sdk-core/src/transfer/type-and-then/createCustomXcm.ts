@@ -1,4 +1,5 @@
-import { isChainEvmImpl, normalizeLocation } from '@paraspell/assets'
+import { extractAssetLocation, isChainEvmImpl, normalizeLocation } from '@paraspell/assets'
+import type { TLocation } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, isExternalChain, isTrustedChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../chains/config'
@@ -55,7 +56,9 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
 ) => {
   const { origin, dest, reserve, isSubBridge, isRelayAsset, assetInfo, bridgeHopChain, options } =
     context
-  const { destination, version, recipient, paraIdTo, sender, ahAddress } = options
+  const { destination, version, recipient, paraIdTo, sender, ahAddress, overriddenAsset } = options
+
+  const overriddenAssets = Array.isArray(overriddenAsset) ? overriddenAsset : null
 
   const buildRefundInstruction = () => {
     if (!sender || isSubBridge) return null
@@ -116,10 +119,10 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     DepositAsset: {
       assets: {
         Wild:
-          assetCount > 1
+          assetCount > 1 && !overriddenAssets
             ? allOfSelector
             : {
-                AllCounted: 1
+                AllCounted: assetCount
               }
       },
       beneficiary: createBeneficiaryLocation({
@@ -130,27 +133,33 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     }
   }
 
-  const assetsFilter = []
-
-  if (!isRelayAsset && !isExternalChain(dest.chain))
-    assetsFilter.push(
-      createAsset(
-        version,
-        hopFees + destFee,
-        localizeLocationImpl(origin.api, reserve.chain, RELAY_LOCATION)
-      )
-    )
-
-  assetsFilter.push(
+  const localizeFilterAsset = (amount: bigint, location: TLocation) =>
     createAsset(
       version,
-      assetInfo.amount,
-      normalizeLocation(
-        localizeLocationImpl(origin.api, reserve.chain, assetInfo.location),
-        version
+      amount,
+      normalizeLocation(localizeLocationImpl(origin.api, reserve.chain, location), version)
+    )
+
+  const assetsFilter = []
+
+  if (overriddenAssets) {
+    assetsFilter.push(
+      ...overriddenAssets.map(asset =>
+        localizeFilterAsset(asset.fun.Fungible, extractAssetLocation(asset))
       )
     )
-  )
+  } else {
+    if (!isRelayAsset && !isExternalChain(dest.chain))
+      assetsFilter.push(
+        createAsset(
+          version,
+          hopFees + destFee,
+          localizeLocationImpl(origin.api, reserve.chain, RELAY_LOCATION)
+        )
+      )
+
+    assetsFilter.push(localizeFilterAsset(assetInfo.amount, assetInfo.location))
+  }
 
   const isAssetEthereumNative = deepEqual(
     getJunctionValue(assetInfo.location, 'GlobalConsensus'),

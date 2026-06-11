@@ -1,4 +1,4 @@
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -8,12 +8,14 @@ import { getAssetBalanceInternal } from '../../balance'
 import type { TGetTransferableAmountOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getOriginXcmFee } from '../fees'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
 import { getTransferableAmount } from './getTransferableAmount'
 
 vi.mock('@paraspell/assets')
 vi.mock('../../utils')
 vi.mock('../../balance')
 vi.mock('../fees')
+vi.mock('../utils')
 
 describe('getTransferableAmount', () => {
   const mockApi = {
@@ -129,6 +131,71 @@ describe('getTransferableAmount', () => {
 
     await expect(getTransferableAmount(baseOptions)).rejects.toThrow(
       'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on chain Astar.'
+    )
+  })
+
+  const usdt = {
+    symbol: 'USDT',
+    decimals: 6,
+    amount: 1000n,
+    isFeeAsset: true
+  } as WithAmount<TAssetInfo>
+
+  const usdc = {
+    symbol: 'USDC',
+    decimals: 6,
+    amount: 2000n,
+    isFeeAsset: false
+  } as WithAmount<TAssetInfo>
+
+  const currenciesOptions = {
+    ...baseOptions,
+    feeAsset: { symbol: 'USDT' },
+    currency: [
+      { symbol: 'USDT', amount: 1000n },
+      { symbol: 'USDC', amount: 2000n }
+    ]
+  }
+
+  const mockResolvedAssets = (assets: WithAmount<TAssetInfo>[]) => {
+    vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
+    vi.mocked(resolveCurrency).mockReturnValue({ assets, asset: usdt })
+  }
+
+  test('returns per-asset transferable amounts in input order for currency arrays', async () => {
+    const fee = 200n
+    const ed = 100n
+
+    mockResolvedAssets([usdt, usdc])
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(1000n).mockResolvedValueOnce(500n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(currenciesOptions)
+
+    expect(result).toEqual([1000n - ed - fee, 500n - ed])
+    expect(getOriginXcmFee).toHaveBeenCalledWith(
+      expect.objectContaining({ currency: currenciesOptions.currency })
+    )
+  })
+
+  test('returns 0 for array elements with negative transferable amounts', async () => {
+    mockResolvedAssets([usdt, usdc])
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(250n).mockResolvedValueOnce(500n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 200n } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(currenciesOptions)
+
+    expect(result).toEqual([0n, 400n])
+  })
+
+  test('throws error when XCM fee is undefined for currency arrays', async () => {
+    mockResolvedAssets([usdt])
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
+
+    await expect(getTransferableAmount(currenciesOptions)).rejects.toThrow(
+      'Cannot get origin xcm fee for currency'
     )
   })
 

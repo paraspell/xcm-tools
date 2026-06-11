@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { getNativeAssetSymbol, InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
+import { getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -32,11 +32,7 @@ class Hydration<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { destination, assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
 
-    if (feeAsset) {
-      if (overriddenAsset) {
-        throw new InvalidCurrencyError('Cannot use overridden assets with XCM execute')
-      }
-
+    if (feeAsset && !overriddenAsset) {
       const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
       const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol(api))
 

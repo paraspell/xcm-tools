@@ -45,7 +45,9 @@ const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
 export const generateE2eTests = <TApi, TRes, TSigner>(
-  Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes, TSigner>,
+  Builder: <TOpts extends TBuilderOptions<TApiOrUrl<TApi>>>(
+    options?: TOpts
+  ) => GeneralBuilder<TApi, TRes, TSigner>,
   [signer, evmSigner]: [TSigner, TSigner],
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   filteredChains: TSubstrateChain[],

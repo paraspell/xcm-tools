@@ -44,6 +44,10 @@ export type TCurrencyInputWithAmount =
   | TAsset<TAmount>[]
   | WithComplexAmount<TCurrencyCore>[]
 
+export type TSingleCurrencyInputWithAmount = Exclude<TCurrencyInputWithAmount, unknown[]>
+
+export type TSingleCurrencyInput = Exclude<TCurrencyInput, unknown[]>
+
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
@@ -53,6 +57,10 @@ export type TCurrencyInput =
 
 export type WithAmount<TBase, T = bigint> = TBase & {
   amount: T
+}
+
+export type WithOptionalAmount<TBase, T = bigint> = TBase & {
+  amount?: T
 }
 
 export type WithComplexAmount<TBase> = WithAmount<TBase, TAmount>

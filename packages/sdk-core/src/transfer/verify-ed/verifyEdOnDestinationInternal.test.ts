@@ -10,6 +10,7 @@ import { DryRunFailedError, UnableToComputeError } from '../../errors'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
+import { resolveCurrency } from '../utils'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 vi.mock('@paraspell/assets')
@@ -17,6 +18,7 @@ vi.mock('@paraspell/assets')
 vi.mock('../../utils')
 vi.mock('../../balance')
 vi.mock('../fees')
+vi.mock('../utils')
 
 describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {
@@ -82,6 +84,112 @@ describe('verifyEdOnDestinationInternal', () => {
     )
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
     vi.spyOn(mockApi, 'getMethod').mockReturnValue('transferAssets')
+  })
+
+  it('returns true only when every asset passes the ED check for currency arrays', async () => {
+    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+
+    vi.mocked(resolveCurrency).mockReturnValue({
+      assets: [
+        { ...usdt, amount: 1000000n, isFeeAsset: true },
+        { ...usdc, amount: 2000000n, isFeeAsset: false }
+      ],
+      asset: { ...usdt, amount: 1000000n, isFeeAsset: true }
+    })
+    findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      hops: [],
+      destination: { fee: 1000n, feeType: 'dryRun', asset: usdt }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      feeAsset: { symbol: 'USDT' },
+      currency: [
+        { symbol: 'USDT', amount: 1000000n },
+        { symbol: 'USDC', amount: 2000000n }
+      ]
+    })
+
+    expect(result).toBe(true)
+    expect(getXcmFeeInternal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currency: [
+          { symbol: 'USDT', amount: 1000000n },
+          { symbol: 'USDC', amount: 2000000n }
+        ]
+      })
+    )
+  })
+
+  it('returns false when any asset fails the ED check for currency arrays', async () => {
+    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+
+    vi.mocked(resolveCurrency).mockReturnValue({
+      assets: [
+        { ...usdt, amount: 1000000n, isFeeAsset: true },
+        { ...usdc, amount: 2000000n, isFeeAsset: false }
+      ],
+      asset: { ...usdt, amount: 1000000n, isFeeAsset: true }
+    })
+    findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(3000000n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      hops: [],
+      destination: { fee: 1000n, feeType: 'dryRun', asset: usdt }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      feeAsset: { symbol: 'USDT' },
+      currency: [
+        { symbol: 'USDT', amount: 5000000n },
+        { symbol: 'USDC', amount: 2000000n }
+      ]
+    })
+
+    expect(result).toBe(false)
+  })
+
+  it('does not subtract the destination fee from assets that do not pay it', async () => {
+    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+
+    vi.mocked(resolveCurrency).mockReturnValue({
+      assets: [
+        { ...usdt, amount: 5000000n, isFeeAsset: true },
+        { ...usdc, amount: 2000000n, isFeeAsset: false }
+      ],
+      asset: { ...usdt, amount: 5000000n, isFeeAsset: true }
+    })
+    findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1900000n)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      hops: [],
+      // USDC amount (2000000) passes its ED (1900000) only if the dest fee
+      // (4000000) is not subtracted from it
+      destination: { fee: 4000000n, feeType: 'dryRun', asset: usdt }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      feeAsset: { symbol: 'USDT' },
+      currency: [
+        { symbol: 'USDT', amount: 9000000n },
+        { symbol: 'USDC', amount: 2000000n }
+      ]
+    })
+
+    expect(result).toBe(true)
   })
 
   it('calls getXcmFee with buildTx and checks method on a real built tx', async () => {

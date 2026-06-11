@@ -1,4 +1,4 @@
-import { isAssetEqual, type TCurrencyCore, type WithAmount } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 
 import type {
   TGetXcmFeeResult,
@@ -52,7 +52,7 @@ export const computeAllFees = async <TApi, TRes, TSigner, TCustomChain extends s
     sender,
     recipient,
     version,
-    currency: currency as WithAmount<TCurrencyCore>,
+    currency,
     feeAsset: feeCurrency,
     disableFallback: false,
     skipReverseFeeCalculation: true

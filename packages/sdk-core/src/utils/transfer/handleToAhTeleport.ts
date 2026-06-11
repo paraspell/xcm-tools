@@ -1,4 +1,3 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TParachain } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 
@@ -58,7 +57,7 @@ export const handleToAhTeleport = async <TApi, TRes, TSigner>(
     sender,
     recipient,
     version,
-    currency: currency as WithAmount<TCurrencyCore>,
+    currency,
     disableFallback: false,
     useRootOrigin: true
   })

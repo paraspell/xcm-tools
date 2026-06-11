@@ -4,7 +4,7 @@ import {
   type TAssetWithFee,
   type TCurrencyInput
 } from '@paraspell/assets'
-import { isSubstrateBridge, Parents, type TLocation, Version } from '@paraspell/sdk-common'
+import { isSubstrateBridge, type TLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
@@ -285,12 +285,13 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
-  it('should handle multiasset currency with default asset object', async () => {
+  it('should use the resolved fee asset as the asset object for currency arrays', async () => {
     const options = {
       api: apiMock,
       from: 'Acala',
       to: 'Astar',
       currency: [] as TCurrencyInput,
+      feeAsset: { symbol: 'FEE' },
       recipient: 'some-address'
     } as TSubstrateTransferOptions<unknown, unknown, unknown>
 
@@ -300,17 +301,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        assetInfo: {
-          symbol: 'TEST',
-          amount: 0n,
-          assetId: '1',
-          location: {
-            parents: Parents.ZERO,
-            interior: {
-              Here: null
-            }
-          }
-        }
+        assetInfo: { symbol: 'FEE', amount: 0n }
       })
     )
   })

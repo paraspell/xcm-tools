@@ -1,4 +1,10 @@
-import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
+import type {
+  TAssetInfo,
+  TCurrencyCore,
+  TCurrencyInput,
+  TCurrencyInputWithAmount,
+  WithAmount
+} from '@paraspell/assets'
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { GeneralBuilder } from '../builder'
@@ -53,7 +59,7 @@ export type TGetAssetBalanceOptions<
   TCustomChain extends string = never
 > = WithApi<TGetAssetBalanceOptionsBase<TCustomChain>, TApi, TRes, TSigner, TCustomChain>
 
-export type TGetTransferableAmountOptionsBase<TRes> = {
+export type TGetTransferableAmountOptionsBase<TRes, TCurrency = WithAmount<TCurrencyCore>> = {
   /**
    * The sender address of the account.
    */
@@ -69,7 +75,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The currency to query.
    */
-  currency: WithAmount<TCurrencyCore>
+  currency: TCurrency
   version: Version | undefined
   buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput
@@ -79,16 +85,20 @@ export type TGetTransferableAmountOptions<
   TApi,
   TRes,
   TSigner,
-  TCustomChain extends string = never
-> = WithApi<TGetTransferableAmountOptionsBase<TRes>, TApi, TRes, TSigner, TCustomChain>
+  TCustomChain extends string = never,
+  TCurrency = WithAmount<TCurrencyCore>
+> = WithApi<TGetTransferableAmountOptionsBase<TRes, TCurrency>, TApi, TRes, TSigner, TCustomChain>
+
+export type TPerAssetResult<TCurrency, TValue> = TCurrency extends unknown[] ? TValue[] : TValue
 
 export type TGetMinTransferableAmountOptions<
   TApi,
   TRes,
   TSigner,
-  TCustomChain extends string = never
+  TCustomChain extends string = never,
+  TCurrency = WithAmount<TCurrencyCore>
 > = WithApi<
-  TGetTransferableAmountOptionsBase<TRes> & {
+  TGetTransferableAmountOptionsBase<TRes, TCurrency> & {
     recipient: string
     builder: GeneralBuilder<
       TApi,
@@ -124,7 +134,7 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
    * The currency to query.
    */
-  currency: WithAmount<TCurrencyCore>
+  currency: TCurrencyInputWithAmount
   version: Version | undefined
   buildTx: TTxFactory<TRes>
   feeAsset?: TCurrencyInput

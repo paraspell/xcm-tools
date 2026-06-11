@@ -12,10 +12,11 @@ export const resolveHopAsset = <TApi, TRes, TSigner, TCustomChain extends string
   destination,
   swapConfig,
   asset,
+  currentAsset,
   hasPassedExchange,
   currency
 }: TResolveHopParams<TApi, TRes, TSigner, TCustomChain>): TAssetInfo => {
-  const isRelayAssetIncluded = api.getTypeThenAssetCount(tx) === 2
+  const isRelayAssetIncluded = !Array.isArray(currency) && api.getTypeThenAssetCount(tx) === 2
   const useRelayAssetAsFee =
     (typeof destination === 'string' && isExternalChain(destination)) || isRelayAssetIncluded
 
@@ -27,5 +28,5 @@ export const resolveHopAsset = <TApi, TRes, TSigner, TCustomChain extends string
     return api.findAssetOnDestOrThrow(swapConfig.exchangeChain, currentChain, swapConfig.currencyTo)
   }
 
-  return api.findAssetInfoOnDest(originChain, currentChain, currency) ?? asset
+  return api.findAssetInfoOnDest(originChain, currentChain, currency, asset) ?? currentAsset
 }

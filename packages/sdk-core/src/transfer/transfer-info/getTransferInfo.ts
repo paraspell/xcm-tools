@@ -1,16 +1,23 @@
+import type { TCurrencyInputWithAmount, TSingleCurrencyInput, WithAmount } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
 
 import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
-import { abstractDecimals } from '../../utils'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
-import { resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { assertNotRawAssets } from '../utils/validationUtils'
 import { aggregateHopFees } from './aggregateHopFees'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { buildOriginInfo } from './buildOriginInfo'
 
-export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends string = never>({
+export const getTransferInfo = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCurrency extends TCurrencyInputWithAmount,
+  TCustomChain extends string = never
+>({
   api,
   buildTx,
   origin,
@@ -21,10 +28,14 @@ export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends 
   currency,
   feeAsset,
   version
-}: TGetTransferInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<TTransferInfo> => {
+}: TGetTransferInfoOptions<TApi, TRes, TSigner, TCustomChain, TCurrency>): Promise<
+  TTransferInfo<TCurrency>
+> => {
   if (api.isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
   }
+
+  assertNotRawAssets(currency)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
@@ -34,9 +45,15 @@ export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends 
   api.disconnectAllowed = false
 
   try {
-    const originAsset = api.findAssetInfoOrThrow(origin, currency, destination)
+    const { assets, asset: originAsset } = resolveCurrency(
+      api,
+      currency,
+      resolvedFeeAsset,
+      origin,
+      destination
+    )
 
-    const amount = abstractDecimals(currency.amount, originAsset.decimals, api)
+    const { amount } = originAsset
 
     const {
       origin: { fee: originFee, asset: originFeeAsset },
@@ -60,12 +77,17 @@ export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends 
       !!resolvedFeeAsset &&
       isAssetEqual(resolvedFeeAsset, originAsset)
 
-    const originInfo = await buildOriginInfo({
+    const feeAssetIndex = assets.findIndex(asset => isAssetEqual(asset, originAsset))
+
+    const feeCurrency: TSingleCurrencyInput = Array.isArray(currency)
+      ? currency[feeAssetIndex]
+      : currency
+
+    const { selectedCurrency, xcmFee: originXcmFee } = await buildOriginInfo({
       api,
       origin,
       sender,
-      currency,
-      originAsset,
+      assets,
       amount,
       originFee,
       originFeeAsset,
@@ -82,7 +104,7 @@ export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends 
             chain: hop.chain,
             fee: hop.result.fee,
             originChain: origin,
-            currency,
+            currency: feeCurrency,
             asset: hop.result.asset,
             sender,
             ahAddress
@@ -97,32 +119,54 @@ export const getTransferInfo = async <TApi, TRes, TSigner, TCustomChain extends 
 
     const { totalHopFee, bridgeFee } = aggregateHopFees(hops, originAsset)
 
-    const destinationInfo = await buildDestInfo({
-      api,
-      origin,
-      destination,
-      recipient,
-      currency: {
-        ...currency,
-        amount
-      },
-      originFee,
-      isFeeAssetAh,
-      destFeeDetail,
-      totalHopFee,
-      bridgeFee
-    })
+    const buildDestInfoForAsset = (item: WithAmount<TSingleCurrencyInput>, isFeeElement: boolean) =>
+      buildDestInfo({
+        api,
+        origin,
+        destination,
+        recipient,
+        currency: item,
+        originFee,
+        isFeeAssetAh: isFeeAssetAh && isFeeElement,
+        paysDestFee: isFeeElement,
+        destFeeDetail,
+        totalHopFee: isFeeElement ? totalHopFee : 0n,
+        bridgeFee
+      })
 
-    return {
+    const destResults = Array.isArray(currency)
+      ? await Promise.all(
+          currency.map((item, index) =>
+            buildDestInfoForAsset(
+              { ...item, amount: assets[index].amount },
+              index === feeAssetIndex
+            )
+          )
+        )
+      : [await buildDestInfoForAsset({ ...currency, amount }, true)]
+
+    const feeResult = destResults[Array.isArray(currency) ? feeAssetIndex : 0]
+
+    const result: TTransferInfo<TCurrencyInputWithAmount> = {
       chain: {
         origin,
         destination,
         ecosystem: api.getRelayChainSymbol(origin)
       },
-      origin: originInfo,
+      origin: {
+        selectedCurrency: Array.isArray(currency) ? selectedCurrency : selectedCurrency[0],
+        xcmFee: originXcmFee
+      },
       hops: builtHops,
-      destination: destinationInfo
+      destination: {
+        receivedCurrency: Array.isArray(currency)
+          ? destResults.map(result => result.receivedCurrency)
+          : destResults[0].receivedCurrency,
+        xcmFee: feeResult.xcmFee
+      }
     }
+
+    return result
   } finally {
     api.disconnectAllowed = true
     await api.disconnect()

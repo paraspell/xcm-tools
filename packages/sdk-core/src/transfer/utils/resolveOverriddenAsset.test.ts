@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { TSubstrateTransferOptions } from '../../types'
-import { abstractDecimals, createAsset } from '../../utils'
+import { abstractDecimals, createAsset, sortAssets } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
@@ -53,6 +53,7 @@ describe('resolveOverriddenAsset', () => {
       location: {}
     } as TAssetInfo)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
+    vi.mocked(sortAssets).mockImplementation(assets => assets)
   })
 
   it('returns the overridden location if currency has override location', () => {
@@ -73,7 +74,7 @@ describe('resolveOverriddenAsset', () => {
     expect(result).toEqual({})
   })
 
-  it('returns multiple assets if all items in currency are already TAsset', () => {
+  it('throws when using raw TAsset overrides', () => {
     const assets = [
       {
         fun: {
@@ -94,11 +95,12 @@ describe('resolveOverriddenAsset', () => {
 
     vi.mocked(isTAsset).mockReturnValue(true)
 
-    const result = resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAssetInfo)
-    expect(result).toEqual(assets)
+    expect(() =>
+      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAssetInfo)
+    ).toThrow('Raw asset overrides are no longer supported. Please use custom assets instead.')
   })
 
-  it('resolves multiple assets by fetching assets when not all items are TAsset', () => {
+  it('resolves currencies by fetching assets when not all items are TAsset', () => {
     const assets = [
       { symbol: 'ASSET1', amount: 1000n },
       { symbol: 'ASSET2', amount: 2000n }
@@ -130,7 +132,7 @@ describe('resolveOverriddenAsset', () => {
     ])
   })
 
-  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset is provided', () => {
+  it('throws an InvalidCurrencyError if using raw TAsset overrides and no fee asset is provided', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}]
@@ -139,26 +141,11 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(isTAsset).mockReturnValue(true)
 
     expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
-      'Overridden multi assets cannot be used without specifying fee asset'
+      'Overridden assets cannot be used without specifying fee asset'
     )
   })
 
-  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset by not location', () => {
-    const options = {
-      ...defaultOptions,
-      currency: [{}, {}],
-      feeAsset: { symbol: 'ASSET' }
-    } as TSubstrateTransferOptions<unknown, unknown, unknown>
-
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
-    vi.mocked(isTAsset).mockReturnValue(true)
-
-    expect(() =>
-      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET' } as TAssetInfo)
-    ).toThrow('Fee asset must be specified by location when using raw overridden multi assets')
-  })
-
-  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset uses override location', () => {
+  it('throws an InvalidCurrencyError if using raw TAsset overrides and fee asset uses override location', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}],
@@ -178,7 +165,7 @@ describe('resolveOverriddenAsset', () => {
     )
   })
 
-  it('returns undefined if currency has no multiasset or location', () => {
+  it('returns undefined if currency is not an array or override location', () => {
     const options = {
       ...defaultOptions,
       currency: { symbol: 'NO_OVERRIDE' }

@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeInternalOptions, TXcmFeeDetail } from '../../types'
-import { abstractDecimals, pickCompatibleXcmVersion } from '../../utils'
+import { pickCompatibleXcmVersion } from '../../utils'
 import { padFee } from '../../utils/fees'
+import { resolveCurrency } from '../utils/resolveCurrency'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { isSufficientOrigin } from './isSufficient'
 
@@ -29,13 +30,11 @@ export const getOriginXcmFeeInternal = async <
     destParaId?: number
   }
 > => {
-  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
-
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
-
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
+
+  const { assets, asset } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
@@ -48,10 +47,6 @@ export const getOriginXcmFeeInternal = async <
       destination,
       sender,
       paddedFee,
-      {
-        ...currency,
-        amount
-      },
       asset,
       resolvedFeeAsset
     )
@@ -71,10 +66,8 @@ export const getOriginXcmFeeInternal = async <
     chain: origin,
     destination,
     address: sender,
-    asset: {
-      ...asset,
-      amount
-    },
+    asset,
+    assets,
     version: resolvedVersion,
     feeAsset: resolvedFeeAsset,
     // Force dryRun pass

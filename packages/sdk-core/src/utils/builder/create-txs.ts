@@ -1,8 +1,9 @@
-import type { TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
+import type { TCurrencyCore, TCurrencyInputWithAmount, WithComplexAmount } from '@paraspell/assets'
 
 import type { GeneralBuilder } from '../../builder'
 import { UnsupportedOperationError } from '../../errors'
 import { createTransfer } from '../../transfer'
+import { assertNotRawAssets } from '../../transfer/utils/validationUtils'
 import type {
   TCreateTxsOptions,
   TSubstrateTransferOptions,
@@ -47,10 +48,18 @@ export const overrideTxAmount = async <TApi, TRes, TSigner, TCustomChain extends
   amount: string,
   relative?: boolean
 ) => {
-  const modifiedBuilder = builder.currency({
-    ...options.currency,
-    amount: computeOverridenAmount(options, amount, relative)
-  })
+  const { currency } = options
+
+  assertNotRawAssets(currency)
+
+  const overrideAmount = (item: TCurrencyInputWithAmount) =>
+    computeOverridenAmount({ ...options, currency: item }, amount, relative)
+
+  const modifiedBuilder = builder.currency(
+    Array.isArray(currency)
+      ? currency.map(item => ({ ...item, amount: overrideAmount(item) }))
+      : { ...currency, amount: overrideAmount(currency) }
+  )
 
   const { tx } = await modifiedBuilder['buildInternal']()
   return tx

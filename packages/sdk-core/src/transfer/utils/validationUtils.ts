@@ -4,6 +4,8 @@ import {
   isChainEvm,
   isSymbolSpecifier,
   isTAsset,
+  type TAmount,
+  type TAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -21,6 +23,16 @@ import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError }
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 
+export const assertNotRawAssets: (
+  currency: TCurrencyInput
+) => asserts currency is Exclude<TCurrencyInput, TAsset<TAmount>[]> = currency => {
+  if (Array.isArray(currency) && currency.length > 0 && currency.every(asset => isTAsset(asset))) {
+    throw new InvalidCurrencyError(
+      'Raw asset overrides are no longer supported. Please use custom assets instead.'
+    )
+  }
+}
+
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if (Array.isArray(currency)) {
     if (currency.length === 0) {
@@ -31,7 +43,9 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
       throw new InvalidCurrencyError('Please provide more than one asset')
     }
 
-    if (currency.length > 1 && !currency.every(asset => isTAsset(asset)) && !feeAsset) {
+    assertNotRawAssets(currency)
+
+    if (!feeAsset) {
       throw new InvalidCurrencyError(
         'Overridden assets cannot be used without specifying fee asset'
       )
@@ -106,6 +120,7 @@ export const validateTransact = <TApi, TRes, TSigner, TCustomChain extends strin
   to,
   sender,
   recipient: address,
+  currency,
   transactOptions
 }: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>) => {
   const call = transactOptions?.call
@@ -114,6 +129,10 @@ export const validateTransact = <TApi, TRes, TSigner, TCustomChain extends strin
 
   if (from === to) {
     throw new UnsupportedOperationError('Cannot use transact options with local transfers.')
+  }
+
+  if (Array.isArray(currency)) {
+    throw new UnsupportedOperationError('Cannot use transact options with multiple currencies.')
   }
 
   if (typeof call === 'string' && !isHex(call)) {

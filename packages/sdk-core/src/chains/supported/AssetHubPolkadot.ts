@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { InvalidCurrencyError, isSymbolMatch } from '@paraspell/assets'
+import { isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 
@@ -31,11 +31,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
   ): Promise<TRes> {
     const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
 
-    if (feeAssetInfo) {
-      if (overriddenAsset) {
-        throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
-      }
-
+    if (feeAssetInfo && !overriddenAsset) {
       if (isSymbolMatch(assetInfo.symbol, 'KSM')) {
         return transferPolkadotXcm(options)
       }

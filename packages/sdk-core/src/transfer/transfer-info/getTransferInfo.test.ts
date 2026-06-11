@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getExistentialDepositOrThrow, isAssetEqual } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -13,16 +13,15 @@ import type {
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../types'
-import { abstractDecimals } from '../../utils'
 import { getXcmFee } from '../fees'
-import { resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { getTransferInfo } from './getTransferInfo'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  getExistentialDepositOrThrow: vi.fn(),
+  getEdFromAssetOrThrow: vi.fn(),
   isAssetXcEqual: vi.fn(),
   isAssetEqual: vi.fn()
 }))
@@ -56,6 +55,15 @@ describe('getTransferInfo', () => {
     decimals: 10
   } as TAssetInfo
 
+  const mockResolvedAsset = (asset: TAssetInfo) =>
+    vi.mocked(resolveCurrency).mockImplementation((_api, currency) => {
+      const resolved = {
+        ...asset,
+        amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
+      }
+      return { assets: [resolved], asset: resolved }
+    })
+
   beforeEach(() => {
     vi.clearAllMocks()
 
@@ -88,10 +96,10 @@ describe('getTransferInfo', () => {
 
     apiSpies.isChainEvm.mockReturnValue(false)
     vi.mocked(resolveFeeAsset).mockImplementation((_api, feeAsset) => feeAsset as TAssetInfo)
-    apiSpies.findAssetInfoOrThrow.mockReturnValue(dotAsset)
+    mockResolvedAsset(dotAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getBalanceInternal).mockResolvedValue(200000000000n)
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000000000n)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1000000000n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { fee: 100000000n, asset: dotAsset },
       hops: [
@@ -136,7 +144,6 @@ describe('getTransferInfo', () => {
         asset: dotAsset
       }
     })
-    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
   it('should successfully get transfer info for a Polkadot parachain transfer with all hops', async () => {
@@ -150,14 +157,16 @@ describe('getTransferInfo', () => {
 
     expect(initSpy).toHaveBeenCalledWith(options.origin)
     expect(disconnectAllowedSpy).toHaveBeenCalledWith(false)
-    expect(apiSpies.findAssetInfoOrThrow).toHaveBeenCalledWith(
-      options.origin,
+    expect(resolveCurrency).toHaveBeenCalledWith(
+      mockApi,
       options.currency,
+      options.feeAsset,
+      options.origin,
       options.destination
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
     expect(getBalanceInternal).not.toHaveBeenCalled()
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
+    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(dotAsset)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
       buildTx,
@@ -322,7 +331,7 @@ describe('getTransferInfo', () => {
     } as WithAmount<TCurrencyCore>
     apiSpies.isChainEvm.mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    apiSpies.findAssetInfoOrThrow.mockReturnValue({
+    mockResolvedAsset({
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
@@ -394,7 +403,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should call api.setDisconnectAllowed(true) and api.disconnect() in finally block even on error', async () => {
-    apiSpies.findAssetInfoOrThrow.mockImplementation(() => {
+    vi.mocked(resolveCurrency).mockImplementation(() => {
       throw new Error('Simulated error in findAssetInfoOrThrow')
     })
     const options = { ...baseOptions, api: mockApi }
@@ -410,6 +419,51 @@ describe('getTransferInfo', () => {
     expect(disconnectAllowedSpy).toHaveBeenCalledWith(false)
     expect(disconnectAllowedSpy).toHaveBeenLastCalledWith(true)
     expect(disconnectSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should return per-asset selected and received currency arrays for currency arrays', async () => {
+    const usdt = { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo
+    const usdc = { symbol: 'USDC', assetId: '1337', decimals: 6 } as TAssetInfo
+
+    const currency = [
+      { symbol: 'USDT', amount: 1000n },
+      { symbol: 'USDC', amount: 2000n }
+    ]
+
+    vi.mocked(resolveCurrency).mockReturnValue({
+      assets: [
+        { ...usdt, amount: 1000n, isFeeAsset: true },
+        { ...usdc, amount: 2000n, isFeeAsset: false }
+      ],
+      asset: { ...usdt, amount: 1000n, isFeeAsset: true }
+    })
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+
+    const result = await getTransferInfo({
+      ...baseOptions,
+      api: mockApi,
+      feeAsset: { symbol: 'USDT' },
+      currency
+    })
+
+    expect(result.origin.selectedCurrency).toHaveLength(2)
+    expect(result.origin.selectedCurrency[0].asset).toEqual({ ...usdt, isFeeAsset: true })
+    expect(result.origin.selectedCurrency[1].asset).toEqual({ ...usdc, isFeeAsset: false })
+    expect(Array.isArray(result.destination.receivedCurrency)).toBe(true)
+    expect(result.destination.receivedCurrency).toHaveLength(2)
+    expect(buildDestInfo).toHaveBeenCalledTimes(2)
+    expect(buildDestInfo).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ currency: { symbol: 'USDT', amount: 1000n } })
+    )
+    expect(buildDestInfo).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        currency: { symbol: 'USDC', amount: 2000n },
+        totalHopFee: 0n,
+        paysDestFee: false
+      })
+    )
   })
 
   it('should handle EVM origin correctly with ahAddress provided', async () => {

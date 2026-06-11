@@ -1,38 +1,64 @@
+import type {
+  TAssetInfo,
+  TCurrencyCore,
+  TCurrencyInputWithAmount,
+  TSingleCurrencyInputWithAmount,
+  WithComplexAmount,
+  WithOptionalAmount
+} from '@paraspell/assets'
 import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
 import { UnableToComputeError } from '../../errors'
-import type { TGetTransferableAmountOptions } from '../../types'
+import type { TGetTransferableAmountOptions, TPerAssetResult } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'
-import { resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { assertNotRawAssets } from '../utils/validationUtils'
 
-export const getTransferableAmountInternal = async <
-  TApi,
-  TRes,
-  TSigner,
-  TCustomChain extends string = never
->({
-  api,
-  sender,
-  origin: chain,
-  destination,
-  currency,
-  buildTx,
-  feeAsset,
-  version
-}: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain>): Promise<bigint> => {
-  validateAddress(api, sender, chain, false)
+const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  {
+    api,
+    buildTx,
+    origin: chain,
+    sender,
+    feeAsset,
+    version,
+    currency
+  }: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrencyInputWithAmount>,
+  feeCurrency: TCurrencyInputWithAmount
+): Promise<bigint> => {
+  const { fee } = await getOriginXcmFee({
+    api,
+    buildTx,
+    origin: chain,
+    destination: chain,
+    sender,
+    feeAsset,
+    version,
+    currency: feeCurrency,
+    disableFallback: false
+  })
 
-  const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(api, feeAsset, chain, destination, currency)
-    : undefined
+  if (fee === undefined) {
+    throw new UnableToComputeError(
+      `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${chain}.`
+    )
+  }
 
-  const asset = api.findAssetInfoOrThrow(chain, currency)
+  return fee
+}
 
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
-
+const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  sender: string,
+  chain: TSubstrateChain,
+  asset: TAssetInfo,
+  fee: bigint
+): Promise<bigint> => {
   const balance = await getAssetBalanceInternal({
     api,
     address: sender,
@@ -40,7 +66,31 @@ export const getTransferableAmountInternal = async <
     asset
   })
 
-  const ed = getEdFromAssetOrThrow(asset)
+  const transferable = balance - getEdFromAssetOrThrow(asset) - fee
+
+  return transferable > 0n ? transferable : 0n
+}
+
+const getTransferableAmountForAsset = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TGetTransferableAmountOptions<
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain,
+    TSingleCurrencyInputWithAmount
+  >,
+  resolvedFeeAsset: WithOptionalAmount<TAssetInfo> | undefined
+): Promise<bigint> => {
+  const { api, sender, origin: chain, currency } = options
+
+  const asset = api.findAssetInfoOrThrow(chain, currency)
+
+  const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
   const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
   const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
@@ -49,45 +99,76 @@ export const getTransferableAmountInternal = async <
     (!resolvedFeeAsset && isNativeAsset) ||
     (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
 
-  let feeToSubtract = 0n
+  const fee = paysOriginInSendingAsset
+    ? await getOriginFeeOrThrow(options, { ...currency, amount })
+    : 0n
 
-  if (paysOriginInSendingAsset) {
-    const { fee } = await getOriginXcmFee({
-      api,
-      buildTx,
-      origin: chain,
-      destination: chain,
-      sender,
-      feeAsset,
-      version,
-      currency: {
-        ...currency,
-        amount
-      },
-      disableFallback: false
-    })
+  return computeTransferableAmount(api, sender, chain, asset, fee)
+}
 
-    if (fee === undefined) {
-      throw new UnableToComputeError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${chain}.`
-      )
-    }
-    feeToSubtract = fee
-  }
+const getTransferableAmountForAssets = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  options: TGetTransferableAmountOptions<
+    TApi,
+    TRes,
+    TSigner,
+    TCustomChain,
+    WithComplexAmount<TCurrencyCore>[]
+  >,
+  resolvedFeeAsset: WithOptionalAmount<TAssetInfo> | undefined
+): Promise<bigint[]> => {
+  const { api, sender, origin: chain, destination, currency } = options
 
-  const transferable = balance - ed - feeToSubtract
+  const { assets } = resolveCurrency(api, currency, resolvedFeeAsset, chain, destination)
 
-  return transferable > 0n ? transferable : 0n
+  const fee = await getOriginFeeOrThrow(options, currency)
+
+  return Promise.all(
+    assets.map(asset =>
+      computeTransferableAmount(api, sender, chain, asset, asset.isFeeAsset ? fee : 0n)
+    )
+  )
+}
+
+export const getTransferableAmountInternal = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCurrency extends TCurrencyInputWithAmount,
+  TCustomChain extends string = never
+>(
+  options: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrency>
+): Promise<TPerAssetResult<TCurrency, bigint>> => {
+  const { api, sender, origin: chain, destination, currency, feeAsset } = options
+
+  validateAddress(api, sender, chain, false)
+
+  assertNotRawAssets(currency)
+
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(api, feeAsset, chain, destination, currency)
+    : undefined
+
+  return (
+    Array.isArray(currency)
+      ? getTransferableAmountForAssets({ ...options, currency }, resolvedFeeAsset)
+      : getTransferableAmountForAsset({ ...options, currency }, resolvedFeeAsset)
+  ) as Promise<TPerAssetResult<TCurrency, bigint>>
 }
 
 export const getTransferableAmount = async <
   TApi,
   TRes,
   TSigner,
+  TCurrency extends TCurrencyInputWithAmount,
   TCustomChain extends string = never
 >(
-  options: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain>
-): Promise<bigint> => {
+  options: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrency>
+): Promise<TPerAssetResult<TCurrency, bigint>> => {
   const { api } = options
   api.disconnectAllowed = false
   try {
