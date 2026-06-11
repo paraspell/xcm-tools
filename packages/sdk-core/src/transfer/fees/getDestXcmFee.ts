@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { TCurrencyCore } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { isExternalChain, isRelayChain, Parents } from '@paraspell/sdk-common'
@@ -46,8 +46,9 @@ export const getDestXcmFee = async <
     prevChain: hopChain,
     destination,
     currency,
-    forwardedXcms,
     asset,
+    currentAsset,
+    forwardedXcms,
     recipient,
     feeAsset,
     originFee,
@@ -66,19 +67,17 @@ export const getDestXcmFee = async <
       return 0n
     }
 
-    const attempt = async (chain: TChain | TCustomChain, curr: TCurrencyCore, amt: bigint) => {
-      const assetInfo = api.findAssetInfoOrThrow(chain, curr, destination)
-
+    const reverseFeeFor = async (assetInfo: TAssetInfo, amount: bigint) => {
       try {
         return await getReverseTxFee(
           { ...options, destination },
-          { location: assetInfo.location, amount: amt }
+          { location: assetInfo.location, amount }
         )
       } catch (err: unknown) {
         if (err instanceof InvalidCurrencyError) {
           return await getReverseTxFee(
             { ...options, destination },
-            { symbol: assetInfo.symbol, amount: amt }
+            { symbol: assetInfo.symbol, amount }
           )
         }
         throw err
@@ -86,33 +85,31 @@ export const getDestXcmFee = async <
     }
 
     try {
-      return await attempt(origin, currency, currency.amount)
+      return await reverseFeeFor(asset, asset.amount)
     } catch (err: unknown) {
       if (!(err instanceof InvalidCurrencyError) || !swapConfig) {
         return 0n
       }
 
-      return await attempt(swapConfig.exchangeChain, swapConfig.currencyTo, swapConfig.amountOut)
+      const swapAsset = api.findAssetInfoOrThrow(
+        swapConfig.exchangeChain,
+        swapConfig.currencyTo,
+        destination
+      )
+      return await reverseFeeFor(swapAsset, swapConfig.amountOut)
     }
   }
 
   if (!api.hasDryRunSupport(destination) || !forwardedXcms || isExternalChain(destination)) {
     const fee = await calcPaymentInfoFee()
 
-    const sufficient = await isSufficientDestination(
-      api,
-      destination,
-      recipient,
-      currency.amount,
-      asset,
-      fee
-    )
+    const sufficient = await isSufficientDestination(api, destination, recipient, currentAsset, fee)
 
     return {
       fee,
       feeType: 'paymentInfo',
       sufficient,
-      asset
+      asset: currentAsset
     }
   }
 
@@ -125,11 +122,11 @@ export const getDestXcmFee = async <
     xcm: forwardedXcms[1][0],
     chain: destination,
     origin,
-    asset,
+    asset: currentAsset,
     version,
     originFee,
     feeAsset: resolvedFeeAsset,
-    amount: normalizeAmount(currency.amount)
+    amount: normalizeAmount(currentAsset.amount)
   })
 
   if (!dryRunResult.success) {
@@ -148,7 +145,7 @@ export const getDestXcmFee = async <
       dryRunError: dryRunResult.failureReason,
       dryRunSubError: dryRunResult.failureSubReason,
       sufficient: false,
-      asset
+      asset: currentAsset
     }
   }
 
@@ -160,6 +157,6 @@ export const getDestXcmFee = async <
     sufficient: true,
     forwardedXcms: newForwardedXcms,
     destParaId,
-    asset
+    asset: currentAsset
   }
 }

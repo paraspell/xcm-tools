@@ -173,34 +173,37 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
     mintFeeAssetRes = await createMintTxs(chain, { ...feeAsset, amount }, 0n, address, api)
   }
 
-  const balance = await getAssetBalanceInternal({
-    api,
-    chain,
-    address,
-    asset
-  })
+  const mintSentAsset = async (sentAsset: WithAmount<TAssetInfo>) => {
+    const balance = await getAssetBalanceInternal({
+      api,
+      chain,
+      address,
+      asset: sentAsset
+    })
 
-  const bonus = mintBonusForSent(chain, asset, feeAsset, !!mintFeeAssets, api)
+    const bonus = mintBonusForSent(chain, sentAsset, feeAsset, !!mintFeeAssets, api)
 
-  let mintAmount: bigint | null
-  if (options?.sentAssetMintMode === 'bypass') {
-    mintAmount = parseUnits(bypassMintAmount, asset.decimals) + asset.amount
-  } else {
-    const missing = calcPreviewMintAmount(balance, asset.amount) ?? 0n
-    const total = missing + bonus
-    mintAmount = total > 0n ? total : null
+    let mintAmount: bigint | null
+    if (options?.sentAssetMintMode === 'bypass') {
+      mintAmount = parseUnits(bypassMintAmount, sentAsset.decimals) + sentAsset.amount
+    } else {
+      const missing = calcPreviewMintAmount(balance, sentAsset.amount) ?? 0n
+      const total = missing + bonus
+      mintAmount = total > 0n ? total : null
+    }
+
+    return mintAmount !== null
+      ? createMintTxs(chain, { ...sentAsset, amount: mintAmount }, balance, address, api)
+      : null
   }
 
-  // mint asset that is being sent
-  const mintAssetRes =
-    mintAmount !== null
-      ? await createMintTxs(chain, { ...asset, amount: mintAmount }, balance, address, api)
-      : null
+  // mint assets that are being sent
+  const mintAssetResults = await Promise.all((dryRunOptions.assets ?? [asset]).map(mintSentAsset))
 
   return api.callBatchMethod(
     [
-      ...[mintNativeAssetRes, mintRelayAssetRes, mintFeeAssetRes, mintAssetRes].flatMap(tx =>
-        tx ? resultToExtrinsics(api, address, tx) : []
+      ...[mintNativeAssetRes, mintRelayAssetRes, mintFeeAssetRes, ...mintAssetResults].flatMap(
+        tx => (tx ? resultToExtrinsics(api, address, tx) : [])
       ),
       api.callDispatchAsMethod(tx, address)
     ],

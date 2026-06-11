@@ -14,6 +14,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
   currency,
   originFee,
   isFeeAssetAh,
+  paysDestFee,
   destFeeDetail,
   totalHopFee,
   bridgeFee
@@ -36,7 +37,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
   const destAmount = isFeeAssetAh ? currency.amount - originFee : currency.amount
 
   const destFeeAssetEqual = isSymbolMatch(destFeeDetail.asset.symbol, destAsset.symbol)
-  const effectiveDestFee = destFeeAssetEqual ? (destFeeDetail.fee as bigint) : 0n
+  const effectiveDestFee = paysDestFee && destFeeAssetEqual ? (destFeeDetail.fee as bigint) : 0n
 
   const effectiveAmountForBalance = destAmount - totalHopFee
 
@@ -50,7 +51,8 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
       'Unable to compute if dest balance will be sufficient. Fee currency is not the same'
     )
 
-  const isUnableToCompute = destFeeDetail.feeType === 'paymentInfo' && !destFeeAssetEqual
+  const isUnableToCompute =
+    paysDestFee && destFeeDetail.feeType === 'paymentInfo' && !destFeeAssetEqual
 
   const destbalanceAfterResult = isUnableToCompute ? createUnableToComputeError() : destBalanceAfter
 

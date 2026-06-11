@@ -150,12 +150,14 @@ describe('getSwapInfo', () => {
     vi.mocked(getRelayChainSymbol).mockReturnValue('Polkadot');
     vi.mocked(getSwapFee).mockResolvedValue({ result: swapFee, amountOut: 500n });
     vi.mocked(buildOriginInfo).mockResolvedValue({
-      selectedCurrency: {
-        sufficient: true,
-        balance: 100n,
-        balanceAfter: 90n,
-        asset: acaAsset,
-      },
+      selectedCurrency: [
+        {
+          sufficient: true,
+          balance: 100n,
+          balanceAfter: 90n,
+          asset: acaAsset,
+        },
+      ],
       xcmFee: {
         fee: 1n,
         asset: acaAsset,

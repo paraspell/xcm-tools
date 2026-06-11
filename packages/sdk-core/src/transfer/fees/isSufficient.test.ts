@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import {
   getEdFromAssetOrThrow,
   getExistentialDepositOrThrowImpl,
@@ -22,7 +22,7 @@ describe('isSufficientOrigin', () => {
   const destination = 'Astar'
   const sender = 'Alice'
   const feeNative = 100n
-  const currency = { amount: 50n } as WithAmount<TCurrencyCore>
+  const amount = 50n
   const asset = { symbol: 'ACA' } as TAssetInfo
 
   beforeEach(() => {
@@ -49,8 +49,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      asset,
+      { ...asset, amount },
       feeAsset
     )
     expect(result).toBeUndefined()
@@ -65,8 +64,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      asset,
+      { ...asset, amount },
       undefined
     )
 
@@ -91,8 +89,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      asset,
+      { ...asset, amount },
       undefined
     )
 
@@ -112,8 +109,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      nonNativeAsset,
+      { ...nonNativeAsset, amount },
       undefined
     )
 
@@ -121,9 +117,9 @@ describe('isSufficientOrigin', () => {
       api: mockApi,
       chain: origin,
       address: sender,
-      asset: nonNativeAsset
+      asset: { ...nonNativeAsset, amount }
     })
-    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(nonNativeAsset)
+    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith({ ...nonNativeAsset, amount })
     expect(result).toBe(true)
   })
 
@@ -140,8 +136,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      nonNativeAsset,
+      { ...nonNativeAsset, amount },
       undefined
     )
 
@@ -161,8 +156,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      nonNativeAsset,
+      { ...nonNativeAsset, amount },
       undefined
     )
 
@@ -181,8 +175,7 @@ describe('isSufficientOrigin', () => {
       destination,
       sender,
       feeNative,
-      currency,
-      asset,
+      { ...asset, amount },
       undefined
     )
 
@@ -213,8 +206,7 @@ describe('isSufficientDestination', () => {
       mockApi,
       destination,
       address,
-      amount,
-      nonNativeAsset,
+      { ...nonNativeAsset, amount },
       feeNative
     )
 
@@ -229,8 +221,7 @@ describe('isSufficientDestination', () => {
       mockApi,
       destination,
       address,
-      amount,
-      asset,
+      { ...asset, amount },
       feeNative
     )
 
@@ -254,8 +245,7 @@ describe('isSufficientDestination', () => {
       mockApi,
       destination,
       address,
-      amount,
-      asset,
+      { ...asset, amount },
       feeNative
     )
 
@@ -272,8 +262,7 @@ describe('isSufficientDestination', () => {
       mockApi,
       destination,
       address,
-      20n,
-      asset,
+      { ...asset, amount: 20n },
       feeNative
     )
 

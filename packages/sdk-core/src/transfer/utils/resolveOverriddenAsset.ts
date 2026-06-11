@@ -1,19 +1,16 @@
-import type { TAmount } from '@paraspell/assets'
 import {
-  extractAssetLocation,
   InvalidCurrencyError,
-  isAssetEqual,
   isOverrideLocationSpecifier,
-  isTAsset,
   type TAssetInfo,
   type TAssetWithFee
 } from '@paraspell/assets'
-import { deepEqual, isTLocation, type TLocation } from '@paraspell/sdk-common'
+import { type TLocation } from '@paraspell/sdk-common'
 
-import { AMOUNT_ALL } from '../../constants'
 import type { TSubstrateTransferOptions } from '../../types'
-import { abstractDecimals, createAsset, getChainVersion } from '../../utils'
+import { createAsset, getChainVersion, sortAssets } from '../../utils'
+import { resolveCurrency } from './resolveCurrency'
 import { validateAssetSupport } from './validateAssetSupport'
+import { assertNotRawAssets } from './validationUtils'
 
 export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>,
@@ -29,7 +26,7 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends
   if (Array.isArray(currency)) {
     if (!feeAsset) {
       throw new InvalidCurrencyError(
-        'Overridden multi assets cannot be used without specifying fee asset'
+        'Overridden assets cannot be used without specifying fee asset'
       )
     }
 
@@ -37,70 +34,25 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends
       throw new InvalidCurrencyError('Fee asset cannot be an overridden location specifier')
     }
 
-    if (currency.every(asset => isTAsset<TAmount>(asset))) {
-      if (!feeAsset) {
-        throw new InvalidCurrencyError('Fee asset not provided')
-      }
+    assertNotRawAssets(currency)
 
-      if (!('location' in feeAsset)) {
-        throw new InvalidCurrencyError(
-          'Fee asset must be specified by location when using raw overridden multi assets'
-        )
-      }
+    const version = getChainVersion(api, origin)
 
-      return currency.map(asset => {
-        const ml = extractAssetLocation(asset)
-        return {
-          ...asset,
-          fun: { Fungible: BigInt(asset.fun.Fungible) },
-          isFeeAsset: deepEqual(ml, feeAsset.location)
-        }
-      })
-    }
+    const { assets } = resolveCurrency(
+      api,
+      currency,
+      resolvedFeeAsset,
+      origin,
+      destination,
+      asset => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
+    )
 
-    // MultiAsset is an array of TCurrencyCore, search for assets
-    const assets = currency.map(currency => {
-      if (currency.amount === AMOUNT_ALL) {
-        throw new InvalidCurrencyError('Multi assets cannot use amount all. Please specify amount.')
-      }
-
-      const asset = api.findAssetInfo(
-        origin,
-        currency,
-        !isTLocation(destination) ? destination : null
-      )
-
-      if (!asset) {
-        throw new InvalidCurrencyError(
-          `Origin chain ${origin} does not support currency ${JSON.stringify(currency)}`
-        )
-      }
-
-      if (!resolvedFeeAsset) {
-        throw new InvalidCurrencyError('Fee asset not found')
-      }
-
-      validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
-
-      const version = getChainVersion(api, origin)
-
-      const abstractedAmount = abstractDecimals(currency.amount, asset.decimals, api)
-
-      return {
-        isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
-        ...createAsset(version, abstractedAmount, asset.location)
-      }
-    })
-
-    if (assets.filter(asset => asset.isFeeAsset).length > 1) {
-      throw new InvalidCurrencyError(`Fee asset matches multiple assets in multiassets`)
-    }
-
-    if (assets.filter(asset => asset.isFeeAsset).length === 0) {
-      throw new InvalidCurrencyError(`Fee asset not found in multiassets`)
-    }
-
-    return assets
+    return sortAssets(
+      assets.map(asset => ({
+        isFeeAsset: asset.isFeeAsset,
+        ...createAsset(version, asset.amount, asset.location)
+      }))
+    )
   }
 
   return undefined

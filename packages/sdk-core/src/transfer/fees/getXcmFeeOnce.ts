@@ -13,10 +13,12 @@ import type {
   TXcmFeeHopInfo,
   TXcmFeeHopResult
 } from '../../types'
-import { abstractDecimals, getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
+import { getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { inferFeeAsset } from '../utils/inferFeeAsset'
+import { resolveCurrency } from '../utils/resolveCurrency'
+import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { resolveHopAsset } from '../utils/resolveHopAsset'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
@@ -80,9 +82,11 @@ export const getXcmFeeOnce = async <
 }: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>): Promise<
   TGetXcmFeeResult<TDisableFallback>
 > => {
-  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
+    : undefined
 
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+  const { asset } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
   const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
@@ -128,13 +132,11 @@ export const getXcmFeeOnce = async <
         origin,
         prevChain: origin,
         destination,
-        currency: {
-          ...currency,
-          amount
-        },
+        currency,
+        asset,
+        currentAsset: asset,
         sender,
         recipient,
-        asset,
         version: resolvedVersion,
         tx,
         originFee: originFee ?? 0n,
@@ -200,7 +202,8 @@ export const getXcmFeeOnce = async <
       originChain: origin,
       currentChain,
       destination,
-      asset: currentAsset,
+      asset,
+      currentAsset,
       currency,
       swapConfig,
       hasPassedExchange
@@ -216,13 +219,11 @@ export const getXcmFeeOnce = async <
       origin,
       prevChain: currentOrigin,
       destination: currentChain,
-      currency: {
-        ...currency,
-        amount
-      },
+      currency,
+      asset,
+      currentAsset: { ...hopAsset, amount: asset.amount },
       sender,
       recipient,
-      asset: hopAsset,
       version: resolvedVersion,
       feeAsset,
       tx,
@@ -246,7 +247,7 @@ export const getXcmFeeOnce = async <
     api,
     origin,
     destination,
-    currency,
+    asset,
     initialForwardedXcms: initialForwardedXcm,
     initialDestParaId,
     swapConfig,
@@ -289,13 +290,14 @@ export const getXcmFeeOnce = async <
       origin,
       prevChain: traversalResult.lastProcessedChain || origin,
       destination,
-      currency: {
-        ...currency,
-        amount
+      currency,
+      asset,
+      currentAsset: {
+        ...(inferFeeAsset(origin, destination, asset, api) ?? asset),
+        amount: asset.amount
       },
       sender,
       recipient,
-      asset: inferFeeAsset(origin, destination, asset, api) ?? asset,
       version: resolvedVersion,
       tx,
       originFee: originFee ?? 0n,

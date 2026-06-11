@@ -133,6 +133,19 @@ describe('AssetHubExchange', () => {
       });
     });
 
+    it('should skip the fee conversion quote when toDestTxFee is zero', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetTo: { symbol: 'NON_NATIVE', location: assetToML },
+        origin: undefined,
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
+      const result: TSingleSwapResult<unknown> = await instance.swapCurrency(opts, 0n);
+      expect(result).toEqual({ tx: dummyTx, amountOut: 2000n });
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
+    });
+
     it('should throw RoutingResolutionError if queryRuntimeApi returns undefined', async () => {
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(undefined);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');

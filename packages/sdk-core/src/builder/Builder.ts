@@ -1,7 +1,11 @@
 // Implements general builder pattern, this is Builder main file
 
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
+import {
+  type TCurrencyInput,
+  type TCurrencyInputWithAmount,
+  type TSingleCurrencyInputWithAmount
+} from '@paraspell/assets'
 import {
   isExternalChain,
   type TChain,
@@ -38,6 +42,7 @@ import type {
   TDryRunResult,
   TGetXcmFeeBuilderOptions,
   TGetXcmFeeResult,
+  TReceivedCurrencyInfo,
   TSender,
   TSubstrateTransferBaseOptions,
   TSwapOptions,
@@ -46,6 +51,7 @@ import type {
   TTransferBaseOptions,
   TTransferBaseOptionsWithSender,
   TTransferBaseOptionsWithSwap,
+  TTransferInfo,
   TTransferOptions,
   TTxFactory,
   TWeight
@@ -151,9 +157,9 @@ export class GeneralBuilder<
    * @param currency - The currency to be transferred.
    * @returns An instance of Builder
    */
-  currency(
-    currency: TCurrencyInputWithAmount
-  ): GeneralBuilder<TApi, TRes, TSigner, T & { currency: TCurrencyInputWithAmount }, TCustomChain> {
+  currency<TCurrency extends TCurrencyInputWithAmount>(
+    currency: TCurrency
+  ): GeneralBuilder<TApi, TRes, TSigner, T & { currency: TCurrency }, TCustomChain> {
     return new GeneralBuilder(this.api, this.batchManager, { ...this._options, currency })
   }
 
@@ -612,7 +618,7 @@ export class GeneralBuilder<
       sender,
       recipient,
       version,
-      currency: currency as WithAmount<TCurrencyCore>,
+      currency,
       feeAsset,
       disableFallback
     })
@@ -657,7 +663,7 @@ export class GeneralBuilder<
         destination: to,
         sender,
         version,
-        currency: currency as WithAmount<TCurrencyCore>,
+        currency,
         feeAsset,
         disableFallback
       })
@@ -667,10 +673,47 @@ export class GeneralBuilder<
   }
 
   /**
+   * Returns the max transferable amount for each provided asset.
+   *
+   * @returns The max transferable amounts in the order the assets were provided.
+   */
+  getTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: WithComplexAmount<TCurrencyCore>[] },
+      TCustomChain
+    >
+  ): Promise<bigint[]>
+
+  /**
    * Returns the max transferable amount for the transfer
    *
    * @returns The max transferable amount.
    */
+  getTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: TSingleCurrencyInputWithAmount },
+      TCustomChain
+    >
+  ): Promise<bigint>
+
+  getTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
+    >
+  ): Promise<bigint | bigint[]>
+
   async getTransferableAmount(
     this: GeneralBuilder<
       TApi,
@@ -679,7 +722,7 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
       TCustomChain
     >
-  ) {
+  ): Promise<bigint | bigint[]> {
     const { senderSource } = this._options
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -702,15 +745,52 @@ export class GeneralBuilder<
       sender,
       feeAsset,
       version,
-      currency: currency as WithAmount<TCurrencyCore>
+      currency
     })
   }
+
+  /**
+   * Returns the min transferable amount for each provided asset.
+   *
+   * @returns The min transferable amounts in the order the assets were provided.
+   */
+  getMinTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: WithComplexAmount<TCurrencyCore>[] },
+      TCustomChain
+    >
+  ): Promise<bigint[]>
 
   /**
    * Returns the min transferable amount for the transfer
    *
    * @returns The min transferable amount.
    */
+  getMinTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: TSingleCurrencyInputWithAmount },
+      TCustomChain
+    >
+  ): Promise<bigint>
+
+  getMinTransferableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
+    >
+  ): Promise<bigint | bigint[]>
+
   async getMinTransferableAmount(
     this: GeneralBuilder<
       TApi,
@@ -719,7 +799,7 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
       TCustomChain
     >
-  ) {
+  ): Promise<bigint | bigint[]> {
     const { senderSource } = this._options
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -745,7 +825,7 @@ export class GeneralBuilder<
       recipient,
       feeAsset,
       version,
-      currency: currency as WithAmount<TCurrencyCore>,
+      currency,
       builder: this
     })
   }
@@ -784,15 +864,52 @@ export class GeneralBuilder<
       recipient,
       version,
       feeAsset,
-      currency: currency as WithAmount<TCurrencyCore>
+      currency
     })
   }
+
+  /**
+   * Returns the transfer info for each provided asset.
+   *
+   * @returns The transfer info with per-asset selected and received currency details.
+   */
+  getTransferInfo(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: WithComplexAmount<TCurrencyCore>[] },
+      TCustomChain
+    >
+  ): Promise<TTransferInfo<WithComplexAmount<TCurrencyCore>[]>>
 
   /**
    * Returns the transfer info for the transfer
    *
    * @returns The transfer info.
    */
+  getTransferInfo(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: TSingleCurrencyInputWithAmount },
+      TCustomChain
+    >
+  ): Promise<TTransferInfo>
+
+  getTransferInfo(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
+    >
+  ): Promise<TTransferInfo<TCurrencyInputWithAmount>>
+
   async getTransferInfo(
     this: GeneralBuilder<
       TApi,
@@ -801,7 +918,7 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
       TCustomChain
     >
-  ) {
+  ): Promise<TTransferInfo<TCurrencyInputWithAmount>> {
     const { senderSource } = this._options
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
@@ -839,10 +956,27 @@ export class GeneralBuilder<
       recipient,
       ahAddress,
       version,
-      currency: currency as WithAmount<TCurrencyCore>,
+      currency,
       feeAsset
     })
   }
+
+  /**
+   * Returns the receivable amount on the destination for each provided asset.
+   *
+   * @returns The computed receivable amounts in the order the assets were provided.
+   * @throws \{UnableToComputeError\} Thrown when a receivable amount cannot be determined.
+   */
+  getReceivableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: WithComplexAmount<TCurrencyCore>[] },
+      TCustomChain
+    >
+  ): Promise<bigint[]>
 
   /**
    * Returns the receivable amount on the destination after the transfer
@@ -850,6 +984,27 @@ export class GeneralBuilder<
    * @returns The computed receivable amount.
    * @throws \{UnableToComputeError\} Thrown when the receivable amount cannot be determined.
    */
+  getReceivableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> &
+        TBuilderInternalOptions<TSigner> & { currency: TSingleCurrencyInputWithAmount },
+      TCustomChain
+    >
+  ): Promise<bigint>
+
+  getReceivableAmount(
+    this: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
+      TCustomChain
+    >
+  ): Promise<bigint | bigint[]>
+
   async getReceivableAmount(
     this: GeneralBuilder<
       TApi,
@@ -858,18 +1013,21 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
       TCustomChain
     >
-  ) {
+  ): Promise<bigint | bigint[]> {
     const {
-      destination: {
-        receivedCurrency: { receivedAmount }
-      }
+      destination: { receivedCurrency }
     } = await this.getTransferInfo()
 
-    if (receivedAmount instanceof UnableToComputeError) {
-      throw receivedAmount
+    const getAmountOrThrow = ({ receivedAmount }: TReceivedCurrencyInfo) => {
+      if (receivedAmount instanceof UnableToComputeError) {
+        throw receivedAmount
+      }
+      return receivedAmount
     }
 
-    return receivedAmount
+    return Array.isArray(receivedCurrency)
+      ? receivedCurrency.map(getAmountOrThrow)
+      : getAmountOrThrow(receivedCurrency)
   }
 
   async getBestAmountOut(

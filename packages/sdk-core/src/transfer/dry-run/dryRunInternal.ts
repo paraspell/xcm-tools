@@ -1,21 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
-import {
-  abstractDecimals,
-  addXcmVersionHeader,
-  assertCurrencyCore,
-  getRelayChainOfImpl,
-  pickCompatibleXcmVersion
-} from '../../utils'
+import { addXcmVersionHeader, getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
-import { resolveHopAsset } from '../utils'
+import { resolveCurrency, resolveHopAsset } from '../utils'
 import { inferFeeAsset } from '../utils/inferFeeAsset'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getFailureInfo } from './getFailureInfo'
@@ -38,19 +31,13 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     useRootOrigin = false
   } = options
 
-  assertCurrencyCore(currency)
-
-  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
-
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
-  const amount = abstractDecimals(
-    (currency as WithAmount<TCurrencyCore>).amount,
-    asset.decimals,
-    api
-  )
+  const { assets, asset } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
+
+  const { amount } = asset
 
   const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
@@ -63,6 +50,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       ...asset,
       amount
     },
+    assets,
     feeAsset: resolvedFeeAsset,
     version: resolvedVersion,
     bypassOptions,
@@ -109,7 +97,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       originChain: origin,
       currentChain,
       destination,
-      asset: currentAsset,
+      asset,
+      currentAsset,
       currency,
       swapConfig,
       hasPassedExchange
@@ -156,7 +145,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     api,
     origin,
     destination,
-    currency,
+    asset,
     initialForwardedXcms,
     initialDestParaId,
     swapConfig,

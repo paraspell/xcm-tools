@@ -180,7 +180,7 @@ describe('Hydration', () => {
       )
     })
 
-    it('should throw InvalidCurrencyError when feeAsset and overriddenAsset are both set', async () => {
+    it('should call transferPolkadotXcm when feeAsset and overriddenAsset are both set', async () => {
       const input = {
         ...mockInput,
         api: mockApi,
@@ -199,7 +199,9 @@ describe('Hydration', () => {
         destination: 'Hydration'
       } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
-      await expect(hydration.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
+      await hydration.transferPolkadotXCM(input)
+
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
     })
 
     it('should call handleExecuteTransfer for non-native asset/feeAsset', async () => {

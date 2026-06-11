@@ -1,6 +1,6 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, TCurrencyCore, WithComplexAmount } from '@paraspell/assets'
 import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import { type TChain, Version } from '@paraspell/sdk-common'
 import type { WalletClient } from 'viem'
@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
-import { DryRunFailedError } from '../errors'
+import { DryRunFailedError, UnableToComputeError } from '../errors'
 import { getEvmExtensionOrThrow, getEvmSnowbridgeExtensionOrThrow } from '../extensions'
 import {
   claimAssets,
@@ -1204,12 +1204,57 @@ describe('Builder', () => {
             receivedAmount
           }
         }
-      } as unknown as TTransferInfo)
+      } as TTransferInfo)
 
       const result = await builder.getReceivableAmount()
 
       expect(getTransferInfoSpy).toHaveBeenCalledTimes(1)
       expect(result).toBe(receivedAmount)
+    })
+
+    it('should return per-asset receivable amounts in input order for currency arrays', async () => {
+      const builder = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency([
+          { ...CURRENCY, amount: 100n },
+          { symbol: 'USDC', amount: 200n }
+        ])
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+
+      vi.spyOn(builder, 'getTransferInfo').mockResolvedValue({
+        destination: {
+          receivedCurrency: [{ receivedAmount: 123n }, { receivedAmount: 456n }]
+        }
+      } as TTransferInfo<WithComplexAmount<TCurrencyCore>[]>)
+
+      const result = await builder.getReceivableAmount()
+
+      expect(result).toEqual([123n, 456n])
+    })
+
+    it('should throw when a receivable amount cannot be computed for currency arrays', async () => {
+      const builder = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency([
+          { ...CURRENCY, amount: 100n },
+          { symbol: 'USDC', amount: 200n }
+        ])
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+
+      vi.spyOn(builder, 'getTransferInfo').mockResolvedValue({
+        destination: {
+          receivedCurrency: [
+            { receivedAmount: 123n },
+            { receivedAmount: new UnableToComputeError('Unable to compute') }
+          ]
+        }
+      } as TTransferInfo<WithComplexAmount<TCurrencyCore>[]>)
+
+      await expect(builder.getReceivableAmount()).rejects.toThrow(UnableToComputeError)
     })
 
     describe('when currency amount equals AMOUNT_ALL', () => {

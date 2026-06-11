@@ -1,11 +1,12 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol } from '@paraspell/assets'
+import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { TDryRunChainResult, TGetOriginXcmFeeInternalOptions } from '../../types'
+import { abstractDecimals } from '../../utils'
 import { padFee } from '../../utils/fees'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 import { isSufficientOrigin } from './isSufficient'
@@ -23,7 +24,7 @@ describe('getOriginXcmFeeInternal', () => {
       X1: [{ Parachain: 1000 }]
     }
   }
-  const mockCurrency = { symbol: mockSymbol } as WithAmount<TCurrencyCore>
+  const mockCurrency = { symbol: mockSymbol, amount: 1000n } as WithAmount<TCurrencyCore>
   const mockAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
@@ -37,6 +38,7 @@ describe('getOriginXcmFeeInternal', () => {
     getPaymentInfo: vi.fn(),
     getDryRunCall: vi.fn(),
     init: vi.fn(),
+    findAssetInfo: vi.fn(),
     findAssetInfoOrThrow: vi.fn(),
     findNativeAssetInfoOrThrow: vi.fn(),
     hasDryRunSupport: vi.fn()
@@ -61,6 +63,7 @@ describe('getOriginXcmFeeInternal', () => {
     vi.resetAllMocks()
     vi.mocked(getNativeAssetSymbol).mockReturnValue(mockSymbol)
     vi.mocked(isSufficientOrigin).mockResolvedValue(true)
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
     findAssetInfoOrThrowSpy.mockReturnValue(mockAsset)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.spyOn(api, 'getPaymentInfo').mockResolvedValue({
@@ -95,8 +98,7 @@ describe('getOriginXcmFeeInternal', () => {
       'Acala',
       'addr',
       150n,
-      mockCurrency,
-      mockAsset,
+      { ...mockAsset, amount: 1000n },
       undefined
     )
     expect(dryRunCallSpy).not.toHaveBeenCalled()
@@ -200,5 +202,49 @@ describe('getOriginXcmFeeInternal', () => {
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
     expect(paymentInfoSpy).toHaveBeenCalledWith({}, 'addr')
+  })
+
+  it('resolves the designated fee asset for an array currency', async () => {
+    const usdt: TAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      location: { parents: 0, interior: { X1: { GeneralIndex: 1984 } } }
+    }
+    const usdc: TAssetInfo = {
+      symbol: 'USDC',
+      decimals: 6,
+      location: { parents: 0, interior: { X1: { GeneralIndex: 1337 } } }
+    }
+
+    hasDryRunSupportSpy.mockReturnValue(false)
+    vi.mocked(padFee).mockReturnValue(150n)
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    vi.spyOn(api, 'findAssetInfo').mockImplementation((_chain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'USDT') return usdt
+      if ('symbol' in currency && currency.symbol === 'USDC') return usdc
+      return null
+    })
+
+    const res = await getOriginXcmFeeInternal({
+      ...baseOptions,
+      origin: 'Hydration',
+      destination: 'AssetHubPolkadot',
+      currency: [
+        { symbol: 'USDT', amount: 100n },
+        { symbol: 'USDC', amount: 200n }
+      ],
+      feeAsset: { symbol: 'USDC' }
+    })
+
+    expect(res.feeType).toBe('paymentInfo')
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'Hydration',
+      'AssetHubPolkadot',
+      'addr',
+      150n,
+      { ...usdc, amount: 200n },
+      { ...usdc, amount: 200n }
+    )
   })
 })

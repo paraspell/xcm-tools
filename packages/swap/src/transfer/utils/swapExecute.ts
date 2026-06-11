@@ -1,9 +1,7 @@
 import type {
   TAssetInfo,
-  TCurrencyCore,
   TGetXcmFeeResult,
   TXcmFeeDetailWithForwardedXcm,
-  WithAmount,
 } from '@paraspell/sdk-core';
 import {
   applyDecimalAbstraction,
@@ -145,7 +143,7 @@ export const getSwapExecuteXcmFee = async <
     destination: destination?.chain ?? exchange.chain,
     sender: evmSenderAddress ?? sender,
     recipient: recipient ?? sender,
-    currency: { ...currencyFrom, amount: amount } as WithAmount<TCurrencyCore>,
+    currency: { ...currencyFrom, amount: amount },
     feeAsset,
     disableFallback,
     swapConfig: {

@@ -1,4 +1,4 @@
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -20,13 +20,14 @@ const createApi = (dryRunRes?: TDryRunChainResult) =>
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getDestXcmFee', () => {
-  const unitAsset: TAssetInfo = {
+  const unitAsset: WithAmount<TAssetInfo> = {
     symbol: 'UNIT',
     decimals: 12,
     location: {
       parents: 0,
       interior: 'Here'
-    }
+    },
+    amount: 1n
   }
 
   const dotAsset: TAssetInfo = {
@@ -47,7 +48,6 @@ describe('getDestXcmFee', () => {
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
     const api = createApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
@@ -59,6 +59,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
@@ -68,7 +69,7 @@ describe('getDestXcmFee', () => {
       location: unitAsset.location,
       amount: 1n
     })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, unitAsset, 130n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', unitAsset, 130n)
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
@@ -81,7 +82,6 @@ describe('getDestXcmFee', () => {
     vi.mocked(getReverseTxFee).mockRejectedValue(new Error('boom'))
 
     const api = createApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
@@ -93,6 +93,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
@@ -103,7 +104,7 @@ describe('getDestXcmFee', () => {
       amount: 1n
     })
 
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, unitAsset, 0n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', unitAsset, 0n)
     expect(res).toEqual({
       fee: 0n,
       feeType: 'paymentInfo',
@@ -116,7 +117,6 @@ describe('getDestXcmFee', () => {
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
     const api = createApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
@@ -128,6 +128,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
@@ -137,7 +138,7 @@ describe('getDestXcmFee', () => {
       location: unitAsset.location,
       amount: 1n
     })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, unitAsset, 130n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', unitAsset, 130n)
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
@@ -151,7 +152,6 @@ describe('getDestXcmFee', () => {
     vi.mocked(getReverseTxFee).mockResolvedValueOnce(130n)
 
     const api = createApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
 
     const options = {
@@ -163,6 +163,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'FOO', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 
@@ -172,7 +173,7 @@ describe('getDestXcmFee', () => {
       location: unitAsset.location,
       amount: 1n
     })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, unitAsset, 130n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', unitAsset, 130n)
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
@@ -190,7 +191,6 @@ describe('getDestXcmFee', () => {
       asset: dotAsset
     }
     const api = createApi(dryRunObj)
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     const res = await getDestXcmFee({
@@ -202,6 +202,7 @@ describe('getDestXcmFee', () => {
       sender: 'sender',
       recipient: 'dest',
       asset: unitAsset,
+      currentAsset: unitAsset,
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>)
@@ -223,7 +224,6 @@ describe('getDestXcmFee', () => {
       failureReason: 'fail',
       asset: dotAsset
     })
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
@@ -237,6 +237,7 @@ describe('getDestXcmFee', () => {
       sender: 'sender',
       recipient: 'dest',
       asset: unitAsset,
+      currentAsset: unitAsset,
       currency: { symbol: 'UNIT', amount: 1n },
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
@@ -262,7 +263,6 @@ describe('getDestXcmFee', () => {
       failureReason: 'boom',
       asset: dotAsset
     })
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
 
     const res = await getDestXcmFee({
@@ -275,6 +275,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: true
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>)
 
@@ -282,7 +283,7 @@ describe('getDestXcmFee', () => {
     expect('fee' in res).toBe(false)
   })
 
-  it('falls back to swapConfig.currencyTo when origin currency is unsupported (uses location)', async () => {
+  it('falls back to swapConfig.currencyTo when the origin-asset reverse fee fails (uses location)', async () => {
     const usdcAsset: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
@@ -300,14 +301,12 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(usdcAsset)
 
-    vi.spyOn(api, 'findAssetInfoOrThrow')
-      .mockImplementationOnce(() => {
-        throw new InvalidCurrencyError('nope')
-      })
-      .mockReturnValueOnce(usdcAsset)
-
-    vi.mocked(getReverseTxFee).mockResolvedValue(321n)
+    vi.mocked(getReverseTxFee)
+      .mockRejectedValueOnce(new InvalidCurrencyError('nope'))
+      .mockRejectedValueOnce(new InvalidCurrencyError('nope'))
+      .mockResolvedValueOnce(321n)
 
     const options = {
       api,
@@ -318,6 +317,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false,
       swapConfig: {
         exchangeChain: 'AssetHubPolkadot',
@@ -328,7 +328,7 @@ describe('getDestXcmFee', () => {
 
     const res = await getDestXcmFee(options)
 
-    expect(getReverseTxFee).toHaveBeenCalledWith(options, {
+    expect(getReverseTxFee).toHaveBeenLastCalledWith(options, {
       location: usdcAsset.location,
       amount: 5000n
     })
@@ -342,7 +342,6 @@ describe('getDestXcmFee', () => {
 
   it('returns 0n when destination is Ethereum', async () => {
     const api = createApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(unitAsset)
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
     const options = {
       api,
@@ -353,6 +352,7 @@ describe('getDestXcmFee', () => {
       recipient: 'dest',
       currency: { symbol: 'UNIT', amount: 1n },
       asset: unitAsset,
+      currentAsset: unitAsset,
       disableFallback: false
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>
 

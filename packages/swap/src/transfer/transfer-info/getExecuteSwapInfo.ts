@@ -50,17 +50,18 @@ export const getExecuteSwapInfo = async <TApi, TRes, TSigner, TCustomChain exten
     ? findAssetInfoOrThrow(originChain, currencyFrom, destChain)
     : exchange.assetFrom;
 
-  const originInfo = await buildOriginInfo({
+  const { selectedCurrency, xcmFee: originXcmFee } = await buildOriginInfo({
     api,
     origin: originChain,
     sender: senderAddress,
-    currency: currencyFrom,
-    originAsset,
+    assets: [{ ...originAsset, amount: BigInt(amount) }],
     amount: BigInt(amount),
     originFee: xcmFeeResult.origin.fee,
     originFeeAsset: xcmFeeResult.origin.asset,
     isFeeAssetAh: false,
   });
+
+  const originInfo = { selectedCurrency: selectedCurrency[0], xcmFee: originXcmFee };
 
   const builtHops = await buildExecuteSwapHops({
     api,
@@ -85,6 +86,7 @@ export const getExecuteSwapInfo = async <TApi, TRes, TSigner, TCustomChain exten
     currency: { ...currencyTo, amount: amountOut },
     originFee: xcmFeeResult.origin.fee,
     isFeeAssetAh: false,
+    paysDestFee: true,
     destFeeDetail: xcmFeeResult.destination,
     totalHopFee,
     bridgeFee,

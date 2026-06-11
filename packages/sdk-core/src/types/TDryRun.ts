@@ -64,6 +64,7 @@ export type TDryRunCallBaseOptions<TRes, TCustomChain extends string = never> = 
    */
   version: Version
   asset: WithAmount<TAssetInfo>
+  assets?: WithAmount<TAssetInfo>[]
   bypassOptions?: TBypassOptions
   feeAsset?: TAssetInfo
 }
@@ -167,6 +168,7 @@ export type TResolveHopParams<TApi, TRes, TSigner, TCustomChain extends string =
   currentChain: TSubstrateChain
   destination: TDestination
   asset: TAssetInfo
+  currentAsset: TAssetInfo
   currency: TCurrencyInputWithAmount
   swapConfig?: TSwapConfig
   hasPassedExchange: boolean
@@ -195,7 +197,7 @@ export type HopTraversalConfig<
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   origin: TSubstrateChain | TCustomChain
   destination: TChain
-  currency: TCurrencyCore
+  asset: TAssetInfo
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialForwardedXcms: any
   initialDestParaId: number | undefined

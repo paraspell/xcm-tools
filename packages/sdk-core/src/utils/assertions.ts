@@ -66,7 +66,7 @@ export const assertCurrencyCore: <T>(
 
   if (Array.isArray(value)) {
     throw new InvalidCurrencyError(
-      'Multi-asset currency input is not supported here. Provide a single currency selector ({ symbol }, { id }, or { location }).'
+      'An array of currencies is not supported here. Provide a single currency selector ({ symbol }, { id }, or { location }).'
     )
   }
 

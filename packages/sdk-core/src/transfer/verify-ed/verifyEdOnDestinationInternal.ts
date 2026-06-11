@@ -12,6 +12,8 @@ import { DryRunFailedError, ScenarioNotSupportedError, UnableToComputeError } fr
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { assertNotRawAssets } from '../utils/validationUtils'
 
 export const calculateTotalXcmFee = (
   asset: TAssetInfo,
@@ -36,7 +38,7 @@ export const verifyEdOnDestinationInternal = async <
   TCustomChain extends string = never
 >(
   options: TVerifyEdOnDestinationOptions<TApi, TRes, TSigner, TCustomChain>
-) => {
+): Promise<boolean> => {
   const { api, buildTx, origin, destination, currency, sender, recipient, feeAsset, version } =
     options
 
@@ -52,23 +54,33 @@ export const verifyEdOnDestinationInternal = async <
     )
   }
 
+  assertNotRawAssets(currency)
+
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
+    : undefined
+
   const destApi = api.clone()
   await destApi.init(destination)
 
-  const asset = api.findAssetOnDestOrThrow(origin, destination, currency)
+  const resolvedAssets = Array.isArray(currency)
+    ? resolveCurrency(api, currency, resolvedFeeAsset, origin, destination).assets.map(
+        (asset, index) => ({ selector: currency[index], paysDestFee: !!asset.isFeeAsset })
+      )
+    : [{ selector: currency, paysDestFee: true }]
 
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+  const destAssets = resolvedAssets.map(({ selector, paysDestFee }) => {
+    const destAsset = api.findAssetOnDestOrThrow(origin, destination, selector)
 
-  const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
-
-  const ed = getEdFromAssetOrThrow(destAsset)
-
-  const balance = await getAssetBalanceInternal({
-    address: recipient,
-    chain: destination,
-    api: destApi,
-    asset: destAsset
+    return {
+      destAsset,
+      amount: abstractDecimals(selector.amount, destAsset.decimals, api),
+      paysDestFee
+    }
   })
+
+  const [firstAsset] = destAssets
+  const feeElement = destAssets.find(({ paysDestFee }) => paysDestFee) ?? firstAsset
 
   const xcmFeeResult = await getXcmFeeInternal({
     api,
@@ -77,10 +89,12 @@ export const verifyEdOnDestinationInternal = async <
     destination,
     sender,
     recipient,
-    currency: {
-      ...currency,
-      amount
-    },
+    currency: Array.isArray(currency)
+      ? currency
+      : {
+          ...currency,
+          amount: feeElement.amount
+        },
     version,
     feeAsset,
     disableFallback: false
@@ -114,8 +128,10 @@ export const verifyEdOnDestinationInternal = async <
   }
 
   const isUnableToCompute =
-    !isSymbolMatch(normalizeSymbol(destAsset.symbol), normalizeSymbol(destFeeAsset.symbol)) &&
-    destFeeType === 'paymentInfo'
+    !isSymbolMatch(
+      normalizeSymbol(feeElement.destAsset.symbol),
+      normalizeSymbol(destFeeAsset.symbol)
+    ) && destFeeType === 'paymentInfo'
 
   if (isUnableToCompute) {
     throw new UnableToComputeError(
@@ -126,20 +142,31 @@ export const verifyEdOnDestinationInternal = async <
   }
 
   const tx = await buildTx()
-
-  const totalFee = calculateTotalXcmFee(asset, xcmFeeResult)
   const method = api.getMethod(tx)
 
-  let feeToSubtract: bigint
+  const isTypeAndThenMethod =
+    method === 'transfer_assets_using_type_and_then' || method === 'transferAssetsUsingTypeAndThen'
 
-  if (
-    method === 'transfer_assets_using_type_and_then' ||
-    method === 'transferAssetsUsingTypeAndThen'
-  ) {
-    feeToSubtract = totalFee
-  } else {
-    feeToSubtract = destFee
+  const verifyAsset = async ({ destAsset, amount, paysDestFee }: (typeof destAssets)[number]) => {
+    const ed = getEdFromAssetOrThrow(destAsset)
+
+    const balance = await getAssetBalanceInternal({
+      address: recipient,
+      chain: destination,
+      api: destApi,
+      asset: destAsset
+    })
+
+    const feeToSubtract = isTypeAndThenMethod
+      ? calculateTotalXcmFee(destAsset, xcmFeeResult)
+      : paysDestFee
+        ? destFee
+        : 0n
+
+    return amount - feeToSubtract > (balance < ed ? ed : 0)
   }
 
-  return amount - feeToSubtract > (balance < ed ? ed : 0)
+  const results = await Promise.all(destAssets.map(verifyAsset))
+
+  return results.every(Boolean)
 }

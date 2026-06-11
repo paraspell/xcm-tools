@@ -1,63 +1,55 @@
-import { isAssetEqual } from '@paraspell/assets'
-import { getEdFromAssetOrThrow } from '@paraspell/assets'
+import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { AmountTooLowError } from '../../errors'
-import type { TGetMinTransferableAmountOptions } from '../../types'
-import { abstractDecimals, padValueBy, validateAddress } from '../../utils'
+import type { TGetMinTransferableAmountOptions, TPerAssetResult } from '../../types'
+import { padValueBy, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { FEE_PADDING } from '../type-and-then/computeFees'
-import { resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { assertNotRawAssets } from '../utils/validationUtils'
 
 export const getMinTransferableAmountInternal = async <
   TApi,
   TRes,
   TSigner,
+  TCurrency extends TCurrencyInputWithAmount,
   TCustomChain extends string = never
 >({
   api,
   origin,
   sender,
   recipient,
-  origin: chain,
   destination,
   currency,
   feeAsset,
   buildTx,
   builder,
   version
-}: TGetMinTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain>): Promise<bigint> => {
-  validateAddress(api, sender, chain, false)
+}: TGetMinTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrency>): Promise<
+  TPerAssetResult<TCurrency, bigint>
+> => {
+  validateAddress(api, sender, origin, false)
+
+  assertNotRawAssets(currency)
 
   const resolvedFeeAsset = feeAsset
-    ? resolveFeeAsset(api, feeAsset, chain, destination, currency)
+    ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
-  const asset = api.findAssetInfoOrThrow(chain, currency)
+  const { assets } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
-  const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
+  const selectors = Array.isArray(currency) ? currency : [currency]
+
+  const toResult = (values: bigint[]) =>
+    (Array.isArray(currency) ? values : values[0]) as TPerAssetResult<TCurrency, bigint>
 
   const destApi = api.clone()
   await destApi.init(destination)
 
-  const destBalance = await getAssetBalanceInternal({
-    api: destApi,
-    address: recipient,
-    chain: destination,
-    asset: destAsset
-  })
-
-  const destEd = getEdFromAssetOrThrow(destAsset)
-
-  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
-  const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
-
-  const paysOriginInSendingAsset =
-    (!resolvedFeeAsset && isNativeAsset) ||
-    (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
-
-  const amount = abstractDecimals(currency.amount, asset.decimals, api)
+  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(origin)
 
   const result = await getXcmFeeInternal({
     api,
@@ -66,56 +58,75 @@ export const getMinTransferableAmountInternal = async <
     buildTx,
     sender,
     recipient,
-    currency: {
-      ...currency,
-      amount
-    },
+    currency: Array.isArray(currency) ? currency : { ...selectors[0], amount: assets[0].amount },
     feeAsset,
     version,
     disableFallback: false
   })
 
-  const originFee =
-    result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)
-      ? result.origin.fee
-      : 0n
+  const minAmounts = await Promise.all(
+    assets.map(async (asset, index) => {
+      const destAsset = api.findAssetOnDestOrThrow(origin, destination, selectors[index])
 
-  const hopFeeTotal = result.hops.reduce((acc, hop) => {
-    // only add if asset is equal
-    return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
-  }, 0n)
-
-  const destinationFee =
-    result.destination && isAssetEqual(result.destination.asset, asset)
-      ? result.destination.fee
-      : 0n
-
-  const edComponent = destBalance === 0n ? destEd : 0n
-
-  let minAmount = hopFeeTotal + destinationFee + originFee + edComponent + 1n
-
-  const createTx = async (amount: bigint) => {
-    const { tx } = await builder
-      .currency({
-        ...currency,
-        amount
+      const destBalance = await getAssetBalanceInternal({
+        api: destApi,
+        address: recipient,
+        chain: destination,
+        asset: destAsset
       })
-      ['buildInternal']()
+
+      const destEd = getEdFromAssetOrThrow(destAsset)
+
+      const paysOriginInSendingAsset =
+        (!resolvedFeeAsset && isAssetEqual(nativeAssetInfo, asset)) ||
+        (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+
+      const originFee =
+        result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)
+          ? result.origin.fee
+          : 0n
+
+      const hopFeeTotal = result.hops.reduce((acc, hop) => {
+        // only add if asset is equal
+        return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
+      }, 0n)
+
+      const destinationFee =
+        result.destination && isAssetEqual(result.destination.asset, asset)
+          ? result.destination.fee
+          : 0n
+
+      const edComponent = destBalance === 0n ? destEd : 0n
+
+      return hopFeeTotal + destinationFee + originFee + edComponent + 1n
+    })
+  )
+
+  const buildMinCurrency = (amounts: bigint[]): TCurrencyInputWithAmount => {
+    assertNotRawAssets(currency)
+
+    return Array.isArray(currency)
+      ? currency.map((item, index) => ({ ...item, amount: amounts[index] }))
+      : { ...selectors[0], amount: amounts[0] }
+  }
+
+  const createTx = async (amounts: bigint[]) => {
+    const { tx } = await builder.currency(buildMinCurrency(amounts))['buildInternal']()
     return tx
   }
 
+  let amounts = minAmounts
+
   let tx
   try {
-    tx = await createTx(minAmount)
+    tx = await createTx(amounts)
   } catch (e) {
     if (e instanceof AmountTooLowError) {
-      minAmount = padValueBy(minAmount, FEE_PADDING)
+      amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
       try {
-        tx = await createTx(minAmount)
+        tx = await createTx(amounts)
       } catch {
-        if (e instanceof AmountTooLowError) {
-          return 0n
-        }
+        return toResult(amounts.map(() => 0n))
       }
     }
   }
@@ -123,32 +134,30 @@ export const getMinTransferableAmountInternal = async <
   const dryRunResult = await dryRunInternal({
     api,
     tx,
-    origin: chain,
+    origin,
     destination,
     sender,
     version,
-    currency: {
-      ...currency,
-      amount: minAmount
-    },
+    currency: buildMinCurrency(amounts),
     feeAsset
   })
 
   if (dryRunResult.failureReason) {
-    return 0n
+    return toResult(amounts.map(() => 0n))
   }
 
-  return minAmount
+  return toResult(amounts)
 }
 
 export const getMinTransferableAmount = async <
   TApi,
   TRes,
   TSigner,
+  TCurrency extends TCurrencyInputWithAmount,
   TCustomChain extends string = never
 >(
-  options: TGetMinTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain>
-): Promise<bigint> => {
+  options: TGetMinTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrency>
+): Promise<TPerAssetResult<TCurrency, bigint>> => {
   const { api } = options
   api.disconnectAllowed = false
   try {

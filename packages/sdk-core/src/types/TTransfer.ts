@@ -72,6 +72,11 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export type TAddress = string | TLocation
 export type TDestination = TChain | TLocation
 
+export type TResolvedCurrency = {
+  assets: WithAmount<TAssetInfo>[]
+  asset: WithAmount<TAssetInfo>
+}
+
 export type TTransferBaseOptions<TApi, TRes, TSigner> = {
   /**
    * The origin chain

@@ -58,6 +58,7 @@ describe('buildDestInfo', () => {
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT },
       originFee: 50000000n,
       isFeeAssetAh: false,
+      paysDestFee: true,
       destFeeDetail: {
         fee: DEFAULT_FEE,
         asset: glmrAsset
@@ -127,6 +128,22 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.sufficient).toBeInstanceOf(UnableToComputeError)
     expect(result.receivedCurrency.balanceAfter).toBeInstanceOf(UnableToComputeError)
     expect(result.receivedCurrency.receivedAmount).toBeInstanceOf(UnableToComputeError)
+  })
+
+  it('should stay computable for a different fee currency when the asset does not pay the dest fee', async () => {
+    const options = {
+      ...baseOptions,
+      api: mockApi,
+      paysDestFee: false,
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        feeType: 'paymentInfo',
+        asset: { symbol: 'OTHER' }
+      } as TXcmFeeDetail
+    }
+    const result = await buildDestInfo(options)
+    expect(result.receivedCurrency.receivedAmount).toBe(DEFAULT_AMOUNT)
+    expect(result.receivedCurrency.balanceAfter).toBe(DEFAULT_BALANCE + DEFAULT_AMOUNT)
   })
 
   it('should adjust destAmount if isFeeAssetAh is true', async () => {

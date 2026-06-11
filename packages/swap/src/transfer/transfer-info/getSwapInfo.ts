@@ -20,23 +20,30 @@ import {
 } from '../utils';
 import { getExecuteSwapInfo } from './getExecuteSwapInfo';
 
-export const buildExchangeOriginInfo = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+export const buildExchangeOriginInfo = async <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never,
+>(
   exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>,
   sender: string,
   amount: bigint,
   swapFee: TXcmFeeDetailSuccess,
-): Promise<TTransferInfo['origin']> =>
-  buildOriginInfo({
+): Promise<TTransferInfo['origin']> => {
+  const { selectedCurrency, xcmFee } = await buildOriginInfo({
     api: exchange.api,
     origin: exchange.chain,
     sender,
-    currency: { location: exchange.assetFrom.location },
-    originAsset: exchange.assetFrom,
+    assets: [{ ...exchange.assetFrom, amount }],
     amount,
     originFee: swapFee.fee,
     originFeeAsset: swapFee.asset,
     isFeeAssetAh: false,
   });
+
+  return { selectedCurrency: selectedCurrency[0], xcmFee };
+};
 
 export const buildExchangeDestInfo = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>,
@@ -52,6 +59,7 @@ export const buildExchangeDestInfo = <TApi, TRes, TSigner, TCustomChain extends 
     currency: { ...currencyTo, amount: amountOut },
     originFee: 0n,
     isFeeAssetAh: false,
+    paysDestFee: true,
     destFeeDetail: { fee: 0n, asset: exchange.assetTo, feeType: 'noFeeRequired' },
     totalHopFee: 0n,
   });

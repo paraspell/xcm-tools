@@ -82,7 +82,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     });
 
     const toDestFeeCurrencyTo =
-      assetTo.symbol == getNativeAssetSymbol(this.chain)
+      toDestTxFee === 0n || assetTo.symbol == getNativeAssetSymbol(this.chain)
         ? toDestTxFee
         : await this.quoteOrThrow(
             api,

@@ -1,11 +1,12 @@
 import type { TAssetInfo, TCurrencyInput } from '@paraspell/assets'
+import { InvalidCurrencyError, isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import { throwUnsupportedCurrency } from '../../utils'
+import { abstractDecimals, throwUnsupportedCurrency } from '../../utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
 vi.mock('@paraspell/assets')
@@ -86,5 +87,39 @@ describe('resolveFeeAsset', () => {
       new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
     )
     expect(findAssetInfoSpy).not.toHaveBeenCalled()
+  })
+
+  it('resolves the fee asset for an array currency on any origin', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    const fakeAsset = { symbol: 'FEE', decimals: 10 } as TAssetInfo
+    vi.spyOn(api, 'findAssetInfo').mockReturnValue(fakeAsset)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    vi.mocked(abstractDecimals).mockReturnValue(5n)
+
+    const currency = [
+      { symbol: 'FEE', amount: 1n },
+      { symbol: 'B', amount: 2n }
+    ] as TCurrencyInput
+    const feeAsset = { symbol: 'FEE' } as TCurrencyInput
+
+    const result = resolveFeeAsset(api, feeAsset, 'Moonbeam', 'Hydration', currency)
+
+    expect(result).toEqual({ ...fakeAsset, amount: 5n })
+  })
+
+  it('throws when the fee asset is not one of the provided assets', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.spyOn(api, 'findAssetInfo').mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+
+    const currency = [
+      { symbol: 'A', amount: 1n },
+      { symbol: 'B', amount: 2n }
+    ] as TCurrencyInput
+    const feeAsset = { symbol: 'FEE' } as TCurrencyInput
+
+    expect(() => resolveFeeAsset(api, feeAsset, 'Hydration', 'Astar', currency)).toThrow(
+      InvalidCurrencyError
+    )
   })
 })

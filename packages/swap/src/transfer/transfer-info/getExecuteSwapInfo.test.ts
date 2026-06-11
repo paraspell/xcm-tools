@@ -100,12 +100,14 @@ const destFee: TXcmFeeDetailSuccess = {
 };
 
 const originInfo = {
-  selectedCurrency: {
-    sufficient: true,
-    balance: 100n,
-    balanceAfter: 90n,
-    asset: dotAsset,
-  },
+  selectedCurrency: [
+    {
+      sufficient: true,
+      balance: 100n,
+      balanceAfter: 90n,
+      asset: dotAsset,
+    },
+  ],
   xcmFee: {
     fee: 7n,
     asset: dotAsset,
@@ -185,7 +187,7 @@ describe('getExecuteSwapInfo', () => {
         origin: 'Hydration',
         sender: 'Alice',
         amount: 1000n,
-        originAsset: dotAsset,
+        assets: [{ ...dotAsset, amount: 1000n }],
         originFee: originFee.fee,
         originFeeAsset: originFee.asset,
         isFeeAssetAh: false,
@@ -209,7 +211,7 @@ describe('getExecuteSwapInfo', () => {
     expect(buildOriginInfo).toHaveBeenCalledWith(
       expect.objectContaining({
         origin: 'Acala',
-        originAsset: acaAsset,
+        assets: [{ ...acaAsset, amount: 1000n }],
       }),
     );
     expect(result.chain.origin).toBe('Acala');

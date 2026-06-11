@@ -25,7 +25,7 @@ export const traverseXcmHops = async <
     api,
     origin,
     destination,
-    currency,
+    asset,
     initialForwardedXcms,
     initialDestParaId,
     swapConfig,
@@ -38,7 +38,6 @@ export const traverseXcmHops = async <
   let forwardedXcms = initialForwardedXcms
   let nextParaId = initialDestParaId
 
-  const asset = api.findAssetInfoOrThrow(origin, currency, destination)
   let currentAsset =
     origin === swapConfig?.exchangeChain
       ? api.findAssetInfoOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo)

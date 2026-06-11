@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TAssetInfo, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
+import type {
+  TAssetInfo,
+  TCurrencyInput,
+  TCurrencyInputWithAmount,
+  WithAmount
+} from '@paraspell/assets'
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
@@ -32,7 +37,7 @@ export type TGetXcmFeeBaseOptions<
    */
   sender: string
   recipient: string
-  currency: WithAmount<TCurrencyCore>
+  currency: TCurrencyInputWithAmount
   version?: Version
   feeAsset?: TCurrencyInput
   disableFallback: TDisableFallback
@@ -79,7 +84,7 @@ export type TGetOriginXcmFeeBaseOptions<
   origin: TSubstrateChain | TCustomChain
   destination: TChain
   sender: string
-  currency: WithAmount<TCurrencyCore>
+  currency: TCurrencyInputWithAmount
   version?: Version
   feeAsset?: TCurrencyInput
   disableFallback: TDisableFallback
@@ -115,10 +120,11 @@ export type TGetFeeForDestChainBaseOptions<TRes, TCustomChain extends string = n
   destination: TChain
   sender: string
   recipient: string
-  currency: WithAmount<TCurrencyCore>
+  currency: TCurrencyInputWithAmount
+  asset: WithAmount<TAssetInfo>
+  currentAsset: WithAmount<TAssetInfo>
   forwardedXcms: any
   tx: TRes
-  asset: TAssetInfo
   version: Version
   originFee: bigint
   feeAsset?: TCurrencyInput

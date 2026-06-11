@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyCore } from '@paraspell/assets'
+import type { TAssetInfo, TSingleCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -39,7 +39,12 @@ describe('buildHopInfo', () => {
       chain: 'AssetHubPolkadot',
       fee: DEFAULT_HOP_FEE,
       originChain: 'Polkadot',
-      currency: { symbol: 'USDT', assetId: '1984', type: 'ASSET_HUB' } as TCurrencyCore,
+      currency: {
+        symbol: 'USDT',
+        assetId: '1984',
+        type: 'ASSET_HUB',
+        amount: 1000n
+      } as TSingleCurrencyInputWithAmount,
       asset: { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo,
       sender: 'senderAlice',
       ahAddress: 'ahBobForEvm'

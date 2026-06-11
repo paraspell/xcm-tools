@@ -1,10 +1,11 @@
-import type { GeneralBuilder, TApiOrUrl, TBuilderOptions } from '@paraspell/sdk-core';
+import type { GeneralBuilder } from '@paraspell/sdk-core';
 import { describe, expect, it } from 'vitest';
 
 const MOCK_ADDRESS = '23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3';
+const ACA_FUNDED_ADDRESS = '2636WSLQhSLPAb4rd7qPgCpSKEjAz6FAbHYPAex6phJLNBfH';
 
 export const generateSwapE2eTests = <TApi, TRes, TSigner>(
-  Builder: (api?: TBuilderOptions<TApiOrUrl<TApi>>) => GeneralBuilder<TApi, TRes, TSigner>,
+  Builder: () => GeneralBuilder<TApi, TRes, TSigner>,
 ) => {
   describe.sequential('Swap - e2e', () => {
     describe('Acala', () => {
@@ -13,7 +14,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .from('Hydration')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: 5 })
-          .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+          .sender(ACA_FUNDED_ADDRESS)
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
           .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'Acala' })
           .buildAll();
@@ -27,7 +28,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .from('Hydration')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: 400 })
-          .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+          .sender(ACA_FUNDED_ADDRESS)
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
           .swap({
             currencyTo: {
@@ -79,7 +80,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
             },
             amount: 500,
           })
-          .sender('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+          .sender(ACA_FUNDED_ADDRESS)
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
           .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'Acala' })
           .buildAll();
@@ -93,7 +94,7 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
           .from('Acala')
           .to('Astar')
           .currency({ symbol: 'DOT', amount: 500 })
-          .sender('23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3')
+          .sender(ACA_FUNDED_ADDRESS)
           .recipient('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
           .swap({ currencyTo: { symbol: 'ACA' }, exchange: 'Acala' })
           .buildAll();
@@ -262,11 +263,11 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
     });
 
     describe('Auto exchange selection', () => {
-      it('should build a swap extrinsic without error for ACA to DOT', async () => {
+      it('should build a swap extrinsic without error for ASTR to DOT', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('Polkadot')
-          .currency({ symbol: 'ACA', amount: 100 })
+          .currency({ symbol: 'ASTR', amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .swap({ currencyTo: { symbol: 'DOT' } })
@@ -276,11 +277,11 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
         expect(txs.length).toBe(2);
       });
 
-      it('should build a swap extrinsic without error for ACA to DOT - 2 exchanges', async () => {
+      it('should build a swap extrinsic without error for ASTR to DOT - 2 exchanges', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('Polkadot')
-          .currency({ symbol: 'ACA', amount: 1000 })
+          .currency({ symbol: 'ASTR', amount: 1000 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .swap({

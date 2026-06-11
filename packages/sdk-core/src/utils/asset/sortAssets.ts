@@ -5,7 +5,7 @@ const isHere = (loc: TLocation): boolean => {
   return loc.interior === 'Here' || loc.interior?.Here !== undefined
 }
 
-export const sortAssets = (assets: TAsset[]) =>
+export const sortAssets = <T extends TAsset>(assets: T[]) =>
   assets.sort((a, b) => {
     const aLoc = extractAssetLocation(a)
     const bLoc = extractAssetLocation(b)

@@ -2,7 +2,7 @@
 
 import type { TAssetInfo } from '@paraspell/assets'
 import { normalizeLocation } from '@paraspell/assets'
-import { isSubstrateBridge, isTLocation, Parents } from '@paraspell/sdk-common'
+import { isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
 
 import { getChainImpl } from '../chains/getChainInstance'
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
@@ -81,22 +81,10 @@ export const resolveTransferParams = <TApi, TRes, TSigner, TCustomChain extends 
       symbol: 'symbol' in currency ? currency.symbol : undefined
     } as TAssetInfo)
 
-  const finalAsset = Array.isArray(currency)
-    ? // TODO: Refactor this
-      // We use a dummy values when overriding with multi-assets
-      // since these values won't be used but need to pass checks
-      {
-        ...resolvedAsset,
-        amount: 0n,
-        assetId: '1',
-        location: {
-          parents: Parents.ZERO,
-          interior: {
-            Here: null
-          }
-        }
-      }
-    : { ...resolvedAsset, amount: finalAmount }
+  const finalAsset =
+    Array.isArray(currency) && resolvedFeeAsset
+      ? { ...resolvedFeeAsset, amount: resolvedFeeAsset.amount ?? 0n }
+      : { ...resolvedAsset, amount: finalAmount }
 
   const normalizedAsset = finalAsset.location
     ? {
