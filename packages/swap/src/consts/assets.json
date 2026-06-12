@@ -356,6 +356,16 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3377
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X1": [
