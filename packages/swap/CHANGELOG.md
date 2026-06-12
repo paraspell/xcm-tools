@@ -1,5 +1,18 @@
 # Changelog
 
+## [13.7.3](https://github.com/paraspell/xcm-tools/compare/swap-v13.7.2...swap-v13.7.3) (2026-06-12)
+
+
+### Code Refactoring
+
+* **sdk-core:** Fully refactor multi-assets handling ⚙️ ([d1ead73](https://github.com/paraspell/xcm-tools/commit/d1ead73388ef30c4cd95c881f41dc46fc365296e))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([9dcdd56](https://github.com/paraspell/xcm-tools/commit/9dcdd56ff3809d2affa798efb72c4ab99ca152d8))
+* **swap:** Update swap assets 📋 ([9dcdd56](https://github.com/paraspell/xcm-tools/commit/9dcdd56ff3809d2affa798efb72c4ab99ca152d8))
+
 ## [13.7.2](https://github.com/paraspell/xcm-tools/compare/swap-v13.7.1...swap-v13.7.2) (2026-06-11)
 
 

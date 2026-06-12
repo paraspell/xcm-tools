@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.7.3](https://github.com/paraspell/xcm-tools/compare/playground-v13.7.2...playground-v13.7.3) (2026-06-12)
+
+
+### Code Refactoring
+
+* **sdk-core:** Fully refactor multi-assets handling ⚙️ ([d1ead73](https://github.com/paraspell/xcm-tools/commit/d1ead73388ef30c4cd95c881f41dc46fc365296e))
+
 ## [13.7.2](https://github.com/paraspell/xcm-tools/compare/playground-v13.7.1...playground-v13.7.2) (2026-06-11)
 
 
