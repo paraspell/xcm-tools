@@ -200,53 +200,60 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         expect(builder).toBeDefined()
       })
 
-      it('should create transfer tx from Hydration to AssetHubPolkadot - overridden asset', async () => {
+      it('should create transfer tx with multiple assets from Hydration to AssetHubPolkadot - assets selected by symbol with fee asset', async () => {
         const tx = await Builder(config)
           .from('Hydration')
           .to('AssetHubPolkadot')
           .currency([
             {
-              symbol: 'USDT',
+              symbol: ForeignAbstract('USDT1'),
               amount: '102928'
             },
             {
-              symbol: 'USDC',
+              symbol: ForeignAbstract('USDC3'),
               amount: '38482'
             }
           ])
-          .feeAsset({ symbol: 'USDC' })
+          .feeAsset({ symbol: ForeignAbstract('USDC3') })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .build()
         validateTx(tx, signer)
       })
 
-      it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset currency selection', async () => {
-        const tx = await Builder(config)
+      it('should create transfer tx with multiple assets from Hydration to AssetHubPolkadot - assets registered via customAssets with fee asset', async () => {
+        const customAssets = [
+          {
+            symbol: 'CUSTA',
+            decimals: 6,
+            assetId: '80001',
+            location: {
+              parents: 1,
+              interior: {
+                X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 80001 }]
+              }
+            }
+          },
+          {
+            symbol: 'CUSTB',
+            decimals: 6,
+            assetId: '80002',
+            location: {
+              parents: 1,
+              interior: {
+                X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 80002 }]
+              }
+            }
+          }
+        ]
+        const tx = await Builder({ ...config, customAssets: { Hydration: customAssets } })
           .from('Hydration')
           .to('AssetHubPolkadot')
           .currency([
-            {
-              id: {
-                parents: 0,
-                interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
-              },
-              fun: { Fungible: '102928' }
-            },
-            {
-              id: {
-                parents: 0,
-                interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
-              },
-              fun: { Fungible: '38482' }
-            }
+            { symbol: 'CUSTA', amount: '102928' },
+            { symbol: 'CUSTB', amount: '38482' }
           ])
-          .feeAsset({
-            location: {
-              parents: 0,
-              interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
-            }
-          })
+          .feeAsset({ symbol: 'CUSTB' })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .build()

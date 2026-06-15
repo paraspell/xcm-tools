@@ -77,7 +77,7 @@ export const CustomChainInputSchema = z.object({
   pallets: CustomChainPalletsInputSchema.optional(),
 });
 
-export const CustomAssetsMapSchema = z.record(
+export const CustomAssetsMapSchema = z.partialRecord(
   z.enum(CHAINS),
   z.array(CustomAssetInfoSchema),
 );

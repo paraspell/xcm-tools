@@ -982,6 +982,22 @@
             {
               "AccountKey20": {
                 "network": null,
+                "key": "0xcec8977efb147760919b983a952033f936c590df"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
                 "key": "0x1806860d27ee903c1ec7586d4f7d598d7591f124"
               }
             }
@@ -1113,6 +1129,26 @@
               "AccountKey20": {
                 "network": null,
                 "key": "0x57e114b691db790c35207b2e685d4a43181e6061"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a"
               }
             }
           ]
@@ -1811,6 +1847,16 @@
       {
         "parents": 1,
         "interior": {
+          "X1": [
+            {
+              "Parachain": 3370
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X2": [
             {
               "Parachain": 2034
@@ -1944,6 +1990,26 @@
           "X1": [
             {
               "Parachain": 2035
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xd166337499e176bbc38a1fbd113ab144e5bd2df7"
+              }
             }
           ]
         }
