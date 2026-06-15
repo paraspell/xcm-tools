@@ -5,11 +5,8 @@ import {
   Foreign,
   getChainProviders,
   Native,
-  Override,
-  TAsset,
   TChain,
   TCurrencyInputWithAmount,
-  TLocation,
   Version,
 } from '@paraspell/sdk';
 import { toHex } from 'polkadot-api/utils';
@@ -614,21 +611,33 @@ describe('X-Transfer controller (e2e)', () => {
       .expect(toHex(await tx.getEncodedData()));
   });
 
-  it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
+  it(`Generate XCM call - Parachain to parachain transfer with a custom asset - ${xTransferUrl}`, async () => {
     const from: TChain = 'Hydration';
     const to: TChain = 'AssetHubPolkadot';
-    const currency: TLocation = {
-      parents: 0,
-      interior: {
-        X1: {
-          Parachain: 2000,
+    const customAsset = {
+      symbol: 'CUSTX',
+      decimals: 6,
+      assetId: '80003',
+      location: {
+        parents: 1,
+        interior: {
+          X3: [
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 80003 },
+          ],
         },
       },
     };
-    const tx = await Builder()
+    const options = {
+      customAssets: { [from]: [customAsset] },
+    };
+    const currency: TCurrencyInputWithAmount = { symbol: 'CUSTX', amount };
+    const tx = await Builder(options)
       .from(from)
       .to(to)
-      .currency({ location: Override(currency), amount })
+      .currency(currency)
+      .sender(sender)
       .recipient(recipient)
       .build();
     return request(app.getHttpServer())
@@ -636,8 +645,10 @@ describe('X-Transfer controller (e2e)', () => {
       .send({
         from,
         to,
+        sender,
         recipient,
-        currency: { location: Override(currency), amount },
+        currency,
+        options,
       })
       .expect(201)
       .expect(toHex(await tx.getEncodedData()));
@@ -662,70 +673,52 @@ describe('X-Transfer controller (e2e)', () => {
       .expect(400);
   });
 
-  it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
+  it(`Generate XCM call - Parachain to parachain transfer with multiple custom assets - ${xTransferUrl}`, async () => {
     const from: TChain = 'AssetHubPolkadot';
     const to: TChain = 'BifrostPolkadot';
-    const createCurrency = (fungible: string): TAsset<string>[] => [
+    const customAssets = [
       {
-        id: {
+        symbol: 'CUSTA',
+        decimals: 6,
+        assetId: '80001',
+        location: {
           parents: 1,
           interior: {
             X3: [
-              {
-                Parachain: 1000,
-              },
-              {
-                PalletInstance: 50,
-              },
-              {
-                GeneralIndex: 1984,
-              },
+              { Parachain: 1000 },
+              { PalletInstance: 50 },
+              { GeneralIndex: 80001 },
             ],
           },
-        },
-        fun: {
-          Fungible: fungible,
         },
       },
       {
-        id: {
+        symbol: 'CUSTB',
+        decimals: 6,
+        assetId: '80002',
+        location: {
           parents: 1,
           interior: {
-            X2: [
-              {
-                Parachain: 2125,
-              },
-              {
-                GeneralIndex: 0,
-              },
+            X3: [
+              { Parachain: 1000 },
+              { PalletInstance: 50 },
+              { GeneralIndex: 80002 },
             ],
           },
         },
-        fun: {
-          Fungible: fungible,
-        },
       },
     ];
-    const feeAsset: TLocation = {
-      parents: 1,
-      interior: {
-        X2: [
-          {
-            Parachain: 2125,
-          },
-          {
-            GeneralIndex: 0,
-          },
-        ],
-      },
-    };
-    const tx = await Builder()
+    const options = { customAssets: { [from]: customAssets } };
+    const currency: TCurrencyInputWithAmount = [
+      { symbol: 'CUSTA', amount: '1000000000' },
+      { symbol: 'CUSTB', amount: '1000000000' },
+    ];
+    const feeAsset = { symbol: 'CUSTB' };
+    const tx = await Builder(options)
       .from(from)
       .to(to)
-      .currency(createCurrency('1000000000'))
-      .feeAsset({
-        location: feeAsset,
-      })
+      .currency(currency)
+      .feeAsset(feeAsset)
       .sender(sender)
       .recipient(recipient)
       .build();
@@ -736,8 +729,9 @@ describe('X-Transfer controller (e2e)', () => {
         to,
         sender,
         recipient,
-        currency: createCurrency('1000000000'),
-        feeAsset: { location: feeAsset },
+        currency,
+        feeAsset,
+        options,
       })
       .expect(201)
       .expect(toHex(await tx.getEncodedData()));

@@ -9,14 +9,6 @@
         "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://asset-hub-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://asset-hub-polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-asset-hub-polkadot.luckyfriday.io"
       },
@@ -27,10 +19,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-asset-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://statemint.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -84,10 +72,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://astar.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://astar.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -116,14 +100,6 @@
         "endpoint": "wss://bridge-hub-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://bridge-hub-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bridge-hub-polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-bridge-hub-polkadot.luckyfriday.io"
       },
@@ -134,10 +110,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-bridge-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bridgehub-polkadot.public.curie.radiumblock.co/ws"
       },
       {
         "name": "Spectrum",
@@ -192,16 +164,12 @@
     "paraId": 2034,
     "providers": [
       {
+        "name": "Dwellir",
+        "endpoint": "wss://hydration-rpc.n.dwellir.com"
+      },
+      {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/hydradx"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://hydration.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://hydration.dotters.network"
       }
     ]
   },
@@ -283,14 +251,6 @@
         "endpoint": "wss://coretime-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://coretime-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://coretime-polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-coretime-polkadot.luckyfriday.io"
       },
@@ -301,10 +261,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-coretime-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://coretime-polkadot.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -318,14 +274,6 @@
         "endpoint": "wss://collectives-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://collectives-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://collectives-polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-collectives-polkadot.luckyfriday.io"
       },
@@ -336,10 +284,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-collectives-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://collectives.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -420,14 +364,6 @@
         "endpoint": "wss://people-polkadot-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://people-polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-people-polkadot.luckyfriday.io"
       },
@@ -438,10 +374,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-people-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://people-polkadot.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -485,14 +417,6 @@
         "endpoint": "wss://asset-hub-kusama-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://asset-hub-kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://asset-hub-kusama.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-asset-hub-kusama.luckyfriday.io"
       },
@@ -503,10 +427,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-asset-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://statemine.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -520,14 +440,6 @@
         "endpoint": "wss://bridge-hub-kusama-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://bridge-hub-kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bridge-hub-kusama.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-bridge-hub-kusama.luckyfriday.io"
       },
@@ -538,10 +450,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-bridge-hub-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bridgehub-kusama.public.curie.radiumblock.co/ws"
       },
       {
         "name": "Spectrum",
@@ -628,14 +536,6 @@
         "endpoint": "wss://coretime-kusama-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://coretime-kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://coretime-kusama.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-coretime-kusama.luckyfriday.io"
       },
@@ -661,14 +561,6 @@
       {
         "name": "Encointer Association",
         "endpoint": "wss://kusama.api.encointer.org"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://encointer-kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://encointer-kusama.dotters.network"
       },
       {
         "name": "LuckyFriday",
@@ -776,14 +668,6 @@
         "endpoint": "wss://rpc-people-kusama.helixstreet.io"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://people-kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-kusama.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-people-kusama.luckyfriday.io"
       },
@@ -794,10 +678,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://kusama-people-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://people-kusama.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -817,10 +697,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://shiden.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://shiden.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -942,16 +818,12 @@
         "endpoint": "wss://asset-hub-paseo-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://asset-hub-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://asset-hub-paseo.dotters.network"
-      },
-      {
         "name": "TurboFlakes",
         "endpoint": "wss://sys.turboflakes.io/asset-hub-paseo"
+      },
+      {
+        "name": "Zondax",
+        "endpoint": "wss://api2.zondax.ch/pas/assethub/node/rpc"
       }
     ]
   },
@@ -976,12 +848,8 @@
     "paraId": 1002,
     "providers": [
       {
-        "name": "IBP1",
-        "endpoint": "wss://bridge-hub-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://bridge-hub-paseo.dotters.network"
+        "name": "Zondax",
+        "endpoint": "wss://api2.zondax.ch/pas/bridgehub/node/rpc"
       }
     ]
   },
@@ -991,12 +859,8 @@
     "paraId": 1005,
     "providers": [
       {
-        "name": "IBP1",
-        "endpoint": "wss://coretime-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://coretime-paseo.dotters.network"
+        "name": "Zondax",
+        "endpoint": "wss://api2.zondax.ch/pas/coretime/node/rpc"
       }
     ]
   },
@@ -1054,12 +918,8 @@
         "endpoint": "wss://people-paseo.rpc.amforc.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://people-paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://people-paseo.dotters.network"
+        "name": "Zondax",
+        "endpoint": "wss://api2.zondax.ch/pas/people/node/rpc"
       }
     ]
   },
@@ -1092,24 +952,12 @@
         "endpoint": "wss://rpc-polkadot.helixstreet.io"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://polkadot.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://polkadot.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-polkadot.luckyfriday.io"
       },
       {
         "name": "OnFinality",
         "endpoint": "wss://polkadot.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://polkadot.public.curie.radiumblock.co/ws"
       },
       {
         "name": "Spectrum",
@@ -1143,24 +991,12 @@
         "endpoint": "wss://rpc-kusama.helixstreet.io"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://kusama.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://kusama.dotters.network"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-kusama.luckyfriday.io"
       },
       {
         "name": "OnFinality",
         "endpoint": "wss://kusama.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://kusama.public.curie.radiumblock.co/ws"
       },
       {
         "name": "Spectrum",
@@ -1188,10 +1024,6 @@
       {
         "name": "Parity",
         "endpoint": "wss://westend-rpc.polkadot.io"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://rpc.public.curie.radiumblock.xyz/ws-westend"
       }
     ]
   },
@@ -1209,12 +1041,8 @@
         "endpoint": "wss://paseo-rpc.n.dwellir.com"
       },
       {
-        "name": "IBP1",
-        "endpoint": "wss://paseo.ibp.network"
-      },
-      {
-        "name": "IBP2",
-        "endpoint": "wss://paseo.dotters.network"
+        "name": "Zondax",
+        "endpoint": "wss://api2.zondax.ch/pas/relay/node/rpc"
       }
     ]
   }

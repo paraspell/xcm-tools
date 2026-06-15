@@ -7,6 +7,8 @@ import { TAssetInfoNoLoc } from './types'
 
 const ALLOWED_AH_ASSET_SYMBOLS = ['BILL']
 
+const EXCLUDED_ASSET_IDS = ['1000099']
+
 const resolveAhMetadata = async (
   location: TLocation,
   ahApi: ApiPromise
@@ -108,5 +110,11 @@ export const fetchHydrationAssets = async (
     )
   )
 
-  return assets.filter(asset => asset.decimals && asset.decimals > 0 && asset.assetId !== '0')
+  return assets.filter(
+    asset =>
+      asset.decimals &&
+      asset.decimals > 0 &&
+      asset.assetId !== '0' &&
+      !EXCLUDED_ASSET_IDS.includes(asset.assetId)
+  )
 }

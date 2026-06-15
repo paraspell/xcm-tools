@@ -289,59 +289,6 @@ describe('Builder', () => {
       )
     })
 
-    it('should initiate a para to para transfer with two overriden multi asset', async () => {
-      const currency: TCurrencyInputWithAmount = [
-        {
-          id: {
-            parents: 0,
-            interior: {
-              X2: [
-                {
-                  PalletInstance: '50'
-                },
-                {
-                  Parachain: '30'
-                }
-              ]
-            }
-          },
-          fun: {
-            Fungible: '102928'
-          }
-        },
-        {
-          id: {
-            parents: 0,
-            interior: {
-              X2: [
-                {
-                  PalletInstance: '50'
-                },
-                {
-                  Parachain: '1337'
-                }
-              ]
-            }
-          },
-          fun: {
-            Fungible: '38482'
-          }
-        }
-      ]
-
-      await Builder(mockApi).from(CHAIN).to(CHAIN_2).currency(currency).recipient(ADDRESS).build()
-
-      expect(createTransferOrSwap).toHaveBeenCalledWith(
-        expect.objectContaining({
-          api: mockApi,
-          from: CHAIN,
-          currency,
-          recipient: ADDRESS,
-          to: CHAIN_2
-        })
-      )
-    })
-
     it('should initiate a para to relay transfer with currency symbol', async () => {
       const currency = getRelayChainSymbol(CHAIN)
 
