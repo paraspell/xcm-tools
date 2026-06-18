@@ -1,5 +1,6 @@
 export enum EventName {
   GET_CHAINS = 'Get Chains',
+  GET_EVM_CHAINS = 'Get EVM Chains',
   GET_WS_ENDPOINTS = 'Get WS Endpoints',
   GET_ASSETS_OBJECT = 'Get Assets Object',
   GET_CHAIN_BY_PARA_ID = 'Get Chain By Para Id',

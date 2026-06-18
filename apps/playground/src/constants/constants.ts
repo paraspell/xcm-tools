@@ -1,4 +1,5 @@
 import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
+import { EVM_ORIGIN_CHAINS as SB_ORIGIN_CHAINS } from '@paraspell/evm-snowbridge';
 import type { TChain } from '@paraspell/sdk';
 import {
   IconBoxAlignBottomRight,
@@ -118,7 +119,7 @@ export const SYMBOL_TYPES = [
   'foreignAbstract',
 ] as const;
 
-export const EVM_CHAINS: TChain[] = ['Ethereum', ...EVM_ORIGIN_CHAINS];
+export const EVM_CHAINS: TChain[] = [...SB_ORIGIN_CHAINS, ...EVM_ORIGIN_CHAINS];
 
 export const QUERY_CONFIG: Record<
   TQuerySubmitType,

@@ -1,5 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
+import { EVM_ORIGIN_CHAINS as SB_ORIGIN_CHAINS } from '@paraspell/evm-snowbridge';
 import { CHAINS, type TChain } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -33,14 +35,24 @@ describe('AssetsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getChainNames', () => {
+  describe('getChains', () => {
     it('should return the list of chain names', () => {
       const mockResult = CHAINS;
-      const spy = vi
-        .spyOn(service, 'getChainNames')
-        .mockReturnValue(mockResult);
+      const spy = vi.spyOn(service, 'getChains').mockReturnValue(mockResult);
 
       const result = controller.getChains(mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getEvmChains', () => {
+    it('should return the list of EVM chains', () => {
+      const mockResult = [...SB_ORIGIN_CHAINS, ...EVM_ORIGIN_CHAINS];
+      const spy = vi.spyOn(service, 'getEvmChains').mockReturnValue(mockResult);
+
+      const result = controller.getEvmChains(mockRequestObject);
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalled();

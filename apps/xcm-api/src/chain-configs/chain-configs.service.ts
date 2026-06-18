@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
+import { EVM_ORIGIN_CHAINS as SB_ORIGIN_CHAINS } from '@paraspell/evm-snowbridge';
 import {
   CHAINS,
   getChainProviders,
@@ -17,8 +19,12 @@ import {
 
 @Injectable()
 export class ChainConfigsService {
-  getChainNames() {
+  getChains() {
     return CHAINS;
+  }
+
+  getEvmChains() {
+    return [...SB_ORIGIN_CHAINS, ...EVM_ORIGIN_CHAINS];
   }
 
   getParaId(chain: TChain) {

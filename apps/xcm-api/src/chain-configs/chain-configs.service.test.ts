@@ -1,6 +1,8 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
+import { EVM_ORIGIN_CHAINS as SB_ORIGIN_CHAINS } from '@paraspell/evm-snowbridge';
 import type { TChain } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
@@ -36,10 +38,17 @@ describe('AssetsService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getChainNames', () => {
+  describe('getChains', () => {
     it('should return the list of chain names', () => {
-      const result = service.getChainNames();
+      const result = service.getChains();
       expect(result).toEqual(paraspellSdk.CHAINS);
+    });
+  });
+
+  describe('getEvmChains', () => {
+    it('should return the Snowbridge and EVM origin chains joined', () => {
+      const result = service.getEvmChains();
+      expect(result).toEqual([...SB_ORIGIN_CHAINS, ...EVM_ORIGIN_CHAINS]);
     });
   });
 
