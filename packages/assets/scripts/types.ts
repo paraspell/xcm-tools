@@ -1,6 +1,10 @@
-import { TLocation } from '@paraspell/sdk-common'
+import { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
+import { PolkadotClient } from 'polkadot-api'
 import { TAssetInfo } from '../src'
 
-export type TRuntimeApi = 'dryRunApi' | 'xcmPaymentApi'
-
 export type TAssetInfoNoLoc = Omit<TAssetInfo, 'location'> & { location?: TLocation }
+
+export type TAssetsFetcher = (
+  client: PolkadotClient,
+  chain: TSubstrateChain
+) => Promise<TAssetInfoNoLoc[]>

@@ -77,6 +77,7 @@ import {
   extractDestParaId,
   findFailingEvent
 } from './utils'
+import { fetchPalletList } from './utils/fetchPalletList'
 
 const clientPool = createClientCache<TPapiApi>(
   MAX_CLIENTS,
@@ -267,14 +268,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   async fetchPalletList(): Promise<TPalletEntry[]> {
-    const { hash } = await this.api.getFinalizedBlock()
-    const bytes = await this.api.getMetadata(hash)
-    const meta = unifyMetadata(decAnyMetadata(bytes))
-    return meta.pallets.map(p => ({
-      name: p.name,
-      index: p.index,
-      hasExtrinsics: p.calls !== undefined
-    }))
+    return fetchPalletList(this.api)
   }
 
   getMethod(tx: TPapiTransaction) {

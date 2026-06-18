@@ -1,4 +1,5 @@
-import { writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
+import { createScriptProgress } from '../../sdk-common/scripts/progress';
+import { filterRequestedChains, writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
 import type ExchangeChain from '../src/exchanges/ExchangeChain';
 import { createExchangeInstance } from '../src/exchanges/ExchangeChainFactory';
 import type { TDexConfigStored, TAssetsRecord } from '../src/types';
@@ -10,6 +11,8 @@ process.on('unhandledRejection', (reason) => {
 });
 
 const assetsMap = assetsMapJson as TAssetsRecord;
+
+const FETCH_TIMEOUT_MS = 60000;
 
 const acquireApi = async (dex: ExchangeChain) => {
   if (dex.apiType === 'PJS') {
@@ -27,7 +30,7 @@ const acquireApi = async (dex: ExchangeChain) => {
 
 const fetchWithTimeout = async (
   exchangeChain: TExchangeChain,
-  timeoutMs: number = 60000,
+  timeoutMs: number = FETCH_TIMEOUT_MS,
 ): Promise<TDexConfigStored> => {
   const timeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs);
@@ -54,13 +57,15 @@ const fetchWithTimeout = async (
 void (async () => {
   const record: Partial<Record<TExchangeChain, TDexConfigStored>> = {};
 
-  for (const exchangeChain of EXCHANGE_CHAINS) {
-    console.log(`Fetching ${exchangeChain} assets...`);
+  const exchangeChains = filterRequestedChains(EXCHANGE_CHAINS, (chain) => chain);
+  const progress = createScriptProgress(exchangeChains, 'Swap assets', FETCH_TIMEOUT_MS);
+
+  for (const exchangeChain of exchangeChains) {
+    progress.update(exchangeChain);
 
     try {
-      const dexConfig = await fetchWithTimeout(exchangeChain, 60000);
+      const dexConfig = await fetchWithTimeout(exchangeChain, FETCH_TIMEOUT_MS);
       record[exchangeChain] = dexConfig;
-      console.log(`✓ Successfully fetched ${exchangeChain} assets`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`✗ Failed to fetch ${exchangeChain} assets:`, errorMessage);
@@ -70,6 +75,8 @@ void (async () => {
       }
     }
   }
+
+  progress.stop();
 
   const merged: TAssetsRecord = {
     ...assetsMap,

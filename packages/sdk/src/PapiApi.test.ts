@@ -40,19 +40,19 @@ import PapiApi from './PapiApi'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
 import { computeOriginFee, deriveAddress } from './utils'
+import { fetchPalletList } from './utils/fetchPalletList'
 
 vi.mock('polkadot-api')
 vi.mock('polkadot-api/utils')
 vi.mock('polkadot-api/ws')
 
-vi.mock('@polkadot-api/substrate-bindings', () => ({
-  decAnyMetadata: vi.fn(),
-  unifyMetadata: vi.fn()
-}))
+vi.mock('@polkadot-api/substrate-bindings')
 
 vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
+
+vi.mock('./utils/fetchPalletList')
 
 vi.mock('./utils', async importActual => ({
   ...(await importActual()),
@@ -2769,26 +2769,16 @@ describe('PapiApi', () => {
   })
 
   describe('fetchPalletList', () => {
-    it('maps unified metadata pallets into TPalletEntry records', async () => {
-      const subs = await import('@polkadot-api/substrate-bindings')
-      vi.mocked(subs.decAnyMetadata).mockReturnValue({} as ReturnType<typeof subs.decAnyMetadata>)
-      vi.mocked(subs.unifyMetadata).mockReturnValue({
-        pallets: [
-          { name: 'Balances', index: 10, calls: { type: 1 } },
-          { name: 'System', index: 0, calls: undefined }
-        ]
-      } as unknown as ReturnType<typeof subs.unifyMetadata>)
+    it('delegates to the fetchPalletList util with the underlying client', async () => {
+      const entries = [{ name: 'Balances', index: 10, hasExtrinsics: true }]
+      vi.mocked(fetchPalletList).mockResolvedValue(entries)
 
       const api = new PapiApi()
-      api._api = {
-        getFinalizedBlock: vi.fn().mockResolvedValue({ hash: '0xabc' }),
-        getMetadata: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]))
-      } as unknown as PolkadotClient
+      const client = {} as PolkadotClient
+      api._api = client
 
-      await expect(api.fetchPalletList()).resolves.toEqual([
-        { name: 'Balances', index: 10, hasExtrinsics: true },
-        { name: 'System', index: 0, hasExtrinsics: false }
-      ])
+      await expect(api.fetchPalletList()).resolves.toBe(entries)
+      expect(fetchPalletList).toHaveBeenCalledWith(client)
     })
   })
 

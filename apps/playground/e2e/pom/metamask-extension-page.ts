@@ -22,7 +22,7 @@ export class MetamaskExtensionPage {
   readonly doneButton: Locator;
   readonly connectNextButton: Locator;
   readonly connectConfirmButton: Locator;
-  extensionId: string;
+  extensionId?: string;
 
   constructor(page: Page) {
     this.page = page;

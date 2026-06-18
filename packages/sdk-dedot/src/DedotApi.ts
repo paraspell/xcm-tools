@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
+import { lowercaseFirstLetter, snakeToCamel } from "@paraspell/sdk-common";
 import type {
   TAssetInfo,
   TBridgeStatus,
@@ -68,7 +69,6 @@ import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { findCodecByType } from "./utils";
 import { computeOriginFee } from "./utils/computeOriginFee";
 import { createKeyringPair } from "./utils/signer";
-import { lowercaseFirstLetter, snakeToCamel } from "./utils/string";
 import { transform } from "./XcmTransformer";
 
 const clientPool = createClientCache<TDedotApi>(

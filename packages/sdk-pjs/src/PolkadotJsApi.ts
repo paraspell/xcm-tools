@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { lowercaseFirstLetter, snakeToCamel } from '@paraspell/sdk-common'
 import type {
   TAssetInfo,
   TBridgeStatus,
@@ -60,7 +61,7 @@ import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
 
 import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
-import { computeOriginFee, createKeyringPair, lowercaseFirstLetter, snakeToCamel } from './utils'
+import { computeOriginFee, createKeyringPair } from './utils'
 import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
 const clientPool = createClientCache<TPjsApi>(
