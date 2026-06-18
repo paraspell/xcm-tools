@@ -644,6 +644,9 @@ const response = await fetch('http://localhost:3001/v1/pallets/:chain/index?pall
 // Return Chain support for DryRun
 const response = await fetch('http://localhost:3001/v1/chains/:chain/has-dry-run-support');
 
+// Returns a JSON array of true EVM compatible chains (Chains that support only substrate EVM are not included. For example 'Crab')
+const response = await fetch('http://localhost:3001/v1/chains/evm');
+
 //Returns all pallets for local transfers of native assets for specific chain.
 const response = await fetch('http://localhost:3001/v1/pallets/:chain/native-assets');
 

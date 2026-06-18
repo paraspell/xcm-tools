@@ -1,13 +1,11 @@
+import type { UnifiedMetadata } from '@polkadot-api/substrate-bindings'
 import { decAnyMetadata, unifyMetadata } from '@polkadot-api/substrate-bindings'
 import type { PolkadotClient } from 'polkadot-api'
 import { describe, expect, it, vi } from 'vitest'
 
 import { fetchPalletList } from './fetchPalletList'
 
-vi.mock('@polkadot-api/substrate-bindings', () => ({
-  decAnyMetadata: vi.fn(),
-  unifyMetadata: vi.fn()
-}))
+vi.mock('@polkadot-api/substrate-bindings')
 
 describe('fetchPalletList', () => {
   it('maps unified metadata pallets into TPalletEntry records', async () => {
@@ -17,7 +15,7 @@ describe('fetchPalletList', () => {
         { name: 'Balances', index: 10, calls: { type: 1 } },
         { name: 'System', index: 0, calls: undefined }
       ]
-    } as unknown as ReturnType<typeof unifyMetadata>)
+    } as unknown as UnifiedMetadata)
 
     const client = {
       getFinalizedBlock: vi.fn().mockResolvedValue({ hash: '0xabc' }),

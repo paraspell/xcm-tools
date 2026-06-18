@@ -1,5 +1,3 @@
-// Script that updates XCM Pallets map for compatible chains
-
 import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
 
 import { fetchPalletList } from '../../sdk/src/utils/fetchPalletList'
@@ -25,7 +23,10 @@ const JSON_FILE_PATH = './src/maps/pallets.json'
 const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTokens', 'PolkadotXcm']
 
 const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain): TPalletMap => {
-  const toDetails = (p: TPalletEntry): TPalletDetails => ({ name: p.name as TPallet, index: p.index })
+  const toDetails = (p: TPalletEntry): TPalletDetails => ({
+    name: p.name as TPallet,
+    index: p.index
+  })
   const palletDetails = pallets.filter(p => p.hasExtrinsics).map(toDetails)
   const palletDetailsWithoutExtrinsics = pallets.filter(p => !p.hasExtrinsics).map(toDetails)
 

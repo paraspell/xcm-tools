@@ -17,7 +17,13 @@ export class ChainConfigsController {
   @Get()
   getChains(@Req() req: Request) {
     this.analyticsService.track(EventName.GET_CHAINS, req);
-    return this.service.getChainNames();
+    return this.service.getChains();
+  }
+
+  @Get('evm')
+  getEvmChains(@Req() req: Request) {
+    this.analyticsService.track(EventName.GET_EVM_CHAINS, req);
+    return this.service.getEvmChains();
   }
 
   @Get(':chain/ws-endpoints')

@@ -15,6 +15,8 @@ import { edString } from '../utils'
 
 const ALLOWED_AH_ASSET_SYMBOLS = ['BILL']
 
+const EXCLUDED_ASSET_IDS = ['1000099']
+
 const hydrationLocationOverrides: Record<string, TLocation> = {
   '42': {
     parents: 2,
@@ -80,7 +82,10 @@ export const fetchHydrationAssets = async (
       })
     )
 
-    return assets.filter(a => a.decimals && a.decimals > 0 && a.assetId !== '0')
+    return assets.filter(
+      a =>
+        a.decimals && a.decimals > 0 && a.assetId !== '0' && !EXCLUDED_ASSET_IDS.includes(a.assetId)
+    )
   } finally {
     ahClient.destroy()
   }

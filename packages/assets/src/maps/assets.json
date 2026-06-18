@@ -3220,29 +3220,6 @@
         "isFeeAsset": true
       },
       {
-        "assetId": "1000099",
-        "symbol": "ACA",
-        "decimals": 12,
-        "existentialDeposit": "90744101633",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "isFeeAsset": true
-      },
-      {
         "assetId": "1000766",
         "symbol": "USDC",
         "decimals": 6,
@@ -17349,29 +17326,6 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
-                }
-              }
-            ]
-          }
-        },
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "1000099",
-        "symbol": "ACA",
-        "decimals": 12,
-        "existentialDeposit": "90744101633",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
