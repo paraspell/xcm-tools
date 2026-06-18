@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.10](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.9...xcm-analyser-v3.0.10) (2026-06-18)
+
+
+### Code Refactoring
+
+* Update all scripts to use polkadot-api (PAPI) 🪄 ([92499f5](https://github.com/paraspell/xcm-tools/commit/92499f51898cc80d8f81af788536f296d38254da))
+
 ## [3.0.9](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.8...xcm-analyser-v3.0.9) (2026-05-31)
 
 
