@@ -40,7 +40,7 @@
     "i18next-http-backend": "^4.0.0",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
-    "polkadot-api": "^2.1.4",
+    "polkadot-api": "^2.1.6",
     "react": "^19.2.6",
     "react-apollo-network-status": "^6.0.0",
     "react-dom": "^19.2.6",
@@ -52,7 +52,6 @@
     "vite-plugin-wasm": "^3.6.0"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "^1.15.4",
     "@graphql-codegen/cli": "^7.1.0",
     "@graphql-codegen/schema-ast": "^6.0.1",
     "@graphql-typed-document-node/core": "^3.2.0",

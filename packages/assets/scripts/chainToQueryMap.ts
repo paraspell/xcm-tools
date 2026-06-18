@@ -1,70 +1,76 @@
-import { TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain } from '@paraspell/sdk-common'
 
-export const chainToQuery: Record<TSubstrateChain, string[]> = {
-  // Chain state query: <module>.<method> for assets metadata
+import type { TChainAssetsInfo } from '../src'
+import { fetchEthereumAssets } from './fetchers/ethereum'
 
-  // Relay chains
-  Kusama: [],
-  Paseo: [],
-  Polkadot: [],
-  Westend: [],
+export const chainToQuery: Record<
+  TChain,
+  string | (() => Promise<TChainAssetsInfo>)
+> = {
+  // Chain state query: <Pallet>.<Storage> for assets metadata
+  Kusama: '',
+  Paseo: '',
+  Polkadot: '',
+  Westend: '',
+  Acala: 'AssetRegistry.AssetMetadatas',
+  Ajuna: 'Assets.Metadata',
+  AjunaPaseo: 'Assets.Metadata',
+  Astar: 'Assets.Metadata',
+  AssetHubKusama: 'Assets.Metadata',
+  AssetHubPaseo: 'Assets.Metadata',
+  AssetHubPolkadot: 'Assets.Metadata',
+  AssetHubWestend: 'Assets.Metadata',
+  Basilisk: 'AssetRegistry.AssetMetadataMap',
+  BifrostKusama: 'AssetRegistry.CurrencyMetadatas',
+  BifrostPaseo: 'AssetRegistry.CurrencyMetadatas',
+  BifrostPolkadot: 'AssetRegistry.CurrencyMetadatas',
+  BridgeHubKusama: '',
+  BridgeHubPaseo: '',
+  BridgeHubPolkadot: '',
+  BridgeHubWestend: '',
+  Centrifuge: 'OrmlAssetRegistry.Metadata',
+  Collectives: '',
+  CollectivesWestend: '',
+  CoretimeKusama: '',
+  CoretimePaseo: '',
+  CoretimePolkadot: '',
+  CoretimeWestend: '',
+  Crab: 'Assets.Metadata',
+  Crust: 'Assets.Metadata',
+  CrustShadow: 'Assets.Metadata',
+  Darwinia: 'Assets.Metadata',
+  Encointer: '',
+  EnergyWebX: 'Assets.Metadata',
+  EnergyWebXPaseo: 'Assets.Metadata',
+  Heima: 'Assets.Metadata',
+  HeimaPaseo: 'Assets.Metadata',
+  Hydration: 'AssetRegistry.Assets',
+  HydrationPaseo: 'AssetRegistry.Assets',
+  Interlay: 'AssetRegistry.Metadata',
+  Jamton: 'AssetRegistry.Metadata',
+  Karura: 'AssetRegistry.AssetMetadatas',
+  Kintsugi: 'AssetRegistry.Metadata',
+  Moonbeam: 'EvmForeignAssets.AssetsById',
+  Moonriver: 'EvmForeignAssets.AssetsById',
+  Mythos: '',
+  NeuroWeb: 'ForeignAssets.Metadata',
+  NeuroWebPaseo: 'ForeignAssets.Metadata',
+  Peaq: 'Assets.Metadata',
+  Pendulum: 'AssetRegistry.Metadata',
+  Penpal: 'ForeignAssets.Metadata',
+  PeopleKusama: '',
+  PeoplePaseo: '',
+  PeoplePolkadot: '',
+  PeopleWestend: '',
+  Quartz: 'ForeignAssets.CollectionToForeignAsset',
+  RobonomicsPolkadot: '',
+  Shiden: 'Assets.Metadata',
+  Unique: 'ForeignAssets.CollectionToForeignAsset',
+  Xode: 'Assets.Metadata',
+  Zeitgeist: 'AssetRegistry.Metadata',
+  ZeitgeistPaseo: 'AssetRegistry.Metadata',
 
-  // Parachains
-  Acala: ['assetRegistry.assetMetadatas'],
-  Ajuna: ['assets.metadata'],
-  AjunaPaseo: ['assets.metadata'],
-  Astar: ['assets.metadata'],
-  AssetHubKusama: ['assets.metadata'],
-  AssetHubPaseo: ['assets.metadata'],
-  AssetHubPolkadot: ['assets.metadata'],
-  AssetHubWestend: ['assets.metadata'],
-  Basilisk: ['assetRegistry.assetMetadataMap'],
-  BifrostKusama: ['assetRegistry.currencyMetadatas'],
-  BifrostPaseo: ['assetRegistry.currencyMetadatas'],
-  BifrostPolkadot: ['assetRegistry.currencyMetadatas'],
-  BridgeHubKusama: [], // No assets metadata query
-  BridgeHubPaseo: [], // No assets metadata query
-  BridgeHubPolkadot: [], // No assets metadata query
-  BridgeHubWestend: [], // No assets metadata query
-  Centrifuge: ['ormlAssetRegistry.metadata'],
-  Collectives: [],
-  CollectivesWestend: [],
-  CoretimeKusama: [], // No assets metadata query
-  CoretimePaseo: [], // No assets metadata query
-  CoretimePolkadot: [], // No assets metadata query
-  CoretimeWestend: [], // No assets metadata query
-  Crab: ['assets.metadata'],
-  Crust: ['assets.metadata'],
-  CrustShadow: ['assets.metadata'],
-  Darwinia: ['assets.metadata'],
-  Encointer: [], // No assets metadata query
-  EnergyWebX: ['assets.metadata'],
-  EnergyWebXPaseo: ['assets.metadata'],
-  Heima: ['assets.metadata'],
-  HeimaPaseo: ['assets.metadata'],
-  Hydration: ['assetRegistry.assets'],
-  HydrationPaseo: ['assetRegistry.assets'],
-  Interlay: ['assetRegistry.metadata'],
-  Jamton: ['assetRegistry.metadata'],
-  Karura: ['assetRegistry.assetMetadatas'],
-  Kintsugi: ['assetRegistry.metadata'],
-  Moonbeam: ['evmForeignAssets.assetsById'],
-  Moonriver: ['evmForeignAssets.assetsById'],
-  Mythos: [], // No assets metadata query
-  NeuroWeb: ['foreignAssets.metadata'],
-  NeuroWebPaseo: ['foreignAssets.metadata'],
-  Peaq: ['assets.metadata'],
-  Pendulum: ['assetRegistry.metadata'],
-  Penpal: ['foreignAssets.metadata'],
-  PeopleKusama: [], // No assets metadata query
-  PeoplePaseo: [], // No assets metadata query
-  PeoplePolkadot: [], // No assets metadata query
-  PeopleWestend: [], // No assets metadata query
-  Quartz: ['foreignAssets.collectionToForeignAsset'],
-  RobonomicsPolkadot: [],
-  Shiden: ['assets.metadata'],
-  Unique: ['foreignAssets.collectionToForeignAsset'],
-  Xode: ['assets.metadata'],
-  Zeitgeist: ['assetRegistry.metadata'],
-  ZeitgeistPaseo: ['assetRegistry.metadata']
+  // External chains
+  Ethereum: () => fetchEthereumAssets(['polkadot_mainnet']),
+  EthereumTestnet: () => fetchEthereumAssets(['paseo_sepolia', 'westend_sepolia'])
 }

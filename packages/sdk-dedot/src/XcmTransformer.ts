@@ -3,10 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { snakeToCamel } from "@paraspell/sdk-common";
 import { NumberFormatError } from "@paraspell/sdk-core";
 import { decodeAddress, isEvmAddress } from "dedot/utils";
-
-import { snakeToCamel } from "./utils";
 
 const isValidSubstrateAddress = (address: string): boolean => {
   try {

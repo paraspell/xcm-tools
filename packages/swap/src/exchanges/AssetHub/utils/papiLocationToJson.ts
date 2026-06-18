@@ -1,3 +1,5 @@
+import { snakeToCamel } from '@paraspell/sdk-common';
+
 // NetworkId enum variants that polkadot.js `.toJSON()` lowercases when the
 // variant carries no data (e.g. `Kusama` -> `kusama`). Struct/tuple variants
 // like `Ethereum { chain_id }` keep their PascalCase.
@@ -11,8 +13,6 @@ const LOWERCASED_PLAIN_VARIANTS = new Set([
   'BitcoinCash',
   'PolkadotBulletin',
 ]);
-
-const snakeToCamel = (key: string) => key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 
 const isBinary = (v: unknown): v is { asHex: () => string } =>
   typeof v === 'object' && v !== null && 'asHex' in v && typeof v.asHex === 'function';

@@ -31,7 +31,7 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts"
+    "updateAssets": "tsx ./scripts/fetchAssets.ts"
   },
   "dependencies": {
     "@paraspell/sdk-common": "workspace:*"
@@ -40,17 +40,16 @@
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@codecov/rollup-plugin": "^2.0.1",
-    "@polkadot/api": "^16.5.6",
-    "@polkadot/types": "^16.5.6",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "@snowbridge/registry": "^1.1.6",
     "@vitest/coverage-v8": "^4.1.7",
     "dotenv": "^17.4.2",
+    "polkadot-api": "^2.1.6",
     "rollup": "^4.60.4",
     "rollup-plugin-dts": "^6.4.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.22.4",
     "viem": "^2.51.3"
   }
 }

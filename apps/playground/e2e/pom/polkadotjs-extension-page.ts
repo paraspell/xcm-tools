@@ -19,7 +19,7 @@ export class PolkadotjsExtensionPage {
   readonly repeatPasswordInput: Locator;
   readonly polkadotExtensionCard: Locator;
   readonly confirmPrivacyOrMigrationNoticeButton: Locator;
-  extensionId: string;
+  extensionId?: string;
 
   constructor(page: Page) {
     this.page = page;

@@ -196,10 +196,9 @@
         "isNative": true
       },
       {
+        "assetId": "10",
         "symbol": "UNQ",
         "decimals": 18,
-        "existentialDeposit": "1250000000000000000",
-        "assetId": "10",
         "location": {
           "parents": 1,
           "interior": {
@@ -209,13 +208,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1250000000000000000"
       },
       {
+        "assetId": "21",
         "symbol": "ETH",
         "decimals": 18,
-        "existentialDeposit": "10000000000000",
-        "assetId": "21",
         "location": {
           "parents": 2,
           "interior": {
@@ -229,13 +228,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000000000000"
       },
       {
+        "assetId": "14",
         "symbol": "USDC",
         "decimals": 6,
-        "existentialDeposit": "10000",
-        "assetId": "14",
         "location": {
           "parents": 1,
           "interior": {
@@ -251,13 +250,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000"
       },
       {
+        "assetId": "19",
         "symbol": "DAMN",
         "decimals": 12,
-        "existentialDeposit": "1",
-        "assetId": "19",
         "location": {
           "parents": 1,
           "interior": {
@@ -273,13 +272,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1"
       },
       {
+        "assetId": "8",
         "symbol": "EQD",
         "decimals": 9,
-        "existentialDeposit": "1000000000",
-        "assetId": "8",
         "location": {
           "parents": 1,
           "interior": {
@@ -295,13 +294,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000"
       },
       {
+        "assetId": "16",
         "symbol": "PDEX",
         "decimals": 12,
-        "existentialDeposit": "3202800000000",
-        "assetId": "16",
         "location": {
           "parents": 1,
           "interior": {
@@ -311,13 +310,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "3202800000000"
       },
       {
+        "assetId": "4",
         "symbol": "INTR",
         "decimals": 10,
-        "existentialDeposit": "1000000000",
-        "assetId": "4",
         "location": {
           "parents": 1,
           "interior": {
@@ -333,13 +332,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000"
       },
       {
+        "assetId": "6",
         "symbol": "WETHah",
         "decimals": 18,
-        "existentialDeposit": "500000000000000",
-        "assetId": "6",
         "location": {
           "parents": 1,
           "interior": {
@@ -355,13 +354,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "500000000000000"
       },
       {
+        "assetId": "2",
         "symbol": "ASTR",
         "decimals": 18,
-        "existentialDeposit": "100000000000000000",
-        "assetId": "2",
         "location": {
           "parents": 1,
           "interior": {
@@ -371,13 +370,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000000"
       },
       {
+        "assetId": "20",
         "symbol": "LOTY",
         "decimals": 12,
-        "existentialDeposit": "100000000",
-        "assetId": "20",
         "location": {
           "parents": 1,
           "interior": {
@@ -393,13 +392,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000"
       },
       {
+        "assetId": "9",
         "symbol": "PHA",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "9",
         "location": {
           "parents": 1,
           "interior": {
@@ -409,13 +408,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "1",
         "symbol": "PARA",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -431,13 +430,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "0",
         "symbol": "GLMR",
         "decimals": 18,
-        "existentialDeposit": "100000000000000000",
-        "assetId": "0",
         "location": {
           "parents": 1,
           "interior": {
@@ -450,13 +449,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000000"
       },
       {
+        "assetId": "5",
         "symbol": "WBTC",
         "decimals": 8,
-        "existentialDeposit": "3000",
-        "assetId": "5",
         "location": {
           "parents": 1,
           "interior": {
@@ -472,13 +471,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "3000"
       },
       {
+        "assetId": "17",
         "symbol": "HDX",
         "decimals": 12,
-        "existentialDeposit": "78438200000000",
-        "assetId": "17",
         "location": {
           "parents": 1,
           "interior": {
@@ -491,13 +490,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "78438200000000"
       },
       {
+        "assetId": "13",
         "symbol": "PINK",
         "decimals": 10,
-        "existentialDeposit": "1000000000",
-        "assetId": "13",
         "location": {
           "parents": 1,
           "interior": {
@@ -513,13 +512,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000"
       },
       {
+        "assetId": "11",
         "symbol": "CRU",
         "decimals": 12,
-        "existentialDeposit": "10000000000",
-        "assetId": "11",
         "location": {
           "parents": 1,
           "interior": {
@@ -529,13 +528,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000000000"
       },
       {
+        "assetId": "12",
         "symbol": "USDT",
         "decimals": 6,
-        "existentialDeposit": "10000",
-        "assetId": "12",
         "location": {
           "parents": 1,
           "interior": {
@@ -551,13 +550,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000"
       },
       {
+        "assetId": "7",
         "symbol": "EQ",
         "decimals": 9,
-        "existentialDeposit": "1000000000",
-        "assetId": "7",
         "location": {
           "parents": 1,
           "interior": {
@@ -567,13 +566,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000"
       },
       {
+        "assetId": "18",
         "symbol": "LOVA",
         "decimals": 12,
-        "existentialDeposit": "1",
-        "assetId": "18",
         "location": {
           "parents": 1,
           "interior": {
@@ -589,13 +588,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1"
       },
       {
+        "assetId": "15",
         "symbol": "CFG",
         "decimals": 18,
-        "existentialDeposit": "1346900000000000000",
-        "assetId": "15",
         "location": {
           "parents": 1,
           "interior": {
@@ -611,13 +610,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1346900000000000000"
       },
       {
+        "assetId": "3",
         "symbol": "IBTC",
         "decimals": 8,
-        "existentialDeposit": "100",
-        "assetId": "3",
         "location": {
           "parents": 1,
           "interior": {
@@ -633,7 +632,8 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100"
       }
     ]
   },
@@ -800,6 +800,7 @@
         "assetId": "18446744073709551623",
         "symbol": "BNC",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -816,13 +817,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551619",
         "symbol": "GLMR",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -836,13 +837,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551633",
         "symbol": "PINK",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -859,13 +860,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551625",
         "symbol": "CLV",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -876,13 +877,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551620",
         "symbol": "IBTC",
         "decimals": 8,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -899,13 +900,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551621",
         "symbol": "INTR",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -922,13 +923,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551622",
         "symbol": "PHA",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -939,13 +940,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551631",
         "symbol": "UNQ",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -956,13 +957,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551635",
         "symbol": "XLM.s",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -979,13 +980,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "4294969281",
         "symbol": "USDC",
         "decimals": 6,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1002,26 +1003,26 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "340282366920938463463374607431768211455",
         "symbol": "DOT",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
             "Here": null
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551616",
         "symbol": "ACA",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1038,13 +1039,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551637",
         "symbol": "vGLMR",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1061,13 +1062,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551624",
         "symbol": "vDOT",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1084,13 +1085,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551618",
         "symbol": "LDOT",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1107,13 +1108,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551630",
         "symbol": "HDX",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1127,13 +1128,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551632",
         "symbol": "vASTR",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1150,13 +1151,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551617",
         "symbol": "aSEED",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1173,13 +1174,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551634",
         "symbol": "xcPEN",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1193,13 +1194,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551640",
         "symbol": "vFIL",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1216,13 +1217,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551626",
         "symbol": "vsDOT",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1239,13 +1240,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551641",
         "symbol": "GAME",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1262,13 +1263,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551629",
         "symbol": "EQD",
         "decimals": 9,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1285,13 +1286,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "4294969280",
         "symbol": "USDT",
         "decimals": 6,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1308,13 +1309,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551628",
         "symbol": "EQ",
         "decimals": 9,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1325,13 +1326,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551638",
         "symbol": "vMANTA",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1348,13 +1349,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551627",
         "symbol": "RING",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1368,13 +1369,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551636",
         "symbol": "EURC.s",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1403,13 +1404,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551639",
         "symbol": "FIL",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -1426,7 +1427,6 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       }
     ]
@@ -1967,6 +1967,7 @@
       {
         "symbol": "CFG",
         "decimals": 18,
+        "existentialDeposit": "1000000000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -1983,7 +1984,6 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000000",
         "isNative": true
       },
       {
@@ -2489,6 +2489,7 @@
         "assetId": "1027",
         "symbol": "ahUSDT",
         "decimals": 6,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -2505,13 +2506,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "1028",
         "symbol": "ahPINK",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -2527,20 +2528,19 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       },
       {
         "assetId": "1029",
         "symbol": "DOT",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
             "Here": null
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       }
     ]
@@ -3212,6 +3212,29 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1000099",
+        "symbol": "ACA",
+        "decimals": 12,
+        "existentialDeposit": "90744101633",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
@@ -5010,7 +5033,7 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "1",
+        "assetId": "13",
         "symbol": "HDX",
         "decimals": 12,
         "location": {
@@ -5126,7 +5149,7 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "1",
+        "assetId": "14",
         "symbol": "PHA",
         "decimals": 12,
         "location": {
@@ -5142,7 +5165,7 @@
         "existentialDeposit": "10000000000"
       },
       {
-        "assetId": "1",
+        "assetId": "15",
         "symbol": "stDOT",
         "decimals": 10,
         "location": {
@@ -5189,7 +5212,7 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "1",
+        "assetId": "10",
         "symbol": "GLMR",
         "decimals": 18,
         "location": {
@@ -5233,7 +5256,7 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "1",
+        "assetId": "11",
         "symbol": "BNC",
         "decimals": 12,
         "location": {
@@ -5302,7 +5325,7 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "1",
+        "assetId": "12",
         "symbol": "USDC",
         "decimals": 6,
         "location": {
@@ -9379,6 +9402,7 @@
         "assetId": "16797826370226091782818345603793389938",
         "symbol": "SDN",
         "decimals": 18,
+        "existentialDeposit": "1000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -9388,13 +9412,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1000000"
+        }
       },
       {
         "assetId": "108036400430056508975016746969135344601",
         "symbol": "XRT",
         "decimals": 9,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9404,13 +9428,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       },
       {
         "assetId": "173481220575862801646329923366065693029",
         "symbol": "CRAB",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9423,13 +9447,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       },
       {
         "assetId": "214920334981412447805621250067209749032",
         "symbol": "AUSD",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9445,13 +9469,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       },
       {
         "assetId": "232263652204149413431520870009560565298",
         "symbol": "MOVR",
         "decimals": 18,
+        "existentialDeposit": "1000000",
         "location": {
           "parents": 1,
           "interior": {
@@ -9464,13 +9488,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1000000"
+        }
       },
       {
         "assetId": "10810581592933651521121702237638664357",
         "symbol": "KAR",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9486,13 +9510,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       },
       {
         "assetId": "319623561105283008236062145480775032445",
         "symbol": "BNC",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9508,8 +9532,7 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       }
     ]
   },
@@ -9711,10 +9734,9 @@
         "isNative": true
       },
       {
+        "assetId": "10",
         "symbol": "KMA",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "10",
         "location": {
           "parents": 1,
           "interior": {
@@ -9724,13 +9746,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "14",
         "symbol": "GENS",
         "decimals": 9,
-        "existentialDeposit": "1000000000000",
-        "assetId": "14",
         "location": {
           "parents": 1,
           "interior": {
@@ -9740,13 +9762,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
+        "assetId": "19",
         "symbol": "LT",
         "decimals": 12,
-        "existentialDeposit": "1000000000000",
-        "assetId": "19",
         "location": {
           "parents": 1,
           "interior": {
@@ -9762,13 +9784,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
+        "assetId": "8",
         "symbol": "TEER",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "8",
         "location": {
           "parents": 1,
           "interior": {
@@ -9784,13 +9806,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "16",
         "symbol": "TUR",
         "decimals": 10,
-        "existentialDeposit": "40000000000",
-        "assetId": "16",
         "location": {
           "parents": 1,
           "interior": {
@@ -9800,13 +9822,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "40000000000"
       },
       {
+        "assetId": "4",
         "symbol": "HKO",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "4",
         "location": {
           "parents": 1,
           "interior": {
@@ -9822,13 +9844,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "6",
         "symbol": "KICO",
         "decimals": 14,
-        "existentialDeposit": "100000000000000",
-        "assetId": "6",
         "location": {
           "parents": 1,
           "interior": {
@@ -9844,13 +9866,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000"
       },
       {
+        "assetId": "2",
         "symbol": "QTZ",
         "decimals": 18,
-        "existentialDeposit": "1000000000000000000",
-        "assetId": "2",
         "location": {
           "parents": 1,
           "interior": {
@@ -9860,13 +9882,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000000000"
       },
       {
+        "assetId": "20",
         "symbol": "LIT",
         "decimals": 12,
-        "existentialDeposit": "100000000000",
-        "assetId": "20",
         "location": {
           "parents": 1,
           "interior": {
@@ -9879,13 +9901,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000"
       },
       {
+        "assetId": "9",
         "symbol": "NEER",
         "decimals": 18,
-        "existentialDeposit": "100000000000000000",
-        "assetId": "9",
         "location": {
           "parents": 1,
           "interior": {
@@ -9901,13 +9923,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000000"
       },
       {
+        "assetId": "1",
         "symbol": "ARIS",
         "decimals": 8,
-        "existentialDeposit": "1000000000000",
-        "assetId": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -9923,13 +9945,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
+        "assetId": "0",
         "symbol": "RMRK",
         "decimals": 10,
-        "existentialDeposit": "100000000",
-        "assetId": "0",
         "location": {
           "parents": 1,
           "interior": {
@@ -9945,13 +9967,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000"
       },
       {
+        "assetId": "5",
         "symbol": "CSM",
         "decimals": 12,
-        "existentialDeposit": "1000000000000",
-        "assetId": "5",
         "location": {
           "parents": 1,
           "interior": {
@@ -9961,13 +9983,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
+        "assetId": "17",
         "symbol": "PCHU",
         "decimals": 18,
-        "existentialDeposit": "100000000000000000",
-        "assetId": "17",
         "location": {
           "parents": 1,
           "interior": {
@@ -9983,13 +10005,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000000"
       },
       {
+        "assetId": "13",
         "symbol": "CRAB",
         "decimals": 18,
-        "existentialDeposit": "1000000000000000000",
-        "assetId": "13",
         "location": {
           "parents": 1,
           "interior": {
@@ -10002,13 +10024,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000000000"
       },
       {
+        "assetId": "11",
         "symbol": "BSX",
         "decimals": 12,
-        "existentialDeposit": "1000000000000",
-        "assetId": "11",
         "location": {
           "parents": 1,
           "interior": {
@@ -10021,13 +10043,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000"
       },
       {
+        "assetId": "12",
         "symbol": "AIR",
         "decimals": 18,
-        "existentialDeposit": "100000000000000000",
-        "assetId": "12",
         "location": {
           "parents": 1,
           "interior": {
@@ -10043,13 +10065,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "100000000000000000"
       },
       {
+        "assetId": "7",
         "symbol": "USDT",
         "decimals": 6,
-        "existentialDeposit": "10000",
-        "assetId": "7",
         "location": {
           "parents": 1,
           "interior": {
@@ -10065,13 +10087,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000"
       },
       {
+        "assetId": "18",
         "symbol": "SDN",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000",
-        "assetId": "18",
         "location": {
           "parents": 1,
           "interior": {
@@ -10081,13 +10103,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000000000000000"
       },
       {
+        "assetId": "15",
         "symbol": "EQD",
         "decimals": 9,
-        "existentialDeposit": "10000000000",
-        "assetId": "15",
         "location": {
           "parents": 1,
           "interior": {
@@ -10103,13 +10125,13 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "10000000000"
       },
       {
+        "assetId": "3",
         "symbol": "MOVR",
         "decimals": 18,
-        "existentialDeposit": "1000000000000000",
-        "assetId": "3",
         "location": {
           "parents": 1,
           "interior": {
@@ -10122,7 +10144,8 @@
               }
             ]
           }
-        }
+        },
+        "existentialDeposit": "1000000000000000"
       }
     ]
   },
@@ -10988,8 +11011,8 @@
     "nativeAssetSymbol": "DOTON",
     "isEVM": false,
     "ss58Prefix": 5589,
-    "supportsDryRunApi": true,
-    "supportsXcmPaymentApi": true,
+    "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "assets": [
       {
         "assetId": "0",
@@ -11067,8 +11090,7 @@
           "interior": {
             "Here": null
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "2",
@@ -11090,8 +11112,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "3",
@@ -11139,8 +11160,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       }
     ]
   },
@@ -11244,6 +11264,7 @@
         "assetId": "18446744073709551623",
         "symbol": "PHA",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11254,13 +11275,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551619",
         "symbol": "LKSM",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11277,13 +11298,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551633",
         "symbol": "QTZ",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11294,13 +11315,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551625",
         "symbol": "CRAB",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11314,13 +11335,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551620",
         "symbol": "MOVR",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11334,13 +11355,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551621",
         "symbol": "KBTC",
         "decimals": 8,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11357,13 +11378,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551622",
         "symbol": "KINT",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11380,26 +11401,26 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "340282366920938463463374607431768211455",
         "symbol": "KSM",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
             "Here": null
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551616",
         "symbol": "aSEED",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11416,13 +11437,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551624",
         "symbol": "CSM",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11433,13 +11454,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551618",
         "symbol": "KAR",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11456,13 +11477,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551634",
         "symbol": "BILL",
         "decimals": 8,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11479,13 +11500,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551626",
         "symbol": "SKU",
         "decimals": 18,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11496,13 +11517,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551629",
         "symbol": "vsKSM",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11519,13 +11540,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551628",
         "symbol": "vKSM",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11542,13 +11563,13 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551627",
         "symbol": "BNC",
         "decimals": 12,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -11565,7 +11586,6 @@
             ]
           }
         },
-        "existentialDeposit": "1",
         "isFeeAsset": true
       }
     ]
@@ -12830,8 +12850,8 @@
     "nativeAssetSymbol": "UNQ",
     "isEVM": false,
     "ss58Prefix": 7391,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "symbol": "UNQ",
@@ -12848,6 +12868,19 @@
             ]
           }
         }
+      },
+      {
+        "assetId": "437",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "existentialDeposit": "0",
+        "isFeeAsset": true
       },
       {
         "assetId": "459",
@@ -12872,9 +12905,9 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "473",
-        "symbol": "USDt",
-        "decimals": 6,
+        "assetId": "3779",
+        "symbol": "WUD",
+        "decimals": 10,
         "location": {
           "parents": 1,
           "interior": {
@@ -12886,7 +12919,7 @@
                 "PalletInstance": 50
               },
               {
-                "GeneralIndex": 1984
+                "GeneralIndex": 31337
               }
             ]
           }
@@ -12913,13 +12946,23 @@
         "existentialDeposit": "0"
       },
       {
-        "assetId": "437",
-        "symbol": "DOT",
-        "decimals": 10,
+        "assetId": "473",
+        "symbol": "USDt",
+        "decimals": 6,
         "location": {
           "parents": 1,
           "interior": {
-            "Here": null
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
           }
         },
         "existentialDeposit": "0"
@@ -12954,6 +12997,7 @@
         "assetId": "187224307232923873519830480073807488153",
         "symbol": "EQD",
         "decimals": 9,
+        "existentialDeposit": "1000",
         "location": {
           "parents": 1,
           "interior": {
@@ -12969,13 +13013,13 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1000"
+        }
       },
       {
         "assetId": "64174511183114006009298114091987195453",
         "symbol": "PINK",
         "decimals": 10,
+        "existentialDeposit": "1",
         "location": {
           "parents": 1,
           "interior": {
@@ -12991,8 +13035,7 @@
               }
             ]
           }
-        },
-        "existentialDeposit": "1"
+        }
       }
     ]
   },

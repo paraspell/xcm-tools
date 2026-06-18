@@ -48,7 +48,7 @@
     "highlight.js": "^11.11.1",
     "mipd": "^0.0.7",
     "nuqs": "^2.8.9",
-    "polkadot-api": "^2.1.4",
+    "polkadot-api": "^2.1.6",
     "react": "^19.2.6",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.2.6",
@@ -63,11 +63,9 @@
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "path": "^0.12.7",
     "postcss": "^8.5.15",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
-    "url": "^0.11.4",
     "vite": "^8.0.14",
     "vite-plugin-wasm": "^3.6.0"
   }

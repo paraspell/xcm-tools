@@ -1,42 +1,33 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails, TAssetsPallet } from '../src'
-import { NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
-import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
+// Script that updates XCM Pallets map for compatible chains
+
 import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
-import { getChainProviders } from '../../sdk-core/dist'
+
+import { fetchPalletList } from '../../sdk/src/utils/fetchPalletList'
+import { createScriptProgress } from '../../sdk-common/scripts/progress'
+import {
+  CHAIN_TIMEOUT_MS,
+  fetchFromChain,
+  filterRequestedChains,
+  handleDataFetching
+} from '../../sdk-common/scripts/scriptUtils'
+import type {
+  TPallet,
+  TPalletMap,
+  TPalletJsonMap,
+  TPalletDetails,
+  TAssetsPallet,
+  TPalletEntry
+} from '../src'
+import { NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
+
+const JSON_FILE_PATH = './src/maps/pallets.json'
 
 const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTokens', 'PolkadotXcm']
 
-const fetchPallets = async (api: ApiPromise) => {
-  const res = await api.rpc.state.getMetadata()
-
-  const palletsWithExtrinsics: TPalletDetails[] = []
-  const palletsWithoutExtrinsics: TPalletDetails[] = []
-
-  res.asLatest.pallets.forEach(val => {
-    const name = val.name.toHuman()
-    const methodName = name.charAt(0).toLowerCase() + name.slice(1)
-    const hasExtrinsics = !!api.tx[methodName]
-    const pallet = {
-      name: name as TPallet,
-      index: val.index.toNumber()
-    }
-
-    if (hasExtrinsics) {
-      palletsWithExtrinsics.push(pallet)
-    } else {
-      palletsWithoutExtrinsics.push(pallet)
-    }
-  })
-
-  return [palletsWithExtrinsics, palletsWithoutExtrinsics]
-}
-
-const composePalletMapObject = async (
-  api: ApiPromise,
-  chain: TSubstrateChain
-): Promise<TPalletMap> => {
-  const [palletDetails, palletDetailsWithoutExtrinsics] = await fetchPallets(api)
+const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain): TPalletMap => {
+  const toDetails = (p: TPalletEntry): TPalletDetails => ({ name: p.name as TPallet, index: p.index })
+  const palletDetails = pallets.filter(p => p.hasExtrinsics).map(toDetails)
+  const palletDetailsWithoutExtrinsics = pallets.filter(p => !p.hasExtrinsics).map(toDetails)
 
   const allPallets = [
     ...defaultPalletsByPriority,
@@ -72,26 +63,29 @@ const composePalletMapObject = async (
   }
 }
 
-export const fetchAllChainsPallets = async (assetsMapJson: unknown) => {
+const fetchAllChainsPallets = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
-  for (const chain of SUBSTRATE_CHAINS) {
-    console.log(`Fetching pallets for ${chain}...`)
+  const chains = filterRequestedChains(SUBSTRATE_CHAINS, chain => chain)
+  const progress = createScriptProgress(chains, 'Pallets', CHAIN_TIMEOUT_MS)
+  for (const chain of chains) {
+    progress.update(chain)
 
-    const newData = await fetchTryMultipleProvidersWithTimeout(chain, getChainProviders, api =>
-      composePalletMapObject(api, chain)
-    )
-    const isError = newData === null
+    const pallets = await fetchFromChain(chain, fetchPalletList)
+    const newData = pallets ? composePalletMapObject(pallets, chain) : null
+
     const oldData = Object.prototype.hasOwnProperty.call(output, chain) ? output[chain] : null
 
     // If we don't have newData and also oldData continue to another chain
-    // Error has to be solved manually by developer
-    // Unit tests will fail
     if (!newData && !oldData) {
       continue
     }
 
-    // In case we cannot fetch data for some chain. Keep existing
-    output[chain] = isError && oldData ? oldData : (newData as TPalletMap)
+    output[chain] = newData ?? (oldData as TPalletMap)
   }
+  progress.stop()
   return output
 }
+
+void (async () => {
+  await handleDataFetching(JSON_FILE_PATH, fetchAllChainsPallets, 'Successfuly updated pallets.')
+})()

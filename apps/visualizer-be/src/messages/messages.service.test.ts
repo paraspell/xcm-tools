@@ -2,6 +2,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { getParaId, getRelayChainOf, getTChain } from '@paraspell/sdk';
+import type { MockInstance } from 'vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PrismaPromise } from '../generated/prisma/internal/prismaNamespace.js';
@@ -244,7 +245,7 @@ describe('MessageService', () => {
     ])(
       'should return message counts for %s',
       async (countBy, selectColumn, alias) => {
-        const groupBySpy = vi.spyOn(prisma.messages, 'groupBy');
+        const groupBySpy: MockInstance = vi.spyOn(prisma.messages, 'groupBy');
         groupBySpy.mockResolvedValue([
           {
             [selectColumn]: 101,
@@ -254,7 +255,7 @@ describe('MessageService', () => {
             [selectColumn]: 102,
             _count: { [alias]: 5 },
           },
-        ] as never);
+        ]);
 
         const results = await service.getTotalMessageCounts(
           ecosystem,
