@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.7.2...sdk-pjs-v13.8.0) (2026-06-18)
+
+
+### Code Refactoring
+
+* Update all scripts to use polkadot-api (PAPI) 🪄 ([92499f5](https://github.com/paraspell/xcm-tools/commit/92499f51898cc80d8f81af788536f296d38254da))
+
 ## [13.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v13.7.1...sdk-pjs-v13.7.2) (2026-06-11)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.7.2...sdk-common-v13.8.0) (2026-06-18)
+
+
+### Features
+
+* **xcm-api:** Add EVM chains endpoint ✨ ([956003a](https://github.com/paraspell/xcm-tools/commit/956003adbc762f70a25180b64a53a81426ab69e1))
+
+
+### Code Refactoring
+
+* Update all scripts to use polkadot-api (PAPI) 🪄 ([92499f5](https://github.com/paraspell/xcm-tools/commit/92499f51898cc80d8f81af788536f296d38254da))
+
 ## [13.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-common-v13.7.1...sdk-common-v13.7.2) (2026-06-11)
 
 
