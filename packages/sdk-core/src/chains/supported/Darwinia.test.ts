@@ -31,6 +31,11 @@ describe('Darwinia', () => {
     expect(chain.version).toBe(Version.V4)
   })
 
+  it('uses BigInt ids for minting', () => {
+    const api = { isChainEvm: () => true } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(chain.resolveMintConfig(api)).toMatchObject({ useBigIntId: true })
+  })
+
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToRelay scenario', async () => {
     await chain.transferPolkadotXCM(mockPolkadotXCMInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockPolkadotXCMInput)

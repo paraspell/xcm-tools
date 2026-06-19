@@ -8,6 +8,7 @@ import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
+  TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
@@ -49,6 +50,10 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     }
 
     return isVToken ? { VToken2: id } : { Token2: id }
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useCustomCurrencyId: true }
   }
 
   transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {

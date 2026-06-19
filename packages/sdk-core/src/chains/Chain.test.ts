@@ -43,7 +43,8 @@ vi.mock('../utils', async () => {
   }
 })
 
-vi.mock('../utils/asset', () => ({
+vi.mock('../utils/asset', async importActual => ({
+  ...(await importActual()),
   createAsset: vi.fn().mockReturnValue('asset')
 }))
 
@@ -684,6 +685,56 @@ describe('Parachain', () => {
       expect(nativeSpy).not.toHaveBeenCalled()
       expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignAsset)
       expect(result).toBe(22n)
+    })
+  })
+
+  describe('mint', () => {
+    it('routes the native asset to the native pallet and forwards the chain instance', async () => {
+      const palletMock = { mint: vi.fn().mockResolvedValue({ balanceTx: { module: 'Balances' } }) }
+      vi.mocked(getPalletInstance).mockReturnValue(palletMock as unknown as BaseAssetsPallet)
+
+      const asset = { symbol: 'DOT', isNative: true, amount: 5n } as WithAmount<TAssetInfo>
+
+      const result = await chain.mint(api, '5FMock', asset, 1n)
+
+      expect(getPalletInstance).toHaveBeenCalledWith('Balances')
+      expect(palletMock.mint).toHaveBeenCalledWith(api, '5FMock', asset, 1n, chain)
+      expect(result).toEqual({ balanceTx: { module: 'Balances' } })
+    })
+
+    it('routes non-native assets to an other-assets pallet', async () => {
+      vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
+      const palletMock = { mint: vi.fn().mockResolvedValue({ balanceTx: { module: 'Tokens' } }) }
+      vi.mocked(getPalletInstance).mockReturnValue(palletMock as unknown as BaseAssetsPallet)
+
+      const asset = {
+        symbol: 'USDT',
+        isNative: false,
+        assetId: '1',
+        amount: 5n
+      } as WithAmount<TAssetInfo>
+
+      await chain.mint(api, '5FMock', asset, 0n)
+
+      expect(getPalletInstance).toHaveBeenCalledWith('Tokens')
+      expect(palletMock.mint).toHaveBeenCalledWith(api, '5FMock', asset, 0n, chain)
+    })
+  })
+
+  describe('resolveMintConfig', () => {
+    const evmApi = (isEvm: boolean) =>
+      ({ isChainEvm: vi.fn().mockReturnValue(isEvm) }) as unknown as PolkadotApi<
+        unknown,
+        unknown,
+        unknown
+      >
+
+    it('enables the id prefix for non-EVM chains', () => {
+      expect(chain.resolveMintConfig(evmApi(false))).toEqual({ useIdPrefix: true })
+    })
+
+    it('disables the id prefix for EVM chains', () => {
+      expect(chain.resolveMintConfig(evmApi(true))).toEqual({ useIdPrefix: false })
     })
   })
 })

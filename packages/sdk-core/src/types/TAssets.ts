@@ -1,13 +1,20 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
+import type Chain from '../chains/Chain'
 import type { TSerializedExtrinsics } from './TTransfer'
 
 export type TSetBalanceRes = {
   assetStatusTx?: TSerializedExtrinsics
   balanceTx: TSerializedExtrinsics
+}
+
+export type TMintConfig = {
+  useIdPrefix?: boolean
+  useLocationId?: boolean
+  useBigIntId?: boolean
+  useCustomCurrencyId?: boolean
 }
 
 export abstract class BaseAssetsPallet {
@@ -18,7 +25,7 @@ export abstract class BaseAssetsPallet {
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes>
 
   abstract getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(

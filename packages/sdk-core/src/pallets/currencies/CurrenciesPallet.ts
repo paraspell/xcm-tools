@@ -1,10 +1,22 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
+import type Chain from '../../chains/Chain'
 import { UnsupportedOperationError } from '../../errors'
-import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId, getChain } from '../../utils'
+import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet } from '../../types/TAssets'
+import { assertHasId } from '../../utils'
+
+const resolveCurrencyId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  asset: WithAmount<TAssetInfo>,
+  chain: Chain<TApi, TRes, TSigner, TCustomChain>,
+  config: TMintConfig
+): unknown => {
+  if (config.useCustomCurrencyId) return chain.getCustomCurrencyId(api, asset)
+  assertHasId(asset)
+  return Number(asset.assetId)
+}
 
 export class CurrenciesPallet extends BaseAssetsPallet {
   mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -12,15 +24,9 @@ export class CurrenciesPallet extends BaseAssetsPallet {
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
-    const isKarura = chain.startsWith('Karura')
-    const isAcala = chain.startsWith('Acala')
-    const isAcalaLike = isKarura || isAcala
-
-    const id = isAcalaLike
-      ? getChain(isKarura ? 'Karura' : 'Acala').getCustomCurrencyId(api, asset)
-      : (assertHasId(asset), Number(asset.assetId))
+    const config = chain.resolveMintConfig(api)
 
     const { amount } = asset
 
@@ -29,8 +35,8 @@ export class CurrenciesPallet extends BaseAssetsPallet {
         module: this.palletName,
         method: 'update_balance',
         params: {
-          who: isAcalaLike ? { Id: address } : address,
-          currency_id: id,
+          who: config.useCustomCurrencyId ? { Id: address } : address,
+          currency_id: resolveCurrencyId(api, asset, chain, config),
           amount: balance + amount
         }
       }

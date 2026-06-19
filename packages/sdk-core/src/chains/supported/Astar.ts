@@ -4,7 +4,7 @@ import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TTransferLocalOptions } from '../../types'
+import type { TMintConfig, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import Chain from '../Chain'
@@ -20,6 +20,10 @@ class Astar<TApi, TRes, TSigner>
     version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useBigIntId: true }
   }
 
   transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {

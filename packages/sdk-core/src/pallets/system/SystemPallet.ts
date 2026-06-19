@@ -1,5 +1,4 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { concat, getAddress, keccak256, pad, toHex } from 'viem'
 
 import type { PolkadotApi } from '../../api'
@@ -24,8 +23,7 @@ export class SystemPallet extends BaseAssetsPallet {
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
-    balance: bigint,
-    _chain: TSubstrateChain | TCustomChain
+    balance: bigint
   ): Promise<TSetBalanceRes> {
     assertHasId(assetInfo)
     const contractAddr = formatAssetIdToERC20(assetInfo.assetId)

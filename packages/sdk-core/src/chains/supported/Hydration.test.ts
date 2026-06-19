@@ -46,6 +46,11 @@ describe('Hydration', () => {
     expect(hydration.version).toBe(Version.V5)
   })
 
+  it('disables the id prefix for minting', () => {
+    const api = { isChainEvm: () => false } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(hydration.resolveMintConfig(api)).toMatchObject({ useIdPrefix: false })
+  })
+
   describe('transferPolkadotXCM', () => {
     let mockApi: PolkadotApi<unknown, unknown, unknown>
     let mockInput: TPolkadotXCMTransferOptions<unknown, unknown, unknown>

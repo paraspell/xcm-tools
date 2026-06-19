@@ -27,6 +27,11 @@ describe('EnergyWebX', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
+  it('uses the asset location as id for minting', () => {
+    const api = { isChainEvm: () => false } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(chain.resolveMintConfig(api)).toMatchObject({ useLocationId: true })
+  })
+
   it('should handle ParaToPara transfers correctly', async () => {
     const input = {
       scenario: 'ParaToPara',

@@ -27,6 +27,11 @@ describe('NeuroWeb', () => {
     expect(chain.version).toBe(Version.V4)
   })
 
+  it('disables the id prefix and uses BigInt ids for minting', () => {
+    const api = { isChainEvm: () => false } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(chain.resolveMintConfig(api)).toMatchObject({ useIdPrefix: false, useBigIntId: true })
+  })
+
   it('should call transferPolkadotXCM with the correct arguments', async () => {
     await chain.transferPolkadotXCM(mockInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)

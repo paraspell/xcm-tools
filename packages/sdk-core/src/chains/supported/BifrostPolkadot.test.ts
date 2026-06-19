@@ -36,6 +36,11 @@ describe('BifrostPolkadot', () => {
     expect(chain.version).toBe(Version.V5)
   })
 
+  it('uses a custom currency id for minting', () => {
+    const mintApi = { isChainEvm: () => false } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(chain.resolveMintConfig(mintApi)).toMatchObject({ useCustomCurrencyId: true })
+  })
+
   it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
     await chain.transferPolkadotXCM(mockInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)

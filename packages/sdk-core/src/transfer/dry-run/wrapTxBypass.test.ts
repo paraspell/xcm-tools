@@ -1,44 +1,21 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol } from '@paraspell/assets'
-import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
-import { getPalletInstance } from '../../pallets'
 import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  getNativeAssetSymbol: vi.fn(),
-  isSymbolMatch: vi.fn((a: string, b: string) => a.toLowerCase() === b.toLowerCase())
-}))
-
-vi.mock('@paraspell/pallets')
-
-vi.mock('../../pallets', () => ({
-  getPalletInstance: vi.fn((pallet: string) => ({
+vi.mock('../../chains/getChainInstance', () => ({
+  getChainImpl: vi.fn(() => ({
     mint: vi.fn(
-      (
-        _api: unknown,
-        _address: string,
-        assetWithAmount: { symbol?: string },
-        _balance: bigint,
-        _chain: string
-      ) => {
-        const sym = assetWithAmount.symbol ?? 'Unknown'
-        const base = {
-          balanceTx: { module: pallet, method: `${pallet}:set_balance:${sym}` }
-        }
-        if (String(pallet).startsWith('Foreign')) {
-          return {
-            ...base,
-            assetStatusTx: { module: pallet, method: `${pallet}:status:${sym}` }
-          }
-        }
-        return base
+      (_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
+        const sym = asset.symbol ?? 'Unknown'
+        const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
+        return asset.isNative
+          ? { balanceTx }
+          : { balanceTx, assetStatusTx: { module: 'Mint', method: `Mint:status:${sym}` } }
       }
     )
   }))
@@ -78,13 +55,10 @@ const version = Version.V5
 describe('wrapTxBypass', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
-    vi.mocked(getNativeAssetsPallet).mockReturnValue('Balances')
-    vi.mocked(getOtherAssetsPallets).mockReturnValue(['ForeignAssets', 'Tokens'])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
-  it('batches native + relay + fee + main-asset mints in order, using ForeignAssets for foreign assets', async () => {
+  it('batches native + relay + fee + main-asset mints in order', async () => {
     const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
@@ -143,11 +117,11 @@ describe('wrapTxBypass', () => {
     const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual(
       expect.arrayContaining([
-        'call:Balances:set_balance:ACA',
-        'call:ForeignAssets:status:USDC',
-        'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDC',
-        'call:ForeignAssets:status:USDT',
-        'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDT',
+        'call:Mint:set_balance:ACA',
+        'call:Mint:status:USDC',
+        'dispatchAs(Alice)->call:Mint:set_balance:USDC',
+        'call:Mint:status:USDT',
+        'dispatchAs(Alice)->call:Mint:set_balance:USDT',
         'dispatchAs(Alice)->ORIG_TX'
       ])
     )
@@ -190,56 +164,9 @@ describe('wrapTxBypass', () => {
 
     const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual([
-      'call:Balances:set_balance:ACA',
-      'call:ForeignAssets:status:USDT',
-      'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDT',
-      'dispatchAs(Alice)->ORIG_TX'
-    ])
-  })
-
-  it('uses first non-Foreign pallet from otherPallets when asset is non-native and not foreign', async () => {
-    const { api, spies } = mkApi()
-    const chain = 'Acala'
-    const address = 'Alice'
-    const originalTx = 'ORIG_TX'
-
-    vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
-
-    const nativeAsset = {
-      symbol: 'ACA',
-      decimals: 12,
-      isNative: true,
-      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
-    } as TAssetInfo
-    const mainAsset = {
-      symbol: 'KSM',
-      decimals: 1,
-      assetId: undefined,
-      amount: 1000n
-    } as WithAmount<TAssetInfo>
-
-    spies.findNativeAssetInfo.mockReturnValue(nativeAsset)
-    spies.findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
-    spies.findAssetInfo.mockReturnValue(null)
-
-    const result = await wrapTxBypass({
-      api,
-      chain,
-      address,
-      version,
-      asset: mainAsset,
-      tx: originalTx
-    })
-    expect(result).toBeDefined()
-
-    const palletsUsed = vi.mocked(getPalletInstance).mock.calls.map(c => c[0])
-    expect(palletsUsed).toContain('Balances')
-    expect(palletsUsed).toContain('Tokens')
-
-    const [[batched]] = spies.callBatchMethod.mock.calls
-    expect(batched).toEqual([
-      'call:Balances:set_balance:ACA',
-      'call:Tokens:set_balance:KSM',
+      'call:Mint:set_balance:ACA',
+      'call:Mint:status:USDT',
+      'dispatchAs(Alice)->call:Mint:set_balance:USDT',
       'dispatchAs(Alice)->ORIG_TX'
     ])
   })
@@ -281,9 +208,9 @@ describe('wrapTxBypass', () => {
 
     const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toEqual([
-      'call:Balances:set_balance:ACA',
-      'call:ForeignAssets:status:USDT',
-      'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDT',
+      'call:Mint:set_balance:ACA',
+      'call:Mint:status:USDT',
+      'dispatchAs(Alice)->call:Mint:set_balance:USDT',
       'dispatchAs(Alice)->ORIG_TX'
     ])
   })
@@ -292,9 +219,6 @@ describe('wrapTxBypass', () => {
 describe('wrapTxBypass (new branches)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
-    vi.mocked(getNativeAssetsPallet).mockReturnValue('Balances')
-    vi.mocked(getOtherAssetsPallets).mockReturnValue(['ForeignAssets', 'Tokens'])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -376,13 +300,13 @@ describe('wrapTxBypass (new branches)', () => {
     expect(result).toBeDefined()
 
     const [[batched]] = spies.callBatchMethod.mock.calls
-    expect(batched.join('|')).not.toMatch(/Balances:set_balance:ACA/)
+    expect(batched.join('|')).not.toMatch(/set_balance:ACA/)
     expect(batched.join('|')).not.toMatch(/RelayDOT/)
     expect(batched.join('|')).not.toMatch(/USDC/)
 
     expect(batched).toEqual([
-      'call:ForeignAssets:status:USDT',
-      'dispatchAs(Alice)->call:ForeignAssets:set_balance:USDT',
+      'call:Mint:status:USDT',
+      'dispatchAs(Alice)->call:Mint:set_balance:USDT',
       'dispatchAs(Alice)->ORIG_TX'
     ])
   })
@@ -416,12 +340,10 @@ describe('wrapTxBypass (new branches)', () => {
     expect(res).toBeDefined()
 
     const [[batched]] = spies.callBatchMethod.mock.calls
-    const nativeMints = batched.filter(x => String(x).includes('Balances:set_balance:ACA'))
-    const relayMints = batched.filter(x => String(x).includes('status:RelayDOT'))
+    const nativeMints = batched.filter(x => String(x) === 'call:Mint:set_balance:ACA')
     expect(nativeMints.length).toBe(1)
-    expect(relayMints.length).toBe(0)
 
-    expect(batched.join('|')).toMatch(/ForeignAssets:status:USDT/)
+    expect(batched.join('|')).toMatch(/Mint:status:USDT/)
   })
 
   it('preview mode adds +1000 bonus when the sent asset equals the pre-minted native asset', async () => {
@@ -451,7 +373,7 @@ describe('wrapTxBypass (new branches)', () => {
     expect(res).toBeDefined()
 
     const [[batched]] = spies.callBatchMethod.mock.calls
-    const acaMints = batched.filter(x => String(x) === 'call:Balances:set_balance:ACA')
+    const acaMints = batched.filter(x => String(x) === 'call:Mint:set_balance:ACA')
     expect(acaMints.length).toBeGreaterThanOrEqual(2)
     expect(batched).toContain('dispatchAs(Alice)->ORIG_TX')
   })

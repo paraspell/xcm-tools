@@ -1,5 +1,4 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { concat, getAddress, keccak256, pad } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -28,7 +27,6 @@ describe('SystemPallet.setBalance', () => {
   it('builds set_storage with encoded amount at the calculated slot', async () => {
     const pallet = new SystemPallet('System')
     const address = '0xAlice'
-    const chain: TSubstrateChain = 'Moonbeam'
     const asset = { assetId: '123', amount: 321n } as WithAmount<TAssetInfo>
     const api = {
       getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
@@ -39,7 +37,7 @@ describe('SystemPallet.setBalance', () => {
 
     const spy = vi.spyOn(api, 'getEvmStorage')
 
-    const res = await pallet.mint(api, address, asset, 0n, chain)
+    const res = await pallet.mint(api, address, asset, 0n)
 
     expect(assertHasId).toHaveBeenCalledWith(asset)
     expect(formatAssetIdToERC20).toHaveBeenCalledWith('123')
@@ -57,7 +55,6 @@ describe('SystemPallet.setBalance', () => {
   it('uses wormhole balance slot when asset id starts with 0x', async () => {
     const pallet = new SystemPallet('System')
     const address = '0xAlice'
-    const chain: TSubstrateChain = 'Moonbeam'
     const asset = { assetId: '0x1234', amount: 1n } as WithAmount<TAssetInfo>
     const api = {
       getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
@@ -65,7 +62,7 @@ describe('SystemPallet.setBalance', () => {
 
     const spy = vi.spyOn(api, 'getEvmStorage')
 
-    await pallet.mint(api, address, asset, 0n, chain)
+    await pallet.mint(api, address, asset, 0n)
 
     const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:5:32`
     expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)

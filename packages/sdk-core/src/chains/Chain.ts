@@ -10,7 +10,7 @@ import {
   isSymbolMatch,
   type TAsset
 } from '@paraspell/assets'
-import { getOtherAssetsPallets, hasPalletImpl } from '@paraspell/pallets'
+import { getNativeAssetsPallet, getOtherAssetsPallets, hasPalletImpl } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import {
@@ -50,6 +50,7 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
+import type { TMintConfig, TSetBalanceRes } from '../types/TAssets'
 import {
   assertHasId,
   assertSender,
@@ -59,7 +60,7 @@ import {
   handleExecuteTransfer,
   resolveDestChain
 } from '../utils'
-import { createAsset } from '../utils/asset'
+import { createAsset, pickOtherMintPallet } from '../utils/asset'
 import { localizeLocationImpl } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
@@ -566,6 +567,28 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
     const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
     if (isNativeAsset) return this.getBalanceNative(api, address, asset)
     return this.getBalanceForeign(api, address, asset)
+  }
+
+  mint(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint
+  ): Promise<TSetBalanceRes> {
+    const isMainNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol(api))
+    const pallet =
+      (!assetInfo.isNative && this.chain !== 'Mythos') || !isMainNativeAsset
+        ? pickOtherMintPallet(assetInfo, getOtherAssetsPallets(this.chain, api._customCtx))
+        : getNativeAssetsPallet(this.chain, api._customCtx)
+    return getPalletInstance(pallet).mint(api, address, assetInfo, balance, this)
+  }
+
+  resolveMintConfig(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>): TMintConfig {
+    return { useIdPrefix: !api.isChainEvm(this.chain), ...this.getMintConfig() }
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return {}
   }
 }
 
