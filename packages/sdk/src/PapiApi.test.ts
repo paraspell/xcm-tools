@@ -1566,6 +1566,53 @@ describe('PapiApi', () => {
       })
     })
 
+    it('should extract failureIndex from LocalExecutionIncompleteWithError', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: {
+              error: {
+                value: {
+                  value: {
+                    type: 'LocalExecutionIncompleteWithError',
+                    value: {
+                      index: 3,
+                      error: { type: 'UnknownClaim' }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+      const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
+      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        chain: 'Moonbeam',
+        destination: 'Acala',
+        version: Version.V5,
+        asset: {
+          symbol: 'USDT'
+        } as WithAmount<TAssetInfo>
+      })
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'LocalExecutionIncompleteWithError',
+        failureSubReason: 'UnknownClaim',
+        failureIndex: 3,
+        asset: nativeAsset
+      })
+    })
+
     it('should extract failure reason from dispatched Utility event result type fallback', async () => {
       const failingEvent = {
         type: 'Utility',
@@ -2325,6 +2372,7 @@ describe('PapiApi', () => {
       expect(result).toEqual({
         success: false,
         failureReason: 'NotHoldingFees',
+        failureIndex: 2,
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
     })

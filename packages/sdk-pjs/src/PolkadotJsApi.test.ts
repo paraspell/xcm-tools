@@ -2150,6 +2150,41 @@ describe('PolkadotJsApi', () => {
       })
     })
 
+    it('should return failureIndex when Incomplete error carries an instruction index', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Incomplete: { error: { index: '2', error: 'UnknownClaim' } } }
+          }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              incomplete: { error: { index: 2, error: 'UnknownClaim' } }
+            }
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValueOnce(false)
+
+      const result = await polkadotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        asset: dotAsset,
+        chain: 'Astar',
+        origin: 'Hydration'
+      } as TDryRunXcmBaseOptions<Extrinsic>)
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'UnknownClaim',
+        failureIndex: 2,
+        asset: dotAsset
+      })
+    })
+
     it('should throw RuntimeApiUnavailableError for unsupported chain', async () => {
       await expect(
         polkadotApi.getDryRunXcm({

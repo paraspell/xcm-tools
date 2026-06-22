@@ -416,6 +416,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
           success: false,
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
+          failureIndex: failureErr.failureIndex,
           asset: resolvedFeeAsset.asset
         }
       }
@@ -426,6 +427,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         success: false,
         failureReason: failureErr.failureReason || 'Unknown error',
         failureSubReason: failureErr.failureSubReason,
+        failureIndex: failureErr.failureIndex,
         asset: resolvedFeeAsset.asset
       }
     }
@@ -679,8 +681,11 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!isSuccess) {
       const execRes = result.Ok?.executionResult
       const error = execRes?.Incomplete?.error ?? execRes?.Error?.error
-      const failureReason = typeof error === 'string' ? error : error.error
-      return { success: false, failureReason, asset }
+      const isInstructionError = typeof error !== 'string'
+      const failureReason = isInstructionError ? error.error : error
+      const failureIndex =
+        isInstructionError && error?.index != null ? Number(error.index) : undefined
+      return { success: false, failureReason, failureIndex, asset }
     }
 
     const forwardedXcms =

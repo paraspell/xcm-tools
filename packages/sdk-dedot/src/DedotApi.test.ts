@@ -955,6 +955,35 @@ describe("DedotApi", () => {
       });
     });
 
+    it("returns failureIndex when incomplete error carries an instruction index", async () => {
+      const mockResponse = {
+        isOk: true,
+        value: {
+          executionResult: {
+            type: "Incomplete",
+            value: { error: { index: 2, error: { type: "SomeXcmError" } } },
+          },
+          forwardedXcms: [],
+        },
+      };
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue(mockResponse);
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        chain: "AssetHubPolkadot",
+        asset: { symbol: "USDT" } as TAssetInfo,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: "SomeXcmError",
+        failureIndex: 2,
+        asset: { symbol: "USDT" },
+      });
+    });
+
     it("returns failure when XcmPaymentApi is not supported", async () => {
       vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(false);
 
