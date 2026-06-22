@@ -4,7 +4,6 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -12,7 +11,10 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import Chain from '../Chain'
+
+const FUNGIBLE_ITEM_ID = 0
 
 class Unique<TApi, TRes, TSigner>
   extends Chain<TApi, TRes, TSigner>
@@ -26,10 +28,23 @@ class Unique<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    throw new ScenarioNotSupportedError(
-      `${this.chain} does not support foreign assets local transfers`
-    )
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+    const { api, assetInfo: asset, recipient } = options
+
+    assertHasId(asset)
+
+    const amount = getLocalTransferAmount(options)
+
+    return api.deserializeExtrinsics({
+      module: 'Unique',
+      method: 'transfer',
+      params: {
+        recipient: { Substrate: recipient },
+        collection_id: Number(asset.assetId),
+        item_id: FUNGIBLE_ITEM_ID,
+        value: amount
+      }
+    })
   }
 
   async getBalanceForeign<TApi, TRes, TSigner>(
@@ -39,16 +54,10 @@ class Unique<TApi, TRes, TSigner>
   ): Promise<bigint> {
     assertHasId(asset)
 
-    const collectionId = await api.queryState({
-      module: 'ForeignAssets',
-      method: 'ForeignAssetToCollection',
-      params: [asset.location]
-    })
-
     const balance = await api.queryRuntimeApi<{ success: boolean; value: bigint; ok: bigint }>({
       module: 'UniqueApi',
       method: 'balance',
-      params: [collectionId, { Substrate: address }, Number(asset.assetId)]
+      params: [Number(asset.assetId), { Substrate: address }, FUNGIBLE_ITEM_ID]
     })
 
     return balance?.value ?? (balance?.ok != undefined ? BigInt(balance.ok) : undefined) ?? 0n
