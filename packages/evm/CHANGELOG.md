@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/evm-v13.8.0...evm-v13.9.0) (2026-06-22)
+
+
+### Miscellaneous Chores
+
+* **evm:** Synchronize main versions
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/evm-v13.7.2...evm-v13.8.0) (2026-06-18)
 
 

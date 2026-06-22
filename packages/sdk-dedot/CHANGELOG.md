@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.8.0...sdk-dedot-v13.9.0) (2026-06-22)
+
+
+### Features
+
+* **sdk:** Expose failing XCM instruction index in dry run results ✨ ([4d46339](https://github.com/paraspell/xcm-tools/commit/4d46339e447c6ce0d3a764f0d8fb4d96d64bfabc))
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.7.2...sdk-dedot-v13.8.0) (2026-06-18)
 
 

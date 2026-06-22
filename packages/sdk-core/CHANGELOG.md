@@ -1,5 +1,24 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.8.0...sdk-core-v13.9.0) (2026-06-22)
+
+
+### Features
+
+* **sdk:** Expose failing XCM instruction index in dry run results ✨ ([4d46339](https://github.com/paraspell/xcm-tools/commit/4d46339e447c6ce0d3a764f0d8fb4d96d64bfabc))
+
+
+### Bug Fixes
+
+* **sdk-core:** Add missing isExchange helper 🔧 ([5e8795d](https://github.com/paraspell/xcm-tools/commit/5e8795d638f8e861afd861f82f3d13f5e2be7586))
+* **sdk-core:** Fix Unique local transfers 🔧 ([1ea5c20](https://github.com/paraspell/xcm-tools/commit/1ea5c20ab1b45fe045c22f6245b3cc3407b46ef6))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor mint logic to be more modular 🔧 ([ac6a791](https://github.com/paraspell/xcm-tools/commit/ac6a79112ad4b37f225f67119400b9b947db8e68))
+* **sdk-core:** Refactor mint logic to be more modular 🔧 ([ecc9cf5](https://github.com/paraspell/xcm-tools/commit/ecc9cf5f384ee78b0d771305fa703eb1dbed3ef0))
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.7.2...sdk-core-v13.8.0) (2026-06-18)
 
 

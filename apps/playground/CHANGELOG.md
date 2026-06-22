@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.8.0...playground-v13.9.0) (2026-06-22)
+
+
+### Bug Fixes
+
+* **playground:** Prevent currency picker dropdown from clipping edit icon 🐛 ([8733a9c](https://github.com/paraspell/xcm-tools/commit/8733a9ce982635e045c58fa3c80f87053b8c21ca))
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.7.2...playground-v13.8.0) (2026-06-18)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/pallets-v13.8.0...pallets-v13.9.0) (2026-06-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Unique local transfers 🔧 ([1ea5c20](https://github.com/paraspell/xcm-tools/commit/1ea5c20ab1b45fe045c22f6245b3cc3407b46ef6))
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/pallets-v13.7.2...pallets-v13.8.0) (2026-06-18)
 
 
