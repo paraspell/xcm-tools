@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.8.0...sdk-v13.9.0) (2026-06-22)
+
+
+### Features
+
+* **sdk:** Expose failing XCM instruction index in dry run results ✨ ([4d46339](https://github.com/paraspell/xcm-tools/commit/4d46339e447c6ce0d3a764f0d8fb4d96d64bfabc))
+
+
+### Bug Fixes
+
+* **sdk-core:** Add missing isExchange helper 🔧 ([5e8795d](https://github.com/paraspell/xcm-tools/commit/5e8795d638f8e861afd861f82f3d13f5e2be7586))
+
 ## [13.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.7.2...sdk-v13.8.0) (2026-06-18)
 
 
