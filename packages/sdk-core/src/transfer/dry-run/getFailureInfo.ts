@@ -1,8 +1,17 @@
-import type { TChainEndpoint, TDryRunChainResult, TDryRunResult } from '../../types'
+import type {
+  TChainEndpoint,
+  TDryRunChainResult,
+  TDryRunError,
+  TDryRunFailureInfo,
+  TDryRunResult
+} from '../../types'
 
-export const getFailureInfo = (
-  result: TDryRunResult
-): Pick<TDryRunResult, 'failureReason' | 'failureSubReason' | 'failureChain'> => {
+const toFailureInfo = (
+  failureChain: TChainEndpoint | undefined,
+  { failureReason, failureSubReason, failureIndex }: Partial<TDryRunError>
+): TDryRunFailureInfo => ({ failureChain, failureReason, failureSubReason, failureIndex })
+
+export const getFailureInfo = (result: TDryRunResult): TDryRunFailureInfo => {
   const orderedChecks: { chain: TChainEndpoint; chainResult?: TDryRunChainResult }[] = [
     { chain: 'origin', chainResult: result.origin },
     { chain: 'destination', chainResult: result.destination },
@@ -11,17 +20,9 @@ export const getFailureInfo = (
 
   for (const { chain, chainResult } of orderedChecks) {
     if (chainResult && chainResult.success === false && chainResult.failureReason) {
-      return {
-        failureChain: chain,
-        failureReason: chainResult.failureReason,
-        failureSubReason: chainResult.failureSubReason
-      }
+      return toFailureInfo(chain, chainResult)
     }
   }
 
-  return {
-    failureChain: result.failureChain,
-    failureReason: result.failureReason,
-    failureSubReason: result.failureSubReason
-  }
+  return toFailureInfo(result.failureChain, result)
 }

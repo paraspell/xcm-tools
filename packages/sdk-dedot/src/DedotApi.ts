@@ -90,7 +90,9 @@ const { leaseClient, releaseClient } = createClientPoolHelpers(
   createDedotClient,
 );
 
-const extractDryRunXcmFailureReason = (result: any): string => {
+const extractDryRunXcmFailureReason = (
+  result: any,
+): { failureReason: string; failureIndex?: number } => {
   const executionResult = result?.value?.executionResult;
 
   const error = executionResult?.value?.error;
@@ -102,18 +104,24 @@ const extractDryRunXcmFailureReason = (result: any): string => {
     error?.value?.type ??
     error?.type;
 
+  const failureIndex =
+    typeof error?.index === "number" ? error.index : undefined;
+
   if (typeof failureType === "string") {
-    return failureType;
+    return { failureReason: failureType, failureIndex };
   }
 
   if (typeof executionResult?.type === "string") {
-    return executionResult.type;
+    return { failureReason: executionResult.type, failureIndex };
   }
 
-  return JSON.stringify(
-    result?.value ?? result ?? "Unknown error structure",
-    replaceBigInt,
-  );
+  return {
+    failureReason: JSON.stringify(
+      result?.value ?? result ?? "Unknown error structure",
+      replaceBigInt,
+    ),
+    failureIndex,
+  };
 };
 
 class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
@@ -499,6 +507,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
           success: false,
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
+          failureIndex: failureErr.failureIndex,
           asset: resolvedFeeAsset.asset,
         };
       }
@@ -509,6 +518,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         success: false,
         failureReason: failureErr.failureReason || "Unknown error",
         failureSubReason: failureErr.failureSubReason,
+        failureIndex: failureErr.failureIndex,
         asset: resolvedFeeAsset.asset,
       };
     }
@@ -798,9 +808,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const isSuccess = result.isOk && executionResult.type === "Complete";
     if (!isSuccess) {
+      const { failureReason, failureIndex } =
+        extractDryRunXcmFailureReason(result);
       return {
         success: false,
-        failureReason: extractDryRunXcmFailureReason(result),
+        failureReason,
+        failureIndex,
         asset,
       };
     }

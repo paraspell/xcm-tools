@@ -37,6 +37,8 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
   }
 
   if (failureReason === PolkadotXcmError.LocalExecutionIncompleteWithError) {
+    // Byte layout: [pallet error variant][instruction index][xcm sub-error]
+    const failureIndex = Number(`0x${error.error.slice(4, 6)}`)
     const subErrorIndex = Number(`0x${error.error.slice(6, 8)}`)
     const failureSubReason = Object.values(PolkadotXcmExecutionError)[subErrorIndex]
 
@@ -46,7 +48,7 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
       )
     }
 
-    return { failureReason, failureSubReason }
+    return { failureReason, failureSubReason, failureIndex }
   }
 
   return { failureReason }

@@ -74,7 +74,22 @@ describe('resolveModuleError', () => {
 
     expect(result).toEqual({
       failureReason: PolkadotXcmError.LocalExecutionIncompleteWithError,
-      failureSubReason: PolkadotXcmExecutionError.UnknownClaim
+      failureSubReason: PolkadotXcmExecutionError.UnknownClaim,
+      failureIndex: 0
+    })
+  })
+
+  it('should extract a non-zero failureIndex for LocalExecutionIncompleteWithError', () => {
+    // 0x1c - LocalExecutionIncompleteWithError, 0x03 - instruction index, 0x10 - UnknownClaim
+    const error: TModuleError = { index: '2', error: '0x1c031000' }
+    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 2, name: 'PolkadotXcm' }])
+
+    const result = resolveModuleError(mockChain, error)
+
+    expect(result).toEqual({
+      failureReason: PolkadotXcmError.LocalExecutionIncompleteWithError,
+      failureSubReason: PolkadotXcmExecutionError.UnknownClaim,
+      failureIndex: 3
     })
   })
 })
