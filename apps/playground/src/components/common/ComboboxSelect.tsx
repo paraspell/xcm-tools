@@ -147,7 +147,11 @@ export const ComboboxSelect = ({
 
       <Combobox.Dropdown>
         <Combobox.Options>
-          <ScrollArea.Autosize mah={220} type="scroll">
+          <ScrollArea.Autosize
+            mah={220}
+            type="scroll"
+            styles={{ content: { minWidth: '100%' } }}
+          >
             {filtered.length > 0 ? (
               filtered.map((option) => {
                 const checked = option.value === value;
