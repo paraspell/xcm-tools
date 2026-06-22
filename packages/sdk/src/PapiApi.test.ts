@@ -2150,6 +2150,37 @@ describe('PapiApi', () => {
       })
     })
 
+    it('should fallback to stringified result when neither error type nor execution_result.type is present', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            value: {
+              error: {}
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        tx: mockTransaction,
+        asset: { symbol: 'USDT' } as TAssetInfo,
+        chain: 'AssetHubPolkadot',
+        origin: 'Hydration'
+      } as TDryRunXcmBaseOptions<TPapiTransaction>)
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: JSON.stringify(mockApiResponse.value),
+        asset: { symbol: 'USDT' } as TAssetInfo
+      })
+    })
+
     it('should throw error for unsupported chain', async () => {
       await expect(
         papiApi.getDryRunXcm({
