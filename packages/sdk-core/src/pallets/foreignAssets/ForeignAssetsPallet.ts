@@ -1,22 +1,22 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
+import type Chain from '../../chains/Chain'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class ForeignAssetsPallet extends BaseAssetsPallet {
   mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
-    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
     const { location, amount } = asset
 
-    const notUseId: TSubstrateChain[] = ['NeuroWeb']
+    const { useIdPrefix } = chain.resolveMintConfig(api)
 
-    const addr = notUseId.some(prefix => chain.startsWith(prefix)) ? address : { Id: address }
+    const addr = useIdPrefix ? { Id: address } : address
 
     return Promise.resolve({
       assetStatusTx: {

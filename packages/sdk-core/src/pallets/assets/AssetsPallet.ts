@@ -1,26 +1,15 @@
 import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import type { TSetBalanceRes } from '../../types/TAssets'
+import type Chain from '../../chains/Chain'
+import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
 import { BaseAssetsPallet } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
-const LOCATION_ID_CHAINS: TSubstrateChain[] = ['EnergyWebX']
-const BIGINT_ID_CHAINS: TSubstrateChain[] = ['Astar', 'Shiden', 'Moonbeam', 'NeuroWeb', 'Darwinia']
-
-const resolveAssetId = <TCustomChain extends string = never>(
-  asset: WithAmount<TAssetInfo>,
-  chain: TSubstrateChain | TCustomChain
-): unknown => {
-  if (LOCATION_ID_CHAINS.some(prefix => chain.startsWith(prefix))) {
-    return asset.location
-  }
-
+const resolveAssetId = (asset: WithAmount<TAssetInfo>, config: TMintConfig): unknown => {
+  if (config.useLocationId) return asset.location
   assertHasId(asset)
-
-  const useBigInt = BIGINT_ID_CHAINS.some(prefix => chain.startsWith(prefix))
-  return useBigInt ? BigInt(asset.assetId) : Number(asset.assetId)
+  return config.useBigIntId ? BigInt(asset.assetId) : Number(asset.assetId)
 }
 
 export class AssetsPallet extends BaseAssetsPallet {
@@ -29,18 +18,15 @@ export class AssetsPallet extends BaseAssetsPallet {
     address: string,
     asset: WithAmount<TAssetInfo>,
     _balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
     const { amount } = asset
 
-    const id = resolveAssetId(asset, chain)
+    const config = chain.resolveMintConfig(api)
 
-    const notUseAddressIdChains: TSubstrateChain[] = ['NeuroWeb', 'Darwinia']
+    const id = resolveAssetId(asset, config)
 
-    const notUseId =
-      notUseAddressIdChains.some(prefix => chain.startsWith(prefix)) || api.isChainEvm(chain)
-
-    const addr = notUseId ? address : { Id: address }
+    const addr = config.useIdPrefix ? { Id: address } : address
 
     return Promise.resolve({
       assetStatusTx: {

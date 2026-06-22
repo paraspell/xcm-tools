@@ -10,6 +10,7 @@ import { MIN_AMOUNT } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
+  TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
@@ -92,6 +93,10 @@ class Acala<TApi, TRes, TSigner>
   ): TForeignOrTokenAsset {
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
     return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useCustomCurrencyId: true }
   }
 
   getBalance(

@@ -7,7 +7,11 @@ import { Version } from '@paraspell/sdk-common'
 import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
+import {
+  type IPolkadotXCMTransfer,
+  type TMintConfig,
+  type TPolkadotXCMTransferOptions
+} from '../../types'
 import Chain from '../Chain'
 
 class EnergyWebX<TApi, TRes, TSigner>
@@ -35,6 +39,10 @@ class EnergyWebX<TApi, TRes, TSigner>
 
   isRelayToParaEnabled(): boolean {
     return false
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useLocationId: true }
   }
 
   async getBalanceForeign<TApi, TRes, TSigner>(

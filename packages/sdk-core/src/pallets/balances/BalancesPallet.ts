@@ -1,7 +1,7 @@
 import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
+import type Chain from '../../chains/Chain'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class BalancesPallet extends BaseAssetsPallet {
@@ -10,19 +10,18 @@ export class BalancesPallet extends BaseAssetsPallet {
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
     const { amount } = assetInfo
 
-    const noIdPrefixes = ['Hydration', 'NeuroWeb', 'Basilisk', 'Darwinia']
-    const notUseId = noIdPrefixes.some(prefix => chain.startsWith(prefix)) || api.isChainEvm(chain)
+    const { useIdPrefix } = chain.resolveMintConfig(api)
 
     return Promise.resolve({
       balanceTx: {
         module: this.palletName,
         method: 'force_set_balance',
         params: {
-          who: notUseId ? address : { Id: address },
+          who: useIdPrefix ? { Id: address } : address,
           new_free: balance + amount
         }
       }

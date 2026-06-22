@@ -1,30 +1,27 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { isCustomChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId, getChain } from '../../utils'
+import type Chain from '../../chains/Chain'
+import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
+import { BaseAssetsPallet } from '../../types/TAssets'
+import { assertHasId } from '../../utils'
 
-const resolveId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+const resolveCurrencyId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-  asset: TAssetInfo,
-  chain: TSubstrateChain | TCustomChain
-) => {
-  if (
-    !isCustomChain(chain) &&
-    (chain === 'BifrostPolkadot' || chain === 'BifrostKusama' || chain === 'BifrostPaseo')
-  ) {
-    const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
-
-    const resolvedAsset = isEthAsset
-      ? api.findAssetInfoOrThrow(chain, { location: asset.location })
-      : asset
-
-    return getChain(chain).getCustomCurrencyId(api, resolvedAsset)
-  } else {
+  asset: WithAmount<TAssetInfo>,
+  chain: Chain<TApi, TRes, TSigner, TCustomChain>,
+  config: TMintConfig
+): unknown => {
+  if (!config.useCustomCurrencyId) {
     assertHasId(asset)
     return asset.assetId
   }
+
+  const isEthAsset = !asset.isNative && asset.assetId?.startsWith('0x')
+  const resolvedAsset = isEthAsset
+    ? api.findAssetInfoOrThrow(chain.chain, { location: asset.location })
+    : asset
+  return chain.getCustomCurrencyId(api, resolvedAsset)
 }
 
 export class TokensPallet extends BaseAssetsPallet {
@@ -33,13 +30,9 @@ export class TokensPallet extends BaseAssetsPallet {
     address: string,
     asset: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: TSubstrateChain | TCustomChain
+    chain: Chain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
-    const isBifrost = chain.startsWith('Bifrost')
-
-    if (!isBifrost) assertHasId(asset)
-
-    const id = resolveId(api, asset, chain)
+    const id = resolveCurrencyId(api, asset, chain, chain.resolveMintConfig(api))
 
     const { amount } = asset
 

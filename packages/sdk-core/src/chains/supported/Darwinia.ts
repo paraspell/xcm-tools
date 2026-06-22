@@ -6,6 +6,7 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
+  TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
@@ -18,6 +19,10 @@ class Darwinia<TApi, TRes, TSigner>
 {
   constructor() {
     super('Darwinia', 'darwinia', 'Polkadot', Version.V4)
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useBigIntId: true }
   }
 
   transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {

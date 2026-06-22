@@ -28,6 +28,11 @@ describe('Astar', () => {
     expect(astar.version).toBe(Version.V5)
   })
 
+  it('uses BigInt ids for minting', () => {
+    const api = { isChainEvm: () => false } as unknown as PolkadotApi<unknown, unknown, unknown>
+    expect(astar.resolveMintConfig(api)).toMatchObject({ useBigIntId: true })
+  })
+
   it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
     await astar.transferPolkadotXCM(mockInput)
     expect(transferPolkadotXcm).toHaveBeenCalledWith(

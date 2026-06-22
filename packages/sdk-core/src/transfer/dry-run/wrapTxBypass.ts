@@ -1,18 +1,16 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbolImpl, isAssetXcEqual, isSymbolMatch } from '@paraspell/assets'
-import type { TAssetsPallet } from '@paraspell/pallets'
-import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
+import { isAssetXcEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
+import { getChainImpl } from '../../chains/getChainInstance'
 import {
   BYPASS_MINT_AMOUNT,
   HIGH_BYPASS_MINT_AMOUNT,
   HIGH_BYPASS_MINT_CHAINS
 } from '../../constants'
-import { getPalletInstance } from '../../pallets'
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
@@ -23,35 +21,19 @@ const resolveBypassMintAmount = <TCustomChain extends string = never>(
 ): string =>
   HIGH_BYPASS_MINT_CHAINS.some(c => c === chain) ? HIGH_BYPASS_MINT_AMOUNT : BYPASS_MINT_AMOUNT
 
-const pickOtherPallet = (asset: TAssetInfo, pallets: TAssetsPallet[]) => {
-  if (!asset.isNative && (!asset.assetId || asset.assetId.startsWith('0x'))) {
-    // No assetId means it's probably a ForeignAssets pallet asset
-    return pallets.find(pallet => pallet.startsWith('Foreign')) ?? pallets[0]
-  }
-  return pallets[0]
-}
-
 const createMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   asset: WithAmount<TAssetInfo>,
   balance: bigint,
   address: string,
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
-): Promise<TSetBalanceRes> => {
-  const nativePallet = getNativeAssetsPallet(chain, api._customCtx)
-  const otherPallets = getOtherAssetsPallets(chain, api._customCtx)
-  const isMainNativeAsset = isSymbolMatch(
-    asset.symbol,
-    getNativeAssetSymbolImpl(chain, api._customCtx)
+): Promise<TSetBalanceRes> =>
+  getChainImpl<TApi, TRes, TSigner, TCustomChain>(chain, api._customCtx).mint(
+    api,
+    address,
+    asset,
+    balance
   )
-  const pallet =
-    (!asset.isNative && chain !== 'Mythos') || !isMainNativeAsset
-      ? pickOtherPallet(asset, otherPallets)
-      : nativePallet
-
-  const palletInstance = getPalletInstance(pallet)
-  return palletInstance.mint(api, address, asset, balance, chain)
-}
 
 const createRequiredMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,

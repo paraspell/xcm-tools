@@ -8,6 +8,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { isMoonbeamWhAsset } from '../../transfer/utils/inferFeeAsset'
 import type {
   IPolkadotXCMTransfer,
+  TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
@@ -25,6 +26,10 @@ class Hydration<TApi, TRes, TSigner>
     version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useIdPrefix: false }
   }
 
   async transferPolkadotXCM(
