@@ -11,6 +11,7 @@ import {
   convertBuilderConfig,
   createSwapBuilder,
   executeWithSwap,
+  isExchange,
   normalizeExchange
 } from './swapUtils'
 
@@ -258,6 +259,13 @@ describe('swapUtils', () => {
 
       expect(executor).toHaveBeenCalledWith(mockBuilderInstance)
       expect(result).toBe(expectedResult)
+    })
+  })
+
+  describe('isExchange', () => {
+    it('should return true for a supported exchange chain and false otherwise', () => {
+      expect(isExchange('Acala')).toBe(true)
+      expect(isExchange('Astar')).toBe(false)
     })
   })
 

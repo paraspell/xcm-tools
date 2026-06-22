@@ -1,10 +1,11 @@
-import { DEFAULT_SWAP_SLIPPAGE } from '../../constants'
+import { DEFAULT_SWAP_SLIPPAGE, EXCHANGE_CHAINS } from '../../constants'
 import { UnsupportedOperationError } from '../../errors'
 import { getSwapExtensionOrThrow } from '../../extensions'
 import type {
   TApiOrUrl,
   TBuilderConfig,
   TBuilderOptions,
+  TExchangeChain,
   TExchangeInput,
   TSwapBuilder,
   TTransferOptionsWithSwap,
@@ -15,6 +16,15 @@ import { isConfig } from '../guards'
 
 const isUrl = (value: unknown): value is string | string[] =>
   typeof value === 'string' || Array.isArray(value)
+
+/**
+ * Checks if a given chain is a supported exchange chain.
+ *
+ * @param chain - The chain to check.
+ * @returns True if the chain is a supported exchange chain; otherwise, false.
+ */
+export const isExchange = (chain: string): chain is TExchangeChain =>
+  EXCHANGE_CHAINS.some(c => c === chain)
 
 export const convertBuilderConfig = <TApi>(
   config: TBuilderOptions<TApiOrUrl<TApi>> | undefined
