@@ -3,13 +3,14 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
+import { getLocalTransferAmount } from '../../utils/transfer'
 import type Unique from './Unique'
 
 vi.mock('../../pallets/polkadotXcm')
+vi.mock('../../utils/transfer')
 
 describe('Unique', () => {
   let chain: Unique<unknown, unknown, unknown>
@@ -34,17 +35,31 @@ describe('Unique', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  it('should throw an error when trying to create a local foreign asset transfer', () => {
+  it('should build a unique.transfer call for local foreign asset transfers', () => {
+    const deserializeExtrinsics = vi.fn()
+    const api = { deserializeExtrinsics } as unknown as PolkadotApi<unknown, unknown, unknown>
+
     const input = {
-      api: {} as unknown as PolkadotApi<unknown, unknown, unknown>,
-      assetInfo: {
-        symbol: 'GLMR',
-        assetId: '123'
-      },
-      to: 'Unique'
+      api,
+      assetInfo: { symbol: 'DOT', assetId: '437', amount: 100n },
+      recipient: 'address',
+      balance: 1000n
     } as TTransferLocalOptions<unknown, unknown, unknown>
 
-    expect(() => chain.transferLocalNonNativeAsset(input)).toThrow(ScenarioNotSupportedError)
+    vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
+
+    chain.transferLocalNonNativeAsset(input)
+
+    expect(deserializeExtrinsics).toHaveBeenCalledWith({
+      module: 'Unique',
+      method: 'transfer',
+      params: {
+        recipient: { Substrate: 'address' },
+        collection_id: 437,
+        item_id: 0,
+        value: 100n
+      }
+    })
   })
 
   describe('getBalanceForeign', () => {
@@ -56,27 +71,17 @@ describe('Unique', () => {
       location: { parents: 1, interior: { X1: [{ Parachain: 2037 }] } }
     }
 
-    it('should return balance.value when present', async () => {
-      const queryState = vi.fn().mockResolvedValue(100)
+    it('should query UniqueApi.balance with the collection id and item id 0', async () => {
       const queryRuntimeApi = vi.fn().mockResolvedValue({ success: true, value: 500n, ok: 300n })
 
-      const api = { queryState, queryRuntimeApi } as unknown as PolkadotApi<
-        unknown,
-        unknown,
-        unknown
-      >
+      const api = { queryRuntimeApi } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       const balance = await chain.getBalanceForeign(api, address, asset)
 
-      expect(queryState).toHaveBeenCalledWith({
-        module: 'ForeignAssets',
-        method: 'ForeignAssetToCollection',
-        params: [asset.location]
-      })
       expect(queryRuntimeApi).toHaveBeenCalledWith({
         module: 'UniqueApi',
         method: 'balance',
-        params: [100, { Substrate: address }, 42]
+        params: [42, { Substrate: address }, 0]
       })
       expect(balance).toBe(500n)
     })

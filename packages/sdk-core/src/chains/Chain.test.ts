@@ -503,6 +503,23 @@ describe('Parachain', () => {
 
       expect(transferLocalNonNativeSpy).toHaveBeenCalled()
     })
+
+    it('should fetch the sender balance for keepAlive transfers', async () => {
+      const options = {
+        api,
+        assetInfo: { symbol: 'WETH', assetId: '123', amount: 100n },
+        sender: '5Sender',
+        recipient: '0x123',
+        isAmountAll: false,
+        keepAlive: true
+      } as TTransferInternalOptions<unknown, unknown, unknown>
+
+      const getBalanceSpy = vi.spyOn(chain, 'getBalance').mockResolvedValue(1000n)
+
+      await chain.transferLocal(options)
+
+      expect(getBalanceSpy).toHaveBeenCalledWith(api, '5Sender', options.assetInfo)
+    })
   })
 
   describe('transferLocalNativeAsset', () => {

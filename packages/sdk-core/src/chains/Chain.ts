@@ -418,7 +418,7 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
   async transferLocal(
     options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
-    const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll } = options
+    const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll, keepAlive } = options
 
     if (isTLocation(recipient)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
@@ -433,7 +433,7 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
     const isNativeAsset = asset.symbol === this.getNativeAssetSymbol(api) && asset.isNative
 
     let balance: bigint
-    if (isAmountAll) {
+    if (isAmountAll || keepAlive) {
       assertSender(sender)
       balance = await this.getBalance(api, sender, asset)
     } else {
