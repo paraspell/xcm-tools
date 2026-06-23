@@ -88,22 +88,4 @@ describe('createPayFees', () => {
       }
     ])
   })
-
-  it('should force BuyExecution for V5 when forceBuyExecution is true', () => {
-    const result = createPayFees(Version.V5, asset, weight, true, true)
-
-    expect(result).toEqual([
-      {
-        BuyExecution: {
-          fees: asset,
-          weight_limit: {
-            Limited: {
-              ref_time: weight.refTime,
-              proof_size: weight.proofSize
-            }
-          }
-        }
-      }
-    ])
-  })
 })

@@ -304,7 +304,6 @@ export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = ne
   version: Version
   useJitWithdraw?: boolean
   useFeeAssetOnHops?: boolean
-  forceBuyExecution?: boolean
   // refactor this
   paraIdTo?: number
   transactOptions?: TTransactOptions<TRes>

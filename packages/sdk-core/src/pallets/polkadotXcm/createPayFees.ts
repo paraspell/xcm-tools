@@ -7,10 +7,9 @@ export const createPayFees = (
   version: Version,
   asset: TAsset,
   weight?: TWeight,
-  includeRefundSurplus = true,
-  forceBuyExecution = false
+  includeRefundSurplus = true
 ) => {
-  if (forceBuyExecution || version < Version.V5) {
+  if (version < Version.V5) {
     return [
       {
         BuyExecution: {

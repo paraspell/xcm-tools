@@ -106,9 +106,7 @@ describe('prepareCommonExecuteXcm', () => {
       {
         BuyExecution: {
           fees: mockFeeAsset,
-          weight_limit: {
-            Limited: { ref_time: 450n, proof_size: 0n }
-          }
+          weight_limit: 'Unlimited'
         }
       }
     ])
@@ -133,16 +131,13 @@ describe('prepareCommonExecuteXcm', () => {
     expect(buyExecution.BuyExecution.fees).toBe(mockFeeAsset)
   })
 
-  it('falls back to main asset for BuyExecution when no fee asset', () => {
+  it('uses jit_withdraw when there is no separate localized fee asset (e.g. fee asset equals main asset)', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const buyExecution = result.prefix[1] as any
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(buyExecution.BuyExecution.fees).toBe(mockAsset)
+    expect(result.prefix[1]).toEqual({ SetFeesMode: { jit_withdraw: true } })
   })
 
   it('uses jit_withdraw when useJitWithdraw is true even with fee asset', () => {
@@ -185,7 +180,14 @@ describe('prepareCommonExecuteXcm', () => {
     expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
   })
 
-  it('creates correct weight limit for BuyExecution', () => {
+  it('uses Unlimited weight for pre-V5 BuyExecution (separate fee asset)', () => {
+    const contextWithFee = {
+      ...mockContext,
+      feeAssetLocalized: mockFeeAsset
+    } as TExecuteContext
+
+    vi.mocked(prepareExecuteContext).mockReturnValue(contextWithFee)
+
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
@@ -194,8 +196,25 @@ describe('prepareCommonExecuteXcm', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(buyExecution.BuyExecution.weight_limit).toEqual({
-      Limited: { ref_time: 450n, proof_size: 0n }
-    })
+    expect(buyExecution.BuyExecution.weight_limit).toEqual('Unlimited')
+  })
+
+  it('emits PayFees without RefundSurplus on V5 for a separate fee asset (kept in fees register for delivery fees)', () => {
+    const contextWithFee = {
+      ...mockContext,
+      feeAssetLocalized: mockFeeAsset
+    } as TExecuteContext
+
+    vi.mocked(prepareExecuteContext).mockReturnValue(contextWithFee)
+
+    const result = prepareCommonExecuteXcm({
+      ...baseOptions,
+      version: Version.V5,
+      feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
+    } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
+
+    expect(result.prefix[1]).toEqual({ PayFees: { asset: mockFeeAsset } })
+    // No RefundSurplus in the prefix (issue #1719) — next instruction is the deposit, not a refund
+    expect(result.prefix[2]).toBeUndefined()
   })
 })

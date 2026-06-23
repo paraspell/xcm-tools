@@ -79,7 +79,6 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     paraIdTo,
     transactOptions,
     useFeeAssetOnHops,
-    forceBuyExecution = false,
     suffixXcm = []
   } = options
 
@@ -131,10 +130,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
                   updateAsset(
                     assetLocalizedToDest,
                     reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
-                  ),
-                undefined,
-                true,
-                forceBuyExecution
+                  )
               ),
               ...suffixXcm
             ]
@@ -182,10 +178,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             xcm: [
               ...createPayFees(
                 version,
-                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction),
-                undefined,
-                true,
-                forceBuyExecution
+                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
               ),
               ...suffixXcm
             ]
@@ -205,10 +198,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
               ...createPayFees(
                 version,
                 hopFeeAssetToReserve ??
-                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction),
-                undefined,
-                true,
-                forceBuyExecution
+                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
               ),
               // Then deposit to final destination
               ...resolvedDepositInstruction
@@ -230,10 +220,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
                 version,
                 // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
                 // than requested, so we need to account for that
-                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n),
-                undefined,
-                true,
-                forceBuyExecution
+                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
               ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
