@@ -2,10 +2,9 @@
 
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import {
-  getNativeAssetSymbol,
   getNativeAssetSymbolImpl,
   getRelayChainSymbolImpl,
-  isAssetXcEqual,
+  isAssetEqual,
   isChainEvm,
   isSymbolMatch,
   type TAsset
@@ -20,9 +19,7 @@ import {
   isSubstrateBridge,
   isTLocation,
   isTrustedChain,
-  PARACHAINS,
-  Parents,
-  type TParachain
+  Parents
 } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
@@ -32,13 +29,12 @@ import {
   InvalidAddressError,
   RoutingResolutionError,
   ScenarioNotSupportedError,
-  TransferToAhNotSupported,
   TypeAndThenUnavailableError,
   UnsupportedOperationError
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
-import { handleTransactUsingSend } from '../pallets/polkadotXcm'
+import { handleTransactUsingSend, transferPolkadotXcm } from '../pallets/polkadotXcm'
 import { transferXTokens } from '../pallets/xTokens'
 import { createTypeAndThenCall } from '../transfer'
 import type {
@@ -56,8 +52,8 @@ import {
   assertSender,
   createBeneficiaryLocation,
   getChain,
-  getRelayChainOf,
   handleExecuteTransfer,
+  isNativeAssetTeleport,
   resolveDestChain
 } from '../utils'
 import { createAsset, pickOtherMintPallet } from '../utils/asset'
@@ -165,7 +161,7 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
       isSymbolMatch(getRelayChainSymbolImpl(this.chain, api._customCtx), asset.symbol)
 
     const mythAsset = api.findNativeAssetInfoOrThrow('Mythos')
-    const isMythAsset = isAssetXcEqual(mythAsset, asset)
+    const isMythAsset = isAssetEqual(mythAsset, asset)
 
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
 
@@ -234,27 +230,6 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
         return api.deserializeExtrinsics(await promise)
       }
 
-      const shouldUseTeleport = this.shouldUseNativeAssetTeleport(transferOptions)
-
-      const isAhToOtherPara =
-        this.chain.startsWith('AssetHub') && destChain && !isTrustedChain(destChain)
-
-      const isOtherParaToAh = destChain?.startsWith('AssetHub') && !isTrustedChain(this.chain)
-
-      const isAllowedAhTransfer = (chain: TChain | TCustomChain | undefined) =>
-        chain?.startsWith('Integritee')
-
-      if (
-        (isAhToOtherPara || isOtherParaToAh) &&
-        shouldUseTeleport &&
-        !isAllowedAhTransfer(destChain) &&
-        !isAllowedAhTransfer(this.chain)
-      ) {
-        throw new TransferToAhNotSupported(
-          'Native asset transfers to or from AssetHub are temporarily disabled'
-        )
-      }
-
       const isAHOrigin = this.chain.includes('AssetHub')
       const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
 
@@ -287,6 +262,10 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
       }
 
       if (supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this)) {
+        if (this.shouldUseNativeAssetTeleport(transferOptions)) {
+          return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')
+        }
+
         return this.transferPolkadotXCM(options)
       }
     } else if (supportsXTokens<TApi, TRes, TSigner, TCustomChain>(this)) {
@@ -375,29 +354,9 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
     assetInfo: asset,
     to
   }: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>): boolean {
-    if (isTLocation(to) || isSubstrateBridge(this.chain, to) || isExternalChain(to)) return false
+    if (isTLocation(to) || isSubstrateBridge(this.chain, to)) return false
 
-    const isAHPOrigin = this.chain.includes('AssetHub')
-    const isAHPDest = !isTLocation(to) && to.includes('AssetHub')
-
-    const nativeSymbols = PARACHAINS.filter(
-      chain => getRelayChainOf(chain) === this.ecosystem && !isTrustedChain(chain)
-    ).map(chain => getNativeAssetSymbol(chain))
-
-    const isSomeChainNativeAsset = nativeSymbols.some(symbol => isSymbolMatch(asset.symbol, symbol))
-
-    const isNativeAsset =
-      !isTLocation(to) &&
-      ((isAHPOrigin &&
-        !asset.isNative &&
-        isSymbolMatch(asset.symbol, getNativeAssetSymbolImpl(to, api._customCtx))) ||
-        (isAHPDest && isSomeChainNativeAsset))
-
-    const assetHubChain = `AssetHub${this.ecosystem}` as TParachain
-
-    const isRegisteredOnAh = api.findAssetInfo(assetHubChain, { location: asset.location })
-
-    return Boolean(isNativeAsset) && Boolean(isRegisteredOnAh) && (isAHPOrigin || isAHPDest)
+    return isNativeAssetTeleport(api, this.chain, to, asset)
   }
 
   createAsset(

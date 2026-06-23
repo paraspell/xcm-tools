@@ -345,7 +345,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                   const allowedErrorNames = [
                     'ScenarioNotSupportedError',
                     'NoXCMSupportImplementedError',
-                    'TransferToAhNotSupported',
                     'RoutingResolutionError',
                     'RuntimeApiUnavailableError',
                     'TypeAndThenUnavailableError'

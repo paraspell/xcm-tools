@@ -40,7 +40,7 @@ import {
   getChainProvidersImpl,
   getRelayChainOfImpl,
   hasXcmPaymentApiSupportImpl,
-  isAssetXcEqual,
+  isAssetEqual,
   isConfig,
   isCustomChain,
   isSenderSigner,
@@ -586,7 +586,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
 
-    if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
+    if (isAssetEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved
     }
 

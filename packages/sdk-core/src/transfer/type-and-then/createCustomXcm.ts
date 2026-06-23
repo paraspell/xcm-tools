@@ -6,7 +6,7 @@ import { getParaId } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { assertSender, createAsset, normalizeAmount } from '../../utils'
+import { assertSender, createAsset, isNativeAssetTeleport, normalizeAmount } from '../../utils'
 import { createBeneficiaryLocation, createDestination, localizeLocationImpl } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
@@ -206,7 +206,10 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
 
     // If both reserve (B) and destination (C) are trusted chains,
     // use teleport instead of DepositReserveAsset
-    if (isTrustedChain(reserve.chain) && isTrustedChain(dest.chain)) {
+    if (
+      (isTrustedChain(reserve.chain) && isTrustedChain(dest.chain)) ||
+      isNativeAssetTeleport(origin.api, reserve.chain, dest.chain, assetInfo)
+    ) {
       const refund = buildRefundInstruction()
       return [
         ...(refund ? [refund] : []),

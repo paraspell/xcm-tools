@@ -251,18 +251,7 @@ export type TDestWeight = {
 
 export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
 
-export type TPolkadotXcmMethod =
-  | 'limited_teleport_assets'
-  | 'limited_reserve_transfer_assets'
-  | 'reserve_transfer_assets'
-  | 'reserve_withdraw_assets'
-  | 'transfer_assets'
-  | 'transfer_assets_using_type_and_then'
-
-export type TXcmPalletMethod =
-  | 'limited_teleport_assets'
-  | 'limited_reserve_transfer_assets'
-  | 'transfer_assets_using_type_and_then'
+export type TPolkadotXcmMethod = 'limited_teleport_assets' | 'transfer_assets_using_type_and_then'
 
 export type TWeight<TWeightType = bigint> = {
   refTime: TWeightType

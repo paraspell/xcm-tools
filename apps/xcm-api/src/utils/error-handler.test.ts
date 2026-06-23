@@ -12,7 +12,6 @@ import {
   MissingChainApiError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
-  TransferToAhNotSupported,
 } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
@@ -28,7 +27,6 @@ describe('handleXcmApiError', () => {
     new ScenarioNotSupportedError({ chain: 'Acala', scenario: 'ParaToPara' }),
     new BridgeHaltedError(),
     new DryRunFailedError('Failed'),
-    new TransferToAhNotSupported(),
     new MissingChainApiError('Acala'),
   ];
 

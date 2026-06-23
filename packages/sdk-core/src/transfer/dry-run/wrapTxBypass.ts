@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { isAssetXcEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
@@ -107,7 +107,7 @@ const mintBonusForSent = <TApi, TRes, TSigner, TCustomChain extends string = nev
       return true
     })
 
-  return preminted.some(a => isAssetXcEqual(a, sent))
+  return preminted.some(a => isAssetEqual(a, sent))
     ? parseUnits(resolveBypassMintAmount(chain), sent.decimals)
     : 0n
 }
@@ -130,7 +130,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
 
   const nativeInfo = mintFeeAssets ? api.findNativeAssetInfo(chain) : null
   const relayInfo = mintFeeAssets ? api.findAssetInfo(chain, relayCurrency) : null
-  const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetXcEqual(nativeInfo, relayInfo))
+  const sameNativeRelay = !!(nativeInfo && relayInfo && isAssetEqual(nativeInfo, relayInfo))
 
   const mintNativeAssetRes = mintFeeAssets
     ? await createRequiredMintTxs(

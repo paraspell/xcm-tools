@@ -13,7 +13,7 @@ import {
   findNativeAssetInfoOrThrowImpl,
   hasDryRunSupportImpl,
   hasXcmPaymentApiSupportImpl,
-  isAssetXcEqual,
+  isAssetEqual,
   localizeLocation,
   RuntimeApiUnavailableError,
   type TLocation,
@@ -88,7 +88,7 @@ vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
   findAssetInfoOrThrowImpl: vi.fn(),
   findNativeAssetInfoOrThrowImpl: vi.fn(),
   localizeLocation: vi.fn(),
-  isAssetXcEqual: vi.fn(),
+  isAssetEqual: vi.fn(),
   isSenderSigner: vi.fn().mockReturnValue(false),
   resolveModuleError: vi
     .fn()
@@ -1060,7 +1060,7 @@ describe("DedotApi", () => {
       vi.mocked(localizeLocation).mockImplementation(
         (_: TChain, loc: TLocation) => loc,
       );
-      vi.mocked(isAssetXcEqual).mockReturnValue(true);
+      vi.mocked(isAssetEqual).mockReturnValue(true);
     });
 
     it("returns delivery fee directly for native asset", async () => {
@@ -1090,7 +1090,7 @@ describe("DedotApi", () => {
     });
 
     it("converts delivery fee via queryRuntimeApi for non-native asset", async () => {
-      vi.mocked(isAssetXcEqual).mockReturnValue(false);
+      vi.mocked(isAssetEqual).mockReturnValue(false);
       vi.spyOn(dedotApi, "queryRuntimeApi").mockResolvedValue(5n);
 
       const asset: TAssetInfo = {
@@ -1113,7 +1113,7 @@ describe("DedotApi", () => {
     });
 
     it("falls back to 0 when queryRuntimeApi throws", async () => {
-      vi.mocked(isAssetXcEqual).mockReturnValue(false);
+      vi.mocked(isAssetEqual).mockReturnValue(false);
       vi.spyOn(dedotApi, "queryRuntimeApi").mockRejectedValue(
         new Error("not available"),
       );

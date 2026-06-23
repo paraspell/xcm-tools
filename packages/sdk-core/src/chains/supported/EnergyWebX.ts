@@ -34,7 +34,7 @@ class EnergyWebX<TApi, TRes, TSigner>
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(input, 'reserve_transfer_assets')
+    return transferPolkadotXcm(input)
   }
 
   isRelayToParaEnabled(): boolean {

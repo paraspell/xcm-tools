@@ -1,4 +1,4 @@
-import { isChainEvm } from '@paraspell/assets'
+import { isAssetEqual, isChainEvm } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -14,7 +14,8 @@ import { createCustomXcm } from './createCustomXcm'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  isChainEvm: vi.fn()
+  isChainEvm: vi.fn(),
+  isAssetEqual: vi.fn()
 }))
 vi.mock('@paraspell/sdk-common')
 vi.mock('../../utils/location')
@@ -57,7 +58,11 @@ describe('createCustomXcm', () => {
     { BuyExecution: unknown }
   > => typeof step === 'object' && step !== null && 'BuyExecution' in step
 
-  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+  const mockApi = { findNativeAssetInfoOrThrow: vi.fn() } as unknown as PolkadotApi<
+    unknown,
+    unknown,
+    unknown
+  >
   const mockAddress = '0x123'
   const mockVersion = Version.V5
 
@@ -175,6 +180,27 @@ describe('createCustomXcm', () => {
       expect(xcm).toHaveLength(2)
       expect(xcm[0]).toHaveProperty('BuyExecution')
       expect(xcm[1]).toHaveProperty('DepositAsset')
+    })
+
+    it('returns InitiateTeleport when forwarding a parachain native asset to AssetHub', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+
+      const result = await createCustomXcm(
+        {
+          ...mockContext,
+          origin: { chain: 'BifrostPolkadot', api: mockApi },
+          dest: { chain: 'AssetHubPolkadot', api: mockApi },
+          reserve: { chain: 'Moonbeam', api: mockApi },
+          isRelayAsset: false
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount,
+        { hopFees: 100n, destFee: 200n }
+      )
+
+      expect(result.find(isInitiateTeleportInstruction)).toBeDefined()
+      expect(result.find(isDepositReserveInstruction)).toBeUndefined()
     })
 
     it('uses destination api for beneficiary when bridge between AssetHubPolkadot and AssetHubKusama is in use', async () => {

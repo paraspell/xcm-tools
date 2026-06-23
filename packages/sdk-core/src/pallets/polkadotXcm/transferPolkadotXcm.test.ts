@@ -38,7 +38,7 @@ const mockVersionedAssets: TXcmVersioned<TAsset[]> = {
   [Version.V4]: [mockAsset]
 }
 
-const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
+const mockMethod: TPolkadotXcmMethod = 'limited_teleport_assets'
 
 describe('transferPolkadotXcm', () => {
   beforeEach(() => {

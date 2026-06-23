@@ -11,8 +11,8 @@ import { addXcmVersionHeader } from '../../utils'
 import { maybeOverrideAssets } from '../../utils/asset'
 import { createDestination } from '../../utils/location'
 
-export const transferPolkadotXcm = async <TApi, TRes, TSigner>(
-  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+export const transferPolkadotXcm = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   method: TPolkadotXcmMethod = 'transfer_assets_using_type_and_then',
   fees: 'Unlimited' | { Limited: string } | undefined = undefined
 ): Promise<TRes> => {
