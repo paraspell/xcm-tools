@@ -21,7 +21,7 @@ describe('RobonomicsPolkadot', () => {
     expect(chain.chain).toBe('RobonomicsPolkadot')
     expect(chain.info).toBe('robonomics')
     expect(chain.ecosystem).toBe('Polkadot')
-    expect(chain.version).toBe(Version.V3)
+    expect(chain.version).toBe(Version.V5)
   })
 
   describe('transferPolkadotXCM', () => {

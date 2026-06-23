@@ -2,7 +2,7 @@ import { isSnowbridge, isSubstrateBridge, type TChain } from '@paraspell/sdk-com
 
 import type { TAssetInfo, TCustomCtx } from '../types'
 import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
-import { isAssetXcEqual } from './isAssetXcEqual'
+import { isAssetEqual } from './isAssetEqual'
 import { isSystemAsset } from './isSystemAsset'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
@@ -15,7 +15,7 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
   const destinationAssets = getAssetsImpl(destination, ctx)
 
   const supportedAssets = originAssets.filter(asset =>
-    destinationAssets.some(a => isAssetXcEqual(a, asset))
+    destinationAssets.some(a => isAssetEqual(a, asset))
   )
 
   const isSubBridge = isSubstrateBridge(origin, destination)
@@ -33,7 +33,7 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
       return [...filteredSystemAssets, ...stablecoinAssets]
     } else {
       // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
-      // so it isn't matched by isAssetXcEqual. Include it explicitly.
+      // so it isn't matched by isAssetEqual. Include it explicitly.
       const mythosNative =
         origin === 'Mythos' && destination === 'Ethereum'
           ? originAssets.filter(asset => asset.symbol === 'MYTH')

@@ -1,7 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import {
   getEdFromAssetOrThrow,
-  isAssetXcEqual,
+  isAssetEqual,
   isSymbolMatch,
   normalizeSymbol
 } from '@paraspell/assets'
@@ -20,13 +20,11 @@ export const calculateTotalXcmFee = (
   feeResult: TGetXcmFeeResult<false>
 ): bigint => {
   const totalHopFee = feeResult.hops.reduce(
-    (acc, hop) => (isAssetXcEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc),
+    (acc, hop) => (isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc),
     0n
   )
 
-  const destFee = isAssetXcEqual(feeResult.destination.asset, asset)
-    ? feeResult.destination.fee
-    : 0n
+  const destFee = isAssetEqual(feeResult.destination.asset, asset) ? feeResult.destination.fee : 0n
 
   return totalHopFee + destFee
 }

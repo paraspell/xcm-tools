@@ -18,7 +18,6 @@ import {
   hasXcmPaymentApiSupportImpl,
   InvalidAddressError,
   isAssetEqual,
-  isAssetXcEqual,
   isSystemChain,
   localizeLocation,
   Parents,
@@ -74,8 +73,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   findAssetInfoOrThrowImpl: vi.fn(),
   findNativeAssetInfoOrThrowImpl: vi.fn(),
   isSystemChain: vi.fn(),
-  localizeLocation: vi.fn(),
-  isAssetXcEqual: vi.fn()
+  localizeLocation: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -616,7 +614,7 @@ describe('PapiApi', () => {
 
       vi.mocked(localizeLocation).mockImplementation((_, loc: TLocation) => loc)
 
-      vi.mocked(isAssetXcEqual)?.mockReturnValue(true)
+      vi.mocked(isAssetEqual)?.mockReturnValue(true)
     })
 
     it('adds delivery fee directly when asset is native', async () => {
@@ -646,7 +644,7 @@ describe('PapiApi', () => {
 
     it('converts delivery fee via queryRuntimeApi when asset is NOT native', async () => {
       const forwardedXcm = [{}, [{}]]
-      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+      vi.mocked(isAssetEqual).mockReturnValue(false)
 
       const quoteSpy = vi.spyOn(papiApi, 'queryRuntimeApi').mockResolvedValue(5n)
 
@@ -703,7 +701,7 @@ describe('PapiApi', () => {
 
     it('falls back to 0 delivery fee when queryRuntimeApi throws the runtime-entry error', async () => {
       const forwardedXcm = [{}, [{}]]
-      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+      vi.mocked(isAssetEqual).mockReturnValue(false)
 
       vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(
         new Error(
@@ -730,7 +728,7 @@ describe('PapiApi', () => {
 
     it('falls back to 0 delivery fee when queryRuntimeApi throws an unexpected error', async () => {
       const forwardedXcm = [{}, [{}]]
-      vi.mocked(isAssetXcEqual).mockReturnValue(false)
+      vi.mocked(isAssetEqual).mockReturnValue(false)
 
       vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(new Error('network flake'))
 

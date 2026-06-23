@@ -5,21 +5,24 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
-import { addXcmVersionHeader, createAsset } from '../../utils'
+import { addXcmVersionHeader, createAsset, isNativeAssetTeleport } from '../../utils'
 import { createDestination, localizeLocationImpl } from '../../utils/location'
 
 export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   origin,
   reserve,
   dest,
-  isSubBridge
+  isSubBridge,
+  assetInfo
 }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>) => {
   // Direct A → C: when origin is reserve OR dest is reserve, check origin <-> dest trust
   // Hop A → B → C: when reserve differs from both, check origin <-> reserve trust
   const isDirect = origin.chain === reserve.chain || dest.chain === reserve.chain
   const chainToCheck = isDirect ? dest.chain : reserve.chain
-  if (isTrustedChain(origin.chain) && isTrustedChain(chainToCheck) && !isSubBridge)
-    return 'Teleport'
+  const canTeleport =
+    (isTrustedChain(origin.chain) && isTrustedChain(chainToCheck)) ||
+    isNativeAssetTeleport(origin.api, origin.chain, chainToCheck, assetInfo)
+  if (canTeleport && !isSubBridge) return 'Teleport'
   if (origin.chain === reserve.chain) return 'LocalReserve'
   return 'DestinationReserve'
 }

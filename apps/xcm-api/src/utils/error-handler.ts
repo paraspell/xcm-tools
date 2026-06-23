@@ -21,7 +21,6 @@ import {
   RoutingResolutionError,
   RuntimeApiUnavailableError,
   ScenarioNotSupportedError,
-  TransferToAhNotSupported,
   UnableToComputeError,
   UnsupportedOperationError,
 } from '@paraspell/sdk';
@@ -37,7 +36,6 @@ const sdkErrors = [
   DuplicateAssetIdError,
   BridgeHaltedError,
   DryRunFailedError,
-  TransferToAhNotSupported,
   UnableToComputeError,
   MissingChainApiError,
   AmountTooLowError,

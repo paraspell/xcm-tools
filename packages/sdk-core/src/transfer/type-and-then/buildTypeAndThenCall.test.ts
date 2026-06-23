@@ -6,11 +6,12 @@ import type { PolkadotApi } from '../../api'
 import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { createDestination, localizeLocationImpl } from '../../utils'
+import { createDestination, isNativeAssetTeleport, localizeLocationImpl } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
 vi.mock('../../chains/config')
 vi.mock('../../utils/location')
+vi.mock('../../utils/transfer/isNativeAssetTeleport')
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
@@ -166,6 +167,38 @@ describe('buildTypeAndThenCall', () => {
 
     expect(result.params.assets_transfer_type).toBe('DestinationReserve')
     expect(result.params.fees_transfer_type).toBe('DestinationReserve')
+  })
+
+  it('should use Teleport when forwarding a parachain native asset to/from AssetHub', () => {
+    vi.mocked(isTrustedChain).mockReturnValue(false)
+    vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+    const mockOrigin: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
+    const mockReserve: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'Moonbeam',
+      api: mockApi
+    }
+    const mockDest: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'BifrostPolkadot',
+      api: mockApi
+    }
+
+    const result = buildTypeAndThenCall(
+      {
+        ...mockContext,
+        origin: mockOrigin,
+        reserve: mockReserve,
+        dest: mockDest
+      },
+      false,
+      mockCustomXcm,
+      mockAssets
+    )
+
+    expect(result.params.assets_transfer_type).toBe('Teleport')
+    expect(result.params.fees_transfer_type).toBe('Teleport')
   })
 
   it('should use asset location as feeAssetLocation when asset location equals RELAY_LOCATION', () => {

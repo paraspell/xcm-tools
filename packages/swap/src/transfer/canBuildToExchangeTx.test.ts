@@ -1,6 +1,6 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo, TParachain } from '@paraspell/sdk-core';
-import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk-core';
+import { ScenarioNotSupportedError } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TGetBestAmountOutOptions } from '../types';
@@ -116,21 +116,6 @@ describe('canBuildToExchangeTx', () => {
 
     expect(result).toEqual({ success: true });
     expect(buildToExchangeExtrinsic).not.toHaveBeenCalled();
-  });
-
-  it('should return { success: false, error } if buildToExchangeExtrinsic throws TransferToAhNotSupported', async () => {
-    const error = new TransferToAhNotSupported('Test AH error');
-    vi.mocked(buildToExchangeExtrinsic).mockRejectedValue(error);
-
-    const result = await canBuildToExchangeTx(
-      defaultOptions,
-      exchangeChain,
-      mockOriginApi,
-      mockAssetFromOrigin,
-    );
-
-    expect(result).toEqual({ success: false, error });
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
   });
 
   it('should return { success: false, error } if buildToExchangeExtrinsic throws ScenarioNotSupportedError', async () => {

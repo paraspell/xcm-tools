@@ -13,7 +13,7 @@ class RobonomicsPolkadot<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor() {
-    super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V3)
+    super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V5)
   }
 
   transferPolkadotXCM(_input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {

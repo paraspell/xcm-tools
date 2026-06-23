@@ -43,7 +43,6 @@ import {
   hasXcmPaymentApiSupportImpl,
   InvalidAddressError,
   isAssetEqual,
-  isAssetXcEqual,
   isConfig,
   isCustomChain,
   isRelayChain,
@@ -603,7 +602,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
 
-    if (isAssetXcEqual(asset, nativeAsset) || usedThirdParam) {
+    if (isAssetEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved
     } else {
       try {

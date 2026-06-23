@@ -22,7 +22,6 @@ import { getTransferInfo } from './getTransferInfo'
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
   getEdFromAssetOrThrow: vi.fn(),
-  isAssetXcEqual: vi.fn(),
   isAssetEqual: vi.fn()
 }))
 

@@ -1,5 +1,5 @@
 import type { TAssetInfo, TExchangeChain } from '@paraspell/sdk-core';
-import { ScenarioNotSupportedError, TransferToAhNotSupported } from '@paraspell/sdk-core';
+import { ScenarioNotSupportedError } from '@paraspell/sdk-core';
 
 import { FALLBACK_FEE_CALC_ADDRESS, FALLBACK_FEE_CALC_EVM_ADDRESS } from '../consts';
 import type { TBuildTransactionsOptions, TExchangeInfo } from '../types';
@@ -40,7 +40,7 @@ export const canBuildToExchangeTx = async <
           })
         : undefined;
   } catch (e) {
-    if (e instanceof TransferToAhNotSupported || e instanceof ScenarioNotSupportedError) {
+    if (e instanceof ScenarioNotSupportedError) {
       return {
         success: false,
         error: e,
