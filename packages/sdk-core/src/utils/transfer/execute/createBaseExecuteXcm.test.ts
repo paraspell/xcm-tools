@@ -233,6 +233,23 @@ describe('createBaseExecuteXcm', () => {
       expect(destBuyExecution.fees).toBe(mockFeeAssetToDest)
       expect(destBuyExecution.fees.fun.Fungible).toBe(100n)
     })
+
+    it('should teleport to reserve when origin and reserve are both trusted and differ', () => {
+      vi.mocked(isTrustedChain).mockReturnValue(true)
+      vi.mocked(prepareExecuteContext).mockReturnValue({
+        ...mockPrepareExecuteContext,
+        reserveChain: 'Polkadot'
+      })
+
+      const result = createBaseExecuteXcm(mockBaseOptions) as any
+
+      const teleport = result[0].InitiateTeleport
+      expect(teleport.dest).toBe(mockChainLocation)
+      expect(teleport.xcm[0].BuyExecution.fees).toEqual({
+        ...mockAsset,
+        fun: { Fungible: 9900n } // amount - originFeeDeduction
+      })
+    })
   })
 
   describe('Direct deposit transfers', () => {

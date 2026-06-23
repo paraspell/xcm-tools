@@ -11,14 +11,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
   options: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>,
   assetToDeposit?: TAsset
 ) => {
-  const {
-    api,
-    feeAssetInfo: feeAsset,
-    useJitWithdraw,
-    recipient,
-    version,
-    forceBuyExecution = false
-  } = options
+  const { api, useJitWithdraw, recipient, version } = options
 
   const context = prepareExecuteContext(options)
 
@@ -34,19 +27,8 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
     WithdrawAsset: withdrawAssets
   })
 
-  if (feeAsset && !useJitWithdraw) {
-    prefix.push(
-      ...createPayFees(
-        version,
-        feeAssetLocalized ?? assetLocalized,
-        {
-          refTime: 450n,
-          proofSize: 0n
-        },
-        false,
-        forceBuyExecution
-      )
-    )
+  if (feeAssetLocalized && !useJitWithdraw) {
+    prefix.push(...createPayFees(version, feeAssetLocalized, undefined, false))
   } else {
     prefix.push({
       SetFeesMode: {
