@@ -39,7 +39,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Prepare environment
         run: |
@@ -92,7 +92,7 @@ jobs:
         run: git pull
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build XCM API
         run: pnpm --filter xcm-api... build
