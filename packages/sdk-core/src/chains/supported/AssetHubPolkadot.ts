@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { isSymbolMatch } from '@paraspell/assets'
+import { isAssetEqual, isSymbolMatch } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { hasJunction, Version } from '@paraspell/sdk-common'
 
@@ -26,22 +26,26 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
+  shouldUseExecuteTransfer(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): boolean {
+    const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
+
+    if (!feeAssetInfo || overriddenAsset) return false
+    if (isSymbolMatch(assetInfo.symbol, 'KSM')) return false
+
+    const nativeAsset = api.findNativeAssetInfoOrThrow(this.chain)
+    const isNativeAsset = isAssetEqual(nativeAsset, assetInfo)
+    const isNativeFeeAsset = isAssetEqual(nativeAsset, feeAssetInfo)
+
+    return !isNativeAsset || !isNativeFeeAsset
+  }
+
   async transferPolkadotXCM(
     options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
+    const { api } = options
 
-    if (feeAssetInfo && !overriddenAsset) {
-      if (isSymbolMatch(assetInfo.symbol, 'KSM')) {
-        return transferPolkadotXcm(options)
-      }
-
-      const isNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol(api))
-      const isNativeFeeAsset = isSymbolMatch(feeAssetInfo.symbol, this.getNativeAssetSymbol(api))
-
-      if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.deserializeExtrinsics(await handleExecuteTransfer(options))
-      }
+    if (this.shouldUseExecuteTransfer(options)) {
+      return api.deserializeExtrinsics(await handleExecuteTransfer(options))
     }
 
     return transferPolkadotXcm(options)

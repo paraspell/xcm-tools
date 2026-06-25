@@ -51,8 +51,6 @@ const WeightSchema = z.object({
   proofSize: z.number().or(z.string()),
 });
 
-// This schema is duplicated in xcm-api
-// Refactor to a shared location in the future if needed
 export const TransactOptionsSchema = z.object({
   call: z.string(),
   originKind: z.enum(TRANSACT_ORIGINS).optional(),

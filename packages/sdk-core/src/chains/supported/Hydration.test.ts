@@ -213,7 +213,10 @@ describe('Hydration', () => {
       const mockTx = {} as TSerializedExtrinsics
 
       const mockApi = {
-        deserializeExtrinsics: vi.fn()
+        deserializeExtrinsics: vi.fn(),
+        findNativeAssetInfoOrThrow: vi
+          .fn()
+          .mockReturnValue({ symbol: 'HDX', location: { parents: 0, interior: 'Here' } })
       } as unknown as PolkadotApi<unknown, unknown, unknown>
 
       vi.mocked(handleExecuteTransfer).mockResolvedValue(mockTx)
@@ -241,6 +244,53 @@ describe('Hydration', () => {
       await hydration.transferPolkadotXCM(input)
 
       expect(spy).toHaveBeenCalledWith(mockTx)
+    })
+  })
+
+  describe('shouldUseExecuteTransfer', () => {
+    const HDX_LOC = { parents: 0, interior: 'Here' }
+    const OTHER_LOC = { parents: 1, interior: 'Here' }
+
+    const api = {
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'HDX', location: HDX_LOC })
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    const opts = (extra: object) =>
+      ({
+        api,
+        assetInfo: { symbol: 'HDX', location: HDX_LOC } as TAssetInfo,
+        ...extra
+      }) as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+    it('returns false when no fee asset is provided', () => {
+      expect(hydration.shouldUseExecuteTransfer(opts({}))).toBe(false)
+    })
+
+    it('returns false when an overridden asset is set', () => {
+      expect(
+        hydration.shouldUseExecuteTransfer(
+          opts({ feeAssetInfo: { location: OTHER_LOC }, overriddenAsset: [] })
+        )
+      ).toBe(false)
+    })
+
+    it('returns false when both asset and fee asset are native', () => {
+      expect(
+        hydration.shouldUseExecuteTransfer(
+          opts({ assetInfo: { location: HDX_LOC }, feeAssetInfo: { location: HDX_LOC } })
+        )
+      ).toBe(false)
+    })
+
+    it.each([
+      { label: 'non-native asset, native fee', assetLoc: OTHER_LOC, feeLoc: HDX_LOC },
+      { label: 'native asset, non-native fee', assetLoc: HDX_LOC, feeLoc: OTHER_LOC }
+    ])('returns true for $label', ({ assetLoc, feeLoc }) => {
+      expect(
+        hydration.shouldUseExecuteTransfer(
+          opts({ assetInfo: { location: assetLoc }, feeAssetInfo: { location: feeLoc } })
+        )
+      ).toBe(true)
     })
   })
 

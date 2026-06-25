@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
+import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -32,18 +32,25 @@ class Hydration<TApi, TRes, TSigner>
     return { useIdPrefix: false }
   }
 
+  shouldUseExecuteTransfer(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): boolean {
+    const { assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
+
+    if (!feeAsset || overriddenAsset) return false
+
+    const nativeAsset = api.findNativeAssetInfoOrThrow(this.chain)
+    const isNativeAsset = isAssetEqual(nativeAsset, asset)
+    const isNativeFeeAsset = isAssetEqual(nativeAsset, feeAsset)
+
+    return !isNativeAsset || !isNativeFeeAsset
+  }
+
   async transferPolkadotXCM(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
   ): Promise<TRes> {
-    const { destination, assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
+    const { destination, assetInfo: asset, api } = input
 
-    if (feeAsset && !overriddenAsset) {
-      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
-      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol(api))
-
-      if (!isNativeAsset || !isNativeFeeAsset) {
-        return api.deserializeExtrinsics(await handleExecuteTransfer(input))
-      }
+    if (this.shouldUseExecuteTransfer(input)) {
+      return api.deserializeExtrinsics(await handleExecuteTransfer(input))
     }
 
     if (isMoonbeamWhAsset(asset.location) && destination === 'Moonbeam') {

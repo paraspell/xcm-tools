@@ -96,6 +96,16 @@ class OnlyPolkadotXCMParachain extends TestParachainBase {
   }
 }
 
+class ExecuteTransferParachain extends TestParachainBase {
+  transferPolkadotXCM() {
+    return 'transferPolkadotXCM called'
+  }
+
+  shouldUseExecuteTransfer() {
+    return true
+  }
+}
+
 class NoSupportParachain extends TestParachainBase {}
 
 describe('Parachain', () => {
@@ -372,6 +382,39 @@ describe('Parachain', () => {
       'Unlimited'
     )
     expect(transferPolkadotXCMSpy).not.toHaveBeenCalled()
+  })
+
+  it('skips limited_teleport_assets and uses transferPolkadotXCM when execute transfer is required', async () => {
+    vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+
+    const chain = new ExecuteTransferParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+    const options = {
+      api,
+      to: 'AssetHubPolkadot',
+      assetInfo: {
+        symbol: 'ASTR',
+        amount: 100n,
+        location: {
+          parents: 1,
+          interior: { X1: { Parachain: 2000 } }
+        }
+      },
+      recipient: 'destinationAddress'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    vi.mocked(resolveDestChain).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(transferPolkadotXcm).mockClear()
+
+    const transferPolkadotXCMSpy = vi.spyOn(chain, 'transferPolkadotXCM')
+
+    await chain.transfer(options)
+
+    expect(transferPolkadotXcm).not.toHaveBeenCalledWith(
+      expect.anything(),
+      'limited_teleport_assets',
+      'Unlimited'
+    )
+    expect(transferPolkadotXCMSpy).toHaveBeenCalled()
   })
 
   it('uses type-and-then call for external asset routed via AssetHub', async () => {

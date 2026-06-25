@@ -8,6 +8,7 @@ import type { PolkadotApi } from '../../../api'
 import { UnsupportedOperationError } from '../../../errors'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
+import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
@@ -19,6 +20,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 }))
 
 vi.mock('../../location')
+vi.mock('../isNativeAssetTeleport')
 vi.mock('./createAssetsFilter')
 vi.mock('./prepareExecuteContext')
 
@@ -61,6 +63,7 @@ describe('createBaseExecuteXcm', () => {
     vi.mocked(createDestination).mockReturnValue(mockDestLocation)
     vi.mocked(createAssetsFilter).mockReturnValue(mockAssetsFilter)
     vi.mocked(getChainLocation).mockReturnValue(mockChainLocation)
+    vi.mocked(isNativeAssetTeleport).mockReturnValue(false)
   })
 
   describe('Teleport transfers (trusted chains)', () => {
@@ -128,6 +131,57 @@ describe('createBaseExecuteXcm', () => {
       expect(teleportInstruction.InitiateTeleport.xcm).toHaveLength(3)
       expect(teleportInstruction.InitiateTeleport.xcm[1]).toEqual({ ClearOrigin: {} })
       expect(teleportInstruction.InitiateTeleport.xcm[2]).toEqual({ RefundSurplus: {} })
+    })
+  })
+
+  describe('Native asset teleports (to/from AssetHub)', () => {
+    it('should teleport a native parachain asset to AssetHub even when chains are not trusted', () => {
+      vi.mocked(isTrustedChain).mockReturnValue(false)
+      vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+      vi.mocked(prepareExecuteContext).mockReturnValue({
+        ...mockPrepareExecuteContext,
+        reserveChain: 'Hydration'
+      })
+
+      const result = createBaseExecuteXcm({
+        ...mockBaseOptions,
+        chain: 'Hydration',
+        destChain: 'AssetHubPolkadot'
+      }) as any
+
+      expect(result[0].InitiateTeleport).toBeDefined()
+      expect(result[0].InitiateTeleport.dest).toBe(mockDestLocation)
+      expect(result[0].InitiateTeleport.xcm[0].BuyExecution.fees).toEqual({
+        ...mockAsset,
+        fun: { Fungible: 9900n } // amount - originFee
+      })
+      expect(isNativeAssetTeleport).toHaveBeenCalledWith(
+        mockApi,
+        'Hydration',
+        'AssetHubPolkadot',
+        undefined
+      )
+    })
+
+    it('should use Teleport filter in InitiateTransfer for native asset teleport on V5 transact', () => {
+      vi.mocked(isTrustedChain).mockReturnValue(false)
+      vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+      vi.mocked(prepareExecuteContext).mockReturnValue({
+        ...mockPrepareExecuteContext,
+        reserveChain: 'Hydration'
+      })
+
+      const result = createBaseExecuteXcm({
+        ...mockBaseOptions,
+        chain: 'Hydration',
+        destChain: 'AssetHubPolkadot',
+        version: Version.V5,
+        transactOptions: { call: 'dummy-call' }
+      }) as any
+
+      expect(result[0].InitiateTransfer).toBeDefined()
+      expect(result[0].InitiateTransfer.remote_fees).toEqual({ Teleport: mockAssetsFilter })
+      expect(result[0].InitiateTransfer.assets).toEqual([{ Teleport: mockAssetsFilter }])
     })
   })
 
