@@ -262,7 +262,10 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
       }
 
       if (supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this)) {
-        if (this.shouldUseNativeAssetTeleport(transferOptions)) {
+        if (
+          this.shouldUseNativeAssetTeleport(transferOptions) &&
+          !this.shouldUseExecuteTransfer(options)
+        ) {
           return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')
         }
 
@@ -357,6 +360,12 @@ abstract class Chain<TApi, TRes, TSigner, TCustomChain extends string = never> {
     if (isTLocation(to) || isSubstrateBridge(this.chain, to)) return false
 
     return isNativeAssetTeleport(api, this.chain, to, asset)
+  }
+
+  shouldUseExecuteTransfer(
+    _options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): boolean {
+    return false
   }
 
   createAsset(

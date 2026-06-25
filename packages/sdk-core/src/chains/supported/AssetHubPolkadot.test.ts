@@ -1,8 +1,9 @@
 import {
-  getNativeAssetSymbol,
   getOtherAssets,
+  isAssetEqual,
   normalizeSymbol,
-  type TAsset
+  type TAsset,
+  type TAssetInfo
 } from '@paraspell/assets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -22,7 +23,6 @@ vi.mock('@paraspell/assets', async importActual => ({
   InvalidCurrencyError: class extends Error {},
   hasSupportForAsset: vi.fn(),
   findAssetInfoByLoc: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
   normalizeSymbol: vi.fn(),
   isAssetEqual: vi.fn()
 }))
@@ -47,6 +47,7 @@ describe('AssetHubPolkadot', () => {
       getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
     }),
     createAccountId: vi.fn().mockReturnValue('0x0000000000000000'),
+    findNativeAssetInfoOrThrow: vi.fn(),
     clone: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -103,8 +104,24 @@ describe('AssetHubPolkadot', () => {
     })
 
     describe('with feeAsset provided', () => {
+      const DOT_LOC = { parents: 1, interior: 'Here' }
+      const USDT_LOC = {
+        parents: 1,
+        interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+      }
+      const USDC_LOC = {
+        parents: 1,
+        interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337 }] }
+      }
+
       beforeEach(() => {
-        vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+        vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
+          symbol: 'DOT',
+          location: DOT_LOC
+        } as TAssetInfo)
+        vi.mocked(isAssetEqual).mockImplementation(
+          (a, b) => JSON.stringify(a?.location) === JSON.stringify(b?.location)
+        )
         vi.mocked(handleExecuteTransfer).mockResolvedValue({
           module: 'System',
           method: 'remark',
@@ -114,14 +131,14 @@ describe('AssetHubPolkadot', () => {
       })
 
       it.each([
-        { assetSymbol: 'USDT', feeAssetSymbol: 'DOT' },
-        { assetSymbol: 'DOT', feeAssetSymbol: 'USDT' },
-        { assetSymbol: 'USDC', feeAssetSymbol: 'USDT' }
-      ])('should call handleExecuteTransfer ', async ({ assetSymbol, feeAssetSymbol }) => {
+        { label: 'non-native asset, native fee', assetLoc: USDT_LOC, feeLoc: DOT_LOC },
+        { label: 'native asset, non-native fee', assetLoc: DOT_LOC, feeLoc: USDT_LOC },
+        { label: 'both non-native', assetLoc: USDC_LOC, feeLoc: USDT_LOC }
+      ])('should call handleExecuteTransfer for $label', async ({ assetLoc, feeLoc }) => {
         const input = {
           ...mockInput,
-          assetInfo: { symbol: assetSymbol, amount: 100n },
-          feeAssetInfo: { symbol: feeAssetSymbol }
+          assetInfo: { symbol: 'A', amount: 100n, location: assetLoc },
+          feeAssetInfo: { symbol: 'B', location: feeLoc }
         } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
         const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
         await chain.transferPolkadotXCM(input)
@@ -133,13 +150,88 @@ describe('AssetHubPolkadot', () => {
         const input = {
           ...mockInput,
           destination: 'Acala',
-          assetInfo: { symbol: 'DOT', amount: 100n },
-          feeAssetInfo: { symbol: 'DOT' }
+          assetInfo: { symbol: 'DOT', amount: 100n, location: DOT_LOC },
+          feeAssetInfo: { symbol: 'DOT', location: DOT_LOC }
         } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
         await chain.transferPolkadotXCM(input)
         expect(handleExecuteTransfer).not.toHaveBeenCalled()
         expect(transferPolkadotXcm).toHaveBeenCalled()
       })
+    })
+  })
+
+  describe('shouldUseExecuteTransfer', () => {
+    const DOT_LOC = { parents: 1, interior: 'Here' }
+    const OTHER_LOC = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+
+    beforeEach(() => {
+      vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
+        symbol: 'DOT',
+        location: DOT_LOC
+      } as TAssetInfo)
+      vi.mocked(isAssetEqual).mockImplementation(
+        (a, b) => JSON.stringify(a?.location) === JSON.stringify(b?.location)
+      )
+    })
+
+    const opts = (extra: object) =>
+      ({ ...mockInput, ...extra }) as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+    it('returns false when no fee asset is provided', () => {
+      expect(
+        chain.shouldUseExecuteTransfer(opts({ assetInfo: { symbol: 'USDT', location: OTHER_LOC } }))
+      ).toBe(false)
+    })
+
+    it('returns false when an overridden asset is set', () => {
+      expect(
+        chain.shouldUseExecuteTransfer(
+          opts({
+            assetInfo: { symbol: 'USDT', location: OTHER_LOC },
+            feeAssetInfo: { symbol: 'DOT', location: DOT_LOC },
+            overriddenAsset: []
+          })
+        )
+      ).toBe(false)
+    })
+
+    it('returns false for KSM asset', () => {
+      expect(
+        chain.shouldUseExecuteTransfer(
+          opts({
+            assetInfo: { symbol: 'KSM', location: OTHER_LOC },
+            feeAssetInfo: { symbol: 'DOT', location: DOT_LOC }
+          })
+        )
+      ).toBe(false)
+    })
+
+    it('returns false when both asset and fee asset are native', () => {
+      expect(
+        chain.shouldUseExecuteTransfer(
+          opts({
+            assetInfo: { symbol: 'DOT', location: DOT_LOC },
+            feeAssetInfo: { symbol: 'DOT', location: DOT_LOC }
+          })
+        )
+      ).toBe(false)
+    })
+
+    it.each([
+      { label: 'non-native asset, native fee', assetLoc: OTHER_LOC, feeLoc: DOT_LOC },
+      { label: 'native asset, non-native fee', assetLoc: DOT_LOC, feeLoc: OTHER_LOC }
+    ])('returns true for $label', ({ assetLoc, feeLoc }) => {
+      expect(
+        chain.shouldUseExecuteTransfer(
+          opts({
+            assetInfo: { symbol: 'A', location: assetLoc },
+            feeAssetInfo: { symbol: 'B', location: feeLoc }
+          })
+        )
+      ).toBe(true)
     })
   })
 

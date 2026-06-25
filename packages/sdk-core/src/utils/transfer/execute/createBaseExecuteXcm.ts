@@ -1,12 +1,14 @@
-import { type TAsset } from '@paraspell/assets'
+import { type TAsset, type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../../api'
 import { UnsupportedOperationError } from '../../../errors'
 import { createPayFees } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
+import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
 import { createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
@@ -17,10 +19,12 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
   }
 })
 
-const getInstructionType = <TRes, TCustomChain extends string = never>(
+const getInstructionType = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   version: Version,
   origin: TSubstrateChain | TCustomChain,
   destination: TChain,
+  assetInfo: TAssetInfo,
   reserveChain?: TChain | TCustomChain,
   transactOptions?: TTransactOptions<TRes>
 ) => {
@@ -37,8 +41,11 @@ const getInstructionType = <TRes, TCustomChain extends string = never>(
     return 'InitiateTeleportToReserve'
   }
 
-  // Trusted chains can teleport
-  if (isTrustedChain(origin) && isTrustedChain(destination)) {
+  // Trusted chains (or native-asset teleports to/from AssetHub) can teleport
+  if (
+    (isTrustedChain(origin) && isTrustedChain(destination)) ||
+    isNativeAssetTeleport(api, origin, destination, assetInfo)
+  ) {
     return 'InitiateTeleport'
   }
 
@@ -51,12 +58,17 @@ const getInstructionType = <TRes, TCustomChain extends string = never>(
   return 'DepositAsset'
 }
 
-const getInitiateTransferType = <TCustomChain extends string = never>(
+const getInitiateTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain | TCustomChain,
   destination: TChain,
+  assetInfo: TAssetInfo,
   reserveChain?: TChain | TCustomChain
 ) => {
-  if (isTrustedChain(origin) && isTrustedChain(destination)) {
+  if (
+    (isTrustedChain(origin) && isTrustedChain(destination)) ||
+    isNativeAssetTeleport(api, origin, destination, assetInfo)
+  ) {
     return 'Teleport'
   }
 
@@ -74,6 +86,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     api,
     chain,
     destChain,
+    assetInfo,
     fees: { originFee, reserveFee },
     version,
     paraIdTo,
@@ -108,7 +121,15 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     )
   }
 
-  const transferType = getInstructionType(version, chain, destChain, reserveChain, transactOptions)
+  const transferType = getInstructionType(
+    api,
+    version,
+    chain,
+    destChain,
+    assetInfo,
+    reserveChain,
+    transactOptions
+  )
 
   const routingAssetsFilter = feeAsset
     ? { Wild: { AllCounted: 2 } }
@@ -142,7 +163,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
   switch (transferType) {
     case 'InitiateTransfer': {
-      const transferFilter = getInitiateTransferType(chain, destChain, reserveChain)
+      const transferFilter = getInitiateTransferType(api, chain, destChain, assetInfo, reserveChain)
       mainInstructions = [
         {
           InitiateTransfer: {
