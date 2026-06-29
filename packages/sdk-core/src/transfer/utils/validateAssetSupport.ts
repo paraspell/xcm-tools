@@ -40,13 +40,11 @@ const validateBridgeAsset = <TApi, TRes, TSigner, TCustomChain extends string = 
 
   const isBridgedStablecoin = isStableCoinAsset(asset)
 
-  if (
-    !(
-      isNativeAsset ||
-      isBridgedSystemAsset(asset, [getRelayChainOf(destination)]) ||
-      isBridgedStablecoin
-    )
-  ) {
+  if (!(
+    isNativeAsset ||
+    isBridgedSystemAsset(asset, [getRelayChainOf(destination)]) ||
+    isBridgedStablecoin
+  )) {
     throw new InvalidCurrencyError(
       `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )

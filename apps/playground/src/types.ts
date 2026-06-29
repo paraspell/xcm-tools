@@ -80,11 +80,7 @@ export type TQuerySubmitType =
   | 'getTransferInfo';
 
 export type TSubmitType =
-  | 'default'
-  | 'update'
-  | 'delete'
-  | 'addToBatch'
-  | TQuerySubmitType;
+  'default' | 'update' | 'delete' | 'addToBatch' | TQuerySubmitType;
 
 export type TEndpoint = {
   url: string;

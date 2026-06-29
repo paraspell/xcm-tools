@@ -72,7 +72,7 @@ const updateChartTooltipPayload = (payload: Record<string, any>[]): Record<strin
 
 export const getFilteredChartTooltipPayload = (
   payload: readonly Record<string, any>[],
-  segmentId?: string
+  segmentId?: string | number
 ) => {
   const duplicatesFilter = updateChartTooltipPayload(
     payload.filter(item => item.fill !== 'none' || !item.color)

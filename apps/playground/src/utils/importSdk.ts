@@ -14,9 +14,7 @@ import type { PolkadotClient } from 'polkadot-api';
 
 export type TApi = ApiPromise | PolkadotClient | DedotClient;
 export type TTransaction =
-  | Extrinsic
-  | TPapiTransaction
-  | ChainSubmittableExtrinsic;
+  Extrinsic | TPapiTransaction | ChainSubmittableExtrinsic;
 
 export const importSdk = async (apiType: TApiType) => {
   let Sdk;

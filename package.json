@@ -5,30 +5,22 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^25.9.1",
-    "eslint": "^10.4.0",
+    "@types/node": "^26.0.1",
+    "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "eslint-plugin-tsdoc": "^0.5.2",
-    "globals": "^17.6.0",
-    "netlify-cli": "^26.0.2",
-    "prettier": "^3.8.3",
-    "turbo": "^2.9.16",
+    "globals": "^17.7.0",
+    "netlify-cli": "^26.1.0",
+    "prettier": "^3.9.3",
+    "turbo": "^2.10.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0",
-    "vitest": "^4.1.7"
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": ">=24"
-  },
-  "resolutions": {
-    "@polkadot/types-codec": "16.5.6",
-    "@polkadot/api": "16.5.6",
-    "@polkadot/types": "16.5.6",
-    "@polkadot-api/json-rpc-provider": "^0.2.0",
-    "react-is": "19.0.0",
-    "@crypto-dex-sdk/chain": "0.1.2"
   },
   "scripts": {
     "compile": "turbo run compile",
@@ -50,5 +42,5 @@
     "run:updateRouterAssets": "pnpm --filter swap updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@10.34.1"
+  "packageManager": "pnpm@11.9.0"
 }

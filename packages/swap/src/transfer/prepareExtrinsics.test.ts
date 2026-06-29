@@ -256,8 +256,7 @@ describe('prepareExtrinsics', () => {
     >;
 
     let capturedCalculateMinAmountOut:
-      | ((amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>)
-      | undefined;
+      ((amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>) | undefined;
 
     vi.mocked(handleSwapExecuteTransfer).mockImplementation((params) => {
       capturedCalculateMinAmountOut = params.calculateMinAmountOut;

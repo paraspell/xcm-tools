@@ -46,7 +46,7 @@ export const getSeriesLabels = (series: ChartSeries[] | undefined): ChartSeriesL
 
 export const getFilteredChartTooltipPayload = (
   payload: readonly Record<string, any>[],
-  segmentId?: string
+  segmentId?: string | number
 ) => {
   const duplicatesFilter = payload.filter(item => item.fill !== 'none' || !item.color);
 

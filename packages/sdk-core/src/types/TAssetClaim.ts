@@ -8,9 +8,7 @@ import { type TAddress } from './TTransfer'
 export type TAssetClaimOptionsBase = {
   chain: TSubstrateChain
   currency:
-    | WithComplexAmount<TCurrencyCore>
-    | TAsset<TAmount>[]
-    | WithComplexAmount<TCurrencyCore>[]
+    WithComplexAmount<TCurrencyCore> | TAsset<TAmount>[] | WithComplexAmount<TCurrencyCore>[]
   address: TAddress
   version?: Version
 }

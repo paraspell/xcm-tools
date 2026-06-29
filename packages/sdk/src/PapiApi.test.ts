@@ -619,16 +619,7 @@ describe('PapiApi', () => {
 
     it('adds delivery fee directly when asset is native', async () => {
       const unsafeApi = papiApi.api.getUnsafeApi()
-      const forwardedXcm = [
-        {
-          /* msg */
-        },
-        [
-          {
-            /* dest */
-          }
-        ]
-      ]
+      const forwardedXcm = [{/* msg */}, [{/* dest */}]]
 
       const res = await papiApi.getDeliveryFee(
         chain,
