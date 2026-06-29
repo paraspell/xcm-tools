@@ -182,8 +182,7 @@ export const resolveCustomChainAssetPallets = (
   const withoutExtrinsics = new Set(pallets.filter(p => !p.hasExtrinsics).map(p => p.name))
 
   const detectedNative = NATIVE_ASSETS_PALLET_PRIORITY.find(p => withExtrinsics.has(p)) as
-    | TAssetsPallet
-    | undefined
+    TAssetsPallet | undefined
 
   const detectedOther: TAssetsPallet[] = [
     ...OTHER_ASSETS_PALLET_PRIORITY.filter(p => withExtrinsics.has(p)),

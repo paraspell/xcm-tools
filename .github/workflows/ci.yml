@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Enable Corepack
         run: corepack enable
@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.head_ref || '' }}
           fetch-depth: 0
@@ -99,7 +99,7 @@ jobs:
 
       - name: Commit auto-fixes
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v10
         with:
           default_author: github_actions
           message: "chore: auto-fix formatting & lint"
@@ -111,7 +111,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Enable Corepack
         run: corepack enable
@@ -134,73 +134,73 @@ jobs:
         run: pnpm test:cov
 
       - name: Upload XCM SDK core coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk-core
           flags: xcm-sdk-core
       - name: Upload XCM SDK coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk
           flags: xcm-sdk
       - name: Upload XCM SDK PJS coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk-pjs
           flags: xcm-sdk-pjs
       - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk-common
           flags: sdk-common
       - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/assets
           flags: assets
       - name: Upload Pallets coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/pallets
           flags: pallets
       - name: Upload XCM Analyser coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/xcm-analyser
           flags: xcm-analyser
       - name: Upload Swap coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/swap
           flags: swap
       - name: Upload EVM coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/evm
           flags: evm
       - name: Upload EVM Snowbridge coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/evm-snowbridge
           flags: evm-snowbridge
       - name: Upload Visualizer BE coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: apps/visualizer-be
           flags: visualizer-be
       - name: Upload XCM API coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: apps/xcm-api

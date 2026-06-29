@@ -9,10 +9,7 @@ import { createName } from './utils/selectorName';
 
 type TSymbolMode = 'Auto' | 'Native' | 'Foreign' | 'Foreign abstract';
 type TCustomAssetOperation =
-  | 'assetId'
-  | 'symbol'
-  | 'location'
-  | 'overridenLocation';
+  'assetId' | 'symbol' | 'location' | 'overridenLocation';
 
 type TTransferAdvancedOptions = {
   development: boolean;
