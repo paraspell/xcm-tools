@@ -70,7 +70,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   // If builderConfig override is provided, it means we're using chopsticks
   const usingChopsticks = !!config
 
-  const describeGroup = usingChopsticks ? describe.concurrent : describe.sequential
+  const describeGroup = (name: string, fn: () => void) =>
+    describe(name, { concurrent: usingChopsticks }, fn)
 
   describeGroup('XCM - e2e', () => {
     describeGroup('Polkadot Kusama bridge', () => {
