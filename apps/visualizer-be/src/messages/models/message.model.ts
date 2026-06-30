@@ -86,8 +86,8 @@ export class Asset {
   @Field({ nullable: true })
   asset_module?: string;
 
-  @Field({ nullable: true })
-  amount?: string;
+  @Field()
+  amount: string;
 
   @Field(() => Int, { nullable: true })
   decimals?: number;

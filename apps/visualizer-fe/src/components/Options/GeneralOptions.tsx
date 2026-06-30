@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useLiveData } from '../../context/LiveData/useLiveData';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { CountOption } from '../../gql/graphql';
+import type { CountOption } from '../../gql/graphql';
 import { LanguageSelect } from './LanguageSelect';
 
 export const GeneralOptions = () => {
@@ -58,9 +58,9 @@ export const GeneralOptions = () => {
         label={t('settings.layout.arrangement')}
         placeholder={t('settings.layout.selectArrangement')}
         data={[
-          { value: CountOption.ORIGIN, label: t('filters.byOrigin') },
-          { value: CountOption.DESTINATION, label: t('filters.byDestination') },
-          { value: CountOption.BOTH, label: t('filters.byBoth') }
+          { value: 'ORIGIN', label: t('filters.byOrigin') },
+          { value: 'DESTINATION', label: t('filters.byDestination') },
+          { value: 'BOTH', label: t('filters.byBoth') }
         ]}
         value={parachainArrangement}
         onChange={onParachainArrangementChange}

@@ -41,7 +41,7 @@ export const AssetsTransferedPlotContainer = () => {
       AssetCountsBySymbolQuery['assetCountsBySymbol'][number],
       '__typename'
     >)[] = ['parachain', 'symbol', 'count', 'amount'];
-    const rows = data.assetCountsBySymbol.map(({ __typename, parachain, ...rest }) => ({
+    const rows = data.assetCountsBySymbol.map(({ parachain, ...rest }) => ({
       ...rest,
       parachain: parachain ?? ''
     }));
@@ -72,7 +72,12 @@ export const AssetsTransferedPlotContainer = () => {
 
   return (
     <Stack gap="xl" w="100%" h="100%" pl="xl" pr="xl">
-      <Group>
+      <Group wrap="nowrap">
+        <Checkbox
+          label={t('charts.assets.amounts')}
+          onChange={() => setShowAmounts(value => !value)}
+          checked={showAmounts}
+        />
         <Title order={2} ta="center" flex={1}>
           {t('charts.assets.title')}
         </Title>
@@ -81,18 +86,13 @@ export const AssetsTransferedPlotContainer = () => {
           onDownloadSvgClick={onDownloadSvgClick}
         />
       </Group>
-      <Group justify="space-between">
-        <Checkbox
-          label={t('charts.assets.amounts')}
-          onChange={() => setShowAmounts(value => !value)}
-          checked={showAmounts}
+      <Group flex={1} w="100%" h="100%" justify="center">
+        <AssetsTransferredPlot
+          ref={ref}
+          counts={data?.assetCountsBySymbol ?? []}
+          showAmounts={showAmounts}
         />
       </Group>
-      <AssetsTransferredPlot
-        ref={ref}
-        counts={data?.assetCountsBySymbol ?? []}
-        showAmounts={showAmounts}
-      />
     </Stack>
   );
 };

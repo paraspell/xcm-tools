@@ -3,8 +3,7 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { createContext, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import type { ChannelsQuery } from '../../gql/graphql';
-import { CountOption } from '../../gql/graphql';
+import type { ChannelsQuery, CountOption } from '../../gql/graphql';
 import { decodeDate, decodeList } from '../../routes/urlFilters';
 
 interface SelectedParachainContextType {
@@ -57,7 +56,7 @@ export const SelectedParachainProvider = ({ children }: SelectedParachainProvide
   const [highlightedChannelColor, setHighlightedChannelColor] = useState<string>();
   const [secondaryChannelColor, setSecondaryChannelColor] = useState<string>();
   const [selectedChannelColor, setSelectedChannelColor] = useState<string>();
-  const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
+  const [parachainArrangement, setParachainArrangement] = useState<CountOption>('ORIGIN');
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
   const [activeEditParachain, setActiveEditParachain] = useState<TSubstrateChain | null>(null);
   const [skyboxTrigger, setSkyboxTrigger] = useState(0);

@@ -1,188 +1,36 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null | undefined;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-  [_ in K]?: never;
-};
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> =
   T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: { input: any; output: any };
-};
-
-export type AccountXcmCountType = {
-  __typename?: 'AccountXcmCountType';
-  count: Scalars['Int']['output'];
-  ecosystem: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-};
-
-export type Asset = {
-  __typename?: 'Asset';
-  amount: Scalars['String']['output'];
-  asset_module: Scalars['String']['output'];
-  decimals: Scalars['Int']['output'];
-  enum_key: Scalars['String']['output'];
-  symbol: Scalars['String']['output'];
-};
-
-export type AssetCount = {
-  __typename?: 'AssetCount';
-  amount: Scalars['String']['output'];
-  count: Scalars['Int']['output'];
-  ecosystem: Scalars['String']['output'];
-  parachain?: Maybe<Scalars['String']['output']>;
-  symbol: Scalars['String']['output'];
-};
-
-export type Channel = {
-  __typename?: 'Channel';
-  active_at: Scalars['Int']['output'];
-  ecosystem: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
-  message_count: Scalars['Int']['output'];
-  proposed_max_capacity: Scalars['Int']['output'];
-  proposed_max_message_size: Scalars['Int']['output'];
-  recipient: Scalars['Int']['output'];
-  sender: Scalars['Int']['output'];
-  status: Scalars['String']['output'];
-  transfer_count: Scalars['Int']['output'];
-};
-
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 /** Option to count messages by origin, destination, or both */
-export enum CountOption {
-  BOTH = 'BOTH',
-  DESTINATION = 'DESTINATION',
-  ORIGIN = 'ORIGIN'
-}
-
-export type MessageCount = {
-  __typename?: 'MessageCount';
-  ecosystem: Scalars['String']['output'];
-  paraId: Scalars['Int']['output'];
-  totalCount: Scalars['Int']['output'];
-};
-
-export type MessageCountByDay = {
-  __typename?: 'MessageCountByDay';
-  date: Scalars['String']['output'];
-  ecosystem: Scalars['String']['output'];
-  messageCount: Scalars['Float']['output'];
-  messageCountFailed: Scalars['Float']['output'];
-  messageCountSuccess: Scalars['Float']['output'];
-  parachain?: Maybe<Scalars['String']['output']>;
-};
-
-export type MessageCountByStatus = {
-  __typename?: 'MessageCountByStatus';
-  ecosystem?: Maybe<Scalars['String']['output']>;
-  failed: Scalars['Int']['output'];
-  parachain?: Maybe<Scalars['String']['output']>;
-  success: Scalars['Int']['output'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  accountCounts: Array<AccountXcmCountType>;
-  assetCountsBySymbol: Array<AssetCount>;
-  channel: Channel;
-  channels: Array<Channel>;
-  channelsInInterval: Array<Channel>;
-  messageCounts: Array<MessageCountByStatus>;
-  messageCountsByDay: Array<MessageCountByDay>;
-  totalMessageCounts: Array<MessageCount>;
-};
-
-export type QueryAccountCountsArgs = {
-  ecosystem: Scalars['String']['input'];
-  endTime: Scalars['Timestamp']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
-  startTime: Scalars['Timestamp']['input'];
-  threshold: Scalars['Int']['input'];
-};
-
-export type QueryAssetCountsBySymbolArgs = {
-  ecosystem: Scalars['String']['input'];
-  endTime: Scalars['Timestamp']['input'];
-  parachains: Array<Scalars['String']['input']>;
-  startTime: Scalars['Timestamp']['input'];
-};
-
-export type QueryChannelArgs = {
-  ecosystem: Scalars['String']['input'];
-  recipient: Scalars['Int']['input'];
-  sender: Scalars['Int']['input'];
-};
-
-export type QueryChannelsArgs = {
-  ecosystem: Scalars['String']['input'];
-};
-
-export type QueryChannelsInIntervalArgs = {
-  ecosystem: Scalars['String']['input'];
-  endTime: Scalars['Timestamp']['input'];
-  startTime: Scalars['Timestamp']['input'];
-};
-
-export type QueryMessageCountsArgs = {
-  ecosystem?: InputMaybe<Scalars['String']['input']>;
-  endTime: Scalars['Timestamp']['input'];
-  parachains: Array<Scalars['String']['input']>;
-  startTime: Scalars['Timestamp']['input'];
-};
-
-export type QueryMessageCountsByDayArgs = {
-  ecosystem: Scalars['String']['input'];
-  endTime: Scalars['Timestamp']['input'];
-  parachains: Array<Scalars['String']['input']>;
-  startTime: Scalars['Timestamp']['input'];
-};
-
-export type QueryTotalMessageCountsArgs = {
-  countBy?: CountOption;
-  ecosystem: Scalars['String']['input'];
-  endTime: Scalars['Timestamp']['input'];
-  startTime: Scalars['Timestamp']['input'];
-};
+export type CountOption = 'BOTH' | 'DESTINATION' | 'ORIGIN';
 
 export type ChannelsQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
+  ecosystem: string;
 }>;
 
 export type ChannelsQuery = {
-  __typename?: 'Query';
   channels: Array<{
-    __typename?: 'Channel';
     id: number;
     ecosystem: string;
     sender: number;
     recipient: number;
-    transfer_count: number;
+    transfer_count: number | null;
     message_count: number;
   }>;
 };
 
 export type ChannelsInIntervalQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  startTime: unknown;
+  endTime: unknown;
 }>;
 
 export type ChannelsInIntervalQuery = {
-  __typename?: 'Query';
   channelsInInterval: Array<{
-    __typename?: 'Channel';
     id: number;
     ecosystem: string;
     sender: number;
@@ -192,55 +40,49 @@ export type ChannelsInIntervalQuery = {
 };
 
 export type ChannelQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  sender: Scalars['Int']['input'];
-  recipient: Scalars['Int']['input'];
+  ecosystem: string;
+  sender: number;
+  recipient: number;
 }>;
 
 export type ChannelQuery = {
-  __typename?: 'Query';
   channel: {
-    __typename?: 'Channel';
     id: number;
     ecosystem: string;
     sender: number;
     recipient: number;
     message_count: number;
-    active_at: number;
+    active_at: number | null;
   };
 };
 
 export type MessageCountsQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  parachains: Array<string> | string;
+  startTime: unknown;
+  endTime: unknown;
 }>;
 
 export type MessageCountsQuery = {
-  __typename?: 'Query';
   messageCounts: Array<{
-    __typename?: 'MessageCountByStatus';
-    ecosystem?: string | null;
-    parachain?: string | null;
+    ecosystem: string | null;
+    parachain: string | null;
     success: number;
     failed: number;
   }>;
 };
 
 export type MessageCountsByDayQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  parachains: Array<string> | string;
+  startTime: unknown;
+  endTime: unknown;
 }>;
 
 export type MessageCountsByDayQuery = {
-  __typename?: 'Query';
   messageCountsByDay: Array<{
-    __typename?: 'MessageCountByDay';
     ecosystem: string;
-    parachain?: string | null;
+    parachain: string | null;
     date: string;
     messageCount: number;
     messageCountSuccess: number;
@@ -249,18 +91,16 @@ export type MessageCountsByDayQuery = {
 };
 
 export type AssetCountsBySymbolQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  parachains: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  parachains: Array<string> | string;
+  startTime: unknown;
+  endTime: unknown;
 }>;
 
 export type AssetCountsBySymbolQuery = {
-  __typename?: 'Query';
   assetCountsBySymbol: Array<{
-    __typename?: 'AssetCount';
     ecosystem: string;
-    parachain?: string | null;
+    parachain: string | null;
     symbol: string;
     count: number;
     amount: string;
@@ -268,38 +108,26 @@ export type AssetCountsBySymbolQuery = {
 };
 
 export type AccountCountsQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  threshold: Scalars['Int']['input'];
-  paraIds?: InputMaybe<Array<Scalars['Int']['input']> | Scalars['Int']['input']>;
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  threshold: number;
+  paraIds?: Array<number> | number | null | undefined;
+  startTime: unknown;
+  endTime: unknown;
 }>;
 
 export type AccountCountsQuery = {
-  __typename?: 'Query';
-  accountCounts: Array<{
-    __typename?: 'AccountXcmCountType';
-    ecosystem: string;
-    id: string;
-    count: number;
-  }>;
+  accountCounts: Array<{ ecosystem: string; id: string; count: number }>;
 };
 
 export type TotalMessageCountsQueryVariables = Exact<{
-  ecosystem: Scalars['String']['input'];
-  startTime: Scalars['Timestamp']['input'];
-  endTime: Scalars['Timestamp']['input'];
+  ecosystem: string;
+  startTime: unknown;
+  endTime: unknown;
   countBy: CountOption;
 }>;
 
 export type TotalMessageCountsQuery = {
-  __typename?: 'Query';
-  totalMessageCounts: Array<{
-    __typename?: 'MessageCount';
-    ecosystem: string;
-    paraId: number;
-    totalCount: number;
-  }>;
+  totalMessageCounts: Array<{ ecosystem: string; paraId: number; totalCount: number }>;
 };
 
 export const ChannelsDocument = {

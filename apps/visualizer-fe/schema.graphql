@@ -10,10 +10,10 @@ type AccountXcmCountType {
 
 type Asset {
   amount: String!
-  asset_module: String!
-  decimals: Int!
-  enum_key: String!
-  symbol: String!
+  asset_module: String
+  decimals: Int
+  enum_key: String
+  symbol: String
 }
 
 type AssetCount {
@@ -25,19 +25,19 @@ type AssetCount {
 }
 
 type Channel {
-  active_at: Int!
+  active_at: Int
   ecosystem: String!
   id: Int!
   message_count: Int!
-  proposed_max_capacity: Int!
-  proposed_max_message_size: Int!
   recipient: Int!
   sender: Int!
-  status: String!
-  transfer_count: Int!
+  status: String
+  transfer_count: Int
 }
 
-"""Option to count messages by origin, destination, or both"""
+"""
+Option to count messages by origin, destination, or both
+"""
 enum CountOption {
   BOTH
   DESTINATION
@@ -67,14 +67,40 @@ type MessageCountByStatus {
 }
 
 type Query {
-  accountCounts(ecosystem: String!, endTime: Timestamp!, paraIds: [Int!], startTime: Timestamp!, threshold: Int!): [AccountXcmCountType!]!
-  assetCountsBySymbol(ecosystem: String!, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [AssetCount!]!
+  accountCounts(
+    ecosystem: String!
+    endTime: Timestamp!
+    paraIds: [Int!]
+    startTime: Timestamp!
+    threshold: Int!
+  ): [AccountXcmCountType!]!
+  assetCountsBySymbol(
+    ecosystem: String!
+    endTime: Timestamp!
+    parachains: [String!]!
+    startTime: Timestamp!
+  ): [AssetCount!]!
   channel(ecosystem: String!, recipient: Int!, sender: Int!): Channel!
   channels(ecosystem: String!): [Channel!]!
   channelsInInterval(ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [Channel!]!
-  messageCounts(ecosystem: String, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [MessageCountByStatus!]!
-  messageCountsByDay(ecosystem: String!, endTime: Timestamp!, parachains: [String!]!, startTime: Timestamp!): [MessageCountByDay!]!
-  totalMessageCounts(countBy: CountOption! = ORIGIN, ecosystem: String!, endTime: Timestamp!, startTime: Timestamp!): [MessageCount!]!
+  messageCounts(
+    ecosystem: String
+    endTime: Timestamp!
+    parachains: [String!]!
+    startTime: Timestamp!
+  ): [MessageCountByStatus!]!
+  messageCountsByDay(
+    ecosystem: String!
+    endTime: Timestamp!
+    parachains: [String!]!
+    startTime: Timestamp!
+  ): [MessageCountByDay!]!
+  totalMessageCounts(
+    countBy: CountOption!
+    ecosystem: String!
+    endTime: Timestamp!
+    startTime: Timestamp!
+  ): [MessageCount!]!
 }
 
 """

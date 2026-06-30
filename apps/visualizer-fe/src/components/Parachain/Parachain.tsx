@@ -1,3 +1,4 @@
+import { lighten, parseThemeColor, useMantineTheme } from '@mantine/core';
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
 import { Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
@@ -12,7 +13,6 @@ import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useAdjustUVs } from '../../hooks/useAdjustUVs';
 import { getChainNameNoEcosystem } from '../../utils';
-import { lightenColor } from '../../utils/lightenColor';
 import { getParachainColor } from '../../utils/utils';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getChainLogo } from './utils';
@@ -42,6 +42,7 @@ export const Parachain: FC<Props> = ({
   ecosystem
 }) => {
   const { activeEditParachain, animationEnabled } = useSelectedParachain();
+  const theme = useMantineTheme();
 
   const initialPosition = useMemo(() => getParachainPosition(index, ecosystem), [index, ecosystem]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -109,7 +110,7 @@ export const Parachain: FC<Props> = ({
   });
 
   const color = getParachainColor(name, ecosystem);
-  const lightColor = lightenColor(color, 50);
+  const lightColor = lighten(parseThemeColor({ color, theme }).value, 0.5);
 
   const onClickHandler = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();

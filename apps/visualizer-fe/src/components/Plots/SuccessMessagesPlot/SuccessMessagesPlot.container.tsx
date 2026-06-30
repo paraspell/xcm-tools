@@ -56,7 +56,7 @@ export const SuccessMessagesPlotContainer = () => {
       'success',
       'failed'
     ];
-    const rows = data.messageCounts.map(({ __typename, parachain, ecosystem, ...rest }) => ({
+    const rows = data.messageCounts.map(({ parachain, ecosystem, ...rest }) => ({
       ...rest,
       parachain: parachain ?? '',
       ecosystem: ecosystem ?? ''

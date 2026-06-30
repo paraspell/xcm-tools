@@ -14,7 +14,7 @@ import {
 } from '@polkadot/apps-config/endpoints';
 
 import { BASE_CHAIN_SCALE, RELAYCHAIN_ID } from '../consts/consts';
-import { CountOption } from '../gql/graphql';
+import type { CountOption } from '../gql/graphql';
 
 export const getParachainById = (id: number, ecosystem: TRelaychain): TSubstrateChain | null => {
   const chain = getTChain(id, ecosystem);
@@ -68,7 +68,7 @@ const getEndpointOptions = (ecosystem: TRelaychain) => {
 };
 
 export const calculateChainScale = (count: number, arrangement: CountOption | undefined) => {
-  const scalingFactor = arrangement === CountOption.BOTH ? 0.000004 : 0.000009;
+  const scalingFactor = arrangement === 'BOTH' ? 0.000004 : 0.000009;
   return BASE_CHAIN_SCALE + count * scalingFactor;
 };
 

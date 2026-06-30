@@ -17,8 +17,8 @@ export class Channel {
   @Field(() => Int, { nullable: true })
   transfer_count?: number;
 
-  @Field(() => Int, { nullable: true })
-  message_count?: number;
+  @Field(() => Int)
+  message_count: number;
 
   @Field(() => Int, { nullable: true })
   active_at?: number;
