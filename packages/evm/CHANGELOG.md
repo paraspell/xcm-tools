@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.10.0](https://github.com/paraspell/xcm-tools/compare/evm-v13.9.0...evm-v13.10.0) (2026-06-30)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([a3ae1ed](https://github.com/paraspell/xcm-tools/commit/a3ae1ed6cf634c839a239ff2dc6a562b2b9787f6))
+
 ## [13.9.0](https://github.com/paraspell/xcm-tools/compare/evm-v13.8.0...evm-v13.9.0) (2026-06-22)
 
 

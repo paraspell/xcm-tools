@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.10.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.9.0...swap-v13.10.0) (2026-06-30)
+
+
+### Bug Fixes
+
+* **sdk-core:** Enable native asset teleports to and from AssetHub 🔧 ([a8931b2](https://github.com/paraspell/xcm-tools/commit/a8931b250126a24a9c681f2bbcd2ed225107701e))
+
+
+### Tests
+
+* Fix deprecated vitest method 🔧 ([0dbe054](https://github.com/paraspell/xcm-tools/commit/0dbe05490655c9e6c00550e971077da993fe0030))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([a3ae1ed](https://github.com/paraspell/xcm-tools/commit/a3ae1ed6cf634c839a239ff2dc6a562b2b9787f6))
+
 ## [13.9.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.8.0...swap-v13.9.0) (2026-06-22)
 
 
