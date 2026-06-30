@@ -9,11 +9,15 @@ import {
   TextInput,
 } from '@mantine/core';
 import { createFormActions, type UseFormReturnType } from '@mantine/form';
+import type { TAssetInfo, TChain } from '@paraspell/sdk';
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
 import { MAIN_FORM_NAME } from '../../constants';
+import { useWallet } from '../../hooks';
 import type { TCurrencyEntryBase } from '../../types';
 import { ComboboxSelect } from './ComboboxSelect';
+import { CurrencyBalance } from './CurrencyBalance';
 
 const { setFieldValue } = createFormActions(MAIN_FORM_NAME);
 
@@ -22,6 +26,9 @@ type Props<T extends object> = {
   fieldPath: string;
   fieldValue: TCurrencyEntryBase;
   currencyOptions: ComboboxItem[];
+  chain?: TChain;
+  currencyMap?: Record<string, TAssetInfo>;
+  balanceActions?: ReactNode;
   size?: MantineSize;
   required?: boolean;
   disabled?: boolean;
@@ -41,6 +48,9 @@ export const CurrencySelection = <T extends object>({
   fieldPath,
   fieldValue,
   currencyOptions,
+  chain,
+  currencyMap,
+  balanceActions,
   size = 'sm',
   required = false,
   disabled,
@@ -56,6 +66,15 @@ export const CurrencySelection = <T extends object>({
 }: Props<T>) => {
   const isCustomCurrency = fieldValue.isCustomCurrency;
   const customCurrencyType = fieldValue.customCurrencyType;
+
+  const { selectedAccount, selectedEvmAccount, apiType } = useWallet();
+
+  const activeAddress = selectedEvmAccount?.address ?? selectedAccount?.address;
+
+  const selectedAsset =
+    !isCustomCurrency && currencyMap
+      ? currencyMap[fieldValue.currencyOptionId]
+      : undefined;
 
   const prevCustomCurrencyType = useRef(customCurrencyType);
 
@@ -141,6 +160,20 @@ export const CurrencySelection = <T extends object>({
             {...form.getInputProps(`${fieldPath}.currencyOptionId`)}
           />
         ))}
+
+      {chain && selectedAsset && activeAddress && (
+        <Group justify="space-between" gap="xs" wrap="nowrap">
+          <CurrencyBalance
+            chain={chain}
+            address={activeAddress}
+            currency={{ location: selectedAsset.location }}
+            decimals={selectedAsset.decimals}
+            symbol={selectedAsset.symbol}
+            apiType={apiType}
+          />
+          {balanceActions}
+        </Group>
+      )}
 
       <Group>
         <Group>

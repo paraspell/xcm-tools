@@ -163,3 +163,5 @@ export const QUERY_CONFIG: Record<
 
 export const TRANSFER_WARNING_TEXT =
   'This tool is intended for testing only, use at your own risk for non tested transfer scenarios. Always test with small amounts first.';
+
+export const BALANCE_FETCH_DEBOUNCE_MS = 400;

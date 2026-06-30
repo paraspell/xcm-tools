@@ -1,5 +1,6 @@
 export * from './builderUtils';
 export * from './eip6963';
+export * from './formatBalance';
 export * from './getViemChainConfig';
 export * from './importSdk';
 export * from './submitMultipleTransactions';
