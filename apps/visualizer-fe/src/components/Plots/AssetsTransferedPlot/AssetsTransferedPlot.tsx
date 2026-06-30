@@ -136,6 +136,7 @@ export const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(
           }
         },
         grid: {
+          top: 20,
           left: '3%',
           right: '4%',
           bottom: '3%',

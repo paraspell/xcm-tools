@@ -49,7 +49,7 @@ export class ChannelService {
         sender: Number(senderId),
         recipient: Number(recipientId),
         transfer_count: Number(transferCount),
-        message_count: Number(totalCount),
+        message_count: Number(totalCount ?? 0),
         status: 'accepted',
       }),
     );
@@ -100,7 +100,7 @@ export class ChannelService {
         ecosystem,
         sender: Number(senderId),
         recipient: Number(recipientId),
-        message_count: Number(totalCount),
+        message_count: Number(totalCount ?? 0),
       }),
     );
   }
@@ -153,7 +153,7 @@ export class ChannelService {
       ecosystem,
       sender: Number(row.senderId),
       recipient: Number(row.recipientId),
-      message_count: Number(row.totalCount),
+      message_count: Number(row.totalCount ?? 0),
       active_at: Number(row.active_at),
       status: row.status,
     };

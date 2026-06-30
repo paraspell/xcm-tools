@@ -7,7 +7,6 @@ import { totalMessageCountsQueryDocument } from '../../api/messages';
 import { useDeviceType } from '../../context/DeviceType/useDeviceType';
 import { useSelectedEcosystem } from '../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { CountOption } from '../../gql/graphql';
 import { ParachainsGraph } from './ParachainsGraph';
 
 const now = Date.now();
@@ -33,7 +32,7 @@ export const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
       ecosystem: ecosystem.toString().toLowerCase(),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now,
-      countBy: parachainArrangement ?? CountOption.ORIGIN
+      countBy: parachainArrangement ?? 'ORIGIN'
     }
   });
 

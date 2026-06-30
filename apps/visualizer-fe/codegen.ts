@@ -4,6 +4,9 @@ const config: CodegenConfig = {
   schema: process.env.VITE_GRAPHQL_URL,
   documents: ['./src/**/*.{ts,tsx}'],
   ignoreNoDocuments: true,
+  hooks: {
+    afterAllFileWrite: ['prettier --write']
+  },
   generates: {
     './src/gql/': {
       preset: 'client',

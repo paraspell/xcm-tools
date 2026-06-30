@@ -52,7 +52,7 @@ export const AmountTransferedPlotContainer = () => {
       'messageCountSuccess',
       'messageCountFailed'
     ];
-    const rows = data.messageCountsByDay.map(({ __typename, parachain, ecosystem, ...rest }) => ({
+    const rows = data.messageCountsByDay.map(({ parachain, ecosystem, ...rest }) => ({
       ...rest,
       parachain: parachain ?? '',
       ecosystem: ecosystem ?? ''

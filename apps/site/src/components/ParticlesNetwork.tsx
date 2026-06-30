@@ -1,22 +1,16 @@
+import type { Engine } from "@tsparticles/engine";
 import { loadLinksPreset } from "@tsparticles/preset-links";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import { useEffect, useState } from "react";
+
+const initParticles = async (engine: Engine) => {
+  await loadLinksPreset(engine);
+  await loadSlim(engine);
+};
 
 export const ParticlesNetwork = () => {
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    void initParticlesEngine(async (engine) => {
-      await loadLinksPreset(engine);
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
-
   return (
-    init && (
+    <ParticlesProvider init={initParticles}>
       <Particles
         id="tsparticles"
         style={{
@@ -68,6 +62,6 @@ export const ParticlesNetwork = () => {
           },
         }}
       />
-    )
+    </ParticlesProvider>
   );
 };

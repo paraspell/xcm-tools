@@ -31,7 +31,6 @@ describe('Channel', () => {
     channel.sender = 101;
     channel.recipient = 201;
     channel.transfer_count = undefined;
-    channel.message_count = undefined;
     channel.active_at = undefined;
     channel.status = undefined;
 
@@ -40,7 +39,6 @@ describe('Channel', () => {
     expect(channel.sender).toBe(101);
     expect(channel.recipient).toBe(201);
     expect(channel.transfer_count).toBeUndefined();
-    expect(channel.message_count).toBeUndefined();
     expect(channel.active_at).toBeUndefined();
     expect(channel.status).toBeUndefined();
   });
