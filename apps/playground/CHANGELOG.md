@@ -1,5 +1,22 @@
 # Changelog
 
+## [13.10.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.9.0...playground-v13.10.0) (2026-06-30)
+
+
+### Features
+
+* **playground:** Show balance next to currency select ✨ ([b29f6ea](https://github.com/paraspell/xcm-tools/commit/b29f6eab4e1d0a9e0bb13b5959c0b3a3227fc156))
+
+
+### Bug Fixes
+
+* **sdk-core:** Use teleport in execute when dealing with chain native asset 🪄 ([4eb407e](https://github.com/paraspell/xcm-tools/commit/4eb407e2e6486eab1b314260ee6234a0f71a43f7))
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([a3ae1ed](https://github.com/paraspell/xcm-tools/commit/a3ae1ed6cf634c839a239ff2dc6a562b2b9787f6))
+
 ## [13.9.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.8.0...playground-v13.9.0) (2026-06-22)
 
 
