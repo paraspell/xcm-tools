@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.11](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.10...xcm-analyser-v3.0.11) (2026-06-30)
+
+
+### Build System
+
+* Perform a monthly check 🪄 ([a3ae1ed](https://github.com/paraspell/xcm-tools/commit/a3ae1ed6cf634c839a239ff2dc6a562b2b9787f6))
+
 ## [3.0.10](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.9...xcm-analyser-v3.0.10) (2026-06-18)
 
 
