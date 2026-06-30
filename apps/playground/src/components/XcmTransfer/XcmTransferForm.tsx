@@ -645,6 +645,9 @@ export const XcmTransferForm: FC<Props> = ({
                       fieldValue={currencies[index]}
                       size={currencies.length > 1 ? 'xs' : 'sm'}
                       currencyOptions={mergedCurrencyOptions}
+                      chain={from}
+                      currencyMap={mergedCurrencyMap}
+                      balanceActions={renderEthAssetActions(index)}
                       onAddCustom={from ? handleAddCustomAsset : undefined}
                       customAssetKeys={customAssetKeys}
                       onEditCustomAsset={handleEditCustomAsset}
@@ -687,7 +690,6 @@ export const XcmTransferForm: FC<Props> = ({
                         style={{ flex: 1 }}
                       />
                     </Group>
-                    {renderEthAssetActions(index)}
                   </Stack>
                   {form.values.currencies.length > 1 && (
                     <ActionIcon

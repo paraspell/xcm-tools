@@ -1,4 +1,5 @@
 import { Button, Group, Text } from '@mantine/core';
+import { useCounter } from '@mantine/hooks';
 import { approveToken, getTokenBalance } from '@paraspell/evm-snowbridge';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState } from 'react';
@@ -6,6 +7,7 @@ import type { Chain, WalletClient } from 'viem';
 import { formatUnits, parseUnits } from 'viem';
 import { mainnet } from 'viem/chains';
 
+import { BALANCE_FETCH_DEBOUNCE_MS } from '../../constants';
 import { submitEvmApproveFromApi } from '../../utils';
 import {
   showErrorNotification,
@@ -35,34 +37,27 @@ export const EthAssetActions: FC<Props> = ({
   getEvmWalletClient,
 }) => {
   const isNativeEth = assetId.toLowerCase() === ETHER_TOKEN_ADDRESS;
-  const [balance, setBalance] = useState<bigint>();
   const [allowance, setAllowance] = useState<bigint>();
-  const [loadingBalance, setLoadingBalance] = useState(false);
   const [approving, setApproving] = useState(false);
-  const [refreshToken, setRefreshToken] = useState(0);
+  const [refreshToken, refreshHandlers] = useCounter();
 
-  const fetchBalance = useCallback(async () => {
+  const fetchAllowance = useCallback(async () => {
     const client = getEvmWalletClient(mainnet);
     if (!client) return;
-    setLoadingBalance(true);
     try {
       const result = await getTokenBalance(client, symbol);
-      setBalance(result.balance);
       setAllowance(result.gatewayAllowance);
     } catch (_e) {
-      setBalance(undefined);
       setAllowance(undefined);
-    } finally {
-      setLoadingBalance(false);
     }
   }, [getEvmWalletClient, symbol]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
-      void fetchBalance();
-    }, 400);
+      void fetchAllowance();
+    }, BALANCE_FETCH_DEBOUNCE_MS);
     return () => window.clearTimeout(handle);
-  }, [fetchBalance, refreshToken]);
+  }, [fetchAllowance, refreshToken]);
 
   const formatAmount = (value: bigint | undefined) =>
     value === undefined ? '…' : formatUnits(value, decimals);
@@ -111,7 +106,7 @@ export const EthAssetActions: FC<Props> = ({
           await approveToken(client, parsedAmount, symbol);
         }
         showSuccessNotification(notifId ?? '', 'Success', `${symbol} approved`);
-        setRefreshToken((n) => n + 1);
+        refreshHandlers.increment();
       } catch (e) {
         const message = e instanceof Error ? e.message : 'Approve failed';
         showErrorNotification(message, notifId);
@@ -122,28 +117,23 @@ export const EthAssetActions: FC<Props> = ({
     void run();
   };
 
+  if (isNativeEth) return null;
+
   return (
-    <Group justify="space-between" gap="xs" wrap="nowrap">
+    <Group gap="xs" wrap="nowrap">
       <Text size="xs" c="dimmed">
-        Balance: {loadingBalance ? '…' : formatAmount(balance)} {symbol}
-        {!isNativeEth && allowance !== undefined && (
-          <>
-            {' • '}Approved: {formatAmount(allowance)} {symbol}
-          </>
-        )}
+        Approved: {formatAmount(allowance)} {symbol}
       </Text>
-      {!isNativeEth && (
-        <Button
-          size="compact-xs"
-          variant="light"
-          onClick={onApproveClick}
-          loading={approving}
-          disabled={!needsApproval}
-          data-testid="btn-approve-token"
-        >
-          Approve
-        </Button>
-      )}
+      <Button
+        size="compact-xs"
+        variant="light"
+        onClick={onApproveClick}
+        loading={approving}
+        disabled={!needsApproval}
+        data-testid="btn-approve-token"
+      >
+        Approve
+      </Button>
     </Group>
   );
 };
