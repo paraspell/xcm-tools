@@ -1,0 +1,545 @@
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import {
+  getNativeAssetSymbolImpl,
+  getRelayChainSymbolImpl,
+  isAssetEqual,
+  isChainEvm,
+  isSymbolMatch,
+  type TAsset
+} from '@paraspell/assets'
+import { getNativeAssetsPallet, getOtherAssetsPallets, hasPalletImpl } from '@paraspell/pallets'
+import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  isExternalChain,
+  isSubstrateBridge,
+  isTLocation,
+  isTrustedChain,
+  Parents
+} from '@paraspell/sdk-common'
+
+import type { PolkadotApi } from '../api'
+import { MIN_AMOUNT, RELAY_LOCATION } from '../constants'
+import {
+  FeatureTemporarilyDisabledError,
+  InvalidAddressError,
+  RoutingResolutionError,
+  ScenarioNotSupportedError,
+  TypeAndThenUnavailableError,
+  UnsupportedOperationError
+} from '../errors'
+import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
+import { getPalletInstance } from '../pallets'
+import { handleTransactUsingSend, transferPolkadotXcm } from '../pallets/polkadotXcm'
+import { transferXTokens } from '../pallets/xTokens'
+import { createTypeAndThenCall } from '../transfer'
+import type {
+  IPolkadotXCMTransfer,
+  IXTokensTransfer,
+  TPolkadotXCMTransferOptions,
+  TScenario,
+  TTransferInternalOptions,
+  TTransferLocalOptions,
+  TXTokensTransferOptions
+} from '../types'
+import type { TMintConfig, TSetBalanceRes } from '../types/TAssets'
+import {
+  assertHasId,
+  assertSender,
+  createBeneficiaryLocation,
+  getChain,
+  handleExecuteTransfer,
+  isNativeAssetTeleport,
+  resolveDestChain
+} from '../utils'
+import { createAsset, pickOtherMintPallet } from '../utils/asset'
+import { localizeLocationImpl } from '../utils/location'
+import { resolveParaId } from '../utils/resolveParaId'
+import { resolveScenario } from '../utils/transfer/resolveScenario'
+import Chain from './Chain'
+
+const supportsXTokens = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  obj: unknown
+): obj is IXTokensTransfer<TApi, TRes, TSigner, TCustomChain> => {
+  return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
+}
+
+const supportsPolkadotXCM = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  obj: unknown
+): obj is IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain> => {
+  return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
+}
+
+abstract class SubstrateChain<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+> extends Chain<TApi, TRes, TSigner, TCustomChain, TSubstrateChain | TCustomChain> {
+  // Property _info maps our chain names to names which polkadot libs are using
+  // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
+  // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts
+  // These names can be found under object key 'info'
+  private readonly _info: string
+
+  constructor(
+    chain: TSubstrateChain | TCustomChain,
+    info: string,
+    ecosystem: TRelaychain,
+    version: Version
+  ) {
+    super(chain, ecosystem, version)
+    this._info = info
+  }
+
+  get info(): string {
+    return this._info
+  }
+
+  async transfer(
+    transferOptions: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
+    const {
+      api,
+      assetInfo: asset,
+      currency,
+      feeAsset,
+      feeCurrency,
+      recipient,
+      to: destination,
+      paraIdTo,
+      overriddenAsset,
+      version,
+      sender,
+      ahAddress,
+      pallet,
+      method,
+      keepAlive,
+      transactOptions
+    } = transferOptions
+    const scenario = resolveScenario(this.chain, destination)
+    const paraId = resolveParaId(paraIdTo, destination, api)
+    const destChain = resolveDestChain<TApi, TRes, TSigner, TCustomChain>(api, this.chain, paraId)
+
+    const isLocalTransfer = this.chain === destination
+    if (isLocalTransfer) {
+      return this.transferLocal({
+        ...transferOptions,
+        keepAlive: keepAlive ?? true
+      })
+    }
+
+    if (keepAlive) {
+      throw new UnsupportedOperationError(
+        'Keep alive option is not yet supported for XCM transfers.'
+      )
+    }
+
+    this.throwIfTempDisabled(transferOptions, destChain)
+    this.throwIfCantReceive(destChain)
+
+    const isRelayAsset =
+      deepEqual(asset.location, RELAY_LOCATION) &&
+      isSymbolMatch(getRelayChainSymbolImpl(this.chain, api._customCtx), asset.symbol)
+
+    const mythAsset = api.findNativeAssetInfoOrThrow('Mythos')
+    const isMythAsset = isAssetEqual(mythAsset, asset)
+
+    const assetNeedsTypeThen = isRelayAsset || isMythAsset
+
+    const supportsTypeThen = await api.hasMethod(
+      hasPalletImpl(this.chain, 'XcmPallet', api._customCtx) ? 'XcmPallet' : 'PolkadotXcm',
+      'transfer_assets_using_type_and_then'
+    )
+
+    if (assetNeedsTypeThen && !supportsTypeThen) {
+      throw new TypeAndThenUnavailableError(
+        'Relaychain assets require the type-and-then method which is not supported by this chain.'
+      )
+    }
+
+    const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
+
+    const useTypeAndThen =
+      (assetNeedsTypeThen &&
+        supportsTypeThen &&
+        destChain &&
+        !isExternalChain(destChain) &&
+        !feeAsset &&
+        (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
+      isSubBridge
+
+    if (supportsPolkadotXCM(this) || useTypeAndThen) {
+      const options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain> = {
+        api,
+        chain: this.chain,
+        beneficiaryLocation: createBeneficiaryLocation({
+          api,
+          address: recipient,
+          version
+        }),
+        sender,
+        recipient,
+        asset: this.createAsset(api, asset, version),
+        overriddenAsset,
+        assetInfo: asset,
+        currency,
+        feeAssetInfo: feeAsset,
+        feeCurrency,
+        scenario,
+        destination,
+        destChain,
+        paraIdTo: paraId,
+        version,
+        ahAddress,
+        pallet,
+        method,
+        transactOptions
+      }
+
+      // Transact instruction required separate handling
+      // It is only supported in execute or using send extrinsics for < V5
+      if (transactOptions?.call) {
+        if (!isTrustedChain(this.chain) && !isTrustedChain(destChain!)) {
+          throw new UnsupportedOperationError(
+            'Transact instruction is only supported for transfers involving trusted chains.'
+          )
+        }
+
+        const promise =
+          version < Version.V5 ? handleTransactUsingSend(options) : handleExecuteTransfer(options)
+
+        return api.deserializeExtrinsics(await promise)
+      }
+
+      const isAHOrigin = this.chain.includes('AssetHub')
+      const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
+
+      // Handle common cases
+      const isExternalAsset = asset.location.parents === Parents.TWO
+
+      const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
+
+      // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
+      const isExternalAssetViaAh =
+        isExternalAsset && !isAHOrigin && !isAHDest && !isEthDest && !feeAsset
+
+      // External asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
+      const isExternalAssetToAh =
+        isExternalAsset && isAHDest && !isAHOrigin && !isEthDest && !feeAsset
+
+      if (isExternalAssetViaAh || isExternalAssetToAh || useTypeAndThen) {
+        // Validate that the chain-specific transfer wouldn't reject this scenario.
+        if (
+          useTypeAndThen &&
+          supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this) &&
+          !isSubBridge
+        ) {
+          await this.transferPolkadotXCM(options) // ignore result
+        }
+
+        const call = await createTypeAndThenCall(options)
+
+        return api.deserializeExtrinsics(call)
+      }
+
+      if (supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this)) {
+        if (
+          this.shouldUseNativeAssetTeleport(transferOptions) &&
+          !this.shouldUseExecuteTransfer(options)
+        ) {
+          return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')
+        }
+
+        return this.transferPolkadotXCM(options)
+      }
+    } else if (supportsXTokens<TApi, TRes, TSigner, TCustomChain>(this)) {
+      const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
+      const isJamtonOrigin = this.chain === 'Jamton'
+      const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+      const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
+
+      const input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain> = {
+        api,
+        asset,
+        recipient,
+        origin: this.chain,
+        scenario,
+        paraIdTo: paraId,
+        version,
+        destination,
+        overriddenAsset,
+        pallet,
+        method
+      }
+
+      if (useMultiAssets) {
+        return transferXTokens(input, undefined)
+      }
+
+      return this.transferXTokens(input)
+    }
+
+    throw new NoXCMSupportImplementedError(this.chain)
+  }
+
+  isRelayToParaEnabled(): boolean {
+    return true
+  }
+
+  throwIfCantReceive(destChain: TChain | undefined): void {
+    if (destChain && !isExternalChain(destChain)) {
+      const dest = getChain(destChain)
+      if (!dest.canReceiveFrom(this.chain)) {
+        throw new ScenarioNotSupportedError(`Receiving from ${this.chain} is not yet enabled`)
+      }
+    }
+  }
+
+  throwIfTempDisabled(
+    options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>,
+    destChain?: TChain
+  ): void {
+    const isSendingDisabled = this.isSendingTempDisabled(options)
+    if (isSendingDisabled) {
+      throw new FeatureTemporarilyDisabledError(
+        `Sending from ${this.chain} is temporarily disabled`
+      )
+    }
+
+    const scenario = resolveScenario(this.chain, options.to)
+
+    const isReceivingDisabled =
+      destChain &&
+      !isExternalChain(destChain) &&
+      getChain(destChain).isReceivingTempDisabled(scenario)
+    if (isReceivingDisabled) {
+      throw new FeatureTemporarilyDisabledError(`Receiving on ${destChain} is temporarily disabled`)
+    }
+  }
+
+  isSendingTempDisabled(
+    _options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): boolean {
+    return false
+  }
+
+  isReceivingTempDisabled(_scenario: TScenario): boolean {
+    return false
+  }
+
+  canReceiveFrom<TCustomChain extends string = never>(_origin: TChain | TCustomChain): boolean {
+    // Default: destination accepts from any origin
+    return true
+  }
+
+  shouldUseNativeAssetTeleport({
+    api,
+    assetInfo: asset,
+    to
+  }: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>): boolean {
+    if (isTLocation(to) || isSubstrateBridge(this.chain, to)) return false
+
+    return isNativeAssetTeleport(api, this.chain, to, asset)
+  }
+
+  shouldUseExecuteTransfer(
+    _options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): boolean {
+    return false
+  }
+
+  createAsset(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: WithAmount<TAssetInfo>,
+    version: Version
+  ): TAsset {
+    const { amount, location } = asset
+    return createAsset(version, amount, localizeLocationImpl(api, this.chain, location))
+  }
+
+  getNativeAssetSymbol<TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
+  ): string {
+    return getNativeAssetSymbolImpl(this.chain, api._customCtx)
+  }
+
+  async transferLocal(
+    options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
+    const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll, keepAlive } = options
+
+    if (isTLocation(recipient)) {
+      throw new InvalidAddressError('Location address is not supported for local transfers')
+    }
+
+    if (feeAsset) {
+      throw new UnsupportedOperationError('Fee asset is not supported for local transfers')
+    }
+
+    const validatedOptions = { ...options, recipient }
+
+    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol(api) && asset.isNative
+
+    let balance: bigint
+    if (isAmountAll || keepAlive) {
+      assertSender(sender)
+      balance = await this.getBalance(api, sender, asset)
+    } else {
+      balance = MIN_AMOUNT
+    }
+
+    const localOptions = {
+      ...validatedOptions,
+      balance
+    }
+
+    if (isNativeAsset) {
+      return this.transferLocalNativeAsset(localOptions)
+    } else {
+      return this.transferLocalNonNativeAsset(localOptions)
+    }
+  }
+
+  transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
+
+    const dest = isChainEvm(this.chain) ? recipient : { Id: recipient }
+
+    if (isAmountAll) {
+      return Promise.resolve(
+        api.deserializeExtrinsics({
+          module: 'Balances',
+          method: 'transfer_all',
+          params: {
+            dest,
+            keep_alive: keepAlive
+          }
+        })
+      )
+    }
+
+    return Promise.resolve(
+      api.deserializeExtrinsics({
+        module: 'Balances',
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer_allow_death',
+        params: {
+          dest,
+          value: asset.amount
+        }
+      })
+    )
+  }
+
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
+
+    assertHasId(asset)
+
+    const dest = { Id: recipient }
+    const currencyId = BigInt(asset.assetId)
+
+    if (isAmountAll) {
+      return api.deserializeExtrinsics({
+        module: 'Tokens',
+        method: 'transfer_all',
+        params: {
+          dest,
+          currency_id: currencyId,
+          keep_alive: keepAlive
+        }
+      })
+    }
+
+    return api.deserializeExtrinsics({
+      module: 'Tokens',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
+      params: {
+        dest,
+        currency_id: currencyId,
+        amount: asset.amount
+      }
+    })
+  }
+
+  getBalanceNative(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    const palletInstance = getPalletInstance('System')
+    return palletInstance.getBalance(api, address, asset)
+  }
+
+  getCustomCurrencyId(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    _asset: TAssetInfo
+  ): unknown {
+    return undefined
+  }
+
+  async getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    asset: TAssetInfo
+  ) {
+    const pallets = getOtherAssetsPallets(this.chain, api._customCtx)
+    let lastError: unknown
+
+    if (pallets.length === 0)
+      throw new RoutingResolutionError(`No foreign asset pallets found for ${this.chain}`)
+
+    const customCurrencyId = this.getCustomCurrencyId(api, asset)
+
+    for (const pallet of pallets) {
+      const instance = getPalletInstance(pallet)
+
+      try {
+        return await instance.getBalance(api, address, asset, customCurrencyId)
+      } catch (e) {
+        lastError = e
+      }
+    }
+
+    throw lastError
+  }
+
+  getBalance(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    asset: TAssetInfo
+  ) {
+    const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
+    if (isNativeAsset) return this.getBalanceNative(api, address, asset)
+    return this.getBalanceForeign(api, address, asset)
+  }
+
+  mint(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint
+  ): Promise<TSetBalanceRes> {
+    const isMainNativeAsset = isSymbolMatch(assetInfo.symbol, this.getNativeAssetSymbol(api))
+    const pallet =
+      (!assetInfo.isNative && this.chain !== 'Mythos') || !isMainNativeAsset
+        ? pickOtherMintPallet(assetInfo, getOtherAssetsPallets(this.chain, api._customCtx))
+        : getNativeAssetsPallet(this.chain, api._customCtx)
+    return getPalletInstance(pallet).mint(api, address, assetInfo, balance, this)
+  }
+
+  resolveMintConfig(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>): TMintConfig {
+    return { useIdPrefix: !api.isChainEvm(this.chain), ...this.getMintConfig() }
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return {}
+  }
+}
+
+export default SubstrateChain

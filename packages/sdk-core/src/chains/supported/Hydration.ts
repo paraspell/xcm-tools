@@ -13,10 +13,10 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { assertHasId, createAsset, handleExecuteTransfer } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class Hydration<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor(

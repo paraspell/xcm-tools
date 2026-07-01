@@ -17,10 +17,10 @@ import type {
 import { type TForeignOrTokenAsset } from '../../types'
 import { assertSender } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class Acala<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor(

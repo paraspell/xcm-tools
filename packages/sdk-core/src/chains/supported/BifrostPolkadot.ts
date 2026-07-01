@@ -12,10 +12,10 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class BifrostPolkadot<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor(

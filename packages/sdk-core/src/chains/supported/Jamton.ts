@@ -9,10 +9,10 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { createAsset } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class Jamton<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor() {

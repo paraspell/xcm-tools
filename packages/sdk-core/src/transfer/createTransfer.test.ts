@@ -8,7 +8,7 @@ import { isSubstrateBridge, type TLocation, Version } from '@paraspell/sdk-commo
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
-import { getChainImpl } from '../chains/getChainInstance'
+import { getSubstrateChainImpl } from '../chains/getChainInstance'
 import type AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSubstrateTransferOptions } from '../types'
@@ -62,7 +62,7 @@ describe('send', () => {
       version: Version.V4
     } as unknown as AssetHubPolkadot<unknown, unknown, unknown>
 
-    vi.mocked(getChainImpl).mockReturnValue(originChainMock)
+    vi.mocked(getSubstrateChainImpl).mockReturnValue(originChainMock)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
