@@ -13,32 +13,36 @@ import {
 } from '../../types'
 import SubstrateChain from '../SubstrateChain'
 
-class Kintsugi<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IXTokensTransfer<TApi, TRes, TSigner>
+class Kintsugi<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IXTokensTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Kintsugi', 'kintsugi', 'Kusama', Version.V3)
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
+  getCustomCurrencyId(
     _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TForeignOrTokenAsset {
     return asset.isNative ? { Token: asset.symbol } : { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {
     const { asset, api } = input
     const currencySelection = this.getCustomCurrencyId(api, asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return Promise.resolve(this.transferLocalNonNativeAsset(options))
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     const currencyId = this.getCustomCurrencyId(api, asset)
@@ -67,7 +71,7 @@ class Kintsugi<TApi, TRes, TSigner>
   }
 
   getBalanceNative(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

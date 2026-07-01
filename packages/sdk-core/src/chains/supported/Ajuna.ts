@@ -12,9 +12,9 @@ import type {
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class Ajuna<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Ajuna<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Ajuna',
@@ -25,7 +25,9 @@ class Ajuna<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -33,7 +35,9 @@ class Ajuna<TApi, TRes, TSigner>
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)

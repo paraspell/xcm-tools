@@ -8,9 +8,9 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import SubstrateChain from '../SubstrateChain'
 
-class Collectives<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Collectives<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Collectives',
@@ -21,7 +21,9 @@ class Collectives<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { scenario, destChain } = input
 
     if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {

@@ -2,18 +2,18 @@ import type { TChain } from '@paraspell/sdk-common'
 
 import { type TScenario } from '../types'
 
-type TScenarioNotSupportedContext = {
-  chain: TChain
+type TScenarioNotSupportedContext<TCustomChain extends string = never> = {
+  chain: TChain | TCustomChain
   scenario: TScenario
 }
 
 /**
  * Error thrown when a scenario, route, or chain capability is not supported.
  */
-export class ScenarioNotSupportedError extends Error {
+export class ScenarioNotSupportedError<TCustomChain extends string = never> extends Error {
   constructor(message: string)
-  constructor({ chain, scenario }: TScenarioNotSupportedContext)
-  constructor(contextOrMsg: string | TScenarioNotSupportedContext) {
+  constructor({ chain, scenario }: TScenarioNotSupportedContext<TCustomChain>)
+  constructor(contextOrMsg: string | TScenarioNotSupportedContext<TCustomChain>) {
     if (typeof contextOrMsg === 'string') {
       super(contextOrMsg)
       this.name = 'ScenarioNotSupportedError'

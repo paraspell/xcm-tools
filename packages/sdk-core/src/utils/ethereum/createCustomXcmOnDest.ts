@@ -13,7 +13,7 @@ import { getEthereumJunction } from '../location/getEthereumJunction'
 
 const createMainInstruction = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   asset: TAssetInfo,
   ethAsset: TAssetInfo,
   recipient: TAddress,
@@ -136,7 +136,7 @@ export const createEthereumBridgeInstructions = <
     ahAddress,
     version
   }: TCreateEthBridgeInstructionsOptions<TApi, TRes, TSigner, TCustomChain>,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   messageId: string,
   ethAsset: TAssetInfo
 ): unknown[] => {
@@ -173,7 +173,7 @@ export const createEthereumBridgeInstructions = <
 
 export const createCustomXcmOnDest = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   messageId: string,
   ethAsset: TAssetInfo
 ) => {

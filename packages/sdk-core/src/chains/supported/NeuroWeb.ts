@@ -9,9 +9,9 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class NeuroWeb<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class NeuroWeb<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'NeuroWeb',
@@ -26,11 +26,15 @@ class NeuroWeb<TApi, TRes, TSigner>
     return { useIdPrefix: false, useBigIntId: true }
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (isAmountAll) {
@@ -58,7 +62,9 @@ class NeuroWeb<TApi, TRes, TSigner>
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, balance, isAmountAll, keepAlive } = options
 
     assertHasId(asset)

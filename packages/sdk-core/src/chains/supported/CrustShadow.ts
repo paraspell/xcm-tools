@@ -11,19 +11,20 @@ import {
   type TReserveAsset,
   type TXTokensTransferOptions
 } from '../../types'
-import { assertHasId, getChain } from '../../utils'
+import { assertHasId } from '../../utils'
+import { getSubstrateChainImpl } from '../getChainInstance'
 import SubstrateChain from '../SubstrateChain'
 
-class CrustShadow<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IXTokensTransfer<TApi, TRes, TSigner>
+class CrustShadow<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IXTokensTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('CrustShadow', 'shadow', 'Kusama', Version.V3)
   }
 
   private getCurrencySelection(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TReserveAsset {
     if (asset.symbol === this.getNativeAssetSymbol(api)) {
@@ -35,14 +36,18 @@ class CrustShadow<TApi, TRes, TSigner>
     return { OtherReserve: BigInt(asset.assetId) }
   }
 
-  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {
     const { asset, api } = input
     const currencySelection = this.getCurrencySelection(api, asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    return getChain<TApi, TRes, TSigner, 'Crust'>('Crust').transferLocalNonNativeAsset(options)
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+      'Crust'
+    ).transferLocalNonNativeAsset(options)
   }
 }
 

@@ -4,7 +4,12 @@ import { Version } from '@paraspell/sdk-common'
 
 import EnergyWebX from './EnergyWebX'
 
-class EnergyWebXPaseo<TApi, TRes, TSigner> extends EnergyWebX<TApi, TRes, TSigner> {
+class EnergyWebXPaseo<TApi, TRes, TSigner, TCustomChain extends string = never> extends EnergyWebX<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+> {
   constructor() {
     super('EnergyWebXPaseo', 'paseoEwx', 'Paseo', Version.V5)
   }

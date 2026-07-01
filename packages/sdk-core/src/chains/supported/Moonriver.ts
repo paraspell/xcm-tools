@@ -8,25 +8,29 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { getChain } from '../../utils'
+import { getSubstrateChainImpl } from '../getChainInstance'
 import SubstrateChain from '../SubstrateChain'
 
-class Moonriver<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Moonriver<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Moonriver', 'moonriver', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    return getChain<TApi, TRes, TSigner, 'Moonbeam'>('Moonbeam').transferLocalNonNativeAsset(
-      options
-    )
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+      'Moonbeam'
+    ).transferLocalNonNativeAsset(options)
   }
 }
 
