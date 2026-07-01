@@ -15,8 +15,8 @@ const ERC20_ABI = [
   }
 ] as const
 
-export const getMoonbeamErc20Balance = async (
-  chain: TSubstrateChain,
+export const getMoonbeamErc20Balance = async <TCustomChain extends string = never>(
+  chain: TSubstrateChain | TCustomChain,
   assetId: string,
   address: string
 ): Promise<bigint> => {

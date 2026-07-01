@@ -68,10 +68,15 @@ export const createDestination = <TApi, TRes, TSigner, TCustomChain extends stri
   return isLocDestination ? destination : { parents: parentsResolved, interior }
 }
 
-export const createVersionedDestination = <TApi, TRes, TSigner>(
-  api: PolkadotApi<TApi, TRes, TSigner>,
+export const createVersionedDestination = <
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain extends string = never
+>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   version: Version,
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   destination: TDestination,
   chainId?: number,
   junction?: TJunction,

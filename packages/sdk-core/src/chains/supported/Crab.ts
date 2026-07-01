@@ -6,18 +6,20 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { getChain } from '../../utils'
+import { getSubstrateChainImpl } from '../getChainInstance'
 import SubstrateChain from '../SubstrateChain'
 
-class Crab<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Crab<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Crab', 'crab', 'Kusama', Version.V4)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     if (input.scenario === 'ParaToPara') return transferPolkadotXcm(input)
     throw new ScenarioNotSupportedError({ chain: this.chain, scenario: input.scenario })
   }
@@ -26,10 +28,12 @@ class Crab<TApi, TRes, TSigner>
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    return getChain<TApi, TRes, TSigner, 'Darwinia'>('Darwinia').transferLocalNonNativeAsset(
-      options
-    )
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+      'Darwinia'
+    ).transferLocalNonNativeAsset(options)
   }
 }
 

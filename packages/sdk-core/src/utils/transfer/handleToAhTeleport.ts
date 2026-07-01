@@ -9,9 +9,9 @@ import { assertSender, assertToIsString } from '../assertions'
 import { padValueBy } from '../fees/padFee'
 import { createExecuteExchangeXcm } from './execute'
 
-export const handleToAhTeleport = async <TApi, TRes, TSigner>(
+export const handleToAhTeleport = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   origin: TParachain,
-  input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+  input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   defaultTx: TRes
 ): Promise<TRes> => {
   const { api, destination, sender, recipient, assetInfo: asset, currency, version } = input

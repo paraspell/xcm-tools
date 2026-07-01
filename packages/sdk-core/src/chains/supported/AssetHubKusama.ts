@@ -8,18 +8,20 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { getChain } from '../../utils'
+import { getSubstrateChainImpl } from '../getChainInstance'
 import SubstrateChain from '../SubstrateChain'
 
-class AssetHubKusama<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class AssetHubKusama<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('AssetHubKusama', 'KusamaAssetHub', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { assetInfo: asset, scenario } = input
 
     if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && asset.assetId === undefined) {
@@ -31,22 +33,22 @@ class AssetHubKusama<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    return getChain<TApi, TRes, TSigner, 'AssetHubPolkadot'>(
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
       'AssetHubPolkadot'
     ).transferLocalNonNativeAsset(options)
   }
 
-  getBalanceForeign<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    return getChain<TApi, TRes, TSigner, 'AssetHubPolkadot'>('AssetHubPolkadot').getBalanceForeign(
-      api,
-      address,
-      asset
-    )
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+      'AssetHubPolkadot'
+    ).getBalanceForeign(api, address, asset)
   }
 }
 

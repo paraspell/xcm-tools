@@ -11,23 +11,22 @@ import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../ty
 import { createAsset } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class Jamton<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Jamton<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Jamton', 'jamton', 'Polkadot', Version.V4)
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
-    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-    asset: TAssetInfo
-  ) {
+  getCustomCurrencyId(_api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>, asset: TAssetInfo) {
     const assetId = Number(asset.assetId)
     return asset.isNative ? { Native: assetId } : { ForeignAsset: assetId }
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { api, assetInfo, scenario, destination, version } = input
 
     if (assetInfo.isNative) return transferPolkadotXcm(input)

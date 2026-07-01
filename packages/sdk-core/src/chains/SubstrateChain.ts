@@ -32,7 +32,6 @@ import {
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
 import { handleTransactUsingSend, transferPolkadotXcm } from '../pallets/polkadotXcm'
-import { transferXTokens } from '../pallets/xTokens'
 import { createTypeAndThenCall } from '../transfer'
 import type {
   IPolkadotXCMTransfer,
@@ -236,7 +235,7 @@ abstract class SubstrateChain<
           supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this) &&
           !isSubBridge
         ) {
-          await this.transferPolkadotXCM(options) // ignore result
+          await this.transferPolkadotXCM(options)
         }
 
         const call = await createTypeAndThenCall(options)
@@ -255,11 +254,6 @@ abstract class SubstrateChain<
         return this.transferPolkadotXCM(options)
       }
     } else if (supportsXTokens<TApi, TRes, TSigner, TCustomChain>(this)) {
-      const isBifrostOrigin = this.chain === 'BifrostPolkadot' || this.chain === 'BifrostKusama'
-      const isJamtonOrigin = this.chain === 'Jamton'
-      const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-      const useMultiAssets = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
-
       const input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain> = {
         api,
         asset,
@@ -272,10 +266,6 @@ abstract class SubstrateChain<
         overriddenAsset,
         pallet,
         method
-      }
-
-      if (useMultiAssets) {
-        return transferXTokens(input, undefined)
       }
 
       return this.transferXTokens(input)

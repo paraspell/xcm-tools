@@ -5,13 +5,18 @@ import type { PolkadotApi } from '../../api'
 import { getPalletInstance } from '../../pallets'
 import Moonbeam from './Moonbeam'
 
-class Penpal<TApi, TRes, TSigner> extends Moonbeam<TApi, TRes, TSigner> {
+class Penpal<TApi, TRes, TSigner, TCustomChain extends string = never> extends Moonbeam<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+> {
   constructor() {
     super('Penpal', 'westendPenpal', 'Westend', Version.V4)
   }
 
-  getBalanceForeign<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

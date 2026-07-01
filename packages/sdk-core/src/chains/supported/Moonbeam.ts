@@ -16,9 +16,9 @@ import type {
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class Moonbeam<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Moonbeam<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Moonbeam',
@@ -29,18 +29,22 @@ class Moonbeam<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    _options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     throw new ScenarioNotSupportedError(
       `${this.chain} local transfers are supported only from EVM Builder`
     )
   }
 
-  getBalanceForeign<TApi, TRes, TSigner>(
-    _api: PolkadotApi<TApi, TRes, TSigner>,
+  getBalanceForeign(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

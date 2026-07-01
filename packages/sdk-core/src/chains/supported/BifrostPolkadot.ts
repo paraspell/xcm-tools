@@ -14,9 +14,9 @@ import type {
 } from '../../types'
 import SubstrateChain from '../SubstrateChain'
 
-class BifrostPolkadot<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class BifrostPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'BifrostPolkadot',
@@ -27,10 +27,7 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
-    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-    asset: TAssetInfo
-  ) {
+  getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>, asset: TAssetInfo) {
     const nativeAssetSymbol = this.getNativeAssetSymbol(api)
 
     if (asset.symbol === nativeAssetSymbol) {
@@ -56,11 +53,15 @@ class BifrostPolkadot<TApi, TRes, TSigner>
     return { useCustomCurrencyId: true }
   }
 
-  transferPolkadotXCM(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     const dest = { Id: recipient }

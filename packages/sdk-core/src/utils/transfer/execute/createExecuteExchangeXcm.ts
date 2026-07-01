@@ -5,8 +5,8 @@ import type { TSerializedExtrinsics, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 
-export const createExecuteExchangeXcm = <TApi, TRes, TSigner>(
-  input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
+export const createExecuteExchangeXcm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   weight: TWeight,
   originExecutionFee: bigint,

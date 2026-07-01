@@ -19,9 +19,9 @@ import { assertSender } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
 import SubstrateChain from '../SubstrateChain'
 
-class Acala<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Acala<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Acala',
@@ -32,7 +32,9 @@ class Acala<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -41,7 +43,7 @@ class Acala<TApi, TRes, TSigner>
   }
 
   async transferLocalNativeAsset(
-    options: TTransferLocalOptions<TApi, TRes, TSigner>
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
     const { api, recipient, sender, isAmountAll, keepAlive } = options
 
@@ -67,7 +69,9 @@ class Acala<TApi, TRes, TSigner>
     return createTx(amount)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
@@ -87,7 +91,7 @@ class Acala<TApi, TRes, TSigner>
     })
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
+  getCustomCurrencyId(
     _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TForeignOrTokenAsset {
@@ -100,7 +104,7 @@ class Acala<TApi, TRes, TSigner>
   }
 
   getBalance(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
