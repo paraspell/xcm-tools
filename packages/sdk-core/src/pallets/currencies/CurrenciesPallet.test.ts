@@ -2,7 +2,7 @@ import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import type Chain from '../../chains/Chain'
+import type SubstrateChain from '../../chains/SubstrateChain'
 import { assertHasId } from '../../utils'
 import { CurrenciesPallet } from './CurrenciesPallet'
 
@@ -22,7 +22,11 @@ describe('CurrenciesPallet.mint', () => {
 
     vi.mocked(assertHasId).mockImplementation(() => {})
 
-    const chain = { resolveMintConfig: () => ({}) } as unknown as Chain<unknown, unknown, unknown>
+    const chain = { resolveMintConfig: () => ({}) } as unknown as SubstrateChain<
+      unknown,
+      unknown,
+      unknown
+    >
 
     const res = await pallet.mint(apiMock, address, asset, 0n, chain)
 
@@ -44,7 +48,7 @@ describe('CurrenciesPallet.mint', () => {
     const chain = {
       resolveMintConfig: () => ({ useCustomCurrencyId: true }),
       getCustomCurrencyId
-    } as unknown as Chain<unknown, unknown, unknown>
+    } as unknown as SubstrateChain<unknown, unknown, unknown>
 
     const res = await pallet.mint(apiMock, address, asset, 2n, chain)
 

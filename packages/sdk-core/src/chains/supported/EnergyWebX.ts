@@ -12,10 +12,10 @@ import {
   type TMintConfig,
   type TPolkadotXCMTransferOptions
 } from '../../types'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class EnergyWebX<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor(

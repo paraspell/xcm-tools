@@ -1,15 +1,21 @@
-import { isCustomChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  isCustomChain,
+  isExternalChain,
+  type TChain,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import { chains } from '../constants'
 import { CustomChainInvalidError } from '../errors'
 import type { TFullCustomCtx } from '../types'
 import type Chain from './Chain'
 import CustomChain from './CustomChain'
+import type SubstrateChain from './SubstrateChain'
 
-export const getChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+export const getSubstrateChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   ctx?: TFullCustomCtx
-): Chain<TApi, TRes, TSigner, TCustomChain> => {
+): SubstrateChain<TApi, TRes, TSigner, TCustomChain> => {
   if (isCustomChain(chain)) {
     const entry = ctx?.customChains?.[chain]
     if (!entry) {
@@ -21,6 +27,15 @@ export const getChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = 
       entry.xcmVersion
     )
   }
-  const map = chains<TApi, TRes, TSigner>()
-  return map[chain]
+  return chains<TApi, TRes, TSigner>()[chain]
+}
+
+export const getChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  ctx?: TFullCustomCtx
+): Chain<TApi, TRes, TSigner, TCustomChain> => {
+  if (!isExternalChain(chain)) {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(chain, ctx)
+  }
+  return chains<TApi, TRes, TSigner>()[chain]
 }

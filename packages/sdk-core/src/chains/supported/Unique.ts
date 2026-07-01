@@ -12,12 +12,12 @@ import type {
 } from '../../types'
 import { assertHasId } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 const FUNGIBLE_ITEM_ID = 0
 
 class Unique<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor() {

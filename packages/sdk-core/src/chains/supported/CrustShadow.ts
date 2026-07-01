@@ -12,10 +12,10 @@ import {
   type TXTokensTransferOptions
 } from '../../types'
 import { assertHasId, getChain } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class CrustShadow<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IXTokensTransfer<TApi, TRes, TSigner>
 {
   constructor() {

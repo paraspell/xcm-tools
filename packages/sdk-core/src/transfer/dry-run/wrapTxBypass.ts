@@ -5,7 +5,7 @@ import { Parents } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
-import { getChainImpl } from '../../chains/getChainInstance'
+import { getSubstrateChainImpl } from '../../chains/getChainInstance'
 import {
   BYPASS_MINT_AMOUNT,
   HIGH_BYPASS_MINT_AMOUNT,
@@ -28,7 +28,7 @@ const createMintTxs = <TApi, TRes, TSigner, TCustomChain extends string = never>
   address: string,
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ): Promise<TSetBalanceRes> =>
-  getChainImpl<TApi, TRes, TSigner, TCustomChain>(chain, api._customCtx).mint(
+  getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(chain, api._customCtx).mint(
     api,
     address,
     asset,
