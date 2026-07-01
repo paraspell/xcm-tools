@@ -1,5 +1,3 @@
-// Contains balance handling for the Ethereum external chain
-
 import type { TAssetInfo } from '@paraspell/assets'
 import type { TExternalChain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'

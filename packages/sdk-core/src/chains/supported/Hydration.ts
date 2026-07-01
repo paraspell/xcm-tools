@@ -15,9 +15,9 @@ import type {
 import { assertHasId, createAsset, handleExecuteTransfer } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class Hydration<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Hydration',
@@ -32,7 +32,9 @@ class Hydration<TApi, TRes, TSigner>
     return { useIdPrefix: false }
   }
 
-  shouldUseExecuteTransfer(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): boolean {
+  shouldUseExecuteTransfer(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): boolean {
     const { assetInfo: asset, feeAssetInfo: feeAsset, overriddenAsset, api } = input
 
     if (!feeAsset || overriddenAsset) return false
@@ -45,7 +47,7 @@ class Hydration<TApi, TRes, TSigner>
   }
 
   async transferPolkadotXCM(
-    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
     const { destination, assetInfo: asset, api } = input
 
@@ -60,8 +62,8 @@ class Hydration<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  transferMoonbeamWhAsset<TApi, TRes, TSigner>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
+  transferMoonbeamWhAsset(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
     const { api, assetInfo, version } = input
 
@@ -77,7 +79,9 @@ class Hydration<TApi, TRes, TSigner>
     })
   }
 
-  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferLocalNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (isAmountAll) {
@@ -105,7 +109,9 @@ class Hydration<TApi, TRes, TSigner>
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)

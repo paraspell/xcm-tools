@@ -5,7 +5,12 @@ import { Version } from '@paraspell/sdk-common'
 
 import Relaychain from './Relaychain'
 
-class Polkadot<TApi, TRes, TSigner> extends Relaychain<TApi, TRes, TSigner> {
+class Polkadot<TApi, TRes, TSigner, TCustomChain extends string = never> extends Relaychain<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+> {
   constructor(
     chain: TSubstrateChain = 'Polkadot',
     info: string = 'polkadot',

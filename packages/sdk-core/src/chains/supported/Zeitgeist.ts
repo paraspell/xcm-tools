@@ -16,9 +16,9 @@ import { assertHasId } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
 import SubstrateChain from '../SubstrateChain'
 
-class Zeitgeist<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Zeitgeist<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Zeitgeist',
@@ -29,7 +29,7 @@ class Zeitgeist<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
+  getCustomCurrencyId(
     _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TZeitgeistAsset | TXcmForeignAsset {
@@ -38,7 +38,9 @@ class Zeitgeist<TApi, TRes, TSigner>
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
@@ -46,7 +48,9 @@ class Zeitgeist<TApi, TRes, TSigner>
     return origin !== 'Astar'
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient } = options
 
     assertHasId(asset)

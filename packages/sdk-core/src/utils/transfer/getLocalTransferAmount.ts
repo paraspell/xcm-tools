@@ -3,8 +3,13 @@ import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { AmountTooLowError } from '../../errors'
 import type { TTransferLocalOptions } from '../../types'
 
-export const getLocalTransferAmount = <TApi, TRes, TSigner>(
-  { assetInfo, balance, isAmountAll, keepAlive }: TTransferLocalOptions<TApi, TRes, TSigner>,
+export const getLocalTransferAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  {
+    assetInfo,
+    balance,
+    isAmountAll,
+    keepAlive
+  }: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>,
   fee = 0n
 ): bigint => {
   const ed = getEdFromAssetOrThrow(assetInfo)

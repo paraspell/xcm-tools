@@ -8,13 +8,15 @@ import SubstrateChain from './SubstrateChain'
 
 class CustomChain<TApi, TRes, TSigner, TCustomChain extends string = string>
   extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(name: TCustomChain, ecosystem: TRelaychain, version: Version) {
     super(name, name, ecosystem, version)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 }

@@ -13,9 +13,9 @@ import type {
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
-class Darwinia<TApi, TRes, TSigner>
-  extends SubstrateChain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Darwinia<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Darwinia', 'darwinia', 'Polkadot', Version.V4)
@@ -25,7 +25,9 @@ class Darwinia<TApi, TRes, TSigner>
     return { useBigIntId: true }
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { scenario, assetInfo: asset, api } = input
 
     if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol(api)) {
@@ -35,7 +37,9 @@ class Darwinia<TApi, TRes, TSigner>
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
