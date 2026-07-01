@@ -1,7 +1,7 @@
 import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
 
 import type { PolkadotApi } from '../../api'
-import type Chain from '../../chains/Chain'
+import type SubstrateChain from '../../chains/SubstrateChain'
 import { BaseAssetsPallet, type TSetBalanceRes } from '../../types/TAssets'
 
 export class BalancesPallet extends BaseAssetsPallet {
@@ -10,7 +10,7 @@ export class BalancesPallet extends BaseAssetsPallet {
     address: string,
     assetInfo: WithAmount<TAssetInfo>,
     balance: bigint,
-    chain: Chain<TApi, TRes, TSigner, TCustomChain>
+    chain: SubstrateChain<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TSetBalanceRes> {
     const { amount } = assetInfo
 

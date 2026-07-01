@@ -4,7 +4,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { normalizeLocation } from '@paraspell/assets'
 import { isSubstrateBridge, isTLocation } from '@paraspell/sdk-common'
 
-import { getChainImpl } from '../chains/getChainInstance'
+import { getSubstrateChainImpl } from '../chains/getChainInstance'
 import { MIN_AMOUNT, TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type { TSubstrateTransferOptions } from '../types'
 import {
@@ -129,7 +129,7 @@ export const createTransfer = async <TApi, TRes, TSigner, TCustomChain extends s
     resolveTransferParams(options)
 
   const customCtx = api?._customCtx
-  const chainInstance = getChainImpl<TApi, TRes, TSigner, TCustomChain>(origin, customCtx)
+  const chainInstance = getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(origin, customCtx)
   return chainInstance.transfer({
     api,
     assetInfo: normalizedAsset,

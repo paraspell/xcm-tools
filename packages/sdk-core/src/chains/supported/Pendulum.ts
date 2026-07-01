@@ -13,10 +13,10 @@ import type {
 } from '../../types'
 import { assertHasId } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
 class Pendulum<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IXTokensTransfer<TApi, TRes, TSigner>
 {
   constructor() {
