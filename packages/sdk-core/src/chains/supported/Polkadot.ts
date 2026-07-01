@@ -3,14 +3,9 @@
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
-import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import Chain from '../Chain'
+import Relaychain from './Relaychain'
 
-class Polkadot<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
-{
+class Polkadot<TApi, TRes, TSigner> extends Relaychain<TApi, TRes, TSigner> {
   constructor(
     chain: TSubstrateChain = 'Polkadot',
     info: string = 'polkadot',
@@ -18,10 +13,6 @@ class Polkadot<TApi, TRes, TSigner>
     version: Version = Version.V5
   ) {
     super(chain, info, ecosystem, version)
-  }
-
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
-    return transferPolkadotXcm(input)
   }
 }
 

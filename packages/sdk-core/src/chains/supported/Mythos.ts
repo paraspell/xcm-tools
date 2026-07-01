@@ -17,8 +17,8 @@ import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDes
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { handleToAhTeleport } from '../../utils/transfer'
-import Chain from '../Chain'
 import { getParaId } from '../config'
+import SubstrateChain from '../SubstrateChain'
 
 export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>,
@@ -81,7 +81,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes, TSigner>(
 }
 
 class Mythos<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
+  extends SubstrateChain<TApi, TRes, TSigner>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
 {
   constructor() {

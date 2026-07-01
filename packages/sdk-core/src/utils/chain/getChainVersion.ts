@@ -1,10 +1,5 @@
-import {
-  isCustomChain,
-  isExternalChain,
-  isRelayChain,
-  type TChain,
-  Version
-} from '@paraspell/sdk-common'
+import type { Version } from '@paraspell/sdk-common'
+import { isCustomChain, type TChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { CustomChainInvalidError } from '../../errors'
@@ -14,10 +9,6 @@ export const getChainVersion = <TApi, TRes, TSigner, TCustomChain extends string
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   chain: TChain | TCustomChain
 ): Version => {
-  if (isRelayChain(chain) || isExternalChain(chain)) {
-    return Version.V5
-  }
-
   if (isCustomChain(chain)) {
     const entry = api._customCtx.customChains?.[chain]
 

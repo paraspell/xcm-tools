@@ -21,7 +21,7 @@ import { createTypeAndThenCall } from '../transfer'
 import type { BaseAssetsPallet, TSerializedExtrinsics, TTransferLocalOptions } from '../types'
 import { type TTransferInternalOptions } from '../types'
 import { getChain, handleExecuteTransfer, isNativeAssetTeleport, resolveDestChain } from '../utils'
-import Chain from './Chain'
+import SubstrateChain from './SubstrateChain'
 
 vi.mock('../constants/chains')
 vi.mock('./getChainInstance', () => ({ getChainImpl: vi.fn() }))
@@ -76,7 +76,7 @@ vi.mock('../transfer', () => ({
   createTypeAndThenCall: vi.fn()
 }))
 
-class TestParachainBase extends Chain<unknown, unknown, unknown> {
+class TestParachainBase extends SubstrateChain<unknown, unknown, unknown> {
   throwIfTempDisabled() {}
 }
 
@@ -162,7 +162,7 @@ describe('Parachain', () => {
   })
 
   describe('Sending / receiving disabled', () => {
-    class SendDisabledParachain extends Chain<unknown, unknown, unknown> {
+    class SendDisabledParachain extends SubstrateChain<unknown, unknown, unknown> {
       isSendingTempDisabled() {
         return true
       }
@@ -185,18 +185,20 @@ describe('Parachain', () => {
     })
 
     it('should throw if receiving is disabled', async () => {
-      class ReceiveDisabledParachain extends Chain<unknown, unknown, unknown> {
+      class ReceiveDisabledParachain extends SubstrateChain<unknown, unknown, unknown> {
         isReceivingTempDisabled() {
           return true
+        }
+
+        transferPolkadotXCM() {
+          return Promise.resolve('transferPolkadotXCM called')
         }
       }
 
       const chainName = 'Acala'
       const chain = new ReceiveDisabledParachain(chainName, 'TestChain', 'Polkadot', Version.V4)
 
-      vi.mocked(getChain).mockReturnValue(
-        chain as unknown as ReturnType<typeof chains<unknown, unknown, unknown>>['Acala']
-      )
+      vi.mocked(getChain).mockReturnValue(chain)
 
       const options = {
         api,
