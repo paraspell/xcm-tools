@@ -11,11 +11,11 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { handleExecuteTransfer } from '../../utils/transfer'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class AssetHubPolkadot<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class AssetHubPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'AssetHubPolkadot',
@@ -26,7 +26,9 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  shouldUseExecuteTransfer(options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): boolean {
+  shouldUseExecuteTransfer(
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): boolean {
     const { api, assetInfo, feeAssetInfo, overriddenAsset } = options
 
     if (!feeAssetInfo || overriddenAsset) return false
@@ -40,7 +42,7 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
   }
 
   async transferPolkadotXCM(
-    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>
+    options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
     const { api } = options
 
@@ -51,7 +53,9 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     return transferPolkadotXcm(options)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (asset.assetId !== undefined) {
@@ -103,8 +107,8 @@ class AssetHubPolkadot<TApi, TRes, TSigner>
     })
   }
 
-  getBalanceForeign<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

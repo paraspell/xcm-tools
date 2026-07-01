@@ -2,14 +2,14 @@ import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import type Chain from '../../chains/Chain'
+import type SubstrateChain from '../../chains/SubstrateChain'
 import type { TMintConfig } from '../../types'
 import { ForeignAssetsPallet } from './ForeignAssetsPallet'
 
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const chainMock = (config: TMintConfig) =>
-  ({ resolveMintConfig: vi.fn().mockReturnValue(config) }) as unknown as Chain<
+  ({ resolveMintConfig: vi.fn().mockReturnValue(config) }) as unknown as SubstrateChain<
     unknown,
     unknown,
     unknown

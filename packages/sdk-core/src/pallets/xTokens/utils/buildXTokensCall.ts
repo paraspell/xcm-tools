@@ -17,24 +17,12 @@ export const shouldUseMultiAssetTransfer = <
   TSigner,
   TCustomChain extends string = never
 >({
-  origin,
-  destination,
-  scenario,
   overriddenAsset,
   useMultiAssetTransfer
 }: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) => {
-  const isAstarOrShidenToRelay =
-    scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
-  const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
-  const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
   const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
 
-  return (
-    useMultiAssetTransfer ||
-    isAstarOrShidenToRelay ||
-    (isAssetHubDest && !isBifrostOrigin) ||
-    !!isOverriddenMultiAssets
-  )
+  return useMultiAssetTransfer || !!isOverriddenMultiAssets
 }
 
 export const getXTokensMethod = <TApi, TRes, TSigner>(

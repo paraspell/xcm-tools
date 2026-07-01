@@ -12,11 +12,11 @@ import {
   type TMintConfig,
   type TPolkadotXCMTransferOptions
 } from '../../types'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class EnergyWebX<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'EnergyWebX',
@@ -27,7 +27,9 @@ class EnergyWebX<TApi, TRes, TSigner>
     super(chain, info, ecosystem, version)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { scenario } = input
 
     if (scenario !== 'ParaToPara') {
@@ -45,8 +47,8 @@ class EnergyWebX<TApi, TRes, TSigner>
     return { useLocationId: true }
   }
 
-  async getBalanceForeign<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  async getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {

@@ -10,31 +10,41 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { getChain } from '../../utils'
-import Chain from '../Chain'
+import { getSubstrateChainImpl } from '../getChainInstance'
+import SubstrateChain from '../SubstrateChain'
 
-class Quartz<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Quartz<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Quartz', 'quartz', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
-    return getChain<TApi, TRes, TSigner, 'Unique'>('Unique').transferLocalNonNativeAsset(options)
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+      'Unique'
+    ).transferLocalNonNativeAsset(options)
   }
 
-  getBalanceForeign<TApi, TRes, TSigner>(
-    api: PolkadotApi<TApi, TRes, TSigner>,
+  getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    return getChain<TApi, TRes, TSigner, 'Unique'>('Unique').getBalanceForeign(api, address, asset)
+    return getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>('Unique').getBalanceForeign(
+      api,
+      address,
+      asset
+    )
   }
 
   isSendingTempDisabled(): boolean {

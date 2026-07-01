@@ -6,23 +6,27 @@ import { ScenarioNotSupportedError } from '../../errors'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class RobonomicsPolkadot<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class RobonomicsPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('RobonomicsPolkadot', 'robonomics', 'Polkadot', Version.V5)
   }
 
-  transferPolkadotXCM(_input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    _input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     throw new ScenarioNotSupportedError(
       'Only local transfers and incoming cross-chain assets are supported.'
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)

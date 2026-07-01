@@ -131,7 +131,7 @@ describe('buildXTokensCall', () => {
 
     const input = {
       ...baseInput,
-      useMultiAssetTransfer: false,
+      useMultiAssetTransfer: true,
       overriddenAsset: overridden,
       origin: 'Acala',
       destination: 'AssetHubPolkadot',
@@ -206,35 +206,7 @@ describe('buildXTokensCall', () => {
   })
 
   describe('shouldUseMultiAssetTransfer scenarios', () => {
-    it('returns true for Astar to Relay scenario', () => {
-      const input = {
-        ...baseInput,
-        origin: 'Astar',
-        destination: 'Polkadot',
-        scenario: 'ParaToRelay',
-        useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown, unknown>
-
-      const result = buildXTokensCall(input, currencySelection, '0.1')
-
-      expect(result.method).toBe('transfer_multiasset')
-    })
-
-    it('returns true for Shiden to Relay scenario', () => {
-      const input = {
-        ...baseInput,
-        origin: 'Shiden',
-        destination: 'Kusama',
-        scenario: 'ParaToRelay',
-        useMultiAssetTransfer: false
-      } as TXTokensTransferOptions<unknown, unknown, unknown>
-
-      const result = buildXTokensCall(input, currencySelection, '0.1')
-
-      expect(result.method).toBe('transfer_multiasset')
-    })
-
-    it('returns true for AssetHub destination (non-Bifrost origin)', () => {
+    it('uses single-asset transfer for AssetHub destination', () => {
       const input = {
         ...baseInput,
         origin: 'Acala',
@@ -245,21 +217,21 @@ describe('buildXTokensCall', () => {
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 
-      expect(result.method).toBe('transfer_multiasset')
+      expect(result.method).toBe('transfer')
     })
 
-    it('returns false for AssetHub destination with Bifrost origin', () => {
+    it('uses multi-asset transfer when useMultiAssetTransfer is set', () => {
       const input = {
         ...baseInput,
-        origin: 'BifrostPolkadot',
+        origin: 'Acala',
         destination: 'AssetHubPolkadot',
         scenario: 'ParaToPara',
-        useMultiAssetTransfer: false
+        useMultiAssetTransfer: true
       } as TXTokensTransferOptions<unknown, unknown, unknown>
 
       const result = buildXTokensCall(input, currencySelection, '0.1')
 
-      expect(result.method).toBe('transfer')
+      expect(result.method).toBe('transfer_multiasset')
     })
   })
 })

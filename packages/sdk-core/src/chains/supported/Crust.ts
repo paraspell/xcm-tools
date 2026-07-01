@@ -11,11 +11,11 @@ import {
   type TXTokensTransferOptions
 } from '../../types'
 import { assertHasId } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class Crust<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IXTokensTransfer<TApi, TRes, TSigner>
+class Crust<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IXTokensTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Crust', 'crustParachain', 'Polkadot', Version.V3)
@@ -27,13 +27,15 @@ class Crust<TApi, TRes, TSigner>
     return { OtherReserve: BigInt(asset.assetId) }
   }
 
-  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return transferXTokens(input, currencySelection)
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)

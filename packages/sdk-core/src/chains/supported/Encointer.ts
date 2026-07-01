@@ -5,17 +5,19 @@ import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class Encointer<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Encointer<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Encointer', 'encointer', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { destChain } = input
 
     if (input.scenario === 'ParaToRelay' || (destChain && isTrustedChain(destChain))) {

@@ -13,17 +13,17 @@ import type {
 } from '../../types'
 import { assertHasId } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class Pendulum<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IXTokensTransfer<TApi, TRes, TSigner>
+class Pendulum<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IXTokensTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('Pendulum', 'pendulum', 'Polkadot', Version.V3)
   }
 
-  getCustomCurrencyId<TCustomChain extends string = never>(
+  getCustomCurrencyId(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TXcmAsset {
@@ -32,7 +32,7 @@ class Pendulum<TApi, TRes, TSigner>
     return { XCM: Number(asset.assetId) }
   }
 
-  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner>) {
+  transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {
     const { asset, api } = input
 
     const currencySelection = this.getCustomCurrencyId(api, asset)
@@ -46,7 +46,9 @@ class Pendulum<TApi, TRes, TSigner>
     )
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient } = options
 
     const amount = getLocalTransferAmount(options)

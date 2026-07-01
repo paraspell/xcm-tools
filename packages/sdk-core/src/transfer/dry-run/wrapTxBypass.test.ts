@@ -8,7 +8,7 @@ import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
 vi.mock('../../chains/getChainInstance', () => ({
-  getChainImpl: vi.fn(() => ({
+  getSubstrateChainImpl: vi.fn(() => ({
     mint: vi.fn(
       (_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
         const sym = asset.symbol ?? 'Unknown'

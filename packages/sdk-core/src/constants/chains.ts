@@ -28,6 +28,8 @@ import Darwinia from '../chains/supported/Darwinia'
 import Encointer from '../chains/supported/Encointer'
 import EnergyWebX from '../chains/supported/EnergyWebX'
 import EnergyWebXPaseo from '../chains/supported/EnergyWebXPaseo'
+import Ethereum from '../chains/supported/Ethereum'
+import EthereumTestnet from '../chains/supported/EthereumTestnet'
 import Heima from '../chains/supported/Heima'
 import HeimaPaseo from '../chains/supported/HeimaPaseo'
 import Hydration from '../chains/supported/Hydration'
@@ -128,5 +130,9 @@ export const chains = <TApi, TRes, TSigner>() => ({
   HeimaPaseo: new HeimaPaseo<TApi, TRes, TSigner>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes, TSigner>(),
   NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes, TSigner>(),
-  ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes, TSigner>()
+  ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes, TSigner>(),
+
+  // External chains
+  Ethereum: new Ethereum<TApi, TRes, TSigner>(),
+  EthereumTestnet: new EthereumTestnet<TApi, TRes, TSigner>()
 })

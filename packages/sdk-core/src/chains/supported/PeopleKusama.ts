@@ -5,17 +5,19 @@ import { Version } from '@paraspell/sdk-common'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class PeopleKusama<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class PeopleKusama<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
     super('PeopleKusama', 'kusamaPeople', 'Kusama', Version.V5)
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     const { scenario } = input
 
     if (scenario === 'ParaToPara') {

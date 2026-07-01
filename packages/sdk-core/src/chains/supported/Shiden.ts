@@ -4,7 +4,12 @@ import { Version } from '@paraspell/sdk-common'
 
 import Astar from './Astar'
 
-class Shiden<TApi, TRes, TSigner> extends Astar<TApi, TRes, TSigner> {
+class Shiden<TApi, TRes, TSigner, TCustomChain extends string = never> extends Astar<
+  TApi,
+  TRes,
+  TSigner,
+  TCustomChain
+> {
   constructor() {
     super('Shiden', 'shiden', 'Kusama', Version.V5)
   }

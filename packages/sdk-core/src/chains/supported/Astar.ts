@@ -7,11 +7,11 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TMintConfig, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import Chain from '../Chain'
+import SubstrateChain from '../SubstrateChain'
 
-class Astar<TApi, TRes, TSigner>
-  extends Chain<TApi, TRes, TSigner>
-  implements IPolkadotXCMTransfer<TApi, TRes, TSigner>
+class Astar<TApi, TRes, TSigner, TCustomChain extends string = never>
+  extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
+  implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor(
     chain: TParachain = 'Astar',
@@ -26,7 +26,9 @@ class Astar<TApi, TRes, TSigner>
     return { useBigIntId: true }
   }
 
-  transferPolkadotXCM(input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner>): Promise<TRes> {
+  transferPolkadotXCM(
+    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  ): Promise<TRes> {
     return transferPolkadotXcm(input, 'transfer_assets_using_type_and_then')
   }
 
@@ -34,7 +36,9 @@ class Astar<TApi, TRes, TSigner>
     return false
   }
 
-  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes, TSigner>): TRes {
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
