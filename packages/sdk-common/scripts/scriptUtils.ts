@@ -35,8 +35,30 @@ export const withTimeout = async <T>(
   }
 }
 
-export const createChainClient = (chain: TSubstrateChain) =>
-  createWsClient(getChainProviders(chain))
+const activeClients = new Set<PolkadotClient>()
+
+const destroyAllClients = () => {
+  for (const client of activeClients) {
+    try {
+      client.destroy()
+    } catch {
+      // ignore teardown errors
+    }
+  }
+  activeClients.clear()
+}
+
+process.on('exit', destroyAllClients)
+process.on('SIGINT', () => {
+  destroyAllClients()
+  process.exit(130)
+})
+
+export const createChainClient = (chain: TSubstrateChain) => {
+  const client = createWsClient(getChainProviders(chain))
+  activeClients.add(client)
+  return client
+}
 
 export const CHAIN_TIMEOUT_MS = 30_000
 
@@ -51,8 +73,6 @@ export const fetchFromChain = async <T>(
   } catch (e) {
     console.error(`Data for ${chain} could not be fetched`, e)
     return null
-  } finally {
-    client.destroy()
   }
 }
 
