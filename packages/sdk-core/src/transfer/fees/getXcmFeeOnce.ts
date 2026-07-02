@@ -30,19 +30,25 @@ const getFailureInfo = (
   failureChain?: TChainEndpoint
   failureReason?: string
   failureSubReason?: string
+  failureIndex?: number
+  failureInstruction?: object
 } => {
   // Check standard chains first for backwards compatibility
   if (chains.origin?.dryRunError)
     return {
       failureChain: 'origin',
       failureReason: chains.origin.dryRunError,
-      failureSubReason: chains.origin.dryRunSubError
+      failureSubReason: chains.origin.dryRunSubError,
+      failureIndex: chains.origin.dryRunErrorIndex,
+      failureInstruction: chains.origin.dryRunErrorInstruction
     }
   if (chains.destination?.dryRunError)
     return {
       failureChain: 'destination',
       failureReason: chains.destination.dryRunError,
-      failureSubReason: chains.destination.dryRunSubError
+      failureSubReason: chains.destination.dryRunSubError,
+      failureIndex: chains.destination.dryRunErrorIndex,
+      failureInstruction: chains.destination.dryRunErrorInstruction
     }
 
   // Check hops for failures
@@ -51,7 +57,9 @@ const getFailureInfo = (
       return {
         failureChain: hop.chain,
         failureReason: hop.result.dryRunError,
-        failureSubReason: hop.result.dryRunSubError
+        failureSubReason: hop.result.dryRunSubError,
+        failureIndex: hop.result.dryRunErrorIndex,
+        failureInstruction: hop.result.dryRunErrorInstruction
       }
     }
   }
@@ -96,6 +104,8 @@ export const getXcmFeeOnce = async <
     feeType: originFeeType,
     dryRunError: originDryRunError,
     dryRunSubError: originDryRunSubError,
+    dryRunErrorIndex: originDryRunErrorIndex,
+    dryRunErrorInstruction: originDryRunErrorInstruction,
     forwardedXcms: initialForwardedXcm,
     destParaId: initialDestParaId,
     weight: originWeight,
@@ -152,7 +162,13 @@ export const getXcmFeeOnce = async <
           sufficient: sufficientOriginFee,
           asset: originAsset,
           ...(originDryRunError && { dryRunError: originDryRunError }),
-          ...(originDryRunSubError && { dryRunSubError: originDryRunSubError })
+          ...(originDryRunSubError && { dryRunSubError: originDryRunSubError }),
+          ...(originDryRunErrorIndex !== undefined && {
+            dryRunErrorIndex: originDryRunErrorIndex
+          }),
+          ...(originDryRunErrorInstruction && {
+            dryRunErrorInstruction: originDryRunErrorInstruction
+          })
         } as TXcmFeeDetail,
         destination: {
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
@@ -163,19 +179,22 @@ export const getXcmFeeOnce = async <
         hops: []
       }
 
-      const { failureChain, failureReason, failureSubReason } = getFailureInfo(
-        {
-          origin: result.origin,
-          destination: result.destination
-        },
-        []
-      )
+      const { failureChain, failureReason, failureSubReason, failureIndex, failureInstruction } =
+        getFailureInfo(
+          {
+            origin: result.origin,
+            destination: result.destination
+          },
+          []
+        )
 
       return {
         ...result,
         failureChain,
         failureReason,
-        failureSubReason
+        failureSubReason,
+        failureIndex,
+        failureInstruction
       } as TGetXcmFeeResult<TDisableFallback>
     } finally {
       destApi.disconnectAllowed = true
@@ -265,6 +284,8 @@ export const getXcmFeeOnce = async <
   let destFeeType: TFeeType | undefined
   let destDryRunError: string | undefined
   let destDryRunSubError: string | undefined
+  let destDryRunErrorIndex: number | undefined
+  let destDryRunErrorInstruction: object | undefined
   let destSufficient: boolean | undefined
 
   if (traversalResult.destination) {
@@ -273,6 +294,8 @@ export const getXcmFeeOnce = async <
     destFeeType = destResult.feeType
     destDryRunError = destResult.dryRunError
     destDryRunSubError = destResult.dryRunSubError
+    destDryRunErrorIndex = destResult.dryRunErrorIndex
+    destDryRunErrorInstruction = destResult.dryRunErrorInstruction
     destSufficient = destResult.sufficient
     destAsset = destResult.asset
   } else if (
@@ -346,7 +369,9 @@ export const getXcmFeeOnce = async <
       ...(result.sufficient !== undefined && { sufficient: result.sufficient }),
       asset: result.asset,
       dryRunError: result.dryRunError,
-      dryRunSubError: result.dryRunSubError
+      dryRunSubError: result.dryRunSubError,
+      dryRunErrorIndex: result.dryRunErrorIndex,
+      dryRunErrorInstruction: result.dryRunErrorInstruction
     }) as TXcmFeeDetail
 
   const result: TGetXcmFeeResult = {
@@ -357,7 +382,9 @@ export const getXcmFeeOnce = async <
       ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
       asset: originAsset,
       dryRunError: originDryRunError,
-      dryRunSubError: originDryRunSubError
+      dryRunSubError: originDryRunSubError,
+      dryRunErrorIndex: originDryRunErrorIndex,
+      dryRunErrorInstruction: originDryRunErrorInstruction
     } as TXcmFeeDetail,
     destination: {
       fee: destFee,
@@ -365,7 +392,9 @@ export const getXcmFeeOnce = async <
       sufficient: destSufficient,
       asset: destAsset,
       dryRunError: destDryRunError,
-      dryRunSubError: destDryRunSubError
+      dryRunSubError: destDryRunSubError,
+      dryRunErrorIndex: destDryRunErrorIndex,
+      dryRunErrorInstruction: destDryRunErrorInstruction
     } as TXcmFeeDetail,
     hops: traversalResult.hops.map(hop => ({
       chain: hop.chain,
@@ -373,18 +402,21 @@ export const getXcmFeeOnce = async <
     }))
   }
 
-  const { failureChain, failureReason, failureSubReason } = getFailureInfo(
-    {
-      origin: result.origin,
-      destination: result.destination
-    },
-    result.hops
-  )
+  const { failureChain, failureReason, failureSubReason, failureIndex, failureInstruction } =
+    getFailureInfo(
+      {
+        origin: result.origin,
+        destination: result.destination
+      },
+      result.hops
+    )
 
   return {
     ...result,
     failureChain,
     failureReason,
-    failureSubReason
+    failureSubReason,
+    failureIndex,
+    failureInstruction
   } as TGetXcmFeeResult<TDisableFallback>
 }

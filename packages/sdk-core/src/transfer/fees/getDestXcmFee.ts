@@ -133,7 +133,9 @@ export const getDestXcmFee = async <
     if (disableFallback) {
       return {
         dryRunError: dryRunResult.failureReason,
-        dryRunSubError: dryRunResult.failureSubReason
+        dryRunSubError: dryRunResult.failureSubReason,
+        dryRunErrorIndex: dryRunResult.failureIndex,
+        dryRunErrorInstruction: dryRunResult.failureInstruction
       } as TXcmFeeDetailWithForwardedXcm<TDisableFallback>
     }
 
@@ -144,6 +146,8 @@ export const getDestXcmFee = async <
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
       dryRunSubError: dryRunResult.failureSubReason,
+      dryRunErrorIndex: dryRunResult.failureIndex,
+      dryRunErrorInstruction: dryRunResult.failureInstruction,
       sufficient: false,
       asset: currentAsset
     }

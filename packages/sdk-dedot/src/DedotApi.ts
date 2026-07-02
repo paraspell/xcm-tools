@@ -49,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
-import { resolveModuleError } from "@paraspell/sdk-core";
+import { getFailingInstruction, resolveModuleError } from "@paraspell/sdk-core";
 import { DedotClient, WsProvider } from "dedot";
 import {
   blake2AsHex,
@@ -498,6 +498,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
           failureIndex: failureErr.failureIndex,
+          failureInstruction: getFailingInstruction(
+            result?.value?.localXcm,
+            failureErr.failureIndex,
+          ),
           asset: resolvedFeeAsset.asset,
         };
       }
@@ -509,6 +513,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         failureReason: failureErr.failureReason || "Unknown error",
         failureSubReason: failureErr.failureSubReason,
         failureIndex: failureErr.failureIndex,
+        failureInstruction: getFailingInstruction(
+          result?.value?.localXcm,
+          failureErr.failureIndex,
+        ),
         asset: resolvedFeeAsset.asset,
       };
     }
@@ -804,6 +812,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         success: false,
         failureReason,
         failureIndex,
+        failureInstruction: getFailingInstruction(xcm, failureIndex),
         asset,
       };
     }

@@ -49,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { resolveModuleError } from '@paraspell/sdk-core'
+import { getFailingInstruction, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
@@ -412,6 +412,10 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
           failureReason: failureErr.failureReason,
           failureSubReason: failureErr.failureSubReason,
           failureIndex: failureErr.failureIndex,
+          failureInstruction: getFailingInstruction(
+            resultJson?.ok?.local_xcm,
+            failureErr.failureIndex
+          ),
           asset: resolvedFeeAsset.asset
         }
       }
@@ -423,6 +427,10 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         failureReason: failureErr.failureReason || 'Unknown error',
         failureSubReason: failureErr.failureSubReason,
         failureIndex: failureErr.failureIndex,
+        failureInstruction: getFailingInstruction(
+          resultJson?.ok?.local_xcm,
+          failureErr.failureIndex
+        ),
         asset: resolvedFeeAsset.asset
       }
     }
@@ -680,7 +688,13 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       const failureReason = isInstructionError ? error.error : error
       const failureIndex =
         isInstructionError && error?.index != null ? Number(error.index) : undefined
-      return { success: false, failureReason, failureIndex, asset }
+      return {
+        success: false,
+        failureReason,
+        failureIndex,
+        failureInstruction: getFailingInstruction(xcm, failureIndex),
+        asset
+      }
     }
 
     const forwardedXcms =
