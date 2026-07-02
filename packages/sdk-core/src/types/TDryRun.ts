@@ -334,4 +334,5 @@ export type TDryRunError = {
   failureReason: string
   failureSubReason?: string
   failureIndex?: number
+  failureInstruction?: object
 }

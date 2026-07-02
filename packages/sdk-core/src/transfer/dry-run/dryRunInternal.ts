@@ -61,6 +61,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     return {
       failureReason: originDryRun.failureReason,
       failureSubReason: originDryRun.failureSubReason,
+      failureInstruction: originDryRun.failureInstruction,
       failureChain: 'origin',
       origin: originDryRun,
       hops: []

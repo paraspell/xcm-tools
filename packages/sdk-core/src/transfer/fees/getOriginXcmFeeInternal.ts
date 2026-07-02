@@ -79,6 +79,8 @@ export const getOriginXcmFeeInternal = async <
       return {
         dryRunError: dryRunResult.failureReason,
         dryRunSubError: dryRunResult.failureSubReason,
+        dryRunErrorIndex: dryRunResult.failureIndex,
+        dryRunErrorInstruction: dryRunResult.failureInstruction,
         asset: dryRunResult.asset
       }
     }
@@ -92,6 +94,8 @@ export const getOriginXcmFeeInternal = async <
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
       dryRunSubError: dryRunResult.failureSubReason,
+      dryRunErrorIndex: dryRunResult.failureIndex,
+      dryRunErrorInstruction: dryRunResult.failureInstruction,
       sufficient: false
     }
   }

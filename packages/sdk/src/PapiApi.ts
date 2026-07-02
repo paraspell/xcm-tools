@@ -35,6 +35,7 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
+  getFailingInstruction,
   InvalidAddressError,
   isAssetEqual,
   isConfig,
@@ -469,6 +470,10 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
         failureReason: failureOutputReason.failureReason,
         failureSubReason: failureOutputReason.failureSubReason,
         failureIndex: failureOutputReason.failureIndex,
+        failureInstruction: getFailingInstruction(
+          result?.value?.local_xcm,
+          failureOutputReason.failureIndex
+        ),
         asset: resolvedFeeAsset.asset
       })
     }
@@ -747,7 +752,13 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
       const { failureReason, failureIndex } = extractDryRunXcmFailureReason(result)
-      return { success: false, failureReason, failureIndex, asset }
+      return {
+        success: false,
+        failureReason,
+        failureIndex,
+        failureInstruction: getFailingInstruction(xcm, failureIndex),
+        asset
+      }
     }
 
     const execResult = result.value.execution_result

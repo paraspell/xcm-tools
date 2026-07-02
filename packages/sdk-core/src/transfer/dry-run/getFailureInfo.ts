@@ -8,8 +8,14 @@ import type {
 
 const toFailureInfo = (
   failureChain: TChainEndpoint | undefined,
-  { failureReason, failureSubReason, failureIndex }: Partial<TDryRunError>
-): TDryRunFailureInfo => ({ failureChain, failureReason, failureSubReason, failureIndex })
+  { failureReason, failureSubReason, failureIndex, failureInstruction }: Partial<TDryRunError>
+): TDryRunFailureInfo => ({
+  failureChain,
+  failureReason,
+  failureSubReason,
+  failureIndex,
+  failureInstruction
+})
 
 export const getFailureInfo = (result: TDryRunResult): TDryRunFailureInfo => {
   const orderedChecks: { chain: TChainEndpoint; chainResult?: TDryRunChainResult }[] = [

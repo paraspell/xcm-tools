@@ -173,6 +173,8 @@ export type TXcmFeeDetailSuccess = TXcmFeeBase & {
   feeType: TFeeType
   dryRunError?: string
   dryRunSubError?: string
+  dryRunErrorIndex?: number
+  dryRunErrorInstruction?: object
 }
 
 export type TXcmFeeDetailWithFallback = TXcmFeeDetailSuccess
@@ -182,6 +184,8 @@ export type TXcmFeeDetailError = TXcmFeeBase & {
   feeType?: TFeeType
   dryRunError: string
   dryRunSubError?: string
+  dryRunErrorIndex?: number
+  dryRunErrorInstruction?: object
 }
 
 export type TXcmFeeDetail = TXcmFeeDetailSuccess | TXcmFeeDetailError
@@ -192,6 +196,8 @@ export type TXcmFeeHopResult = {
   sufficient?: boolean
   dryRunError?: string
   dryRunSubError?: string
+  dryRunErrorIndex?: number
+  dryRunErrorInstruction?: object
   forwardedXcms?: any
   destParaId?: number
   asset: TAssetInfo
@@ -218,6 +224,8 @@ export type TXcmFeeHopInfo = {
 
 export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
   failureReason?: string
+  failureIndex?: number
+  failureInstruction?: object
   failureChain?: TChainEndpoint
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
