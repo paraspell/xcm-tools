@@ -1,4 +1,4 @@
-import { isAssetEqual, isChainEvm } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,13 +8,12 @@ import { getParaId } from '../../chains/config'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext } from '../../types'
-import { createBeneficiaryLocation, createDestination, localizeLocationImpl } from '../../utils'
+import { createBeneficiaryLocation, createDestination } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createCustomXcm } from './createCustomXcm'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  isChainEvm: vi.fn(),
   isAssetEqual: vi.fn()
 }))
 vi.mock('@paraspell/sdk-common')
@@ -58,11 +57,12 @@ describe('createCustomXcm', () => {
     { BuyExecution: unknown }
   > => typeof step === 'object' && step !== null && 'BuyExecution' in step
 
-  const mockApi = { findNativeAssetInfoOrThrow: vi.fn() } as unknown as PolkadotApi<
-    unknown,
-    unknown,
-    unknown
-  >
+  const mockApi = {
+    findNativeAssetInfoOrThrow: vi.fn(),
+    getRelayChainOf: vi.fn(),
+    isChainEvm: vi.fn(),
+    localizeLocation: vi.fn()
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
   const mockAddress = '0x123'
   const mockVersion = Version.V5
 
@@ -93,9 +93,10 @@ describe('createCustomXcm', () => {
     vi.resetAllMocks()
     vi.mocked(createDestination).mockReturnValue(mockDestination)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
-    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
+    vi.spyOn(mockApi, 'localizeLocation').mockImplementation((_chain, location) => location)
     vi.mocked(isTrustedChain).mockReturnValue(false)
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
   })
 
   describe('DepositReserveAsset (different chains)', () => {
@@ -450,7 +451,7 @@ describe('createCustomXcm', () => {
       typeof instruction === 'object' && instruction !== null && 'SetAppendix' in instruction
 
     it('prefers ahAddress when provided', async () => {
-      vi.mocked(isChainEvm).mockReturnValue(true)
+      vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
 
       const result = await createCustomXcm(
         {
@@ -473,7 +474,7 @@ describe('createCustomXcm', () => {
     })
 
     it('uses sender when origin is not EVM and ahAddress is missing', async () => {
-      vi.mocked(isChainEvm).mockReturnValue(false)
+      vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
 
       const result = await createCustomXcm(
         {
@@ -492,7 +493,7 @@ describe('createCustomXcm', () => {
     })
 
     it('uses recipient when origin is EVM but destination is not EVM and ahAddress is missing', async () => {
-      vi.mocked(isChainEvm).mockImplementation(chain => chain === 'Moonbeam')
+      vi.spyOn(mockApi, 'isChainEvm').mockImplementation(chain => chain === 'Moonbeam')
 
       const result = await createCustomXcm(
         {
@@ -516,7 +517,7 @@ describe('createCustomXcm', () => {
     })
 
     it('throws MissingParameterError when both origin and destination are EVM and ahAddress is missing', async () => {
-      vi.mocked(isChainEvm).mockReturnValue(true)
+      vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
 
       await expect(
         createCustomXcm(

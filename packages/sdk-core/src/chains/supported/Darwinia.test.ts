@@ -17,7 +17,11 @@ describe('Darwinia', () => {
   const mockPolkadotXCMInput = {
     scenario: 'ParaToRelay',
     assetInfo: { symbol: 'DOT', amount: 100n },
-    api: { _customCtx: {} } as unknown as PolkadotApi<unknown, unknown, unknown>
+    api: { getNativeAssetSymbol: vi.fn().mockReturnValue('RING') } as unknown as PolkadotApi<
+      unknown,
+      unknown,
+      unknown
+    >
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {

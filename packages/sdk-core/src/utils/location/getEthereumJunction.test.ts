@@ -2,12 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
-import { getRelayChainOfImpl } from '../chain'
 import { getEthereumJunction } from './getEthereumJunction'
 
-vi.mock('../chain')
-
-const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+const mockApi = {
+  getRelayChainOf: vi.fn()
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getEthereumJunction', () => {
   beforeEach(() => {
@@ -15,7 +14,7 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns mainnet chainId as bigint by default', () => {
-    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
 
     const result = getEthereumJunction(mockApi, 'AssetHubPolkadot')
 
@@ -27,7 +26,7 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns testnet chainId for Westend/Paseo', () => {
-    vi.mocked(getRelayChainOfImpl).mockReturnValue('Westend')
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Westend')
 
     const result = getEthereumJunction(mockApi, 'AssetHubWestend')
 
@@ -39,7 +38,7 @@ describe('getEthereumJunction', () => {
   })
 
   it('returns chainId as number when useBigInt is false', () => {
-    vi.mocked(getRelayChainOfImpl).mockReturnValue('Paseo')
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Paseo')
 
     const result = getEthereumJunction(mockApi, 'AssetHubPaseo', false)
 

@@ -17,12 +17,7 @@ import type {
   TTypeAndThenCallContext,
   TTypeAndThenOverrides
 } from '../../types'
-import {
-  assertToIsString,
-  getAssetReserveChainImpl,
-  getRelayChainOf,
-  getRelayChainOfImpl
-} from '../../utils'
+import { assertToIsString, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
 export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -56,7 +51,7 @@ const resolveReserveChain = <TApi, TRes, TSigner, TCustomChain extends string = 
     return overrideReserve
   }
 
-  return getAssetReserveChainImpl(api, chain, assetLocation, true)
+  return api.getAssetReserveChain(chain, assetLocation, true)
 }
 
 export const createTypeAndThenCallContext = async <
@@ -106,10 +101,10 @@ export const createTypeAndThenCallContext = async <
     }
   ]
 
-  const systemAsset = api.findNativeAssetInfoOrThrow(getRelayChainOfImpl(api, chain))
+  const systemAsset = api.findNativeAssetInfoOrThrow(api.getRelayChainOf(chain))
 
   const assetGlobalConsensus = getJunctionValue(assetInfo.location, 'GlobalConsensus')
-  const originRelayChain = getRelayChainOfImpl(api, chain)
+  const originRelayChain = api.getRelayChainOf(chain)
   const isAssetHubToExternal = chain.startsWith('AssetHub') && isExternalChain(destination)
   const isForeignRelayToExternal =
     isExternalChain(destination) &&

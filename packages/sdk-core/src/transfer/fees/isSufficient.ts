@@ -1,10 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import {
-  getEdFromAssetOrThrow,
-  getExistentialDepositOrThrowImpl,
-  getNativeAssetSymbolImpl,
-  isSymbolMatch
-} from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isSymbolMatch } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
@@ -21,7 +16,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
 ): Promise<boolean | undefined> => {
   if (feeAsset) return undefined
 
-  const edNative = getExistentialDepositOrThrowImpl(origin, undefined, api._customCtx)
+  const edNative = api.getExistentialDepositOrThrow(origin)
 
   const balanceNative = await getBalanceInternal({
     api,
@@ -29,14 +24,8 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
     address: sender
   })
 
-  const isNativeAssetToOrigin = isSymbolMatch(
-    asset.symbol,
-    getNativeAssetSymbolImpl(origin, api._customCtx)
-  )
-  const isNativeAssetToDest = isSymbolMatch(
-    asset.symbol,
-    getNativeAssetSymbolImpl(destination, api._customCtx)
-  )
+  const isNativeAssetToOrigin = isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(origin))
+  const isNativeAssetToDest = isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(destination))
 
   if (isNativeAssetToOrigin && isNativeAssetToDest) {
     return balanceNative - edNative - feeNative - asset.amount > 0n
@@ -74,18 +63,11 @@ export const isSufficientDestination = async <
   asset: WithAmount<TAssetInfo>,
   feeNative: bigint
 ): Promise<boolean | undefined> => {
-  const isNativeAsset = isSymbolMatch(
-    asset.symbol,
-    getNativeAssetSymbolImpl(destination, api._customCtx)
-  )
+  const isNativeAsset = isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(destination))
 
   if (!isNativeAsset) return undefined
 
-  const existentialDeposit = getExistentialDepositOrThrowImpl(
-    destination,
-    undefined,
-    api._customCtx
-  )
+  const existentialDeposit = api.getExistentialDepositOrThrow(destination)
 
   const nativeBalance = await getBalanceInternal({
     api,

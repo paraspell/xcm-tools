@@ -3,8 +3,7 @@ import type { TChain } from '@paraspell/sdk-common'
 
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createAsset } from '../../asset'
-import { getAssetReserveChainImpl } from '../../chain'
-import { localizeLocation, localizeLocationImpl } from '../../location'
+import { localizeLocation } from '../../location'
 
 export type TExecuteContext<TCustomChain extends string = never> = {
   amount: bigint
@@ -29,14 +28,14 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
   version
 }: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>): TExecuteContext<TCustomChain> => {
   const amount = assetInfo.amount
-  const reserveChain = getAssetReserveChainImpl(api, chain, assetInfo.location)
+  const reserveChain = api.getAssetReserveChain(chain, assetInfo.location)
 
   const asset = createAsset(version, amount, assetInfo.location)
 
   const assetLocalized = createAsset(
     version,
     amount,
-    localizeLocationImpl(api, chain, assetInfo.location)
+    api.localizeLocation(chain, assetInfo.location)
   )
   const assetLocalizedToDest = createAsset(
     version,
@@ -46,7 +45,7 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
   const assetLocalizedToReserve = createAsset(
     version,
     amount,
-    localizeLocationImpl(api, reserveChain ?? chain, assetInfo.location)
+    api.localizeLocation(reserveChain ?? chain, assetInfo.location)
   )
 
   const feeAsset =
@@ -56,7 +55,7 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
 
   const feeAssetLocalized =
     feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(version, originFee, localizeLocationImpl(api, chain, feeAssetInfo.location))
+      ? createAsset(version, originFee, api.localizeLocation(chain, feeAssetInfo.location))
       : undefined
 
   const feeAssetLocalizedToDest =
@@ -69,7 +68,7 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
       ? createAsset(
           version,
           originFee,
-          localizeLocationImpl(api, reserveChain ?? chain, feeAssetInfo.location)
+          api.localizeLocation(reserveChain ?? chain, feeAssetInfo.location)
         )
       : undefined
 

@@ -11,13 +11,7 @@ import type {
   TTypeAndThenFees,
   TTypeAndThenOverrides
 } from '../../types'
-import {
-  createAsset,
-  localizeLocationImpl,
-  normalizeAmount,
-  parseUnits,
-  sortAssets
-} from '../../utils'
+import { createAsset, normalizeAmount, parseUnits, sortAssets } from '../../utils'
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
@@ -47,7 +41,7 @@ const buildAssets = <TApi, TRes, TSigner, TCustomChain extends string = never>(
     createAsset(
       version,
       asset.amount,
-      normalizeLocation(localizeLocationImpl(api, chain, asset.location), version)
+      normalizeLocation(api.localizeLocation(chain, asset.location), version)
     )
   )
 

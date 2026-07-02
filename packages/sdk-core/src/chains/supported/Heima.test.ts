@@ -11,7 +11,9 @@ import Heima from './Heima'
 
 vi.mock('../../pallets/polkadotXcm')
 
-const apiMock = { _customCtx: {} } as unknown as PolkadotApi<unknown, unknown, unknown>
+const apiMock = {
+  getNativeAssetSymbol: vi.fn().mockReturnValue('HEI')
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('Heima', () => {
   let chain: Heima<unknown, unknown, unknown>

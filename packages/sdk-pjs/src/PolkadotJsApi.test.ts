@@ -10,11 +10,6 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  getChainProviders,
-  getRelayChainOfImpl,
-  hasXcmPaymentApiSupportImpl,
   localizeLocation,
   MissingChainApiError,
   RELAY_LOCATION,
@@ -38,13 +33,8 @@ import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
-  findAssetInfoOrThrowImpl: vi.fn(),
-  getChainProviders: vi.fn(),
   resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
-  findNativeAssetInfoOrThrowImpl: vi.fn(),
-  hasXcmPaymentApiSupportImpl: vi.fn().mockReturnValue(true),
   localizeLocation: vi.fn(),
-  getRelayChainOfImpl: vi.fn(),
   wrapTxBypass: vi.fn(),
   addXcmVersionHeader: vi.fn()
 }))
@@ -106,7 +96,6 @@ describe('PolkadotJsApi', () => {
   }
 
   beforeEach(async () => {
-    vi.mocked(getChainProviders).mockReset()
     vi.mocked(addXcmVersionHeader).mockImplementation(location => ({ V4: location }))
     vi.mocked(localizeLocation).mockImplementation((_chain, location) => location)
     mockApiPromise = {
@@ -179,8 +168,8 @@ describe('PolkadotJsApi', () => {
     polkadotApi = new PolkadotJsApi(mockApiPromise)
     await polkadotApi.init(mockChain)
 
-    vi.mocked(findNativeAssetInfoOrThrowImpl).mockReset()
-    vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+    vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
+    vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
 
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockReset()
     vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue({
@@ -205,7 +194,6 @@ describe('PolkadotJsApi', () => {
     accountCurrencyMapMock = mockApiPromise.query.multiTransactionPayment
       .accountCurrencyMap as unknown as Mock
     accountCurrencyMapMock.mockReset()
-    vi.mocked(findAssetInfoOrThrowImpl).mockReset()
   })
 
   describe('getFromRpc', () => {
@@ -1041,7 +1029,7 @@ describe('PolkadotJsApi', () => {
       const convertedFee = 999n
       const localizedLoc = { parents: 0, interior: { Here: null } } as TLocation
 
-      vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+      vi.spyOn(polkadotApi, 'getRelayChainOf').mockReturnValue('Polkadot')
       vi.mocked(localizeLocation).mockReturnValue(localizedLoc)
       vi.mocked(addXcmVersionHeader).mockReturnValue({ V4: { relay: true } })
 
@@ -1358,7 +1346,7 @@ describe('PolkadotJsApi', () => {
         forwarded: hereForwarded
       })
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1443,7 +1431,7 @@ describe('PolkadotJsApi', () => {
     it('success with undefined weight and no forwardedXcms', async () => {
       const resp = makeSuccessResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1468,7 +1456,7 @@ describe('PolkadotJsApi', () => {
     it('returns failure with "Other" error without retry', async () => {
       const resp = makeErrOtherResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1490,7 +1478,7 @@ describe('PolkadotJsApi', () => {
     it('returns failure reason from direct human error (Err.error) when not Module/Other', async () => {
       const resp = makeErrDirectHumanResponse('DirectHumanError')
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1512,7 +1500,7 @@ describe('PolkadotJsApi', () => {
     it('JSON-only module error (no human error present)', async () => {
       const resp = makeJsonModuleOnlyResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1533,7 +1521,7 @@ describe('PolkadotJsApi', () => {
     it('returns failure reason from JSON other when human result has no error', async () => {
       const resp = makeJsonOtherOnlyResponse('JsonOnlyFailureReason')
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1554,7 +1542,7 @@ describe('PolkadotJsApi', () => {
     it('falls back to stringified output when neither human nor JSON have recognizable error', async () => {
       const resp = makeNoErrShapesResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1582,7 +1570,7 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
         .mockResolvedValueOnce(vcf)
         .mockResolvedValueOnce(ok)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1628,7 +1616,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
 
       const feeAsset = usdtAsset
 
@@ -1678,7 +1666,7 @@ describe('PolkadotJsApi', () => {
 
       const resp = makeSuccessResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
 
       const bypassOptions = { mintFeeAssets: true }
 
@@ -1714,7 +1702,7 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall)
         .mockResolvedValueOnce(vcf)
         .mockResolvedValueOnce(modErr)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1741,7 +1729,7 @@ describe('PolkadotJsApi', () => {
         .mockImplementationOnce(() => {
           throw new Error('RPC temporarily unavailable')
         })
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1778,7 +1766,7 @@ describe('PolkadotJsApi', () => {
           throw new Error('DryRunApi_dry_run_call:: Expected 3 arguments, found 2')
         })
         .mockResolvedValueOnce(ok)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1807,7 +1795,7 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockImplementationOnce(() => {
         throw new Error('Some unexpected error')
       })
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1832,7 +1820,7 @@ describe('PolkadotJsApi', () => {
         forwarded: x1ArrayForwarded
       })
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(usdtAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(usdtAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1889,7 +1877,7 @@ describe('PolkadotJsApi', () => {
       const nativeAsset = dotAsset
       const multiAsset = usdtAsset
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
 
       const resolveUsedAssetSpy = vi
         .spyOn(polkadotApi, 'resolveFeeAsset')
@@ -1942,7 +1930,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
 
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
@@ -1991,13 +1979,14 @@ describe('PolkadotJsApi', () => {
       accountCurrencyMapMock.mockResolvedValue(storageResponse)
 
       const nativeAsset = dotAsset
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
+      const findAssetInfoSpy = vi.spyOn(polkadotApi, 'findAssetInfoOrThrow')
 
       const result = await polkadotApi.resolveFeeAsset(baseOptions)
 
       expect(accountCurrencyMapMock).toHaveBeenCalledWith(baseOptions.address)
       expect(result).toEqual({ isCustomAsset: false, asset: nativeAsset })
-      expect(findAssetInfoOrThrowImpl).not.toHaveBeenCalled()
+      expect(findAssetInfoSpy).not.toHaveBeenCalled()
     })
 
     it('returns mapped asset when accountCurrencyMap yields an id', async () => {
@@ -2009,17 +1998,14 @@ describe('PolkadotJsApi', () => {
       accountCurrencyMapMock.mockResolvedValue(storageResponse)
 
       const mappedAsset = usdtAsset
-      vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue(mappedAsset)
+      const findAssetInfoSpy = vi
+        .spyOn(polkadotApi, 'findAssetInfoOrThrow')
+        .mockReturnValue(mappedAsset)
 
       const result = await polkadotApi.resolveFeeAsset(baseOptions)
 
       expect(accountCurrencyMapMock).toHaveBeenCalledWith(baseOptions.address)
-      expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
-        'Hydration',
-        { id: assetId },
-        undefined,
-        polkadotApi._customCtx
-      )
+      expect(findAssetInfoSpy).toHaveBeenCalledWith('Hydration', { id: assetId })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
   })
@@ -2133,7 +2119,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValueOnce(false)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValueOnce(false)
 
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
@@ -2167,7 +2153,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValueOnce(false)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValueOnce(false)
 
       const result = await polkadotApi.getDryRunXcm({
         originLocation,
@@ -2215,7 +2201,7 @@ describe('PolkadotJsApi', () => {
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValueOnce(false)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValueOnce(false)
 
       expect(
         await polkadotApi.getDryRunXcm({

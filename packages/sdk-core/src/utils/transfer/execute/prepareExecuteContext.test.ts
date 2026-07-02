@@ -5,15 +5,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../../api'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createAsset } from '../../asset'
-import { getAssetReserveChainImpl } from '../../chain'
-import { localizeLocation, localizeLocationImpl } from '../../location'
+import { localizeLocation } from '../../location'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
 vi.mock('@paraspell/assets')
 
 vi.mock('../../location')
 vi.mock('../../asset')
-vi.mock('../../chain')
 
 describe('prepareExecuteContext', () => {
   const mockLocation: TLocation = { parents: 1, interior: { Here: null } }
@@ -22,7 +20,10 @@ describe('prepareExecuteContext', () => {
   const chain = 'Acala'
   const destChain = 'Moonbeam'
 
-  const api = {} as PolkadotApi<unknown, unknown, unknown>
+  const api = {
+    getAssetReserveChain: vi.fn(),
+    localizeLocation: vi.fn()
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockOptions = {
     api,
@@ -45,16 +46,19 @@ describe('prepareExecuteContext', () => {
     vi.clearAllMocks()
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(localizeLocation).mockReturnValue(mockLocalizedLocation)
-    vi.mocked(localizeLocationImpl).mockReturnValue(mockLocalizedLocation)
-    vi.mocked(getAssetReserveChainImpl).mockReturnValue('AssetHubPolkadot')
+    vi.spyOn(api, 'localizeLocation').mockReturnValue(mockLocalizedLocation)
+    vi.spyOn(api, 'getAssetReserveChain').mockReturnValue('AssetHubPolkadot')
   })
 
   it('creates execute context without fee asset', () => {
+    const getAssetReserveChainSpy = vi.spyOn(api, 'getAssetReserveChain')
+    const localizeLocationSpy = vi.spyOn(api, 'localizeLocation')
+
     const result = prepareExecuteContext(mockOptions)
 
-    expect(getAssetReserveChainImpl).toHaveBeenCalledWith(api, chain, mockLocation)
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(chain, mockLocation)
     expect(createAsset).toHaveBeenCalledTimes(4)
-    expect(localizeLocationImpl).toHaveBeenCalledTimes(2)
+    expect(localizeLocationSpy).toHaveBeenCalledTimes(2)
     expect(localizeLocation).toHaveBeenCalledTimes(1)
 
     expect(result).toEqual({
@@ -81,10 +85,12 @@ describe('prepareExecuteContext', () => {
 
     vi.mocked(isAssetEqual).mockReturnValue(false)
 
+    const localizeLocationSpy = vi.spyOn(api, 'localizeLocation')
+
     const result = prepareExecuteContext(optionsWithFee)
 
     expect(createAsset).toHaveBeenCalledTimes(8) // 4 base + 4 fee assets
-    expect(localizeLocationImpl).toHaveBeenCalledTimes(4) // 2 base + 2 fee assets
+    expect(localizeLocationSpy).toHaveBeenCalledTimes(4) // 2 base + 2 fee assets
     expect(localizeLocation).toHaveBeenCalledTimes(2) // 1 base + 1 fee asset
 
     expect(result.feeAsset).toBe(mockAsset)
@@ -114,11 +120,13 @@ describe('prepareExecuteContext', () => {
   })
 
   it('localizes to different chains correctly', () => {
+    const localizeLocationSpy = vi.spyOn(api, 'localizeLocation')
+
     prepareExecuteContext(mockOptions)
 
-    expect(localizeLocationImpl).toHaveBeenCalledWith(api, 'Acala', mockLocation)
+    expect(localizeLocationSpy).toHaveBeenCalledWith('Acala', mockLocation)
     expect(localizeLocation).toHaveBeenCalledWith('Moonbeam', mockLocation)
-    expect(localizeLocationImpl).toHaveBeenCalledWith(api, 'AssetHubPolkadot', mockLocation)
+    expect(localizeLocationSpy).toHaveBeenCalledWith('AssetHubPolkadot', mockLocation)
   })
 
   it('converts string amount to bigint', () => {

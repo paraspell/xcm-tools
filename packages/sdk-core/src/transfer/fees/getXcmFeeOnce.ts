@@ -13,7 +13,7 @@ import type {
   TXcmFeeHopInfo,
   TXcmFeeHopResult
 } from '../../types'
-import { getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
+import { pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { inferFeeAsset } from '../utils/inferFeeAsset'
@@ -318,8 +318,8 @@ export const getXcmFeeOnce = async <
   }
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(api, origin)}`
+  const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
+  const assetHubChain: TSubstrateChain = `AssetHub${api.getRelayChainOf(origin)}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 
@@ -329,7 +329,7 @@ export const getXcmFeeOnce = async <
 
   // Update bridge hub fee in hops if needed
   if (processedBridgeHub && bridgeHubHop && processedBridgeHub.fee !== bridgeHubHop.result.fee) {
-    const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
+    const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
     const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1) {
       traversalResult.hops[bridgeHubHopIndex].result = {

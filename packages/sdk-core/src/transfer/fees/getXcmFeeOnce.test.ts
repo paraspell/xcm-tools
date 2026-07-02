@@ -10,7 +10,6 @@ import type {
   TGetXcmFeeOptions,
   TXcmFeeHopResult
 } from '../../types'
-import { getRelayChainOf, getRelayChainOfImpl } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
 import { getDestXcmFee } from './getDestXcmFee'
@@ -40,7 +39,8 @@ const createApi = () =>
     init: vi.fn().mockResolvedValue(undefined),
     getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() }),
     findAssetInfoOrThrow: vi.fn(),
-    findNativeAssetInfoOrThrow: vi.fn()
+    findNativeAssetInfoOrThrow: vi.fn(),
+    getRelayChainOf: vi.fn().mockReturnValue('Polkadot')
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 let defaultApi: PolkadotApi<unknown, unknown, unknown>
@@ -70,7 +70,6 @@ describe('getXcmFeeOnce', () => {
 
   beforeEach(() => {
     defaultApi = createApi()
-    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
   })
 
   afterEach(() => vi.resetAllMocks())
@@ -223,8 +222,6 @@ describe('getXcmFeeOnce', () => {
       destParaId: undefined
     })
 
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
       lastProcessedChain: 'Acala'
@@ -262,8 +259,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
-
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -326,8 +321,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
-
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -400,7 +393,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -488,8 +480,6 @@ describe('getXcmFeeOnce', () => {
       return { symbol: 'GLMR' } as TAssetInfo
     })
 
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
       feeType: 'dryRun',
@@ -573,7 +563,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'ETH'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -606,7 +595,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
       return { symbol: 'ACA' } as TAssetInfo
     })
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -647,7 +635,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'ACA'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -675,7 +662,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'ACA'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -706,7 +692,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'Centrifuge') return { symbol: 'CUSTOM' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -748,7 +733,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'ACA'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -782,7 +766,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'ACA'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -815,7 +798,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'GLMR'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -853,7 +835,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'DOT'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -949,9 +930,9 @@ describe('getXcmFeeOnce', () => {
         if (chain === 'Acala') return { symbol: 'ACA' }
         if (chain === 'AssetHubPolkadot') return { symbol: 'DOT' }
         return { symbol: 'GLMR' }
-      })
+      }),
+      getRelayChainOf: vi.fn().mockReturnValue('Polkadot')
     } as unknown as PolkadotApi<unknown, unknown, unknown>
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -1004,7 +985,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'GLMR'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -1062,7 +1042,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'GLMR'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -1126,7 +1105,6 @@ describe('getXcmFeeOnce', () => {
       if (chain === 'BridgeHubPolkadot') return { symbol: 'DOT' } as TAssetInfo
       return { symbol: 'ACA' } as TAssetInfo
     })
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
@@ -1169,7 +1147,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'DOT'
     } as TAssetInfo)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,

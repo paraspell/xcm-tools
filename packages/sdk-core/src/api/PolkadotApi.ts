@@ -1,4 +1,4 @@
-import type { TAssetInfo, TChainAssetsInfo, TCurrencyInput } from '@paraspell/assets'
+import type { TAssetInfo, TChainAssetsInfo, TCurrencyCore, TCurrencyInput } from '@paraspell/assets'
 import {
   findAssetInfoImpl,
   findAssetInfoOnDestImpl,
@@ -8,6 +8,7 @@ import {
   findNativeAssetInfoOrThrowImpl,
   getAssetsImpl,
   getAssetsObjectImpl,
+  getExistentialDepositOrThrowImpl,
   getNativeAssetsImpl,
   getNativeAssetSymbolImpl,
   getOtherAssetsImpl,
@@ -19,9 +20,17 @@ import {
   normalizeCustomAssets
 } from '@paraspell/assets'
 import type { TPallet, TPalletEntry } from '@paraspell/pallets'
-import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import { getXcmPalletImpl, hasPalletImpl } from '@paraspell/pallets'
+import type {
+  TChain,
+  TLocation,
+  TRelaychain,
+  TSubstrateChain,
+  Version
+} from '@paraspell/sdk-common'
 import { isCustomChain, isExternalChain } from '@paraspell/sdk-common'
 
+import { getChainProvidersImpl, getParaIdImpl } from '../chains/config'
 import {
   buildCustomChainAssetsInfo,
   normalizeCustomChains,
@@ -54,7 +63,12 @@ import type {
   TUrl,
   TWeight
 } from '../types'
-import { isConfig } from '../utils'
+import {
+  getAssetReserveChainImpl,
+  getRelayChainOfImpl,
+  isConfig,
+  localizeLocationImpl
+} from '../utils'
 import { resolveChainApi } from './resolveChainApi'
 
 export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends string = never> {
@@ -174,6 +188,46 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
 
   hasXcmPaymentApiSupport(chain: TChain | TCustomChain): boolean {
     return hasXcmPaymentApiSupportImpl(chain, this._customCtx)
+  }
+
+  getExistentialDepositOrThrow(chain: TChain | TCustomChain, currency?: TCurrencyCore): bigint {
+    return getExistentialDepositOrThrowImpl(chain, currency, this._customCtx)
+  }
+
+  hasPallet(chain: TSubstrateChain | TCustomChain, pallet: TPallet): boolean {
+    return hasPalletImpl(chain, pallet, this._customCtx)
+  }
+
+  getXcmPallet(chain: TSubstrateChain | TCustomChain): TPallet {
+    return getXcmPalletImpl(chain, this._customCtx)
+  }
+
+  getRelayChainOf(chain: TSubstrateChain | TCustomChain): TRelaychain {
+    return getRelayChainOfImpl(this, chain)
+  }
+
+  getParaId(chain: TChain | TCustomChain): number {
+    return getParaIdImpl(chain, this._customCtx)
+  }
+
+  getChainProviders(chain: TSubstrateChain | TCustomChain): string[] {
+    return getChainProvidersImpl(chain, this._customCtx)
+  }
+
+  localizeLocation(
+    chain: TChain | TCustomChain,
+    location: TLocation,
+    origin?: TChain | TCustomChain
+  ): TLocation {
+    return localizeLocationImpl(this, chain, location, origin)
+  }
+
+  getAssetReserveChain(
+    chain: TSubstrateChain | TCustomChain,
+    assetLocation: TLocation,
+    resolveExternalReserve = false
+  ): TChain | TCustomChain {
+    return getAssetReserveChainImpl(this, chain, assetLocation, resolveExternalReserve)
   }
 
   async init(

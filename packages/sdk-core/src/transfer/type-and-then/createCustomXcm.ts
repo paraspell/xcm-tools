@@ -1,4 +1,4 @@
-import { extractAssetLocation, isChainEvmImpl, normalizeLocation } from '@paraspell/assets'
+import { extractAssetLocation, normalizeLocation } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue, isExternalChain, isTrustedChain } from '@paraspell/sdk-common'
 
@@ -7,7 +7,7 @@ import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import { assertSender, createAsset, isNativeAssetTeleport, normalizeAmount } from '../../utils'
-import { createBeneficiaryLocation, createDestination, localizeLocationImpl } from '../../utils'
+import { createBeneficiaryLocation, createDestination } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
@@ -65,8 +65,8 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
 
     const resolveRefundAddress = () => {
       if (ahAddress) return ahAddress
-      if (!isChainEvmImpl(origin.chain, origin.api._customCtx)) return sender
-      if (!isChainEvmImpl(dest.chain, dest.api._customCtx)) return recipient
+      if (!origin.api.isChainEvm(origin.chain)) return sender
+      if (!dest.api.isChainEvm(dest.chain)) return recipient
       throw new MissingParameterError('ahAddress')
     }
 
@@ -92,15 +92,9 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
 
   const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
 
-  const feeLocLocalized = localizeLocationImpl(
-    origin.api,
-    dest.chain,
-    feeAssetLocation,
-    origin.chain
-  )
+  const feeLocLocalized = origin.api.localizeLocation(dest.chain, feeAssetLocation, origin.chain)
 
-  const assetLocLocalized = localizeLocationImpl(
-    origin.api,
+  const assetLocLocalized = origin.api.localizeLocation(
     dest.chain,
     assetInfo.location,
     origin.chain
@@ -137,7 +131,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     createAsset(
       version,
       amount,
-      normalizeLocation(localizeLocationImpl(origin.api, reserve.chain, location), version)
+      normalizeLocation(origin.api.localizeLocation(reserve.chain, location), version)
     )
 
   const assetsFilter = []
@@ -154,7 +148,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
         createAsset(
           version,
           hopFees + destFee,
-          localizeLocationImpl(origin.api, reserve.chain, RELAY_LOCATION)
+          origin.api.localizeLocation(reserve.chain, RELAY_LOCATION)
         )
       )
 

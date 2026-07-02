@@ -5,13 +5,10 @@ import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig } from '../../types'
-import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-vi.mock('@paraspell/assets')
 vi.mock('../../chains/getTChain')
-vi.mock('../../utils')
 vi.mock('../eth-transfer')
 vi.mock('../../constants', async importOriginal => ({
   ...(await importOriginal()),
@@ -42,11 +39,11 @@ describe('traverseXcmHops', () => {
       init: vi.fn(),
       disconnect: vi.fn(),
       findAssetInfoOrThrow: vi.fn().mockReturnValue({ assetId: 'asset1' }),
-      findAssetOnDestOrThrow: vi.fn().mockReturnValue({ assetId: 'asset2' })
+      findAssetOnDestOrThrow: vi.fn().mockReturnValue({ assetId: 'asset2' }),
+      getRelayChainOf: vi.fn().mockReturnValue('Polkadot')
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
   })
 
   it('should process a single hop successfully', async () => {

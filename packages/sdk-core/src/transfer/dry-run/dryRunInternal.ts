@@ -5,7 +5,7 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
-import { addXcmVersionHeader, getRelayChainOfImpl, pickCompatibleXcmVersion } from '../../utils'
+import { addXcmVersionHeader, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveCurrency, resolveHopAsset } from '../utils'
@@ -158,8 +158,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
   })
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${getRelayChainOfImpl(api, origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(api, origin)}`
+  const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
+  const assetHubChain: TSubstrateChain = `AssetHub${api.getRelayChainOf(origin)}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 

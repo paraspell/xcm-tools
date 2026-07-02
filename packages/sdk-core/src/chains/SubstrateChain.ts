@@ -1,13 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import {
-  getNativeAssetSymbolImpl,
-  getRelayChainSymbolImpl,
-  isAssetEqual,
-  isChainEvm,
-  isSymbolMatch,
-  type TAsset
-} from '@paraspell/assets'
-import { getNativeAssetsPallet, getOtherAssetsPallets, hasPalletImpl } from '@paraspell/pallets'
+import { isAssetEqual, isChainEvm, isSymbolMatch, type TAsset } from '@paraspell/assets'
+import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import {
@@ -53,7 +46,6 @@ import {
   resolveDestChain
 } from '../utils'
 import { createAsset, pickOtherMintPallet } from '../utils/asset'
-import { localizeLocationImpl } from '../utils/location'
 import { resolveParaId } from '../utils/resolveParaId'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import Chain from './Chain'
@@ -140,7 +132,7 @@ abstract class SubstrateChain<
 
     const isRelayAsset =
       deepEqual(asset.location, RELAY_LOCATION) &&
-      isSymbolMatch(getRelayChainSymbolImpl(this.chain, api._customCtx), asset.symbol)
+      isSymbolMatch(api.getRelayChainSymbol(this.chain), asset.symbol)
 
     const mythAsset = api.findNativeAssetInfoOrThrow('Mythos')
     const isMythAsset = isAssetEqual(mythAsset, asset)
@@ -148,7 +140,7 @@ abstract class SubstrateChain<
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
 
     const supportsTypeThen = await api.hasMethod(
-      hasPalletImpl(this.chain, 'XcmPallet', api._customCtx) ? 'XcmPallet' : 'PolkadotXcm',
+      api.hasPallet(this.chain, 'XcmPallet') ? 'XcmPallet' : 'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 
@@ -346,11 +338,11 @@ abstract class SubstrateChain<
     version: Version
   ): TAsset {
     const { amount, location } = asset
-    return createAsset(version, amount, localizeLocationImpl(api, this.chain, location))
+    return createAsset(version, amount, api.localizeLocation(this.chain, location))
   }
 
   getNativeAssetSymbol(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>): string {
-    return getNativeAssetSymbolImpl(this.chain, api._customCtx)
+    return api.getNativeAssetSymbol(this.chain)
   }
 
   async transferLocal(

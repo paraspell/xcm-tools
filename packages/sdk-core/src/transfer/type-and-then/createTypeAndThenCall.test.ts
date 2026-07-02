@@ -8,14 +8,7 @@ import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION, RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import {
-  createAsset,
-  getRelayChainOf,
-  localizeLocationImpl,
-  normalizeAmount,
-  parseUnits,
-  sortAssets
-} from '../../utils'
+import { createAsset, getRelayChainOf, normalizeAmount, parseUnits, sortAssets } from '../../utils'
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
@@ -84,13 +77,14 @@ describe('createTypeAndThenCall', () => {
     vi.clearAllMocks()
     mockApi.deserializeExtrinsics = vi.fn()
     mockApi.clone = vi.fn().mockReturnValue(mockApi)
+    mockApi.localizeLocation = vi.fn()
+    vi.spyOn(mockApi, 'localizeLocation').mockImplementation((_chain, location) => location)
     vi.mocked(createTypeAndThenCallContext).mockResolvedValue(mockContext)
     vi.mocked(createCustomXcm).mockResolvedValue(mockCustomXcm)
     vi.mocked(computeAllFees).mockResolvedValue(mockFees)
     vi.mocked(buildTypeAndThenCall).mockReturnValue(mockSerializedCall)
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(createAsset).mockReturnValue(mockAsset)
-    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(parseUnits).mockImplementation(value => BigInt(value.toString()))
     vi.mocked(normalizeAmount).mockImplementation(value => value)
@@ -262,8 +256,10 @@ describe('createTypeAndThenCall', () => {
       }
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
+    const localizeLocationSpy = vi.spyOn(mockApi, 'localizeLocation')
+
     vi.mocked(createAsset).mockClear()
-    vi.mocked(localizeLocationImpl).mockClear()
+    localizeLocationSpy.mockClear()
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
@@ -277,7 +273,7 @@ describe('createTypeAndThenCall', () => {
       overriddenAssets
     )
     expect(createAsset).not.toHaveBeenCalled()
-    expect(localizeLocationImpl).not.toHaveBeenCalled()
+    expect(localizeLocationSpy).not.toHaveBeenCalled()
     expect(sortAssets).not.toHaveBeenCalled()
   })
 
@@ -295,8 +291,10 @@ describe('createTypeAndThenCall', () => {
       }
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
+    const localizeLocationSpy = vi.spyOn(mockApi, 'localizeLocation')
+
     vi.mocked(createAsset).mockClear()
-    vi.mocked(localizeLocationImpl).mockClear()
+    localizeLocationSpy.mockClear()
     vi.mocked(sortAssets).mockClear()
     vi.mocked(buildTypeAndThenCall).mockClear()
 
@@ -311,7 +309,7 @@ describe('createTypeAndThenCall', () => {
       mockCustomXcm,
       [mockAsset]
     )
-    expect(localizeLocationImpl).not.toHaveBeenCalled()
+    expect(localizeLocationSpy).not.toHaveBeenCalled()
     expect(sortAssets).not.toHaveBeenCalled()
   })
 })

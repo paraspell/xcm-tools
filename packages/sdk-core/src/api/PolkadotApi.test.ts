@@ -7,6 +7,7 @@ import {
   findNativeAssetInfoOrThrowImpl,
   getAssetsImpl,
   getAssetsObjectImpl,
+  getExistentialDepositOrThrowImpl,
   getNativeAssetsImpl,
   getNativeAssetSymbolImpl,
   getOtherAssetsImpl,
@@ -16,9 +17,10 @@ import {
   isChainEvmImpl,
   type TChainAssetsInfo
 } from '@paraspell/assets'
-import type { TPalletEntry } from '@paraspell/pallets'
+import { getXcmPalletImpl, hasPalletImpl, type TPalletEntry } from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getChainProvidersImpl, getParaIdImpl } from '../chains/config'
 import { DEFAULT_TTL_MS } from '../constants'
 import {
   ApiNotInitializedError,
@@ -26,6 +28,7 @@ import {
   UnsupportedOperationError
 } from '../errors'
 import type { TBridgeStatus, TBuilderOptions, TDestination, TDryRunChainResult } from '../types'
+import { getAssetReserveChainImpl, getRelayChainOfImpl, localizeLocationImpl } from '../utils'
 import { PolkadotApi } from './PolkadotApi'
 import { resolveChainApi } from './resolveChainApi'
 
@@ -47,7 +50,26 @@ vi.mock('@paraspell/assets', async importOriginal => ({
   getNativeAssetSymbolImpl: vi.fn(),
   getRelayChainSymbolImpl: vi.fn(),
   hasDryRunSupportImpl: vi.fn(),
-  hasXcmPaymentApiSupportImpl: vi.fn()
+  hasXcmPaymentApiSupportImpl: vi.fn(),
+  getExistentialDepositOrThrowImpl: vi.fn()
+}))
+
+vi.mock('@paraspell/pallets', async importOriginal => ({
+  ...(await importOriginal()),
+  hasPalletImpl: vi.fn(),
+  getXcmPalletImpl: vi.fn()
+}))
+
+vi.mock('../chains/config', () => ({
+  getParaIdImpl: vi.fn(),
+  getChainProvidersImpl: vi.fn()
+}))
+
+vi.mock('../utils', async importOriginal => ({
+  ...(await importOriginal()),
+  getRelayChainOfImpl: vi.fn(),
+  localizeLocationImpl: vi.fn(),
+  getAssetReserveChainImpl: vi.fn()
 }))
 
 class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
@@ -277,6 +299,67 @@ describe('PolkadotApi', () => {
         args: [chain],
         expectedArgs: [chain, ctx],
         returnValue: true
+      },
+      {
+        method: 'getExistentialDepositOrThrow',
+        impl: vi.mocked(getExistentialDepositOrThrowImpl),
+        args: [chain, 'DOT'],
+        expectedArgs: [chain, 'DOT', ctx],
+        returnValue: 10000000000n
+      },
+      {
+        method: 'hasPallet',
+        impl: vi.mocked(hasPalletImpl),
+        args: [chain, 'Balances'],
+        expectedArgs: [chain, 'Balances', ctx],
+        returnValue: true
+      },
+      {
+        method: 'getXcmPallet',
+        impl: vi.mocked(getXcmPalletImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: 'PolkadotXcm'
+      },
+      {
+        method: 'getRelayChainOf',
+        impl: vi.mocked(getRelayChainOfImpl),
+        args: [chain],
+        expectedArgs: [expect.any(ConcreteApi), chain],
+        returnValue: 'Polkadot'
+      },
+      {
+        method: 'getParaId',
+        impl: vi.mocked(getParaIdImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: 2000
+      },
+      {
+        method: 'getChainProviders',
+        impl: vi.mocked(getChainProvidersImpl),
+        args: [chain],
+        expectedArgs: [chain, ctx],
+        returnValue: ['wss://rpc.example']
+      },
+      {
+        method: 'localizeLocation',
+        impl: vi.mocked(localizeLocationImpl),
+        args: [chain, { parents: 1, interior: 'Here' }, 'Polkadot'],
+        expectedArgs: [
+          expect.any(ConcreteApi),
+          chain,
+          { parents: 1, interior: 'Here' },
+          'Polkadot'
+        ],
+        returnValue: { parents: 0, interior: 'Here' }
+      },
+      {
+        method: 'getAssetReserveChain',
+        impl: vi.mocked(getAssetReserveChainImpl),
+        args: [chain, { parents: 1, interior: 'Here' }, true],
+        expectedArgs: [expect.any(ConcreteApi), chain, { parents: 1, interior: 'Here' }, true],
+        returnValue: 'AssetHubPolkadot'
       }
     ]
 
