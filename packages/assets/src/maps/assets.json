@@ -15948,23 +15948,6 @@
         "existentialDeposit": "20000000000000000"
       },
       {
-        "symbol": "ROC",
-        "decimals": 12,
-        "location": {
-          "parents": 2,
-          "interior": {
-            "X1": [
-              {
-                "GlobalConsensus": {
-                  "unused5": null
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
         "symbol": "WETH",
         "decimals": 18,
         "location": {

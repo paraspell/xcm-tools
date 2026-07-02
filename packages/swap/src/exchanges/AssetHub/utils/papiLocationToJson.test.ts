@@ -68,9 +68,7 @@ describe('papiLocationToJson', () => {
   });
 
   it('reshapes a compact GeneralKey into { length, data }', () => {
-    expect(
-      papiLocationToJson({ type: 'GeneralKey', value: fakeBinary('0x0001') }),
-    ).toEqual({
+    expect(papiLocationToJson({ type: 'GeneralKey', value: fakeBinary('0x0001') })).toEqual({
       GeneralKey: {
         length: 2,
         data: '0x0001000000000000000000000000000000000000000000000000000000000000',
