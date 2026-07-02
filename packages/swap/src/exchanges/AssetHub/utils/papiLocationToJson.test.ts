@@ -33,11 +33,22 @@ describe('papiLocationToJson', () => {
     expect(papiLocationToJson({ type: 'Here', value: undefined })).toEqual({ Here: null });
   });
 
-  it('lowercases plain NetworkId variants but keeps non-network variants', () => {
-    expect(papiLocationToJson({ type: 'Kusama', value: undefined })).toEqual({ kusama: null });
-    expect(papiLocationToJson({ type: 'Polkadot', value: undefined })).toEqual({ polkadot: null });
-    // Here / X1 / etc. stay PascalCase
-    expect(papiLocationToJson({ type: 'Here', value: undefined })).toEqual({ Here: null });
+  it('lowercases any data-less variant nested below junction level, keeps junction level PascalCase', () => {
+    expect(
+      papiLocationToJson({
+        parents: 2,
+        interior: {
+          type: 'X1',
+          value: [{ type: 'GlobalConsensus', value: { type: 'Unused5', value: undefined } }],
+        },
+      }),
+    ).toEqual({ parents: 2, interior: { X1: [{ GlobalConsensus: { unused5: null } }] } });
+    expect(
+      papiLocationToJson({
+        parents: 0,
+        interior: { type: 'X1', value: [{ type: 'OnlyChild', value: undefined }] },
+      }),
+    ).toEqual({ parents: 0, interior: { X1: [{ OnlyChild: null }] } });
   });
 
   it('keeps struct-variant NetworkIds in PascalCase', () => {
@@ -46,7 +57,34 @@ describe('papiLocationToJson', () => {
         type: 'Ethereum',
         value: { chain_id: 1n },
       }),
-    ).toEqual({ Ethereum: { chainId: 1n } });
+    ).toEqual({ Ethereum: { chainId: 1 } });
+  });
+
+  it('converts bigints to numbers (or padded hex when out of safe range)', () => {
+    expect(papiLocationToJson({ type: 'Parachain', value: 2000n })).toEqual({ Parachain: 2000 });
+    expect(papiLocationToJson({ type: 'GeneralIndex', value: 2n ** 60n })).toEqual({
+      GeneralIndex: '0x00000000000000001000000000000000',
+    });
+  });
+
+  it('reshapes a compact GeneralKey into { length, data }', () => {
+    expect(
+      papiLocationToJson({ type: 'GeneralKey', value: fakeBinary('0x0001') }),
+    ).toEqual({
+      GeneralKey: {
+        length: 2,
+        data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+      },
+    });
+  });
+
+  it('unwraps a versioned location wrapper', () => {
+    expect(
+      papiLocationToJson({
+        type: 'V4',
+        value: { parents: 0, interior: { type: 'Here', value: undefined } },
+      }),
+    ).toEqual({ parents: 0, interior: { Here: null } });
   });
 
   it('converts snake_case struct fields to camelCase', () => {
@@ -80,7 +118,7 @@ describe('papiLocationToJson', () => {
       parents: 2,
       interior: {
         X2: [
-          { GlobalConsensus: { Ethereum: { chainId: 1n } } },
+          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
           { AccountKey20: { network: null, key: '0xdac17f958d2ee523a2206206994597c13d831ec7' } },
         ],
       },
