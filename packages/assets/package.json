@@ -40,6 +40,8 @@
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@codecov/rollup-plugin": "^2.0.1",
+    "@polkadot-api/metadata-builders": "^0.14.3",
+    "@polkadot-api/substrate-bindings": "^0.20.3",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
