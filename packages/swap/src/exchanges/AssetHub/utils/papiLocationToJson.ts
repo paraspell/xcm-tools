@@ -1,37 +1,22 @@
-import { snakeToCamel } from '@paraspell/sdk-common';
-
-// NetworkId enum variants that polkadot.js `.toJSON()` lowercases when the
-// variant carries no data (e.g. `Kusama` -> `kusama`). Struct/tuple variants
-// like `Ethereum { chain_id }` keep their PascalCase.
-const LOWERCASED_PLAIN_VARIANTS = new Set([
-  'Polkadot',
-  'Kusama',
-  'Westend',
-  'Rococo',
-  'Wococo',
-  'BitcoinCore',
-  'BitcoinCash',
-  'PolkadotBulletin',
-]);
+import type { TLocation } from '@paraspell/sdk-common';
+import { lowercaseFirstLetter, snakeToCamel } from '@paraspell/sdk-common';
+import { toHex } from 'polkadot-api/utils';
 
 const isBinary = (v: unknown): v is { asHex: () => string } =>
   typeof v === 'object' && v !== null && 'asHex' in v && typeof v.asHex === 'function';
 
 const JUNCTIONS_VARIANT = /^X[1-8]$/;
 
-// Recursively convert polkadot-api's `{ type, value }` enum encoding into the
-// flat `{ VariantName: value }` shape used by stored asset locations (which
-// originate from polkadot.js's `.toJSON()`).
-//
-// Reproduces three pjs `.toJSON()` quirks so output is byte-identical:
-//   - plain NetworkId variants lowercased (`Kusama` -> `kusama`)
-//   - struct field names snake_case -> camelCase (`chain_id` -> `chainId`)
-//   - `Binary` byte values rendered as `0x...` hex strings
-export const papiLocationToJson = (value: unknown): unknown => {
-  if (value === undefined) return null;
+const MAX_SAFE = BigInt(Number.MAX_SAFE_INTEGER);
+
+const toJson = (value: unknown, depth: number): unknown => {
+  if (value === undefined || value === null) return null;
+  if (typeof value === 'bigint')
+    return value <= MAX_SAFE ? Number(value) : '0x' + value.toString(16).padStart(32, '0');
   if (isBinary(value)) return value.asHex();
-  if (typeof value !== 'object' || value === null) return value;
-  if (Array.isArray(value)) return value.map(papiLocationToJson);
+  if (value instanceof Uint8Array) return toHex(value);
+  if (typeof value !== 'object') return value;
+  if (Array.isArray(value)) return value.map((v) => toJson(v, depth));
 
   const obj = value as Record<string, unknown>;
   if (
@@ -39,21 +24,27 @@ export const papiLocationToJson = (value: unknown): unknown => {
     typeof obj.type === 'string' &&
     Object.prototype.hasOwnProperty.call(obj, 'value')
   ) {
-    // v3 Junctions encode X1 as a single Junction (not an array). pjs
-    // normalizes X1..X8 to array form, so we do the same.
-    if (JUNCTIONS_VARIANT.test(obj.type) && !Array.isArray(obj.value)) {
-      return { [obj.type]: [papiLocationToJson(obj.value)] };
+    if (/^V\d+$/.test(obj.type)) return toJson(obj.value, depth);
+    const inner = toJson(obj.value, depth + 1);
+    if (obj.type === 'GeneralKey' && typeof inner === 'string') {
+      return {
+        GeneralKey: { length: (inner.length - 2) / 2, data: '0x' + inner.slice(2).padEnd(64, '0') },
+      };
     }
-    const variant =
-      obj.value === undefined && LOWERCASED_PLAIN_VARIANTS.has(obj.type)
-        ? obj.type[0].toLowerCase() + obj.type.slice(1)
-        : obj.type;
-    return { [variant]: papiLocationToJson(obj.value) };
+    if (JUNCTIONS_VARIANT.test(obj.type)) {
+      return { [obj.type]: Array.isArray(obj.value) ? inner : [inner] };
+    }
+    const isObjectPayload = obj.value !== null && typeof obj.value === 'object';
+    const key = depth <= 2 || isObjectPayload ? obj.type : lowercaseFirstLetter(obj.type);
+    return { [key]: inner };
   }
 
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(obj)) {
-    out[snakeToCamel(k)] = papiLocationToJson(v);
+    out[snakeToCamel(k)] = toJson(v, depth + 1);
   }
   return out;
 };
+
+export const papiLocationToJson = (loc: unknown): TLocation | undefined =>
+  loc === null || loc === undefined ? undefined : (toJson(loc, 0) as TLocation);

@@ -77,7 +77,8 @@ export const fetchHydrationAssets = async (
           symbol,
           decimals,
           existentialDeposit: edString(value),
-          location: location ?? (chain === 'Hydration' ? hydrationLocationOverrides[assetId] : undefined)
+          location:
+            location ?? (chain === 'Hydration' ? hydrationLocationOverrides[assetId] : undefined)
         }
       })
     )

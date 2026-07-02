@@ -1,5 +1,3 @@
-// Contains detailed structure of XCM call construction for relaychains
-
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import SubstrateChain from '../SubstrateChain'
