@@ -678,6 +678,12 @@ importers:
       '@codecov/rollup-plugin':
         specifier: ^2.0.1
         version: 2.0.1(rollup@4.62.2)
+      '@polkadot-api/metadata-builders':
+        specifier: ^0.14.3
+        version: 0.14.3
+      '@polkadot-api/substrate-bindings':
+        specifier: ^0.20.3
+        version: 0.20.3
       '@rollup/plugin-babel':
         specifier: ^7.1.0
         version: 7.1.0(@babel/core@7.29.7)(@types/babel__core@7.20.5)(rollup@4.62.2)
