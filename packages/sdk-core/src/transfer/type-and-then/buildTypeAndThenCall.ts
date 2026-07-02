@@ -1,12 +1,11 @@
 import { normalizeLocation, type TAsset } from '@paraspell/assets'
-import { getXcmPalletImpl, type TPallet } from '@paraspell/pallets'
+import type { TPallet } from '@paraspell/pallets'
 import { isTrustedChain } from '@paraspell/sdk-common'
 
-import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
 import { addXcmVersionHeader, createAsset, isNativeAssetTeleport } from '../../utils'
-import { createDestination, localizeLocationImpl } from '../../utils/location'
+import { createDestination } from '../../utils/location'
 
 export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   origin,
@@ -51,7 +50,7 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
     version,
     origin.chain,
     finalDest,
-    getParaIdImpl(finalDest, origin.api._customCtx)
+    origin.api.getParaId(finalDest)
   )
 
   const transferType = bridgeHopChain ? 'DestinationReserve' : resolveTransferType(context)
@@ -63,10 +62,10 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
     createAsset(
       version,
       assetInfo.amount,
-      normalizeLocation(localizeLocationImpl(origin.api, origin.chain, feeAssetLocation), version)
+      normalizeLocation(origin.api.localizeLocation(origin.chain, feeAssetLocation), version)
     )
 
-  const module = (pallet as TPallet) ?? getXcmPalletImpl(origin.chain, origin.api._customCtx)
+  const module = (pallet as TPallet) ?? origin.api.getXcmPallet(origin.chain)
   const methodName = method ?? 'transfer_assets_using_type_and_then'
 
   return {

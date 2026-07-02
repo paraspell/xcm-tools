@@ -13,7 +13,6 @@ import {
 
 import type { PolkadotApi } from '../../api'
 import type { TDestination, TXcmVersioned } from '../../types'
-import { getRelayChainOfImpl } from '../chain'
 import { resolveScenario } from '../transfer/resolveScenario'
 import { addXcmVersionHeader } from '../xcm-version'
 import { createX1Payload } from './createX1Payload'
@@ -38,7 +37,7 @@ export const createDestination = <TApi, TRes, TSigner, TCustomChain extends stri
       parents: Parents.TWO,
       interior: {
         X2: [
-          { GlobalConsensus: getRelayChainOfImpl(api, destination) },
+          { GlobalConsensus: api.getRelayChainOf(destination) },
           {
             Parachain: chainId
           }

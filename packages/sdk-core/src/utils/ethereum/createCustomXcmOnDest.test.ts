@@ -14,12 +14,10 @@ vi.mock('../location', () => ({
   createBeneficiaryLocation: vi.fn(() => 'mockedBeneficiary')
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn(() => ({}))
-}))
-
 describe('createCustomXcmOnDest', () => {
-  const api = {} as unknown as PolkadotApi<unknown, unknown, unknown>
+  const api = {
+    getRelayChainOf: vi.fn().mockReturnValue('Polkadot')
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockChain: TChain = 'Acala'
   const version = Version.V4

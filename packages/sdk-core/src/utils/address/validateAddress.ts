@@ -1,4 +1,3 @@
-import { isChainEvmImpl } from '@paraspell/assets'
 import { isTLocation, type TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
@@ -14,7 +13,7 @@ export const validateAddress = <TApi, TRes, TSigner, TCustomChain extends string
 ) => {
   if (isTLocation(address)) return
 
-  const isEvm = isChainEvmImpl(chain, api._customCtx)
+  const isEvm = api.isChainEvm(chain)
   const isEthereumAddress = isAddress(address)
 
   const isPublicKeyFormat =

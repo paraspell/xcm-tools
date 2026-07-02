@@ -35,11 +35,6 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  getChainProvidersImpl,
-  getRelayChainOfImpl,
-  hasXcmPaymentApiSupportImpl,
   isAssetEqual,
   isConfig,
   isCustomChain,
@@ -54,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { hasDryRunSupportImpl, resolveModuleError } from '@paraspell/sdk-core'
+import { resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
@@ -258,7 +253,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   resolveDefaultFeeAsset({ chain, feeAsset }: TDryRunCallBaseOptions<Extrinsic>) {
-    return feeAsset ?? findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
+    return feeAsset ?? this.findNativeAssetInfoOrThrow(chain)
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<Extrinsic>) {
@@ -277,7 +272,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrowImpl(chain, { id: assetId }, undefined, this._customCtx)
+      asset: this.findAssetInfoOrThrow(chain, { id: assetId })
     }
   }
 
@@ -292,7 +287,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       useRootOrigin = false,
       bypassOptions
     } = options
-    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx)
+    const supportsDryRunApi = this.hasDryRunSupport(chain)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
@@ -452,7 +447,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
           )
 
     if (
-      (hasXcmPaymentApiSupportImpl(chain, this._customCtx) &&
+      (this.hasXcmPaymentApiSupport(chain) &&
         resultJson.ok.local_xcm &&
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
@@ -584,7 +579,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         ? BigInt((deliveryFeeResJson?.ok?.v4 ?? deliveryFeeResJson?.ok?.v3)?.[0]?.fun?.fungible)
         : 0n
 
-    const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
+    const nativeAsset = this.findNativeAssetInfoOrThrow(chain)
 
     if (isAssetEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved
@@ -632,7 +627,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     }
 
     const ahApi = this.clone()
-    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(this, chain)}`
+    const assetHubChain: TSubstrateChain = `AssetHub${this.getRelayChainOf(chain)}`
 
     await ahApi.init(assetHubChain)
 
@@ -665,7 +660,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     version,
     origin
   }: TDryRunXcmBaseOptions<Extrinsic>): Promise<TDryRunChainResult> {
-    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx)
+    const supportsDryRunApi = this.hasDryRunSupport(chain)
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
@@ -707,7 +702,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
-    if (hasXcmPaymentApiSupportImpl(chain, this._customCtx) && asset) {
+    if (this.hasXcmPaymentApiSupport(chain) && asset) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
@@ -808,7 +803,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       if (force) {
         void this.api.disconnect()
       } else {
-        const key = api === undefined ? getChainProvidersImpl(chain, this._customCtx) : api
+        const key = api === undefined ? this.getChainProviders(chain) : api
         releaseClient(key)
       }
     }

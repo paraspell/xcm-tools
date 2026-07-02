@@ -9,7 +9,6 @@ import { getTChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
-import { getRelayChainOfImpl } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
 
 export const traverseXcmHops = async <
@@ -57,7 +56,7 @@ export const traverseXcmHops = async <
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTChain(nextParaId, getRelayChainOfImpl(api, origin))
+    const nextChain = getTChain(nextParaId, api.getRelayChainOf(origin))
 
     if (!nextChain) {
       throw new RoutingResolutionError(`Unable to find TChain for paraId ${nextParaId}`)

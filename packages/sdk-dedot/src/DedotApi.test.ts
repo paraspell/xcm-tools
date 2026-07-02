@@ -9,10 +9,6 @@ import type {
 } from "@paraspell/sdk-core";
 import {
   BatchMode,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  hasDryRunSupportImpl,
-  hasXcmPaymentApiSupportImpl,
   isAssetEqual,
   localizeLocation,
   RuntimeApiUnavailableError,
@@ -81,12 +77,7 @@ vi.mock("./utils/signer", () => ({
 vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
   ...(await importOriginal()),
   addXcmVersionHeader: vi.fn(),
-  hasDryRunSupportImpl: vi.fn(),
-  hasXcmPaymentApiSupportImpl: vi.fn(),
-  getChainProviders: vi.fn(),
   wrapTxBypass: vi.fn(),
-  findAssetInfoOrThrowImpl: vi.fn(),
-  findNativeAssetInfoOrThrowImpl: vi.fn(),
   localizeLocation: vi.fn(),
   isAssetEqual: vi.fn(),
   isSenderSigner: vi.fn().mockReturnValue(false),
@@ -192,7 +183,7 @@ describe("DedotApi", () => {
     vi.spyOn(dedotApi, "leaseClient").mockResolvedValue(mockApi);
     await dedotApi.init(mockChain);
 
-    vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(false);
+    vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -500,7 +491,9 @@ describe("DedotApi", () => {
 
     it("returns native asset for non-Hydration chains", async () => {
       const nativeAsset = { symbol: "DOT" } as TAssetInfo;
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(
+        nativeAsset,
+      );
 
       const result = await dedotApi.resolveFeeAsset({
         ...createOptions(),
@@ -512,7 +505,9 @@ describe("DedotApi", () => {
 
     it("returns native asset when Hydration has no currency mapping", async () => {
       const nativeAsset = { symbol: "HDX" } as TAssetInfo;
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(
+        nativeAsset,
+      );
       mockApiRaw.query.multiTransactionPayment.accountCurrencyMap.mockResolvedValueOnce(
         null,
       );
@@ -530,19 +525,18 @@ describe("DedotApi", () => {
       mockApiRaw.query.multiTransactionPayment.accountCurrencyMap.mockResolvedValueOnce(
         "1001",
       );
-      vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue(mappedAsset);
+      const findAssetInfoOrThrowSpy = vi
+        .spyOn(dedotApi, "findAssetInfoOrThrow")
+        .mockReturnValue(mappedAsset);
 
       const result = await dedotApi.resolveFeeAsset(createOptions());
 
       expect(
         mockApiRaw.query.multiTransactionPayment.accountCurrencyMap,
       ).toHaveBeenCalledWith("addr");
-      expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
-        "Hydration",
-        { id: "1001" },
-        undefined,
-        dedotApi._customCtx,
-      );
+      expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith("Hydration", {
+        id: "1001",
+      });
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset });
     });
   });
@@ -552,7 +546,7 @@ describe("DedotApi", () => {
     const testAddress = "some_address";
 
     beforeEach(() => {
-      vi.mocked(hasDryRunSupportImpl).mockImplementation(
+      vi.spyOn(dedotApi, "hasDryRunSupport").mockImplementation(
         (chain) => chain !== "Acala",
       );
 
@@ -585,7 +579,7 @@ describe("DedotApi", () => {
         },
       };
       dryRunCallMock.mockResolvedValue(successResponse);
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "GLMR",
       } as TAssetInfo);
 
@@ -641,7 +635,7 @@ describe("DedotApi", () => {
         .mockResolvedValueOnce(failResponse)
         .mockResolvedValueOnce(successResponse);
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "DOT",
       } as TAssetInfo);
 
@@ -677,7 +671,7 @@ describe("DedotApi", () => {
         .mockRejectedValueOnce(new Error("Expected 3 parameters"))
         .mockResolvedValueOnce(successResponse);
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "DOT",
       } as TAssetInfo);
 
@@ -699,7 +693,7 @@ describe("DedotApi", () => {
         .mockRejectedValueOnce(new Error("Expected 3 parameters"))
         .mockRejectedValueOnce(new Error("hex string expected"));
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "DOT",
       } as TAssetInfo);
 
@@ -722,7 +716,7 @@ describe("DedotApi", () => {
     it("returns failure when first call throws unexpected error", async () => {
       dryRunCallMock.mockRejectedValue(new Error("Network error"));
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "GLMR",
       } as TAssetInfo);
 
@@ -754,7 +748,7 @@ describe("DedotApi", () => {
         },
       };
       dryRunCallMock.mockResolvedValue(failResponse);
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "GLMR",
       } as TAssetInfo);
 
@@ -788,7 +782,7 @@ describe("DedotApi", () => {
       };
       dryRunCallMock.mockResolvedValue(successResponse);
       vi.mocked(wrapTxBypass).mockResolvedValue(mockTx);
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "GLMR",
       } as TAssetInfo);
 
@@ -835,7 +829,7 @@ describe("DedotApi", () => {
         },
       };
       dryRunCallMock.mockResolvedValue(successResponse);
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue({
         symbol: "GLMR",
       } as TAssetInfo);
 
@@ -863,7 +857,7 @@ describe("DedotApi", () => {
     const dummyXcm = { some: "xcm-payload" };
 
     beforeEach(() => {
-      vi.mocked(hasDryRunSupportImpl).mockImplementation(
+      vi.spyOn(dedotApi, "hasDryRunSupport").mockImplementation(
         (chain) => chain !== "Acala",
       );
     });
@@ -881,7 +875,7 @@ describe("DedotApi", () => {
     });
 
     it("returns success with fee and weight", async () => {
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true);
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
 
       const mockResponse = {
         isOk: true,
@@ -985,7 +979,7 @@ describe("DedotApi", () => {
     });
 
     it("returns failure when XcmPaymentApi is not supported", async () => {
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(false);
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(false);
 
       const mockResponse = {
         isOk: true,
@@ -1056,7 +1050,9 @@ describe("DedotApi", () => {
     };
 
     beforeEach(() => {
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(baseAsset);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(
+        baseAsset,
+      );
       vi.mocked(localizeLocation).mockImplementation(
         (_: TChain, loc: TLocation) => loc,
       );

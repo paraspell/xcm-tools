@@ -2,20 +2,15 @@ import { isTLocation, type TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
-import { getParaIdImpl } from '../chains/config'
 import { resolveParaId } from './resolveParaId'
 
 vi.mock('@paraspell/sdk-common', () => ({
   isTLocation: vi.fn()
 }))
 
-vi.mock('../chains/config', () => ({
-  getParaIdImpl: vi.fn()
-}))
-
 describe('resolveParaId', () => {
   const parachain = 'Acala'
-  const api = { _customCtx: {} } as PolkadotApi<unknown, unknown, unknown>
+  const api = { getParaId: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -34,17 +29,17 @@ describe('resolveParaId', () => {
 
   it('returns the provided paraId if destination is not TLocation', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getParaIdImpl).mockReturnValue(1234)
+    const getParaIdSpy = vi.spyOn(api, 'getParaId').mockReturnValue(1234)
     const result = resolveParaId(999, parachain, api)
     expect(result).toBe(999)
-    expect(getParaIdImpl).not.toHaveBeenCalled()
+    expect(getParaIdSpy).not.toHaveBeenCalled()
   })
 
-  it('calls getParaIdImpl and returns its value if paraId is undefined', () => {
+  it('calls getParaId and returns its value if paraId is undefined', () => {
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getParaIdImpl).mockReturnValue(5678)
+    const getParaIdSpy = vi.spyOn(api, 'getParaId').mockReturnValue(5678)
     const result = resolveParaId(undefined, parachain, api)
-    expect(getParaIdImpl).toHaveBeenCalledWith(parachain, api._customCtx)
+    expect(getParaIdSpy).toHaveBeenCalledWith(parachain)
     expect(result).toBe(5678)
   })
 })

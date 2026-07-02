@@ -3,13 +3,11 @@ import { isTrustedChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { getParaIdImpl } from '../../chains/config'
 import { RELAY_LOCATION } from '../../constants'
 import type { TChainWithApi, TTypeAndThenCallContext } from '../../types'
-import { createDestination, isNativeAssetTeleport, localizeLocationImpl } from '../../utils'
+import { createDestination, isNativeAssetTeleport } from '../../utils'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 
-vi.mock('../../chains/config')
 vi.mock('../../utils/location')
 vi.mock('../../utils/transfer/isNativeAssetTeleport')
 
@@ -19,7 +17,13 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 }))
 
 describe('buildTypeAndThenCall', () => {
-  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+  const mockApi = {
+    getParaId: vi.fn(),
+    getXcmPallet: vi.fn(),
+    localizeLocation: vi.fn()
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const getParaIdSpy = vi.spyOn(mockApi, 'getParaId')
   const mockVersion = Version.V5
   const mockDestination: TLocation = {
     parents: 1,
@@ -52,15 +56,16 @@ describe('buildTypeAndThenCall', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(getParaIdImpl).mockReturnValue(mockParaId)
+    getParaIdSpy.mockReturnValue(mockParaId)
+    vi.spyOn(mockApi, 'getXcmPallet').mockReturnValue('XcmPallet')
+    vi.spyOn(mockApi, 'localizeLocation').mockImplementation((_chain, location) => location)
     vi.mocked(createDestination).mockReturnValue(mockDestination)
-    vi.mocked(localizeLocationImpl).mockImplementation((_api, _chain, location) => location)
   })
 
   it('should build correct call when chain equals reserveChain and asset location is not RELAY_LOCATION', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
 
-    expect(getParaIdImpl).toHaveBeenCalledWith(mockContext.dest.chain, undefined)
+    expect(getParaIdSpy).toHaveBeenCalledWith(mockContext.dest.chain)
     expect(createDestination).toHaveBeenCalledWith(
       mockContext.origin.api,
       mockVersion,
@@ -100,7 +105,7 @@ describe('buildTypeAndThenCall', () => {
       mockAssets
     )
 
-    expect(getParaIdImpl).toHaveBeenCalledWith(differentReserve.chain, undefined)
+    expect(getParaIdSpy).toHaveBeenCalledWith(differentReserve.chain)
     expect(createDestination).toHaveBeenCalledWith(
       mockContext.origin.api,
       mockVersion,

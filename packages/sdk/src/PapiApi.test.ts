@@ -1,6 +1,5 @@
 import type {
   TAssetInfo,
-  TChainAssetsInfo,
   TDestination,
   TDryRunXcmBaseOptions,
   TPallet,
@@ -10,12 +9,6 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  getAssetsObjectImpl,
-  getChainProvidersImpl,
-  hasDryRunSupportImpl,
-  hasXcmPaymentApiSupportImpl,
   InvalidAddressError,
   isAssetEqual,
   isSystemChain,
@@ -64,14 +57,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   addXcmVersionHeader: vi.fn(),
   createChainClient: vi.fn().mockResolvedValue({}),
-  getAssetsObjectImpl: vi.fn(),
-  hasDryRunSupportImpl: vi.fn(),
-  hasXcmPaymentApiSupportImpl: vi.fn(),
   isAssetEqual: vi.fn(),
-  getChainProvidersImpl: vi.fn(),
   wrapTxBypass: vi.fn(),
-  findAssetInfoOrThrowImpl: vi.fn(),
-  findNativeAssetInfoOrThrowImpl: vi.fn(),
   isSystemChain: vi.fn(),
   localizeLocation: vi.fn()
 }))
@@ -178,10 +165,10 @@ describe('PapiApi', () => {
       })
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
-    vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(false)
     vi.mocked(deriveAddress).mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
     papiApi = new PapiApi(mockPolkadotClient)
     await papiApi.init(mockChain)
+    vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(false)
 
     accountCurrencyMapGetValue = papiApi.api.getUnsafeApi().query.MultiTransactionPayment
       .AccountCurrencyMap.getValue as unknown as Mock
@@ -200,35 +187,28 @@ describe('PapiApi', () => {
 
     it('returns native asset when MultiTransactionPayment has no mapping', async () => {
       const nativeAsset = { symbol: 'HYDR' } as TAssetInfo
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      const findNativeAssetSpy = vi
+        .spyOn(papiApi, 'findNativeAssetInfoOrThrow')
+        .mockReturnValue(nativeAsset)
       accountCurrencyMapGetValue.mockResolvedValueOnce(undefined)
 
       const result = await papiApi.resolveFeeAsset(createOptions())
 
       expect(accountCurrencyMapGetValue).toHaveBeenCalledWith('addr')
-      expect(findNativeAssetInfoOrThrowImpl).toHaveBeenCalledWith('Hydration', {})
+      expect(findNativeAssetSpy).toHaveBeenCalledWith('Hydration')
       expect(result).toEqual({ isCustomAsset: false, asset: nativeAsset })
-
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReset()
     })
 
     it('returns mapped asset when MultiTransactionPayment specifies an id', async () => {
       const mappedAsset = { symbol: 'USDC' } as TAssetInfo
       accountCurrencyMapGetValue.mockResolvedValueOnce('1001')
-      vi.mocked(findAssetInfoOrThrowImpl).mockReturnValue(mappedAsset)
+      const findAssetSpy = vi.spyOn(papiApi, 'findAssetInfoOrThrow').mockReturnValue(mappedAsset)
 
       const result = await papiApi.resolveFeeAsset(createOptions())
 
       expect(accountCurrencyMapGetValue).toHaveBeenCalledWith('addr')
-      expect(findAssetInfoOrThrowImpl).toHaveBeenCalledWith(
-        'Hydration',
-        { id: '1001' },
-        undefined,
-        {}
-      )
+      expect(findAssetSpy).toHaveBeenCalledWith('Hydration', { id: '1001' })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
-
-      vi.mocked(findAssetInfoOrThrowImpl).mockReset()
     })
   })
 
@@ -507,13 +487,15 @@ describe('PapiApi', () => {
       papiApi = new PapiApi()
       await papiApi.init(mockChain)
 
-      const providersSpy = vi.mocked(getChainProvidersImpl).mockReturnValue(['ws://dummy:9944'])
+      const providersSpy = vi
+        .spyOn(papiApi, 'getChainProviders')
+        .mockReturnValue(['ws://dummy:9944'])
 
       const destroySpy = spyDestroy()
 
       await papiApi.disconnect(false)
 
-      expect(providersSpy).toHaveBeenCalledWith('Acala', expect.any(Object))
+      expect(providersSpy).toHaveBeenCalledWith('Acala')
       expect(destroySpy).not.toHaveBeenCalled()
 
       providersSpy.mockRestore()
@@ -606,7 +588,7 @@ describe('PapiApi', () => {
         V4: location
       }))
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR',
         decimals: 18,
         location: { parents: 0, interior: { Here: null } }
@@ -1191,10 +1173,7 @@ describe('PapiApi', () => {
     }
 
     beforeEach(() => {
-      vi.mocked(getAssetsObjectImpl).mockImplementation(
-        chain => ({ supportsDryRunApi: chain === 'Acala' ? false : true }) as TChainAssetsInfo
-      )
-      vi.mocked(hasDryRunSupportImpl).mockImplementation(chain => chain !== 'Acala')
+      vi.spyOn(papiApi, 'hasDryRunSupport').mockImplementation(chain => chain !== 'Acala')
 
       dryRunApiCallMock = vi.fn()
       const unsafeApi = papiApi.api.getUnsafeApi()
@@ -1219,7 +1198,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1271,7 +1250,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
         .mockResolvedValueOnce(successResponseWithVersion)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'DOT'
       } as TAssetInfo)
 
@@ -1309,10 +1288,10 @@ describe('PapiApi', () => {
     })
 
     it('skips XcmPaymentApi on system chains (falls back to computeOriginFee)', async () => {
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true)
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
       vi.mocked(isSystemChain).mockReturnValue(true)
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'DOT',
         location: { parents: 1, interior: { Here: null } }
       } as TAssetInfo)
@@ -1368,7 +1347,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock
         .mockRejectedValueOnce(new Error('Incompatible runtime entry'))
         .mockResolvedValueOnce(retryFailedResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1413,7 +1392,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(otherErrorResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1452,7 +1431,7 @@ describe('PapiApi', () => {
       }
 
       dryRunApiCallMock.mockResolvedValue(directTypeErrorResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1484,7 +1463,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1534,7 +1513,7 @@ describe('PapiApi', () => {
 
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
       const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1580,7 +1559,7 @@ describe('PapiApi', () => {
 
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
       const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1635,7 +1614,7 @@ describe('PapiApi', () => {
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
 
       const nativeAsset = { symbol: 'GLMR' } as TAssetInfo
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
@@ -1669,7 +1648,7 @@ describe('PapiApi', () => {
       }
       dryRunApiCallMock.mockResolvedValue(successResponse)
       vi.mocked(wrapTxBypass).mockResolvedValue(mockTransaction)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1712,7 +1691,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(mockApiResponse)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1772,7 +1751,7 @@ describe('PapiApi', () => {
         }
       }
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1827,8 +1806,8 @@ describe('PapiApi', () => {
       }
       dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
 
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true)
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue({
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR'
       } as TAssetInfo)
 
@@ -1882,7 +1861,7 @@ describe('PapiApi', () => {
         location: { parents: Parents.ZERO, interior: 'Here' }
       } as TAssetInfo
 
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true)
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
 
       vi.spyOn(papiApi, 'resolveFeeAsset').mockResolvedValue({
         asset: customAsset,
@@ -1949,8 +1928,8 @@ describe('PapiApi', () => {
         location: { parents: Parents.ZERO, interior: 'Here' }
       } as TAssetInfo
 
-      vi.mocked(findNativeAssetInfoOrThrowImpl).mockReturnValue(nativeAsset)
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
 
       const resolveFeeAssetSpy = vi
         .spyOn(papiApi, 'resolveFeeAsset')
@@ -2171,6 +2150,8 @@ describe('PapiApi', () => {
     })
 
     it('should throw error for unsupported chain', async () => {
+      vi.spyOn(papiApi, 'hasDryRunSupport').mockReturnValue(false)
+
       await expect(
         papiApi.getDryRunXcm({
           originLocation,
@@ -2261,7 +2242,6 @@ describe('PapiApi', () => {
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalled()
 
       vi.mocked(isAssetEqual).mockRestore()
-      vi.mocked(getAssetsObjectImpl).mockRestore()
     })
   })
 
@@ -2273,9 +2253,7 @@ describe('PapiApi', () => {
     const dummyXcm = { some: 'xcm-payload' }
 
     beforeEach(() => {
-      vi.mocked(getAssetsObjectImpl).mockImplementation(
-        chain => ({ supportsDryRunApi: chain === 'Acala' ? false : true }) as TChainAssetsInfo
-      )
+      vi.spyOn(papiApi, 'hasDryRunSupport').mockImplementation(chain => chain !== 'Acala')
     })
 
     it('should return success with destination fee, weight and forwarded XCM', async () => {
@@ -2618,7 +2596,7 @@ describe('PapiApi', () => {
         }
       }
 
-      vi.mocked(hasXcmPaymentApiSupportImpl).mockReturnValue(true)
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
 
       const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)

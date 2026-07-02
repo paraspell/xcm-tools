@@ -36,11 +36,6 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  getChainProvidersImpl,
-  getRelayChainOfImpl,
-  hasXcmPaymentApiSupportImpl,
   isAssetEqual,
   isConfig,
   isCustomChain,
@@ -54,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
-import { hasDryRunSupportImpl, resolveModuleError } from "@paraspell/sdk-core";
+import { resolveModuleError } from "@paraspell/sdk-core";
 import { DedotClient, WsProvider } from "dedot";
 import {
   blake2AsHex,
@@ -324,7 +319,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     chain,
     feeAsset,
   }: TDryRunCallBaseOptions<TDedotExtrinsic>) {
-    return feeAsset ?? findNativeAssetInfoOrThrowImpl(chain, this._customCtx);
+    return feeAsset ?? this.findNativeAssetInfoOrThrow(chain);
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TDedotExtrinsic>) {
@@ -349,12 +344,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrowImpl(
-        chain,
-        { id: assetId },
-        undefined,
-        this._customCtx,
-      ),
+      asset: this.findAssetInfoOrThrow(chain, { id: assetId }),
     };
   }
 
@@ -372,7 +362,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       bypassOptions,
     } = options;
 
-    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx);
+    const supportsDryRunApi = this.hasDryRunSupport(chain);
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, "DryRunApi");
@@ -542,7 +532,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ["Astar"];
 
     if (
-      (hasXcmPaymentApiSupportImpl(chain, this._customCtx) &&
+      (this.hasXcmPaymentApiSupport(chain) &&
         localXcm &&
         (feeAsset ||
           USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
@@ -693,7 +683,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const deliveryFeeResolved =
       deliveryFeeRes && assets?.length > 0 ? (assets[0]?.fun?.value ?? 0n) : 0n;
 
-    const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx);
+    const nativeAsset = this.findNativeAssetInfoOrThrow(chain);
 
     if (isAssetEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved;
@@ -743,7 +733,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     }
 
     const ahApi = this.clone();
-    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(this, chain)}`;
+    const assetHubChain: TSubstrateChain = `AssetHub${this.getRelayChainOf(chain)}`;
 
     await ahApi.init(assetHubChain);
 
@@ -791,7 +781,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     chain,
     version,
   }: TDryRunXcmBaseOptions<TDedotExtrinsic>): Promise<TDryRunChainResult> {
-    const supportsDryRunApi = hasDryRunSupportImpl(chain, this._customCtx);
+    const supportsDryRunApi = this.hasDryRunSupport(chain);
 
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, "DryRunApi");
@@ -829,7 +819,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const destParaId = this.extractDestParaId(forwardedXcms);
 
-    if (hasXcmPaymentApiSupportImpl(chain, this._customCtx)) {
+    if (this.hasXcmPaymentApiSupport(chain)) {
       const fee = await this.getXcmPaymentApiFee(
         chain,
         xcm,
@@ -924,10 +914,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       if (force) {
         void this.api.disconnect();
       } else {
-        const key =
-          api === undefined
-            ? getChainProvidersImpl(chain, this._customCtx)
-            : api;
+        const key = api === undefined ? this.getChainProviders(chain) : api;
         releaseClient(key);
       }
     }

@@ -3,21 +3,16 @@ import { isExternalChain, isSubstrateBridge, Parents, Version } from '@paraspell
 import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { getRelayChainOf, getRelayChainOfImpl } from '../chain'
 import { createDestination } from './createDestination'
 
-const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+const mockApi = {
+  getRelayChainOf: vi.fn()
+} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
   isSubstrateBridge: vi.fn(),
   isExternalChain: vi.fn()
-}))
-
-vi.mock('../chain', async importActual => ({
-  ...(await importActual()),
-  getRelayChainOf: vi.fn(),
-  getRelayChainOfImpl: vi.fn()
 }))
 
 describe('createDestination', () => {
@@ -28,7 +23,7 @@ describe('createDestination', () => {
 
     vi.mocked(isSubstrateBridge).mockReturnValue(true)
     vi.mocked(isExternalChain).mockReturnValue(false)
-    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Kusama')
 
     const location = createDestination(mockApi, Version.V5, origin, destination, chainId)
 
@@ -47,8 +42,7 @@ describe('createDestination', () => {
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isExternalChain).mockReturnValue(false)
-    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+    vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
 
     const location = createDestination(mockApi, Version.V5, origin, destination, chainId)
 

@@ -1,4 +1,3 @@
-import { isChainEvmImpl } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,10 +8,10 @@ import type { TAddress } from '../../types'
 import { validateAddress } from './validateAddress'
 
 vi.mock('viem')
-vi.mock('@paraspell/assets')
 
 describe('validateAddress', () => {
   const mockApi = {
+    isChainEvm: vi.fn(),
     validateSubstrateAddress: vi.fn().mockReturnValue(true)
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -31,7 +30,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(true)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -41,7 +40,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(true)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).toThrow(InvalidAddressError)
@@ -54,7 +53,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'some-non-ethereum-address'
     const chain: TChain = 'Acala'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -64,7 +63,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain)).toThrow(InvalidAddressError)
@@ -77,7 +76,7 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Moonbeam'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(true)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain, false)).toThrow(InvalidAddressError)
@@ -90,7 +89,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain, false)).toThrow(InvalidAddressError)
@@ -103,7 +102,7 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12'
     const chain: TChain = 'Polkadot'
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
@@ -113,12 +112,13 @@ describe('validateAddress', () => {
     const address: TAddress = '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
     const chain: TChain = 'Polkadot'
     const mockApi = {
+      isChainEvm: vi.fn(),
       validateSubstrateAddress: vi.fn().mockReturnValue(true)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(mockApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(mockApi, address, chain, true)).not.toThrow()
@@ -129,12 +129,13 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Polkadot'
     const invalidApi = {
+      isChainEvm: vi.fn(),
       validateSubstrateAddress: vi.fn().mockReturnValue(false)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(invalidApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(invalidApi, address, chain, true)).toThrow(InvalidAddressError)
@@ -148,12 +149,13 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const chain: TChain = 'Polkadot'
     const invalidApi = {
+      isChainEvm: vi.fn(),
       validateSubstrateAddress: vi.fn().mockReturnValue(false)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const validateSpy = vi.spyOn(invalidApi, 'validateSubstrateAddress')
 
-    vi.mocked(isChainEvmImpl).mockReturnValue(false)
+    vi.spyOn(invalidApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(invalidApi, address, chain, true)).toThrow(InvalidAddressError)

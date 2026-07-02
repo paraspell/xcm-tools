@@ -13,7 +13,8 @@ describe('BifrostPolkadot', () => {
   let chain: BifrostPolkadot<unknown, unknown, unknown>
 
   const api = {
-    deserializeExtrinsics: vi.fn()
+    deserializeExtrinsics: vi.fn(),
+    getNativeAssetSymbol: vi.fn().mockReturnValue('BNC')
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockInput = {

@@ -1,5 +1,5 @@
 import type { WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol, InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -56,21 +56,7 @@ vi.mock('@paraspell/pallets', async () => {
   }
 })
 
-vi.mock('@paraspell/assets', async () => {
-  const actual = await vi.importActual('@paraspell/assets')
-  return {
-    ...actual,
-    getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
-    getNativeAssetSymbolImpl: vi.fn().mockReturnValue('DOT')
-  }
-})
-
 vi.mock('../pallets')
-
-vi.mock('./config', () => ({
-  getParaId: vi.fn().mockReturnValue(1000),
-  getParaIdImpl: vi.fn().mockReturnValue(1000)
-}))
 
 vi.mock('../transfer', () => ({
   createTypeAndThenCall: vi.fn()
@@ -119,12 +105,17 @@ describe('Parachain', () => {
     getFromRpc: vi.fn(),
     clone: vi.fn(),
     findAssetInfo: vi.fn(),
-    findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'MYTH', location: {} })
+    findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'MYTH', location: {} }),
+    getParaId: vi.fn().mockReturnValue(1000),
+    getNativeAssetSymbol: vi.fn(),
+    getRelayChainSymbol: vi.fn().mockReturnValue('DOT'),
+    hasPallet: vi.fn().mockReturnValue(false),
+    localizeLocation: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.spyOn(api, 'getNativeAssetSymbol').mockReturnValue('DOT')
     vi.mocked(isNativeAssetTeleport).mockReturnValue(false)
     vi.mocked(getPalletInstance).mockReset()
     vi.mocked(getOtherAssetsPallets).mockReset()
@@ -531,7 +522,7 @@ describe('Parachain', () => {
         recipient: '0x123'
       } as TTransferInternalOptions<unknown, unknown, unknown>
 
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+      vi.spyOn(api, 'getNativeAssetSymbol').mockReturnValue('DOT')
 
       const transferLocalNativeSpy = vi.spyOn(chain, 'transferLocalNativeAsset')
 

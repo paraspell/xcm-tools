@@ -48,7 +48,8 @@ describe('Centrifuge', () => {
 
   describe('transferLocalNonNativeAsset', () => {
     const mockApi = {
-      deserializeExtrinsics: vi.fn()
+      deserializeExtrinsics: vi.fn(),
+      getNativeAssetSymbol: vi.fn().mockReturnValue('CFG')
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     it('should call transfer with ForeignAsset when assetId is defined', () => {

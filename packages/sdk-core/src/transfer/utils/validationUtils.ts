@@ -1,5 +1,4 @@
 import {
-  getRelayChainSymbolImpl,
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
@@ -83,8 +82,8 @@ export const validateDestination = <TApi, TRes, TSigner, TCustomChain extends st
   const isBridgeTransfer = !isTLocation(destination) && isBridge(origin, destination)
 
   if (!isLocationDestination) {
-    const originRelayChainSymbol = getRelayChainSymbolImpl(origin, api._customCtx)
-    const destinationRelayChainSymbol = getRelayChainSymbolImpl(destination, api._customCtx)
+    const originRelayChainSymbol = api.getRelayChainSymbol(origin)
+    const destinationRelayChainSymbol = api.getRelayChainSymbol(destination)
     if (!isBridgeTransfer && originRelayChainSymbol !== destinationRelayChainSymbol) {
       throw new ScenarioNotSupportedError(
         'Origin and destination must share the same relay chain unless using a bridge.'

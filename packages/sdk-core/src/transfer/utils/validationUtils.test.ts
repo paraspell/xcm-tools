@@ -1,5 +1,4 @@
 import {
-  getRelayChainSymbolImpl,
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
@@ -34,7 +33,6 @@ vi.mock('viem')
 vi.mock('@paraspell/pallets')
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
-  getRelayChainSymbolImpl: vi.fn(),
   getNativeAssets: vi.fn(),
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
@@ -106,7 +104,7 @@ describe('validateCurrency', () => {
 describe('validateDestination', () => {
   let origin: TSubstrateChain
   let destination: TDestination
-  const api = { _customCtx: {} } as PolkadotApi<unknown, unknown, unknown>
+  const api = { getRelayChainSymbol: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -155,7 +153,7 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
+    vi.spyOn(api, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
@@ -165,7 +163,7 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    vi.spyOn(api, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
@@ -175,7 +173,7 @@ describe('validateDestination', () => {
     destination = 'Astar'
 
     vi.mocked(isBridge).mockReturnValue(true)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
+    vi.spyOn(api, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
@@ -186,9 +184,10 @@ describe('validateDestination', () => {
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     // Relay chain symbols should not be fetched in this case
+    const getRelayChainSymbolSpy = vi.spyOn(api, 'getRelayChainSymbol')
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
-    expect(getRelayChainSymbolImpl).not.toHaveBeenCalled()
+    expect(getRelayChainSymbolSpy).not.toHaveBeenCalled()
   })
 
   it('should throw ScenarioNotSupportedError when origin is undefined and destination is Ethereum', () => {
@@ -206,10 +205,13 @@ describe('validateDestination', () => {
 
     vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    const getRelayChainSymbolSpy = vi
+      .spyOn(api, 'getRelayChainSymbol')
+      .mockReturnValueOnce('DOT')
+      .mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
-    expect(getRelayChainSymbolImpl).toHaveBeenCalled()
+    expect(getRelayChainSymbolSpy).toHaveBeenCalled()
   })
 
   it('should throw ScenarioNotSupportedError for a cross-ecosystem para to relay transfer (AssetHubPolkadot -> Paseo)', () => {
@@ -218,7 +220,7 @@ describe('validateDestination', () => {
 
     vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
+    vi.spyOn(api, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
 
     expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
   })
@@ -230,7 +232,7 @@ describe('validateDestination', () => {
     vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(true)
     vi.mocked(isTLocation).mockReturnValue(false)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    vi.spyOn(api, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
     vi.mocked(getChain).mockReturnValue({
       isRelayToParaEnabled: () => true
     } as unknown as ReturnType<typeof getChain>)
@@ -238,21 +240,24 @@ describe('validateDestination', () => {
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
 
-  it('should not throw for a custom chain transferring to its own relay chain and forward the custom context', () => {
+  it('should not throw for a custom chain transferring to its own relay chain', () => {
     const customOrigin = 'MyCustomChain' as TSubstrateChain
     destination = 'Polkadot'
 
     const customApi = {
-      _customCtx: { customChainAssets: { MyCustomChain: {} } }
+      getRelayChainSymbol: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
+    const getRelayChainSymbolSpy = vi
+      .spyOn(customApi, 'getRelayChainSymbol')
+      .mockReturnValueOnce('DOT')
+      .mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(customOrigin, destination, customApi)).not.toThrow()
-    expect(getRelayChainSymbolImpl).toHaveBeenCalledWith(customOrigin, customApi._customCtx)
-    expect(getRelayChainSymbolImpl).toHaveBeenCalledWith(destination, customApi._customCtx)
+    expect(getRelayChainSymbolSpy).toHaveBeenCalledWith(customOrigin)
+    expect(getRelayChainSymbolSpy).toHaveBeenCalledWith(destination)
   })
 
   it('should throw ScenarioNotSupportedError for a custom chain transferring to a foreign relay chain', () => {
@@ -260,12 +265,12 @@ describe('validateDestination', () => {
     destination = 'Paseo'
 
     const customApi = {
-      _customCtx: { customChainAssets: { MyCustomChain: {} } }
+      getRelayChainSymbol: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.mocked(isBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(chain => chain === destination)
-    vi.mocked(getRelayChainSymbolImpl).mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
+    vi.spyOn(customApi, 'getRelayChainSymbol').mockReturnValueOnce('DOT').mockReturnValueOnce('PAS')
 
     expect(() => validateDestination(customOrigin, destination, customApi)).toThrow(
       ScenarioNotSupportedError

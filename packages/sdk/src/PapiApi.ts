@@ -35,12 +35,6 @@ import {
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  findAssetInfoOrThrowImpl,
-  findNativeAssetInfoOrThrowImpl,
-  getChainProvidersImpl,
-  getRelayChainOfImpl,
-  hasDryRunSupportImpl,
-  hasXcmPaymentApiSupportImpl,
   InvalidAddressError,
   isAssetEqual,
   isConfig,
@@ -326,7 +320,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   resolveDefaultFeeAsset({ chain, feeAsset }: TDryRunCallBaseOptions<TPapiTransaction>) {
-    return feeAsset ?? findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
+    return feeAsset ?? this.findNativeAssetInfoOrThrow(chain)
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TPapiTransaction>) {
@@ -343,7 +337,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     return {
       isCustomAsset: true,
-      asset: findAssetInfoOrThrowImpl(chain, { id: assetId as number }, undefined, this._customCtx)
+      asset: this.findAssetInfoOrThrow(chain, { id: assetId as number })
     }
   }
 
@@ -360,7 +354,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       version,
       useRootOrigin = false
     } = options
-    if (!hasDryRunSupportImpl(chain, this._customCtx)) {
+    if (!this.hasDryRunSupport(chain)) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
@@ -493,7 +487,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ['Astar']
 
     if (
-      (hasXcmPaymentApiSupportImpl(chain, this._customCtx) &&
+      (this.hasXcmPaymentApiSupport(chain) &&
         result.value.local_xcm &&
         (feeAsset ||
           USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
@@ -600,7 +594,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     const deliveryFeeResolved =
       deliveryFeeRes?.value?.value.length > 0 ? deliveryFeeRes?.value?.value[0].fun.value : 0n
 
-    const nativeAsset = findNativeAssetInfoOrThrowImpl(chain, this._customCtx)
+    const nativeAsset = this.findNativeAssetInfoOrThrow(chain)
 
     if (isAssetEqual(asset, nativeAsset) || usedThirdParam) {
       return deliveryFeeResolved
@@ -709,7 +703,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const ahApi = this.clone()
 
-    const assetHubChain: TSubstrateChain = `AssetHub${getRelayChainOfImpl(this, chain)}`
+    const assetHubChain: TSubstrateChain = `AssetHub${this.getRelayChainOf(chain)}`
 
     await ahApi.init(assetHubChain)
 
@@ -739,7 +733,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     amount,
     version
   }: TDryRunXcmBaseOptions<TPapiTransaction>): Promise<TDryRunChainResult> {
-    if (!hasDryRunSupportImpl(chain, this._customCtx)) {
+    if (!this.hasDryRunSupport(chain)) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
 
@@ -768,7 +762,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const destParaId = extractDestParaId(forwardedXcms)
 
-    if (hasXcmPaymentApiSupportImpl(chain, this._customCtx) && asset) {
+    if (this.hasXcmPaymentApiSupport(chain) && asset) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
@@ -919,7 +913,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       if (force) {
         this.api.destroy()
       } else {
-        const key = api === undefined ? getChainProvidersImpl(chain, this._customCtx) : api
+        const key = api === undefined ? this.getChainProviders(chain) : api
         releaseClient(key)
       }
     }
