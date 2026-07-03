@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.10.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.10.0...sdk-core-v13.10.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update chain endpoints ⚙️ ([d34af28](https://github.com/paraspell/xcm-tools/commit/d34af28003b34b2a24af35d81335f43892deaa6d))
+
 ## [13.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.9.0...sdk-core-v13.10.0) (2026-06-30)
 
 
