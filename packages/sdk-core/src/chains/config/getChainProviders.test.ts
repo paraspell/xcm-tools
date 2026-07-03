@@ -38,6 +38,36 @@ describe('getChainProviders', () => {
     expect(getChainConfigImpl).toHaveBeenCalledWith(mockChain, undefined)
   })
 
+  it('should move the Dwellir provider to the front for non-Hydration chains', () => {
+    const mockChain: TSubstrateChain = 'Acala'
+    vi.mocked(getChainConfigImpl).mockReturnValue({
+      ...chainConfig,
+      providers: [
+        { name: 'OnFinality', endpoint: 'https://onfinality.com' },
+        { name: 'Dwellir', endpoint: 'https://dwellir.com' },
+        { name: 'Other', endpoint: 'https://other.com' }
+      ]
+    })
+
+    const result = getChainProviders(mockChain)
+    expect(result).toEqual(['https://dwellir.com', 'https://onfinality.com', 'https://other.com'])
+  })
+
+  it('should keep the original provider order for Hydration', () => {
+    const mockChain: TSubstrateChain = 'Hydration'
+    vi.mocked(getChainConfigImpl).mockReturnValue({
+      ...chainConfig,
+      providers: [
+        { name: 'OnFinality', endpoint: 'https://onfinality.com' },
+        { name: 'Dwellir', endpoint: 'https://dwellir.com' },
+        { name: 'Other', endpoint: 'https://other.com' }
+      ]
+    })
+
+    const result = getChainProviders(mockChain)
+    expect(result).toEqual(['https://onfinality.com', 'https://dwellir.com', 'https://other.com'])
+  })
+
   it('should throw an error when no providers are found', () => {
     const mockChain: TSubstrateChain = 'Centrifuge'
     vi.mocked(getChainConfigImpl).mockReturnValue({

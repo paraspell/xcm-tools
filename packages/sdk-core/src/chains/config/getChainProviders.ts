@@ -15,7 +15,10 @@ export const getChainProvidersImpl = <TCustomChain extends string = never>(
   }
 
   // Prefer Dwellir provider
-  providers.sort((a, b) => (a.name === 'Dwellir' ? 0 : 1) - (b.name === 'Dwellir' ? 0 : 1))
+  // TODO: Look into this - check whether preferring Dwellir is still up to date for other chains
+  if (chain !== 'Hydration') {
+    providers.sort((a, b) => (a.name === 'Dwellir' ? 0 : 1) - (b.name === 'Dwellir' ? 0 : 1))
+  }
 
   return providers.map(p => p.endpoint)
 }
