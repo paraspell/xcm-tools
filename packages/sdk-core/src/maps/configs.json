@@ -9,6 +9,10 @@
         "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
       {
+        "name": "Helixstreet",
+        "endpoint": "wss://rpc-asset-hub-polkadot.helixstreet.io"
+      },
+      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-asset-hub-polkadot.luckyfriday.io"
       },
@@ -19,6 +23,10 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-asset-hub-rpc.polkadot.io"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://rpc-asset-hub-polkadot.stakeworld.io"
       }
     ]
   },
@@ -114,6 +122,10 @@
       {
         "name": "Spectrum",
         "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/mgX--uWlEtmNKw/polkadotbridgehub/mainnet/"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://rpc-bridge-hub-polkadot.stakeworld.io"
       }
     ]
   },
@@ -163,6 +175,14 @@
     "info": "hydradx",
     "paraId": 2034,
     "providers": [
+      {
+        "name": "Galactic Council",
+        "endpoint": "wss://rpc.hydradx.cloud"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://hydration-rpc.n.dwellir.com"
+      },
       {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/hydradx"
@@ -360,6 +380,10 @@
         "endpoint": "wss://people-polkadot-rpc.n.dwellir.com"
       },
       {
+        "name": "Helixstreet",
+        "endpoint": "wss://rpc-people-polkadot.helixstreet.io"
+      },
+      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-people-polkadot.luckyfriday.io"
       },
@@ -370,6 +394,10 @@
       {
         "name": "Parity",
         "endpoint": "wss://polkadot-people-rpc.polkadot.io"
+      },
+      {
+        "name": "Stakeworld",
+        "endpoint": "wss://rpc-people-polkadot.stakeworld.io"
       }
     ]
   },
@@ -916,6 +944,10 @@
       {
         "name": "Zondax",
         "endpoint": "wss://api2.zondax.ch/pas/people/node/rpc"
+      },
+      {
+        "name": "interweb",
+        "endpoint": "wss://rpc.interweb-it.com/people-paseo"
       }
     ]
   },
@@ -960,12 +992,12 @@
         "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/LjwBJpV3dIKyWQ/polkadot/mainnet/"
       },
       {
-        "name": "Stakeworld",
-        "endpoint": "wss://rpc-polkadot.stakeworld.io"
-      },
-      {
         "name": "SubQuery",
         "endpoint": "wss://polkadot.rpc.subquery.network/public/ws"
+      },
+      {
+        "name": "interweb",
+        "endpoint": "wss://rpc.interweb-it.com/polkadot"
       }
     ]
   },
@@ -997,10 +1029,6 @@
       {
         "name": "Spectrum",
         "endpoint": "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/QXq7QZ6Q60NDzA/kusama/mainnet/"
-      },
-      {
-        "name": "Stakeworld",
-        "endpoint": "wss://rpc-kusama.stakeworld.io"
       }
     ]
   },
@@ -1037,8 +1065,16 @@
         "endpoint": "wss://paseo-rpc.n.dwellir.com"
       },
       {
+        "name": "StakeWorld",
+        "endpoint": "wss://rpc-paseo.stakeworld.io"
+      },
+      {
         "name": "Zondax",
         "endpoint": "wss://api2.zondax.ch/pas/relay/node/rpc"
+      },
+      {
+        "name": "interweb",
+        "endpoint": "wss://rpc.interweb-it.com/paseo"
       }
     ]
   }
