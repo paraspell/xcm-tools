@@ -7,6 +7,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { replaceBigInt } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
@@ -16,6 +17,7 @@ import { determineCurrency, fetchFromApi } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';
+import { AssetsList } from '../common/AssetsList';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
@@ -23,6 +25,13 @@ import type { FormValuesResolved } from './AssetsQueriesForm';
 import { AssetsQueriesForm } from './AssetsQueriesForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
+
+const ASSET_LIST_TITLES: Partial<Record<TAssetsQuery, string>> = {
+  NATIVE_ASSETS: 'Native assets',
+  OTHER_ASSETS: 'Other assets',
+  FEE_ASSETS: 'Fee assets',
+  SUPPORTED_ASSETS: 'Supported assets',
+};
 
 export const AssetsQueries = () => {
   const theme = useMantineColorScheme();
@@ -38,6 +47,10 @@ export const AssetsQueries = () => {
 
   const [error, setError] = useState<Error>();
   const [output, setOutput] = useState<string>();
+  const [assetsView, setAssetsView] = useState<{
+    title: string;
+    assets: TAssetInfo[];
+  }>();
 
   const [loading, setLoading] = useState(false);
 
@@ -107,8 +120,16 @@ export const AssetsQueries = () => {
     setLoading(true);
 
     try {
-      const output = await getQueryResult(formValues);
-      setOutput(JSON.stringify(output, replaceBigInt, 2));
+      const result = await getQueryResult(formValues);
+      const listTitle = ASSET_LIST_TITLES[formValues.func];
+
+      if (listTitle && Array.isArray(result)) {
+        setAssetsView({ title: listTitle, assets: result as TAssetInfo[] });
+        setOutput(undefined);
+      } else {
+        setAssetsView(undefined);
+        setOutput(JSON.stringify(result, replaceBigInt, 2));
+      }
       openOutputAlert();
       closeErrorAlert();
     } catch (e) {
@@ -119,6 +140,7 @@ export const AssetsQueries = () => {
         setError(e);
         openErrorAlert();
         closeOutputAlert();
+        setAssetsView(undefined);
       }
     } finally {
       setLoading(false);
@@ -126,6 +148,11 @@ export const AssetsQueries = () => {
   };
 
   const onSubmit = (formValues: FormValuesResolved) => void submit(formValues);
+
+  const handleCloseOutput = () => {
+    closeOutputAlert();
+    setAssetsView(undefined);
+  };
 
   return (
     <Stack gap="xl">
@@ -159,8 +186,15 @@ export const AssetsQueries = () => {
         )}
       </Center>
       <Center>
-        {outputAlertOpened && output && (
-          <OutputAlert output={output} onClose={closeOutputAlert} />
+        {outputAlertOpened && assetsView && (
+          <AssetsList
+            title={assetsView.title}
+            assets={assetsView.assets}
+            onClose={handleCloseOutput}
+          />
+        )}
+        {outputAlertOpened && !assetsView && output && (
+          <OutputAlert output={output} onClose={handleCloseOutput} />
         )}
       </Center>
     </Stack>

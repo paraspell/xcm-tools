@@ -1,4 +1,5 @@
 export * from './builderUtils';
+export * from './buildResultView';
 export * from './eip6963';
 export * from './formatBalance';
 export * from './getViemChainConfig';

@@ -27,6 +27,7 @@ import type { TTransaction } from '../../utils';
 import {
   addSwapToBuilder,
   buildApiPayload,
+  buildResultView,
   createBuilderOptions,
   fetchFromApi,
   getTxFromApi,
@@ -47,8 +48,11 @@ import {
   showSuccessNotification,
 } from '../../utils/notifications';
 import { BatchTypeSelectModal } from '../BatchTypeSelectModal/BatchTypeSelectModal';
+import { DryRunResult } from '../common/DryRunResult';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
+import { isResultViewFailure, type TResultView } from '../common/resultDisplay';
+import { TransferInfoResult } from '../common/TransferInfoResult';
 import { TransferStepper } from '../common/TransferStepper';
 import { VersionBadge } from '../common/VersionBadge';
 import { XcmTransferForm } from './XcmTransferForm';
@@ -85,6 +89,8 @@ export const XcmTransfer = () => {
   const [loading, setLoading] = useState(false);
 
   const [output, setOutput] = useState<string>();
+
+  const [resultView, setResultView] = useState<TResultView>();
 
   const [batchItems, setBatchItems] = useState<TFormValuesTransformed[]>([]);
   const [lastFormValues, setLastFormValues] =
@@ -326,10 +332,33 @@ export const XcmTransfer = () => {
           submitType,
         );
 
-    setOutput(JSON.stringify(result, replaceBigInt, 2));
+    const view = buildResultView(submitType, result, {
+      originChain: formValues.from,
+      destChain: formValues.to,
+    });
+
+    if (view) {
+      setResultView(view);
+      setOutput(undefined);
+    } else {
+      setResultView(undefined);
+      setOutput(JSON.stringify(result, replaceBigInt, 2));
+    }
     openOutputAlert();
     closeErrorAlert();
-    showSuccessNotification(notifId ?? '', 'Success', message);
+
+    const wouldFail = view ? isResultViewFailure(view) : false;
+
+    if (wouldFail) {
+      showErrorNotification(
+        view?.variant === 'xcmFee' || view?.variant === 'originXcmFee'
+          ? 'The transfer would fail. Fees shown are payment-info estimates.'
+          : 'The transfer would fail. See the dry run result for details.',
+        notifId,
+      );
+    } else {
+      showSuccessNotification(notifId ?? '', 'Success', message);
+    }
   };
 
   const submit = async (
@@ -439,6 +468,7 @@ export const XcmTransfer = () => {
           hash = await evmBuilder.signAndSubmit();
         }
 
+        setResultView(undefined);
         setOutput(`'Transaction was submitted. Hash: ${hash}'`);
         openOutputAlert();
         closeErrorAlert();
@@ -594,6 +624,7 @@ export const XcmTransfer = () => {
           'Transaction was successful',
         );
       } else if (hash !== undefined) {
+        setResultView(undefined);
         setOutput(`'Transaction was submitted. Hash: ${hash}'`);
         openOutputAlert();
         showSuccessNotification(
@@ -620,7 +651,10 @@ export const XcmTransfer = () => {
 
   const onAlertCloseClick = () => closeErrorAlert();
 
-  const onOutputAlertCloseClick = () => closeOutputAlert();
+  const onOutputAlertCloseClick = () => {
+    closeOutputAlert();
+    setResultView(undefined);
+  };
 
   const theme = useMantineColorScheme();
 
@@ -693,7 +727,20 @@ export const XcmTransfer = () => {
           )}
         </Center>
         <Center>
-          {outputAlertOpened && output && (
+          {outputAlertOpened && resultView?.variant === 'transferInfo' && (
+            <TransferInfoResult
+              result={resultView.result}
+              originChain={resultView.originChain}
+              destChain={resultView.destChain}
+              onClose={onOutputAlertCloseClick}
+            />
+          )}
+          {outputAlertOpened &&
+            resultView &&
+            resultView.variant !== 'transferInfo' && (
+              <DryRunResult {...resultView} onClose={onOutputAlertCloseClick} />
+            )}
+          {outputAlertOpened && !resultView && output && (
             <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
           )}
         </Center>
