@@ -14,18 +14,34 @@ const assetsMap = assetsMapJson as TAssetsRecord;
 
 const FETCH_TIMEOUT_MS = 60000;
 
+const activeReleases = new Set<() => void | Promise<void>>();
+
+const destroyAllClients = () => {
+  for (const release of activeReleases) {
+    try {
+      void release();
+    } catch {
+      // ignore teardown errors
+    }
+  }
+  activeReleases.clear();
+};
+
+process.on('exit', destroyAllClients);
+process.on('SIGINT', () => {
+  destroyAllClients();
+  process.exit(130);
+});
+
 const acquireApi = async (dex: ExchangeChain) => {
   if (dex.apiType === 'PJS') {
     const api = await dex.createApiInstance();
-    return { api, release: () => api.disconnect() };
+    activeReleases.add(() => api.disconnect());
+    return api;
   }
   const api = await dex.createApiInstancePapi();
-  return {
-    api,
-    release: async () => {
-      api.destroy();
-    },
-  };
+  activeReleases.add(() => api.destroy());
+  return api;
 };
 
 const fetchWithTimeout = async (
@@ -37,7 +53,7 @@ const fetchWithTimeout = async (
   });
 
   const dex = createExchangeInstance(exchangeChain);
-  const { api, release } = await acquireApi(dex);
+  const api = await acquireApi(dex);
 
   try {
     return await Promise.race([dex.getDexConfig(api), timeoutPromise]);
@@ -49,8 +65,6 @@ const fetchWithTimeout = async (
       return assetsMap[exchangeChain];
     }
     throw error;
-  } finally {
-    await release();
   }
 };
 
