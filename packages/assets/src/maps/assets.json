@@ -2939,6 +2939,29 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "67",
+        "symbol": "GIGAHDX",
+        "decimals": 12,
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6b9ac524ec8f08c49ec80176b138d16eb461c3d8"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "20",
         "symbol": "WETH",
         "decimals": 18,
