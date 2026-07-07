@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.10.1...sdk-core-v13.11.0) (2026-07-07)
+
+
+### Features
+
+* **sdk-core:** Add failure instruction field ✨ ([5235aac](https://github.com/paraspell/xcm-tools/commit/5235aacb086f6f93ef8bd189e1ab3134de2cfd5a))
+
+
+### Bug Fixes
+
+* **sdk-core:** Use BuyExecution instead of PayFees on execute transfers 🔧 ([f372626](https://github.com/paraspell/xcm-tools/commit/f3726261b6dff131ee9991d1ab6e0c5529bd04ac))
+
+
+### Code Refactoring
+
+* **sdk-core:** Create chain classes for Ethereum and relaychains 🏗️ ([a185eb2](https://github.com/paraspell/xcm-tools/commit/a185eb29bd0fc6ccde129af13383e913f562c121))
+* **sdk-core:** Propagate TCustomChain to chain subclass declarations 🏷️ ([3976c6b](https://github.com/paraspell/xcm-tools/commit/3976c6b8a1a25d142d9fd390c02abb305935d4c3))
+* **sdk-core:** Use api.* instead of impl methods directly ([0a0d2f8](https://github.com/paraspell/xcm-tools/commit/0a0d2f8d4830f97dc31c73ae40069cd9159c5d3b))
+* **swap:** Merge papiLocationToJson with the assets normalizeLocation ♻️ ([f3e9ea7](https://github.com/paraspell/xcm-tools/commit/f3e9ea71f38e3738b771ede518fb5d2ae73daa0f))
+
 ## [13.10.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.10.0...sdk-core-v13.10.1) (2026-07-03)
 
 

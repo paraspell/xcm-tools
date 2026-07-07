@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.11.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.10.1...playground-v13.11.0) (2026-07-07)
+
+
+### Bug Fixes
+
+* **playground:** Preserve swap currency when switching exchange 🔧 ([2c1dea4](https://github.com/paraspell/xcm-tools/commit/2c1dea49975726c6791dfde64c73772c6b869bcc))
+
 ## [13.10.1](https://github.com/paraspell/xcm-tools/compare/playground-v13.10.0...playground-v13.10.1) (2026-07-03)
 
 

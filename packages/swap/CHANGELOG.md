@@ -1,5 +1,28 @@
 # Changelog
 
+## [13.11.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.10.1...swap-v13.11.0) (2026-07-07)
+
+
+### Bug Fixes
+
+* **swap:** Fix assets script disconnect 🔧 ([4c1b49b](https://github.com/paraspell/xcm-tools/commit/4c1b49b9b93d5b21bbf5400584aed377f281b372))
+
+
+### Code Refactoring
+
+* **swap:** Merge papiLocationToJson with the assets normalizeLocation ♻️ ([f3e9ea7](https://github.com/paraspell/xcm-tools/commit/f3e9ea71f38e3738b771ede518fb5d2ae73daa0f))
+
+
+### Build System
+
+* **assets:** Update assets map ([b17dda2](https://github.com/paraspell/xcm-tools/commit/b17dda2017fd820eb9c994f4d787875b55945a94))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([259564c](https://github.com/paraspell/xcm-tools/commit/259564c63c14816020abd24819661015e6b56b6b))
+* **swap:** Update swap assets 📋 ([259564c](https://github.com/paraspell/xcm-tools/commit/259564c63c14816020abd24819661015e6b56b6b))
+
 ## [13.10.1](https://github.com/paraspell/xcm-tools/compare/swap-v13.10.0...swap-v13.10.1) (2026-07-03)
 
 
