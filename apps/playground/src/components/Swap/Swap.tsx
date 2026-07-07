@@ -11,9 +11,9 @@ import {
 } from '@mantine/core';
 import { type UseFormReturnType } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { EXCHANGE_CHAINS } from '@paraspell/sdk';
+import { EXCHANGE_CHAINS, type TAssetInfo } from '@paraspell/sdk';
 import { IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
 import { useEvmWallet, useSwapCurrencyOptions } from '../../hooks';
@@ -77,13 +77,39 @@ export const Swap = ({ form }: Props) => {
   const { exchange, currencyTo } = swapOptions;
   const { currencyOptionId } = currencyTo;
 
-  const { currencyToOptions } = useSwapCurrencyOptions(
+  const { currencyToOptions, currencyToMap } = useSwapCurrencyOptions(
     from,
     exchange,
     to,
     undefined,
     currencyOptionId || undefined,
   );
+
+  const selectedToAssetRef = useRef<TAssetInfo | undefined>(undefined);
+
+  useEffect(() => {
+    if (currencyTo.isCustomCurrency || !currencyOptionId) return;
+
+    const currentAsset = currencyToMap[currencyOptionId];
+    if (currentAsset) {
+      selectedToAssetRef.current = currentAsset;
+      return;
+    }
+
+    const prevLocation = selectedToAssetRef.current
+      ? JSON.stringify(selectedToAssetRef.current.location)
+      : undefined;
+    const remappedKey = prevLocation
+      ? Object.keys(currencyToMap).find(
+          (key) => JSON.stringify(currencyToMap[key].location) === prevLocation,
+        )
+      : undefined;
+
+    form.setFieldValue(
+      'swapOptions.currencyTo.currencyOptionId',
+      remappedKey ?? '',
+    );
+  }, [currencyToMap, currencyOptionId]);
 
   const infoEvmWallet = (
     <Tooltip label="Required for transfers from EVM chains like Moonbeam">
