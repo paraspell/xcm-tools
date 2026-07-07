@@ -447,7 +447,7 @@ describe('createBaseExecuteXcm', () => {
     )
   })
 
-  it('should create InitiateTransfer when version is V5 or higher and transactOptions provided', () => {
+  it('should use BuyExecution (not PayFees) for the teleport hop on V5', () => {
     vi.mocked(isTrustedChain).mockReturnValue(true)
 
     const result = createBaseExecuteXcm({
@@ -461,8 +461,8 @@ describe('createBaseExecuteXcm', () => {
         dest: mockDestLocation,
         xcm: [
           {
-            PayFees: {
-              asset: {
+            BuyExecution: {
+              fees: {
                 fun: {
                   Fungible: 9900n
                 },
@@ -472,11 +472,9 @@ describe('createBaseExecuteXcm', () => {
                     parents: 0
                   }
                 }
-              }
+              },
+              weight_limit: 'Unlimited'
             }
-          },
-          {
-            RefundSurplus: undefined
           }
         ]
       }

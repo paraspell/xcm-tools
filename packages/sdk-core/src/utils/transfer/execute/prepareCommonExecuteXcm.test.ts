@@ -199,7 +199,7 @@ describe('prepareCommonExecuteXcm', () => {
     expect(buyExecution.BuyExecution.weight_limit).toEqual('Unlimited')
   })
 
-  it('emits PayFees without RefundSurplus on V5 for a separate fee asset (kept in fees register for delivery fees)', () => {
+  it('emits BuyExecution (not PayFees) on V5 for a separate fee asset', () => {
     const contextWithFee = {
       ...mockContext,
       feeAssetLocalized: mockFeeAsset
@@ -213,8 +213,10 @@ describe('prepareCommonExecuteXcm', () => {
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
-    expect(result.prefix[1]).toEqual({ PayFees: { asset: mockFeeAsset } })
-    // No RefundSurplus in the prefix (issue #1719) — next instruction is the deposit, not a refund
+    expect(result.prefix[1]).toEqual({
+      BuyExecution: { fees: mockFeeAsset, weight_limit: 'Unlimited' }
+    })
+    // No RefundSurplus in the prefix — next instruction is the deposit
     expect(result.prefix[2]).toBeUndefined()
   })
 })

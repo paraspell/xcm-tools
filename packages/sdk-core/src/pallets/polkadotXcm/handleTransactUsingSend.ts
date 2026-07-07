@@ -8,7 +8,7 @@ import {
   createBeneficiaryLocation,
   createDestination
 } from '../../utils'
-import { createPayFees } from './createPayFees'
+import { createBuyExecution } from './createBuyExecution'
 import { createTransactInstructions } from './createTransact'
 
 export const handleTransactUsingSend = async <
@@ -60,7 +60,7 @@ export const handleTransactUsingSend = async <
     {
       WithdrawAsset: [asset]
     },
-    ...createPayFees(version, asset),
+    ...createBuyExecution(asset),
     ...transactInstructions,
     {
       RefundSurplus: undefined

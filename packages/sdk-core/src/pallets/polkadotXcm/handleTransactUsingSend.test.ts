@@ -6,7 +6,7 @@ import type { PolkadotApi } from '../../api'
 import { UnsupportedOperationError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader, createBeneficiaryLocation, createDestination } from '../../utils'
-import { createPayFees } from './createPayFees'
+import { createBuyExecution } from './createBuyExecution'
 import { createTransactInstructions } from './createTransact'
 import { handleTransactUsingSend } from './handleTransactUsingSend'
 
@@ -14,8 +14,8 @@ vi.mock('@paraspell/pallets')
 
 vi.mock('../../utils')
 
-vi.mock('./createPayFees', () => ({
-  createPayFees: vi.fn().mockReturnValue([{ PayFees: 'feeInstruction' }])
+vi.mock('./createBuyExecution', () => ({
+  createBuyExecution: vi.fn().mockReturnValue([{ BuyExecution: 'feeInstruction' }])
 }))
 
 vi.mock('./createTransact', () => ({
@@ -84,7 +84,7 @@ describe('handleTransactUsingSend', () => {
 
       const result = await handleTransactUsingSend(options)
 
-      expect(createPayFees).toHaveBeenCalledWith(options.version, options.asset)
+      expect(createBuyExecution).toHaveBeenCalledWith(options.asset)
       expect(createTransactInstructions).toHaveBeenCalledWith(
         api,
         options.transactOptions,
@@ -102,7 +102,7 @@ describe('handleTransactUsingSend', () => {
         {
           WithdrawAsset: [options.asset]
         },
-        { PayFees: 'feeInstruction' },
+        { BuyExecution: 'feeInstruction' },
         { Transact: 'transactInstruction' },
         {
           RefundSurplus: undefined
