@@ -216,6 +216,17 @@ export const XcmTransferForm: FC<Props> = ({
           ? 'Fee asset is required'
           : null;
       },
+      swapOptions: {
+        currencyTo: {
+          currencyOptionId: (value, values) => {
+            const { exchange, currencyTo } = values.swapOptions;
+            if (currencyTo.isCustomCurrency) return null;
+            return exchange.length > 0 && !value
+              ? 'Swap target currency is required'
+              : null;
+          },
+        },
+      },
       ahAddress: (value) => {
         if (value.length === 0) return null;
         return isValidPolkadotAddress(value)
