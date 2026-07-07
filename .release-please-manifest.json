@@ -1,15 +1,15 @@
 {
   "packages/xcm-analyser": "3.0.11",
-  "packages/swap": "13.10.1",
-  "packages/evm": "13.10.1",
-  "packages/evm-snowbridge": "13.10.1",
-  "packages/sdk": "13.10.1",
-  "packages/sdk-core": "13.10.1",
-  "packages/sdk-pjs": "13.10.1",
-  "packages/sdk-dedot": "13.10.1",
-  "packages/sdk-common": "13.10.1",
-  "packages/assets": "13.10.1",
-  "packages/pallets": "13.10.1",
-  "apps/xcm-api": "13.10.1",
-  "apps/playground": "13.10.1"
+  "packages/swap": "13.11.0",
+  "packages/evm": "13.11.0",
+  "packages/evm-snowbridge": "13.11.0",
+  "packages/sdk": "13.11.0",
+  "packages/sdk-core": "13.11.0",
+  "packages/sdk-pjs": "13.11.0",
+  "packages/sdk-dedot": "13.11.0",
+  "packages/sdk-common": "13.11.0",
+  "packages/assets": "13.11.0",
+  "packages/pallets": "13.11.0",
+  "apps/xcm-api": "13.11.0",
+  "apps/playground": "13.11.0"
 }

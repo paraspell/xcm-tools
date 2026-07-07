@@ -1,5 +1,17 @@
 # Changelog
 
+## [13.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.10.1...sdk-dedot-v13.11.0) (2026-07-07)
+
+
+### Features
+
+* **sdk-core:** Add failure instruction field ✨ ([5235aac](https://github.com/paraspell/xcm-tools/commit/5235aacb086f6f93ef8bd189e1ab3134de2cfd5a))
+
+
+### Code Refactoring
+
+* **sdk-core:** Use api.* instead of impl methods directly ([0a0d2f8](https://github.com/paraspell/xcm-tools/commit/0a0d2f8d4830f97dc31c73ae40069cd9159c5d3b))
+
 ## [13.10.1](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v13.10.0...sdk-dedot-v13.10.1) (2026-07-03)
 
 
