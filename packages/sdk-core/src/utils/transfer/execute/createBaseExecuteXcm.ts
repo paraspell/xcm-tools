@@ -5,7 +5,7 @@ import { isTrustedChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../../api'
 import { UnsupportedOperationError } from '../../../errors'
-import { createPayFees } from '../../../pallets/polkadotXcm'
+import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
@@ -145,8 +145,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             assets: createAssetsFilter(assetLocalizedToReserve, version),
             dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
             xcm: [
-              ...createPayFees(
-                version,
+              ...createBuyExecution(
                 hopFeeAssetToDest ??
                   updateAsset(
                     assetLocalizedToDest,
@@ -197,8 +196,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             assets: routingAssetsFilter,
             dest: destLocation,
             xcm: [
-              ...createPayFees(
-                version,
+              ...createBuyExecution(
                 hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
               ),
               ...suffixXcm
@@ -216,8 +214,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             assets: routingAssetsFilter,
             dest: getChainLocation(chain, reserveChain, api._customCtx),
             xcm: [
-              ...createPayFees(
-                version,
+              ...createBuyExecution(
                 hopFeeAssetToReserve ??
                   updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
               ),
@@ -237,8 +234,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             assets: routingAssetsFilter,
             reserve: getChainLocation(chain, reserveChain, api._customCtx),
             xcm: [
-              ...createPayFees(
-                version,
+              ...createBuyExecution(
                 // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
                 // than requested, so we need to account for that
                 hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
