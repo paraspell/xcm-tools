@@ -13,7 +13,7 @@ import { resolveModuleError } from './resolveModuleError'
 vi.mock('@paraspell/pallets')
 
 describe('resolveModuleError', () => {
-  const mockChain = {} as TSubstrateChain
+  const mockChain: TSubstrateChain = 'Acala'
 
   it('should return the failure reason for XTokens pallet', () => {
     const error: TModuleError = { index: '1', error: '0x00' }

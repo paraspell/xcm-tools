@@ -1,6 +1,6 @@
 import type { MultiSelectProps } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
-import { SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk';
+import { isSubstrateChain, SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk';
 import type { FC } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +25,7 @@ export const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
   );
 
   const onChangeInternal = (values: string[]) => {
-    if (values) onCustomChange(values as TSubstrateChain[]);
+    if (values) onCustomChange(values.filter(isSubstrateChain));
   };
 
   return (

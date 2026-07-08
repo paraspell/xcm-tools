@@ -5,7 +5,7 @@
 import { isExternalChain, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { getTChain } from '../../chains/getTChain'
+import { getTSubstrateChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
@@ -56,7 +56,7 @@ export const traverseXcmHops = async <
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTChain(nextParaId, api.getRelayChainOf(origin))
+    const nextChain = getTSubstrateChain(nextParaId, api.getRelayChainOf(origin))
 
     if (!nextChain) {
       throw new RoutingResolutionError(`Unable to find TChain for paraId ${nextParaId}`)
@@ -76,7 +76,7 @@ export const traverseXcmHops = async <
 
       const hopResult = await processHop({
         api: hopApi,
-        currentChain: nextChain as TSubstrateChain,
+        currentChain: nextChain,
         currentOrigin,
         currentAsset,
         forwardedXcms,
@@ -86,7 +86,7 @@ export const traverseXcmHops = async <
 
       if (!isDestination) {
         hops.push({
-          chain: nextChain as TSubstrateChain,
+          chain: nextChain,
           result: hopResult
         })
       }
@@ -112,7 +112,7 @@ export const traverseXcmHops = async <
       const { forwardedXcms: newXcms, destParaId } = extractNextHopData(hopResult)
       forwardedXcms = newXcms
       nextParaId = destParaId
-      currentOrigin = nextChain as TSubstrateChain
+      currentOrigin = nextChain
     } finally {
       await hopApi.disconnect()
     }

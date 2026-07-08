@@ -20,7 +20,7 @@ vi.mock('@paraspell/sdk-core', async importActual => ({
 }))
 
 describe('API Instance and Call Utility Functions', () => {
-  const mockChain = {} as TSubstrateChain
+  const mockChain: TSubstrateChain = 'Acala'
   const mockApi = {} as TPjsApi
 
   describe('createChainClient', () => {

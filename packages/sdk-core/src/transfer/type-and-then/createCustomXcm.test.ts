@@ -4,7 +4,6 @@ import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { getParaId } from '../../chains/config'
 import { MIN_AMOUNT, RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext } from '../../types'
@@ -19,10 +18,6 @@ vi.mock('@paraspell/assets', async importActual => ({
 vi.mock('@paraspell/sdk-common')
 vi.mock('../../utils/location')
 vi.mock('../../utils/ethereum/generateMessageId')
-vi.mock('../../chains/config', async importActual => ({
-  ...(await importActual()),
-  getParaId: vi.fn()
-}))
 
 describe('createCustomXcm', () => {
   const isDepositReserveInstruction = (
@@ -60,6 +55,7 @@ describe('createCustomXcm', () => {
   const mockApi = {
     findNativeAssetInfoOrThrow: vi.fn(),
     getRelayChainOf: vi.fn(),
+    getParaId: vi.fn(),
     isChainEvm: vi.fn(),
     localizeLocation: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
@@ -558,7 +554,7 @@ describe('createCustomXcm', () => {
 
     it('generates a message id and emits SetTopic when isSnowbridge is true', async () => {
       vi.mocked(generateMessageId).mockResolvedValue('0xmessage-id')
-      vi.mocked(getParaId).mockReturnValue(2034)
+      vi.spyOn(mockApi, 'getParaId').mockReturnValue(2034)
 
       const snowbridgeContext = {
         ...mockContext,

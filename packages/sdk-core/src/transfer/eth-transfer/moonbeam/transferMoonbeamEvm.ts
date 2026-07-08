@@ -3,7 +3,6 @@ import {
   InvalidCurrencyError,
   isOverrideLocationSpecifier
 } from '@paraspell/assets'
-import { type TSubstrateChain } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
@@ -66,7 +65,7 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
     asset = formatAssetIdToERC20(foundAsset.assetId)
   }
 
-  const destLocation = getDestinationLocation(api, recipient, to as TSubstrateChain)
+  const destLocation = getDestinationLocation(api, recipient, to)
 
   const weight = U_64_MAX
 

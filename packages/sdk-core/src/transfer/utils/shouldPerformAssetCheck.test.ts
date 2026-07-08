@@ -18,7 +18,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if origin is a relay chain', () => {
-    const origin = {} as TSubstrateChain
+    const origin: TSubstrateChain = 'Acala'
     const currency = {} as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(true)
@@ -28,7 +28,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns false if "multiasset" is in currency', () => {
-    const origin = {} as TSubstrateChain
+    const origin: TSubstrateChain = 'Acala'
     const currency = [] as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -38,7 +38,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns false if "location" is in currency and isOverrideLocationSpecifier returns true', () => {
-    const origin = {} as TSubstrateChain
+    const origin: TSubstrateChain = 'Acala'
     const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -49,7 +49,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if neither "multiasset" nor overridden "location" is present', () => {
-    const origin = {} as TSubstrateChain
+    const origin: TSubstrateChain = 'Acala'
     const currency = {} as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -59,7 +59,7 @@ describe('shouldPerformAssetCheck', () => {
   })
 
   it('returns true if "location" exists but override is false', () => {
-    const origin = {} as TSubstrateChain
+    const origin: TSubstrateChain = 'Acala'
     const currency = { location: {} } as TCurrencyInput
 
     vi.mocked(isRelayChain).mockReturnValue(false)

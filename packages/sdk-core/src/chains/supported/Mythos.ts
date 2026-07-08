@@ -41,7 +41,7 @@ export const createTypeAndThenTransfer = async <
   const messageId = await generateMessageId(
     api,
     sender,
-    getParaId(chain),
+    api.getParaId(chain),
     ethAsset.assetId,
     recipient,
     asset.amount

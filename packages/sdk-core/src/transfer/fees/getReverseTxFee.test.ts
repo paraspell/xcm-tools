@@ -50,10 +50,13 @@ describe('getReverseTxFee', () => {
   const paddedFee = 120000n
   const mockAmount = 10000000000n
 
+  const originChain: TSubstrateChain = 'Acala'
+  const destinationChain: TSubstrateChain = 'Astar'
+
   const defaultOptions = {
     api: mockApi,
-    origin: 'ParachainA' as TSubstrateChain,
-    destination: 'ParachainB' as TSubstrateChain,
+    origin: originChain,
+    destination: destinationChain,
     sender: 'senderAlice',
     recipient: '0x1234567890123456789012345678901234567890',
     currency: { symbol: 'DOT', amount: mockAmount }

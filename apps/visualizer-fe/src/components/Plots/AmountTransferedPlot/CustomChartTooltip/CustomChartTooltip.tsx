@@ -18,13 +18,13 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
-import { getParaId, type TRelaychain, type TSubstrateChain } from '@paraspell/sdk';
+import type { TRelaychain } from '@paraspell/sdk';
 import { IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { getChainDisplayName } from '../../../../utils';
+import { getChainDisplayName, resolveParaId } from '../../../../utils';
 import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
@@ -120,11 +120,6 @@ export type ChartTooltipFactory = Factory<{
 const defaultProps: Partial<ChartTooltipProps> = {
   type: 'area',
   showColor: true
-};
-
-const resolveParaId = (label?: string, total?: string): number | undefined => {
-  if (!label || (total && label.includes(total))) return undefined;
-  return getParaId(label as TSubstrateChain);
 };
 
 const getLinkByEcosystem = (ecosystem: TRelaychain): string => {

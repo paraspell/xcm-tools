@@ -1,5 +1,7 @@
+import { BadRequestException } from '@nestjs/common';
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
-import { TSubstrateChain } from '@paraspell/sdk';
+import type { TSubstrateChain } from '@paraspell/sdk';
+import { isSubstrateChain } from '@paraspell/sdk';
 
 import { CountOption } from '../types.js';
 import { MessageService } from './messages.service.js';
@@ -16,6 +18,15 @@ import {
 export class MessageResolver {
   constructor(private readonly messageService: MessageService) {}
 
+  private validateParachains(parachains: string[]): TSubstrateChain[] {
+    return parachains.map((chain) => {
+      if (!isSubstrateChain(chain)) {
+        throw new BadRequestException(`Invalid substrate chain: ${chain}`);
+      }
+      return chain;
+    });
+  }
+
   @Query(() => [MessageCountByStatus])
   async messageCounts(
     @Args('ecosystem', { type: () => String, nullable: true })
@@ -26,7 +37,7 @@ export class MessageResolver {
   ): Promise<MessageCountByStatus[]> {
     return this.messageService.countMessagesByStatus(
       ecosystem,
-      parachains as TSubstrateChain[],
+      this.validateParachains(parachains),
       startTime.getTime(),
       endTime.getTime(),
     );
@@ -41,7 +52,7 @@ export class MessageResolver {
   ) {
     return this.messageService.countMessagesByDay(
       ecosystem,
-      parachains as TSubstrateChain[],
+      this.validateParachains(parachains),
       startTime.getTime(),
       endTime.getTime(),
     );
@@ -56,7 +67,7 @@ export class MessageResolver {
   ) {
     return this.messageService.countAssetsBySymbol(
       ecosystem,
-      parachains as TSubstrateChain[],
+      this.validateParachains(parachains),
       startTime.getTime(),
       endTime.getTime(),
     );
