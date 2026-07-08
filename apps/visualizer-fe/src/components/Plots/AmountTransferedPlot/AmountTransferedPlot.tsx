@@ -1,5 +1,5 @@
 import { LineChart } from '@mantine/charts';
-import type { TSubstrateChain } from '@paraspell/sdk';
+import { isSubstrateChain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -93,7 +93,10 @@ export const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(
       }, {})
     ).map(key => ({
       name: key,
-      color: key === t('charts.common.total') ? 'blue.6' : getParachainColor(key as TSubstrateChain)
+      color:
+        key === t('charts.common.total') || !isSubstrateChain(key)
+          ? 'blue.6'
+          : getParachainColor(key)
     }));
 
     const onTooltipClose = () => {

@@ -7,8 +7,6 @@ export const MIN_FEE = 1000n
 
 export const DEFAULT_FEE_ASSET = 0
 
-export const RELAYCHAIN_PARA_ID = 0
-
 export const ETH_MAINNET_PARA_ID = 1
 export const ETH_MAINNET_CHAIN_ID = BigInt(ETH_MAINNET_PARA_ID)
 

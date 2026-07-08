@@ -1,5 +1,4 @@
 import { BarChart } from '@mantine/charts';
-import type { TSubstrateChain } from '@paraspell/sdk';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +19,7 @@ export const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }
   const { selectedParachains } = useSelectedParachain();
   const { selectedEcosystem } = useSelectedEcosystem();
 
-  const order = new Map(selectedParachains.map((p, index) => [p, index]));
+  const order = new Map<string, number>(selectedParachains.map((p, index) => [p, index]));
   const chartData = counts
     .map(c => {
       const name = c.parachain ?? `${t('charts.common.total')} - ${selectedEcosystem}`;
@@ -33,8 +32,8 @@ export const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }
       };
     })
     .sort((a, b) => {
-      const aIndex = order.get(a.category as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
-      const bIndex = order.get(b.category as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+      const aIndex = order.get(a.category) ?? Number.MAX_SAFE_INTEGER;
+      const bIndex = order.get(b.category) ?? Number.MAX_SAFE_INTEGER;
       return aIndex - bIndex;
     });
 

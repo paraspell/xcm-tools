@@ -111,7 +111,8 @@ describe('Mythos', () => {
       init: vi.fn(),
       queryRuntimeApi: vi.fn(),
       deserializeExtrinsics: vi.fn(),
-      findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset)
+      findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset),
+      getParaId: vi.fn().mockReturnValue(3369)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const mockEthereumInput = {
@@ -190,7 +191,8 @@ describe('Mythos', () => {
 
 describe('createTypeAndThenTransfer', () => {
   const mockApi = {
-    findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset)
+    findAssetInfoOrThrow: vi.fn().mockReturnValue(ethAsset),
+    getParaId: vi.fn().mockReturnValue(3369)
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')

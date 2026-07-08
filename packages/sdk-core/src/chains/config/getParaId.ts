@@ -23,6 +23,4 @@ export const getParaIdImpl = <TCustomChain extends string = never>(
  * @param chain - The chain for which to get the paraId.
  * @returns The parachain ID of the chain.
  */
-export const getParaId = <TCustomChain extends string = never>(
-  chain: TChain | TCustomChain
-): number => getParaIdImpl(chain)
+export const getParaId = (chain: TChain): number => getParaIdImpl(chain)

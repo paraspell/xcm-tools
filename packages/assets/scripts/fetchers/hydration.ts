@@ -41,7 +41,7 @@ export const fetchHydrationAssets = async (
   chain: TSubstrateChain
 ): Promise<TAssetInfoNoLoc[]> => {
   const api = client.getUnsafeApi()
-  const ahChain = `AssetHub${getRelayChainOf(chain)}` as TSubstrateChain
+  const ahChain: TSubstrateChain = `AssetHub${getRelayChainOf(chain)}`
   const ahClient = createChainClient(ahChain)
   const ahApi = ahClient.getUnsafeApi()
 

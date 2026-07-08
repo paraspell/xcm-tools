@@ -241,7 +241,7 @@ describe('validateDestination', () => {
   })
 
   it('should not throw for a custom chain transferring to its own relay chain', () => {
-    const customOrigin = 'MyCustomChain' as TSubstrateChain
+    const customOrigin = 'MyCustomChain'
     destination = 'Polkadot'
 
     const customApi = {
@@ -261,7 +261,7 @@ describe('validateDestination', () => {
   })
 
   it('should throw ScenarioNotSupportedError for a custom chain transferring to a foreign relay chain', () => {
-    const customOrigin = 'MyCustomChain' as TSubstrateChain
+    const customOrigin = 'MyCustomChain'
     destination = 'Paseo'
 
     const customApi = {

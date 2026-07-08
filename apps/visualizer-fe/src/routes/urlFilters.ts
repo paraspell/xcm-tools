@@ -1,5 +1,5 @@
 import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
-import { RELAYCHAINS } from '@paraspell/sdk';
+import { isSubstrateChain, RELAYCHAINS } from '@paraspell/sdk';
 
 export const encodeDate = (d: Date | null | undefined) => {
   return d ? d.toISOString() : undefined;
@@ -16,7 +16,7 @@ export const encodeList = (list: string[]) => {
 };
 
 export const decodeList = (s: string | null): TSubstrateChain[] => {
-  return s ? (s.split(',').filter(Boolean) as TSubstrateChain[]) : [];
+  return s ? s.split(',').filter(isSubstrateChain) : [];
 };
 
 export const encodeEcosystem = (e: TRelaychain): string => {

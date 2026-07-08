@@ -1,5 +1,4 @@
-import type { TRelaychain, TSubstrateChain } from '@paraspell/sdk';
-import { getParaId } from '@paraspell/sdk';
+import type { TRelaychain } from '@paraspell/sdk';
 import dayjs from 'dayjs';
 import type { BarSeriesOption, EChartsOption } from 'echarts';
 import { BarChart } from 'echarts/charts';
@@ -13,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelectedEcosystem } from '../../../context/SelectedEcosystem/useSelectedEcosystem';
 import { useSelectedParachain } from '../../../context/SelectedParachain/useSelectedParachain';
 import type { TAssetCounts } from '../../../types/types';
-import { getChainDisplayName } from '../../../utils';
+import { getChainDisplayName, resolveParaId } from '../../../utils';
 import { formatNumber } from '../utils';
 import { colorPallete } from './color-pallete';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
@@ -23,11 +22,6 @@ echarts.use([BarChart, GridComponent, TooltipComponent, SVGRenderer]);
 type Props = {
   counts: TAssetCounts;
   showAmounts?: boolean;
-};
-
-const resolveParaId = (label: string, total: string): number | undefined => {
-  if (label.includes(total)) return undefined;
-  return getParaId(label as TSubstrateChain);
 };
 
 const getLinkByEcosystem = (ecosystem: TRelaychain): string =>
@@ -59,14 +53,14 @@ export const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(
     const option = useMemo((): EChartsOption => {
       const aggregated = Object.values(aggregateDataByParachain(counts, t, selectedEcosystem));
 
-      const order = new Map(selectedParachains.map((p, i) => [p, i]));
+      const order = new Map<string, number>(selectedParachains.map((p, i) => [p, i]));
       const sorted = aggregated.sort((a, b) => {
-        const aIdx = order.get(a.parachain as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
-        const bIdx = order.get(b.parachain as TSubstrateChain) ?? Number.MAX_SAFE_INTEGER;
+        const aIdx = order.get(a.parachain) ?? Number.MAX_SAFE_INTEGER;
+        const bIdx = order.get(b.parachain) ?? Number.MAX_SAFE_INTEGER;
         return aIdx - bIdx;
       });
 
-      const categories = sorted.map(d => getChainDisplayName(d.parachain as TSubstrateChain));
+      const categories = sorted.map(d => getChainDisplayName(d.parachain));
 
       const symbolSet = new Set<string>();
       counts.forEach(a => symbolSet.add(a.symbol));

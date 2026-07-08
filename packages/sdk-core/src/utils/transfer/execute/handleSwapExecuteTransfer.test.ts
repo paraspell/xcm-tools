@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TChain, TParachain, TSubstrateChain } from '@paraspell/sdk-common'
+import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -46,11 +46,15 @@ const mockApi = {
   findNativeAssetInfoOrThrow: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
+const ORIGIN_CHAIN: TSubstrateChain = 'Astar'
+const EXCHANGE_CHAIN: TExchangeChain = 'Hydration'
+const DEST_CHAIN: TChain = 'Moonbeam'
+
 const baseOptions = {
   api: mockApi,
-  chain: 'A' as TSubstrateChain,
-  exchangeChain: 'B' as TParachain,
-  destChain: 'C' as TChain,
+  chain: ORIGIN_CHAIN,
+  exchangeChain: EXCHANGE_CHAIN,
+  destChain: DEST_CHAIN,
   assetInfoFrom: {
     amount: 2000n,
     location: {}
@@ -70,14 +74,14 @@ const mockDryRunResult = (success = true, includeOrigin = false) =>
     },
     hops: [
       {
-        chain: 'A',
+        chain: ORIGIN_CHAIN,
         result: {
           success: true,
           fee: 100n
         }
       },
       {
-        chain: 'B',
+        chain: EXCHANGE_CHAIN,
         result: {
           success,
           fee: 200n,
@@ -85,7 +89,7 @@ const mockDryRunResult = (success = true, includeOrigin = false) =>
         }
       },
       {
-        chain: 'C',
+        chain: DEST_CHAIN,
         result: {
           success: true,
           fee: 150n
@@ -124,8 +128,8 @@ describe('handleSwapExecuteTransfer', () => {
     const dryRunMissingExchange = {
       origin: { success: true, fee: 0n },
       hops: [
-        { chain: 'A', result: { success: true, fee: 0n } },
-        { chain: 'C', result: { success: true, fee: 0n } }
+        { chain: ORIGIN_CHAIN, result: { success: true, fee: 0n } },
+        { chain: DEST_CHAIN, result: { success: true, fee: 0n } }
       ]
     } as unknown as TDryRunResult
 
@@ -133,7 +137,7 @@ describe('handleSwapExecuteTransfer', () => {
 
     const options = {
       ...baseOptions,
-      exchangeChain: 'B' as TExchangeChain
+      exchangeChain: EXCHANGE_CHAIN
     }
 
     await expect(handleSwapExecuteTransfer(options)).rejects.toThrow(RoutingResolutionError)
@@ -187,7 +191,7 @@ describe('handleSwapExecuteTransfer', () => {
       destination: { success: true, fee: 300n },
       hops: [
         {
-          chain: 'A',
+          chain: ORIGIN_CHAIN,
           result: { success: true, fee: 150n }
         }
       ]
@@ -213,7 +217,7 @@ describe('handleSwapExecuteTransfer', () => {
       origin: { success: true, fee: 0n },
       hops: [
         {
-          chain: 'C',
+          chain: DEST_CHAIN,
           result: { success: true, fee: 150n }
         }
       ]
@@ -241,7 +245,7 @@ describe('handleSwapExecuteTransfer', () => {
   it('handles case when origin chain is same as exchange chain', async () => {
     const optionsSameChain = {
       ...baseOptions,
-      chain: 'B' as TExchangeChain
+      chain: EXCHANGE_CHAIN
     }
 
     const mockDryRunSameChain = {
@@ -249,11 +253,11 @@ describe('handleSwapExecuteTransfer', () => {
       destination: { success: true, fee: 200n },
       hops: [
         {
-          chain: 'B',
+          chain: EXCHANGE_CHAIN,
           result: { success: true, fee: 100n }
         },
         {
-          chain: 'C',
+          chain: DEST_CHAIN,
           result: { success: true, fee: 150n }
         }
       ]

@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { getTChain } from '../../chains/getTChain'
+import { getTSubstrateChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig } from '../../types'
 import { getParaEthTransferFees } from '../eth-transfer'
@@ -60,7 +60,7 @@ describe('traverseXcmHops', () => {
       initialDestParaId: destParaId
     }
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTSubstrateChain).mockReturnValue('AssetHubPolkadot')
 
     vi.spyOn(config, 'processHop').mockResolvedValue({
       fee: 1000n,
@@ -114,7 +114,7 @@ describe('traverseXcmHops', () => {
       }
     }
 
-    vi.mocked(getTChain)
+    vi.mocked(getTSubstrateChain)
       .mockReturnValueOnce('BridgeHubPolkadot')
       .mockReturnValueOnce('Hydration')
       .mockReturnValueOnce('AssetHubPolkadot')
@@ -150,10 +150,10 @@ describe('traverseXcmHops', () => {
     expect(processHopSpy.mock.calls[2][0].hasPassedExchange).toBe(true)
   })
 
-  it('should throw error when getTChain returns null', async () => {
+  it('should throw error when getTSubstrateChain returns null', async () => {
     const forwardedXcms = [[], [{ value: ['data'] }]]
 
-    vi.mocked(getTChain).mockReturnValue(null)
+    vi.mocked(getTSubstrateChain).mockReturnValue(null)
 
     const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
       ...baseConfig,
@@ -183,7 +183,7 @@ describe('traverseXcmHops', () => {
       initialDestParaId: 1000
     }
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTSubstrateChain).mockReturnValue('AssetHubPolkadot')
 
     vi.spyOn(config, 'processHop').mockResolvedValue({ fee: 1000n })
     vi.spyOn(config, 'shouldContinue').mockReturnValue(false)
@@ -231,7 +231,7 @@ describe('traverseXcmHops', () => {
       initialDestParaId: 1000
     }
 
-    vi.mocked(getTChain).mockReturnValue('AssetHubPolkadot')
+    vi.mocked(getTSubstrateChain).mockReturnValue('AssetHubPolkadot')
     vi.spyOn(config, 'processHop').mockRejectedValue(new Error('Processing failed'))
 
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')

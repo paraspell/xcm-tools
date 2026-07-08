@@ -31,8 +31,8 @@ describe('verifyEdOnDestinationInternal', () => {
 
   const findAssetOnDestOrThrowSpy = vi.spyOn(mockApi, 'findAssetOnDestOrThrow')
 
-  const mockOrigin = 'OriginChain' as TSubstrateChain
-  const mockDestination = 'DestinationChain' as TChain
+  const mockOrigin: TSubstrateChain = 'Acala'
+  const mockDestination: TChain = 'Astar'
   const mockAddress = 'destinationAddress'
   const mockSender = 'senderAddress'
   const mockCurrency = { symbol: 'DOT', amount: 1000000000000n }

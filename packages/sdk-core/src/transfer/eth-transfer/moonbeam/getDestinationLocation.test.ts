@@ -4,16 +4,15 @@ import type { TParachain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../../api'
-import { getChainConfig } from '../../../chains/config'
-import type { TChainConfig } from '../../../types'
 import { getDestinationLocation } from './getDestinationLocation'
 
 vi.mock('@paraspell/assets')
-vi.mock('../../../chains/config')
 
 describe('getDestinationLocation', () => {
+  const getParaId = vi.fn()
   const mockApi = {
-    accountToHex: vi.fn().mockReturnValue('abc123')
+    accountToHex: vi.fn().mockReturnValue('abc123'),
+    getParaId
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   let mockDestination: TParachain
@@ -23,7 +22,7 @@ describe('getDestinationLocation', () => {
     mockDestination = 'AssetHubPolkadot'
 
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: false } as TChainAssetsInfo)
-    vi.mocked(getChainConfig).mockReturnValue({ paraId: 2000 } as TChainConfig)
+    getParaId.mockReturnValue(2000)
   })
 
   it('returns correct location when isEVM=false', () => {
@@ -49,7 +48,7 @@ describe('getDestinationLocation', () => {
 
   it('returns correct location when isEVM=true', () => {
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: true } as TChainAssetsInfo)
-    vi.mocked(getChainConfig).mockReturnValue({ paraId: 3000 } as TChainConfig)
+    getParaId.mockReturnValue(3000)
     const spy = vi.spyOn(mockApi, 'accountToHex').mockReturnValue('deadbeef')
 
     const result = getDestinationLocation(mockApi, 'another-address', mockDestination)
@@ -64,10 +63,10 @@ describe('getDestinationLocation', () => {
     expect(finalAddress).toBe('0x03deadbeef00')
   })
 
-  it('calls getChainConfig with the correct destination', () => {
+  it('calls getParaId with the correct destination', () => {
     getDestinationLocation(mockApi, 'some-address', mockDestination)
-    expect(getChainConfig).toHaveBeenCalledTimes(1)
-    expect(getChainConfig).toHaveBeenCalledWith(mockDestination)
+    expect(getParaId).toHaveBeenCalledTimes(1)
+    expect(getParaId).toHaveBeenCalledWith(mockDestination)
   })
 
   it('calls getAssetsObject with the correct destination', () => {

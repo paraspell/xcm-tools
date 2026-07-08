@@ -53,7 +53,7 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
 }
 
 export const validateDestination = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  origin: TSubstrateChain,
+  origin: TSubstrateChain | TCustomChain,
   destination: TDestination,
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
 ) => {
@@ -71,7 +71,7 @@ export const validateDestination = <TApi, TRes, TSigner, TCustomChain extends st
   if (
     typeof destination === 'string' &&
     isExternalChain(destination) &&
-    !ETHEREUM_BRIDGE_ORIGINS.includes(origin)
+    !ETHEREUM_BRIDGE_ORIGINS.some(o => o === origin)
   ) {
     throw new ScenarioNotSupportedError(
       `Transfers to Ethereum are only supported from: ${ETHEREUM_BRIDGE_ORIGINS.join(', ')}`

@@ -10,7 +10,7 @@ vi.mock("@paraspell/sdk-core");
 vi.mock("./getLocationTokenId");
 
 describe("computeOriginFee", () => {
-  const mockChain = {} as TSubstrateChain;
+  const mockChain: TSubstrateChain = "Acala";
 
   beforeEach(() => {
     vi.resetAllMocks();

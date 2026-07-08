@@ -1,4 +1,5 @@
 import { ApolloDriver } from '@nestjs/apollo';
+import { BadRequestException } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
@@ -80,6 +81,27 @@ describe('MessageResolver', () => {
         startTime.getTime(),
         endTime.getTime(),
       );
+    });
+  });
+
+  describe('validateParachains', () => {
+    it('should throw BadRequestException for an invalid substrate chain', async () => {
+      await expect(
+        resolver.messageCounts(
+          ecosystem,
+          ['Acala', 'NotAChain'],
+          startTime,
+          endTime,
+        ),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(service.countMessagesByStatus).not.toHaveBeenCalled();
+    });
+
+    it('should include the invalid chain name in the error message', async () => {
+      await expect(
+        resolver.messageCounts(ecosystem, ['NotAChain'], startTime, endTime),
+      ).rejects.toThrow('Invalid substrate chain: NotAChain');
     });
   });
 
