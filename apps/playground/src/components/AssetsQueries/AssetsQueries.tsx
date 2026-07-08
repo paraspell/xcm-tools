@@ -7,8 +7,8 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TAssetInfo } from '@paraspell/sdk';
-import { replaceBigInt } from '@paraspell/sdk';
+import type { TAssetInfo, TChain, TChainAssetsInfo } from '@paraspell/sdk';
+import { getAssetsObject, replaceBigInt } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks';
@@ -18,6 +18,7 @@ import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';
 import { AssetsList } from '../common/AssetsList';
+import { AssetsObjectResult } from '../common/AssetsObjectResult';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
@@ -31,6 +32,19 @@ const ASSET_LIST_TITLES: Partial<Record<TAssetsQuery, string>> = {
   OTHER_ASSETS: 'Other assets',
   FEE_ASSETS: 'Fee assets',
   SUPPORTED_ASSETS: 'Supported assets',
+};
+
+const getAssetsObjectResult = (
+  formValues: FormValuesResolved,
+): Promise<TChainAssetsInfo> => {
+  const { useApi, chain, destination } = formValues;
+  const payload = { origin: chain, destination };
+  return useApi
+    ? fetchFromApi<typeof payload, TChainAssetsInfo>(
+        payload,
+        getApiEndpoint('ASSETS_OBJECT', chain),
+      )
+    : Promise.resolve(getAssetsObject(chain));
 };
 
 export const AssetsQueries = () => {
@@ -50,6 +64,10 @@ export const AssetsQueries = () => {
   const [assetsView, setAssetsView] = useState<{
     title: string;
     assets: TAssetInfo[];
+  }>();
+  const [assetsObjectView, setAssetsObjectView] = useState<{
+    chain: TChain;
+    info: TChainAssetsInfo;
   }>();
 
   const [loading, setLoading] = useState(false);
@@ -120,15 +138,26 @@ export const AssetsQueries = () => {
     setLoading(true);
 
     try {
-      const result = await getQueryResult(formValues);
-      const listTitle = ASSET_LIST_TITLES[formValues.func];
-
-      if (listTitle && Array.isArray(result)) {
-        setAssetsView({ title: listTitle, assets: result as TAssetInfo[] });
+      if (formValues.func === 'ASSETS_OBJECT') {
+        setAssetsObjectView({
+          chain: formValues.chain,
+          info: await getAssetsObjectResult(formValues),
+        });
+        setAssetsView(undefined);
         setOutput(undefined);
       } else {
-        setAssetsView(undefined);
-        setOutput(JSON.stringify(result, replaceBigInt, 2));
+        const result = await getQueryResult(formValues);
+        const listTitle = ASSET_LIST_TITLES[formValues.func];
+
+        if (listTitle && Array.isArray(result)) {
+          setAssetsView({ title: listTitle, assets: result as TAssetInfo[] });
+          setAssetsObjectView(undefined);
+          setOutput(undefined);
+        } else {
+          setAssetsView(undefined);
+          setAssetsObjectView(undefined);
+          setOutput(JSON.stringify(result, replaceBigInt, 2));
+        }
       }
       openOutputAlert();
       closeErrorAlert();
@@ -141,6 +170,7 @@ export const AssetsQueries = () => {
         openErrorAlert();
         closeOutputAlert();
         setAssetsView(undefined);
+        setAssetsObjectView(undefined);
       }
     } finally {
       setLoading(false);
@@ -152,6 +182,7 @@ export const AssetsQueries = () => {
   const handleCloseOutput = () => {
     closeOutputAlert();
     setAssetsView(undefined);
+    setAssetsObjectView(undefined);
   };
 
   return (
@@ -186,6 +217,13 @@ export const AssetsQueries = () => {
         )}
       </Center>
       <Center>
+        {outputAlertOpened && assetsObjectView && (
+          <AssetsObjectResult
+            chain={assetsObjectView.chain}
+            info={assetsObjectView.info}
+            onClose={handleCloseOutput}
+          />
+        )}
         {outputAlertOpened && assetsView && (
           <AssetsList
             title={assetsView.title}
@@ -193,7 +231,7 @@ export const AssetsQueries = () => {
             onClose={handleCloseOutput}
           />
         )}
-        {outputAlertOpened && !assetsView && output && (
+        {outputAlertOpened && !assetsView && !assetsObjectView && output && (
           <OutputAlert output={output} onClose={handleCloseOutput} />
         )}
       </Center>

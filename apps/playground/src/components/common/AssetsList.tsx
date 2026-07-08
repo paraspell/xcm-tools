@@ -1,12 +1,4 @@
-import {
-  Accordion,
-  Alert,
-  Badge,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Accordion, Badge, Group, Stack, Text, TextInput } from '@mantine/core';
 import type { TAssetInfo } from '@paraspell/sdk';
 import { formatUnits } from '@paraspell/sdk';
 import { IconCoins, IconSearch } from '@tabler/icons-react';
@@ -14,15 +6,9 @@ import Fuse from 'fuse.js';
 import type { FC } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { CollapsibleJson, DetailRow } from './resultDisplay';
+import { CollapsibleJson, DetailRow, ResultAlert } from './resultDisplay';
 
-type Props = {
-  title: string;
-  assets: TAssetInfo[];
-  onClose: () => void;
-};
-
-export const AssetsList: FC<Props> = ({ title, assets, onClose }) => {
+export const AssetsAccordion: FC<{ assets: TAssetInfo[] }> = ({ assets }) => {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -48,26 +34,7 @@ export const AssetsList: FC<Props> = ({ title, assets, onClose }) => {
   }));
 
   return (
-    <Alert
-      color="blue"
-      title={title}
-      icon={<IconCoins size={24} />}
-      withCloseButton
-      onClose={onClose}
-      mt="lg"
-      p="xl"
-      maw={900}
-      w="100%"
-      data-testid="output"
-      styles={{
-        title: { fontSize: 'var(--mantine-font-size-lg)' },
-        icon: {
-          marginTop: 0,
-          height:
-            'calc(var(--mantine-font-size-lg) * var(--mantine-line-height))',
-        },
-      }}
-    >
+    <>
       <Group justify="space-between" mb="md" gap="sm" wrap="wrap">
         <Text size="sm" c="dimmed">
           {trimmed === ''
@@ -148,6 +115,23 @@ export const AssetsList: FC<Props> = ({ title, assets, onClose }) => {
           ))}
         </Accordion>
       )}
-    </Alert>
+    </>
   );
 };
+
+type Props = {
+  title: string;
+  assets: TAssetInfo[];
+  onClose: () => void;
+};
+
+export const AssetsList: FC<Props> = ({ title, assets, onClose }) => (
+  <ResultAlert
+    color="blue"
+    title={title}
+    icon={<IconCoins size={24} />}
+    onClose={onClose}
+  >
+    <AssetsAccordion assets={assets} />
+  </ResultAlert>
+);

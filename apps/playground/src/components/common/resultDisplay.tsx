@@ -90,13 +90,16 @@ export const rawJsonStyles = {
   } satisfies CSSProperties,
 };
 
-export const ChainIcon: FC<{ chain?: TChain }> = ({ chain }) => {
+export const ChainIcon: FC<{ chain?: TChain; size?: number }> = ({
+  chain,
+  size = 20,
+}) => {
   const src = getParachainIcon(chain);
   if (!src) return null;
   return (
     <Image
       src={src}
-      style={{ width: 20, height: 20 }}
+      style={{ width: size, height: size }}
       radius="xl"
       alt={chain}
     />
