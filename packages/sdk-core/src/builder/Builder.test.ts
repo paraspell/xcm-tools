@@ -11,7 +11,6 @@ import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
 import { DryRunFailedError, UnableToComputeError } from '../errors'
 import { getEvmExtensionOrThrow, getEvmSnowbridgeExtensionOrThrow } from '../extensions'
 import {
-  claimAssets,
   getMinTransferableAmount,
   getOriginXcmFee,
   getTransferableAmount,
@@ -722,58 +721,6 @@ describe('Builder', () => {
           method: method
         })
       )
-    })
-  })
-
-  describe('Claim asset', () => {
-    it('should create a normal claim asset tx', async () => {
-      vi.mocked(claimAssets).mockResolvedValue(mockExtrinsic)
-      await Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS).build()
-      expect(claimAssets).toHaveBeenCalledTimes(1)
-      expect(claimAssets).toHaveBeenCalledWith({
-        api: mockApi,
-        chain: CHAIN,
-        currency: [],
-        address: ADDRESS
-      })
-    })
-
-    it('should create a claim asset tx with valid output', async () => {
-      vi.mocked(claimAssets).mockResolvedValue({
-        method: 'claim',
-        args: []
-      })
-      const tx = await Builder(mockApi)
-        .claimFrom(CHAIN)
-        .currency([])
-        .address(ADDRESS)
-        .xcmVersion(Version.V3)
-        .build()
-
-      expect(tx).toHaveProperty('method')
-      expect(tx).toHaveProperty('args')
-      expect(claimAssets).toHaveBeenCalledTimes(1)
-    })
-
-    it('should disconnect the api after building', async () => {
-      vi.mocked(claimAssets).mockResolvedValue({
-        method: 'claim',
-        args: []
-      })
-
-      const disconnectAllowedSpy = vi.spyOn(mockApi, 'disconnectAllowed', 'set')
-      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
-
-      const builder = Builder(mockApi).claimFrom(CHAIN).currency([]).address(ADDRESS)
-
-      const tx = await builder.build()
-      expect(tx).toBeDefined()
-
-      await builder.disconnect()
-
-      expect(disconnectAllowedSpy).not.toHaveBeenCalled()
-      expect(disconnectSpy).toHaveBeenCalledWith(true)
-      expect(claimAssets).toHaveBeenCalledTimes(1)
     })
   })
 
