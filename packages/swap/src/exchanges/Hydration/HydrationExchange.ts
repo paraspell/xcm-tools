@@ -53,7 +53,6 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
       options,
       tradeRouter,
       txBuilderFactory,
-      assetClient,
       currencyFromInfo,
       currencyToInfo,
       currencyFromInfo.decimals,

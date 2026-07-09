@@ -33,7 +33,6 @@ vi.mock('@paraspell/pallets')
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
   getNativeAssets: vi.fn(),
-  hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isSymbolSpecifier: vi.fn(),
   isChainEvm: vi.fn()

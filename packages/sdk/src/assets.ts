@@ -15,8 +15,6 @@ export {
   Foreign,
   ForeignAbstract,
   getAllAssetsSymbols,
-  getAssetDecimals,
-  getAssetId,
   getAssets,
   getAssetsObject,
   getExistentialDeposit,
@@ -26,7 +24,6 @@ export {
   getRelayChainSymbol,
   getSupportedAssets,
   getTChain,
-  hasSupportForAsset,
   isChainEvm,
   Native
 } from '@paraspell/sdk-core'

@@ -1,21 +1,9 @@
 import type { Asset } from '@galacticcouncil/sdk-next';
 import type { AssetClient } from '@galacticcouncil/sdk-next/client';
-import type { TAssetInfo, TChain } from '@paraspell/sdk';
+import type { TAssetInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getAssetInfo } from './utils';
-
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const originalModule = await vi.importActual('@paraspell/sdk-pjs');
-  return {
-    ...originalModule,
-    getAssetDecimals: (_chain: TChain, symbol: string): number | null => {
-      if (symbol === 'HDX') return 12;
-      if (symbol === 'BSX') return 12;
-      return null;
-    },
-  };
-});
 
 describe('getAssetInfo', () => {
   const mockAssets: Asset[] = [

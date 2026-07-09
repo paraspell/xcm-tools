@@ -1,9 +1,4 @@
-import {
-  findAssetInfo,
-  findAssetInfoOrThrow,
-  hasSupportForAsset,
-  RoutingResolutionError,
-} from '@paraspell/sdk-core';
+import { findAssetInfo, findAssetInfoOrThrow, RoutingResolutionError } from '@paraspell/sdk-core';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -59,7 +54,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
     );
   }
 
-  if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
+  if (destinationSpecified && !findAssetInfo(to, { location: assetTo.location })) {
     throw new RoutingResolutionError(
       `Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`,
     );

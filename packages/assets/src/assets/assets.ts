@@ -8,8 +8,6 @@ import assetsMapJson from '../maps/assets.json' with { type: 'json' }
 import type { TAssetInfo, TCustomCtx } from '../types'
 import { type TAssetJsonMap, type TChainAssetsInfo } from '../types'
 import { mergeCustomAssets } from './customAssets'
-import { isSymbolMatch } from './isSymbolMatch'
-import { findNativeAssetInfoOrThrowImpl } from './search'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
@@ -46,20 +44,6 @@ export const isChainEvmImpl = <TCustomChain extends string = never>(
 export const isChainEvm = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain
 ): boolean => isChainEvmImpl(chain)
-
-/**
- * Retrieves the asset ID for a given symbol on a specified chain.
- *
- * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
- *
- * @param chain - The chain to search for the asset.
- * @param symbol - The symbol of the asset.
- * @returns The asset ID if found; otherwise, null.
- */
-export const getAssetId = (chain: TChain, symbol: string): string | null => {
-  const asset = getAssetsObject(chain).assets.find(o => o.symbol === symbol)
-  return asset != null && asset.assetId ? asset.assetId : null
-}
 
 export const getRelayChainSymbolImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
@@ -140,55 +124,6 @@ export const getNativeAssetSymbolImpl = <TCustomChain extends string = never>(
 export const getNativeAssetSymbol = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain
 ): string => getNativeAssetSymbolImpl(chain)
-
-/**
- * Determines whether a specified chain supports an asset with the given symbol.
- *
- * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
- *
- * @param chain - The chain to check for asset support.
- * @param symbol - The symbol of the asset to check.
- * @returns True if the asset is supported; otherwise, false.
- */
-export const hasSupportForAsset = (chain: TChain, symbol: string): boolean => {
-  const lowerSymbol = symbol.toLowerCase()
-  const symbolsToCheck = new Set<string>()
-
-  symbolsToCheck.add(lowerSymbol)
-
-  if (lowerSymbol.startsWith('xc')) {
-    symbolsToCheck.add(lowerSymbol.substring(2))
-  } else {
-    symbolsToCheck.add(`xc${lowerSymbol}`)
-  }
-
-  if (lowerSymbol.endsWith('.e')) {
-    symbolsToCheck.add(lowerSymbol.substring(0, lowerSymbol.length - 2))
-  } else {
-    symbolsToCheck.add(`${lowerSymbol}.e`)
-  }
-
-  const chainSymbols = getAllAssetsSymbols(chain).map(s => s.toLowerCase())
-
-  return chainSymbols.some(chainSymbol => symbolsToCheck.has(chainSymbol))
-}
-
-/**
- * Retrieves the number of decimals for an asset with the given symbol on a specified chain.
- *
- * @deprecated Use `findAssetInfo` instead. Will be removed in v14.
- *
- * @param chain - The chain where the asset is located.
- * @param symbol - The symbol of the asset.
- * @returns The number of decimals if the asset is found; otherwise, null.
- */
-export const getAssetDecimals = (chain: TChain, symbol: string): number | null => {
-  const { assets } = getAssetsObject(chain)
-  const isMainNativeAsset = isSymbolMatch(symbol, getNativeAssetSymbol(chain))
-  if (isMainNativeAsset) return findNativeAssetInfoOrThrowImpl(chain).decimals
-  const asset = assets.find(o => o.symbol === symbol)
-  return asset?.decimals !== undefined ? asset.decimals : null
-}
 
 export const hasDryRunSupportImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,

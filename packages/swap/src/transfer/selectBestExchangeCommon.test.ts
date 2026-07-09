@@ -1,5 +1,5 @@
 import type { PolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
-import { applyDecimalAbstraction, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk-core';
+import { applyDecimalAbstraction, findAssetInfo } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -14,7 +14,6 @@ const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfo: vi.fn(),
-  hasSupportForAsset: vi.fn(),
   getRelayChainOf: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
   RoutingResolutionError: class extends Error {},
@@ -87,7 +86,6 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(findAssetInfo).mockReturnValue(asset1);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
     vi.mocked(getExchangeAsset).mockReturnValue(asset2);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
     const fakeDex2 = { chain: 'ex2', exchangeChain: 'ex2Ex' } as unknown as ExchangeChain;
@@ -125,7 +123,6 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(findAssetInfo).mockReturnValue(asset1);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
     vi.mocked(getExchangeAsset).mockReturnValue(asset2);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
     const fakeDex2 = { chain: 'ex2', exchangeChain: 'ex2Ex' } as unknown as ExchangeChain;
@@ -156,7 +153,7 @@ describe('selectBestExchangeCommon', () => {
 
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
+    vi.mocked(findAssetInfo).mockReturnValue(asset2);
 
     const fakeDex = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
@@ -183,7 +180,6 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(findAssetInfo).mockReturnValue(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset1);
     vi.mocked(getExchangeAsset).mockReturnValueOnce(asset2);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
 
     const fakeDex = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);

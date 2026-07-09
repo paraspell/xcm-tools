@@ -17,7 +17,6 @@ import { createTestApp } from './helpers/app';
 import {
   BALANCE_ADDRESS,
   MOCK_CHAIN,
-  MOCK_SYMBOL,
   UNKNOWN_CHAIN,
   UNKNOWN_SYMBOL,
 } from './helpers/fixtures';
@@ -42,23 +41,6 @@ describe('Assets controller (e2e)', () => {
         .expect(200)
         .expect(assetsObject);
     });
-
-    const otherAssets = getOtherAssets(chain);
-    if (otherAssets.length > 1) {
-      const { symbol, decimals } =
-        otherAssets[0].assetId !== undefined ? otherAssets[0] : otherAssets[1];
-
-      if (symbol) {
-        const assetDecimalsUrl = `/assets/${chain}/decimals`;
-        it(`Get asset decimals - ${assetDecimalsUrl} symbol=${symbol} (GET)`, () => {
-          return request(app.getHttpServer())
-            .get(assetDecimalsUrl)
-            .query({ symbol })
-            .expect(200)
-            .expect((res) => expect(Number(res.text)).toEqual(decimals));
-        });
-      }
-    }
 
     const relayChainSymbolUrl = `/assets/${chain}/relay-chain-symbol`;
     it(`Get relaychain symbol - ${relayChainSymbolUrl} (GET)`, () => {
@@ -111,22 +93,6 @@ describe('Assets controller (e2e)', () => {
     return request(app.getHttpServer())
       .get(assetsObjectUnknownChainUrl)
       .expect(400);
-  });
-
-  const assetIdUnknownChainUrl = `/assets/${UNKNOWN_CHAIN}/id`;
-  it(`Get asset id - ${assetIdUnknownChainUrl} (GET)`, () => {
-    return request(app.getHttpServer())
-      .get(assetIdUnknownChainUrl)
-      .query({ symbol: MOCK_SYMBOL })
-      .expect(400);
-  });
-
-  const assetIdUnknownSymbolUrl = `/assets/${MOCK_CHAIN}/id`;
-  it(`Get asset id - non existent symbol - ${assetIdUnknownSymbolUrl} (GET)`, () => {
-    return request(app.getHttpServer())
-      .get(assetIdUnknownSymbolUrl)
-      .query({ symbol: UNKNOWN_SYMBOL })
-      .expect(404);
   });
 
   it(`Get asset location`, () =>
@@ -248,22 +214,6 @@ describe('Assets controller (e2e)', () => {
       .expect(400);
   });
 
-  const assetDecimalsUnknownChainUrl = `/assets/${UNKNOWN_CHAIN}/decimals`;
-  it(`Get asset decimals - ${assetDecimalsUnknownChainUrl} (GET)`, () => {
-    return request(app.getHttpServer())
-      .get(assetDecimalsUnknownChainUrl)
-      .query({ symbol: MOCK_SYMBOL })
-      .expect(400);
-  });
-
-  const assetDecimalsUnknownSymbolUrl = `/assets/${MOCK_CHAIN}/decimals`;
-  it(`Get asset decimals - non existent symbol - ${assetDecimalsUnknownSymbolUrl} (GET)`, () => {
-    return request(app.getHttpServer())
-      .get(assetDecimalsUnknownSymbolUrl)
-      .query({ symbol: UNKNOWN_SYMBOL })
-      .expect(404);
-  });
-
   const feeAssetsUrl = `/assets/${MOCK_CHAIN}/fee-assets`;
   it(`Get fee assets - ${feeAssetsUrl} (GET)`, () => {
     const feeAssets = getFeeAssets(MOCK_CHAIN);
@@ -276,13 +226,6 @@ describe('Assets controller (e2e)', () => {
   it(`Get fee assets - unknown chain - /assets/${UNKNOWN_CHAIN}/fee-assets (GET)`, () => {
     return request(app.getHttpServer())
       .get(`/assets/${UNKNOWN_CHAIN}/fee-assets`)
-      .expect(400);
-  });
-
-  it('Get asset support - unknown chain - /assets/:chain/has-support (GET)', () => {
-    return request(app.getHttpServer())
-      .get(`/assets/${UNKNOWN_CHAIN}/has-support`)
-      .query({ symbol: 'DOT' })
       .expect(400);
   });
 

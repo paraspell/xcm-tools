@@ -7,8 +7,6 @@ import { InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TChainAssetsInfo, TCustomCtx } from '../types'
 import {
   getAllAssetsSymbols,
-  getAssetDecimals,
-  getAssetId,
   getAssetsImpl,
   getAssetsObject,
   getAssetsObjectImpl,
@@ -34,18 +32,6 @@ describe('getAssetsObject', () => {
         })
       )
     })
-  })
-})
-
-describe('getAssetId', () => {
-  it('should return id of BTC from AssetHubKusama', () => {
-    const assetId = getAssetId('AssetHubKusama', 'USDt')
-    expect(assetId).toEqual('1984')
-  })
-
-  it('should return null for not existing assetId', () => {
-    const assetId = getAssetId('AssetHubKusama', 'BTG')
-    expect(assetId).toBeNull()
   })
 })
 
@@ -99,20 +85,6 @@ describe('getAllAssetsSymbols', () => {
       expect(assetsSymbols).toBeInstanceOf(Array)
       assetsSymbols.forEach(assetSymbol => {
         expect(assetSymbol).toBeTypeOf('string')
-      })
-    })
-  })
-})
-
-describe('getAssetDecimals', () => {
-  it('should return valid decimals for all available assets', () => {
-    CHAINS.forEach(chain => {
-      const obj = getAssetsObject(chain)
-      expect(obj).not.toBeNull()
-      obj.assets.forEach(asset => {
-        const decimals = getAssetDecimals(chain, asset.symbol)
-        expect(decimals).toBeTypeOf('number')
-        expect(decimals).toBeGreaterThanOrEqual(0)
       })
     })
   })
