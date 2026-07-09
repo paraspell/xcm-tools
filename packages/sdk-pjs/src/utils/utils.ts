@@ -1,7 +1,5 @@
 import type { PolkadotApi, TApiOrUrl, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
-import type { Contract, Signer } from 'ethers'
-import type { Abi, GetContractReturnType, WalletClient } from 'viem'
 
 import PolkadotJsApi from '../PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsSigner } from '../types'
@@ -30,10 +28,3 @@ export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, T
     return apiCall(optionsWithApi)
   }
 }
-
-export const isEthersSigner = (signer: Signer | WalletClient): signer is Signer =>
-  typeof signer === 'object' && signer !== null && 'provider' in signer
-
-export const isEthersContract = (
-  contract: Contract | GetContractReturnType<Abi | readonly unknown[]>
-): contract is Contract => !('abi' in contract)

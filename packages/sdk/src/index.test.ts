@@ -14,7 +14,6 @@ describe('Index Exports', () => {
           'getBalance',
           'Builder',
           'GeneralBuilder',
-          'EvmBuilder',
           'IFinalBuilderWithOptions',
           'createChainClient',
           'convertSs58'
@@ -48,7 +47,6 @@ describe('Index Exports', () => {
 
   it('should export builder classes', () => {
     expect(moduleExports.Builder).toBeDefined()
-    expect(moduleExports.EvmBuilder).toBeDefined()
   })
 
   it('should export the utility function', () => {

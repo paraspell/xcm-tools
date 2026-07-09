@@ -8,7 +8,6 @@ import type {
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api'
 
-import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
 
@@ -29,9 +28,3 @@ export type GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TPapiApi, TPapiTransaction, TPapiSigner>> = object,
   TCustomChain extends string = never
 > = GeneralBuilderCore<PolkadotClient, TPapiTransaction, PolkadotSigner, T, TCustomChain>
-
-/** @deprecated EvmBuilder is deprecated. Please use the Builder class instead. */
-export const EvmBuilder = (api?: TBuilderOptions<TApiOrUrl<TPapiApi>>) => {
-  const papiApi = new PapiApi(api)
-  return EvmBuilderImpl(papiApi)
-}

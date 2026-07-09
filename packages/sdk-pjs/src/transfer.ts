@@ -7,9 +7,8 @@ import {
 } from '@paraspell/sdk-core'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '@paraspell/sdk-core'
 
-import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from './types'
+import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
 export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic, TPjsSigner>)
@@ -17,12 +16,6 @@ export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic, TPj
 export const dryRunOrigin = createPolkadotJsApiCall(
   dryRunOriginImpl<TPjsApi, Extrinsic, TPjsSigner>
 )
-export const transferEthToPolkadot = (
-  options: Omit<TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>, 'api'>
-): ReturnType<typeof transferEthToPolkadotImpl> => {
-  const api = new PolkadotJsApi()
-  return transferEthToPolkadotImpl({ ...options, api })
-}
 
 export const getParaEthTransferFees = async (api?: TApiOrUrl<TPjsApi>) => {
   const pjsApi = new PolkadotJsApi(api)
@@ -37,5 +30,3 @@ export const getBridgeStatus = async (api?: TApiOrUrl<TPjsApi>) => {
   const pjsApi = new PolkadotJsApi(api)
   return getBridgeStatusImpl(pjsApi)
 }
-
-export { approveToken, depositToken, getTokenBalance } from './ethTransfer'
