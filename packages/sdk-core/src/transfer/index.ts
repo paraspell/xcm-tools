@@ -1,4 +1,3 @@
-export * from './asset-claim'
 export * from './createTransfer'
 export * from './dry-run'
 export * from './eth-transfer'

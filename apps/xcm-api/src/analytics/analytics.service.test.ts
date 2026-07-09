@@ -61,7 +61,7 @@ describe('AnalyticsService', () => {
         id: '123',
       },
     } as unknown as RequestWithUser;
-    const eventName = EventName.CLAIM_ASSETS;
+    const eventName = EventName.GET_TRANSFER_INFO;
     const properties = { additional: 'info' };
 
     const spy = vi.spyOn(mockMixpanel, 'track');
@@ -88,7 +88,7 @@ describe('AnalyticsService', () => {
         'x-forwarded-for': '192.168.1.1',
       },
     } as unknown as RequestWithUser;
-    const eventName = EventName.CLAIM_ASSETS;
+    const eventName = EventName.GET_TRANSFER_INFO;
     const properties = { additional: 'info' };
 
     const spy = vi.spyOn(mockMixpanel, 'track');

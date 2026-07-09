@@ -74,13 +74,12 @@ import {
   isViemSigner,
   normalizeExchange
 } from '../utils'
-import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 /**
- * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
+ * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions.
  */
 export class GeneralBuilder<
   TApi,
@@ -133,22 +132,6 @@ export class GeneralBuilder<
       to: chain,
       paraIdTo
     })
-  }
-
-  /**
-   * Initiates the process to claim assets from a specified chain.
-   *
-   * @deprecated Asset claim functionality is deprecated and will be removed in v14.
-   * @param chain - The chain from which to claim assets.
-   * @returns An instance of Builder
-   */
-  claimFrom(chain: TSubstrateChain) {
-    return new AssetClaimBuilder<TApi, TRes, TSigner, { chain: TSubstrateChain }, TCustomChain>(
-      this.api,
-      {
-        chain
-      }
-    )
   }
 
   /**

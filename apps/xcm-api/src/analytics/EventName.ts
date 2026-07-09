@@ -50,7 +50,6 @@ export enum EventName {
   GET_EXCHANGE_CHAINS = 'Get Exchange Chains',
   GET_SWAP_ASSETS_FROM = 'Get Swap Assets From',
   GET_SWAP_ASSETS_TO = 'Get Swap Assets To',
-  CLAIM_ASSETS = 'Claim assets',
   GET_TRANSFER_INFO = 'Get Transfer Info',
   GET_RECEIVABLE_AMOUNT = 'Get Receivable Amount',
   XCM_ANALYSER = 'XCM Analyser',

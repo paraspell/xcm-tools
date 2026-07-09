@@ -1,9 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChainProviders,
-  Parents,
   TApiOrUrl,
-  Version,
   getRelayChainOf,
   TSubstrateChain,
   PARACHAINS,
@@ -121,48 +119,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
         await validateTransfer(builder, signer)
-      })
-    })
-
-    describeGroup('AssetClaim', () => {
-      const ASSET_CLAIM_CHAINS: TSubstrateChain[] = [
-        'Polkadot',
-        'Kusama',
-        'AssetHubPolkadot',
-        'AssetHubKusama'
-      ]
-      ASSET_CLAIM_CHAINS.forEach(chain => {
-        it(`should create asset claim tx for ${chain}`, async () => {
-          const tx = await Builder(config)
-            .claimFrom(chain)
-            .currency([
-              {
-                id: {
-                  parents: Parents.ZERO,
-                  interior: 'Here'
-                },
-                fun: { Fungible: MOCK_AMOUNT }
-              }
-            ])
-            .address(MOCK_ADDRESS)
-            .build()
-          await validateTx(tx, signer)
-        })
-      })
-
-      it('should create asset claim tx V3', async () => {
-        const tx = await Builder(config)
-          .claimFrom('AssetHubPolkadot')
-          .currency([
-            {
-              location: { parents: Parents.ONE, interior: { Here: null } },
-              amount: MOCK_AMOUNT
-            }
-          ])
-          .address(MOCK_ADDRESS)
-          .xcmVersion(Version.V3)
-          .build()
-        await validateTx(tx, signer)
       })
     })
 
