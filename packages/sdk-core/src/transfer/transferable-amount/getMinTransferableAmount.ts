@@ -1,4 +1,7 @@
-import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type {
+  TCurrencyInputWithAmount,
+  TSingleCurrencyInputWithAmount
+} from '@paraspell/assets'
 import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -9,7 +12,10 @@ import { dryRunInternal } from '../dry-run'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { FEE_PADDING } from '../type-and-then/computeFees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
-import { assertNotRawAssets } from '../utils/validationUtils'
+
+const toSelectors = (
+  currency: TCurrencyInputWithAmount
+): TSingleCurrencyInputWithAmount[] => (Array.isArray(currency) ? currency : [currency])
 
 export const getMinTransferableAmountInternal = async <
   TApi,
@@ -33,18 +39,17 @@ export const getMinTransferableAmountInternal = async <
 > => {
   validateAddress(api, sender, origin, false)
 
-  assertNotRawAssets(currency)
-
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
   const { assets } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
-  const selectors = Array.isArray(currency) ? currency : [currency]
+  const isMulti = Array.isArray(currency)
+  const selectors = toSelectors(currency)
 
   const toResult = (values: bigint[]) =>
-    (Array.isArray(currency) ? values : values[0]) as TPerAssetResult<TCurrency, bigint>
+    (isMulti ? values : values[0]) as TPerAssetResult<TCurrency, bigint>
 
   const destApi = api.clone()
   await destApi.init(destination)
@@ -58,7 +63,7 @@ export const getMinTransferableAmountInternal = async <
     buildTx,
     sender,
     recipient,
-    currency: Array.isArray(currency) ? currency : { ...selectors[0], amount: assets[0].amount },
+    currency: isMulti ? selectors : { ...selectors[0], amount: assets[0].amount },
     feeAsset,
     version,
     disableFallback: false
@@ -102,13 +107,10 @@ export const getMinTransferableAmountInternal = async <
     })
   )
 
-  const buildMinCurrency = (amounts: bigint[]): TCurrencyInputWithAmount => {
-    assertNotRawAssets(currency)
-
-    return Array.isArray(currency)
-      ? currency.map((item, index) => ({ ...item, amount: amounts[index] }))
+  const buildMinCurrency = (amounts: bigint[]): TCurrencyInputWithAmount =>
+    isMulti
+      ? selectors.map((item, index) => ({ ...item, amount: amounts[index] }))
       : { ...selectors[0], amount: amounts[0] }
-  }
 
   const createTx = async (amounts: bigint[]) => {
     const { tx } = await builder.currency(buildMinCurrency(amounts))['buildInternal']()

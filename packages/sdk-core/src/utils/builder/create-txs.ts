@@ -3,7 +3,6 @@ import type { TCurrencyCore, TCurrencyInputWithAmount, WithComplexAmount } from 
 import type { GeneralBuilder } from '../../builder'
 import { UnsupportedOperationError } from '../../errors'
 import { createTransfer } from '../../transfer'
-import { assertNotRawAssets } from '../../transfer/utils/validationUtils'
 import type {
   TCreateTxsOptions,
   TSubstrateTransferOptions,
@@ -49,8 +48,6 @@ export const overrideTxAmount = async <TApi, TRes, TSigner, TCustomChain extends
   relative?: boolean
 ) => {
   const { currency } = options
-
-  assertNotRawAssets(currency)
 
   const overrideAmount = (item: TCurrencyInputWithAmount) =>
     computeOverridenAmount({ ...options, currency: item }, amount, relative)

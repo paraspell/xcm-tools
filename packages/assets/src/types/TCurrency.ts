@@ -32,7 +32,6 @@ export type TLocationValue = string | TLocation
 
 export type TCurrencyInputWithAmount =
   | WithComplexAmount<TCurrencySymbol | { id: TCurrency } | { location: TLocationValue }>
-  | TAsset<TAmount>[]
   | WithComplexAmount<TCurrencyCore>[]
 
 export type TSingleCurrencyInputWithAmount = Exclude<TCurrencyInputWithAmount, unknown[]>
@@ -43,7 +42,6 @@ export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
   | { location: TLocationValue }
-  | TAsset<TAmount>[]
   | WithComplexAmount<TCurrencyCore>[]
 
 export type WithAmount<TBase, T = bigint> = TBase & {

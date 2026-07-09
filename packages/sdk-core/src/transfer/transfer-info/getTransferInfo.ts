@@ -5,7 +5,6 @@ import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
-import { assertNotRawAssets } from '../utils/validationUtils'
 import { aggregateHopFees } from './aggregateHopFees'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -34,8 +33,6 @@ export const getTransferInfo = async <
   if (api.isChainEvm(origin) && !ahAddress) {
     throw new MissingParameterError('ahAddress', `ahAddress is required for EVM origin ${origin}.`)
   }
-
-  assertNotRawAssets(currency)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)

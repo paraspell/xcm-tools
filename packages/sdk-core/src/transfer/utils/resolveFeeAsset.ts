@@ -6,7 +6,6 @@ import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TDestination } from '../../types'
 import { abstractDecimals, throwUnsupportedCurrency } from '../../utils'
-import { assertNotRawAssets } from './validationUtils'
 
 export const resolveFeeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -22,8 +21,6 @@ export const resolveFeeAsset = <TApi, TRes, TSigner, TCustomChain extends string
   ) {
     throw new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
   }
-
-  assertNotRawAssets(currency)
 
   const dest = !isTLocation(destination) ? destination : null
   const asset = api.findAssetInfo(origin, feeAsset, dest)

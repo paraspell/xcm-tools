@@ -2,7 +2,6 @@ import {
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
-  isTAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -37,7 +36,6 @@ vi.mock('@paraspell/assets', () => ({
   hasSupportForAsset: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isSymbolSpecifier: vi.fn(),
-  isTAsset: vi.fn(),
   isChainEvm: vi.fn()
 }))
 
@@ -82,16 +80,6 @@ describe('validateCurrency', () => {
     const currency = [{}, {}] as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).not.toThrow()
-  })
-
-  it('should throw when using raw TAsset overrides', () => {
-    const currency = [{}, {}] as TCurrencyInput
-
-    vi.mocked(isTAsset).mockReturnValue(true)
-
-    expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(
-      'Raw asset overrides are no longer supported. Please use custom assets instead.'
-    )
   })
 
   it('should throw when currency is an array with length 1 or less', () => {

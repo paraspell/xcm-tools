@@ -2,9 +2,6 @@ import {
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
-  isTAsset,
-  type TAmount,
-  type TAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -22,16 +19,6 @@ import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError }
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
 
-export const assertNotRawAssets: (
-  currency: TCurrencyInput
-) => asserts currency is Exclude<TCurrencyInput, TAsset<TAmount>[]> = currency => {
-  if (Array.isArray(currency) && currency.length > 0 && currency.every(asset => isTAsset(asset))) {
-    throw new InvalidCurrencyError(
-      'Raw asset overrides are no longer supported. Please use custom assets instead.'
-    )
-  }
-}
-
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if (Array.isArray(currency)) {
     if (currency.length === 0) {
@@ -41,8 +28,6 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
     if (currency.length === 1) {
       throw new InvalidCurrencyError('Please provide more than one asset')
     }
-
-    assertNotRawAssets(currency)
 
     if (!feeAsset) {
       throw new InvalidCurrencyError(

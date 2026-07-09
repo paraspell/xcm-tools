@@ -11,7 +11,6 @@ import type { PolkadotApi } from '../../api'
 import { AMOUNT_ALL } from '../../constants'
 import type { TDestination, TResolvedCurrency } from '../../types'
 import { abstractDecimals } from '../../utils'
-import { assertNotRawAssets } from './validationUtils'
 
 export const resolveCurrency = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -27,8 +26,6 @@ export const resolveCurrency = <TApi, TRes, TSigner, TCustomChain extends string
     if (!resolvedFeeAsset) {
       throw new InvalidCurrencyError('Fee asset is required when providing more than one asset')
     }
-
-    assertNotRawAssets(currency)
 
     const assets = currency.map((item): WithAmount<TAssetInfo> => {
       if (item.amount === AMOUNT_ALL) {
