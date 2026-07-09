@@ -6,13 +6,13 @@ import { throwUnsupportedCurrency } from './throwUnsupportedCurrency'
 describe('throwUnsupportedCurrency', () => {
   const originChain = 'Acala'
 
-  it('suggests using the override option when a location is supplied', () => {
+  it('suggests registering a custom asset when a location is supplied', () => {
     const currency = { location: { parents: 1, interior: 'Here' } } as TCurrencyInput
     const act = () => throwUnsupportedCurrency(currency, originChain)
 
     expect(act).toThrow(InvalidCurrencyError)
     expect(act).toThrow("Selected chain doesn't support location you provided.")
-    expect(act).toThrow('Override')
+    expect(act).toThrow('customAssets')
   })
 
   it('serializes the unsupported origin currency when no location is given', () => {

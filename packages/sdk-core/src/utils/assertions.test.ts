@@ -80,12 +80,5 @@ describe('assertions', () => {
       const value = [{ symbol: 'DOT', amount: 1n }] as unknown as TCurrencyInput
       expect(() => assertCurrencyCore(value)).toThrow(InvalidCurrencyError)
     })
-
-    it('throws InvalidCurrencyError for an override location specifier', () => {
-      const value: TCurrencyInput = {
-        location: { type: 'Override', value: { parents: 1, interior: 'Here' } }
-      }
-      expect(() => assertCurrencyCore(value)).toThrow(InvalidCurrencyError)
-    })
   })
 })

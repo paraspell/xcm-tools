@@ -12,7 +12,6 @@ import {
   getBridgeStatus,
   getParaEthTransferFees,
   getParaId,
-  isOverrideLocationSpecifier,
   MissingParameterError,
   Version
 } from '@paraspell/sdk-core'
@@ -31,8 +30,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   generateMessageId: vi.fn(),
   getBridgeStatus: vi.fn(),
   getParaEthTransferFees: vi.fn(),
-  getParaId: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn()
+  getParaId: vi.fn()
 }))
 
 vi.mock('viem', async importOriginal => ({
@@ -78,7 +76,6 @@ describe('buildMoonbeamToEth', () => {
     vi.mocked(findAssetInfoOrThrow).mockImplementation(chain =>
       chain === 'Ethereum' ? ethereumAsset : moonbeamAsset
     )
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
     vi.mocked(getParaId).mockReturnValue(1000)
     vi.mocked(getParaEthTransferFees).mockResolvedValue([1000n, 1000n])
@@ -100,16 +97,6 @@ describe('buildMoonbeamToEth', () => {
         currency: [] as TCurrencyInputWithAmount
       })
     ).rejects.toThrow('Multi-assets are not yet supported for EVM transfers')
-  })
-
-  it('rejects override location specifiers', async () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-    await expect(
-      buildMoonbeamToEth('Moonbeam', {
-        ...baseOptions,
-        currency: { location: { type: 'Override' } } as TCurrencyInputWithAmount
-      })
-    ).rejects.toThrow('Override location is not supported for EVM transfers')
   })
 
   it('throws BridgeHaltedError when the bridge is not Normal', async () => {

@@ -8,7 +8,7 @@ export const throwUnsupportedCurrency = (
 ): never => {
   if ('location' in currency) {
     throw new InvalidCurrencyError(`
-      Selected chain doesn't support location you provided. Maybe you meant custom location. If so, you need to use override option. Your selection should look like this: {location: Override(${JSON.stringify(currency.location)})}.`)
+      Selected chain doesn't support location you provided. If you meant a custom location, register it with the 'customAssets' Builder option instead.`)
   }
 
   throw new InvalidCurrencyError(

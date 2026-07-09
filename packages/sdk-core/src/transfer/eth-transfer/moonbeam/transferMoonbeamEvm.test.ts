@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { getNativeAssetSymbol, isOverrideLocationSpecifier } from '@paraspell/assets'
+import { getNativeAssetSymbol } from '@paraspell/assets'
 import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -14,8 +14,7 @@ import { transferMoonbeamLocal } from './transferMoonbeamLocal'
 
 vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class InvalidCurrencyError extends Error {},
-  getNativeAssetSymbol: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn().mockReturnValue(false)
+  getNativeAssetSymbol: vi.fn()
 }))
 vi.mock('viem')
 
@@ -177,23 +176,6 @@ describe('transferMoonbeamEvm', () => {
         signer: mockSigner,
         recipient: mockRecipient,
         currency: []
-      })
-    ).rejects.toThrow()
-  })
-
-  it('throws if trying to override location', async () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValueOnce(true)
-    await expect(
-      transferMoonbeamEvm({
-        api: mockApi,
-        from: 'Moonbeam',
-        to: 'AssetHubPolkadot',
-        signer: mockSigner,
-        recipient: mockRecipient,
-        currency: {
-          location: { type: 'Override', value: { parents: 1, interior: {} } },
-          amount: 1000
-        }
       })
     ).rejects.toThrow()
   })

@@ -123,17 +123,7 @@ export const SymbolSpecifierSchema = z.object({
   value: z.string(),
 });
 
-const OverrideLocationSpecifierSchema = z.object({
-  type: z.literal('Override'),
-  value: LocationSchema,
-});
-
 const LocationValueSchema = z.union([z.string(), LocationSchema]);
-
-const LocationValueWithOverrideSchema = z.union([
-  LocationValueSchema,
-  OverrideLocationSpecifierSchema,
-]);
 
 const CurrencySymbolValueSchema = z.union([z.string(), SymbolSpecifierSchema]);
 
@@ -168,24 +158,8 @@ export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
   }),
 );
 
-const CurrencyCoreWithMLOverride = z
-  .union([
-    CurrencySymbolSchema,
-    z.object({
-      id: z.union([z.string(), z.number(), z.bigint()]),
-    }),
-    z.object({
-      location: LocationValueWithOverrideSchema,
-    }),
-  ])
-  .and(
-    z.object({
-      amount: AmountSchema,
-    }),
-  );
-
 export const CurrencySchema = z.union([
-  CurrencyCoreWithMLOverride,
+  CurrencyCoreWithAmountSchema,
   z.array(AssetSchema),
   z.array(CurrencyCoreWithAmountSchema),
 ]);

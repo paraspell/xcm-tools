@@ -25,7 +25,7 @@ export type TPolkadotXCMTransferOptions<
   beneficiaryLocation: TLocation
   recipient: TAddress
   asset: TAsset
-  overriddenAsset?: TLocation | TAssetWithFee[]
+  overriddenAsset?: TAssetWithFee[]
   scenario: TScenario
   assetInfo: WithAmount<TAssetInfo>
   currency: TCurrencyInputWithAmount
@@ -51,7 +51,7 @@ export type TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain extends st
   destination: TDestination
   paraIdTo?: number
   version: Version
-  overriddenAsset?: TLocation | TAssetWithFee[]
+  overriddenAsset?: TAssetWithFee[]
   pallet?: string
   method?: string
   useMultiAssetTransfer?: boolean
@@ -213,7 +213,7 @@ export type TTransferInternalOptions<
   assetInfo: WithAmount<TAssetInfo>
   feeAsset?: TAssetInfo
   feeCurrency?: TCurrencyInput
-  overriddenAsset?: TLocation | TAssetWithFee[]
+  overriddenAsset?: TAssetWithFee[]
   version: Version
   isAmountAll: boolean
 }

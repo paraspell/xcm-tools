@@ -4,7 +4,7 @@ import {
   type TAssetWithFee,
   type TCurrencyInput
 } from '@paraspell/assets'
-import { isSubstrateBridge, type TLocation, Version } from '@paraspell/sdk-common'
+import { isSubstrateBridge, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
@@ -23,7 +23,6 @@ import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
-  shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
   validateCurrency,
@@ -64,7 +63,6 @@ describe('send', () => {
 
     vi.mocked(getSubstrateChainImpl).mockReturnValue(originChainMock)
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAssetInfo)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
     vi.mocked(pickCompatibleXcmVersion).mockReturnValue(Version.V4)
@@ -186,31 +184,6 @@ describe('send', () => {
 
     const apiSpy = vi.spyOn(apiMock, 'init')
     expect(apiSpy).not.toHaveBeenCalled()
-  })
-
-  it('should handle overriddenAsset when override location is present', async () => {
-    vi.mocked(resolveOverriddenAsset).mockReturnValue({} as TLocation)
-    const currency = { location: { type: 'Override', value: {} }, amount: '100' }
-
-    const options = {
-      api: apiMock,
-      from: 'Acala',
-      currency: currency,
-      recipient: 'some-address',
-      to: 'Astar'
-    } as TSubstrateTransferOptions<unknown, unknown, unknown>
-
-    const transferSpy = vi.spyOn(originChainMock, 'transfer')
-
-    const result = await createTransfer(options)
-
-    expect(transferSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        overriddenAsset: {}
-      })
-    )
-
-    expect(result).toBe('transferResult')
   })
 
   it('should handle overriddenAsset when multiasset is present', async () => {

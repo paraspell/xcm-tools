@@ -6,7 +6,6 @@ import {
   findBestMatches,
   getNativeAssets,
   getOtherAssets,
-  isOverrideLocationSpecifier,
   isSymbolSpecifier,
 } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -23,7 +22,6 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   findAssetInfoById: vi.fn(),
   findBestMatches: vi.fn(),
   isSymbolSpecifier: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn(),
   UnsupportedOperationError: class extends Error {},
   RoutingResolutionError: class extends Error {},
 }));
@@ -50,20 +48,13 @@ describe('getExchangeAsset', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([mockNativeAsset, mockForeignAsset]);
     vi.mocked(getOtherAssets).mockReturnValue([mockForeignAsset]);
     vi.mocked(getNativeAssets).mockReturnValue([mockNativeAsset]);
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false);
     vi.mocked(isSymbolSpecifier).mockReturnValue(false);
   });
 
-  test('should throw error for multiasset or override location currencies', () => {
+  test('should throw error for multiasset currencies', () => {
     const currency = ['some-asset'] as unknown as TCurrencyInput;
     expect(() => getExchangeAsset(mockExchange, currency)).toThrow(
-      'XCM Router does not support location override or multi-asset currencies yet.',
-    );
-
-    const currency2 = { location: { override: true } } as unknown as TCurrencyInput;
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true);
-    expect(() => getExchangeAsset(mockExchange, currency2)).toThrow(
-      'XCM Router does not support location override or multi-asset currencies yet.',
+      'XCM Router does not support multi-asset currencies yet.',
     );
   });
 

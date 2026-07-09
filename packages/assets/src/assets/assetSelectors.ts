@@ -1,6 +1,4 @@
-import type { TLocation } from '@paraspell/sdk-common'
-
-import type { TOverrideLocationSpecifier, TSymbolSpecifier } from '../types'
+import type { TSymbolSpecifier } from '../types'
 
 export const Native = (symbol: string): TSymbolSpecifier => ({
   type: 'Native',
@@ -15,12 +13,4 @@ export const Foreign = (symbol: string): TSymbolSpecifier => ({
 export const ForeignAbstract = (symbol: string): TSymbolSpecifier => ({
   type: 'ForeignAbstract',
   value: symbol
-})
-
-/**
- * @deprecated Use the `customAssets` Builder option to register the asset instead. Will be removed in v14.
- */
-export const Override = (location: TLocation): TOverrideLocationSpecifier => ({
-  type: 'Override',
-  value: location
 })

@@ -3,7 +3,6 @@ import {
   assertHasId,
   findAssetInfoOrThrow,
   getParaId,
-  isOverrideLocationSpecifier,
   MissingParameterError,
   RoutingResolutionError,
   UnsupportedOperationError
@@ -36,10 +35,6 @@ export const transferEthToPolkadot = async <TApi, TRes, TSigner>({
 }: TPjsEvmBuilderOptions<TApi, TRes, TSigner>) => {
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
-  }
-
-  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   if (!provider) {

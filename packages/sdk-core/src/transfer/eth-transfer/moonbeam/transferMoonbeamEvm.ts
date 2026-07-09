@@ -1,8 +1,4 @@
-import {
-  getNativeAssetSymbol,
-  InvalidCurrencyError,
-  isOverrideLocationSpecifier
-} from '@paraspell/assets'
+import { getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
@@ -26,10 +22,6 @@ export const transferMoonbeamEvm = async <TApi, TRes, TSigner>(
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
-  }
-
-  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   const foundAsset = api.findAssetInfoOrThrow(from, currency, to)

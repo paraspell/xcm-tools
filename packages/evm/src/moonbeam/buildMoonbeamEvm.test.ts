@@ -3,8 +3,7 @@ import {
   abstractDecimals,
   findAssetInfoOrThrow,
   formatAssetIdToERC20,
-  getNativeAssetSymbol,
-  isOverrideLocationSpecifier
+  getNativeAssetSymbol
 } from '@paraspell/sdk-core'
 import { encodeFunctionData } from 'viem'
 import { moonbeam } from 'viem/chains'
@@ -20,8 +19,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   assertHasId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   formatAssetIdToERC20: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn()
+  getNativeAssetSymbol: vi.fn()
 }))
 
 vi.mock('viem', async importOriginal => ({
@@ -66,7 +64,6 @@ describe('buildMoonbeamEvm', () => {
       data: '0xLocalData',
       value: 0n
     })
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(encodeFunctionData).mockReturnValue('0xencoded')
   })
 
@@ -159,19 +156,6 @@ describe('buildMoonbeamEvm', () => {
     expect(() => buildMoonbeamEvm({ ...baseOptions, currency: [] })).toThrow(
       'Multi-assets are not yet supported for EVM transfers'
     )
-  })
-
-  it('rejects override location specifiers', () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValueOnce(true)
-    expect(() =>
-      buildMoonbeamEvm({
-        ...baseOptions,
-        currency: {
-          location: { type: 'Override', value: { parents: 1, interior: {} } },
-          amount: 1000
-        }
-      })
-    ).toThrow('Override location is not supported for EVM transfers')
   })
 
   it('delegates to buildMoonbeamLocal when from === to', () => {

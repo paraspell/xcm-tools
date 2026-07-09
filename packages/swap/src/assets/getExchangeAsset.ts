@@ -4,7 +4,6 @@ import {
   findAssetInfoByLoc,
   findAssetInfoBySymbol,
   findBestMatches,
-  isOverrideLocationSpecifier,
   isSymbolSpecifier,
   RoutingResolutionError,
   UnsupportedOperationError,
@@ -17,13 +16,8 @@ export const getExchangeAsset = (
   currency: TCurrencyInput,
   throwOnDuplicateSymbol = false,
 ): TAssetInfo | null => {
-  if (
-    ('location' in currency && isOverrideLocationSpecifier(currency.location)) ||
-    Array.isArray(currency)
-  ) {
-    throw new UnsupportedOperationError(
-      'XCM Router does not support location override or multi-asset currencies yet.',
-    );
+  if (Array.isArray(currency)) {
+    throw new UnsupportedOperationError('XCM Router does not support multi-asset currencies yet.');
   }
 
   const assets = getExchangeAssets(exchange);
@@ -32,7 +26,7 @@ export const getExchangeAsset = (
   const otherAssets = assets.filter((asset) => !asset.isNative);
 
   let asset: TAssetInfo | undefined;
-  if ('location' in currency && !isOverrideLocationSpecifier(currency.location)) {
+  if ('location' in currency) {
     asset = findAssetInfoByLoc(assets, currency.location);
   } else if ('symbol' in currency) {
     if (!isSymbolSpecifier(currency.symbol)) {

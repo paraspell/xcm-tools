@@ -5,7 +5,6 @@ import {
   DEFAULT_TTL_MS,
   findAssetInfoOrThrow,
   getParaId,
-  isOverrideLocationSpecifier,
   RoutingResolutionError,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
@@ -35,12 +34,6 @@ export const buildSnowbridgeTransfer = async <
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError(
       'Multi-assets are not yet supported for Snowbridge transfers'
-    )
-  }
-
-  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new UnsupportedOperationError(
-      'Override location is not supported for Snowbridge transfers'
     )
   }
 

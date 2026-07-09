@@ -31,5 +31,4 @@ export {
   hasSupportForAsset,
   isChainEvm,
   Native,
-  Override,
 } from "@paraspell/sdk-core";

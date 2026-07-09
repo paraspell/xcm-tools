@@ -1,8 +1,7 @@
-import type { TLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TOverrideLocationSpecifier, TSymbolSpecifier } from '../types'
-import { Foreign, ForeignAbstract, Native, Override } from './assetSelectors'
+import type { TSymbolSpecifier } from '../types'
+import { Foreign, ForeignAbstract, Native } from './assetSelectors'
 
 describe('Symbol Specifiers', () => {
   const symbol = 'TEST'
@@ -29,24 +28,5 @@ describe('Symbol Specifiers', () => {
       type: 'ForeignAbstract',
       value: symbol
     })
-  })
-})
-
-describe('Override Function', () => {
-  it('should return an object with type "Override" and the correct value', () => {
-    const sampleLocation: TLocation = {
-      parents: 1,
-      interior: {
-        X1: { Parachain: 1000 }
-      }
-    }
-
-    const result = Override(sampleLocation)
-
-    const expected: TOverrideLocationSpecifier = {
-      type: 'Override',
-      value: sampleLocation
-    }
-    expect(result).toEqual(expected)
   })
 })

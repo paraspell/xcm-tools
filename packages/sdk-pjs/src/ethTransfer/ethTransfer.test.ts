@@ -1,10 +1,5 @@
 import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core'
-import {
-  findAssetInfoOrThrow,
-  getParaId,
-  isOverrideLocationSpecifier,
-  MissingParameterError
-} from '@paraspell/sdk-core'
+import { findAssetInfoOrThrow, getParaId, MissingParameterError } from '@paraspell/sdk-core'
 import { SnowbridgeApi, toPolkadotV2 } from '@snowbridge/api'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
@@ -19,7 +14,6 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   getParaId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
   InvalidCurrencyError: class extends Error {},
-  isOverrideLocationSpecifier: vi.fn().mockReturnValue(false),
   abstractDecimals: vi.fn(),
   assertHasId: vi.fn(),
   MissingParameterError: class extends Error {},
@@ -168,34 +162,6 @@ describe('transferEthToPolkadot', () => {
 
     await expect(transferEthToPolkadot(options)).rejects.toThrow(
       'Multi-assets are not yet supported for EVM transfers'
-    )
-  })
-
-  it('throws an error if trying to override location', async () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-    const options: TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner> = {
-      api: {} as PolkadotApi<TPjsApi, Extrinsic, TPjsSigner>,
-      provider: {} as AbstractProvider,
-      currency: {
-        location: {
-          type: 'Override',
-          value: {
-            parents: 1,
-            interior: {}
-          }
-        },
-        amount: 1000
-      },
-      from: 'Ethereum',
-      to: 'AssetHubPolkadot',
-      recipient: '0xSenderAddress',
-      signer: {
-        provider: {}
-      } as Signer
-    }
-
-    await expect(transferEthToPolkadot(options)).rejects.toThrow(
-      'Override location is not supported for EVM transfers'
     )
   })
 

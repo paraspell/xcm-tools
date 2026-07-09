@@ -1,9 +1,5 @@
-import type { TAssetInfoWithId, TCurrencyCore, TLocationValueWithOverride } from '@paraspell/assets'
-import {
-  InvalidCurrencyError,
-  isOverrideLocationSpecifier,
-  type TAssetInfo
-} from '@paraspell/assets'
+import type { TAssetInfoWithId, TCurrencyCore } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isExternalChain, isTLocation, replaceBigInt } from '@paraspell/sdk-common'
 import type { Address, WalletClient } from 'viem'
@@ -67,16 +63,6 @@ export const assertCurrencyCore: <T>(
   if (Array.isArray(value)) {
     throw new InvalidCurrencyError(
       'An array of currencies is not supported here. Provide a single currency selector ({ symbol }, { id }, or { location }).'
-    )
-  }
-
-  if (
-    typeof value === 'object' &&
-    'location' in value &&
-    isOverrideLocationSpecifier((value as { location: TLocationValueWithOverride }).location)
-  ) {
-    throw new InvalidCurrencyError(
-      'Override location specifier is not supported here. Provide a regular location.'
     )
   }
 }
