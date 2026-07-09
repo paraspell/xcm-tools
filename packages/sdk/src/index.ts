@@ -5,7 +5,7 @@ export * from '@paraspell/sdk-core'
 export * as assets from './assets'
 export { convertSs58 } from './address'
 export { getBalance } from './assets'
-export { Builder, EvmBuilder, GeneralBuilder } from './builder'
+export { Builder, GeneralBuilder } from './builder'
 export { hydrateCustomChain } from './hydrateCustomChain'
 export * as xcmPallet from './transfer'
 export {

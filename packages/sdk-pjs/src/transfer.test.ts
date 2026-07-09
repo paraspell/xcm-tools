@@ -3,14 +3,11 @@ import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import { getBridgeStatus, getParaEthTransferFees, transferEthToPolkadot } from './transfer'
-import type { Extrinsic, TPjsApi, TPjsEvmBuilderOptions, TPjsSigner } from './types'
+import { getBridgeStatus, getParaEthTransferFees } from './transfer'
+import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 
 vi.mock('./PolkadotJsApi')
-
-vi.mock('./ethTransfer')
 
 vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
@@ -40,27 +37,6 @@ describe('Transfer function using PolkadotJsAPI', () => {
       await getBridgeStatus(options.api)
 
       expect(sdkCore.getBridgeStatus).toHaveBeenCalledWith(expect.any(PolkadotJsApi))
-    })
-  })
-
-  describe('transferEthToPolkadot', () => {
-    it('should call transferEthToPolkadot in ethTransferImpl with correct arguments', async () => {
-      const options = {
-        provider: {},
-        signer: {
-          provider: {}
-        },
-        currency: {
-          symbol: 'ETH'
-        }
-      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic, TPjsSigner>
-
-      await transferEthToPolkadot(options)
-
-      expect(transferEthToPolkadotImpl).toHaveBeenCalledWith({
-        ...options,
-        api: expect.any(PolkadotJsApi)
-      })
     })
   })
 
