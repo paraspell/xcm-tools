@@ -4,7 +4,6 @@ import {
   EXCHANGE_CHAINS,
   findAssetInfo,
   getRelayChainOf,
-  hasSupportForAsset,
   isConfig,
   RoutingResolutionError,
   type TAssetInfo,
@@ -85,7 +84,7 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
-    if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
+    if (destinationSpecified && !findAssetInfo(to, { location: assetTo.location })) {
       continue;
     }
 

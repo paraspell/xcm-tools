@@ -1,7 +1,4 @@
-import type {
-  TCurrencyInputWithAmount,
-  TSingleCurrencyInputWithAmount
-} from '@paraspell/assets'
+import type { TCurrencyInputWithAmount, TSingleCurrencyInputWithAmount } from '@paraspell/assets'
 import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -13,9 +10,8 @@ import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { FEE_PADDING } from '../type-and-then/computeFees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
 
-const toSelectors = (
-  currency: TCurrencyInputWithAmount
-): TSingleCurrencyInputWithAmount[] => (Array.isArray(currency) ? currency : [currency])
+const toSelectors = (currency: TCurrencyInputWithAmount): TSingleCurrencyInputWithAmount[] =>
+  Array.isArray(currency) ? currency : [currency]
 
 export const getMinTransferableAmountInternal = async <
   TApi,

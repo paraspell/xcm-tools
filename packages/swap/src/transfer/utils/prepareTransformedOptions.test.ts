@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import type { PolkadotApi } from '@paraspell/sdk-core';
-import { createChainClient, findAssetInfo, hasSupportForAsset } from '@paraspell/sdk-core';
+import { createChainClient, findAssetInfo } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import {
@@ -28,7 +28,6 @@ vi.mock('../../assets');
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  hasSupportForAsset: vi.fn(),
   createChainClient: vi.fn(),
   findAssetInfo: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
@@ -162,10 +161,9 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeChain;
 
     vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
-    vi.mocked(findAssetInfo).mockReturnValue({ symbol: 'ACA' } as TAssetInfo);
+    vi.mocked(findAssetInfo).mockReturnValue(null);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAsset).mockReturnValue(astrAsset);
-    vi.mocked(hasSupportForAsset).mockReturnValue(false);
     vi.mocked(supportsExchangePair).mockReturnValue(true);
 
     await expect(prepareTransformedOptions({ ...mockOptions, api: mockApi })).rejects.toThrow(
@@ -197,7 +195,6 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(findAssetInfo).mockReturnValue(mockOriginAsset);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAsset).mockReturnValue(astrAsset);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
     vi.mocked(createChainClient).mockResolvedValue({});
     vi.mocked(supportsExchangePair).mockReturnValue(true);
     vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
@@ -239,7 +236,6 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(findAssetInfo).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAsset).mockReturnValue(astrAsset);
-    vi.mocked(hasSupportForAsset).mockReturnValue(true);
     vi.mocked(supportsExchangePair).mockReturnValue(false);
 
     await expect(prepareTransformedOptions({ ...mockOptions, api: mockApi })).rejects.toThrow(

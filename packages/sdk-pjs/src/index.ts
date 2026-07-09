@@ -7,11 +7,6 @@ export { convertSs58 } from './address'
 export { getBalance } from './assets'
 export { Builder, GeneralBuilder } from './builder'
 export * as xcmPallet from './transfer'
-export {
-  dryRun,
-  dryRunOrigin,
-  getParaEthTransferFees,
-  getBridgeStatus
-} from './transfer'
+export { dryRun, dryRunOrigin, getParaEthTransferFees, getBridgeStatus } from './transfer'
 export * from './types'
 export { createChainClient } from './utils'

@@ -1,9 +1,4 @@
-import {
-  findAssetInfo,
-  findAssetInfoOrThrow,
-  hasSupportForAsset,
-  type TAssetInfo,
-} from '@paraspell/sdk-core';
+import { findAssetInfo, findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
@@ -15,7 +10,6 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   findAssetInfo: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
-  hasSupportForAsset: vi.fn(),
 }));
 
 vi.mock('../../assets');
@@ -166,7 +160,7 @@ describe('resolveAssets', () => {
       return null;
     });
 
-    vi.mocked(hasSupportForAsset).mockReturnValueOnce(false);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(null);
     expect(() => resolveAssets(dex, options)).toThrow();
   });
 
@@ -182,7 +176,7 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       return null;
     });
-    vi.mocked(hasSupportForAsset).mockReturnValueOnce(true);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetTo);
 
     const result = resolveAssets(dex, options);
     expect(result).toEqual({
@@ -208,7 +202,7 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       return null;
     });
-    vi.mocked(hasSupportForAsset).mockReturnValueOnce(true);
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetTo);
 
     const result = resolveAssets(dex, options);
     expect(result).toEqual({

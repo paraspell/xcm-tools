@@ -1,10 +1,8 @@
 import type { Asset } from '@galacticcouncil/sdk-next';
-import type { AssetClient } from '@galacticcouncil/sdk-next/client';
 import type { TradeRouter } from '@galacticcouncil/sdk-next/sor';
 import type { TxBuilderFactory } from '@galacticcouncil/sdk-next/tx';
 import {
-  getAssetDecimals,
-  getNativeAssetSymbol,
+  findNativeAssetInfoOrThrow,
   padValueBy,
   type TChain,
   UnableToComputeError,
@@ -14,13 +12,11 @@ import { FEE_BUFFER_PCT } from '../../../consts';
 import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
 import { pow10n } from '../../../utils';
-import { getAssetInfo } from './utils';
 
 export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   { amount, slippagePct, feeCalcAddress, sender }: TSwapOptions<TApi, TRes, TSigner, TCustomChain>,
   tradeRouter: TradeRouter,
   txBuilderFactory: TxBuilderFactory,
-  assetClient: AssetClient,
   currencyFromInfo: Asset,
   currencyToInfo: Asset,
   currencyFromDecimals: number,
@@ -33,19 +29,7 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
     amount.toString(),
   );
 
-  const nativeCurrencyInfo = await getAssetInfo(assetClient, {
-    symbol: getNativeAssetSymbol(chain),
-  });
-
-  if (nativeCurrencyInfo === undefined) {
-    throw new UnableToComputeError('Native currency not found');
-  }
-
-  const nativeCurrencyDecimals = getAssetDecimals(chain, nativeCurrencyInfo.symbol);
-
-  if (nativeCurrencyDecimals === null) {
-    throw new UnableToComputeError('Native currency decimals not found');
-  }
+  const nativeAsset = findNativeAssetInfoOrThrow(chain);
 
   const substrateTx = await txBuilderFactory
     .trade(trade)
@@ -58,16 +42,16 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
   const { partial_fee: swapFee } = await tx.getPaymentInfo(feeCalcAddress);
   const feeNative = swapFee + toDestTransactionFee + toDestTransactionFee;
 
-  Logger.log('XCM to exch. fee:', toDestTransactionFee, nativeCurrencyInfo.symbol);
-  Logger.log('XCM to dest. fee:', toDestTransactionFee, nativeCurrencyInfo.symbol);
-  Logger.log('Swap fee:', swapFee, nativeCurrencyInfo.symbol);
-  Logger.log('Total fee:', feeNative, nativeCurrencyInfo.symbol);
+  Logger.log('XCM to exch. fee:', toDestTransactionFee, nativeAsset.symbol);
+  Logger.log('XCM to dest. fee:', toDestTransactionFee, nativeAsset.symbol);
+  Logger.log('Swap fee:', swapFee, nativeAsset.symbol);
+  Logger.log('Total fee:', feeNative, nativeAsset.symbol);
 
-  if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeNative;
+  if (currencyFromInfo.symbol === nativeAsset.symbol) return feeNative;
 
   const currencyFromPriceInfo = await tradeRouter.getSpotPrice(
     currencyFromInfo.id,
-    nativeCurrencyInfo.id,
+    Number(nativeAsset.assetId),
   );
 
   if (currencyFromPriceInfo === undefined) {
@@ -78,7 +62,7 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
 
   const feeInCurrencyFrom =
     (feeNative * pow10n(currencyFromPriceInfo.decimals + currencyFromDecimals)) /
-    (currencyFromPrice * pow10n(nativeCurrencyDecimals));
+    (currencyFromPrice * pow10n(nativeAsset.decimals));
 
   Logger.log('Total fee in currency from:', feeInCurrencyFrom, currencyFromInfo.symbol);
 

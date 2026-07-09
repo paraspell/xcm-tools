@@ -72,25 +72,6 @@ describe('AssetsController', () => {
     });
   });
 
-  describe('getAssetId', () => {
-    it('should return asset ID for a valid chain and symbol', () => {
-      const symbol = 'DOT';
-      const mockResult = '1';
-      const spy = vi
-        .spyOn(assetsService, 'getAssetId')
-        .mockReturnValue(mockResult);
-
-      const result = controller.getAssetId(
-        chain,
-        { symbol },
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(chain, symbol);
-    });
-  });
-
   describe('getAssetLocation', () => {
     it('should return asset location for a valid chain and symbol', () => {
       const mockResult = JSON.stringify({ currency: { symbol } });
@@ -192,42 +173,6 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(chain);
-    });
-  });
-
-  describe('getDecimals', () => {
-    it('should return decimals for a valid chain and symbol', () => {
-      const mockResult = 18;
-      const spy = vi
-        .spyOn(assetsService, 'getDecimals')
-        .mockReturnValue(mockResult);
-
-      const result = controller.getDecimals(
-        chain,
-        { symbol },
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(chain, symbol);
-    });
-  });
-
-  describe('hasSupportForAsset', () => {
-    it('should return true if asset is supported for a valid chain and symbol', () => {
-      const mockResult = true;
-      const spy = vi
-        .spyOn(assetsService, 'hasSupportForAsset')
-        .mockReturnValue(mockResult);
-
-      const result = controller.hasSupportForAsset(
-        chain,
-        { symbol },
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(chain, symbol);
     });
   });
 

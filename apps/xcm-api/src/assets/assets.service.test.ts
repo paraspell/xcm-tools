@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import * as paraspellSdk from '@paraspell/sdk';
@@ -21,7 +21,6 @@ describe('AssetsService', () => {
   let service: AssetsService;
   const chain: TChain = 'Acala';
   const symbol = 'DOT';
-  const unknownSymbol = 'UNKNOWN';
   const assetId = '1';
   const decimals = 12;
 
@@ -81,36 +80,6 @@ describe('AssetsService', () => {
       const result = service.getAssetsObject(chain);
       expect(result).toEqual(assetsObject);
       expect(getAssetsObjectSpy).toHaveBeenCalledWith(chain);
-    });
-  });
-
-  describe('getAssetId', () => {
-    let getAssetIdSpy: MockInstance;
-
-    beforeEach(() => {
-      getAssetIdSpy = vi.spyOn(paraspellSdk, 'getAssetId');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('should return asset ID for a valid chain and symbol', () => {
-      getAssetIdSpy.mockReturnValue(assetId);
-
-      const result = service.getAssetId(chain, symbol);
-
-      expect(result).toEqual(assetId);
-      expect(getAssetIdSpy).toHaveBeenCalledWith(chain, symbol);
-    });
-
-    it('should throw NotFoundException for unknown symbol', () => {
-      getAssetIdSpy.mockReturnValue(null);
-
-      expect(() => service.getAssetId(chain, unknownSymbol)).toThrow(
-        NotFoundException,
-      );
-      expect(getAssetIdSpy).toHaveBeenCalledWith(chain, unknownSymbol);
     });
   });
 
@@ -278,69 +247,6 @@ describe('AssetsService', () => {
 
       expect(result).toEqual(allAssetSymbols);
       expect(getAllAssetsSymbolsSpy).toHaveBeenCalledWith(chain);
-    });
-  });
-
-  describe('getDecimals', () => {
-    let getAssetDecimalsSpy: MockInstance;
-
-    beforeEach(() => {
-      getAssetDecimalsSpy = vi.spyOn(paraspellSdk, 'getAssetDecimals');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('should return asset decimals for a valid chain and symbol', () => {
-      const chain = 'Acala';
-      const symbol = 'DOT';
-      const decimals = 18;
-      getAssetDecimalsSpy.mockReturnValue(decimals);
-
-      const result = service.getDecimals(chain, symbol);
-
-      expect(result).toEqual(decimals);
-      expect(getAssetDecimalsSpy).toHaveBeenCalledWith(chain, symbol);
-    });
-
-    it('should throw NotFoundException for unknown symbol', () => {
-      getAssetDecimalsSpy.mockReturnValue(null);
-
-      expect(() => service.getDecimals(chain, unknownSymbol)).toThrow(
-        NotFoundException,
-      );
-      expect(getAssetDecimalsSpy).toHaveBeenCalledWith(chain, unknownSymbol);
-    });
-  });
-
-  describe('hasSupportForAsset', () => {
-    let hasSupportForAssetSpy: MockInstance;
-
-    beforeEach(() => {
-      hasSupportForAssetSpy = vi.spyOn(paraspellSdk, 'hasSupportForAsset');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
-    it('should return true if asset is supported for a valid chain and symbol', () => {
-      hasSupportForAssetSpy.mockReturnValue(true);
-
-      const result = service.hasSupportForAsset(chain, symbol);
-
-      expect(result).toEqual(true);
-      expect(hasSupportForAssetSpy).toHaveBeenCalledWith(chain, symbol);
-    });
-
-    it('should return false if asset is not supported for a valid chain and symbol', () => {
-      hasSupportForAssetSpy.mockReturnValue(false);
-
-      const result = service.hasSupportForAsset(chain, unknownSymbol);
-
-      expect(result).toEqual(false);
-      expect(hasSupportForAssetSpy).toHaveBeenCalledWith(chain, unknownSymbol);
     });
   });
 

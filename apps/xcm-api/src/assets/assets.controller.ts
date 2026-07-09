@@ -28,7 +28,6 @@ import {
   SupportedDestinationsDto,
   SupportedDestinationsSchema,
 } from './dto/SupportedDestinationsDto.js';
-import { SymbolDto } from './dto/SymbolDto.js';
 
 @Controller()
 export class AssetsController {
@@ -47,20 +46,6 @@ export class AssetsController {
       chain,
     });
     return this.assetsService.getAssetsObject(chain);
-  }
-
-  @Get('assets/:chain/id')
-  getAssetId(
-    @Param('chain', new ZodValidationPipe(ChainSchema))
-    chain: TChain,
-    @Query() { symbol }: SymbolDto,
-    @Req() req: Request,
-  ) {
-    this.analyticsService.track(EventName.GET_ASSET_ID, req, {
-      chain,
-      symbol,
-    });
-    return this.assetsService.getAssetId(chain, symbol);
   }
 
   @Post('assets/:chain/location')
@@ -151,34 +136,6 @@ export class AssetsController {
       chain,
     });
     return this.assetsService.getAllAssetsSymbols(chain);
-  }
-
-  @Get('assets/:chain/decimals')
-  getDecimals(
-    @Param('chain', new ZodValidationPipe(ChainSchema))
-    chain: TChain,
-    @Query() { symbol }: SymbolDto,
-    @Req() req: Request,
-  ) {
-    this.analyticsService.track(EventName.GET_DECIMALS, req, {
-      chain,
-      symbol,
-    });
-    return this.assetsService.getDecimals(chain, symbol);
-  }
-
-  @Get('assets/:chain/has-support')
-  hasSupportForAsset(
-    @Param('chain', new ZodValidationPipe(ChainSchema))
-    chain: TChain,
-    @Query() { symbol }: SymbolDto,
-    @Req() req: Request,
-  ) {
-    this.analyticsService.track(EventName.HAS_SUPPORT_FOR_ASSET, req, {
-      chain,
-      symbol,
-    });
-    return this.assetsService.hasSupportForAsset(chain, symbol);
   }
 
   @Get('supported-assets')

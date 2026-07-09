@@ -1,10 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   findAssetInfo,
   findAssetInfoOrThrow,
   getAllAssetsSymbols,
-  getAssetDecimals,
-  getAssetId,
   getAssetLocation,
   getAssetReserveChain,
   getAssetsObject,
@@ -14,7 +12,6 @@ import {
   getRelayChainSymbol,
   getSupportedAssets,
   getSupportedDestinations,
-  hasSupportForAsset,
   TChain,
   TSubstrateChain,
 } from '@paraspell/sdk';
@@ -28,14 +25,6 @@ import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 export class AssetsService {
   getAssetsObject(chain: TChain) {
     return getAssetsObject(chain);
-  }
-
-  getAssetId(chain: TChain, symbol: string) {
-    const id = getAssetId(chain, symbol);
-    if (!id) {
-      throw new NotFoundException(`Asset id for symbol ${symbol} not found.`);
-    }
-    return id;
   }
 
   getAssetLocation(chain: TChain, { currency }: AssetLocationDto) {
@@ -71,20 +60,8 @@ export class AssetsService {
     return getAllAssetsSymbols(chain);
   }
 
-  getDecimals(chain: TChain, symbol: string) {
-    const decimals = getAssetDecimals(chain, symbol);
-    if (decimals === null) {
-      throw new NotFoundException(`Decimals for currency ${symbol} not found.`);
-    }
-    return decimals;
-  }
-
   getFeeAssets(chain: TChain) {
     return getFeeAssets(chain);
-  }
-
-  hasSupportForAsset(chain: TChain, symbol: string) {
-    return hasSupportForAsset(chain, symbol);
   }
 
   getSupportedAssets(originChain: TChain, destChain: TChain) {

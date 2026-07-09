@@ -11,6 +11,7 @@ import {
   isRelayChain,
   TTransferInternalOptions,
   RELAYCHAINS,
+  RELAY_LOCATION,
   isSystemChain,
   RuntimeApiUnavailableError,
   TBuilderConfig,
@@ -25,7 +26,6 @@ import {
   ForeignAbstract,
   getAssets,
   getRelayChainSymbol,
-  hasSupportForAsset,
   isChainEvm,
   Native
 } from '@paraspell/assets'
@@ -126,7 +126,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       RELAYCHAINS.forEach(relayChain => {
         PARACHAINS.forEach(chain => {
           const symbol = getRelayChainSymbol(chain)
-          if (!hasSupportForAsset(chain, symbol)) return
+          if (!findAssetInfo(chain, { location: RELAY_LOCATION })) return
           it(`should create transfer tx - ${symbol} from ${relayChain} to ${chain}`, async () => {
             try {
               const builder = Builder(config)

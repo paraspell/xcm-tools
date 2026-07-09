@@ -21,7 +21,6 @@ vi.mock('@paraspell/assets', async importActual => ({
   getOtherAssets: vi.fn(),
   getParaId: vi.fn(),
   InvalidCurrencyError: class extends Error {},
-  hasSupportForAsset: vi.fn(),
   findAssetInfoByLoc: vi.fn(),
   normalizeSymbol: vi.fn(),
   isAssetEqual: vi.fn()
