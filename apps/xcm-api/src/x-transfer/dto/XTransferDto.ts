@@ -23,26 +23,6 @@ const StringOrNumber = z
   ])
   .transform((value) => BigInt(value));
 
-export const AssetSchemaV3 = z.object({
-  id: z.object({
-    Concrete: LocationSchema,
-  }),
-  fun: z.object({
-    Fungible: StringOrNumber,
-  }),
-});
-
-export const AssetSchemaV4 = z.object({
-  id: LocationSchema,
-  fun: z.object({
-    Fungible: StringOrNumber,
-  }),
-});
-
-export const AssetSchema = z.union([AssetSchemaV3, AssetSchemaV4]);
-
-export type TAsset = z.infer<typeof AssetSchema>;
-
 const ProviderEntrySchema = z.object({
   name: z.string().min(1),
   endpoint: z.string().min(1),
@@ -160,7 +140,6 @@ export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
 
 export const CurrencySchema = z.union([
   CurrencyCoreWithAmountSchema,
-  z.array(AssetSchema),
   z.array(CurrencyCoreWithAmountSchema),
 ]);
 

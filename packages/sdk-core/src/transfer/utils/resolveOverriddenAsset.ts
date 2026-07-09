@@ -4,7 +4,6 @@ import type { TSubstrateTransferOptions } from '../../types'
 import { createAsset, getChainVersion, sortAssets } from '../../utils'
 import { resolveCurrency } from './resolveCurrency'
 import { validateAssetSupport } from './validateAssetSupport'
-import { assertNotRawAssets } from './validationUtils'
 
 export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TSubstrateTransferOptions<TApi, TRes, TSigner, TCustomChain>,
@@ -20,8 +19,6 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends
         'Overridden assets cannot be used without specifying fee asset'
       )
     }
-
-    assertNotRawAssets(currency)
 
     const version = getChainVersion(api, origin)
 

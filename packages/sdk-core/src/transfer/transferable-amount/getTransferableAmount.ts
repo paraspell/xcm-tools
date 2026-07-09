@@ -17,7 +17,6 @@ import type { TGetTransferableAmountOptions, TPerAssetResult } from '../../types
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getOriginXcmFee } from '../fees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
-import { assertNotRawAssets } from '../utils/validationUtils'
 
 const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   {
@@ -146,8 +145,6 @@ export const getTransferableAmountInternal = async <
   const { api, sender, origin: chain, destination, currency, feeAsset } = options
 
   validateAddress(api, sender, chain, false)
-
-  assertNotRawAssets(currency)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, chain, destination, currency)

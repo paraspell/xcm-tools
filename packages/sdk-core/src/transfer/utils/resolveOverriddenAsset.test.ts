@@ -1,5 +1,5 @@
-import type { TAsset, TAssetInfo, TAssetWithFee } from '@paraspell/assets'
-import { isAssetEqual, isTAsset } from '@paraspell/assets'
+import type { TAsset, TAssetInfo } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +16,6 @@ vi.mock('./validateAssetSupport')
 
 vi.mock('@paraspell/sdk-common')
 vi.mock('@paraspell/assets', () => ({
-  isTAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   extractAssetLocation: vi.fn().mockResolvedValue({}),
   InvalidCurrencyError: class extends Error {}
@@ -39,7 +38,6 @@ describe('resolveOverriddenAsset', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(isTAsset).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(createAsset).mockReturnValue({} as TAsset)
     vi.spyOn(mockApi, 'findAssetInfo').mockReturnValue({
@@ -47,32 +45,6 @@ describe('resolveOverriddenAsset', () => {
     } as TAssetInfo)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
     vi.mocked(sortAssets).mockImplementation(assets => assets)
-  })
-
-  it('throws when using raw TAsset overrides', () => {
-    const assets = [
-      {
-        fun: {
-          Fungible: 1000n
-        }
-      },
-      {
-        fun: {
-          Fungible: 2000n
-        }
-      }
-    ] as TAssetWithFee[]
-    const options = {
-      ...defaultOptions,
-      currency: assets,
-      feeAsset: { location: {} }
-    } as TSubstrateTransferOptions<unknown, unknown, unknown>
-
-    vi.mocked(isTAsset).mockReturnValue(true)
-
-    expect(() =>
-      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAssetInfo)
-    ).toThrow('Raw asset overrides are no longer supported. Please use custom assets instead.')
   })
 
   it('resolves currencies by fetching assets when not all items are TAsset', () => {
@@ -86,7 +58,6 @@ describe('resolveOverriddenAsset', () => {
       feeAsset: { symbol: 'ASSET2' }
     }
 
-    vi.mocked(isTAsset).mockImplementationOnce(() => false)
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValueOnce(false).mockReturnValueOnce(true)
 
@@ -107,13 +78,11 @@ describe('resolveOverriddenAsset', () => {
     ])
   })
 
-  it('throws an InvalidCurrencyError if using raw TAsset overrides and no fee asset is provided', () => {
+  it('throws an InvalidCurrencyError if a currency array is provided without a fee asset', () => {
     const options = {
       ...defaultOptions,
       currency: [{}, {}]
     } as TSubstrateTransferOptions<unknown, unknown, unknown>
-
-    vi.mocked(isTAsset).mockReturnValue(true)
 
     expect(() => resolveOverriddenAsset(options, false, false, {} as TAssetInfo)).toThrow(
       'Overridden assets cannot be used without specifying fee asset'

@@ -13,7 +13,6 @@ import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../type
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
-import { assertNotRawAssets } from '../utils/validationUtils'
 
 export const calculateTotalXcmFee = (
   asset: TAssetInfo,
@@ -51,8 +50,6 @@ export const verifyEdOnDestinationInternal = async <
       'Unable to verify the existential deposit for substrate bridge scenarios'
     )
   }
-
-  assertNotRawAssets(currency)
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
