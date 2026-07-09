@@ -11,11 +11,6 @@ export type TSymbolSpecifier = {
   value: string
 }
 
-export type TOverrideLocationSpecifier = {
-  type: 'Override'
-  value: TLocation
-}
-
 export type TCurrencySymbolValue = string | TSymbolSpecifier
 
 export type TCurrencySymbol = {
@@ -35,12 +30,8 @@ export type TAssetWithFee = TAsset & { isFeeAsset?: boolean }
 
 export type TLocationValue = string | TLocation
 
-export type TLocationValueWithOverride = TLocationValue | TOverrideLocationSpecifier
-
 export type TCurrencyInputWithAmount =
-  | WithComplexAmount<
-      TCurrencySymbol | { id: TCurrency } | { location: TLocationValueWithOverride }
-    >
+  | WithComplexAmount<TCurrencySymbol | { id: TCurrency } | { location: TLocationValue }>
   | TAsset<TAmount>[]
   | WithComplexAmount<TCurrencyCore>[]
 
@@ -51,7 +42,7 @@ export type TSingleCurrencyInput = Exclude<TCurrencyInput, unknown[]>
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
-  | { location: TLocationValueWithOverride }
+  | { location: TLocationValue }
   | TAsset<TAmount>[]
   | WithComplexAmount<TCurrencyCore>[]
 

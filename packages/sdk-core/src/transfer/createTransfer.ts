@@ -17,7 +17,6 @@ import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
-  shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
   validateCurrency,
@@ -47,7 +46,7 @@ export const resolveTransferParams = <TApi, TRes, TSigner, TCustomChain extends 
 
   const isBridge = !isTLocation(destination) && isSubstrateBridge(origin, destination)
 
-  const assetCheckEnabled = shouldPerformAssetCheck(origin, currency)
+  const assetCheckEnabled = !Array.isArray(currency)
 
   validateAssetSpecifiers(assetCheckEnabled, currency)
   const asset = resolveAsset(currency, origin, destination, assetCheckEnabled, api)

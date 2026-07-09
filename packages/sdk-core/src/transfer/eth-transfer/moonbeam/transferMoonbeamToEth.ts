@@ -1,5 +1,4 @@
 import type { TAsset } from '@paraspell/assets'
-import { isOverrideLocationSpecifier } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
@@ -41,10 +40,6 @@ export const transferMoonbeamToEth = async <TApi, TRes, TSigner>(
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
-  }
-
-  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   const foundAsset = api.findAssetInfoOrThrow(from, currency, to)

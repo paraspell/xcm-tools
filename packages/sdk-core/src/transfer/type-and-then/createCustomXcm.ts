@@ -57,8 +57,6 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     context
   const { destination, version, recipient, paraIdTo, sender, ahAddress, overriddenAsset } = options
 
-  const overriddenAssets = Array.isArray(overriddenAsset) ? overriddenAsset : null
-
   const buildRefundInstruction = () => {
     if (!sender || isSubBridge) return null
 
@@ -112,7 +110,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     DepositAsset: {
       assets: {
         Wild:
-          assetCount > 1 && !overriddenAssets
+          assetCount > 1 && !overriddenAsset
             ? allOfSelector
             : {
                 AllCounted: assetCount
@@ -135,9 +133,9 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
 
   const assetsFilter = []
 
-  if (overriddenAssets) {
+  if (overriddenAsset) {
     assetsFilter.push(
-      ...overriddenAssets.map(asset =>
+      ...overriddenAsset.map(asset =>
         localizeFilterAsset(asset.fun.Fungible, extractAssetLocation(asset))
       )
     )

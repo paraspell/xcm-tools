@@ -1,7 +1,7 @@
 // Contains basic structure of polkadotXCM call
 
 import { getXcmPallet, type TPallet } from '@paraspell/pallets'
-import { isExternalChain, isTLocation } from '@paraspell/sdk-common'
+import { isExternalChain } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import { createTypeAndThenCall } from '../../transfer'
@@ -45,7 +45,7 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner, TCustomChain exte
   const destLocation = createDestination(api, version, chain, destination, paraIdTo)
 
   const feeAssetIndex =
-    overriddenAsset === undefined || isTLocation(overriddenAsset)
+    overriddenAsset === undefined
       ? DEFAULT_FEE_ASSET
       : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 

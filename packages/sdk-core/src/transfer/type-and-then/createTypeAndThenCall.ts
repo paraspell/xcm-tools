@@ -27,8 +27,7 @@ const buildAssets = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
 ) => {
   if (overriddenAsset) {
-    if (Array.isArray(overriddenAsset)) return overriddenAsset
-    return [createAsset(version, asset.amount, overriddenAsset)]
+    return overriddenAsset
   }
 
   const assets = []
@@ -53,7 +52,7 @@ export const resolveAssetCount = <TApi, TRes, TSigner>(
   isRelayAsset: boolean
 ): number => {
   if (overriddenAsset) {
-    return Array.isArray(overriddenAsset) ? overriddenAsset.length : 1
+    return overriddenAsset.length
   }
   return isRelayAsset ? 1 : 2
 }

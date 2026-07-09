@@ -10,7 +10,6 @@ import {
   getBridgeStatus,
   getParaEthTransferFees,
   getParaId,
-  isOverrideLocationSpecifier,
   MissingParameterError,
   NumberFormatError,
   pickCompatibleXcmVersion,
@@ -44,10 +43,6 @@ export const buildMoonbeamToEth = async <TApi, TRes, TSigner, TCustomChain exten
 
   if (Array.isArray(currency)) {
     throw new UnsupportedOperationError('Multi-assets are not yet supported for EVM transfers')
-  }
-
-  if ('location' in currency && isOverrideLocationSpecifier(currency.location)) {
-    throw new UnsupportedOperationError('Override location is not supported for EVM transfers')
   }
 
   const foundAsset = findAssetInfoOrThrow(from, currency, to)

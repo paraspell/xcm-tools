@@ -1,5 +1,4 @@
 import type { TPallet } from '@paraspell/pallets'
-import { isTLocation } from '@paraspell/sdk-common'
 
 import type {
   TSerializedExtrinsics,
@@ -11,29 +10,13 @@ import { createBeneficiaryLocXTokens } from '../../../utils'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParams } from './getXTokensParams'
 
-export const shouldUseMultiAssetTransfer = <
-  TApi,
-  TRes,
-  TSigner,
-  TCustomChain extends string = never
->({
-  overriddenAsset,
-  useMultiAssetTransfer
-}: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) => {
-  const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
-
-  return useMultiAssetTransfer || !!isOverriddenMultiAssets
-}
-
 export const getXTokensMethod = <TApi, TRes, TSigner>(
   useMultiAsset: boolean,
   overriddenAsset: TXTokensTransferOptions<TApi, TRes, TSigner>['overriddenAsset']
 ): TXTokensMethod => {
   if (!useMultiAsset) return 'transfer'
 
-  const isOverriddenMultiAssets = overriddenAsset && !isTLocation(overriddenAsset)
-
-  return isOverriddenMultiAssets ? 'transfer_multiassets' : 'transfer_multiasset'
+  return overriddenAsset ? 'transfer_multiassets' : 'transfer_multiasset'
 }
 
 export const buildXTokensCall = <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -46,6 +29,7 @@ export const buildXTokensCall = <TApi, TRes, TSigner, TCustomChain extends strin
     origin,
     destination,
     overriddenAsset,
+    useMultiAssetTransfer,
     recipient,
     asset,
     pallet,
@@ -54,7 +38,7 @@ export const buildXTokensCall = <TApi, TRes, TSigner, TCustomChain extends strin
     method: methodOverride
   } = input
 
-  const useMultiAsset = shouldUseMultiAssetTransfer(input)
+  const useMultiAsset = useMultiAssetTransfer || !!overriddenAsset
 
   const modifiedCurrencySelection = useMultiAsset
     ? getModifiedCurrencySelection(input)

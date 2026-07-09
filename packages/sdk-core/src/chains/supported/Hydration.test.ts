@@ -200,7 +200,7 @@ describe('Hydration', () => {
           assetId: '456',
           location: DOT_LOCATION
         },
-        overriddenAsset: { parents: 1, interior: 'Here' },
+        overriddenAsset: [{ id: DOT_LOCATION, fun: { Fungible: 1000n } }],
         destination: 'Hydration'
       } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 

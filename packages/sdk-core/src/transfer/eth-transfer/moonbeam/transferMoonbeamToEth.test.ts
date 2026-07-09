@@ -1,5 +1,4 @@
-import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
-import { isOverrideLocationSpecifier } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import type { Address, WalletClient } from 'viem'
 import { getContract } from 'viem'
@@ -121,7 +120,6 @@ describe('transferMoonbeamToEth', () => {
       if (chain === 'Ethereum') return ethereumAsset
       return moonbeamAsset
     })
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
@@ -141,16 +139,6 @@ describe('transferMoonbeamToEth', () => {
         currency: []
       })
     ).rejects.toThrow('Multi-assets are not yet supported for EVM transfers')
-  })
-
-  it('should throw error for override location', async () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-    await expect(
-      transferMoonbeamToEth(from, {
-        ...baseOptions,
-        currency: { location: { type: 'override' } } as unknown as TCurrencyInputWithAmount
-      })
-    ).rejects.toThrow('Override location is not supported for EVM transfers')
   })
 
   it('should throw error when Ethereum asset not found', async () => {

@@ -5,7 +5,6 @@ import {
   DEFAULT_TTL_MS,
   findAssetInfoOrThrow,
   getParaId,
-  isOverrideLocationSpecifier,
   RoutingResolutionError,
   UnsupportedOperationError
 } from '@paraspell/sdk-core'
@@ -39,8 +38,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   abstractDecimals: vi.fn(),
   assertHasId: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
-  getParaId: vi.fn(),
-  isOverrideLocationSpecifier: vi.fn()
+  getParaId: vi.fn()
 }))
 
 vi.mock('@snowbridge/api', () => ({
@@ -96,7 +94,6 @@ describe('buildSnowbridgeTransfer', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(ethAsset)
     vi.mocked(abstractDecimals).mockReturnValue(1_000n)
     vi.mocked(getParaId).mockReturnValue(1000)
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(false)
 
     vi.mocked(bridgeInfoFor).mockReturnValue({
       environment: { ethChainId: 1 }
@@ -113,22 +110,6 @@ describe('buildSnowbridgeTransfer', () => {
   it('throws UnsupportedOperationError when currency is an array', async () => {
     await expect(
       buildSnowbridgeTransfer(baseOptions({ currency: [] }), publicClient)
-    ).rejects.toThrow(UnsupportedOperationError)
-  })
-
-  it('throws UnsupportedOperationError when currency uses an override location', async () => {
-    vi.mocked(isOverrideLocationSpecifier).mockReturnValue(true)
-
-    await expect(
-      buildSnowbridgeTransfer(
-        baseOptions({
-          currency: {
-            location: { type: 'Override', value: { parents: 0, interior: 'Here' } },
-            amount: '1'
-          }
-        }),
-        publicClient
-      )
     ).rejects.toThrow(UnsupportedOperationError)
   })
 

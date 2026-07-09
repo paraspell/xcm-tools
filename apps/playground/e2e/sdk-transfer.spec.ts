@@ -8,8 +8,7 @@ import { acknowledgeTransferWarningIfOpened } from './utils/transferWarningModal
 import { createName } from './utils/selectorName';
 
 type TSymbolMode = 'Auto' | 'Native' | 'Foreign' | 'Foreign abstract';
-type TCustomAssetOperation =
-  'assetId' | 'symbol' | 'location' | 'overridenLocation';
+type TCustomAssetOperation = 'assetId' | 'symbol' | 'location';
 
 type TTransferAdvancedOptions = {
   development: boolean;
@@ -235,14 +234,9 @@ const performCustomAction = async (
     if (symbolMode) {
       await selectSegmentedOption(symbolMode);
     }
-  } else if (type === 'location') {
+  } else {
     await selectSegmentedOption('Location');
     await fillCustomJsonField('Input JSON location or interior junctions');
-  } else {
-    await selectSegmentedOption('Override location');
-    await fillCustomJsonField(
-      'Provide the JSON location to override the default configuration',
-    );
   }
 };
 
@@ -938,34 +932,6 @@ basePjsTest.describe(`XCM SDK - Transfer E2E Tests`, () => {
         useApi: true,
         customCurrencyFunction: async () =>
           performCustomAction(appPage, 'location', customLocationJson),
-      });
-    },
-  );
-
-  basePjsTest(
-    'Should succeed for custom asset transfer - overridden location',
-    async () => {
-      await performTransfer(appPage, extensionPage, {
-        fromChain: HYDRATION_CUSTOM_FROM,
-        toChain: HYDRATION_CUSTOM_TO,
-        currency: null,
-        useApi: false,
-        customCurrencyFunction: async () =>
-          performCustomAction(appPage, 'overridenLocation', customLocationJson),
-      });
-    },
-  );
-
-  basePjsTest(
-    'Should succeed for custom asset transfer - overridden location - API',
-    async () => {
-      await performTransfer(appPage, extensionPage, {
-        fromChain: HYDRATION_CUSTOM_FROM,
-        toChain: HYDRATION_CUSTOM_TO,
-        currency: null,
-        useApi: true,
-        customCurrencyFunction: async () =>
-          performCustomAction(appPage, 'overridenLocation', customLocationJson),
       });
     },
   );

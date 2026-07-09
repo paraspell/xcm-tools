@@ -276,42 +276,6 @@ describe('createTypeAndThenCall', () => {
     expect(localizeLocationSpy).not.toHaveBeenCalled()
     expect(sortAssets).not.toHaveBeenCalled()
   })
-
-  it('should wrap overriddenAsset when it is a location', async () => {
-    const overriddenLocation = {
-      parents: 1,
-      interior: { X1: { Parachain: 2000 } }
-    }
-
-    const contextWithOverriddenLocation = {
-      ...mockContext,
-      options: {
-        ...mockContext.options,
-        overriddenAsset: overriddenLocation
-      }
-    } as TTypeAndThenCallContext<unknown, unknown, unknown>
-
-    const localizeLocationSpy = vi.spyOn(mockApi, 'localizeLocation')
-
-    vi.mocked(createAsset).mockClear()
-    localizeLocationSpy.mockClear()
-    vi.mocked(sortAssets).mockClear()
-    vi.mocked(buildTypeAndThenCall).mockClear()
-
-    const result = await constructTypeAndThenCall(contextWithOverriddenLocation, mockFees)
-
-    expect(result).toBe(mockSerializedCall)
-    expect(createAsset).toHaveBeenCalledTimes(1)
-    expect(createAsset).toHaveBeenCalledWith(mockVersion, 1000n, overriddenLocation)
-    expect(buildTypeAndThenCall).toHaveBeenCalledWith(
-      contextWithOverriddenLocation,
-      false,
-      mockCustomXcm,
-      [mockAsset]
-    )
-    expect(localizeLocationSpy).not.toHaveBeenCalled()
-    expect(sortAssets).not.toHaveBeenCalled()
-  })
 })
 
 describe('resolveAssetCount', () => {
@@ -322,12 +286,6 @@ describe('resolveAssetCount', () => {
     ]
     expect(resolveAssetCount(overriddenAssets, false)).toBe(2)
     expect(resolveAssetCount(overriddenAssets, true)).toBe(2)
-  })
-
-  it('returns 1 when overriddenAsset is a single location', () => {
-    const location = { parents: 1, interior: { X1: { Parachain: 1000 } } }
-    expect(resolveAssetCount(location, false)).toBe(1)
-    expect(resolveAssetCount(location, true)).toBe(1)
   })
 
   it('returns 1 for relay asset without override', () => {

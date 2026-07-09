@@ -1,6 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
-import type { TLocation } from '@paraspell/sdk-common'
-import { isTLocation, Version } from '@paraspell/sdk-common'
+import type { TAsset, TAssetWithFee } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../../api'
@@ -10,11 +9,6 @@ import { createBeneficiaryLocXTokens } from '../../../utils'
 import { buildXTokensCall } from './buildXTokensCall'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParams } from './getXTokensParams'
-
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTLocation: vi.fn()
-}))
 
 vi.mock('./currencySelection')
 vi.mock('./getXTokensParams')
@@ -43,7 +37,6 @@ describe('buildXTokensCall', () => {
     currencySelection = { ForeignAsset: '1' }
     vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TAsset })
     vi.mocked(getXTokensParams).mockReturnValue({ param1: 'value1', param2: 'value2' })
-    vi.mocked(isTLocation).mockReturnValue(true)
     vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockDestLocation)
   })
 
@@ -126,13 +119,11 @@ describe('buildXTokensCall', () => {
     expect(result.module).toBe('TestPallet')
   })
 
-  it('selects transfer_multiasset when overriddenAsset is location', () => {
-    const overridden = {} as TLocation
-
+  it('selects transfer_multiasset when there is no overriddenAsset', () => {
     const input = {
       ...baseInput,
       useMultiAssetTransfer: true,
-      overriddenAsset: overridden,
+      overriddenAsset: undefined,
       origin: 'Acala',
       destination: 'AssetHubPolkadot',
       scenario: 'ParaToPara'
@@ -152,9 +143,8 @@ describe('buildXTokensCall', () => {
     expect(result.method).toBe('transfer_multiasset')
   })
 
-  it('selects transfer_multiassets when overriddenAsset is not location', () => {
-    vi.mocked(isTLocation).mockReturnValue(false)
-    const overridden = {} as TLocation
+  it('selects transfer_multiassets when overriddenAsset is set', () => {
+    const overridden = [{ id: {}, fun: { Fungible: 100n } }] as TAssetWithFee[]
 
     const input = {
       ...baseInput,
@@ -205,7 +195,7 @@ describe('buildXTokensCall', () => {
     expect(result.method).toBe('custom_method')
   })
 
-  describe('shouldUseMultiAssetTransfer scenarios', () => {
+  describe('multi-asset transfer scenarios', () => {
     it('uses single-asset transfer for AssetHub destination', () => {
       const input = {
         ...baseInput,

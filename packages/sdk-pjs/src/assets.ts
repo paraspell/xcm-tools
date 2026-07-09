@@ -28,6 +28,5 @@ export {
   getTChain,
   hasSupportForAsset,
   isChainEvm,
-  Native,
-  Override
+  Native
 } from '@paraspell/sdk-core'
