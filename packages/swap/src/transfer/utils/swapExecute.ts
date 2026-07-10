@@ -103,8 +103,8 @@ export const canUseExecuteTransfer = <TApi, TRes, TSigner, TCustomChain extends 
 
 export const isFilteredError = (error: unknown): boolean =>
   error instanceof DryRunFailedError &&
-  error.dryRunType === 'origin' &&
-  error.reason === 'Filtered';
+  error.dryRunError.chainKind === 'origin' &&
+  error.dryRunError.reason === 'Filtered';
 
 export const getSwapExecuteXcmFee = async <
   TApi,
@@ -153,7 +153,7 @@ export const getSwapExecuteXcmFee = async <
     },
   });
 
-  if (result.failureReason === 'NoDeal' && exchange.chain === 'Hydration') {
+  if (result.dryRunError?.reason === 'NoDeal' && exchange.chain === 'Hydration') {
     throw new RoutingResolutionError(
       'An error occured, either this route is not registered for swap on exchange chain, or the amount out was not able to be calculated.',
     );

@@ -490,12 +490,8 @@ export class GeneralBuilder<
         }
       )
 
-      if (dryRunResult.failureReason) {
-        throw new DryRunFailedError(
-          dryRunResult.failureReason,
-          dryRunResult.failureChain,
-          'XCM format check failed.'
-        )
+      if (dryRunResult.dryRunError) {
+        throw new DryRunFailedError(dryRunResult.dryRunError, 'XCM format check failed.')
       }
     }
   }

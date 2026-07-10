@@ -30,6 +30,7 @@ import { XTransferService } from './x-transfer.service.js';
 const txHash = '0x123';
 const txHashBatch = '0x123456';
 const dryRunResult: TDryRunResult = {
+  success: true,
   origin: {
     success: true,
     fee: 1n,
@@ -42,6 +43,7 @@ const dryRunResult: TDryRunResult = {
 };
 
 const feeResult: TGetXcmFeeResult = {
+  success: true,
   origin: {
     fee: 1n,
     asset: {

@@ -230,6 +230,7 @@ describe('getTransferInfo', () => {
     }
 
     vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
       origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
       hops: mockHopsFromFee as TXcmFeeHopInfo[],
       destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
@@ -300,6 +301,7 @@ describe('getTransferInfo', () => {
     } as TAssetInfo
 
     vi.mocked(getXcmFee).mockResolvedValueOnce({
+      success: true,
       origin: { fee: 100000000n, feeType: 'paymentInfo', asset: feeAssetFromFee },
       hops: [],
       destination: { fee: 70000000n, feeType: 'paymentInfo', asset: dotAsset }

@@ -19,27 +19,27 @@ describe('resolveModuleError', () => {
     const error: TModuleError = { index: '1', error: '0x00' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 1, name: 'XTokens' }])
 
-    const { failureReason } = resolveModuleError(mockChain, error)
+    const { reason } = resolveModuleError(mockChain, error)
 
-    expect(failureReason).toBe(Object.values(XTokensError)[0])
+    expect(reason).toBe(Object.values(XTokensError)[0])
   })
 
   it('should return the failure reason for PolkadotXcm pallet', () => {
     const error: TModuleError = { index: '2', error: '0x01' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 2, name: 'PolkadotXcm' }])
 
-    const { failureReason } = resolveModuleError(mockChain, error)
+    const { reason } = resolveModuleError(mockChain, error)
 
-    expect(failureReason).toBe(Object.values(PolkadotXcmError)[1])
+    expect(reason).toBe(Object.values(PolkadotXcmError)[1])
   })
 
   it('should return the failure reason for PolkadotXcm pallet', () => {
     const error: TModuleError = { index: '2', error: '0x02' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 2, name: 'PolkadotXcm' }])
 
-    const { failureReason } = resolveModuleError(mockChain, error)
+    const { reason } = resolveModuleError(mockChain, error)
 
-    expect(failureReason).toBe(Object.values(PolkadotXcmError)[2])
+    expect(reason).toBe(Object.values(PolkadotXcmError)[2])
   })
 
   it('should throw an error if pallet is not supported', () => {
@@ -73,13 +73,13 @@ describe('resolveModuleError', () => {
     const result = resolveModuleError(mockChain, error)
 
     expect(result).toEqual({
-      failureReason: PolkadotXcmError.LocalExecutionIncompleteWithError,
-      failureSubReason: PolkadotXcmExecutionError.UnknownClaim,
-      failureIndex: 0
+      reason: PolkadotXcmError.LocalExecutionIncompleteWithError,
+      subReason: PolkadotXcmExecutionError.UnknownClaim,
+      instructionIndex: 0
     })
   })
 
-  it('should extract a non-zero failureIndex for LocalExecutionIncompleteWithError', () => {
+  it('should extract a non-zero instructionIndex for LocalExecutionIncompleteWithError', () => {
     // 0x1c - LocalExecutionIncompleteWithError, 0x03 - instruction index, 0x10 - UnknownClaim
     const error: TModuleError = { index: '2', error: '0x1c031000' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 2, name: 'PolkadotXcm' }])
@@ -87,9 +87,9 @@ describe('resolveModuleError', () => {
     const result = resolveModuleError(mockChain, error)
 
     expect(result).toEqual({
-      failureReason: PolkadotXcmError.LocalExecutionIncompleteWithError,
-      failureSubReason: PolkadotXcmExecutionError.UnknownClaim,
-      failureIndex: 3
+      reason: PolkadotXcmError.LocalExecutionIncompleteWithError,
+      subReason: PolkadotXcmExecutionError.UnknownClaim,
+      instructionIndex: 3
     })
   })
 })

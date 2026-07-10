@@ -1,5 +1,5 @@
 import type { PolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core';
-import { dryRun, getFailureInfo, UnsupportedOperationError } from '@paraspell/sdk-core';
+import { dryRun, getDryRunError, UnsupportedOperationError } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,7 +17,7 @@ vi.mock('@paraspell/sdk-core', async () => {
   return {
     ...actual,
     dryRun: vi.fn(),
-    getFailureInfo: vi.fn(),
+    getDryRunError: vi.fn(),
   };
 });
 
@@ -99,6 +99,7 @@ const createTransaction = (chain: string): TTransaction<unknown, unknown> =>
 
 const createDryRunResult = (overrides: Partial<TDryRunResult> = {}): TDryRunResult =>
   ({
+    success: true,
     origin: { chain: 'Acala' },
     destination: { chain: 'Acala' },
     hops: [],
@@ -214,9 +215,7 @@ describe('dryRunRouter', () => {
 
     vi.mocked(dryRun).mockResolvedValueOnce(firstResult).mockResolvedValueOnce(secondResult);
 
-    vi.mocked(getFailureInfo)
-      .mockReturnValueOnce({ failureReason: undefined })
-      .mockReturnValueOnce({ failureReason: undefined });
+    vi.mocked(getDryRunError).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
 
     await dryRunRouter({ ...createInitialOptions(), api: mockApi });
 
@@ -307,9 +306,7 @@ describe('dryRunRouterPreview', () => {
       .mockResolvedValueOnce(createDryRunResult())
       .mockResolvedValueOnce(createDryRunResult());
 
-    vi.mocked(getFailureInfo)
-      .mockReturnValueOnce({ failureReason: undefined })
-      .mockReturnValueOnce({ failureReason: undefined });
+    vi.mocked(getDryRunError).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
 
     await dryRunRouterPreview({ ...createInitialOptions(), api: mockApi }, { mintFeeAssets: true });
 
@@ -371,9 +368,7 @@ describe('dryRunTransactions', () => {
       .mockResolvedValueOnce(createDryRunResult())
       .mockResolvedValueOnce(createDryRunResult());
 
-    vi.mocked(getFailureInfo)
-      .mockReturnValueOnce({ failureReason: undefined })
-      .mockReturnValueOnce({ failureReason: undefined });
+    vi.mocked(getDryRunError).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
 
     await dryRunTransactions(
       [createTransaction('BifrostPolkadot'), createTransaction('Hydration')],

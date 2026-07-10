@@ -107,18 +107,18 @@ export const verifyEdOnDestinationInternal = async <
   } = xcmFeeResult
 
   if (dryRunError) {
-    throw new DryRunFailedError(dryRunError, 'origin')
+    throw new DryRunFailedError({ ...dryRunError, chainKind: 'origin' })
   }
 
   const erroredHop = hops.find(hop => hop.result.dryRunError)
   const hopError = erroredHop?.result.dryRunError
   if (hopError) {
-    throw new DryRunFailedError(hopError, erroredHop.chain)
+    throw new DryRunFailedError(hopError)
   }
 
   if (destDryRunError) {
     throw new UnableToComputeError(
-      `Unable to compute fee for the destination asset. Destination dry run error: ${destDryRunError}`
+      `Unable to compute fee for the destination asset. Destination dry run error: ${destDryRunError.reason}`
     )
   }
 

@@ -27,11 +27,7 @@ export const maybePerformXcmFormatCheck = async <
 
   const result = await dryRunTransactions(routerPlan, options, BYPASS, BYPASS);
 
-  if (result.failureReason) {
-    throw new DryRunFailedError(
-      result.failureReason,
-      result.failureChain,
-      'XCM format check failed.',
-    );
+  if (result.dryRunError) {
+    throw new DryRunFailedError(result.dryRunError, 'XCM format check failed.');
   }
 };

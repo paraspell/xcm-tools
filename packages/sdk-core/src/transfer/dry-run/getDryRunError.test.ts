@@ -2,7 +2,7 @@ import type { TAssetInfo } from '@paraspell/assets'
 import { describe, expect, it } from 'vitest'
 
 import type { TDryRunChainResult, TDryRunResult, THopInfo } from '../../types'
-import { getFailureInfo } from './getFailureInfo'
+import { getDryRunError } from './getDryRunError'
 
 const makeSuccessResult = (symbol: string): TDryRunChainResult => ({
   success: true,
@@ -13,12 +13,12 @@ const makeSuccessResult = (symbol: string): TDryRunChainResult => ({
   forwardedXcms: []
 })
 
-const makeFailureResult = (symbol: string, failureReason: string): TDryRunChainResult => ({
+const makeFailureResult = (symbol: string, reason: string): TDryRunChainResult => ({
   success: false,
   asset: {
     symbol
   } as TAssetInfo,
-  failureReason
+  dryRunError: { reason }
 })
 
 const makeHop = (chain: THopInfo['chain'], result: TDryRunChainResult): THopInfo => ({
@@ -27,22 +27,23 @@ const makeHop = (chain: THopInfo['chain'], result: TDryRunChainResult): THopInfo
 })
 
 const makeResult = (overrides: Partial<TDryRunResult>): TDryRunResult => ({
+  success: true,
   origin: makeSuccessResult('DOT'),
   hops: [],
   ...overrides
 })
 
-describe('getFailureInfo', () => {
+describe('getDryRunError', () => {
   it('returns destination failure before hops', () => {
     const failure = makeFailureResult('ASTR', 'Destination failed')
     const hop = makeHop('Hydration', makeFailureResult('DOT', 'Hop failed'))
 
     const result = makeResult({ destination: failure, hops: [hop] })
 
-    const failureInfo = getFailureInfo(result)
+    const dryRunError = getDryRunError<TDryRunChainResult>(result)
 
-    expect(failureInfo.failureChain).toBe('destination')
-    expect(failureInfo.failureReason).toBe('Destination failed')
+    expect(dryRunError?.chainKind).toBe('destination')
+    expect(dryRunError?.reason).toBe('Destination failed')
   })
 
   it('returns hop failure when no chain failure detected', () => {
@@ -50,18 +51,19 @@ describe('getFailureInfo', () => {
 
     const result = makeResult({ destination: makeSuccessResult('DOT'), hops: [failureHop] })
 
-    const failureInfo = getFailureInfo(result)
+    const dryRunError = getDryRunError<TDryRunChainResult>(result)
 
-    expect(failureInfo.failureChain).toBe('Astar')
-    expect(failureInfo.failureReason).toBe('Hop failure')
+    expect(dryRunError?.chainKind).toBe('hop')
+    expect(dryRunError?.chain).toBe('Astar')
+    expect(dryRunError?.reason).toBe('Hop failure')
   })
 
-  it('returns empty object when no failures detected', () => {
+  it('returns undefined when no failures detected', () => {
     const result = makeResult({
       destination: makeSuccessResult('DOT'),
       hops: [makeHop('Hydration', makeSuccessResult('DOT'))]
     })
 
-    expect(getFailureInfo(result)).toEqual({ failureChain: undefined, failureReason: undefined })
+    expect(getDryRunError<TDryRunChainResult>(result)).toBeUndefined()
   })
 })

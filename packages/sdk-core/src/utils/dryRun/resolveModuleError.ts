@@ -27,29 +27,29 @@ export const resolveModuleError = (chain: TSubstrateChain, error: TModuleError):
     throw new UnsupportedOperationError(`Pallet ${name} is not supported`)
   }
 
-  const failureReason =
+  const reason =
     name === 'XTokens'
       ? Object.values(XTokensError)[errorIndex]
       : Object.values(PolkadotXcmError)[errorIndex]
 
-  if (!failureReason) {
+  if (!reason) {
     throw new RoutingResolutionError(`Error index ${errorIndex} not found in ${name} pallet`)
   }
 
-  if (failureReason === PolkadotXcmError.LocalExecutionIncompleteWithError) {
+  if (reason === PolkadotXcmError.LocalExecutionIncompleteWithError) {
     // Byte layout: [pallet error variant][instruction index][xcm sub-error]
-    const failureIndex = Number(`0x${error.error.slice(4, 6)}`)
+    const instructionIndex = Number(`0x${error.error.slice(4, 6)}`)
     const subErrorIndex = Number(`0x${error.error.slice(6, 8)}`)
-    const failureSubReason = Object.values(PolkadotXcmExecutionError)[subErrorIndex]
+    const subReason = Object.values(PolkadotXcmExecutionError)[subErrorIndex]
 
-    if (!failureSubReason) {
+    if (!subReason) {
       throw new RoutingResolutionError(
         `Sub-error index ${subErrorIndex} not found in PolkadotXcm pallet`
       )
     }
 
-    return { failureReason, failureSubReason, failureIndex }
+    return { reason, subReason, instructionIndex }
   }
 
-  return { failureReason }
+  return { reason }
 }

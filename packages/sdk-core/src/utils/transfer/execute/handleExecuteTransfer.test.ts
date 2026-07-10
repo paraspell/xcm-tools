@@ -147,9 +147,14 @@ describe('handleExecuteTransfer', () => {
     vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
 
     const dryRunResult = {
-      origin: { success: false, fee: 0n },
-      failureReason: 'Origin execution failed'
-    } as unknown as TDryRunResult
+      success: false,
+      origin: {
+        success: false,
+        asset: { symbol: 'DOT', decimals: 10, location: { parents: 0, interior: 'Here' } },
+        dryRunError: { reason: 'Origin execution failed' }
+      },
+      hops: []
+    } as TDryRunResult
     vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
 
     await expect(handleExecuteTransfer(input)).rejects.toThrow('Origin execution failed')

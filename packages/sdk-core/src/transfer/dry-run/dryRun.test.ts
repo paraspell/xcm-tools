@@ -23,6 +23,7 @@ describe('dryRun', () => {
     const chain = 'Polkadot'
 
     const mockResult: TDryRunResult = {
+      success: true,
       origin: {
         success: true,
         fee: 1000n,

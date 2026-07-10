@@ -221,7 +221,7 @@ describe('getDestXcmFee', () => {
   it('falls back to “paymentInfo” and returns `dryRunError` when dry-run fails', async () => {
     const api = createApi({
       success: false,
-      failureReason: 'fail',
+      dryRunError: { reason: 'fail' },
       asset: dotAsset
     })
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
@@ -251,7 +251,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
-      dryRunError: 'fail',
+      dryRunError: { reason: 'fail' },
       asset: unitAsset,
       sufficient: false
     })
@@ -260,7 +260,7 @@ describe('getDestXcmFee', () => {
   it('returns error variant (only `dryRunError`) when fallback is disabled', async () => {
     const api = createApi({
       success: false,
-      failureReason: 'boom',
+      dryRunError: { reason: 'boom' },
       asset: dotAsset
     })
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
@@ -279,7 +279,7 @@ describe('getDestXcmFee', () => {
       disableFallback: true
     } as TGetFeeForDestChainOptions<unknown, unknown, unknown>)
 
-    expect(res).toEqual({ dryRunError: 'boom' })
+    expect(res).toEqual({ dryRunError: { reason: 'boom' } })
     expect('fee' in res).toBe(false)
   })
 

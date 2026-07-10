@@ -21,6 +21,7 @@ const options = {} as TTransformedOptions<
 const routerPlan = [{ tx: {}, chain: 'Acala' }] as TRouterPlan<unknown, unknown>;
 
 const dryRunRes = (overrides: Partial<TDryRunResult> = {}): TDryRunResult => ({
+  success: true,
   origin: {
     success: true,
     fee: 0n,
@@ -72,7 +73,7 @@ describe('maybePerformXcmFormatCheck', () => {
 
   it('throws DryRunFailedError with reason and failure chain when dry run fails', async () => {
     vi.mocked(dryRunTransactions).mockResolvedValue(
-      dryRunRes({ failureReason: 'BadFormat', failureChain: 'origin' }),
+      dryRunRes({ dryRunError: { reason: 'BadFormat', chainKind: 'origin' } }),
     );
 
     await expect(
@@ -82,9 +83,8 @@ describe('maybePerformXcmFormatCheck', () => {
     await expect(
       maybePerformXcmFormatCheck(createApi({ xcmFormatCheck: true }), options, routerPlan),
     ).rejects.toMatchObject({
-      reason: 'BadFormat',
-      dryRunType: 'origin',
-      message: 'XCM format check failed. Dry run on origin failed: BadFormat',
+      dryRunError: { reason: 'BadFormat', chainKind: 'origin' },
+      message: 'XCM format check failed. Dry run failed: BadFormat',
     });
   });
 

@@ -153,7 +153,7 @@ describe('getOriginXcmFeeInternal', () => {
 
     vi.spyOn(api, 'getDryRunCall').mockResolvedValue({
       success: false,
-      failureReason: 'boom',
+      dryRunError: { reason: 'boom' },
       asset: mockAsset
     })
 
@@ -162,7 +162,7 @@ describe('getOriginXcmFeeInternal', () => {
     const res = await getOriginXcmFeeInternal({ ...baseOptions, disableFallback: true })
 
     expect(res).toEqual({
-      dryRunError: 'boom',
+      dryRunError: { reason: 'boom' },
       asset: mockAsset
     })
     expect('fee' in res).toBe(false)
@@ -183,7 +183,7 @@ describe('getOriginXcmFeeInternal', () => {
 
     vi.spyOn(api, 'getDryRunCall').mockResolvedValue({
       success: false,
-      failureReason: 'fail',
+      dryRunError: { reason: 'fail' },
       asset: mockAsset
     })
 
@@ -197,7 +197,7 @@ describe('getOriginXcmFeeInternal', () => {
       fee: 999n,
       asset: mockAsset,
       feeType: 'paymentInfo',
-      dryRunError: 'fail',
+      dryRunError: { reason: 'fail' },
       sufficient: false
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')

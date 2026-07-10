@@ -45,7 +45,7 @@ const executeDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = 
   const result = await dryRunInternal(params)
 
   if (!result.origin.success) {
-    throw new DryRunFailedError(result.failureReason as string, 'origin')
+    throw new DryRunFailedError(result.origin.dryRunError)
   }
 
   return result
@@ -98,9 +98,7 @@ const extractFeesFromDryRun = (
     if (!destChain) {
       // Exchange fee comes from the final destination result
       if (dryRunResult.destination && !dryRunResult.destination.success && requireHopsSuccess) {
-        throw new DryRunFailedError(
-          `Exchange (destination) failed: ${dryRunResult.destination.failureReason || 'Unknown reason'}`
-        )
+        throw new DryRunFailedError(dryRunResult.destination.dryRunError, 'Exchange (destination):')
       }
       if (dryRunResult.destination && dryRunResult.destination.success) {
         fees.exchangeFee = padValueBy(dryRunResult.destination.fee, FEE_PADDING_PERCENTAGE)
@@ -109,9 +107,7 @@ const extractFeesFromDryRun = (
       // Normal case: exchange is an intermediate hop
       const exchangeHop = hops[exchangeHopIndex]
       if (requireHopsSuccess && !exchangeHop.result.success) {
-        throw new DryRunFailedError(
-          `Exchange hop failed: ${exchangeHop.result.failureReason || 'Unknown reason'}`
-        )
+        throw new DryRunFailedError(exchangeHop.result.dryRunError, 'Exchange hop:')
       }
       if (exchangeHop.result.success) {
         fees.exchangeFee = padValueBy(exchangeHop.result.fee, FEE_PADDING_PERCENTAGE)
@@ -119,9 +115,7 @@ const extractFeesFromDryRun = (
     }
   } else {
     if (!dryRunResult.origin.success) {
-      throw new DryRunFailedError(
-        `Origin dry run failed: ${dryRunResult.origin.failureReason || 'Unknown reason'}`
-      )
+      throw new DryRunFailedError(dryRunResult.origin.dryRunError, 'Origin:')
     }
     // There is no exchange fee if origin is exchange, because jit_withdraw is used
     fees.exchangeFee = 0n
@@ -131,9 +125,7 @@ const extractFeesFromDryRun = (
   if (exchangeHopIndex > 0) {
     const hopBeforeExchange = hops[exchangeHopIndex - 1]
     if (requireHopsSuccess && !hopBeforeExchange.result.success) {
-      throw new DryRunFailedError(
-        `Hop before exchange failed: ${hopBeforeExchange.result.failureReason || 'Unknown reason'}`
-      )
+      throw new DryRunFailedError(hopBeforeExchange.result.dryRunError, 'Hop before exchange:')
     }
     if (hopBeforeExchange.result.success) {
       fees.originReserveFee = padValueBy(hopBeforeExchange.result.fee, FEE_PADDING_PERCENTAGE)
@@ -143,9 +135,7 @@ const extractFeesFromDryRun = (
     // the last hop is the origin reserve fee (before reaching exchange destination)
     const lastHop = hops[hops.length - 1]
     if (requireHopsSuccess && !lastHop.result.success) {
-      throw new DryRunFailedError(
-        `Origin reserve hop failed: ${lastHop.result.failureReason || 'Unknown reason'}`
-      )
+      throw new DryRunFailedError(lastHop.result.dryRunError, 'Origin reserve hop:')
     }
     if (lastHop.result.success) {
       fees.originReserveFee = padValueBy(lastHop.result.fee, FEE_PADDING_PERCENTAGE)
@@ -157,9 +147,7 @@ const extractFeesFromDryRun = (
   if (destChain && exchangeHopIndex < hops.length - 1) {
     const hopAfterExchange = hops[exchangeHopIndex + 1]
     if (requireHopsSuccess && !hopAfterExchange.result.success) {
-      throw new DryRunFailedError(
-        `Hop after exchange failed: ${hopAfterExchange.result.failureReason || 'Unknown reason'}`
-      )
+      throw new DryRunFailedError(hopAfterExchange.result.dryRunError, 'Hop after exchange:')
     }
     if (hopAfterExchange.result.success) {
       fees.destReserveFee = padValueBy(hopAfterExchange.result.fee, FEE_PADDING_PERCENTAGE)
@@ -287,7 +275,7 @@ export const handleSwapExecuteTransfer = async <
     tx: api.deserializeExtrinsics(initialCall)
   })
 
-  if (firstDryRunResult.failureReason === 'NotHoldingFees') {
+  if (firstDryRunResult.dryRunError?.reason === 'NotHoldingFees') {
     throw new AmountTooLowError(
       `Asset amount is too low to cover the fees, please increase the amount.`
     )

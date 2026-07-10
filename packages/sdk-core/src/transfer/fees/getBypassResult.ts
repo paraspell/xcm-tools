@@ -1,5 +1,5 @@
 import { AmountTooLowError } from '../../errors'
-import type { TTxFactory } from '../../types'
+import type { TDryRunError, TTxFactory } from '../../types'
 
 const MAX_INCREASE_RETRIES = 5
 const INCREASE_BUMP_STEP = 100
@@ -13,7 +13,7 @@ const FAILED_TO_TRANSACT_ASSET = 'FailedToTransactAsset'
 export const getBypassResultWithRetries = async <
   TApi,
   TRes,
-  TResult extends { failureReason?: string; failureSubReason?: string } | { dryRunError?: string }
+  TResult extends { dryRunError?: TDryRunError }
 >(
   options: { buildTx: TTxFactory<TRes> } & TApi,
   internalFn: (opts: { tx: TRes; useRootOrigin: boolean } & TApi) => Promise<TResult>,
@@ -21,12 +21,11 @@ export const getBypassResultWithRetries = async <
   maxRetries = MAX_INCREASE_RETRIES,
   bumpStep = INCREASE_BUMP_STEP
 ): Promise<TResult> => {
-  const getResultError = (res: TResult): string | undefined =>
-    'failureReason' in res ? res.failureReason : 'dryRunError' in res ? res.dryRunError : undefined
+  const getResultError = (res: TResult): string | undefined => res.dryRunError?.reason
 
   const isFailedToTransact = (res: TResult): boolean =>
-    ('failureReason' in res && res.failureReason === FAILED_TO_TRANSACT_ASSET) ||
-    ('failureSubReason' in res && res.failureSubReason === FAILED_TO_TRANSACT_ASSET)
+    res.dryRunError?.reason === FAILED_TO_TRANSACT_ASSET ||
+    res.dryRunError?.subReason === FAILED_TO_TRANSACT_ASSET
 
   const isAmountTooLow = (e: unknown): e is AmountTooLowError => e instanceof AmountTooLowError
 

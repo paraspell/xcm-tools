@@ -727,6 +727,7 @@ describe('Builder', () => {
   describe('Dry run', () => {
     it('should dry run a normal transfer', async () => {
       vi.mocked(buildDryRun).mockResolvedValue({
+        success: true,
         origin: {
           success: true,
           fee: 1000n,
@@ -749,6 +750,7 @@ describe('Builder', () => {
         .dryRun()
 
       expect(result).toEqual({
+        success: true,
         origin: {
           success: true,
           fee: 1000n,
@@ -766,6 +768,7 @@ describe('Builder', () => {
 
     it('should dry run preview', async () => {
       const mockDryRunResult = {
+        success: true,
         origin: {
           success: true,
           fee: 1000n,
@@ -796,6 +799,7 @@ describe('Builder', () => {
 
     it('should dry run preview with swapOptions via executeWithSwap', async () => {
       const mockDryRunResult: TDryRunResult = {
+        success: true,
         origin: {
           success: true,
           fee: 500n,
@@ -836,6 +840,7 @@ describe('Builder', () => {
 
     it('should dry run with swapOptions via executeWithSwap', async () => {
       const mockDryRunResult: TDryRunResult = {
+        success: true,
         origin: {
           success: true,
           fee: 500n,
@@ -1316,6 +1321,7 @@ describe('Builder', () => {
       vi.resetAllMocks()
       vi.mocked(createTransferOrSwap).mockResolvedValue(mockTx)
       vi.mocked(buildDryRun).mockResolvedValue({
+        success: true,
         origin: {
           success: true,
           fee: 1000n,
@@ -1390,8 +1396,7 @@ describe('Builder', () => {
     it('should throw DryRunFailedError when dryRun reports a failure', async () => {
       vi.mocked(isConfig).mockReturnValue(true)
       vi.mocked(buildDryRun).mockResolvedValue({
-        failureReason: 'Bad XCM format',
-        failureChain: CHAIN_2
+        dryRunError: { reason: 'Bad XCM format', chain: CHAIN_2 }
       } as TDryRunResult)
       vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
         abstractDecimals: true,
@@ -1408,7 +1413,7 @@ describe('Builder', () => {
 
       await expect(buildPromise).rejects.toBeInstanceOf(DryRunFailedError)
       await expect(buildPromise).rejects.toMatchObject({
-        reason: 'Bad XCM format',
+        dryRunError: { reason: 'Bad XCM format' },
         message: `XCM format check failed. Dry run on ${CHAIN_2} failed: Bad XCM format`
       })
     })

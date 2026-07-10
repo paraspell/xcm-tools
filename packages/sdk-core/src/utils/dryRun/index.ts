@@ -1,2 +1,2 @@
-export * from './getFailingInstruction'
+export * from './getErrorInstruction'
 export * from './resolveModuleError'

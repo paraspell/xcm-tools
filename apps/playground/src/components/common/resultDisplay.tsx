@@ -75,9 +75,7 @@ export type TResultView =
 
 export const isResultViewFailure = (view: TResultView): boolean => {
   if (view.variant === 'transferInfo') return false;
-  if (view.variant === 'originXcmFee')
-    return view.result.dryRunError !== undefined;
-  return view.result.failureReason !== undefined;
+  return view.result.dryRunError !== undefined;
 };
 
 export const rawJsonStyles = {

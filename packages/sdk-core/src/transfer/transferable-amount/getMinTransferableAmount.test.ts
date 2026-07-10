@@ -78,7 +78,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.clearAllMocks()
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
-    vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
+    vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
   })
 
@@ -105,6 +105,7 @@ describe('getMinTransferableAmountInternal', () => {
 
     // origin fee (USDT, paid by the fee asset) = 2; destination fee (USDT) = 7
     vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
       origin: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
       hops: [],
       destination: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 7n, feeType: 'dryRun' }
@@ -148,12 +149,16 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
       origin: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
       hops: [],
       destination: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 7n, feeType: 'dryRun' }
     })
     buildInternal.mockResolvedValue({})
-    vi.mocked(dryRunInternal).mockResolvedValue({ failureReason: 'failed' } as TDryRunResult)
+    vi.mocked(dryRunInternal).mockResolvedValue({
+      success: false,
+      dryRunError: { reason: 'failed' }
+    } as TDryRunResult)
 
     const res = await mod.getMinTransferableAmountInternal({
       ...baseOptions,
@@ -241,6 +246,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(999n) // ignored due to balance>0
     vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
       origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 5n, feeType: 'dryRun' },
       hops: [],
       destination: {} as TXcmFeeDetail
@@ -274,12 +280,14 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
       origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 1n, feeType: 'dryRun' },
       hops: [],
       destination: {} as TXcmFeeDetail
     })
     vi.mocked(dryRunInternal).mockResolvedValue({
-      failureReason: 'Nope'
+      success: false,
+      dryRunError: { reason: 'Nope' }
     } as TDryRunResult)
 
     const res = await mod.getMinTransferableAmountInternal({
@@ -354,7 +362,7 @@ describe('getMinTransferableAmount', () => {
       hops: [],
       destination: undefined
     } as unknown as TGetXcmFeeResult)
-    vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
+    vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
     vi.mocked(resolveCurrency).mockReturnValue({
       assets: [{ symbol: 'A', decimals: 10, amount: 100n } as WithAmount<TAssetInfo>],
       asset: { symbol: 'A', decimals: 10, amount: 100n } as WithAmount<TAssetInfo>

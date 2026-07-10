@@ -155,7 +155,9 @@ describe('getRouterFees', () => {
 
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
 
-      vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Filtered', 'origin'));
+      vi.mocked(getXcmFee).mockRejectedValueOnce(
+        new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin' }),
+      );
 
       const result = await getRouterFees(assetHubDex, options, false);
 
@@ -169,8 +171,8 @@ describe('getRouterFees', () => {
       const result = await getRouterFees(dex, options, false);
 
       expect(result).toEqual<TGetXcmFeeResult>({
-        failureReason: undefined,
-        failureChain: undefined,
+        success: true,
+        dryRunError: undefined,
         origin: { ...swapFee, isExchange: true },
         destination: { ...swapFee, isExchange: true, fee: 0n },
         hops: [],
@@ -204,8 +206,8 @@ describe('getRouterFees', () => {
       const result = await getRouterFees(dex, options, false);
 
       expect(result).toEqual<TGetXcmFeeResult>({
-        failureReason: undefined,
-        failureChain: undefined,
+        success: true,
+        dryRunError: undefined,
         origin: toExchangeFeeValue.origin,
         destination: toDestFeeValue.destination,
         hops: [
@@ -227,15 +229,14 @@ describe('getRouterFees', () => {
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
       const failedToExchangeFee = {
         ...toExchangeFeeValue,
-        failureReason: 'InsufficientBalance',
-        failureChain: 'origin',
+        dryRunError: { reason: 'InsufficientBalance', chainKind: 'origin' },
       } as TGetXcmFeeResult<false>;
       vi.mocked(getToExchangeFee).mockResolvedValue(failedToExchangeFee);
 
       const result = await getRouterFees(dex, options, false);
 
-      expect(result.failureReason).toBe('InsufficientBalance');
-      expect(result.failureChain).toBe('origin');
+      expect(result.dryRunError?.reason).toBe('InsufficientBalance');
+      expect(result.dryRunError?.chainKind).toBe('origin');
     });
   });
 
@@ -286,7 +287,9 @@ describe('getRouterFees', () => {
       unknown
     >;
 
-    vi.mocked(getXcmFee).mockRejectedValueOnce(new DryRunFailedError('Other', 'origin'));
+    vi.mocked(getXcmFee).mockRejectedValueOnce(
+      new DryRunFailedError({ reason: 'Other', chainKind: 'origin' }),
+    );
 
     await expect(getRouterFees(assetHubDex, localOptions, false)).rejects.toBeInstanceOf(
       DryRunFailedError,
@@ -450,7 +453,8 @@ describe('getRouterFees', () => {
     >;
 
     vi.mocked(getXcmFee).mockResolvedValue({
-      failureReason: 'NoDeal',
+      success: false,
+      dryRunError: { reason: 'NoDeal' },
       hops: [],
       origin: {
         fee: 0n,

@@ -2,6 +2,7 @@ import type {
   TAssetInfo,
   TChain,
   TDryRunChainResult,
+  TDryRunError,
   TDryRunResult,
   TFeeType,
   TGetXcmFeeResult,
@@ -22,10 +23,7 @@ export type TStop = {
   forwardedXcms?: unknown;
   sufficient?: boolean;
   feeType?: TFeeType;
-  failureReason?: string;
-  failureSubReason?: string;
-  failureIndex?: number;
-  failureInstruction?: object;
+  dryRunError?: TDryRunError;
 };
 
 type TStopData = Omit<TStop, 'key' | 'role' | 'chain'>;
@@ -45,10 +43,7 @@ const normalizeDryRunStop = (result: TDryRunChainResult): TStopData =>
         success: false,
         isExchange: result.isExchange,
         asset: result.asset,
-        failureReason: result.failureReason,
-        failureSubReason: result.failureSubReason,
-        failureIndex: result.failureIndex,
-        failureInstruction: result.failureInstruction,
+        dryRunError: result.dryRunError,
       };
 
 const normalizeFeeStop = (result: TXcmFeeDetail): TStopData => ({
@@ -59,10 +54,7 @@ const normalizeFeeStop = (result: TXcmFeeDetail): TStopData => ({
   weight: result.weight,
   sufficient: result.sufficient,
   feeType: result.feeType,
-  failureReason: result.dryRunError,
-  failureSubReason: result.dryRunSubError,
-  failureIndex: result.dryRunErrorIndex,
-  failureInstruction: result.dryRunErrorInstruction,
+  dryRunError: result.dryRunError,
 });
 
 export const buildDryRunStops = (

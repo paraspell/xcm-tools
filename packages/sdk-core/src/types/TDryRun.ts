@@ -137,10 +137,10 @@ export type TDryRunChainSuccess = TDryRunResBase & {
   destParaId?: number
 }
 
-export type TDryRunChainFailure = TDryRunResBase &
-  TDryRunError & {
-    success: false
-  }
+export type TDryRunChainFailure = TDryRunResBase & {
+  success: false
+  dryRunError: TDryRunError
+}
 
 export type TDryRunChainResult = TDryRunChainSuccess | TDryRunChainFailure
 
@@ -149,13 +149,16 @@ export type THopInfo = {
   result: TDryRunChainResult
 }
 
-export type TChainEndpoint = 'origin' | 'destination' | TChain
+export type TDryRunChainKind = 'origin' | 'destination' | 'hop'
 
-export type TDryRunFailureInfo = Partial<TDryRunError> & {
-  failureChain?: TChainEndpoint
+export type TDryRunFailure = TDryRunError & {
+  chainKind?: TDryRunChainKind
+  chain?: TChain
 }
 
-export type TDryRunResult = TDryRunFailureInfo & {
+export type TDryRunResult = {
+  success: boolean
+  dryRunError?: TDryRunFailure
   origin: TDryRunChainResult
   destination?: TDryRunChainResult
   hops: THopInfo[]
@@ -331,8 +334,8 @@ export type TModuleError = {
 }
 
 export type TDryRunError = {
-  failureReason: string
-  failureSubReason?: string
-  failureIndex?: number
-  failureInstruction?: object
+  reason: string
+  subReason?: string
+  instructionIndex?: number
+  instruction?: object
 }

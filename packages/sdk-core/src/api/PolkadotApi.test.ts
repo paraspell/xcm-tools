@@ -106,14 +106,14 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   getDryRunCall = (): Promise<TDryRunChainResult> =>
     Promise.resolve({
       success: false as const,
-      failureReason: 'stub',
+      dryRunError: { reason: 'stub' },
       asset: { decimals: 0, symbol: '', location: { parents: 0, interior: 'Here' as const } }
     })
 
   getDryRunXcm = (): Promise<TDryRunChainResult> =>
     Promise.resolve({
       success: false as const,
-      failureReason: 'stub',
+      dryRunError: { reason: 'stub' },
       asset: { decimals: 0, symbol: '', location: { parents: 0, interior: 'Here' as const } }
     })
 

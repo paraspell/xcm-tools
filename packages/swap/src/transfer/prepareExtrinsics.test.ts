@@ -260,7 +260,7 @@ describe('prepareExtrinsics', () => {
 
     vi.mocked(handleSwapExecuteTransfer).mockImplementation((params) => {
       capturedCalculateMinAmountOut = params.calculateMinAmountOut;
-      throw new DryRunFailedError('Filtered', 'origin');
+      throw new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin' });
     });
 
     mockBuildTo.mockResolvedValue('toExchangeTx');

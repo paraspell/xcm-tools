@@ -25,6 +25,7 @@ describe('getXcmFees', () => {
       location: { parents: 1, interior: 'Here' },
     };
     const mockFeeResult: TGetXcmFeeResult = {
+      success: true,
       origin: { fee: 10n, feeType: 'dryRun', asset: mockAsset },
       hops: [],
       destination: { fee: 5n, feeType: 'dryRun', asset: mockAsset },

@@ -8,7 +8,7 @@ import type {
 import type { TChain, TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
-import type { TChainEndpoint, TSwapConfig } from './TDryRun'
+import type { TDryRunError, TDryRunFailure, TSwapConfig } from './TDryRun'
 import type { TWeight } from './TTransfer'
 
 export type TXcmFeeSwapConfig = TSwapConfig & { amountOut: bigint }
@@ -171,10 +171,7 @@ type TXcmFeeBase = {
 export type TXcmFeeDetailSuccess = TXcmFeeBase & {
   fee: bigint
   feeType: TFeeType
-  dryRunError?: string
-  dryRunSubError?: string
-  dryRunErrorIndex?: number
-  dryRunErrorInstruction?: object
+  dryRunError?: TDryRunError
 }
 
 export type TXcmFeeDetailWithFallback = TXcmFeeDetailSuccess
@@ -182,10 +179,7 @@ export type TXcmFeeDetailWithFallback = TXcmFeeDetailSuccess
 export type TXcmFeeDetailError = TXcmFeeBase & {
   fee?: bigint
   feeType?: TFeeType
-  dryRunError: string
-  dryRunSubError?: string
-  dryRunErrorIndex?: number
-  dryRunErrorInstruction?: object
+  dryRunError: TDryRunError
 }
 
 export type TXcmFeeDetail = TXcmFeeDetailSuccess | TXcmFeeDetailError
@@ -194,10 +188,7 @@ export type TXcmFeeHopResult = {
   fee?: bigint
   feeType?: TFeeType
   sufficient?: boolean
-  dryRunError?: string
-  dryRunSubError?: string
-  dryRunErrorIndex?: number
-  dryRunErrorInstruction?: object
+  dryRunError?: TDryRunError
   forwardedXcms?: any
   destParaId?: number
   asset: TAssetInfo
@@ -223,10 +214,8 @@ export type TXcmFeeHopInfo = {
 }
 
 export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
-  failureReason?: string
-  failureIndex?: number
-  failureInstruction?: object
-  failureChain?: TChainEndpoint
+  success: boolean
+  dryRunError?: TDryRunFailure
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
   hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]
