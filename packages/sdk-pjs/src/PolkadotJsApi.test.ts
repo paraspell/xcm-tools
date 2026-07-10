@@ -753,6 +753,30 @@ describe('PolkadotJsApi', () => {
       queryRuntimeSpy.mockRestore()
     })
 
+    it('resolves the delivery fee from a V5 versioned result', async () => {
+      const forwardedXcm0 = { some: 'xcm0' }
+      const forwardedXcm1 = { some: 'xcm1' }
+      const forwardedXcm: unknown[] = [forwardedXcm0, [forwardedXcm1]]
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).mockResolvedValueOnce({
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            v5: [{ fun: { fungible: '304850000' } }]
+          }
+        })
+      })
+
+      const fee = await polkadotApi.getDeliveryFee(
+        'AssetHubPolkadot',
+        forwardedXcm,
+        dotAsset,
+        dotAsset.location,
+        Version.V5
+      )
+
+      expect(fee).toBe(304850000n)
+    })
+
     it('rethrows errors from queryDeliveryFees when not an arity mismatch', async () => {
       const forwardedXcm0 = { some: 'xcm0' }
       const forwardedXcm1 = { some: 'xcm1' }

@@ -582,9 +582,13 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const deliveryFeeResJson = deliveryFeeRes?.toJSON()
 
+    const versionedAssets = deliveryFeeResJson?.ok
+      ? Object.values(deliveryFeeResJson.ok)[0]
+      : undefined
+
     const deliveryFeeResolved =
-      deliveryFeeRes && (deliveryFeeResJson.ok?.v4 ?? deliveryFeeResJson.ok?.v3)?.length > 0
-        ? BigInt((deliveryFeeResJson?.ok?.v4 ?? deliveryFeeResJson?.ok?.v3)?.[0]?.fun?.fungible)
+      Array.isArray(versionedAssets) && versionedAssets.length > 0
+        ? BigInt(versionedAssets[0]?.fun?.fungible)
         : 0n
 
     const nativeAsset = this.findNativeAssetInfoOrThrow(chain)
