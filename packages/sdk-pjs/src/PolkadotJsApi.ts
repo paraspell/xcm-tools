@@ -49,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { getFailingInstruction, resolveModuleError } from '@paraspell/sdk-core'
+import { buildDryRunError, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
@@ -336,12 +336,12 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       }
       const otherErrHuman = resultHuman?.Ok?.executionResult?.Err?.error?.Other
       if (otherErrHuman) {
-        return { failureReason: String(otherErrHuman) }
+        return { reason: String(otherErrHuman) }
       }
 
       const secondErrHuman = resultHuman?.Ok?.executionResult?.Err?.error
       if (secondErrHuman) {
-        return { failureReason: String(secondErrHuman) }
+        return { reason: String(secondErrHuman) }
       }
 
       const execErrJson = resultJson?.ok?.executionResult?.err?.error
@@ -349,7 +349,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         return resolveModuleError(chain, execErrJson.module as TModuleError)
       }
       if (execErrJson?.other) {
-        return { failureReason: String(execErrJson.other) }
+        return { reason: String(execErrJson.other) }
       }
       const erroredEvent = findFailingEventInResult(resultHuman)
       if (erroredEvent) {
@@ -358,11 +358,11 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
           return resolveModuleError(chain, err.Module as TModuleError)
         }
         if (err) {
-          return { failureReason: typeof err === 'string' ? err : JSON.stringify(err) }
+          return { reason: typeof err === 'string' ? err : JSON.stringify(err) }
         }
       }
 
-      return { failureReason: JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error') }
+      return { reason: JSON.stringify(resultJson ?? resultHuman ?? 'Unknown error') }
     }
 
     // Attempt 1: WITHOUT version
@@ -370,7 +370,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     let resultHuman: any
     let resultJson: any
     let isSuccess = false
-    let failureErr: TDryRunError = { failureReason: '' }
+    let failureErr: TDryRunError = { reason: '' }
     let shouldRetryWithVersion = false
 
     try {
@@ -381,7 +381,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
       if (!isSuccess) {
         failureErr = extractFailureReasonFromResult(resultHuman, resultJson)
-        if (failureErr.failureReason === 'VersionedConversionFailed') {
+        if (failureErr.reason === 'VersionedConversionFailed') {
           shouldRetryWithVersion = true
         }
       }
@@ -390,7 +390,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       if (msg.includes('Expected 3 arguments')) {
         shouldRetryWithVersion = true
       } else {
-        return { success: false, failureReason: msg, asset: resolvedFeeAsset.asset }
+        return { success: false, dryRunError: { reason: msg }, asset: resolvedFeeAsset.asset }
       }
     }
 
@@ -409,13 +409,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         failureErr = failureErr || msg
         return {
           success: false,
-          failureReason: failureErr.failureReason,
-          failureSubReason: failureErr.failureSubReason,
-          failureIndex: failureErr.failureIndex,
-          failureInstruction: getFailingInstruction(
-            resultJson?.ok?.local_xcm,
-            failureErr.failureIndex
-          ),
+          dryRunError: buildDryRunError(failureErr, resultJson?.ok?.local_xcm),
           asset: resolvedFeeAsset.asset
         }
       }
@@ -424,12 +418,9 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!isSuccess) {
       return {
         success: false,
-        failureReason: failureErr.failureReason || 'Unknown error',
-        failureSubReason: failureErr.failureSubReason,
-        failureIndex: failureErr.failureIndex,
-        failureInstruction: getFailingInstruction(
-          resultJson?.ok?.local_xcm,
-          failureErr.failureIndex
+        dryRunError: buildDryRunError(
+          { ...failureErr, reason: failureErr.reason || 'Unknown error' },
+          resultJson?.ok?.local_xcm
         ),
         asset: resolvedFeeAsset.asset
       }
@@ -689,14 +680,12 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       const execRes = result.Ok?.executionResult
       const error = execRes?.Incomplete?.error ?? execRes?.Error?.error
       const isInstructionError = typeof error !== 'string'
-      const failureReason = isInstructionError ? error.error : error
-      const failureIndex =
+      const reason = isInstructionError ? error.error : error
+      const instructionIndex =
         isInstructionError && error?.index != null ? Number(error.index) : undefined
       return {
         success: false,
-        failureReason,
-        failureIndex,
-        failureInstruction: getFailingInstruction(xcm, failureIndex),
+        dryRunError: buildDryRunError({ reason, instructionIndex }, xcm),
         asset
       }
     }
@@ -763,7 +752,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!feeEvent) {
       return Promise.resolve({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found',
+        dryRunError: { reason: 'Cannot determine destination fee. No Issued event found' },
         asset
       })
     }

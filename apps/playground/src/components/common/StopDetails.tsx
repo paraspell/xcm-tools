@@ -98,9 +98,9 @@ export const StopDetails: FC<{ stop: TStop }> = ({ stop }) => {
   }
 
   const failureDetail = [
-    stop.failureSubReason,
-    stop.failureIndex !== undefined
-      ? `at instruction #${stop.failureIndex}`
+    stop.dryRunError?.subReason,
+    stop.dryRunError?.instructionIndex !== undefined
+      ? `at instruction #${stop.dryRunError.instructionIndex}`
       : undefined,
   ]
     .filter(Boolean)
@@ -109,7 +109,7 @@ export const StopDetails: FC<{ stop: TStop }> = ({ stop }) => {
   return (
     <Stack gap={6} mt={4}>
       <Badge color="red" variant="light" radius="sm" tt="none" w="fit-content">
-        {stop.failureReason}
+        {stop.dryRunError?.reason}
       </Badge>
       {failureDetail && (
         <Text size="xs" c="dimmed">
@@ -117,7 +117,7 @@ export const StopDetails: FC<{ stop: TStop }> = ({ stop }) => {
         </Text>
       )}
       {feeRow}
-      {stop.failureInstruction !== undefined && (
+      {stop.dryRunError?.instruction !== undefined && (
         <>
           <Button
             variant="subtle"
@@ -131,7 +131,11 @@ export const StopDetails: FC<{ stop: TStop }> = ({ stop }) => {
           </Button>
           <Collapse expanded={instructionOpened}>
             <CodeHighlight
-              code={JSON.stringify(stop.failureInstruction, replaceBigInt, 2)}
+              code={JSON.stringify(
+                stop.dryRunError?.instruction,
+                replaceBigInt,
+                2,
+              )}
               language="ts"
               styles={rawJsonStyles}
             />

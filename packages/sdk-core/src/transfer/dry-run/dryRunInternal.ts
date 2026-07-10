@@ -11,7 +11,7 @@ import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveCurrency, resolveHopAsset } from '../utils'
 import { inferFeeAsset } from '../utils/inferFeeAsset'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
-import { getFailureInfo } from './getFailureInfo'
+import { getDryRunError } from './getDryRunError'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -59,10 +59,8 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
 
   if (!originDryRun.success) {
     return {
-      failureReason: originDryRun.failureReason,
-      failureSubReason: originDryRun.failureSubReason,
-      failureInstruction: originDryRun.failureInstruction,
-      failureChain: 'origin',
+      success: false,
+      dryRunError: { chainKind: 'origin', ...originDryRun.dryRunError },
       origin: originDryRun,
       hops: []
     }
@@ -113,7 +111,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       return {
         success: false,
         asset: currentAsset,
-        failureReason: `DryRunApi is not available on chain ${currentChain}`
+        dryRunError: { reason: `DryRunApi is not available on chain ${currentChain}` }
       }
     }
 
@@ -188,14 +186,17 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     }
   }
 
-  const result: TDryRunResult = {
+  const result = {
     origin: originDryModified,
     destination: traversalResult.destination,
     hops: traversalResult.hops
   }
 
+  const dryRunError = getDryRunError(result)
+
   return {
-    ...getFailureInfo(result),
+    success: !dryRunError,
+    dryRunError,
     ...result
   }
 }

@@ -1376,7 +1376,7 @@ describe('PapiApi', () => {
       )
       expect(result).toEqual({
         success: false,
-        failureReason: 'SomeOtherErrorAfterRetry',
+        dryRunError: { reason: 'SomeOtherErrorAfterRetry' },
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1414,7 +1414,7 @@ describe('PapiApi', () => {
       )
       expect(result).toEqual({
         success: false,
-        failureReason: 'NotVersionedConversion',
+        dryRunError: { reason: 'NotVersionedConversion' },
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1449,7 +1449,7 @@ describe('PapiApi', () => {
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'DirectTypeError',
+        dryRunError: { reason: 'DirectTypeError' },
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1480,7 +1480,7 @@ describe('PapiApi', () => {
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'ShortErrorType',
+        dryRunError: { reason: 'ShortErrorType' },
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -1528,8 +1528,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'Module',
-        failureSubReason: 'Token',
+        dryRunError: { reason: 'Module', subReason: 'Token' },
         asset: nativeAsset
       })
     })
@@ -1574,9 +1573,11 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'LocalExecutionIncompleteWithError',
-        failureSubReason: 'UnknownClaim',
-        failureIndex: 3,
+        dryRunError: {
+          reason: 'LocalExecutionIncompleteWithError',
+          subReason: 'UnknownClaim',
+          instructionIndex: 3
+        },
         asset: nativeAsset
       })
     })
@@ -1630,7 +1631,7 @@ describe('PapiApi', () => {
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'DispatchError',
+        dryRunError: { reason: 'DispatchError' },
         asset: nativeAsset
       })
     })
@@ -1708,7 +1709,7 @@ describe('PapiApi', () => {
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: JSON.stringify(mockApiResponse.value),
+        dryRunError: { reason: JSON.stringify(mockApiResponse.value) },
         asset: { symbol: 'GLMR' } as TAssetInfo
       })
     })
@@ -2081,7 +2082,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'SomeXcmError',
+        dryRunError: { reason: 'SomeXcmError' },
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -2113,7 +2114,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'Incomplete',
+        dryRunError: { reason: 'Incomplete' },
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -2144,7 +2145,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: JSON.stringify(mockApiResponse.value),
+        dryRunError: { reason: JSON.stringify(mockApiResponse.value) },
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })
@@ -2331,7 +2332,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'SomeXcmError',
+        dryRunError: { reason: 'SomeXcmError' },
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
     })
@@ -2369,8 +2370,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'NotHoldingFees',
-        failureIndex: 2,
+        dryRunError: { reason: 'NotHoldingFees', instructionIndex: 2 },
         asset: { symbol: 'AUSD' } as TAssetInfo
       })
     })
@@ -2574,7 +2574,7 @@ describe('PapiApi', () => {
         } as TDryRunXcmBaseOptions<TPapiTransaction>)
       ).toEqual({
         success: false,
-        failureReason: 'Cannot determine destination fee. No fee event found',
+        dryRunError: { reason: 'Cannot determine destination fee. No fee event found' },
         asset: { symbol: 'USDT' } as TAssetInfo
       })
     })

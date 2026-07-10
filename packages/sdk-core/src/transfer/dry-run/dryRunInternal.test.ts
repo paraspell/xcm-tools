@@ -61,7 +61,7 @@ afterEach(() => vi.resetAllMocks())
 
 describe('dryRunInternal', () => {
   it('returns only origin result when origin dry-run fails', async () => {
-    const originFail = { success: false, failureReason: 'someError' }
+    const originFail = { success: false, dryRunError: { reason: 'someError' } }
     const api = createFakeApi(originFail)
     const findAssetInfoOrThrowSpy = vi.spyOn(api, 'findAssetInfoOrThrow')
     findAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
@@ -69,8 +69,8 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
-      failureReason: 'someError',
-      failureChain: 'origin',
+      success: false,
+      dryRunError: { chainKind: 'origin', reason: 'someError' },
       origin: originFail,
       hops: []
     })
@@ -107,6 +107,7 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
+      success: true,
       origin: { ...originOk, asset: acaAsset },
       destination: { success: true, fee: 2_000n, asset: acaAsset },
       hops: []
@@ -209,6 +210,7 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
+      success: true,
       origin: { ...originOk, asset: acaAsset },
       destination: { success: true, fee: 4_000n, asset: acaAsset },
       hops: [
@@ -234,7 +236,7 @@ describe('dryRunInternal', () => {
 
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [],
-      destination: { success: false, failureReason: 'dest-boom' }
+      destination: { success: false, dryRunError: { reason: 'dest-boom' } }
     })
 
     const api = createFakeApi(originOk)
@@ -243,10 +245,10 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
-      failureReason: 'dest-boom',
-      failureChain: 'destination',
+      success: false,
+      dryRunError: { chainKind: 'destination', reason: 'dest-boom' },
       origin: { ...originOk, asset: { symbol: 'ACA' } },
-      destination: { success: false, failureReason: 'dest-boom' },
+      destination: { success: false, dryRunError: { reason: 'dest-boom' } },
       hops: []
     })
   })
@@ -298,6 +300,7 @@ describe('dryRunInternal', () => {
     )
 
     expect(res).toEqual({
+      success: true,
       origin: { ...originOk, asset: { symbol: 'ACA' } },
       destination: { success: true, fee: 4_000n, asset: { symbol: 'ACA' } },
       hops: [
@@ -491,7 +494,7 @@ describe('dryRunInternal', () => {
         const mockHopApi = {
           getDryRunXcm: vi.fn().mockResolvedValue({
             success: false,
-            failureReason: 'Hop simulation failed'
+            dryRunError: { reason: 'Hop simulation failed' }
           })
         } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -522,8 +525,8 @@ describe('dryRunInternal', () => {
       hasDryRunSupportSpy.mockReturnValue(true)
       const res = await dryRunInternal(createOptions(api))
 
-      expect(res.failureReason).toBe('Hop simulation failed')
-      expect(res.failureChain).toBe('AssetHubPolkadot')
+      expect(res.dryRunError?.reason).toBe('Hop simulation failed')
+      expect(res.dryRunError?.chain).toBe('AssetHubPolkadot')
     })
 
     it('handles bridge hub fee update when fees differ', async () => {
@@ -581,7 +584,7 @@ describe('dryRunInternal', () => {
 
       const failedBridgeHubResult = {
         success: false,
-        failureReason: 'BridgeHub failed'
+        dryRunError: { reason: 'BridgeHub failed' }
       }
 
       vi.mocked(traverseXcmHops).mockResolvedValue({
@@ -603,7 +606,7 @@ describe('dryRunInternal', () => {
       expect(res.hops?.[0].result).toEqual(failedBridgeHubResult)
     })
 
-    it('handles hop failure in getFailureInfo', async () => {
+    it('handles hop failure in getDryRunError', async () => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('ACA')
       vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
 
@@ -618,7 +621,7 @@ describe('dryRunInternal', () => {
         hops: [
           {
             chain: 'Quartz',
-            result: { success: false, failureReason: 'Custom hop failed' }
+            result: { success: false, dryRunError: { reason: 'Custom hop failed' } }
           }
         ]
       })
@@ -628,8 +631,8 @@ describe('dryRunInternal', () => {
       findAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
       const res = await dryRunInternal(createOptions(api))
 
-      expect(res.failureReason).toBe('Custom hop failed')
-      expect(res.failureChain).toBe('Quartz')
+      expect(res.dryRunError?.reason).toBe('Custom hop failed')
+      expect(res.dryRunError?.chain).toBe('Quartz')
     })
 
     it('handles feeAsset resolution', async () => {

@@ -101,7 +101,7 @@ export const handleExecuteTransfer = async <
   })
 
   if (!dryRunResult.origin.success) {
-    throw new DryRunFailedError(dryRunResult.failureReason as string)
+    throw new DryRunFailedError(dryRunResult.origin.dryRunError)
   }
 
   const originFeeEstimate = dryRunResult.origin.fee

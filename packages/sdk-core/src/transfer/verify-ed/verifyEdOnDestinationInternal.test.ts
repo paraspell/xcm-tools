@@ -223,14 +223,14 @@ describe('verifyEdOnDestinationInternal', () => {
           chain: 'AssetHubPolkadot',
           result: {
             fee: 500000000n,
-            dryRunError: hopError
+            dryRunError: { reason: hopError }
           }
         }
       ]
     } as TGetXcmFeeResult<boolean>)
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
-      new DryRunFailedError(hopError, 'AssetHubPolkadot')
+      new DryRunFailedError({ reason: hopError })
     )
   })
 

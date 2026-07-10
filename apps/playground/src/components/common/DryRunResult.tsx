@@ -72,7 +72,7 @@ export const DryRunResult: FC<Props> = (props) => {
   const hasFailure =
     failedStop !== undefined ||
     (props.variant !== 'originXcmFee' &&
-      props.result.failureReason !== undefined);
+      props.result.dryRunError !== undefined);
   const hasPaymentInfo = stops.some((stop) => stop.feeType === 'paymentInfo');
 
   const title = getResultTitle(variant);
@@ -85,8 +85,8 @@ export const DryRunResult: FC<Props> = (props) => {
       ? ` on ${failedStop.chain}`
       : '';
 
-  const failReason = failedStop?.failureReason
-    ? ` due to ${failedStop.failureReason}`
+  const failReason = failedStop?.dryRunError?.reason
+    ? ` due to ${failedStop.dryRunError.reason}`
     : '';
 
   const getSubtitle = (): string => {

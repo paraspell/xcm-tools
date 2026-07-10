@@ -33,8 +33,7 @@ const createCallForReserve = async <TApi, TRes, TSigner>(
     useRootOrigin: true
   })
 
-  const success = !dryRunResult.failureReason
-  return { call: serialized, success }
+  return { call: serialized, success: dryRunResult.success }
 }
 
 /**

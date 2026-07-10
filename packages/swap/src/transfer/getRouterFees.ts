@@ -103,9 +103,11 @@ export const getRouterFees = async <
     ...(!origin && !destination && { fee: 0n }),
   };
 
+  const dryRunError = sendingChain?.dryRunError ?? receivingChain?.dryRunError;
+
   return {
-    failureReason: sendingChain?.failureReason ?? receivingChain?.failureReason,
-    failureChain: sendingChain?.failureChain ?? receivingChain?.failureChain,
+    success: !dryRunError,
+    dryRunError,
     origin: finalOrigin,
     destination: finalDestination,
     hops: mergedHops,

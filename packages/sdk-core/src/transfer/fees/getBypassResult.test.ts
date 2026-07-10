@@ -20,7 +20,7 @@ describe('getBypassResultWithRetries', () => {
     const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
     const internalFn = vi
       .fn()
-      .mockResolvedValueOnce({ dryRunError: 'retry-needed' })
+      .mockResolvedValueOnce({ dryRunError: { reason: 'retry-needed' } })
       .mockResolvedValueOnce({})
     await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined)
@@ -30,8 +30,8 @@ describe('getBypassResultWithRetries', () => {
     const buildTx = vi.fn((a?: string) => Promise.resolve({ a }))
     const internalFn = vi
       .fn()
-      .mockResolvedValueOnce({ dryRunError: 'x' })
-      .mockResolvedValueOnce({ dryRunError: 'y' })
+      .mockResolvedValueOnce({ dryRunError: { reason: 'x' } })
+      .mockResolvedValueOnce({ dryRunError: { reason: 'y' } })
       .mockResolvedValueOnce({})
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(res).toEqual({})
@@ -43,8 +43,8 @@ describe('getBypassResultWithRetries', () => {
     let call = 0
     const internalFn = vi.fn(() => {
       call += 1
-      if (call === 1) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
-      if (call < 5) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
+      if (call === 1) return Promise.resolve({ dryRunError: { reason: 'FailedToTransactAsset' } })
+      if (call < 5) return Promise.resolve({ dryRunError: { reason: 'FailedToTransactAsset' } })
       return Promise.resolve({})
     })
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
@@ -59,7 +59,7 @@ describe('getBypassResultWithRetries', () => {
     let call = 0
     const internalFn = vi.fn(() => {
       call += 1
-      if (call === 1) return Promise.resolve({ failureReason: 'FailedToTransactAsset' })
+      if (call === 1) return Promise.resolve({ dryRunError: { reason: 'FailedToTransactAsset' } })
       if (call === 2) return Promise.reject(new AmountTooLowError('low'))
       return Promise.resolve({})
     })
@@ -74,7 +74,9 @@ describe('getBypassResultWithRetries', () => {
   it('after exhausting reduced retries performs final attempt', async () => {
     const buildTx = vi.fn((a?: string, rel?: boolean) => Promise.resolve({ a, rel }))
     const responses = [
-      ...Array.from({ length: 6 }, () => ({ failureReason: 'FailedToTransactAsset' as const })),
+      ...Array.from({ length: 6 }, () => ({
+        dryRunError: { reason: 'FailedToTransactAsset' as const }
+      })),
       {}
     ]
     const internalFn = vi.fn(() => {

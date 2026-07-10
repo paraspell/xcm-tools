@@ -76,6 +76,7 @@ describe('computeAllFees', () => {
     }
 
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      success: true,
       origin: feeDetail,
       destination: { ...feeDetail, fee: 30n },
       hops: [
@@ -114,6 +115,7 @@ describe('computeAllFees', () => {
     }
 
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      success: true,
       origin: feeDetail,
       destination: { ...feeDetail, fee: 5n },
       hops: [

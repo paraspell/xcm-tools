@@ -148,7 +148,7 @@ describe('getSwapFee', () => {
   });
 
   it('includes dryRunError when getOriginXcmFee returns one', async () => {
-    const dryError = 'Dry run error';
+    const dryError = { reason: 'Dry run error' };
     vi.mocked(createSwapTx).mockResolvedValue({
       txs: ['dummyTx'],
       amountOut: 200n,

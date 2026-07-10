@@ -25,7 +25,11 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
 vi.mock('../utils/resolveHopAsset')
-vi.mock('../dry-run')
+vi.mock('../dry-run', async importActual => ({
+  ...(await importActual()),
+  traverseXcmHops: vi.fn(),
+  addEthereumBridgeFees: vi.fn()
+}))
 vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
 
@@ -78,7 +82,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
       ...xcmFeeResultbase,
       feeType: 'paymentInfo',
-      dryRunError: 'Simulation failed',
+      dryRunError: { reason: 'Simulation failed' },
       forwardedXcms: undefined,
       destParaId: undefined
     })
@@ -97,13 +101,13 @@ describe('getXcmFeeOnce', () => {
     const res = await getXcmFeeOnce(options)
 
     expect(res).toEqual({
-      failureReason: 'Simulation failed',
-      failureChain: 'origin',
+      success: false,
+      dryRunError: { reason: 'Simulation failed', chainKind: 'origin' },
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
         asset: { symbol: 'ACA', decimals: 12 },
-        dryRunError: 'Simulation failed'
+        dryRunError: { reason: 'Simulation failed' }
       },
       hops: [],
       destination: {
@@ -190,6 +194,7 @@ describe('getXcmFeeOnce', () => {
     const res = await getXcmFeeOnce(createOptions())
 
     expect(res).toEqual({
+      success: true,
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
@@ -234,6 +239,7 @@ describe('getXcmFeeOnce', () => {
     expect(getDestXcmFee).not.toHaveBeenCalled()
 
     expect(res).toEqual({
+      success: true,
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
@@ -287,6 +293,7 @@ describe('getXcmFeeOnce', () => {
     const res = await getXcmFeeOnce(createOptions())
 
     expect(res).toEqual({
+      success: true,
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
@@ -338,7 +345,7 @@ describe('getXcmFeeOnce', () => {
             fee: 3_000n,
             feeType: 'paymentInfo',
             asset: { symbol: 'DOT' },
-            dryRunError: 'Hop failed'
+            dryRunError: { reason: 'Hop failed' }
           }
         }
       ],
@@ -358,8 +365,8 @@ describe('getXcmFeeOnce', () => {
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
 
     expect(res).toEqual({
-      failureReason: 'Hop failed',
-      failureChain: 'AssetHubPolkadot',
+      success: false,
+      dryRunError: { reason: 'Hop failed', chain: 'AssetHubPolkadot', chainKind: 'hop' },
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',
@@ -372,7 +379,7 @@ describe('getXcmFeeOnce', () => {
             fee: 3_000n,
             feeType: 'paymentInfo',
             asset: { symbol: 'DOT' },
-            dryRunError: 'Hop failed'
+            dryRunError: { reason: 'Hop failed' }
           }
         }
       ],
@@ -709,7 +716,7 @@ describe('getXcmFeeOnce', () => {
             fee: 3_000n,
             feeType: 'paymentInfo',
             asset: { symbol: 'CUSTOM' },
-            dryRunError: 'Custom chain failed'
+            dryRunError: { reason: 'Custom chain failed' }
           }
         }
       ],
@@ -724,8 +731,8 @@ describe('getXcmFeeOnce', () => {
 
     const res = await getXcmFeeOnce(createOptions())
 
-    expect(res.failureChain).toBe('Quartz')
-    expect(res.failureReason).toBe('Custom chain failed')
+    expect(res.dryRunError?.chain).toBe('Quartz')
+    expect(res.dryRunError?.reason).toBe('Custom chain failed')
   })
 
   it('handles destination dry run error in failureChain detection', async () => {
@@ -749,7 +756,7 @@ describe('getXcmFeeOnce', () => {
         fee: 2_000n,
         feeType: 'paymentInfo',
         asset: { symbol: 'GLMR' },
-        dryRunError: 'Destination failed'
+        dryRunError: { reason: 'Destination failed' }
       }
     })
 
@@ -757,8 +764,8 @@ describe('getXcmFeeOnce', () => {
 
     const res = await getXcmFeeOnce(createOptions())
 
-    expect(res.failureChain).toBe('destination')
-    expect(res.failureReason).toBe('Destination failed')
+    expect(res.dryRunError?.chainKind).toBe('destination')
+    expect(res.dryRunError?.reason).toBe('Destination failed')
   })
 
   it('handles case where no failures occur', async () => {
@@ -789,8 +796,8 @@ describe('getXcmFeeOnce', () => {
 
     const res = await getXcmFeeOnce(createOptions())
 
-    expect(res.failureChain).toBeUndefined()
-    expect(res.failureReason).toBeUndefined()
+    expect(res.dryRunError?.chain).toBeUndefined()
+    expect(res.dryRunError?.reason).toBeUndefined()
   })
 
   it('handles case with no hops and traversal reaches destination successfully', async () => {
@@ -853,7 +860,7 @@ describe('getXcmFeeOnce', () => {
             feeType: undefined,
             asset: { symbol: 'DOT' },
             sufficient: false,
-            dryRunError: 'Some error'
+            dryRunError: { reason: 'Some error' }
           }
         }
       ],
@@ -872,7 +879,7 @@ describe('getXcmFeeOnce', () => {
     expect(res.hops[0].result).toEqual({
       asset: { symbol: 'DOT' },
       sufficient: false,
-      dryRunError: 'Some error'
+      dryRunError: { reason: 'Some error' }
     })
   })
 
@@ -949,7 +956,7 @@ describe('getXcmFeeOnce', () => {
           result: {
             fee: 2_000n,
             feeType: 'dryRun',
-            dryRunError: 'Failed at AssetHub'
+            dryRunError: { reason: 'Failed at AssetHub' }
           }
         }
       ],

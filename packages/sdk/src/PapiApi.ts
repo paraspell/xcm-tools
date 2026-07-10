@@ -31,11 +31,11 @@ import type {
 import {
   addXcmVersionHeader,
   BatchMode,
+  buildDryRunError,
   createAssetId,
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
-  getFailingInstruction,
   InvalidAddressError,
   isAssetEqual,
   isConfig,
@@ -88,7 +88,7 @@ const { leaseClient, releaseClient } = createClientPoolHelpers(clientPool, creat
 
 const extractDryRunXcmFailureReason = (
   result: any
-): { failureReason: string; failureIndex?: number } => {
+): Pick<TDryRunError, 'reason' | 'instructionIndex'> => {
   const executionResult = result?.value?.execution_result
 
   const error = executionResult?.value?.error
@@ -100,22 +100,19 @@ const extractDryRunXcmFailureReason = (
     error?.value?.type ??
     error?.type
 
-  const failureIndex = typeof error?.index === 'number' ? error.index : undefined
+  const instructionIndex = typeof error?.index === 'number' ? error.index : undefined
 
   if (typeof failureType === 'string') {
-    return { failureReason: failureType, failureIndex }
+    return { reason: failureType, instructionIndex }
   }
 
   if (typeof executionResult?.type === 'string') {
-    return { failureReason: executionResult.type, failureIndex }
+    return { reason: executionResult.type, instructionIndex }
   }
 
   return {
-    failureReason: JSON.stringify(
-      result?.value ?? result ?? 'Unknown error structure',
-      replaceBigInt
-    ),
-    failureIndex
+    reason: JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt),
+    instructionIndex
   }
 }
 
@@ -428,21 +425,18 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     const extractFailureReasonFromResult = (result: any): TDryRunError => {
       const obj = findFailureObjectFromResult(result)
 
-      const failureIndex = typeof obj?.value?.index === 'number' ? obj.value.index : undefined
+      const instructionIndex = typeof obj?.value?.index === 'number' ? obj.value.index : undefined
 
       if (obj?.type && obj?.value?.error?.type) {
-        return { failureReason: obj.type, failureSubReason: obj.value.error.type, failureIndex }
+        return { reason: obj.type, subReason: obj.value.error.type, instructionIndex }
       }
 
       if (obj?.type) {
-        return { failureReason: obj.type, failureIndex }
+        return { reason: obj.type, instructionIndex }
       }
 
       return {
-        failureReason: JSON.stringify(
-          result?.value ?? result ?? 'Unknown error structure',
-          replaceBigInt
-        )
+        reason: JSON.stringify(result?.value ?? result ?? 'Unknown error structure', replaceBigInt)
       }
     }
 
@@ -464,16 +458,10 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     let resolvedFeeAsset = await this.resolveFeeAsset(options)
 
     if (!isSuccess) {
-      const failureOutputReason = extractFailureReasonFromResult(result)
+      const failure = extractFailureReasonFromResult(result)
       return Promise.resolve({
         success: false,
-        failureReason: failureOutputReason.failureReason,
-        failureSubReason: failureOutputReason.failureSubReason,
-        failureIndex: failureOutputReason.failureIndex,
-        failureInstruction: getFailingInstruction(
-          result?.value?.local_xcm,
-          failureOutputReason.failureIndex
-        ),
+        dryRunError: buildDryRunError(failure, result?.value?.local_xcm),
         asset: resolvedFeeAsset.asset
       })
     }
@@ -751,12 +739,10 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const isSuccess = result.success && result.value.execution_result.type === 'Complete'
     if (!isSuccess) {
-      const { failureReason, failureIndex } = extractDryRunXcmFailureReason(result)
+      const failure = extractDryRunXcmFailureReason(result)
       return {
         success: false,
-        failureReason,
-        failureIndex,
-        failureInstruction: getFailingInstruction(xcm, failureIndex),
+        dryRunError: buildDryRunError(failure, xcm),
         asset
       }
     }
@@ -852,7 +838,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!feeEvent) {
       return Promise.resolve({
         success: false,
-        failureReason: 'Cannot determine destination fee. No fee event found',
+        dryRunError: { reason: 'Cannot determine destination fee. No fee event found' },
         asset
       })
     }

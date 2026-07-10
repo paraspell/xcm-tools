@@ -140,7 +140,7 @@ export const getMinTransferableAmountInternal = async <
     feeAsset
   })
 
-  if (dryRunResult.failureReason) {
+  if (!dryRunResult.success) {
     return toResult(amounts.map(() => 0n))
   }
 

@@ -33,7 +33,7 @@ import { txFromHex as txFromHexUtil } from './utils/txFromHex'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
-  resolveModuleError: vi.fn().mockReturnValue({ failureReason: 'ModuleError' }),
+  resolveModuleError: vi.fn().mockReturnValue({ reason: 'ModuleError' }),
   localizeLocation: vi.fn(),
   wrapTxBypass: vi.fn(),
   addXcmVersionHeader: vi.fn()
@@ -1494,7 +1494,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'SomeOtherReason',
+        dryRunError: { reason: 'SomeOtherReason' },
         asset: usdtAsset
       })
     })
@@ -1516,7 +1516,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'DirectHumanError',
+        dryRunError: { reason: 'DirectHumanError' },
         asset: usdtAsset
       })
     })
@@ -1537,7 +1537,7 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'ModuleError',
+        dryRunError: { reason: 'ModuleError' },
         asset: usdtAsset
       })
     })
@@ -1558,7 +1558,7 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'JsonOnlyFailureReason',
+        dryRunError: { reason: 'JsonOnlyFailureReason' },
         asset: usdtAsset
       })
     })
@@ -1579,7 +1579,7 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: '{}',
+        dryRunError: { reason: '{}' },
         asset: usdtAsset
       })
     })
@@ -1740,7 +1740,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(2)
       expect(result).toEqual({
         success: false,
-        failureReason: 'ModuleError',
+        dryRunError: { reason: 'ModuleError' },
         asset: usdtAsset
       })
     })
@@ -1773,8 +1773,7 @@ describe('PolkadotJsApi', () => {
       )
       expect(result).toEqual({
         success: false,
-        failureReason: 'VersionedConversionFailed',
-        failureSubReason: undefined,
+        dryRunError: { reason: 'VersionedConversionFailed', subReason: undefined },
         asset: usdtAsset
       })
     })
@@ -1833,7 +1832,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
         success: false,
-        failureReason: 'Some unexpected error',
+        dryRunError: { reason: 'Some unexpected error' },
         asset: usdtAsset
       })
     })
@@ -1966,7 +1965,7 @@ describe('PolkadotJsApi', () => {
       })
 
       expect(result.success).toBe(false)
-      expect(result).toHaveProperty('failureReason', 'ModuleError')
+      expect(result).toHaveProperty('dryRunError.reason', 'ModuleError')
     })
 
     it('should throw error for unsupported chain', async () => {
@@ -2155,7 +2154,7 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'ModuleError',
+        dryRunError: { reason: 'ModuleError' },
         asset: dotAsset
       })
     })
@@ -2189,8 +2188,7 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: 'UnknownClaim',
-        failureIndex: 2,
+        dryRunError: { reason: 'UnknownClaim', instructionIndex: 2 },
         asset: dotAsset
       })
     })
@@ -2237,7 +2235,7 @@ describe('PolkadotJsApi', () => {
         } as TDryRunXcmBaseOptions<Extrinsic>)
       ).toEqual({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found',
+        dryRunError: { reason: 'Cannot determine destination fee. No Issued event found' },
         asset: dotAsset
       })
     })

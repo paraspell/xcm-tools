@@ -8,7 +8,7 @@ import type {
 import {
   assertCurrencyCore,
   dryRun,
-  getFailureInfo,
+  getDryRunError,
   UnsupportedOperationError,
 } from '@paraspell/sdk-core';
 
@@ -108,7 +108,7 @@ const mergeDryRunResults = <TApi, TRes, TSigner, TCustomChain extends string = n
 ): TDryRunResult => {
   const { exchange, destination } = options;
 
-  const result: TDryRunResult = {
+  const result: Omit<TDryRunResult, 'success'> = {
     origin: originResult.origin,
     destination: destination ? exchangeResult.destination : exchangeResult.origin,
     hops: [
@@ -118,8 +118,11 @@ const mergeDryRunResults = <TApi, TRes, TSigner, TCustomChain extends string = n
     ],
   };
 
+  const dryRunError = getDryRunError(result);
+
   return {
-    ...getFailureInfo(result),
+    success: !dryRunError,
+    dryRunError,
     ...result,
   };
 };
@@ -142,11 +145,9 @@ const dryRun2Transactions = async <TApi, TRes, TSigner, TCustomChain extends str
 
   const firstRes = await dryRunTransaction(options, firstTx, exchange.chain, originBypass);
 
-  const { failureReason } = getFailureInfo(firstRes);
-
   const exchangeBypassOptions: TBypassOptions | undefined =
     exchangeBypass ??
-    (!failureReason
+    (firstRes.success
       ? {
           sentAssetMintMode: 'preview',
           mintFeeAssets: originBypass?.mintFeeAssets ?? false,

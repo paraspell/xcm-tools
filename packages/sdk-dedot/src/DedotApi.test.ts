@@ -88,8 +88,8 @@ vi.mock("@paraspell/sdk-core", async (importOriginal) => ({
         _chain: string,
         err: { type?: string; value?: { error?: { type?: string } } },
       ) => ({
-        failureReason: err?.type ?? "Unknown",
-        failureSubReason: err?.value?.error?.type,
+        reason: err?.type ?? "Unknown",
+        subReason: err?.value?.error?.type,
       }),
     ),
 }));
@@ -709,7 +709,7 @@ describe("DedotApi", () => {
       expect(dryRunCallMock).toHaveBeenCalledTimes(2);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.failureReason).toBe("hex string expected");
+        expect(result.dryRunError.reason).toBe("hex string expected");
       }
     });
 
@@ -732,7 +732,7 @@ describe("DedotApi", () => {
       expect(dryRunCallMock).toHaveBeenCalledTimes(1);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.failureReason).toBe("Network error");
+        expect(result.dryRunError.reason).toBe("Network error");
       }
     });
 
@@ -764,7 +764,7 @@ describe("DedotApi", () => {
       expect(dryRunCallMock).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
         success: false,
-        failureReason: "SomeError",
+        dryRunError: { reason: "SomeError" },
         asset: { symbol: "GLMR" },
       });
     });
@@ -944,7 +944,7 @@ describe("DedotApi", () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: "SomeXcmError",
+        dryRunError: { reason: "SomeXcmError" },
         asset: { symbol: "USDT" },
       });
     });
@@ -972,8 +972,7 @@ describe("DedotApi", () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason: "SomeXcmError",
-        failureIndex: 2,
+        dryRunError: { reason: "SomeXcmError", instructionIndex: 2 },
         asset: { symbol: "USDT" },
       });
     });
@@ -1003,8 +1002,10 @@ describe("DedotApi", () => {
 
       expect(result).toEqual({
         success: false,
-        failureReason:
-          "Cannot determine destination fee. XcmPaymentApi is not supported by this chain",
+        dryRunError: {
+          reason:
+            "Cannot determine destination fee. XcmPaymentApi is not supported by this chain",
+        },
         asset: { symbol: "USDT" },
       });
     });

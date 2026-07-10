@@ -70,7 +70,7 @@ const mockDryRunResult = (success = true, includeOrigin = false) =>
     origin: {
       success: includeOrigin,
       fee: 500n,
-      failureReason: includeOrigin ? undefined : 'Origin failed'
+      dryRunError: includeOrigin ? undefined : { reason: 'Origin failed' }
     },
     hops: [
       {
@@ -85,7 +85,7 @@ const mockDryRunResult = (success = true, includeOrigin = false) =>
         result: {
           success,
           fee: 200n,
-          failureReason: success ? undefined : 'Exchange failed'
+          dryRunError: success ? undefined : { reason: 'Exchange failed' }
         }
       },
       {
@@ -233,9 +233,14 @@ describe('handleSwapExecuteTransfer', () => {
 
   it('throws when origin dry run fails', async () => {
     const mockDryRunOriginFailed = {
-      origin: { success: false, failureReason: 'Origin execution failed' },
+      success: false,
+      origin: {
+        success: false,
+        asset: { symbol: 'ACA', decimals: 12, location: { parents: 0, interior: 'Here' } },
+        dryRunError: { reason: 'Origin execution failed' }
+      },
       hops: []
-    } as unknown as TDryRunResult
+    } as TDryRunResult
 
     vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValueOnce(mockDryRunOriginFailed)
 

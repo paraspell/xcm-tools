@@ -49,7 +49,7 @@ describe('createTypeThenAutoReserve', () => {
   it('prefers AssetHub when AH dry-run succeeds', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(true)
     vi.mocked(createTypeAndThenCall).mockResolvedValueOnce(ahCall).mockResolvedValueOnce(relayCall)
-    vi.mocked(dryRunInternal).mockResolvedValue({} as TDryRunResult)
+    vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(ahCall)
@@ -63,8 +63,8 @@ describe('createTypeThenAutoReserve', () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(true)
     vi.mocked(createTypeAndThenCall).mockResolvedValueOnce(ahCall).mockResolvedValueOnce(relayCall)
     vi.mocked(dryRunInternal)
-      .mockResolvedValueOnce({ failureReason: 'Fail' } as TDryRunResult)
-      .mockResolvedValueOnce({} as TDryRunResult)
+      .mockResolvedValueOnce({ success: false, dryRunError: { reason: 'Fail' } } as TDryRunResult)
+      .mockResolvedValueOnce({ success: true } as TDryRunResult)
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(relayCall)
@@ -78,8 +78,11 @@ describe('createTypeThenAutoReserve', () => {
     vi.mocked(hasDryRunSupport).mockReturnValueOnce(true).mockReturnValueOnce(true)
     vi.mocked(createTypeAndThenCall).mockResolvedValueOnce(ahCall).mockResolvedValueOnce(relayCall)
     vi.mocked(dryRunInternal)
-      .mockResolvedValueOnce({ failureReason: 'Fail' } as TDryRunResult)
-      .mockResolvedValueOnce({ failureReason: 'Fail again' } as TDryRunResult)
+      .mockResolvedValueOnce({ success: false, dryRunError: { reason: 'Fail' } } as TDryRunResult)
+      .mockResolvedValueOnce({
+        success: false,
+        dryRunError: { reason: 'Fail again' }
+      } as TDryRunResult)
 
     const res = await createTypeThenAutoReserve(origin, options)
     expect(res).toEqual(ahCall)

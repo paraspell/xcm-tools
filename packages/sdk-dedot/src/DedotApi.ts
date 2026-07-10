@@ -49,7 +49,7 @@ import {
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
-import { getFailingInstruction, resolveModuleError } from "@paraspell/sdk-core";
+import { buildDryRunError, resolveModuleError } from "@paraspell/sdk-core";
 import { DedotClient, WsProvider } from "dedot";
 import {
   blake2AsHex,
@@ -87,7 +87,7 @@ const { leaseClient, releaseClient } = createClientPoolHelpers(
 
 const extractDryRunXcmFailureReason = (
   result: any,
-): { failureReason: string; failureIndex?: number } => {
+): Pick<TDryRunError, "reason" | "instructionIndex"> => {
   const executionResult = result?.value?.executionResult;
 
   const error = executionResult?.value?.error;
@@ -99,23 +99,23 @@ const extractDryRunXcmFailureReason = (
     error?.value?.type ??
     error?.type;
 
-  const failureIndex =
+  const instructionIndex =
     typeof error?.index === "number" ? error.index : undefined;
 
   if (typeof failureType === "string") {
-    return { failureReason: failureType, failureIndex };
+    return { reason: failureType, instructionIndex };
   }
 
   if (typeof executionResult?.type === "string") {
-    return { failureReason: executionResult.type, failureIndex };
+    return { reason: executionResult.type, instructionIndex };
   }
 
   return {
-    failureReason: JSON.stringify(
+    reason: JSON.stringify(
       result?.value ?? result ?? "Unknown error structure",
       replaceBigInt,
     ),
-    failureIndex,
+    instructionIndex,
   };
 };
 
@@ -427,12 +427,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         }
         const otherErr = execErr.error?.Other ?? execErr.error?.other;
         if (otherErr) {
-          return { failureReason: String(otherErr) };
+          return { reason: String(otherErr) };
         }
         if (typeof execErr.error === "string") {
-          return { failureReason: execErr.error };
+          return { reason: execErr.error };
         }
-        return { failureReason: JSON.stringify(execErr.error) };
+        return { reason: JSON.stringify(execErr.error) };
       }
 
       const erroredEvent = findFailingEventInResult(result);
@@ -444,17 +444,17 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
           if (subErr) {
             return resolveModuleError(chain, subErr as TModuleError);
           }
-          return { failureReason: err.type };
+          return { reason: err.type };
         }
       }
 
-      return { failureReason: JSON.stringify(result ?? "Unknown error") };
+      return { reason: JSON.stringify(result ?? "Unknown error") };
     };
 
     // Attempt 1: WITHOUT version
     let result: any;
     let isSuccess = false;
-    let failureErr: TDryRunError = { failureReason: "" };
+    let failureErr: TDryRunError = { reason: "" };
     let shouldRetryWithVersion = false;
 
     try {
@@ -463,7 +463,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
       if (!isSuccess) {
         failureErr = extractFailureReasonFromResult(result);
-        if (failureErr.failureReason === "VersionedConversionFailed") {
+        if (failureErr.reason === "VersionedConversionFailed") {
           shouldRetryWithVersion = true;
         }
       }
@@ -474,7 +474,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       } else {
         return {
           success: false,
-          failureReason: msg,
+          dryRunError: { reason: msg },
           asset: resolvedFeeAsset.asset,
         };
       }
@@ -490,18 +490,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         }
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
-        if (!failureErr.failureReason) {
-          failureErr = { failureReason: msg };
+        if (!failureErr.reason) {
+          failureErr = { reason: msg };
         }
         return {
           success: false,
-          failureReason: failureErr.failureReason,
-          failureSubReason: failureErr.failureSubReason,
-          failureIndex: failureErr.failureIndex,
-          failureInstruction: getFailingInstruction(
-            result?.value?.localXcm,
-            failureErr.failureIndex,
-          ),
+          dryRunError: buildDryRunError(failureErr, result?.value?.localXcm),
           asset: resolvedFeeAsset.asset,
         };
       }
@@ -510,12 +504,9 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!isSuccess) {
       return {
         success: false,
-        failureReason: failureErr.failureReason || "Unknown error",
-        failureSubReason: failureErr.failureSubReason,
-        failureIndex: failureErr.failureIndex,
-        failureInstruction: getFailingInstruction(
+        dryRunError: buildDryRunError(
+          { ...failureErr, reason: failureErr.reason || "Unknown error" },
           result?.value?.localXcm,
-          failureErr.failureIndex,
         ),
         asset: resolvedFeeAsset.asset,
       };
@@ -806,13 +797,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const isSuccess = result.isOk && executionResult.type === "Complete";
     if (!isSuccess) {
-      const { failureReason, failureIndex } =
-        extractDryRunXcmFailureReason(result);
+      const failure = extractDryRunXcmFailureReason(result);
       return {
         success: false,
-        failureReason,
-        failureIndex,
-        failureInstruction: getFailingInstruction(xcm, failureIndex),
+        dryRunError: buildDryRunError(failure, xcm),
         asset,
       };
     }
@@ -840,7 +828,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       if (typeof fee !== "bigint") {
         return {
           success: false,
-          failureReason: "Failed to retrieve fee from XcmPaymentApi",
+          dryRunError: { reason: "Failed to retrieve fee from XcmPaymentApi" },
           asset,
         };
       }
@@ -857,8 +845,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     return {
       success: false,
-      failureReason:
-        "Cannot determine destination fee. XcmPaymentApi is not supported by this chain",
+      dryRunError: {
+        reason:
+          "Cannot determine destination fee. XcmPaymentApi is not supported by this chain",
+      },
       asset,
     };
   }

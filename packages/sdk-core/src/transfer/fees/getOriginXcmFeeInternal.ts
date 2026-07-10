@@ -77,10 +77,7 @@ export const getOriginXcmFeeInternal = async <
   if (!dryRunResult.success) {
     if (disableFallback) {
       return {
-        dryRunError: dryRunResult.failureReason,
-        dryRunSubError: dryRunResult.failureSubReason,
-        dryRunErrorIndex: dryRunResult.failureIndex,
-        dryRunErrorInstruction: dryRunResult.failureInstruction,
+        dryRunError: dryRunResult.dryRunError,
         asset: dryRunResult.asset
       }
     }
@@ -92,10 +89,7 @@ export const getOriginXcmFeeInternal = async <
       fee: paddedFee,
       asset: dryRunResult.asset,
       feeType: 'paymentInfo',
-      dryRunError: dryRunResult.failureReason,
-      dryRunSubError: dryRunResult.failureSubReason,
-      dryRunErrorIndex: dryRunResult.failureIndex,
-      dryRunErrorInstruction: dryRunResult.failureInstruction,
+      dryRunError: dryRunResult.dryRunError,
       sufficient: false
     }
   }

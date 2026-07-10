@@ -150,6 +150,7 @@ describe('getExecuteSwapInfo', () => {
     vi.mocked(aggregateHopFees).mockReturnValue({ totalHopFee: 0n });
     vi.mocked(getSwapExecuteXcmFee).mockResolvedValue({
       result: {
+        success: true,
         origin: originFee,
         destination: destFee,
         hops: [],
@@ -285,6 +286,7 @@ describe('getExecuteSwapInfo', () => {
 
     vi.mocked(getSwapExecuteXcmFee).mockResolvedValue({
       result: {
+        success: true,
         origin: originFee,
         destination: destFee,
         hops: [preSwap, swap, postSwap],
@@ -313,6 +315,7 @@ describe('getExecuteSwapInfo', () => {
 
     vi.mocked(getSwapExecuteXcmFee).mockResolvedValue({
       result: {
+        success: true,
         origin: originFee,
         destination: destFee,
         hops: [preSwap, otherHop],
