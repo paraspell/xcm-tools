@@ -43,7 +43,7 @@ export const fetchNativeAssetsDefault = async (
 ): Promise<TAssetInfoNoLoc[]> => {
   const { properties } = await client.getChainSpecData()
   const symbols = [properties?.tokenSymbol].flat() as string[]
-  const decimals = [properties?.tokenDecimals].flat() as number[]
+  const decimals = [properties?.tokenDecimals].flat().map(Number)
   const ed = await fetchEd(client)
   return symbols.map((symbol, i) => ({
     symbol,
