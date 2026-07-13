@@ -11,7 +11,6 @@ import type { PolkadotClient } from 'polkadot-api'
 import { getParaId, getRelayChainSymbolOf, reverseTransformLocation } from '../../sdk-core/src'
 import {
   findAssetInfoByLoc,
-  getNativeAssetSymbol,
   normalizeLocation,
   type TAssetInfo,
   type TAssetJsonMap,
@@ -68,7 +67,8 @@ const resolveNativeAssets = async (
 
 const fetchNativeAssets = async (
   chain: TSubstrateChain,
-  client: PolkadotClient
+  client: PolkadotClient,
+  nativeSymbol: string
 ): Promise<TAssetInfoNoLoc[]> => {
   const fetcher = getNativeAssetsFetcher(chain)
   let nativeAssets: TAssetInfoNoLoc[] = fetcher ? await fetcher(client, chain) : []
@@ -79,7 +79,6 @@ const fetchNativeAssets = async (
   if (chain === 'Kintsugi') nativeAssets = fetchKintsugiNativeAssets(defaultNativeAssets)
 
   const transformed = nativeAssets.length > 0 ? nativeAssets : defaultNativeAssets
-  const nativeSymbol = getNativeAssetSymbol(chain)
 
   const reordered = transformed.sort((a, b) => {
     if (a.symbol === nativeSymbol) return -1
@@ -171,10 +170,8 @@ export const fetchChainAssets = async (
   }
 
   const paraId = getParaId(chain)
-  const flags = await getChainMetadataFlags(client)
-  const feeAssets: TLocation[] = flags.supportsXcmPaymentApi
-    ? await fetchFeeAssets(client, paraId)
-    : []
+  const { supportsDryRunApi, supportsXcmPaymentApi, isEVM } = await getChainMetadataFlags(client)
+  const feeAssets: TLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(client, paraId) : []
 
   const nativeAssetSymbol = await resolveNativeAssetSymbol(chain, client)
 
@@ -185,27 +182,28 @@ export const fetchChainAssets = async (
     )
     .filter(asset => asset.assetId !== 'Native')
 
-  const nativeAssets = (await fetchNativeAssets(chain, client)) ?? []
+  const nativeAssets = (await fetchNativeAssets(chain, client, nativeAssetSymbol)) ?? []
+
+  const joinedAssets = [...nativeAssets, ...otherAssets].filter(
+    (asset): asset is TAssetInfo => asset.location !== undefined
+  )
 
   if (feeAssets.length > 0) {
-    const allAssets = [...nativeAssets, ...otherAssets] as unknown as TAssetInfo[]
     feeAssets.forEach(loc => {
       const matched =
-        findAssetInfoByLoc(allAssets, loc) ||
-        findAssetInfoByLoc(allAssets, reverseTransformLocation(loc))
+        findAssetInfoByLoc(joinedAssets, loc) ||
+        findAssetInfoByLoc(joinedAssets, reverseTransformLocation(loc))
       if (matched) matched.isFeeAsset = true
     })
   }
 
-  const joinedAssets = [...nativeAssets, ...otherAssets]
-
   return {
-    assets: joinedAssets.filter((asset): asset is TAssetInfo => asset.location !== undefined),
+    assets: joinedAssets,
     nativeAssetSymbol,
     ss58Prefix,
-    isEVM: flags.isEVM,
-    supportsDryRunApi: flags.supportsDryRunApi,
-    supportsXcmPaymentApi: flags.supportsXcmPaymentApi
+    isEVM,
+    supportsDryRunApi,
+    supportsXcmPaymentApi
   }
 }
 

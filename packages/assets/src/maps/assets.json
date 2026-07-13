@@ -69,7 +69,7 @@
     "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
-    "ss58Prefix": 0,
+    "ss58Prefix": 42,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "assets": [
@@ -7224,6 +7224,29 @@
         "existentialDeposit": "100000000"
       },
       {
+        "assetId": "50000534",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000534
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "DOT3"
+      },
+      {
         "assetId": "50000073",
         "symbol": "VDOT",
         "decimals": 10,
@@ -11924,7 +11947,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "alias": "KSM1"
       },
       {
         "assetId": "223",
@@ -11948,6 +11972,29 @@
         },
         "existentialDeposit": "10000",
         "isFeeAsset": true
+      },
+      {
+        "assetId": "50000011",
+        "symbol": "KSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000011
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "KSM2"
       },
       {
         "assetId": "2000",
@@ -16768,14 +16815,14 @@
   },
   "EnergyWebXPaseo": {
     "relaychainSymbol": "PAS",
-    "nativeAssetSymbol": "EWT",
+    "nativeAssetSymbol": "VT",
     "isEVM": false,
     "ss58Prefix": 42,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "assets": [
       {
-        "symbol": "EWT",
+        "symbol": "VT",
         "isNative": true,
         "decimals": 18,
         "existentialDeposit": "0",
