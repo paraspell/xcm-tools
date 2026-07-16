@@ -44,6 +44,7 @@
     "viem": "^2.53.1"
   },
   "peerDependencies": {
+    "@paraspell/descriptors": "workspace:*",
     "polkadot-api": "2.1.7"
   },
   "devDependencies": {

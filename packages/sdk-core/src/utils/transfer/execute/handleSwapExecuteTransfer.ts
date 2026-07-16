@@ -45,7 +45,7 @@ const executeDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = 
   const result = await dryRunInternal(params)
 
   if (!result.origin.success) {
-    throw new DryRunFailedError(result.origin.dryRunError)
+    throw new DryRunFailedError({ chainKind: 'origin', ...result.origin.dryRunError })
   }
 
   return result

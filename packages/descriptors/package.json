@@ -1,0 +1,44 @@
+{
+  "name": "@paraspell/descriptors",
+  "version": "13.11.0",
+  "description": "ParaSpell Polkadot-api type descriptors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paraspell/xcm-tools.git",
+    "directory": "packages/descriptors"
+  },
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "paraspell",
+    "descriptors",
+    "papi",
+    "polkadot-api",
+    "xcm"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "papi": "papi",
+    "papi:update": "papi update",
+    "prebuild": "papi",
+    "build": "pnpm clean && pnpm copy:dist",
+    "clean": "rm -rf dist",
+    "copy:dist": "cp -r .papi/descriptors/dist ./dist"
+  },
+  "devDependencies": {
+    "polkadot-api": "2.1.7"
+  }
+}

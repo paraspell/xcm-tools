@@ -63,7 +63,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     const tx = await builder.build()
     await validateTx(tx, signer)
     const feeRes = await builder.getXcmFee()
-    expect(feeRes.dryRunError).toBeUndefined()
+    expect(feeRes.dryRunError?.reason).toBeUndefined()
   }
   // If builderConfig override is provided, it means we're using chopsticks
   const usingChopsticks = !!config

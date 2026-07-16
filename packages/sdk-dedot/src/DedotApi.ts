@@ -619,16 +619,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       execFeeRes?.success === false &&
       execFeeRes?.value?.type === "AssetNotFound"
     ) {
-      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(
+      execFee = await this.getBridgeHubFallbackExecFee(
         chain,
         weight,
         asset,
         version,
       );
-
-      if (typeof bridgeHubExecFee === "bigint") {
-        execFee = bridgeHubExecFee;
-      }
     }
 
     const deliveryFee = await this.getDeliveryFee(
@@ -711,7 +707,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     weightValue: any,
     asset: TAssetInfo,
     version: Version,
-  ): Promise<bigint | undefined> {
+  ): Promise<bigint> {
     const fallbackExecFeeRes =
       await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
         weightValue,
@@ -728,7 +724,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
           : undefined;
 
     if (fallbackExecFee === undefined) {
-      return undefined;
+      return 0n;
     }
 
     const ahApi = this.clone();
@@ -744,11 +740,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false],
     });
 
-    if (typeof convertedExecFee === "bigint") {
-      return convertedExecFee;
-    }
-
-    return undefined;
+    return typeof convertedExecFee === "bigint" ? convertedExecFee : 0n;
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {

@@ -26,6 +26,7 @@
     "@mantine/hooks": "^9.4.1",
     "@mantine/notifications": "^9.4.1",
     "@mantinex/dev-icons": "^2.0.0",
+    "@paraspell/descriptors": "workspace:*",
     "@paraspell/evm": "workspace:*",
     "@paraspell/evm-snowbridge": "workspace:*",
     "@paraspell/sdk": "workspace:*",
