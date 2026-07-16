@@ -36,7 +36,7 @@ npm install | pnpm add | yarn add @paraspell/assets
 To use this functionality, you first have to import it in the following way.
 
 ```ts
-import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTChain, getAssetLocation, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
+import { getSupportedDestinations, getSupportedAssets, getFeeAssets, getAssetsObject, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, getParaId, getTChain, getAssetLocation, findAssetInfo, findAssetInfoOrThrow } from  '@paraspell/assets'
 ```
 
 
@@ -45,13 +45,6 @@ This function returns `assets object` from `assets.json` for `particular Paracha
 
 ```ts
 getAssetsObject(TChain)
-```
-
-### Query asset ID
-This function returns `assetId` for `particular Parachain` and `asset symbol`. Function uses [TChain](https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types) types.
-
-```ts
-getAssetId(TChain, ASSET_SYMBOL)
 ```
 
 ### Query Relay chain asset symbol
@@ -80,20 +73,6 @@ Function returns string array of all asset symbols for a specific Parachain. (na
 
 ```ts
 getAllAssetsSymbols(TChain)
-```
-
-### Query asset support
-The function checks if Parachain supports a particular asset. (Both native and foreign assets are searched). Returns boolean. Function uses [TChain](https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types) types.
-
-```ts
-hasSupportForAsset(TChain, ASSET_SYMBOL)
-```
-
-### Query asset decimals
-The function returns decimals for a specific asset. Function uses [TChain](https://paraspell.github.io/docs/xcm-sdk/asset-package.html#import-chains-as-types) types.
-
-```ts
-getAssetDecimals(TChain, ASSET_SYMBOL)
 ```
 
 ### Query Parachain ID
