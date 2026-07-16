@@ -1029,7 +1029,7 @@ describe('PolkadotJsApi', () => {
 
       const fallbackSpy = vi
         .spyOn(polkadotApi, 'getBridgeHubFallbackExecFee')
-        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(0n)
 
       const fee = await polkadotApi.getXcmPaymentApiFee(
         'BridgeHubPolkadot',
@@ -1090,7 +1090,7 @@ describe('PolkadotJsApi', () => {
       expect(res).toBe(convertedFee)
     })
 
-    it('returns undefined when fallback fee or conversion is unavailable', async () => {
+    it('returns 0n when fallback fee or conversion is unavailable', async () => {
       vi.mocked(addXcmVersionHeader).mockReturnValue({ V4: {} })
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
         toJSON: vi.fn().mockReturnValue({ ok: undefined })
@@ -1102,7 +1102,7 @@ describe('PolkadotJsApi', () => {
         dotAsset,
         Version.V5
       )
-      expect(resWithoutFee).toBeUndefined()
+      expect(resWithoutFee).toBe(0n)
 
       vi.mocked(mockApiPromise.call.xcmPaymentApi.queryWeightToAssetFee).mockResolvedValueOnce({
         toJSON: vi.fn().mockReturnValue({ ok: 123 })
@@ -1122,7 +1122,7 @@ describe('PolkadotJsApi', () => {
         Version.V5
       )
 
-      expect(resWithoutConversion).toBeUndefined()
+      expect(resWithoutConversion).toBe(0n)
     })
   })
 

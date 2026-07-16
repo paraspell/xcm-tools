@@ -22,6 +22,7 @@
     "@mantine/form": "^9.4.1",
     "@mantine/hooks": "^9.4.1",
     "@mantine/notifications": "^9.4.1",
+    "@paraspell/descriptors": "workspace:*",
     "@paraspell/sdk": "workspace:*",
     "@polkadot/apps-config": "^0.171.1",
     "@react-spring/web": "^10.1.2",

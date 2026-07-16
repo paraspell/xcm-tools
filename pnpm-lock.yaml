@@ -81,6 +81,9 @@ importers:
       '@mantinex/dev-icons':
         specifier: ^2.0.0
         version: 2.0.0(@mantine/core@9.4.1(@mantine/hooks@9.4.1(react@19.2.7))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@mantine/hooks@9.4.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@paraspell/descriptors':
+        specifier: workspace:*
+        version: link:../../packages/descriptors
       '@paraspell/evm':
         specifier: workspace:*
         version: link:../../packages/evm
@@ -152,7 +155,7 @@ importers:
         version: 2.8.9(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -308,6 +311,9 @@ importers:
       '@nestjs/websockets':
         specifier: ^11.1.27
         version: 11.1.27(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/core@11.1.27)(@nestjs/platform-socket.io@11.1.27)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@paraspell/descriptors':
+        specifier: workspace:*
+        version: link:../../packages/descriptors
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -384,6 +390,9 @@ importers:
       '@mantine/notifications':
         specifier: ^9.4.1
         version: 9.4.1(@mantine/core@9.4.1(@mantine/hooks@9.4.1(react@19.2.7))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@mantine/hooks@9.4.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@paraspell/descriptors':
+        specifier: workspace:*
+        version: link:../../packages/descriptors
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -440,7 +449,7 @@ importers:
         version: 3.10.1
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -538,6 +547,9 @@ importers:
       '@nestjs/throttler':
         specifier: ^6.5.0
         version: 6.5.0(@nestjs/common@11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.27)(reflect-metadata@0.2.2)
+      '@paraspell/descriptors':
+        specifier: workspace:*
+        version: link:../../packages/descriptors
       '@paraspell/evm':
         specifier: workspace:*
         version: link:../../packages/evm
@@ -609,7 +621,7 @@ importers:
         version: 8.22.0
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -707,7 +719,7 @@ importers:
         version: 17.4.2
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       rollup:
         specifier: ^4.62.2
         version: 4.62.2
@@ -720,6 +732,12 @@ importers:
       viem:
         specifier: ^2.53.1
         version: 2.53.1(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.3)
+
+  packages/descriptors:
+    devDependencies:
+      polkadot-api:
+        specifier: 2.1.7
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
 
   packages/evm:
     dependencies:
@@ -858,6 +876,9 @@ importers:
       '@noble/hashes':
         specifier: ^2.2.0
         version: 2.2.0
+      '@paraspell/descriptors':
+        specifier: workspace:*
+        version: link:../descriptors
       '@paraspell/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
@@ -872,7 +893,7 @@ importers:
         version: 0.0.30
       polkadot-api:
         specifier: 2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       viem:
         specifier: ^2.53.1
         version: 2.53.1(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.3)
@@ -960,7 +981,7 @@ importers:
         version: 1.1.1
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       rollup:
         specifier: ^4.62.2
         version: 4.62.2
@@ -1248,7 +1269,7 @@ importers:
         version: 4.18.1
       polkadot-api:
         specifier: ^2.1.7
-        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+        version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       postcss:
         specifier: ^8.5.16
         version: 8.5.16
@@ -15972,7 +15993,7 @@ snapshots:
     dependencies:
       big.js: 6.2.2
       lru-cache: 11.5.1
-      polkadot-api: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+      polkadot-api: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
 
   '@galacticcouncil/descriptors@2.4.0': {}
 
@@ -16005,7 +16026,7 @@ snapshots:
       '@thi.ng/cache': 2.3.72
       '@thi.ng/memoize': 4.0.43
       big.js: 6.2.2
-      polkadot-api: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10)
+      polkadot-api: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       viem: 2.53.1(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@5.0.10)(zod@4.4.3)
 
   '@graphql-codegen/add@7.0.1(graphql@17.0.1)':
@@ -18244,7 +18265,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@polkadot-api/cli@0.21.6(bufferutil@4.1.0)(esbuild@0.27.7)(supports-color@10.2.2)(utf-8-validate@5.0.10)':
+  '@polkadot-api/cli@0.21.6(bufferutil@4.1.0)(esbuild@0.28.0)(supports-color@10.2.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@commander-js/extra-typings': 15.0.0(commander@15.0.0)
       '@polkadot-api/codegen': 0.22.5
@@ -18268,42 +18289,7 @@ snapshots:
       ora: 9.4.1
       read-pkg: 10.1.0
       rollup: 4.62.2
-      rollup-plugin-esbuild: 6.2.1(esbuild@0.27.7)(rollup@4.62.2)(supports-color@10.2.2)
-      rxjs: 7.8.2
-      tsc-prog: 2.3.0(typescript@6.0.3)
-      typescript: 6.0.3
-      write-package: 7.2.0
-    transitivePeerDependencies:
-      - bufferutil
-      - esbuild
-      - supports-color
-      - utf-8-validate
-
-  '@polkadot-api/cli@0.21.6(bufferutil@4.1.0)(esbuild@0.28.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@commander-js/extra-typings': 15.0.0(commander@15.0.0)
-      '@polkadot-api/codegen': 0.22.5
-      '@polkadot-api/ink-contracts': 0.6.3
-      '@polkadot-api/json-rpc-provider': 0.2.0
-      '@polkadot-api/known-chains': 0.11.6
-      '@polkadot-api/metadata-compatibility': 0.6.3
-      '@polkadot-api/observable-client': 0.18.7(rxjs@7.8.2)
-      '@polkadot-api/sm-provider': 0.3.6(@polkadot-api/smoldot@0.4.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@polkadot-api/smoldot': 0.4.5(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot-api/substrate-bindings': 0.20.3
-      '@polkadot-api/substrate-client': 0.7.0
-      '@polkadot-api/utils': 0.4.0
-      '@polkadot-api/wasm-executor': 0.2.3
-      '@polkadot-api/ws-middleware': 0.3.5(rxjs@7.8.2)
-      '@polkadot-api/ws-provider': 0.9.0(rxjs@7.8.2)
-      '@types/node': 25.9.4
-      commander: 15.0.0
-      execa: 9.6.1
-      fs.promises.exists: 1.1.4
-      ora: 9.4.1
-      read-pkg: 10.1.0
-      rollup: 4.62.2
-      rollup-plugin-esbuild: 6.2.1(esbuild@0.28.0)(rollup@4.62.2)
+      rollup-plugin-esbuild: 6.2.1(esbuild@0.28.0)(rollup@4.62.2)(supports-color@10.2.2)
       rxjs: 7.8.2
       tsc-prog: 2.3.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -26018,37 +26004,9 @@ snapshots:
 
   pnglib@0.0.1: {}
 
-  polkadot-api@2.1.7(bufferutil@4.1.0)(esbuild@0.27.7)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10):
+  polkadot-api@2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10):
     dependencies:
-      '@polkadot-api/cli': 0.21.6(bufferutil@4.1.0)(esbuild@0.27.7)(supports-color@10.2.2)(utf-8-validate@5.0.10)
-      '@polkadot-api/ink-contracts': 0.6.3
-      '@polkadot-api/json-rpc-provider': 0.2.0
-      '@polkadot-api/known-chains': 0.11.6
-      '@polkadot-api/logs-provider': 0.2.0
-      '@polkadot-api/metadata-builders': 0.14.3
-      '@polkadot-api/metadata-compatibility': 0.6.3
-      '@polkadot-api/observable-client': 0.18.7(rxjs@7.8.2)
-      '@polkadot-api/pjs-signer': 0.7.3
-      '@polkadot-api/polkadot-signer': 0.1.6
-      '@polkadot-api/signer': 0.3.3
-      '@polkadot-api/sm-provider': 0.3.6(@polkadot-api/smoldot@0.4.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))
-      '@polkadot-api/smoldot': 0.4.5(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-      '@polkadot-api/substrate-bindings': 0.20.3
-      '@polkadot-api/substrate-client': 0.7.0
-      '@polkadot-api/utils': 0.4.0
-      '@polkadot-api/ws-middleware': 0.3.5(rxjs@7.8.2)
-      '@polkadot-api/ws-provider': 0.9.0(rxjs@7.8.2)
-      '@rx-state/core': 0.1.4(rxjs@7.8.2)
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - bufferutil
-      - esbuild
-      - supports-color
-      - utf-8-validate
-
-  polkadot-api@2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(utf-8-validate@5.0.10):
-    dependencies:
-      '@polkadot-api/cli': 0.21.6(bufferutil@4.1.0)(esbuild@0.28.0)(utf-8-validate@5.0.10)
+      '@polkadot-api/cli': 0.21.6(bufferutil@4.1.0)(esbuild@0.28.0)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       '@polkadot-api/ink-contracts': 0.6.3
       '@polkadot-api/json-rpc-provider': 0.2.0
       '@polkadot-api/known-chains': 0.11.6
@@ -26719,18 +26677,7 @@ snapshots:
     optionalDependencies:
       '@babel/code-frame': 7.29.7
 
-  rollup-plugin-esbuild@6.2.1(esbuild@0.27.7)(rollup@4.62.2)(supports-color@10.2.2):
-    dependencies:
-      debug: 4.4.3(supports-color@10.2.2)
-      es-module-lexer: 1.7.0
-      esbuild: 0.27.7
-      get-tsconfig: 4.14.0
-      rollup: 4.62.2
-      unplugin-utils: 0.2.5
-    transitivePeerDependencies:
-      - supports-color
-
-  rollup-plugin-esbuild@6.2.1(esbuild@0.28.0)(rollup@4.62.2):
+  rollup-plugin-esbuild@6.2.1(esbuild@0.28.0)(rollup@4.62.2)(supports-color@10.2.2):
     dependencies:
       debug: 4.4.3(supports-color@10.2.2)
       es-module-lexer: 1.7.0

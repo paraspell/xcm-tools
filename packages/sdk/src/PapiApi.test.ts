@@ -106,63 +106,66 @@ describe('PapiApi', () => {
       }
     }
 
+    const mockApi = {
+      apis: {
+        LocationToAccountApi: {
+          convert_location: vi.fn()
+        },
+        DryRunApi: {
+          dry_run_call: vi.fn().mockResolvedValue(mockDryRunResult)
+        },
+        AssetConversionApi: {
+          quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
+        },
+        XcmPaymentApi: {
+          query_xcm_weight: vi
+            .fn()
+            .mockResolvedValue({ success: true, value: { ref_time: 100n, proof_size: 200n } }),
+          query_weight_to_asset_fee: vi.fn().mockResolvedValue({ success: true, value: 100n })
+        }
+      },
+      tx: {
+        XcmPallet: {
+          methodName: vi.fn().mockReturnValue(mockTransaction)
+        },
+        PolkadotXcm: {
+          send: vi.fn().mockReturnValue({
+            getEncodedData: vi.fn().mockReturnValue({
+              asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+            })
+          })
+        }
+      },
+      query: {
+        EVM: {
+          AccountStorages: {
+            getValue: vi.fn()
+          }
+        },
+        MultiTransactionPayment: {
+          AccountCurrencyMap: {
+            getValue: vi.fn()
+          }
+        },
+        EthereumOutboundQueue: {
+          OperatingMode: {
+            getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
+          }
+        },
+        System: {
+          Account: {
+            getValue: vi.fn()
+          }
+        }
+      },
+      txFromCallData: vi.fn().mockReturnValue(mockTransaction)
+    }
+
     mockPolkadotClient = {
       _request: vi.fn(),
       destroy: vi.fn(),
-      getUnsafeApi: vi.fn().mockReturnValue({
-        apis: {
-          LocationToAccountApi: {
-            convert_location: vi.fn()
-          },
-          DryRunApi: {
-            dry_run_call: vi.fn().mockResolvedValue(mockDryRunResult)
-          },
-          AssetConversionApi: {
-            quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
-          },
-          XcmPaymentApi: {
-            query_xcm_weight: vi
-              .fn()
-              .mockResolvedValue({ success: true, value: { ref_time: 100n, proof_size: 200n } }),
-            query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
-          }
-        },
-        tx: {
-          XcmPallet: {
-            methodName: vi.fn().mockReturnValue(mockTransaction)
-          },
-          PolkadotXcm: {
-            send: vi.fn().mockReturnValue({
-              getEncodedData: vi.fn().mockReturnValue({
-                asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
-              })
-            })
-          }
-        },
-        query: {
-          EVM: {
-            AccountStorages: {
-              getValue: vi.fn()
-            }
-          },
-          MultiTransactionPayment: {
-            AccountCurrencyMap: {
-              getValue: vi.fn()
-            }
-          },
-          EthereumOutboundQueue: {
-            OperatingMode: {
-              getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
-            }
-          },
-          System: {
-            Account: {
-              getValue: vi.fn()
-            }
-          }
-        },
-        txFromCallData: vi.fn().mockReturnValue(mockTransaction)
-      })
+      getUnsafeApi: vi.fn().mockReturnValue(mockApi),
+      getTypedApi: vi.fn().mockReturnValue(mockApi)
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
     vi.mocked(deriveAddress).mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY')
@@ -615,11 +618,14 @@ describe('PapiApi', () => {
       expect(res).toBe(7n)
     })
 
-    it('converts delivery fee via queryRuntimeApi when asset is NOT native', async () => {
+    it('converts delivery fee via AssetConversionApi when asset is NOT native', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetEqual).mockReturnValue(false)
 
-      const quoteSpy = vi.spyOn(papiApi, 'queryRuntimeApi').mockResolvedValue(5n)
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const quoteSpy = unsafeApi.apis.AssetConversionApi
+        .quote_price_exact_tokens_for_tokens as unknown as Mock
+      quoteSpy.mockResolvedValue(5n)
 
       const asset: TAssetInfo = {
         symbol: 'USDC',
@@ -672,11 +678,14 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
-    it('falls back to 0 delivery fee when queryRuntimeApi throws the runtime-entry error', async () => {
+    it('falls back to 0 delivery fee when AssetConversionApi throws the runtime-entry error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetEqual).mockReturnValue(false)
 
-      vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const quoteMock = unsafeApi.apis.AssetConversionApi
+        .quote_price_exact_tokens_for_tokens as unknown as Mock
+      quoteMock.mockRejectedValue(
         new Error(
           'Runtime entry RuntimeCall(AssetConversionApi.quote_price_exact_tokens_for_tokens) not found'
         )
@@ -699,11 +708,14 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
-    it('falls back to 0 delivery fee when queryRuntimeApi throws an unexpected error', async () => {
+    it('falls back to 0 delivery fee when AssetConversionApi throws an unexpected error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetEqual).mockReturnValue(false)
 
-      vi.spyOn(papiApi, 'queryRuntimeApi').mockRejectedValue(new Error('network flake'))
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const quoteMock = unsafeApi.apis.AssetConversionApi
+        .quote_price_exact_tokens_for_tokens as unknown as Mock
+      quoteMock.mockRejectedValue(new Error('network flake'))
 
       const asset: TAssetInfo = {
         symbol: 'USDT',
@@ -795,7 +807,7 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.api.getUnsafeApi()
       unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi
         .fn()
-        .mockResolvedValue({ value: 100n })
+        .mockResolvedValue({ success: true, value: 100n })
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
         success: true,
         value: { ref_time: 100n, proof_size: 200n }
@@ -867,9 +879,7 @@ describe('PapiApi', () => {
         value: { ref_time: 100n, proof_size: 200n }
       })
 
-      const fallbackSpy = vi
-        .spyOn(papiApi, 'getBridgeHubFallbackExecFee')
-        .mockResolvedValue(undefined)
+      const fallbackSpy = vi.spyOn(papiApi, 'getBridgeHubFallbackExecFee').mockResolvedValue(0n)
 
       const res = await papiApi.getXcmPaymentApiFee(
         bridgeChain,
@@ -908,19 +918,21 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.api.getUnsafeApi()
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
-      queryFeeMock.mockResolvedValueOnce({ value: fallbackFee })
+      queryFeeMock.mockResolvedValueOnce({ success: true, value: fallbackFee })
 
       vi.mocked(localizeLocation).mockReturnValueOnce(localizedLoc)
 
+      const ahQuoteSpy = vi.fn().mockResolvedValue(convertedFee)
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
-        queryRuntimeApi: vi.fn().mockResolvedValue(convertedFee)
+        ahpApi: {
+          apis: { AssetConversionApi: { quote_price_exact_tokens_for_tokens: ahQuoteSpy } }
+        }
       } as unknown as PapiApi
 
       const cloneSpy = vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
 
       const ahInitSpy = vi.spyOn(ahApiMock, 'init')
-      const ahQuoteSpy = vi.spyOn(ahApiMock, 'queryRuntimeApi')
 
       const res = await papiApi.getBridgeHubFallbackExecFee(chain, weightValue, asset, Version.V4)
 
@@ -932,18 +944,19 @@ describe('PapiApi', () => {
       expect(cloneSpy).toHaveBeenCalledTimes(1)
       expect(ahInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', asset.location)
-      expect(ahQuoteSpy).toHaveBeenCalledWith({
-        module: 'AssetConversionApi',
-        method: 'quote_price_exact_tokens_for_tokens',
-        params: [RELAY_LOCATION, localizedLoc, fallbackFee, false]
-      })
+      expect(ahQuoteSpy).toHaveBeenCalledWith(
+        { transformed: true },
+        { transformed: true },
+        fallbackFee,
+        false
+      )
       expect(res).toBe(convertedFee)
     })
 
-    it('returns undefined when fallback fee or conversion is unavailable', async () => {
+    it('returns 0n when fallback fee or conversion is unavailable', async () => {
       const unsafeApi = papiApi.api.getUnsafeApi()
       const queryFeeMock = unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee as unknown as Mock
-      queryFeeMock.mockResolvedValueOnce({ value: undefined })
+      queryFeeMock.mockResolvedValueOnce({ success: false, value: undefined })
 
       const resWithoutFee = await papiApi.getBridgeHubFallbackExecFee(
         chain,
@@ -951,13 +964,19 @@ describe('PapiApi', () => {
         asset,
         Version.V5
       )
-      expect(resWithoutFee).toBeUndefined()
+      expect(resWithoutFee).toBe(0n)
 
-      queryFeeMock.mockResolvedValueOnce({ value: 123n })
+      queryFeeMock.mockResolvedValueOnce({ success: true, value: 123n })
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
-        queryRuntimeApi: vi.fn().mockResolvedValue(undefined)
+        ahpApi: {
+          apis: {
+            AssetConversionApi: {
+              quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(undefined)
+            }
+          }
+        }
       } as unknown as PapiApi
 
       vi.spyOn(papiApi, 'clone').mockReturnValue(ahApiMock)
@@ -969,7 +988,7 @@ describe('PapiApi', () => {
         Version.V5
       )
 
-      expect(resWithoutConversion).toBeUndefined()
+      expect(resWithoutConversion).toBe(0n)
     })
   })
 
@@ -1903,65 +1922,6 @@ describe('PapiApi', () => {
         destParaId: undefined
       })
     })
-
-    it('falls back to native asset when MultiTransactionPayment fee lookup fails', async () => {
-      const localXcm = { type: 'V4', value: [] }
-      const successResponse = {
-        success: true,
-        value: {
-          execution_result: {
-            success: true,
-            value: { actual_weight: { ref_time: 1n, proof_size: 2n } }
-          },
-          local_xcm: localXcm,
-          forwarded_xcms: []
-        }
-      }
-
-      dryRunApiCallMock.mockResolvedValue(successResponse)
-
-      const nativeAsset = {
-        symbol: 'HYDR',
-        location: { parents: Parents.ZERO, interior: 'Here' }
-      } as TAssetInfo
-      const multiAsset = {
-        symbol: 'USDC',
-        location: { parents: Parents.ZERO, interior: 'Here' }
-      } as TAssetInfo
-
-      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
-      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
-
-      const resolveFeeAssetSpy = vi
-        .spyOn(papiApi, 'resolveFeeAsset')
-        .mockResolvedValue({ asset: multiAsset, isCustomAsset: true })
-
-      const getXcmPaymentApiFeeSpy = vi
-        .spyOn(papiApi, 'getXcmPaymentApiFee')
-        .mockResolvedValue(undefined as unknown as bigint)
-
-      const result = await papiApi.getDryRunCall({
-        tx: mockTransaction,
-        address: testAddress,
-        chain: 'Hydration',
-        destination: 'Moonbeam',
-        version: Version.V5,
-        asset: multiAsset as WithAmount<TAssetInfo>
-      })
-
-      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledTimes(1)
-      expect(result).toEqual({
-        success: true,
-        fee: 500n,
-        asset: nativeAsset,
-        weight: { refTime: 1n, proofSize: 2n },
-        forwardedXcms: [],
-        destParaId: undefined
-      })
-
-      resolveFeeAssetSpy.mockRestore()
-      getXcmPaymentApiFeeSpy.mockRestore()
-    })
   })
 
   describe('getXcmWeight', () => {
@@ -2605,6 +2565,7 @@ describe('PapiApi', () => {
         value: weight
       })
       unsafeApi.apis.XcmPaymentApi.query_weight_to_asset_fee = vi.fn().mockResolvedValue({
+        success: true,
         value: 100n
       })
 

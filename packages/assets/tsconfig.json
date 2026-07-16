@@ -4,9 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "noImplicitAny": true,
     "resolveJsonModule": true,
-    "strictNullChecks": true,
     "skipLibCheck": true
   },
   "include": ["src", "vitest.config.ts", "e2e"]

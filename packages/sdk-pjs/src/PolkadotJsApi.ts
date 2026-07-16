@@ -521,11 +521,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     const isAssetNotFound = execFeeRes?.err === 'AssetNotFound'
 
     if (chain.startsWith('BridgeHub') && isAssetNotFound) {
-      const bridgeHubExecFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset, version)
-
-      if (typeof bridgeHubExecFee === 'bigint') {
-        execFee = bridgeHubExecFee
-      }
+      execFee = await this.getBridgeHubFallbackExecFee(chain, weight, asset, version)
     }
 
     const deliveryFee = await this.getDeliveryFee(
@@ -611,7 +607,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     weightValue: any,
     asset: TAssetInfo,
     version: Version
-  ): Promise<bigint | undefined> {
+  ): Promise<bigint> {
     const fallbackExecFeeRes = await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
       weightValue,
       addXcmVersionHeader(RELAY_LOCATION, version)
@@ -626,7 +622,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         : undefined
 
     if (fallbackExecFee === undefined) {
-      return undefined
+      return 0n
     }
 
     const ahApi = this.clone()
@@ -642,11 +638,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
       params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false]
     })
 
-    if (convertedExecFee != null) {
-      return BigInt(convertedExecFee)
-    }
-
-    return undefined
+    return convertedExecFee != null ? BigInt(convertedExecFee) : 0n
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {

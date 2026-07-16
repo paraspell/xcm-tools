@@ -8,6 +8,7 @@
   "packages/sdk-pjs": "13.11.0",
   "packages/sdk-dedot": "13.11.0",
   "packages/sdk-common": "13.11.0",
+  "packages/descriptors": "13.11.0",
   "packages/assets": "13.11.0",
   "packages/pallets": "13.11.0",
   "apps/xcm-api": "13.11.0",

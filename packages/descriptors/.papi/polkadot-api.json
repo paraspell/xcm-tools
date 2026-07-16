@@ -1,0 +1,33 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "ahp": {
+      "wsUrl": "wss://polkadot-asset-hub-rpc.polkadot.io",
+      "metadata": ".papi/metadata/ahp.scale",
+      "genesis": "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
+      "codeHash": "0xd8c8c132cd1f51504af2cd45c8dd7c5565dff0a4e9d7fde72daa8975c58ef961"
+    },
+    "bridgeHub": {
+      "wsUrl": "wss://polkadot-bridge-hub-rpc.polkadot.io",
+      "metadata": ".papi/metadata/bridgeHub.scale",
+      "genesis": "0xdcf691b5a3fbe24adc99ddc959c0561b973e329b1aef4c4b22e7bb2ddecb4464",
+      "codeHash": "0xd6cec5904b600adf1ee51f681def68e76c9e277d00e7d36ed85d2f761793bfe5"
+    },
+    "hydration": {
+      "wsUrl": "wss://rpc.hydradx.cloud",
+      "metadata": ".papi/metadata/hydration.scale",
+      "genesis": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
+      "codeHash": "0x906f5ac6f0b88e52361b92a2011b1379e12133c846aa5a12913202f9e8921253"
+    },
+    "moonbeam": {
+      "wsUrl": "wss://wss.api.moonbeam.network",
+      "metadata": ".papi/metadata/moonbeam.scale",
+      "genesis": "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d",
+      "codeHash": "0x43eff74f05632950d049db14806c5637158687280031e71279467a3a929f2757"
+    }
+  },
+  "options": {
+    "noDescriptorsPackage": true
+  }
+}
