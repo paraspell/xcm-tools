@@ -125,10 +125,7 @@ import * as paraspell from '@paraspell/sdk-dedot'
  
 > [!NOTE]
 > **Latest news:**
-> - V12 > V13 Migration guide: https://paraspell.github.io/docs/migration/v12-to-v13.html
-> - Swap extension is now available on every XCM SDK version: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-swap-extension
-> - EVM extension is now available: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-evm-extension
-> - Snowbridge extension is now available: https://paraspell.github.io/docs/xcm-sdk/getting-started.html#install-snowbridge-extension
+> - V13 > V14 Migration guide: https://paraspell.github.io/docs/migration/v13-to-v14.html
 
 
 ### Sending XCM

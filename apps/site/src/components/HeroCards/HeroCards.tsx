@@ -35,10 +35,10 @@ const codeForSdk = `
     `;
 
 const codeForLightSpell = `HTTP GET 
-api.paraspell.xyz/v1/chains/
-Acala/para-id
+api.paraspell.xyz/v2/chains/
+Hydration/para-id
 -> { 
-  "paraId": 2000
+  "paraId": 2034
 } `;
 
 export const HeroCards = () => {
