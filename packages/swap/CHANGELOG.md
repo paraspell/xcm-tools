@@ -1,5 +1,30 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.11.0...swap-v14.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Unify dry run and XCM fee error fields under dryRunError 🔧
+* Remove deprecated asset query functions 🧹
+* Remove deprecated location override code 🧹
+
+### Features
+
+* Remove deprecated asset query functions 🧹 ([400d538](https://github.com/paraspell/xcm-tools/commit/400d5380f6e6bb4ed3e62efaaf331ce3f751e2e4))
+* Remove deprecated location override code 🧹 ([dfc7f32](https://github.com/paraspell/xcm-tools/commit/dfc7f32738e1aa9eb35cf6d61e304dcb1b8bcf6f))
+
+
+### Bug Fixes
+
+* **assets:** Fix assets script compile errors 🔧 ([74711a9](https://github.com/paraspell/xcm-tools/commit/74711a996f6c9de59f13949f0af0b1613369cb2e))
+
+
+### Code Refactoring
+
+* **sdk:** Require chain field on dry run error 🔧 ([7cd6bb2](https://github.com/paraspell/xcm-tools/commit/7cd6bb240bd4f401eed372d4ce4173e6e6f16cc8))
+* Unify dry run and XCM fee error fields under dryRunError 🔧 ([6b6849b](https://github.com/paraspell/xcm-tools/commit/6b6849b4c214fdcbee230ee6628ad257effc4281))
+
 ## [13.11.0](https://github.com/paraspell/xcm-tools/compare/swap-v13.10.1...swap-v13.11.0) (2026-07-07)
 
 

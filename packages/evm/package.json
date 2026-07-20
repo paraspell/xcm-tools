@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/evm",
-  "version": "13.11.0",
+  "version": "14.0.0",
   "description": "Optional EVM extension for @paraspell/sdk enabling interaction with EVM-compatible chains.",
   "repository": {
     "type": "git",
