@@ -1,14 +1,14 @@
 <br /><br />
 
 <div align="center">
-  <h1 align="center">@paraspell/sdk-core</h1>
-  <h4 align="center"> Core component for @paraspell/sdk, @paraspell/sdk-pjs & @paraspell/sdk-dedot. </h4>
+  <h1 align="center">@paraspell/descriptors</h1>
+  <h4 align="center"> Polkadot-API type descriptors powering the typed API of @paraspell/sdk </h4>
   <p align="center">
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/descriptors">
+      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/descriptors?style=flat-square" />
     </a>
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/descriptors">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/descriptors?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
@@ -21,17 +21,9 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own `doesn't` offer any XCM functionality but can be used to get `common functions` shared between both XCM SDK versions.
-
+This package provides the [Polkadot-API (PAPI)](https://papi.how/) type descriptors that give `@paraspell/sdk` its fully `typed API`. It must be installed as a `peer dependency` alongside `@paraspell/sdk` and `polkadot-api`, and is `not` installed in automatically. You can also use it standalone whenever you need the types it exports. On its own it `doesn't` offer any XCM functionality. 
 
 ## 💻 Tests
-- Run compilation using `pnpm compile`
-
-- Run linter using `pnpm lint`
-
-- Run unit tests using `pnpm test`
-
-- Run all core tests and checks using `pnpm runAll`
 
 XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
 
@@ -49,7 +41,7 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-core/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/descriptors/LICENSE).
 
 ## Supported by
 
