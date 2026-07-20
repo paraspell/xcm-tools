@@ -64,25 +64,27 @@ export type TSwapEvent<TApi, TRes> = {
 
 export type TStatusChangeCallback<TApi, TRes> = (info: TSwapEvent<TApi, TRes>) => void
 
-export interface TSwapBuilder<TApi, TRes, TSigner> {
-  from(chain: TSubstrateChain | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  to(chain: TChain | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  exchange(chain: TExchangeInput): TSwapBuilder<TApi, TRes, TSigner>
-  currencyFrom(currency: TCurrencyInput): TSwapBuilder<TApi, TRes, TSigner>
-  currencyTo(currency: TCurrencyInput): TSwapBuilder<TApi, TRes, TSigner>
-  feeAsset(currency: TCurrencyInput | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  amount(amount: TAmount): TSwapBuilder<TApi, TRes, TSigner>
-  recipient(address: string | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  sender(address: string): TSwapBuilder<TApi, TRes, TSigner>
-  signer(signer: TSigner): TSwapBuilder<TApi, TRes, TSigner>
-  evmSenderAddress(address: string | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  evmSigner(signer: TSigner | undefined): TSwapBuilder<TApi, TRes, TSigner>
-  slippagePct(pct: string): TSwapBuilder<TApi, TRes, TSigner>
-  onStatusChange(callback: TStatusChangeCallback<TApi, TRes>): TSwapBuilder<TApi, TRes, TSigner>
+export interface TSwapBuilder<TApi, TRes, TSigner, TCustomChain extends string = never> {
+  from(chain: TSubstrateChain | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  to(chain: TChain | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  exchange(chain: TExchangeInput): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  currencyFrom(currency: TCurrencyInput): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  currencyTo(currency: TCurrencyInput): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  feeAsset(currency: TCurrencyInput | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  amount(amount: TAmount): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  recipient(address: string | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  sender(address: string): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  signer(signer: TSigner): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  evmSenderAddress(address: string | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  evmSigner(signer: TSigner | undefined): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  slippagePct(pct: string): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
+  onStatusChange(
+    callback: TStatusChangeCallback<TApi, TRes>
+  ): TSwapBuilder<TApi, TRes, TSigner, TCustomChain>
 
   getXcmFees<TDisableFallback extends boolean = false>(
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
-  ): Promise<TGetXcmFeeResult<TDisableFallback>>
+  ): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>>
   getOriginXcmFee<TDisableFallback extends boolean = false>(
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>>
@@ -90,12 +92,12 @@ export interface TSwapBuilder<TApi, TRes, TSigner> {
   getTransferableAmount(): Promise<bigint>
   getMinTransferableAmount(): Promise<bigint>
   getBestAmountOut(): Promise<{ exchange: TExchangeChain; amountOut: bigint }>
-  dryRun(): Promise<TDryRunResult>
-  dryRunPreview(previewOptions?: TDryRunPreviewOptions): Promise<TDryRunResult>
+  dryRun(): Promise<TDryRunResult<TCustomChain>>
+  dryRunPreview(previewOptions?: TDryRunPreviewOptions): Promise<TDryRunResult<TCustomChain>>
   build(): Promise<TTransactionContext<TApi, TRes>[]>
   signAndSubmit(): Promise<string[]>
 }
 
 export type TSwapBuilderFactory = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>
-) => TSwapBuilder<TApi, TRes, TSigner>
+) => TSwapBuilder<TApi, TRes, TSigner, TCustomChain>

@@ -3,22 +3,32 @@ import type { TChain } from '@paraspell/sdk-common'
 
 import type { TDryRunChainKind, TDryRunError, TDryRunFailure } from '../../types'
 
-export const getDryRunError = <T extends { asset: TAssetInfo; dryRunError?: TDryRunError }>({
+type TChainResult<T, TCustomChain extends string> = { chain: TChain | TCustomChain; result: T }
+
+export const getDryRunError = <
+  T extends { asset: TAssetInfo; dryRunError?: TDryRunError },
+  TCustomChain extends string = never
+>({
   origin,
   destination,
   hops
 }: {
-  origin: T
-  destination?: T
-  hops: { chain: TChain; result: T }[]
-}): TDryRunFailure | undefined => {
-  const entries: { chainKind: TDryRunChainKind; chain?: TChain; result: T }[] = [
-    { chainKind: 'origin', result: origin },
-    ...(destination ? [{ chainKind: 'destination' as const, result: destination }] : []),
-    ...hops.map(hop => ({ chainKind: 'hop' as const, chain: hop.chain, result: hop.result }))
+  origin: TChainResult<T, TCustomChain>
+  destination?: TChainResult<T, TCustomChain>
+  hops: TChainResult<T, TCustomChain>[]
+}): TDryRunFailure<TCustomChain> | undefined => {
+  const toCandidate = (chainKind: TDryRunChainKind, entry: TChainResult<T, TCustomChain>) => ({
+    chainKind,
+    ...entry
+  })
+
+  const candidates = [
+    toCandidate('origin', origin),
+    ...(destination ? [toCandidate('destination', destination)] : []),
+    ...hops.map(hop => toCandidate('hop', hop))
   ]
 
-  for (const { chainKind, chain, result } of entries) {
+  for (const { chainKind, chain, result } of candidates) {
     if (result.dryRunError?.reason) {
       return { chainKind, chain, ...result.dryRunError }
     }

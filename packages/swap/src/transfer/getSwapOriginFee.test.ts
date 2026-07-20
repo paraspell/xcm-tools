@@ -141,7 +141,7 @@ describe('getSwapOriginFee', () => {
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
 
       vi.mocked(getOriginXcmFee).mockRejectedValueOnce(
-        new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin' }),
+        new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin', chain: 'Acala' }),
       );
 
       const result = await getSwapOriginFee(assetHubDex, options, false);
@@ -162,7 +162,7 @@ describe('getSwapOriginFee', () => {
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
 
       vi.mocked(getOriginXcmFee).mockRejectedValueOnce(
-        new DryRunFailedError({ reason: 'Other', chainKind: 'origin' }),
+        new DryRunFailedError({ reason: 'Other', chainKind: 'origin', chain: 'Acala' }),
       );
 
       await expect(getSwapOriginFee(assetHubDex, options, false)).rejects.toBeInstanceOf(

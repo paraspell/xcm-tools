@@ -151,14 +151,14 @@ export type THopInfo = {
 
 export type TDryRunChainKind = 'origin' | 'destination' | 'hop'
 
-export type TDryRunFailure = TDryRunError & {
-  chainKind?: TDryRunChainKind
-  chain?: TChain
+export type TDryRunFailure<TCustomChain extends string = never> = TDryRunError & {
+  chainKind: TDryRunChainKind
+  chain: TChain | TCustomChain
 }
 
-export type TDryRunResult = {
+export type TDryRunResult<TCustomChain extends string = never> = {
   success: boolean
-  dryRunError?: TDryRunFailure
+  dryRunError?: TDryRunFailure<TCustomChain>
   origin: TDryRunChainResult
   destination?: TDryRunChainResult
   hops: THopInfo[]

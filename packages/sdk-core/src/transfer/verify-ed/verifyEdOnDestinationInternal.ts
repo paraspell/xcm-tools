@@ -14,9 +14,9 @@ import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
 import { resolveCurrency, resolveFeeAsset } from '../utils'
 
-export const calculateTotalXcmFee = (
+export const calculateTotalXcmFee = <TCustomChain extends string = never>(
   asset: TAssetInfo,
-  feeResult: TGetXcmFeeResult<false>
+  feeResult: TGetXcmFeeResult<false, TCustomChain>
 ): bigint => {
   const totalHopFee = feeResult.hops.reduce(
     (acc, hop) => (isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc),
@@ -107,13 +107,13 @@ export const verifyEdOnDestinationInternal = async <
   } = xcmFeeResult
 
   if (dryRunError) {
-    throw new DryRunFailedError({ ...dryRunError, chainKind: 'origin' })
+    throw new DryRunFailedError({ ...dryRunError, chainKind: 'origin', chain: origin })
   }
 
   const erroredHop = hops.find(hop => hop.result.dryRunError)
   const hopError = erroredHop?.result.dryRunError
-  if (hopError) {
-    throw new DryRunFailedError(hopError)
+  if (erroredHop && hopError) {
+    throw new DryRunFailedError({ ...hopError, chainKind: 'hop', chain: erroredHop.chain })
   }
 
   if (destDryRunError) {

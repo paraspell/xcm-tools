@@ -22,7 +22,7 @@ import { buildTransactions } from './buildTransactions';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
 const assignIsExchange = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  result: TDryRunResult,
+  result: TDryRunResult<TCustomChain>,
   options: TTransformedOptions<
     TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
     TApi,
@@ -67,7 +67,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner, TCustomChain extends strin
   transaction: TTransaction<TApi, TRes>,
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
-): Promise<TDryRunResult> => {
+): Promise<TDryRunResult<TCustomChain>> => {
   const { api, exchange, sender, evmSenderAddress, destination, currencyFrom, currencyTo, amount } =
     options;
   const { tx, chain } = transaction;
@@ -103,12 +103,12 @@ const mergeDryRunResults = <TApi, TRes, TSigner, TCustomChain extends string = n
     TSigner,
     TCustomChain
   >,
-  originResult: TDryRunResult,
-  exchangeResult: TDryRunResult,
-): TDryRunResult => {
-  const { exchange, destination } = options;
+  originResult: TDryRunResult<TCustomChain>,
+  exchangeResult: TDryRunResult<TCustomChain>,
+): TDryRunResult<TCustomChain> => {
+  const { origin, exchange, destination } = options;
 
-  const result: Omit<TDryRunResult, 'success'> = {
+  const result: Omit<TDryRunResult<TCustomChain>, 'success'> = {
     origin: originResult.origin,
     destination: destination ? exchangeResult.destination : exchangeResult.origin,
     hops: [
@@ -118,7 +118,13 @@ const mergeDryRunResults = <TApi, TRes, TSigner, TCustomChain extends string = n
     ],
   };
 
-  const dryRunError = getDryRunError(result);
+  const dryRunError = getDryRunError({
+    origin: { chain: origin ? origin.chain : exchange.chain, result: result.origin },
+    destination: result.destination
+      ? { chain: destination ? destination.chain : exchange.chain, result: result.destination }
+      : undefined,
+    hops: result.hops,
+  });
 
   return {
     success: !dryRunError,
@@ -138,7 +144,7 @@ const dryRun2Transactions = async <TApi, TRes, TSigner, TCustomChain extends str
   transactions: TRouterPlan<TApi, TRes>,
   originBypass?: TBypassOptions,
   exchangeBypass?: TBypassOptions,
-): Promise<TDryRunResult> => {
+): Promise<TDryRunResult<TCustomChain>> => {
   const { exchange } = options;
 
   const [firstTx, secondTx] = transactions;
@@ -191,7 +197,7 @@ const runDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = neve
     TCustomChain
   >,
   originBypassOptions?: TBypassOptions,
-): Promise<TDryRunResult> => {
+): Promise<TDryRunResult<TCustomChain>> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions);
   const routerPlan = await buildTransactions(dex, options);
@@ -209,7 +215,7 @@ export const dryRunRouter = <TApi, TRes, TSigner, TCustomChain extends string = 
     TSigner,
     TCustomChain
   >,
-): Promise<TDryRunResult> => runDryRun(initialOptions);
+): Promise<TDryRunResult<TCustomChain>> => runDryRun(initialOptions);
 
 export const dryRunRouterPreview = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   initialOptions: WithApi<
@@ -220,7 +226,7 @@ export const dryRunRouterPreview = <TApi, TRes, TSigner, TCustomChain extends st
     TCustomChain
   >,
   previewOptions?: TDryRunPreviewOptions,
-): Promise<TDryRunResult> =>
+): Promise<TDryRunResult<TCustomChain>> =>
   runDryRun(initialOptions, {
     sentAssetMintMode: 'preview',
     mintFeeAssets: previewOptions?.mintFeeAssets,

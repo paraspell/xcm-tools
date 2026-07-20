@@ -213,9 +213,12 @@ export type TXcmFeeHopInfo = {
   result: TXcmFeeDetail
 }
 
-export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
+export type TGetXcmFeeResult<
+  TDisableFallback extends boolean = boolean,
+  TCustomChain extends string = never
+> = {
   success: boolean
-  dryRunError?: TDryRunFailure
+  dryRunError?: TDryRunFailure<TCustomChain>
   origin: TConditionalXcmFeeDetail<TDisableFallback>
   destination: TConditionalXcmFeeDetail<TDisableFallback>
   hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]

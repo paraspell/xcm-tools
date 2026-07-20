@@ -112,7 +112,7 @@ export const createSwapBuilder = <TApi, TRes, TSigner, TCustomChain extends stri
 
 export const executeWithSwap = async <TApi, TRes, TSigner, T, TCustomChain extends string = never>(
   options: TTransferOptionsWithSwap<TApi, TRes, TSigner, TCustomChain>,
-  executor: (builder: TSwapBuilder<TApi, TRes, TSigner>) => Promise<T>
+  executor: (builder: TSwapBuilder<TApi, TRes, TSigner, TCustomChain>) => Promise<T>
 ) => {
   const swapBuilder = createSwapBuilder(options)
   return executor(swapBuilder)

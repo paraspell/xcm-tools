@@ -11,7 +11,7 @@ export const getXcmFeeInternal = async <
   TCustomChain extends string = never
 >(
   options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>
-): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>> => {
   const { buildTx } = options
 
   try {
@@ -53,7 +53,7 @@ export const getXcmFee = async <
   TCustomChain extends string = never
 >(
   options: TGetXcmFeeOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>
-): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>> => {
   const { api } = options
   try {
     return await getXcmFeeInternal(options)

@@ -45,15 +45,19 @@ const executeDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = 
   const result = await dryRunInternal(params)
 
   if (!result.origin.success) {
-    throw new DryRunFailedError({ chainKind: 'origin', ...result.origin.dryRunError })
+    throw new DryRunFailedError({
+      chainKind: 'origin',
+      chain: params.origin,
+      ...result.origin.dryRunError
+    })
   }
 
   return result
 }
 
-const findExchangeHopIndex = (
+const findExchangeHopIndex = <TCustomChain extends string = never>(
   chain: TSubstrateChain | undefined,
-  dryRunResult: TDryRunResult,
+  dryRunResult: TDryRunResult<TCustomChain>,
   exchangeChain: TParachain,
   destChain?: TChain
 ): number => {
@@ -76,9 +80,10 @@ const findExchangeHopIndex = (
   return index
 }
 
-const extractFeesFromDryRun = (
+const extractFeesFromDryRun = <TCustomChain extends string = never>(
   chain: TSubstrateChain | undefined,
-  dryRunResult: TDryRunResult,
+  exchangeChain: TParachain,
+  dryRunResult: TDryRunResult<TCustomChain>,
   exchangeHopIndex: number,
   destChain?: TChain,
   requireHopsSuccess: boolean = false
@@ -98,7 +103,14 @@ const extractFeesFromDryRun = (
     if (!destChain) {
       // Exchange fee comes from the final destination result
       if (dryRunResult.destination && !dryRunResult.destination.success && requireHopsSuccess) {
-        throw new DryRunFailedError(dryRunResult.destination.dryRunError, 'Exchange (destination):')
+        throw new DryRunFailedError(
+          {
+            ...dryRunResult.destination.dryRunError,
+            chainKind: 'destination',
+            chain: exchangeChain
+          },
+          'Exchange (destination):'
+        )
       }
       if (dryRunResult.destination && dryRunResult.destination.success) {
         fees.exchangeFee = padValueBy(dryRunResult.destination.fee, FEE_PADDING_PERCENTAGE)
@@ -107,7 +119,10 @@ const extractFeesFromDryRun = (
       // Normal case: exchange is an intermediate hop
       const exchangeHop = hops[exchangeHopIndex]
       if (requireHopsSuccess && !exchangeHop.result.success) {
-        throw new DryRunFailedError(exchangeHop.result.dryRunError, 'Exchange hop:')
+        throw new DryRunFailedError(
+          { ...exchangeHop.result.dryRunError, chainKind: 'hop', chain: exchangeHop.chain },
+          'Exchange hop:'
+        )
       }
       if (exchangeHop.result.success) {
         fees.exchangeFee = padValueBy(exchangeHop.result.fee, FEE_PADDING_PERCENTAGE)
@@ -115,7 +130,10 @@ const extractFeesFromDryRun = (
     }
   } else {
     if (!dryRunResult.origin.success) {
-      throw new DryRunFailedError(dryRunResult.origin.dryRunError, 'Origin:')
+      throw new DryRunFailedError(
+        { ...dryRunResult.origin.dryRunError, chainKind: 'origin', chain: exchangeChain },
+        'Origin:'
+      )
     }
     // There is no exchange fee if origin is exchange, because jit_withdraw is used
     fees.exchangeFee = 0n
@@ -125,7 +143,14 @@ const extractFeesFromDryRun = (
   if (exchangeHopIndex > 0) {
     const hopBeforeExchange = hops[exchangeHopIndex - 1]
     if (requireHopsSuccess && !hopBeforeExchange.result.success) {
-      throw new DryRunFailedError(hopBeforeExchange.result.dryRunError, 'Hop before exchange:')
+      throw new DryRunFailedError(
+        {
+          ...hopBeforeExchange.result.dryRunError,
+          chainKind: 'hop',
+          chain: hopBeforeExchange.chain
+        },
+        'Hop before exchange:'
+      )
     }
     if (hopBeforeExchange.result.success) {
       fees.originReserveFee = padValueBy(hopBeforeExchange.result.fee, FEE_PADDING_PERCENTAGE)
@@ -135,7 +160,10 @@ const extractFeesFromDryRun = (
     // the last hop is the origin reserve fee (before reaching exchange destination)
     const lastHop = hops[hops.length - 1]
     if (requireHopsSuccess && !lastHop.result.success) {
-      throw new DryRunFailedError(lastHop.result.dryRunError, 'Origin reserve hop:')
+      throw new DryRunFailedError(
+        { ...lastHop.result.dryRunError, chainKind: 'hop', chain: lastHop.chain },
+        'Origin reserve hop:'
+      )
     }
     if (lastHop.result.success) {
       fees.originReserveFee = padValueBy(lastHop.result.fee, FEE_PADDING_PERCENTAGE)
@@ -147,7 +175,10 @@ const extractFeesFromDryRun = (
   if (destChain && exchangeHopIndex < hops.length - 1) {
     const hopAfterExchange = hops[exchangeHopIndex + 1]
     if (requireHopsSuccess && !hopAfterExchange.result.success) {
-      throw new DryRunFailedError(hopAfterExchange.result.dryRunError, 'Hop after exchange:')
+      throw new DryRunFailedError(
+        { ...hopAfterExchange.result.dryRunError, chainKind: 'hop', chain: hopAfterExchange.chain },
+        'Hop after exchange:'
+      )
     }
     if (hopAfterExchange.result.success) {
       fees.destReserveFee = padValueBy(hopAfterExchange.result.fee, FEE_PADDING_PERCENTAGE)
@@ -285,6 +316,7 @@ export const handleSwapExecuteTransfer = async <
 
   const extractedFees = extractFeesFromDryRun(
     chain,
+    exchangeChain,
     firstDryRunResult,
     exchangeHopIndex,
     destChain,

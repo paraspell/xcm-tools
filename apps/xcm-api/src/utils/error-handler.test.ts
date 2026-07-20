@@ -26,7 +26,11 @@ describe('handleXcmApiError', () => {
     new DuplicateAssetIdError('2'),
     new ScenarioNotSupportedError({ chain: 'Acala', scenario: 'ParaToPara' }),
     new BridgeHaltedError(),
-    new DryRunFailedError({ reason: 'Failed' }),
+    new DryRunFailedError({
+      reason: 'Failed',
+      chainKind: 'origin',
+      chain: 'Acala',
+    }),
     new MissingChainApiError('Acala'),
   ];
 
