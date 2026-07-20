@@ -3,7 +3,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  ApiNotInitializedError,
   BridgeHaltedError,
+  CustomAssetConflictError,
+  CustomChainConflictError,
+  CustomChainInvalidError,
   DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
@@ -11,7 +15,12 @@ import {
   InvalidCurrencyError,
   MissingChainApiError,
   NoXCMSupportImplementedError,
+  RuntimeApiError,
   ScenarioNotSupportedError,
+  SubmitTransactionError,
+  TypeAndThenUnavailableError,
+  ValidationError,
+  XcmPalletNotFoundError,
 } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
@@ -32,6 +41,15 @@ describe('handleXcmApiError', () => {
       chain: 'Acala',
     }),
     new MissingChainApiError('Acala'),
+    new ValidationError('Invalid transfer'),
+    new CustomChainInvalidError('Invalid custom chain'),
+    new CustomChainConflictError('Custom chain conflict'),
+    new CustomAssetConflictError('Custom asset conflict'),
+    new XcmPalletNotFoundError('Acala'),
+    new TypeAndThenUnavailableError('Type and then unavailable'),
+    new ApiNotInitializedError(),
+    new RuntimeApiError('Runtime API failed'),
+    new SubmitTransactionError('Submit failed'),
   ];
 
   it('should throw BadRequestException for known SDK errors', () => {
