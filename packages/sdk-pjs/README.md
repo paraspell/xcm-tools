@@ -726,7 +726,7 @@ We run an open Bug Bounty Program that rewards contributors for reporting and fi
 
 Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-pjs/LICENSE).
 
 ## Supported by
 
