@@ -4,8 +4,12 @@ import {
 } from '@nestjs/common';
 import {
   AmountTooLowError,
+  ApiNotInitializedError,
   BatchValidationError,
   BridgeHaltedError,
+  CustomAssetConflictError,
+  CustomChainConflictError,
+  CustomChainInvalidError,
   DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
@@ -19,10 +23,15 @@ import {
   OverrideConflictError,
   ProviderUnavailableError,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   ScenarioNotSupportedError,
+  SubmitTransactionError,
+  TypeAndThenUnavailableError,
   UnableToComputeError,
   UnsupportedOperationError,
+  ValidationError,
+  XcmPalletNotFoundError,
 } from '@paraspell/sdk';
 
 // For these errors thrown inside SDK, throw a 400 BadRequestException in API
@@ -48,6 +57,15 @@ const sdkErrors = [
   OverrideConflictError,
   NumberFormatError,
   RuntimeApiUnavailableError,
+  ValidationError,
+  CustomChainInvalidError,
+  CustomChainConflictError,
+  CustomAssetConflictError,
+  XcmPalletNotFoundError,
+  TypeAndThenUnavailableError,
+  ApiNotInitializedError,
+  RuntimeApiError,
+  SubmitTransactionError,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

@@ -736,7 +736,7 @@ importers:
   packages/descriptors:
     devDependencies:
       polkadot-api:
-        specifier: 2.1.7
+        specifier: ^2.1.7
         version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
 
   packages/evm:
@@ -892,7 +892,7 @@ importers:
         specifier: ^0.0.30
         version: 0.0.30
       polkadot-api:
-        specifier: 2.1.7
+        specifier: '>= 2 < 3'
         version: 2.1.7(bufferutil@4.1.0)(esbuild@0.28.0)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       viem:
         specifier: ^2.53.1

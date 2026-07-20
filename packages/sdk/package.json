@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@paraspell/descriptors": "workspace:*",
-    "polkadot-api": "2.1.7"
+    "polkadot-api": ">= 2 < 3"
   },
   "devDependencies": {
     "@acala-network/chopsticks": "^1.5.0",

@@ -39,7 +39,7 @@ Possible parameters:
 
 ```ts
 //Construct XCM call from Substrate to Substrate
-const response = await fetch('http://localhost:3001/v2/x-transfer', {
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const response = await fetch('http://localhost:3001/v2/x-transfer', {
 });
 
 //Construct local asset transfer
-const response = await fetch('http://localhost:3001/v2/x-transfer', {
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const response = await fetch('http://localhost:3001/v2/x-transfer', {
 });
 
 //Transact call
-const response = await fetch('http://localhost:3001/v2/x-transfer', {
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const response = await fetch('http://localhost:3001/v2/x-transfer', {
 });
 
 //Swap call
-const response = await fetch('http://localhost:3001/v2/x-transfers', {
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfers', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const response = await fetch('http://localhost:3001/v2/x-transfers', {
 });
 
 //Sending EVM XCM transfer https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#sending-evm-xcm
-const response = await fetch("http://localhost:3001/v2/evm-x-transfer", {
+const response = await fetch("https://api.paraspell.xyz/v2/evm-x-transfer", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -130,7 +130,7 @@ const response = await fetch("http://localhost:3001/v2/evm-x-transfer", {
 });
 
 //DryRun your XCM calls to find whether they will execute
-const response = await fetch('http://localhost:3001/v2/dry-run', {
+const response = await fetch('https://api.paraspell.xyz/v2/dry-run', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ const response = await fetch('http://localhost:3001/v2/dry-run', {
 });
 
 //Preview dryrun result of different amount than you currently have
-const response = await fetch('http://localhost:3001/v2/dry-run-preview', {
+const response = await fetch('https://api.paraspell.xyz/v2/dry-run-preview', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ const response = await fetch('http://localhost:3001/v2/dry-run-preview', {
 });
 
 //Construct custom batch of XCM Calls
-const response = await fetch('http://localhost:3001/v2/x-transfer-batch', {
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfer-batch', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ Possible parameters:
 - Inherited from concrete endpoint
 
 ```ts
-const response = await fetch("http://localhost:3001/v2/x-transfer", {
+const response = await fetch("https://api.paraspell.xyz/v2/x-transfer", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -217,7 +217,7 @@ const response = await fetch("http://localhost:3001/v2/x-transfer", {
               "symbol": "USDC",
               "decimals": 6,
               "assetId": "1337",
-              "existentialDeposit": "0.1",
+              "existentialDeposit": "10000000", //Needs to be in planck
               "location": {
                 "parents": 1,
                 "interior": {
@@ -240,7 +240,7 @@ const response = await fetch("http://localhost:3001/v2/x-transfer", {
             "symbol": "MYNEWUSD",
             "decimals": 6,
             "assetId": "9999",
-            "existentialDeposit": "0.1",
+            "existentialDeposit": "10000000", //Needs to be in planck
             "location": {
               "parents": 0,
               "interior": {
@@ -253,7 +253,7 @@ const response = await fetch("http://localhost:3001/v2/x-transfer", {
             "symbol": "USDT",
             "decimals": 6,
             "assetId": "1984",
-            "existentialDeposit": "0.1",
+            "existentialDeposit": "10000000", //Needs to be in planck
             "location": {
               "parents": 0,
               "interior": {
@@ -277,7 +277,7 @@ Possible parameters:
 - Inherited from concrete endpoint
 
 ```ts
-const response = await fetch("http://localhost:3001/v2/x-transfer", {
+const response = await fetch("https://api.paraspell.xyz/v2/x-transfer", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -313,7 +313,7 @@ Possible parameters:
 - Inherited from concrete endpoint
 
 ```ts
-const response = await fetch("http://localhost:3001/v2/sign-and-submit", {
+const response = await fetch("https://api.paraspell.xyz/v2/sign-and-submit", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -355,7 +355,7 @@ Possible parameters:
 
 ```ts
 //XCM Fee (Origin & Destination)
-const response = await fetch("http://localhost:3001/v2/xcm-fee", {
+const response = await fetch("https://api.paraspell.xyz/v2/xcm-fee", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -372,7 +372,7 @@ const response = await fetch("http://localhost:3001/v2/xcm-fee", {
 });
 
 //XCM Fee (Origin)
-const response = await fetch("http://localhost:3001/v2/origin-xcm-fee", {
+const response = await fetch("https://api.paraspell.xyz/v2/origin-xcm-fee", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -390,7 +390,7 @@ const response = await fetch("http://localhost:3001/v2/origin-xcm-fee", {
 
 //Perform comprehensive transfer info query that will retrieve all details regarding fees and balances that will be changed by performing selected XCM call
 const response = await fetch(
-  'http://localhost:3001/v2/transfer-info' , {
+  'https://api.paraspell.xyz/v2/transfer-info' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -405,7 +405,7 @@ const response = await fetch(
 
 //Query maximal transferable balance for specific currency on specific account
 const response = await fetch(
-  'http://localhost:3001/v2/transferable-amount' , {
+  'https://api.paraspell.xyz/v2/transferable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -420,7 +420,7 @@ const response = await fetch(
 
 //Query minimal transferable balance for specific currency on specific account
 const response = await fetch(
-  'http://localhost:3001/v2/min-transferable-amount' , {
+  'https://api.paraspell.xyz/v2/min-transferable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -435,7 +435,7 @@ const response = await fetch(
 
 //Retrieve the amount of the currency that will be received on destination.
 const response = await fetch(
-  'http://localhost:3001/v2/receivable-amount' , {
+  'https://api.paraspell.xyz/v2/receivable-amount' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -450,7 +450,7 @@ const response = await fetch(
 
 //Verify whether the existential deposit will be met when XCM message will be sent to destination chain
 const response = await fetch(
-  'http://localhost:3001/v2/verify-ed-on-destination' , {
+  'https://api.paraspell.xyz/v2/verify-ed-on-destination' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -464,7 +464,7 @@ const response = await fetch(
   }),
 
 // Retrieve specific asset balance for specific chain
-const response = await fetch("http://localhost:3001/v2/balance/:chain", {
+const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -477,7 +477,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:chain", {
 
 // Get best amount out
 const response = await fetch(
-  'http://localhost:3001/v2/best-amount-out' , {
+  'https://api.paraspell.xyz/v2/best-amount-out' , {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -496,7 +496,7 @@ const response = await fetch(
 }),
 
 // Retrieve existential deposit for specific assets on selected chain
-const response = await fetch("http://localhost:3001/v2/balance/:chain/existential-deposit", {
+const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain/existential-deposit", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -507,7 +507,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:chain/existentia
 });
 
 // Convert SS58 address to Chain specific format
-const response = await fetch('http://localhost:3001/v2/convert-ss58?address=:address&chain=:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/convert-ss58?address=:address&chain=:chain');
 ```
 
 ### Swap helper queries
@@ -521,13 +521,13 @@ Possible parameters:
 
 ```ts
 // Get list of exchange chains
-const response = await fetch('http://localhost:3001/v2/swap/exchange-chains');
+const response = await fetch('https://api.paraspell.xyz/v2/swap/exchange-chains');
 
 // Get list of possible assets to exchange from
-const response = await fetch('http://localhost:3001/v2/swap/supported-assets-from?from=:chain&exchange=:exchange');
+const response = await fetch('https://api.paraspell.xyz/v2/swap/supported-assets-from?from=:chain&exchange=:exchange');
 
 // Get list of possible assets to exchange to
-const response = await fetch('http://localhost:3001/v2/swap/supported-assets-from?exchange=:exchange&to=:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/swap/supported-assets-from?exchange=:exchange&to=:chain');
 ```
 
 ### Asset queries
@@ -543,42 +543,42 @@ Possible parameters:
 ```ts
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific chain)
-const response = await fetch('http://localhost:3001/v2/assets/:chain/fee-assets');
+const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain/fee-assets');
 
 // Retrieve assets object for a specific Chain
-const response = await fetch('http://localhost:3001/v2/assets/:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain');
 
 // Retrieve the Relay chain asset Symbol for a particular Chain
 const response = await fetch(
-  'http://localhost:3001/v2/assets/:chain/relay-chain-symbol',
+  'https://api.paraspell.xyz/v2/assets/:chain/relay-chain-symbol',
 );
 
 // Retrieve native assets for a particular Chain
-const response = await fetch('http://localhost:3001/v2/assets/:chain/native');
+const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain/native');
 
 // Retrieve foreign assets for a particular Chain
-const response = await fetch('http://localhost:3001/v2/assets/:chain/other');
+const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain/other');
 
 // Retrieve all asset symbols for particular Chain
-const response = await fetch('http://localhost:3001/v2/assets/:chain/all-symbols');
+const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain/all-symbols');
 
 // Retrieve Chain ID for a particular Chain
-const response = await fetch('http://localhost:3001/v2/chains/:chain/para-id');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/:chain/para-id');
 
 // Retrieve Chain name from Chain ID
-const response = await fetch('http://localhost:3001/v2/chains/:paraID?ecosystem=polkadot');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/:paraID?ecosystem=polkadot');
 
 // Retrieve a list of implemented Chains
-const response = await fetch('http://localhost:3001/v2/chains');
+const response = await fetch('https://api.paraspell.xyz/v2/chains');
 
 // Query list of chain WS endpoints
-const response = await fetch('http://localhost:3001/v2/chains/:chain/ws-endpoints');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/:chain/ws-endpoints');
 
 // Query supported assets supported between two chains
-const response = await fetch('http://localhost:3001/v2/supported-assets?origin=:chain&destination=:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/supported-assets?origin=:chain&destination=:chain');
 
 // Retrieve location for asset id or symbol for specific assets on selected chain
-const response = await fetch("http://localhost:3001/v2/assets/:chain/location", {
+const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/location", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -589,7 +589,7 @@ const response = await fetch("http://localhost:3001/v2/assets/:chain/location", 
 });
 
 // Retrieve reserve chain for specific asset on specific chain
-const response = await fetch("http://localhost:3001/v2/assets/:chain/reserve-chain", {
+const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/reserve-chain", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -600,7 +600,7 @@ const response = await fetch("http://localhost:3001/v2/assets/:chain/reserve-cha
 });
 
 // Find out whether asset is registered on chain and return its entire parameters. If not found, returns null.
-const response = await fetch("http://localhost:3001/v2/assets/:chain/asset-info", {
+const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/asset-info", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -612,7 +612,7 @@ const response = await fetch("http://localhost:3001/v2/assets/:chain/asset-info"
 });
 
 //Get chains that support the specific asset related to origin
-const response = await fetch("http://localhost:3001/v2/assets/:chain/supported-destinations", {
+const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/supported-destinations", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -633,25 +633,25 @@ Possible parameters:
 
 ```ts
 // Return default pallet for specific Chain
-const response = await fetch('http://localhost:3001/v2/pallets/:chain/default');
+const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain/default');
 
 // Return an array of supported pallets for a specific Chain
-const response = await fetch('http://localhost:3001/v2/pallets/:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain');
 
 // Return ID of the specific cross-chain pallet for specific Chain
-const response = await fetch('http://localhost:3001/v2/pallets/:chain/index?pallet=XTokens');
+const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain/index?pallet=XTokens');
 
 // Return Chain support for DryRun
-const response = await fetch('http://localhost:3001/v2/chains/:chain/has-dry-run-support');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/:chain/has-dry-run-support');
 
 // Returns a JSON array of true EVM compatible chains (Chains that support only substrate EVM are not included. For example 'Crab')
-const response = await fetch('http://localhost:3001/v2/chains/evm');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/evm');
 
 //Returns all pallets for local transfers of native assets for specific chain.
-const response = await fetch('http://localhost:3001/v2/pallets/:chain/native-assets');
+const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain/native-assets');
 
 //Returns all pallets for local transfers of foreign assets for specific chain.
-const response = await fetch('http://localhost:3001/v2/pallets/:chain/other-assets');
+const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain/other-assets');
 ```
 
 ### XCM Analyser
@@ -668,7 +668,7 @@ Possible parameters:
 - `xcm` (Optional): Complete XCM call
 
 ```ts
-const response = await fetch('http://localhost:3001/v2/xcm-analyser', {
+const response = await fetch('https://api.paraspell.xyz/v2/xcm-analyser', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
