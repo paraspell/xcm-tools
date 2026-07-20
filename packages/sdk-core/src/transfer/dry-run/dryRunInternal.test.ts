@@ -70,7 +70,7 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       success: false,
-      dryRunError: { chainKind: 'origin', reason: 'someError' },
+      dryRunError: { chainKind: 'origin', chain: 'Acala', reason: 'someError' },
       origin: originFail,
       hops: []
     })
@@ -246,7 +246,7 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       success: false,
-      dryRunError: { chainKind: 'destination', reason: 'dest-boom' },
+      dryRunError: { chainKind: 'destination', chain: 'Moonbeam', reason: 'dest-boom' },
       origin: { ...originOk, asset: { symbol: 'ACA' } },
       destination: { success: false, dryRunError: { reason: 'dest-boom' } },
       hops: []

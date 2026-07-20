@@ -73,7 +73,7 @@ describe('maybePerformXcmFormatCheck', () => {
 
   it('throws DryRunFailedError with reason and failure chain when dry run fails', async () => {
     vi.mocked(dryRunTransactions).mockResolvedValue(
-      dryRunRes({ dryRunError: { reason: 'BadFormat', chainKind: 'origin' } }),
+      dryRunRes({ dryRunError: { reason: 'BadFormat', chainKind: 'origin', chain: 'Acala' } }),
     );
 
     await expect(
@@ -83,8 +83,8 @@ describe('maybePerformXcmFormatCheck', () => {
     await expect(
       maybePerformXcmFormatCheck(createApi({ xcmFormatCheck: true }), options, routerPlan),
     ).rejects.toMatchObject({
-      dryRunError: { reason: 'BadFormat', chainKind: 'origin' },
-      message: 'XCM format check failed. Dry run failed: BadFormat',
+      dryRunError: { reason: 'BadFormat', chainKind: 'origin', chain: 'Acala' },
+      message: 'XCM format check failed. Dry run on Acala failed: BadFormat',
     });
   });
 

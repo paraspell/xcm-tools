@@ -162,7 +162,7 @@ export class SwapBuilderCore<
       TCustomChain
     >,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback },
-  ): Promise<TGetXcmFeeResult<TDisableFallback>> {
+  ): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback;
     return getXcmFees({ ...this._options, api: this._api }, disableFallback);
   }
@@ -249,7 +249,7 @@ export class SwapBuilderCore<
       TBuildTransactionsBaseOptions<TApi, TRes, TSigner>,
       TCustomChain
     >,
-  ): Promise<TDryRunResult> {
+  ): Promise<TDryRunResult<TCustomChain>> {
     return dryRunRouter({ ...this._options, api: this._api });
   }
 
@@ -262,7 +262,7 @@ export class SwapBuilderCore<
       TCustomChain
     >,
     previewOptions?: TDryRunPreviewOptions,
-  ): Promise<TDryRunResult> {
+  ): Promise<TDryRunResult<TCustomChain>> {
     return dryRunRouterPreview({ ...this._options, api: this._api }, previewOptions);
   }
 
@@ -281,4 +281,4 @@ export class SwapBuilderCore<
 
 export const SwapBuilder = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-): TSwapBuilder<TApi, TRes, TSigner> => new SwapBuilderCore(api);
+): TSwapBuilder<TApi, TRes, TSigner, TCustomChain> => new SwapBuilderCore(api);

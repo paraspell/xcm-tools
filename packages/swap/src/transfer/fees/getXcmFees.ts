@@ -13,7 +13,7 @@ export const getXcmFees = async <
 >(
   initialOptions: TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>,
   disableFallback: TDisableFallback,
-): Promise<TGetXcmFeeResult<TDisableFallback>> => {
+): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions, true);
   return getRouterFees(dex, options, disableFallback);

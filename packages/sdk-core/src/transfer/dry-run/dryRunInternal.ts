@@ -16,7 +16,7 @@ import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
 export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TDryRunOptions<TApi, TRes, TSigner, TCustomChain>
-): Promise<TDryRunResult> => {
+): Promise<TDryRunResult<TCustomChain>> => {
   const {
     api,
     origin,
@@ -60,7 +60,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
   if (!originDryRun.success) {
     return {
       success: false,
-      dryRunError: { chainKind: 'origin', ...originDryRun.dryRunError },
+      dryRunError: { chainKind: 'origin', chain: origin, ...originDryRun.dryRunError },
       origin: originDryRun,
       hops: []
     }
@@ -192,7 +192,13 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     hops: traversalResult.hops
   }
 
-  const dryRunError = getDryRunError(result)
+  const dryRunError = getDryRunError({
+    origin: { chain: origin, result: result.origin },
+    destination: result.destination
+      ? { chain: destination, result: result.destination }
+      : undefined,
+    hops: result.hops
+  })
 
   return {
     success: !dryRunError,

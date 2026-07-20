@@ -116,7 +116,7 @@ export const getSwapExecuteXcmFee = async <
   dex: ExchangeChain,
   options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
   disableFallback: TDisableFallback,
-): Promise<{ result: TGetXcmFeeResult<TDisableFallback>; amountOut: bigint }> => {
+): Promise<{ result: TGetXcmFeeResult<TDisableFallback, TCustomChain>; amountOut: bigint }> => {
   const {
     api,
     origin,

@@ -12,7 +12,7 @@ import { getXcmFeeInternal } from '../fees'
 export const FEE_PADDING = 30
 
 const sumHopFees = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  result: TGetXcmFeeResult<false>,
+  result: TGetXcmFeeResult<false, TCustomChain>,
   {
     assetInfo,
     isRelayAsset,

@@ -33,6 +33,12 @@ const makeResult = (overrides: Partial<TDryRunResult>): TDryRunResult => ({
   ...overrides
 })
 
+const toArgs = (result: TDryRunResult) => ({
+  origin: { chain: 'Polkadot', result: result.origin },
+  destination: result.destination ? { chain: 'Astar', result: result.destination } : undefined,
+  hops: result.hops
+})
+
 describe('getDryRunError', () => {
   it('returns destination failure before hops', () => {
     const failure = makeFailureResult('ASTR', 'Destination failed')
@@ -40,9 +46,10 @@ describe('getDryRunError', () => {
 
     const result = makeResult({ destination: failure, hops: [hop] })
 
-    const dryRunError = getDryRunError<TDryRunChainResult>(result)
+    const dryRunError = getDryRunError(toArgs(result))
 
     expect(dryRunError?.chainKind).toBe('destination')
+    expect(dryRunError?.chain).toBe('Astar')
     expect(dryRunError?.reason).toBe('Destination failed')
   })
 
@@ -51,7 +58,7 @@ describe('getDryRunError', () => {
 
     const result = makeResult({ destination: makeSuccessResult('DOT'), hops: [failureHop] })
 
-    const dryRunError = getDryRunError<TDryRunChainResult>(result)
+    const dryRunError = getDryRunError(toArgs(result))
 
     expect(dryRunError?.chainKind).toBe('hop')
     expect(dryRunError?.chain).toBe('Astar')
@@ -64,6 +71,6 @@ describe('getDryRunError', () => {
       hops: [makeHop('Hydration', makeSuccessResult('DOT'))]
     })
 
-    expect(getDryRunError<TDryRunChainResult>(result)).toBeUndefined()
+    expect(getDryRunError(toArgs(result))).toBeUndefined()
   })
 })

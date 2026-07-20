@@ -102,7 +102,7 @@ describe('getXcmFeeOnce', () => {
 
     expect(res).toEqual({
       success: false,
-      dryRunError: { reason: 'Simulation failed', chainKind: 'origin' },
+      dryRunError: { reason: 'Simulation failed', chainKind: 'origin', chain: 'Acala' },
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',

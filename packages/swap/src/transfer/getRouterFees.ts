@@ -27,7 +27,7 @@ export const getRouterFees = async <
     TCustomChain
   >,
   disableFallback: TDisableFallback,
-): Promise<TGetXcmFeeResult> => {
+): Promise<TGetXcmFeeResult<boolean, TCustomChain>> => {
   const { api, origin, exchange, destination, sender } = options;
 
   if (canUseExecuteTransfer(dex, options)) {

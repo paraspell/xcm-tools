@@ -43,7 +43,7 @@ export const getXcmFeeOnce = async <
   useRootOrigin,
   skipReverseFeeCalculation
 }: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>): Promise<
-  TGetXcmFeeResult<TDisableFallback>
+  TGetXcmFeeResult<TDisableFallback, TCustomChain>
 > => {
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
@@ -124,13 +124,17 @@ export const getXcmFeeOnce = async <
         hops: []
       }
 
-      const dryRunError = getDryRunError(result)
+      const dryRunError = getDryRunError({
+        origin: { chain: origin, result: result.origin },
+        destination: { chain: destination, result: result.destination },
+        hops: result.hops
+      })
 
       return {
         success: !dryRunError,
         ...result,
         dryRunError
-      } as TGetXcmFeeResult<TDisableFallback>
+      } as TGetXcmFeeResult<TDisableFallback, TCustomChain>
     } finally {
       destApi.disconnectAllowed = true
       await destApi.disconnect()
@@ -322,11 +326,15 @@ export const getXcmFeeOnce = async <
     }))
   }
 
-  const dryRunError = getDryRunError(result)
+  const dryRunError = getDryRunError({
+    origin: { chain: origin, result: result.origin },
+    destination: { chain: destination, result: result.destination },
+    hops: result.hops
+  })
 
   return {
     success: !dryRunError,
     ...result,
     dryRunError
-  } as TGetXcmFeeResult<TDisableFallback>
+  } as TGetXcmFeeResult<TDisableFallback, TCustomChain>
 }

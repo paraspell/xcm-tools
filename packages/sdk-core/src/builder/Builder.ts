@@ -504,7 +504,7 @@ export class GeneralBuilder<
       TTransferBaseOptionsWithSender<TApi, TRes, TSigner> & TBuilderInternalOptions<TSigner>,
       TCustomChain
     >
-  ): Promise<TDryRunResult> {
+  ): Promise<TDryRunResult<TCustomChain>> {
     const { from, senderSource, swapOptions } = this._options
     assertNotEvmTransfer(from, senderSource)
 
@@ -527,7 +527,7 @@ export class GeneralBuilder<
       TCustomChain
     >,
     dryRunOptions?: TDryRunPreviewOptions
-  ): Promise<TDryRunResult> {
+  ): Promise<TDryRunResult<TCustomChain>> {
     const { from, senderSource, swapOptions } = this._options
     assertNotEvmTransfer(from, senderSource)
 
@@ -570,7 +570,7 @@ export class GeneralBuilder<
       TCustomChain
     >,
     options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
-  ): Promise<TGetXcmFeeResult<TDisableFallback>> {
+  ): Promise<TGetXcmFeeResult<TDisableFallback, TCustomChain>> {
     const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
 
     const { senderSource } = this._options

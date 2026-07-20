@@ -194,7 +194,7 @@ describe('getSwapInfo', () => {
     it('falls back to routed path on filtered error', async () => {
       vi.mocked(canUseExecuteTransfer).mockReturnValue(true);
       vi.mocked(getExecuteSwapInfo).mockRejectedValue(
-        new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin' }),
+        new DryRunFailedError({ reason: 'Filtered', chainKind: 'origin', chain: 'Acala' }),
       );
       vi.mocked(isFilteredError).mockReturnValue(true);
 

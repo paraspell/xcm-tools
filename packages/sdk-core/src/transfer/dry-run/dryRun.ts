@@ -5,7 +5,7 @@ import { dryRunInternal } from './dryRunInternal'
 
 export const dryRun = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TDryRunOptions<TApi, TRes, TSigner, TCustomChain>
-): Promise<TDryRunResult> => {
+): Promise<TDryRunResult<TCustomChain>> => {
   const { api, sender, origin } = options
 
   validateAddress(api, sender, origin, false)
