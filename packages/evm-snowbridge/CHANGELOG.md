@@ -1,5 +1,16 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.11.0...evm-snowbridge-v14.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove deprecated location override code 🧹
+
+### Features
+
+* Remove deprecated location override code 🧹 ([dfc7f32](https://github.com/paraspell/xcm-tools/commit/dfc7f32738e1aa9eb35cf6d61e304dcb1b8bcf6f))
+
 ## [13.11.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v13.10.1...evm-snowbridge-v13.11.0) (2026-07-07)
 
 

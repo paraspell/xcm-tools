@@ -1,5 +1,25 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.11.0...playground-v14.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Unify dry run and XCM fee error fields under dryRunError 🔧
+* Remove deprecated location override code 🧹
+
+### Features
+
+* **playground:** Add structured result & asset query views ✨ ([975b8ca](https://github.com/paraspell/xcm-tools/commit/975b8ca692b2e3bc9817cd9eb5bc51bc3cdaf561))
+* **playground:** Add UI view for assets object query ✨ ([beb4eb8](https://github.com/paraspell/xcm-tools/commit/beb4eb851feb270165eca9e4ef914ed365d0d6ec))
+* Remove deprecated location override code 🧹 ([dfc7f32](https://github.com/paraspell/xcm-tools/commit/dfc7f32738e1aa9eb35cf6d61e304dcb1b8bcf6f))
+* **sdk:** Add papi type descriptors and use typed api ✨ ([21c9723](https://github.com/paraspell/xcm-tools/commit/21c972375e913e08a70f4b74ad206edd50bc293a))
+
+
+### Code Refactoring
+
+* Unify dry run and XCM fee error fields under dryRunError 🔧 ([6b6849b](https://github.com/paraspell/xcm-tools/commit/6b6849b4c214fdcbee230ee6628ad257effc4281))
+
 ## [13.11.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.10.1...playground-v13.11.0) (2026-07-07)
 
 

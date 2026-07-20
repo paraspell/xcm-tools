@@ -1,5 +1,38 @@
 # Changelog
 
+## [14.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.11.0...sdk-core-v14.0.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* Unify dry run and XCM fee error fields under dryRunError 🔧
+* Remove deprecated asset query functions 🧹
+* Remove EvmBuilder code 🧹
+* Remove raw multiasset support 🧹
+* Remove deprecated location override code 🧹
+* Remove deprecated asset claim code 🧹
+
+### Features
+
+* Remove deprecated asset claim code 🧹 ([4e5b4a7](https://github.com/paraspell/xcm-tools/commit/4e5b4a795642f60737956687f36c19a6ca1f4284))
+* Remove deprecated asset query functions 🧹 ([400d538](https://github.com/paraspell/xcm-tools/commit/400d5380f6e6bb4ed3e62efaaf331ce3f751e2e4))
+* Remove deprecated location override code 🧹 ([dfc7f32](https://github.com/paraspell/xcm-tools/commit/dfc7f32738e1aa9eb35cf6d61e304dcb1b8bcf6f))
+* Remove EvmBuilder code 🧹 ([f9c7e2a](https://github.com/paraspell/xcm-tools/commit/f9c7e2a31a8cfdae7601ffa0d5b40390b3d6623b))
+* Remove raw multiasset support 🧹 ([748ed52](https://github.com/paraspell/xcm-tools/commit/748ed526f37c52a4ed490cca43da8ef462ae8064))
+* **sdk:** Add papi type descriptors and use typed api ✨ ([21c9723](https://github.com/paraspell/xcm-tools/commit/21c972375e913e08a70f4b74ad206edd50bc293a))
+
+
+### Documentation
+
+* Add readme for descriptors package ✨ ([cb1f1ca](https://github.com/paraspell/xcm-tools/commit/cb1f1ca5f64539e81236f2b07153440a39f2e97d))
+
+
+### Code Refactoring
+
+* Remove TSubstrateChain type casts 🔧 ([3d99cb7](https://github.com/paraspell/xcm-tools/commit/3d99cb7f15190a55bba5af789bb192a8e597e333))
+* **sdk:** Require chain field on dry run error 🔧 ([7cd6bb2](https://github.com/paraspell/xcm-tools/commit/7cd6bb240bd4f401eed372d4ce4173e6e6f16cc8))
+* Unify dry run and XCM fee error fields under dryRunError 🔧 ([6b6849b](https://github.com/paraspell/xcm-tools/commit/6b6849b4c214fdcbee230ee6628ad257effc4281))
+
 ## [13.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.10.1...sdk-core-v13.11.0) (2026-07-07)
 
 
