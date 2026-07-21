@@ -44,6 +44,7 @@ packages | - XCM SDK
          | - XCM SDK-Core
          | - XCM SDK-Common
          | - EVM
+         | - Descriptors
          | - EVM-Snowbridge
          | - Swap
          | - XCM Analyser
