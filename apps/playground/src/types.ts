@@ -3,6 +3,7 @@ import type {
   TChain,
   TExchangeChain,
   TPapiApi,
+  TPapiSigner,
   TPapiTransaction,
   TSwapEventType,
   TTransactionContext,
@@ -10,7 +11,6 @@ import type {
   Version,
 } from '@paraspell/sdk';
 import type { IconProps } from '@tabler/icons-react';
-import type { PolkadotSigner } from 'polkadot-api';
 import type { FC } from 'react';
 
 import type {
@@ -136,7 +136,7 @@ export type TSwapOptions = {
   currencyTo: TCurrencyEntryBase;
   exchange: TExchangeChain[];
   slippage: string;
-  evmSigner?: PolkadotSigner;
+  evmSigner?: TPapiSigner;
   evmInjectorAddress?: string;
 };
 

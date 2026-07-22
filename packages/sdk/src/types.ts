@@ -1,10 +1,10 @@
 import type { TSwapEvent as TSwapEventBase } from '@paraspell/sdk-core'
-import type { PolkadotClient, PolkadotSigner, Transaction } from 'polkadot-api'
+import type { PolkadotClient, Transaction } from 'polkadot-api'
+import type { RawTxCreator } from 'polkadot-api/tx-creator'
 
 export type TPapiApi = PolkadotClient
-export type TPapiSigner = PolkadotSigner
+export type TPapiSigner = RawTxCreator
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TPapiTransaction = Transaction<any, any>
+export type TPapiTransaction = Transaction
 
 export type TSwapEvent = TSwapEventBase<TPapiApi, TPapiTransaction>

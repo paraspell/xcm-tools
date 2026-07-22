@@ -1,7 +1,7 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
 import type { PolkadotApi } from '@paraspell/sdk-core';
 import { isChainEvm } from '@paraspell/sdk-core';
-import type { PolkadotSigner } from 'polkadot-api';
+import type { TxCreator } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { TRouterPlan } from '../types';
@@ -20,8 +20,8 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
 }));
 
 describe('executeRouterPlan', () => {
-  const mockSigner = {} as PolkadotSigner;
-  const mockEvmSigner = {} as PolkadotSigner;
+  const mockSigner = {} as TxCreator;
+  const mockEvmSigner = {} as TxCreator;
   const mockSenderAddress = 'sender-address';
   const mockEvmSenderAddress = 'evm-sender-address';
   const mockOnStatusChange = vi.fn();

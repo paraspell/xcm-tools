@@ -71,7 +71,8 @@ import {
   createDevSigner,
   deriveAddress,
   extractDestParaId,
-  findFailingEvent
+  findFailingEvent,
+  getPaymentInfo
 } from './utils'
 import { fetchPalletList } from './utils/fetchPalletList'
 
@@ -312,7 +313,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     const {
       partial_fee,
       weight: { proof_size, ref_time }
-    } = await tx.getPaymentInfo(address)
+    } = await getPaymentInfo(tx, address)
 
     return {
       partialFee: partial_fee,
@@ -931,7 +932,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
   async signAndSubmit(tx: TPapiTransaction, sender: TSender<TPapiSigner>): Promise<string> {
     const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
-    const { txHash } = await tx.signAndSubmit(signer)
+    const { txHash } = await tx.createAndSubmit(signer)
     return txHash
   }
 
@@ -941,9 +942,9 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
   ): Promise<string> {
     const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
     return new Promise((resolve, reject) => {
-      tx.signSubmitAndWatch(signer).subscribe({
+      tx.createSubmitAndWatch(signer).subscribe({
         next: event => {
-          if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
+          if (event.type === 'finalized' || event.type === 'inBestBlock') {
             if (!event.ok) {
               reject(new SubmitTransactionError(JSON.stringify(event.dispatchError.value)))
             } else {

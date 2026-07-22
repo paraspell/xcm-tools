@@ -1,4 +1,4 @@
-import { PolkadotSigner } from 'polkadot-api/signer'
+import type { TxCreator } from 'polkadot-api'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE } from '@polkadot-labs/hdkd-helpers'
@@ -25,15 +25,15 @@ const serializeTx = (tx: TPapiTransaction): TSerializedExtrinsics => {
   }
 }
 
-export const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) => {
+export const validateTx = async (tx: TPapiTransaction, signer: TxCreator) => {
   expect(tx).toBeDefined()
-  const hex = await tx.sign(signer)
+  const hex = await tx.create(signer)
   expect(hex).toBeDefined()
   const serialized = serializeTx(tx)
   expect(serialized).toMatchSnapshot()
 }
 
-export const createSigners = (): [PolkadotSigner, PolkadotSigner] => [
+export const createSigners = (): [TxCreator, TxCreator] => [
   createSr25519Signer('//Alice'),
   getEcdsaSigner()
 ]

@@ -1,5 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import type { TxCreator, TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { submitTransaction } from './submitTransaction';
@@ -9,7 +9,7 @@ const buildTxMock = () => {
   let onError: (err: unknown) => void = () => {};
 
   const txMock: TPapiTransaction = {
-    signSubmitAndWatch: vi.fn(() => ({
+    createSubmitAndWatch: vi.fn(() => ({
       subscribe(observer: { next: typeof onNext; error: typeof onError }) {
         onNext = observer.next;
         onError = observer.error;
@@ -26,18 +26,18 @@ const buildTxMock = () => {
   return { txMock, emit };
 };
 
-const signerStub = {} as PolkadotSigner;
+const signerStub = {} as TxCreator;
 
 describe('submitTransaction', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('invokes onSign when a "signed" event is received', async () => {
+  it('invokes onSign when a "created" event is received', async () => {
     const { txMock, emit } = buildTxMock();
     const onSign = vi.fn();
 
     const promise = submitTransaction(txMock, signerStub, onSign);
 
-    emit.next({ type: 'signed' });
+    emit.next({ type: 'created' });
     const okEvt = { type: 'finalized', ok: true } as unknown as TxFinalizedPayload;
     emit.next(okEvt);
 

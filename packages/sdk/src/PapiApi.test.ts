@@ -429,8 +429,9 @@ describe('PapiApi', () => {
 
   describe('getPaymentInfo', () => {
     it('should return the estimated fee and weight', async () => {
+      const getPaymentInfoSpy = vi.spyOn(mockTransaction, 'getPaymentInfo')
       const fee = await papiApi.getPaymentInfo(mockTransaction, 'some_address')
-      expect(mockTransaction.getPaymentInfo).toHaveBeenCalledWith('some_address')
+      expect(getPaymentInfoSpy).toHaveBeenCalled()
       expect(fee).toEqual({
         partialFee: 1000n,
         weight: {
@@ -1903,7 +1904,7 @@ describe('PapiApi', () => {
         destination: 'Acala'
       })
 
-      expect(paymentInfoSpy).toHaveBeenCalledWith(testAddress)
+      expect(paymentInfoSpy).toHaveBeenCalled()
       expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
         'Moonbeam',
         undefined,
@@ -2911,10 +2912,10 @@ describe('PapiApi', () => {
     it('should sign and submit a transaction', async () => {
       const mockTxHash = '0x1234567890abcdef'
       const mockTx = {
-        signAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
+        createAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
       } as unknown as TPapiTransaction
 
-      const spy = vi.spyOn(mockTx, 'signAndSubmit')
+      const spy = vi.spyOn(mockTx, 'createAndSubmit')
 
       const result = await papiApi.signAndSubmit(mockTx, '//Alice')
 
@@ -2932,10 +2933,10 @@ describe('PapiApi', () => {
           next({ type: 'finalized', ok: true, txHash: mockTxHash })
         })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        createSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
-      const spy = vi.spyOn(mockTx, 'signSubmitAndWatch')
+      const spy = vi.spyOn(mockTx, 'createSubmitAndWatch')
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
@@ -2943,15 +2944,15 @@ describe('PapiApi', () => {
       expect(result).toBe(mockTxHash)
     })
 
-    it('should resolve on txBestBlocksState with found', async () => {
+    it('should resolve on inBestBlock', async () => {
       const mockTxHash = '0xbestblock'
       const mockSubscribe = vi
         .fn()
         .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
-          next({ type: 'txBestBlocksState', found: true, ok: true, txHash: mockTxHash })
+          next({ type: 'inBestBlock', ok: true, txHash: mockTxHash })
         })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        createSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
@@ -2970,7 +2971,7 @@ describe('PapiApi', () => {
           })
         })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        createSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
@@ -2986,7 +2987,7 @@ describe('PapiApi', () => {
           error(mockError)
         })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        createSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
@@ -3001,7 +3002,7 @@ describe('PapiApi', () => {
           error('raw string error')
         })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        createSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(

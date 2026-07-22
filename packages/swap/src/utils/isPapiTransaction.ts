@@ -7,5 +7,5 @@ export const isPapiTransaction = <TRes>(tx: TExtrinsic<TRes>): tx is TPapiTransa
   tx !== null &&
   'getEncodedData' in tx &&
   typeof tx.getEncodedData === 'function' &&
-  'signSubmitAndWatch' in tx &&
-  typeof tx.signSubmitAndWatch === 'function';
+  'createSubmitAndWatch' in tx &&
+  typeof tx.createSubmitAndWatch === 'function';

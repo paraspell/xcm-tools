@@ -6,7 +6,8 @@ import type {
   TTransferBaseOptions
 } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
-import type { PolkadotClient, PolkadotSigner } from 'polkadot-api'
+import type { PolkadotClient } from 'polkadot-api'
+import type { RawTxCreator } from 'polkadot-api/tx-creator'
 
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
@@ -27,4 +28,4 @@ export const Builder = <const TOpts extends TBuilderOptions<TApiOrUrl<TPapiApi>>
 export type GeneralBuilder<
   T extends Partial<TTransferBaseOptions<TPapiApi, TPapiTransaction, TPapiSigner>> = object,
   TCustomChain extends string = never
-> = GeneralBuilderCore<PolkadotClient, TPapiTransaction, PolkadotSigner, T, TCustomChain>
+> = GeneralBuilderCore<PolkadotClient, TPapiTransaction, RawTxCreator, T, TCustomChain>
