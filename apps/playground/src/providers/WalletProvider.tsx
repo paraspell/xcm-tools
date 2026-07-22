@@ -349,7 +349,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       if (!account) {
         throw new Error('No selected account');
       }
-      return account.polkadotSigner;
+      return account.txCreator;
     }
   };
 

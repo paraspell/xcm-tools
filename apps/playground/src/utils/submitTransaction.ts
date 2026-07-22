@@ -3,7 +3,7 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { DedotClient, SubmittableExtrinsic } from 'dedot';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import type { TxCreator, TxFinalizedPayload } from 'polkadot-api';
 
 import type { TApi, TTransaction } from './importSdk';
 
@@ -57,20 +57,17 @@ export const submitTransactionPjs = async (
 
 export const submitTransactionPapi = async (
   tx: TPapiTransaction,
-  signer: PolkadotSigner,
+  signer: TxCreator,
   onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
   return new Promise((resolve, reject) => {
-    return tx.signSubmitAndWatch(signer).subscribe({
+    return tx.createSubmitAndWatch(signer).subscribe({
       next: (event) => {
-        if (event.type === 'signed') {
+        if (event.type === 'created') {
           if (onSign) onSign();
         }
 
-        if (
-          event.type === 'finalized' ||
-          (event.type === 'txBestBlocksState' && event.found)
-        ) {
+        if (event.type === 'finalized' || event.type === 'inBestBlock') {
           if (!event.ok) {
             reject(new Error(JSON.stringify(event.dispatchError.value)));
           } else {
@@ -90,14 +87,14 @@ export const submitTx = async (
   apiType: TApiType,
   api: TApi,
   tx: TTransaction,
-  signer: PolkadotSigner | Signer,
+  signer: TxCreator | Signer,
   senderAddress: string,
   onSign?: () => void,
 ) => {
   if (apiType === 'PAPI') {
     await submitTransactionPapi(
       tx as TPapiTransaction,
-      signer as PolkadotSigner,
+      signer as TxCreator,
       onSign,
     );
   } else if (apiType === 'DEDOT') {

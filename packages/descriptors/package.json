@@ -39,9 +39,9 @@
     "copy:dist": "cp -r .papi/descriptors/dist ./dist"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 2 < 3"
+    "polkadot-api": "3.0.0-rc.4"
   },
   "devDependencies": {
-    "polkadot-api": "^2.1.7"
+    "polkadot-api": "3.0.0-rc.4"
   }
 }

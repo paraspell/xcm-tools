@@ -41,7 +41,7 @@
     "i18next-http-backend": "^4.0.0",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
-    "polkadot-api": "^2.1.7",
+    "polkadot-api": "3.0.0-rc.4",
     "react": "^19.2.7",
     "react-apollo-network-status": "^6.0.0",
     "react-dom": "^19.2.7",

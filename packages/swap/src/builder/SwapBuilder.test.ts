@@ -1,5 +1,5 @@
 import type { PolkadotApi, TExchangeInput } from '@paraspell/sdk-core';
-import type { PolkadotSigner } from 'polkadot-api';
+import type { TxCreator } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import {
@@ -117,7 +117,7 @@ describe('Builder', () => {
   it('should construct a transfer using SwapBuilder with evmSenderAddress and evmSigner', async () => {
     const onStatusChange = vi.fn();
     const evmSenderAddress = '0x1234567890';
-    const evmSigner = {} as PolkadotSigner;
+    const evmSigner = {} as TxCreator;
 
     await SwapBuilder(mockApi)
       .from(from)

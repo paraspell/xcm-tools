@@ -37,7 +37,7 @@
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@codecov/rollup-plugin": "^2.0.1",
-    "@polkadot-api/substrate-bindings": "^0.20.3",
+    "@polkadot-api/substrate-bindings": "0.21.0-rc.1",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
@@ -46,7 +46,7 @@
     "cli-progress": "^3.12.0",
     "dotenv": "^17.4.2",
     "picocolors": "^1.1.1",
-    "polkadot-api": "^2.1.7",
+    "polkadot-api": "3.0.0-rc.4",
     "rollup": "^4.62.2",
     "rollup-plugin-dts": "^6.4.1"
   }

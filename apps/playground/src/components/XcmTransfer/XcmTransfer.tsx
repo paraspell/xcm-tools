@@ -8,10 +8,14 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { GeneralBuilder, TBuilderConfig, TUrl } from '@paraspell/sdk';
+import type {
+  GeneralBuilder,
+  TBuilderConfig,
+  TPapiSigner,
+  TUrl,
+} from '@paraspell/sdk';
 import { BatchMode, isExternalChain, replaceBigInt } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
-import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
 import { EVM_CHAINS, QUERY_CONFIG } from '../../constants';
@@ -252,7 +256,7 @@ export const XcmTransfer = () => {
   const executeSdkQuery = async (
     formValues: TFormValuesTransformed,
     sender: string,
-    signer: PolkadotSigner | Signer,
+    signer: TPapiSigner | Signer,
     builderOptions: TBuilderConfig<TUrl>,
     submitType: TQuerySubmitType,
   ) => {
@@ -301,7 +305,7 @@ export const XcmTransfer = () => {
   const performQuery = async (
     formValues: TFormValuesTransformed,
     sender: string,
-    signer: PolkadotSigner | Signer,
+    signer: TPapiSigner | Signer,
     notifId: string | undefined,
     submitType: TQuerySubmitType,
   ) => {
