@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0-rc](https://github.com/paraspell/xcm-tools/compare/playground-v14.0.0...playground-v14.1.0-rc) (2026-07-22)
+
+
+### Features
+
+* Migrate to polkadot-api v3 🚀 ([f705a8f](https://github.com/paraspell/xcm-tools/commit/f705a8faf4f4486f196e35763995d0590ce8eaeb))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.11.0...playground-v14.0.0) (2026-07-20)
 
 
