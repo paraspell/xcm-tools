@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - next
 
 name: release-please
 jobs:
@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
-      sdk_core_released: ${{ steps.release.outputs['packages/sdk-core--release_created'] }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v5
@@ -17,14 +16,13 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           target-branch: ${{ github.ref_name }}
 
-  publish_packages_and_deploy_websites:
+  publish_packages:
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -67,42 +65,5 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish packages
-        run: pnpm publish -r --no-git-checks --access=public
-
-      - name: Publish Playground
-        run: pnpm exec netlify deploy --prod --site $PLAYGROUND_SITE_ID --filter @paraspell/playground
-        env:
-          PLAYGROUND_SITE_ID: ${{ secrets.PLAYGROUND_SITE_ID }}
-
-      - name: Publish Visualizer FE
-        run: pnpm exec netlify deploy --prod --site $VISUALIZER_SITE_ID --filter visualizer-fe
-        env:
-          VISUALIZER_SITE_ID: ${{ secrets.VISUALIZER_SITE_ID }}
-
-      - name: Publish ParaSpell Website
-        run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
-
-  deploy_xcm_api_and_visualizer_be:
-    needs: release-please
-    if: needs.release-please.outputs.sdk_core_released == 'true'
-    runs-on: self-hosted
-    steps:
-      - name: Pull latest changes
-        run: git pull
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build XCM API
-        run: pnpm --filter xcm-api... build
-
-      - name: Build Visualizer BE
-        run: pnpm --filter visualizer-be... build
-
-      - name: Restart PM2 process
-        run: |
-          pm2 reload xcm-api
-          pm2 reload visualizer-be
-        env:
-          PM2_HOME: /${{ secrets.USER }}/.pm2
+      - name: Publish packages (rc dist-tag)
+        run: pnpm publish -r --tag rc --no-git-checks --access=public

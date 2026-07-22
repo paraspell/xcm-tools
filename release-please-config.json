@@ -1,5 +1,8 @@
 {
   "separate-pull-requests": true,
+  "versioning": "prerelease",
+  "prerelease": true,
+  "prerelease-type": "rc",
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Bug Fixes", "hidden": false },
