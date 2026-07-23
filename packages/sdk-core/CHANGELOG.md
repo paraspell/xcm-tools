@@ -1,5 +1,12 @@
 # Changelog
 
+## [13.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.11.0...sdk-core-v13.11.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update Hydration endpoints 👨‍💻 ([0082476](https://github.com/paraspell/xcm-tools/commit/0082476f25f2b522612dd1a82bc2926b195cdabb))
+
 ## [13.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.10.1...sdk-core-v13.11.0) (2026-07-07)
 
 
