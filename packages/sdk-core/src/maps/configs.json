@@ -9,6 +9,10 @@
         "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
       {
+        "name": "Gatotech Unlimited",
+        "endpoint": "wss://asset-hub-polkadot.gatotech.network"
+      },
+      {
         "name": "Helixstreet",
         "endpoint": "wss://rpc-asset-hub-polkadot.helixstreet.io"
       },
@@ -186,6 +190,42 @@
       {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/hydradx"
+      },
+      {
+        "name": "Rotko (SEA)",
+        "endpoint": "wss://hydration.rotko.net"
+      },
+      {
+        "name": "sin",
+        "endpoint": "wss://subway.sin.hydration.cloud"
+      },
+      {
+        "name": "coke",
+        "endpoint": "wss://subway.coke.hydration.cloud"
+      },
+      {
+        "name": "kril",
+        "endpoint": "wss://rpc.kril.hydration.cloud"
+      },
+      {
+        "name": "shellfish",
+        "endpoint": "wss://subway.shellfish.hydration.cloud"
+      },
+      {
+        "name": "catfish-1",
+        "endpoint": "wss://rpc-catfish-1.catfish.hydration.cloud"
+      },
+      {
+        "name": "catfish-2",
+        "endpoint": "wss://rpc-catfish-2.catfish.hydration.cloud"
+      },
+      {
+        "name": "catfish-3",
+        "endpoint": "wss://rpc-catfish-3.catfish.hydration.cloud"
+      },
+      {
+        "name": "catfish-4",
+        "endpoint": "wss://rpc-catfish-4.catfish.hydration.cloud"
       }
     ]
   },
@@ -938,12 +978,12 @@
     "paraId": 1004,
     "providers": [
       {
-        "name": "Amforc",
-        "endpoint": "wss://people-paseo.rpc.amforc.com"
+        "name": "Gatotech Unlimited",
+        "endpoint": "wss://people-paseo.gatotech.network"
       },
       {
-        "name": "Zondax",
-        "endpoint": "wss://api2.zondax.ch/pas/people/node/rpc"
+        "name": "Rotko",
+        "endpoint": "wss://people-paseo.rotko.net"
       },
       {
         "name": "interweb",
@@ -974,6 +1014,10 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://polkadot-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Gatotech Unlimited",
+        "endpoint": "wss://polkadot.gatotech.network"
       },
       {
         "name": "Helixstreet",
@@ -1013,6 +1057,10 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://kusama-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Gatotech Unlimited",
+        "endpoint": "wss://kusama.gatotech.network"
       },
       {
         "name": "Helixstreet",
@@ -1057,10 +1105,6 @@
     "paraId": 0,
     "providers": [
       {
-        "name": "Amforc",
-        "endpoint": "wss://paseo.rpc.amforc.com"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://paseo-rpc.n.dwellir.com"
       },
@@ -1069,8 +1113,8 @@
         "endpoint": "wss://rpc-paseo.stakeworld.io"
       },
       {
-        "name": "Zondax",
-        "endpoint": "wss://api2.zondax.ch/pas/relay/node/rpc"
+        "name": "TurboFlakes",
+        "endpoint": "wss://paseo-v2.rpc.turboflakes.io"
       },
       {
         "name": "interweb",
