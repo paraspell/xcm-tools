@@ -197,6 +197,19 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "GeneralIndex": 222
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X2": [
@@ -408,6 +421,16 @@
             },
             {
               "PalletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X1": [
+            {
+              "Parachain": 3388
             }
           ]
         }
