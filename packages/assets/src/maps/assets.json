@@ -8047,7 +8047,8 @@
             ]
           }
         },
-        "existentialDeposit": "20000000000000000"
+        "existentialDeposit": "20000000000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "SKY",
@@ -8419,6 +8420,21 @@
         "isFeeAsset": true
       },
       {
+        "symbol": "XON",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3417
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "100"
+      },
+      {
         "symbol": "MYTH",
         "decimals": 18,
         "location": {
@@ -8623,6 +8639,7 @@
           }
         },
         "existentialDeposit": "1000",
+        "isFeeAsset": true,
         "alias": "XRT1"
       },
       {
@@ -16216,7 +16233,7 @@
     "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
-    "ss58Prefix": 0,
+    "ss58Prefix": 42,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "assets": [
@@ -16668,7 +16685,7 @@
     "relaychainSymbol": "PAS",
     "nativeAssetSymbol": "PAS",
     "isEVM": false,
-    "ss58Prefix": 0,
+    "ss58Prefix": 42,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "assets": [
