@@ -22,9 +22,11 @@ export default [
         presets: ['@babel/preset-env']
       }),
       codecovRollupPlugin({
-        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+        enableBundleAnalysis: process.env.GITHUB_ACTIONS === 'true',
         bundleName: 'sdk-pjs',
-        uploadToken: process.env.CODECOV_TOKEN,
+        oidc: {
+          useGitHubOIDC: true
+        },
         uploadOverrides: {
           sha: process.env.GH_COMMIT_SHA
         }
