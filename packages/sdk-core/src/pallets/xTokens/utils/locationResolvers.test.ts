@@ -8,7 +8,8 @@ import type { TXTokensTransferOptions } from '../../../types'
 import { buildLocation } from './locationResolvers'
 
 vi.mock('@paraspell/assets')
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isRelayChain: vi.fn(),
   Parents: {
     ONE: 1

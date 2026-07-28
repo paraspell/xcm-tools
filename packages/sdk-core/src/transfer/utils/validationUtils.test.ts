@@ -30,7 +30,14 @@ import {
 
 vi.mock('viem')
 vi.mock('@paraspell/pallets')
-vi.mock('@paraspell/sdk-common')
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  isBridge: vi.fn(),
+  isExternalChain: vi.fn(),
+  isRelayChain: vi.fn(),
+  isSubstrateBridge: vi.fn(),
+  isTLocation: vi.fn()
+}))
 vi.mock('@paraspell/assets', () => ({
   getNativeAssets: vi.fn(),
   InvalidCurrencyError: class extends Error {},

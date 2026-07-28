@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * Error thrown when multiple assets with the same symbol are found.
  */
-export class DuplicateAssetIdError extends Error {
+export class DuplicateAssetIdError extends ParaSpellError {
   /**
    * Constructs a new DuplicateAssetError.
    *
@@ -11,6 +13,5 @@ export class DuplicateAssetIdError extends Error {
     super(
       `Multiple assets found with the same ID: ${id}. Please specify asset directly by symbol using .currency({symbol: <ASSET_SYMBOL>})`
     )
-    this.name = 'DuplicateAssetId'
   }
 }

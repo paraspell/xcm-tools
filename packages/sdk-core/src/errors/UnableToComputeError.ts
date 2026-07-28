@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * UnableToComputeError is thrown when a computation cannot be performed.
  */
-export class UnableToComputeError extends Error {
+export class UnableToComputeError extends ParaSpellError {
   /**
    * Constructs a new UnableToComputeError.
    *
@@ -9,6 +11,5 @@ export class UnableToComputeError extends Error {
    */
   constructor(message: string) {
     super(message)
-    this.name = 'UnableToComputeError'
   }
 }

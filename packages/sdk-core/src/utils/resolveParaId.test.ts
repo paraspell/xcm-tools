@@ -4,7 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../api'
 import { resolveParaId } from './resolveParaId'
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isTLocation: vi.fn()
 }))
 

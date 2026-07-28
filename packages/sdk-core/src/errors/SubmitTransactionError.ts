@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * Error thrown when a submitted transaction encounters a dispatch error on-chain.
  */
-export class SubmitTransactionError extends Error {
+export class SubmitTransactionError extends ParaSpellError {
   /**
    * Constructs a new SubmitTransactionError.
    *
@@ -9,6 +11,5 @@ export class SubmitTransactionError extends Error {
    */
   constructor(message: string) {
     super(message)
-    this.name = 'SubmitTransactionError'
   }
 }

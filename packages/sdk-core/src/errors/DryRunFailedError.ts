@@ -1,9 +1,11 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 import type { TDryRunFailure } from '../types'
 
 /**
  * Error thrown when the Dry Run fails.
  */
-export class DryRunFailedError<TCustomChain extends string = never> extends Error {
+export class DryRunFailedError<TCustomChain extends string = never> extends ParaSpellError {
   readonly dryRunError: TDryRunFailure<TCustomChain>
 
   /**
@@ -18,7 +20,6 @@ export class DryRunFailedError<TCustomChain extends string = never> extends Erro
       message = `${prefix} ${message}`
     }
     super(message)
-    this.name = 'DryRunFailedError'
     this.dryRunError = error
   }
 }

@@ -5,7 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { TDestination } from '../../types'
 import { resolveScenario } from './resolveScenario'
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isRelayChain: vi.fn(),
   isTLocation: vi.fn()
 }))

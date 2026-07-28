@@ -1,9 +1,11 @@
-import type { TChain } from '@paraspell/sdk-common'
+import { ParaSpellError, type TChain } from '@paraspell/sdk-common'
 
 /**
  * Used to inform user, that Parachain they wish to use has not yet implemented full XCM Support
  */
-export class NoXCMSupportImplementedError<TCustomChain extends string = never> extends Error {
+export class NoXCMSupportImplementedError<
+  TCustomChain extends string = never
+> extends ParaSpellError {
   /**
    * Constructs a new NoXCMSupportImplementedError.
    *
@@ -11,6 +13,5 @@ export class NoXCMSupportImplementedError<TCustomChain extends string = never> e
    */
   constructor(chain: TChain | TCustomChain) {
     super(`No XCM support implemented for chain ${chain} yet.`)
-    this.name = 'NoXCMSupportImplemented'
   }
 }

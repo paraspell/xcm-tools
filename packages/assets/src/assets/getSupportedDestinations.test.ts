@@ -32,7 +32,8 @@ vi.mock('./isStableCoinAsset', () => ({
   isStableCoinAsset: vi.fn(() => false)
 }))
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Moonbeam', 'Astar', 'AssetHubPolkadot'],
   SUBSTRATE_CHAINS: ['Polkadot', 'BifrostPolkadot', 'Acala', 'Astar', 'Karura'],
   ETHEREUM_BRIDGE_ORIGINS: ['Acala'],

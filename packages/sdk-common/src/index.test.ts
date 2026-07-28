@@ -14,6 +14,7 @@ describe('index.ts re-exports', () => {
     expect(rootExports.EXTERNAL_CHAINS).toBeDefined()
     expect(rootExports.CHAINS).toBeDefined()
     expect(rootExports.Parents).toBeDefined()
+    expect(rootExports.ParaSpellError).toBeDefined()
     expect(rootExports.deepEqual).toBeDefined()
     expect(rootExports.hasJunction).toBeDefined()
     expect(rootExports.isTLocation).toBeDefined()

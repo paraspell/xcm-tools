@@ -6,7 +6,8 @@ import type { PolkadotApi } from '../../api'
 import type { TDestination } from '../../types'
 import { resolveAsset } from './resolveAsset'
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isTLocation: vi.fn()
 }))
 

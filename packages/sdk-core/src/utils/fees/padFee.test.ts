@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   isRelayChain: (c: string) => c === 'Polkadot' || c === 'Kusama'
 }))
 

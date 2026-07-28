@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * Error thrown when the Ethereum bridge is halted.
  */
-export class BridgeHaltedError extends Error {
+export class BridgeHaltedError extends ParaSpellError {
   /**
    * Constructs a new BridgeHaltedError.
    *
@@ -9,6 +11,5 @@ export class BridgeHaltedError extends Error {
    */
   constructor() {
     super('Bridge operations have been paused by onchain governance.')
-    this.name = 'BridgeHaltedError'
   }
 }
