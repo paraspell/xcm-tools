@@ -12,6 +12,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -33,7 +36,6 @@ jobs:
         run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
-          echo CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" >> .env
           for app in apps/visualizer-be apps/xcm-api; do
             echo DATABASE_URL="file:./dev.db" > $app/.env
           done
@@ -108,6 +110,9 @@ jobs:
     name: Test & Coverage
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -136,72 +141,72 @@ jobs:
       - name: Upload XCM SDK core coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/sdk-core
           flags: xcm-sdk-core
       - name: Upload XCM SDK coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/sdk
           flags: xcm-sdk
       - name: Upload XCM SDK PJS coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/sdk-pjs
           flags: xcm-sdk-pjs
       - name: Upload Assets coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/sdk-common
           flags: sdk-common
       - name: Upload Assets coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/assets
           flags: assets
       - name: Upload Pallets coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/pallets
           flags: pallets
       - name: Upload XCM Analyser coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/xcm-analyser
           flags: xcm-analyser
       - name: Upload Swap coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/swap
           flags: swap
       - name: Upload EVM coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/evm
           flags: evm
       - name: Upload EVM Snowbridge coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: packages/evm-snowbridge
           flags: evm-snowbridge
       - name: Upload Visualizer BE coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: apps/visualizer-be
           flags: visualizer-be
       - name: Upload XCM API coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           directory: apps/xcm-api
           flags: xcm-api
