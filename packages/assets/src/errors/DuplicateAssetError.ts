@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * Error thrown when multiple assets with the same symbol are found.
  */
-export class DuplicateAssetError extends Error {
+export class DuplicateAssetError extends ParaSpellError {
   /**
    * Constructs a new DuplicateAssetError.
    *
@@ -9,6 +11,5 @@ export class DuplicateAssetError extends Error {
    */
   constructor(msg: string) {
     super(msg)
-    this.name = 'DuplicateAsset'
   }
 }

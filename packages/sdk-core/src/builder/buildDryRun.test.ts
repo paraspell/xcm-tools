@@ -10,7 +10,10 @@ import type {
 } from '../types'
 import { buildDryRun } from './buildDryRun'
 
-vi.mock('@paraspell/sdk-common')
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  isTLocation: vi.fn()
+}))
 vi.mock('../transfer')
 
 describe('buildDryRun', () => {

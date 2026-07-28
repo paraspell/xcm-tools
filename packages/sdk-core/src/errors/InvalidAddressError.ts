@@ -1,7 +1,9 @@
+import { ParaSpellError } from '@paraspell/sdk-common'
+
 /**
  * Error thrown when an invalid address is provided.
  */
-export class InvalidAddressError extends Error {
+export class InvalidAddressError extends ParaSpellError {
   /**
    * Constructs a new InvalidAddressError.
    *
@@ -9,6 +11,5 @@ export class InvalidAddressError extends Error {
    */
   constructor(message: string) {
     super(message)
-    this.name = 'InvalidAddressError'
   }
 }

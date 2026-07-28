@@ -1,9 +1,9 @@
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { ParaSpellError, type TSubstrateChain } from '@paraspell/sdk-common'
 
 /**
  * Used to inform user, that no XCM pallet was found on the specified chain.
  */
-export class XcmPalletNotFoundError<TCustomChain extends string = never> extends Error {
+export class XcmPalletNotFoundError<TCustomChain extends string = never> extends ParaSpellError {
   /**
    * Constructs a new XcmPalletNotFoundError.
    *
@@ -11,6 +11,5 @@ export class XcmPalletNotFoundError<TCustomChain extends string = never> extends
    */
   constructor(chain: TSubstrateChain | TCustomChain) {
     super(`No XCM pallet found on chain ${chain}`)
-    this.name = 'XcmPalletNotFoundError'
   }
 }

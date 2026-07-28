@@ -9,7 +9,10 @@ import { validateDestinationAddress } from './validateDestinationAddress'
 
 vi.mock('./validateAddress')
 
-vi.mock('@paraspell/sdk-common')
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
+  isTLocation: vi.fn()
+}))
 
 describe('validateDestinationAddress', () => {
   const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>

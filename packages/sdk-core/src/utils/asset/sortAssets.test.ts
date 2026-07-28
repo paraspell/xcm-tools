@@ -16,7 +16,8 @@ vi.mock('@paraspell/assets', () => ({
   })
 }))
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importActual => ({
+  ...(await importActual()),
   hasJunction: vi.fn((loc: TLocation, junction: string) => {
     if (junction === 'GlobalConsensus' && loc.interior && typeof loc.interior === 'object') {
       if ('X2' in loc.interior && Array.isArray(loc.interior.X2)) {
