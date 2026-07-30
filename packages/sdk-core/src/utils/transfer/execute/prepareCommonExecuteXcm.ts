@@ -1,6 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
 
-import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
 import { createBeneficiaryLocation } from '../../location'
@@ -27,9 +26,9 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
     WithdrawAsset: withdrawAssets
   })
 
-  if (feeAssetLocalized && !useJitWithdraw) {
-    prefix.push(...createBuyExecution(feeAssetLocalized))
-  } else {
+  const feePaymentAsset = feeAssetLocalized && !useJitWithdraw ? feeAssetLocalized : undefined
+
+  if (!feePaymentAsset) {
     prefix.push({
       SetFeesMode: {
         jit_withdraw: true
@@ -50,5 +49,5 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
     }
   }
 
-  return { prefix, depositInstruction }
+  return { prefix, feePaymentAsset, depositInstruction }
 }

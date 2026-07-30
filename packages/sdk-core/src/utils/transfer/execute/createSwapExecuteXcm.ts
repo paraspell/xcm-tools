@@ -8,10 +8,11 @@ import { createAsset } from '../../asset'
 import { getRelayChainOf } from '../../chain'
 import { createEthereumBridgeInstructions } from '../../ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../ethereum/generateMessageId'
-import { localizeLocation } from '../../location'
+import { createBeneficiaryLocation, localizeLocation } from '../../location'
 import { addXcmVersionHeader } from '../../xcm-version'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
+import { createExecutionProgram } from './createExecutionProgram'
 import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
@@ -101,7 +102,7 @@ export const createSwapExecuteXcm = async <
     assetInfoFrom,
     assetInfoTo,
     feeAssetInfo,
-    fees: { originFee, originReserveFee, destReserveFee },
+    fees: { originFee, originReserveFee, destReserveFee, byChain },
     sender,
     recipient,
     version,
@@ -159,8 +160,9 @@ export const createSwapExecuteXcm = async <
   const resolvedFeeAssetInfo = ethFeeAssetInfo ?? feeAssetInfo
 
   const hasSeparateFeeAsset = (isEthereumDest && !isMainAssetDot) || !!feeAssetInfo
+  const hopOriginFee = hasSeparateFeeAsset ? ethBridgeFee : 0n
 
-  const { prefix, depositInstruction } = prepareCommonExecuteXcm(
+  const { prefix, feePaymentAsset, depositInstruction } = prepareCommonExecuteXcm(
     {
       api,
       chain: chain ?? exchangeChain,
@@ -169,9 +171,11 @@ export const createSwapExecuteXcm = async <
       feeAssetInfo: resolvedFeeAssetInfo,
       useJitWithdraw: isEthereumDest,
       recipient,
+      sender,
       fees: {
         originFee: hasSeparateFeeAsset ? ethBridgeFee || originFee : originFee,
-        reserveFee: originReserveFee
+        reserveFee: originReserveFee,
+        byChain
       },
       version
     },
@@ -227,9 +231,11 @@ export const createSwapExecuteXcm = async <
             paraIdTo: getParaId(resolvedDestChain!),
             version,
             recipient,
+            sender,
             fees: {
-              originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
-              reserveFee: destReserveFee
+              originFee: hopOriginFee,
+              reserveFee: destReserveFee,
+              byChain
             },
             suffixXcm: snowbridgeInstructions
           })
@@ -242,8 +248,9 @@ export const createSwapExecuteXcm = async <
       paraIdTo,
       version,
       recipient,
+      sender,
       // Deal with this after feeAsset is supported
-      fees: { originFee: 0n, reserveFee: destReserveFee },
+      fees: { originFee: 0n, reserveFee: destReserveFee, byChain },
       suffixXcm: [depositInstruction]
     })
   } else {
@@ -261,11 +268,24 @@ export const createSwapExecuteXcm = async <
         paraIdTo: getParaId(exchangeChain),
         version,
         recipient,
-        fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
+        sender,
+        fees: {
+          originFee: hopOriginFee,
+          reserveFee: originReserveFee,
+          byChain
+        },
         suffixXcm: [...exchangeInstructions, ...exchangeToDestXcm]
       })
     : [...exchangeInstructions, ...exchangeToDestXcm]
 
-  const fullXcm = [...prefix, ...finalXcm]
+  const paidFinalXcm = createExecutionProgram({
+    version,
+    feeAsset: feePaymentAsset,
+    executionFee: byChain?.[chain ?? exchangeChain],
+    xcm: finalXcm,
+    refundBeneficiary: createBeneficiaryLocation({ api, address: sender, version })
+  })
+
+  const fullXcm = [...prefix, ...paidFinalXcm]
   return addXcmVersionHeader(fullXcm, version)
 }

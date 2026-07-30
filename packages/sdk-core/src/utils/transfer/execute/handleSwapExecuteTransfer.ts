@@ -24,6 +24,7 @@ import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
 import { createExecuteCall } from './createExecuteCall'
+import { createExecutionFeePlan } from './createExecutionFeePlan'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
 const FEE_PADDING_PERCENTAGE = 20
@@ -36,7 +37,10 @@ const validateAmount = (amount: bigint, requiredFee: bigint): void => {
   }
 }
 
-const calculateTotalFees = (chain: TSubstrateChain | undefined, fees: TSwapFeeEstimates): bigint =>
+const calculateTotalFees = <TCustomChain extends string = never>(
+  chain: TSubstrateChain | undefined,
+  fees: TSwapFeeEstimates<TCustomChain>
+): bigint =>
   chain ? fees.originReserveFee + fees.exchangeFee : 0n
 
 const executeDryRun = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -87,8 +91,8 @@ const extractFeesFromDryRun = <TCustomChain extends string = never>(
   exchangeHopIndex: number,
   destChain?: TChain,
   requireHopsSuccess: boolean = false
-): TSwapFeeEstimates => {
-  const fees: TSwapFeeEstimates = {
+): TSwapFeeEstimates<TCustomChain> => {
+  const fees: TSwapFeeEstimates<TCustomChain> = {
     originFee: 0n,
     originReserveFee: 0n,
     exchangeFee: 0n,
@@ -277,14 +281,14 @@ export const handleSwapExecuteTransfer = async <
     ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
     : 0n
 
-  const fees: TSwapFeeEstimates = {
+  const initialFees: TSwapFeeEstimates<TCustomChain> = {
     originFee: dummyOriginFee,
     originReserveFee: MIN_FEE,
     exchangeFee: 0n,
     destReserveFee: MIN_FEE
   }
 
-  const totalFeesPre = calculateTotalFees(chain, fees)
+  const totalFeesPre = calculateTotalFees(chain, initialFees)
 
   if (!hasSeparateFeeAsset) {
     validateAmount(assetFrom.amount, totalFeesPre)
@@ -298,7 +302,7 @@ export const handleSwapExecuteTransfer = async <
       // Use half of the amountOut in initial dryRun to prevent NoDeal error in dry run
       amount: assetTo.amount / 2n
     },
-    fees
+    fees: initialFees
   })
 
   const firstDryRunResult = await executeDryRun({
@@ -322,7 +326,6 @@ export const handleSwapExecuteTransfer = async <
     destChain,
     false
   )
-
   // Set originFee from dry run origin fee (padded), same as handleExecuteTransfer
   extractedFees.originFee =
     feeAssetInfo && firstDryRunResult.origin.success
@@ -333,7 +336,16 @@ export const handleSwapExecuteTransfer = async <
     // We set the exchange fee to non-zero value to prevent creating dummy tx
     extractedFees.exchangeFee = MIN_FEE
   }
-  const totalFees = calculateTotalFees(chain, extractedFees)
+  const fees = {
+    ...extractedFees,
+    byChain: createExecutionFeePlan(
+      firstDryRunResult,
+      chain ?? exchangeChain,
+      destChain ?? exchangeChain,
+      FEE_PADDING_PERCENTAGE
+    )
+  }
+  const totalFees = calculateTotalFees(chain, fees)
 
   if (!hasSeparateFeeAsset) {
     validateAmount(assetFrom.amount, totalFees)
@@ -357,7 +369,11 @@ export const handleSwapExecuteTransfer = async <
   }
 
   const { call: finalCall } = await createXcmAndCall(
-    { ...internalOptions, assetInfoTo: updatedAssetTo, fees: extractedFees },
+    {
+      ...internalOptions,
+      assetInfoTo: updatedAssetTo,
+      fees
+    },
     firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
   )
 

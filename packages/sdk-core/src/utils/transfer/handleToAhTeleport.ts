@@ -46,7 +46,8 @@ export const handleToAhTeleport = async <TApi, TRes, TSigner, TCustomChain exten
     MAX_WEIGHT,
     // Enter dummy fee values just to get the dry run to pass
     asset.amount,
-    asset.amount / 2n
+    asset.amount / 2n,
+    true
   )
 
   const feeResult = await getXcmFeeOnce({

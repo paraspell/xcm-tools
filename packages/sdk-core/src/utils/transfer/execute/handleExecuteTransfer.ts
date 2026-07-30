@@ -7,6 +7,7 @@ import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
+import { createExecutionFeePlan } from './createExecutionFeePlan'
 
 const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
   if (!hops || hops.length === 0 || !hops[0].result.success) {
@@ -113,15 +114,22 @@ export const handleExecuteTransfer = async <
 
   const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
   const reserveFee = padValueBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
+  const fees = {
+    originFee,
+    reserveFee,
+    byChain: createExecutionFeePlan(
+      dryRunResult,
+      chain,
+      destChain,
+      FEE_PADDING_PERCENTAGE
+    )
+  }
 
   checkAmount(reserveFee)
 
   const xcm = await createDirectExecuteXcm({
     ...internalOptions,
-    fees: {
-      originFee,
-      reserveFee
-    }
+    fees
   })
 
   const weight = await api.getXcmWeight(xcm)

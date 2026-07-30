@@ -4,15 +4,17 @@ import { DOT_LOCATION } from '../../../constants'
 import type { TSerializedExtrinsics, TWeight } from '../../../types'
 import { type TPolkadotXCMTransferOptions } from '../../../types'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
+import { createExecutionProgram } from './createExecutionProgram'
 
 export const createExecuteExchangeXcm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   origin: TSubstrateChain,
   weight: TWeight,
   originExecutionFee: bigint,
-  destExecutionFee: bigint
+  destExecutionFee: bigint,
+  isFeeEstimate = false
 ): TRes => {
-  const { api, version, assetInfo: asset, destination, paraIdTo, recipient } = input
+  const { api, version, assetInfo: asset, destination, paraIdTo, recipient, sender } = input
 
   const dest = createDestination(api, version, origin, destination, paraIdTo)
 
@@ -23,6 +25,75 @@ export const createExecuteExchangeXcm = <TApi, TRes, TSigner, TCustomChain exten
   })
 
   const transformedLocation = localizeLocation(origin, asset.location)
+
+  const originFeeAsset = {
+    id: transformedLocation,
+    fun: {
+      Fungible: originExecutionFee
+    }
+  }
+
+  const destinationFeeAsset = {
+    id: asset.location,
+    fun: {
+      Fungible: destExecutionFee
+    }
+  }
+
+  const destinationProgram = createExecutionProgram({
+    version,
+    feeAsset: destinationFeeAsset,
+    executionFee: isFeeEstimate ? undefined : destExecutionFee,
+    xcm: [
+      {
+        ExchangeAsset: {
+          give: {
+            Wild: {
+              AllCounted: 1
+            }
+          },
+          want: [
+            {
+              id: DOT_LOCATION,
+              fun: { Fungible: 100000000n } // 0.01 DOT
+            }
+          ],
+          maximal: false
+        }
+      },
+      {
+        DepositAsset: {
+          assets: {
+            Wild: {
+              AllCounted: 2
+            }
+          },
+          beneficiary
+        }
+      }
+    ],
+    refundBeneficiary: beneficiary
+  })
+
+  const originProgram = createExecutionProgram({
+    version,
+    feeAsset: originFeeAsset,
+    executionFee: isFeeEstimate ? undefined : originExecutionFee,
+    xcm: [
+      {
+        InitiateTeleport: {
+          assets: { Wild: { AllCounted: 1 } },
+          dest,
+          xcm: destinationProgram
+        }
+      }
+    ],
+    refundBeneficiary: createBeneficiaryLocation({
+      api,
+      address: sender ?? recipient,
+      version
+    })
+  })
 
   const call: TSerializedExtrinsics = {
     module: 'PolkadotXcm',
@@ -40,62 +111,7 @@ export const createExecuteExchangeXcm = <TApi, TRes, TSigner, TCustomChain exten
               }
             ]
           },
-          {
-            BuyExecution: {
-              fees: {
-                id: transformedLocation,
-                fun: {
-                  Fungible: originExecutionFee
-                }
-              },
-              weight_limit: 'Unlimited'
-            }
-          },
-          {
-            InitiateTeleport: {
-              assets: { Wild: { AllCounted: 1 } },
-              dest,
-              xcm: [
-                {
-                  BuyExecution: {
-                    fees: {
-                      id: asset.location,
-                      fun: {
-                        Fungible: destExecutionFee
-                      }
-                    },
-                    weight_limit: 'Unlimited'
-                  }
-                },
-                {
-                  ExchangeAsset: {
-                    give: {
-                      Wild: {
-                        AllCounted: 1
-                      }
-                    },
-                    want: [
-                      {
-                        id: DOT_LOCATION,
-                        fun: { Fungible: 100000000n } // 0.01 DOT
-                      }
-                    ],
-                    maximal: false
-                  }
-                },
-                {
-                  DepositAsset: {
-                    assets: {
-                      Wild: {
-                        AllCounted: 2
-                      }
-                    },
-                    beneficiary
-                  }
-                }
-              ]
-            }
-          }
+          ...originProgram
         ]
       },
       max_weight: {

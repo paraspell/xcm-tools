@@ -288,9 +288,27 @@ export type TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain extends stri
   balance: bigint
 }
 
-export type TTransferFeeEstimates = {
+export type TExecutionFeePlan<TCustomChain extends string = never> = Readonly<
+  Partial<Record<TChain | TCustomChain, bigint>>
+>
+
+export type TSetAppendixInstruction = {
+  SetAppendix: unknown[]
+}
+
+export type TCreateExecutionProgramOptions = {
+  version: Version
+  feeAsset?: TAsset
+  executionFee?: bigint
+  legacyFeeAsset?: TAsset
+  xcm: unknown[]
+  refundBeneficiary: TLocation
+}
+
+export type TTransferFeeEstimates<TCustomChain extends string = never> = {
   originFee: bigint
   reserveFee: bigint
+  byChain?: TExecutionFeePlan<TCustomChain>
 }
 
 export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = never> = {
@@ -298,7 +316,7 @@ export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = ne
   destChain: TChain
   assetInfo: WithAmount<TAssetInfo>
   feeAssetInfo?: TAssetInfo
-  fees: TTransferFeeEstimates
+  fees: TTransferFeeEstimates<TCustomChain>
   recipient: string
   sender?: string
   version: Version
@@ -336,11 +354,12 @@ export type TCreateSwapXcmOptions<
   TCustomChain extends string = never
 > = WithApi<TCreateBaseSwapXcmOptions, TApi, TRes, TSigner, TCustomChain>
 
-export type TSwapFeeEstimates = {
+export type TSwapFeeEstimates<TCustomChain extends string = never> = {
   originFee: bigint
   originReserveFee: bigint
   exchangeFee: bigint
   destReserveFee: bigint
+  byChain?: TExecutionFeePlan<TCustomChain>
 }
 
 export type TCreateSwapXcmInternalOptions<
@@ -350,7 +369,7 @@ export type TCreateSwapXcmInternalOptions<
   TCustomChain extends string = never
 > = WithApi<TCreateBaseSwapXcmOptions, TApi, TRes, TSigner, TCustomChain> & {
   version: Version
-  fees: TSwapFeeEstimates
+  fees: TSwapFeeEstimates<TCustomChain>
   // refactor this
   paraIdTo?: number
 }

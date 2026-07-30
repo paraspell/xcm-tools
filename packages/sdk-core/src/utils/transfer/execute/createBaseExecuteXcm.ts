@@ -1,15 +1,13 @@
 import { type TAsset, type TAssetInfo } from '@paraspell/assets'
-import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
-import { Version } from '@paraspell/sdk-common'
-import { isTrustedChain } from '@paraspell/sdk-common'
+import { isTrustedChain, type TChain, type TSubstrateChain, Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../../api'
-import { UnsupportedOperationError } from '../../../errors'
-import { createBuyExecution } from '../../../pallets/polkadotXcm'
+import { MissingExecutionFeeError, UnsupportedOperationError } from '../../../errors'
 import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
-import { createDestination, getChainLocation } from '../../location'
+import { createBeneficiaryLocation, createDestination, getChainLocation } from '../../location'
 import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
 import { createAssetsFilter } from './createAssetsFilter'
+import { createExecutionProgram, withV5RefundAppendix } from './createExecutionProgram'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
 const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
@@ -87,11 +85,13 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     chain,
     destChain,
     assetInfo,
-    fees: { originFee, reserveFee },
+    fees: { originFee, reserveFee, byChain },
     version,
     paraIdTo,
     transactOptions,
     useFeeAssetOnHops,
+    sender,
+    recipient,
     suffixXcm = []
   } = options
 
@@ -101,6 +101,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     assetLocalizedToReserve,
     assetLocalizedToDest,
     feeAsset,
+    feeAssetLocalized,
     feeAssetLocalizedToReserve,
     feeAssetLocalizedToDest,
     reserveChain
@@ -108,6 +109,8 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
   const hopFeeAssetToReserve = useFeeAssetOnHops ? feeAssetLocalizedToReserve : undefined
   const hopFeeAssetToDest = useFeeAssetOnHops ? feeAssetLocalizedToDest : undefined
+  const reserveExecutionFeeAsset = hopFeeAssetToReserve ?? assetLocalizedToReserve
+  const destinationExecutionFeeAsset = hopFeeAssetToDest ?? assetLocalizedToDest
 
   // When fees are paid in a separate asset, originFee is denominated in that asset's
   // currency and must not be subtracted from the transfer amount.
@@ -137,6 +140,23 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
   const isReserveDest = reserveChain === destChain
 
+  const recipientBeneficiary = createBeneficiaryLocation({ api, address: recipient, version })
+  const senderBeneficiary = createBeneficiaryLocation({
+    api,
+    address: sender ?? recipient,
+    version
+  })
+  const reserveRefundBeneficiary = isReserveDest ? recipientBeneficiary : senderBeneficiary
+
+  const getExecutionFee = (programChain: TChain | TCustomChain) => {
+    const executionFee = byChain?.[programChain]
+    if (version >= Version.V5 && byChain !== undefined && executionFee === undefined) {
+      throw new MissingExecutionFeeError(programChain)
+    }
+
+    return executionFee
+  }
+
   const resolvedDepositInstruction = isReserveDest
     ? suffixXcm
     : [
@@ -144,31 +164,44 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
           DepositReserveAsset: {
             assets: createAssetsFilter(assetLocalizedToReserve, version),
             dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
-            xcm: [
-              ...createBuyExecution(
+            xcm: createExecutionProgram({
+              version,
+              feeAsset: destinationExecutionFeeAsset,
+              executionFee: getExecutionFee(destChain),
+              legacyFeeAsset:
                 hopFeeAssetToDest ??
-                  updateAsset(
-                    assetLocalizedToDest,
-                    reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
-                  )
-              ),
-              ...suffixXcm
-            ]
+                updateAsset(
+                  assetLocalizedToDest,
+                  reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
+                ),
+              xcm: suffixXcm,
+              refundBeneficiary: recipientBeneficiary
+            })
           }
         }
       ]
 
-  let mainInstructions
+  let mainInstructions: unknown[]
 
   switch (transferType) {
     case 'InitiateTransfer': {
       const transferFilter = getInitiateTransferType(api, chain, destChain, assetInfo, reserveChain)
+      const remoteExecutionFee = getExecutionFee(destChain)
+      const remoteFeeAsset =
+        remoteExecutionFee !== undefined
+          ? updateAsset(
+              (useFeeAssetOnHops ? feeAssetLocalized : undefined) ?? assetLocalized,
+              remoteExecutionFee
+            )
+          : undefined
       mainInstructions = [
         {
           InitiateTransfer: {
             destination: destLocation,
             remote_fees: {
-              [transferFilter]: routingAssetsFilter
+              [transferFilter]: remoteFeeAsset
+                ? { Definite: [remoteFeeAsset] }
+                : routingAssetsFilter
             },
             preserve_origin: true,
             assets: [
@@ -176,12 +209,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
                 [transferFilter]: routingAssetsFilter
               }
             ],
-            remote_xcm: [
-              {
-                RefundSurplus: undefined
-              },
-              ...suffixXcm
-            ]
+            remote_xcm: withV5RefundAppendix(version, suffixXcm, recipientBeneficiary)
           }
         }
       ]
@@ -195,12 +223,15 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
           InitiateTeleport: {
             assets: routingAssetsFilter,
             dest: destLocation,
-            xcm: [
-              ...createBuyExecution(
-                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
-              ),
-              ...suffixXcm
-            ]
+            xcm: createExecutionProgram({
+              version,
+              feeAsset: destinationExecutionFeeAsset,
+              executionFee: getExecutionFee(destChain),
+              legacyFeeAsset:
+                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction),
+              xcm: suffixXcm,
+              refundBeneficiary: recipientBeneficiary
+            })
           }
         }
       ]
@@ -213,14 +244,17 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
           InitiateTeleport: {
             assets: routingAssetsFilter,
             dest: getChainLocation(chain, reserveChain, api._customCtx),
-            xcm: [
-              ...createBuyExecution(
+            xcm: createExecutionProgram({
+              version,
+              feeAsset: reserveExecutionFeeAsset,
+              executionFee: getExecutionFee(reserveChain),
+              legacyFeeAsset:
                 hopFeeAssetToReserve ??
-                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
-              ),
+                updateAsset(assetLocalizedToReserve, amount - originFeeDeduction),
               // Then deposit to final destination
-              ...resolvedDepositInstruction
-            ]
+              xcm: resolvedDepositInstruction,
+              refundBeneficiary: reserveRefundBeneficiary
+            })
           }
         }
       ]
@@ -233,16 +267,19 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
           InitiateReserveWithdraw: {
             assets: routingAssetsFilter,
             reserve: getChainLocation(chain, reserveChain, api._customCtx),
-            xcm: [
-              ...createBuyExecution(
-                // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
-                // than requested, so we need to account for that
-                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
-              ),
+            xcm: createExecutionProgram({
+              version,
+              feeAsset: reserveExecutionFeeAsset,
+              executionFee: getExecutionFee(reserveChain),
+              // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
+              // than requested, so we need to account for that
+              legacyFeeAsset:
+                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
-              ...resolvedDepositInstruction
-            ]
+              xcm: resolvedDepositInstruction,
+              refundBeneficiary: reserveRefundBeneficiary
+            })
           }
         }
       ]

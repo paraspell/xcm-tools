@@ -33,6 +33,12 @@
     "test:watch": "vitest",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
+    "test:e2e:execute": "vitest run --config ./vitest.config.execute.e2e.ts",
+    "test:e2e:execute:discovery": "vitest run --config ./vitest.config.execute-discovery.e2e.ts",
+    "test:e2e:execute:discovery:transfers": "vitest run --config ./vitest.config.execute-discovery.e2e.ts -t transfers",
+    "test:e2e:execute:discovery:swaps": "vitest run --config ./vitest.config.execute-discovery.e2e.ts -t swaps",
+    "test:e2e:execute:pay-fees": "vitest run --config ./vitest.config.execute.e2e.ts --project execute-pay-fees",
+    "test:e2e:execute:buy-execution": "vitest run --config ./vitest.config.execute.e2e.ts --project execute-buy-execution",
     "test:e2e:chopsticks": "vitest run --config ./vitest.config.chopsticks.e2e.ts"
   },
   "dependencies": {
