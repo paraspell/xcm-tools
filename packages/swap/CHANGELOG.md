@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0-rc.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.1.0-rc...swap-v14.1.0-rc.1) (2026-07-30)
+
+
+### Features
+
+* Update polkadot-api to v3.0.0-rc.5 🚀 ([8686e2e](https://github.com/paraspell/xcm-tools/commit/8686e2eadf3a37a90ad7547eb5bae1bbb2bc95df))
+
 ## [14.1.0-rc](https://github.com/paraspell/xcm-tools/compare/swap-v14.0.0...swap-v14.1.0-rc) (2026-07-22)
 
 
