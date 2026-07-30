@@ -156,6 +156,12 @@ jobs:
           use_oidc: true
           directory: packages/sdk-pjs
           flags: xcm-sdk-pjs
+      - name: Upload XCM SDK Dedot coverage report to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          use_oidc: true
+          directory: packages/sdk-dedot
+          flags: sdk-dedot
       - name: Upload Assets coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:

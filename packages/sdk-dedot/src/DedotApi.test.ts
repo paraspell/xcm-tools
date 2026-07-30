@@ -10,6 +10,7 @@ import type {
 import {
   BatchMode,
   isAssetEqual,
+  isSenderSigner,
   localizeLocation,
   RuntimeApiUnavailableError,
   type TLocation,
@@ -141,8 +142,20 @@ const createMockApi = (mockTx: TDedotExtrinsic) => ({
     },
   },
   registry: {},
+  metadata: {
+    latest: {
+      pallets: [] as Array<{
+        name: string;
+        index: number;
+        calls?: unknown;
+      }>,
+      types: [] as Array<{ path?: string[] }>,
+    },
+  },
+  consts: {},
   rpc: {
     system_chain: vi.fn(),
+    system_properties: vi.fn(),
   },
   toTx: vi.fn().mockReturnValue(mockTx),
   disconnect: vi.fn(),
@@ -1157,6 +1170,629 @@ describe("DedotApi", () => {
       const result = await dedotApi.getXcmWeight({ some: "xcm" });
       expect(result).toEqual({ refTime: 100n, proofSize: 200n });
     });
+
+    it("preserves transformed XCM and defaults missing weight fields to zero", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
+        value: {},
+      });
+
+      const xcm = { type: "V5", value: [] };
+      await expect(dedotApi.getXcmWeight(xcm)).resolves.toEqual({
+        refTime: 0n,
+        proofSize: 0n,
+      });
+      expect(transform).not.toHaveBeenCalledWith(xcm);
+    });
+  });
+
+  describe("encoding and capability helpers", () => {
+    it.each([
+      ["0x0", "0x00"],
+      ["0x00", "0x00"],
+      ["1", "01"],
+      ["12", "12"],
+    ])("encodes %s as an even-length hex value", (input, encoded) => {
+      expect(dedotApi.encodeTx(input)).toEqual({ encoded });
+    });
+
+    it("returns undefined when transfer assets are missing or malformed", () => {
+      const missingAssets = {
+        call: {
+          palletCall: {
+            name: "transferAssetsUsingTypeAndThen",
+            params: {},
+          },
+        },
+      } as unknown as TDedotExtrinsic;
+      const malformedAssets = {
+        call: {
+          palletCall: {
+            name: "transferAssetsUsingTypeAndThen",
+            params: { assets: { value: {} } },
+          },
+        },
+      } as unknown as TDedotExtrinsic;
+
+      expect(dedotApi.getTypeThenAssetCount(missingAssets)).toBeUndefined();
+      expect(dedotApi.getTypeThenAssetCount(malformedAssets)).toBeUndefined();
+    });
+
+    it("returns false when checking a method throws", async () => {
+      Object.defineProperty(mockApiRaw.tx, "broken", {
+        get() {
+          throw new Error("metadata unavailable");
+        },
+      });
+
+      await expect(
+        dedotApi.hasMethod("Broken" as never, "method"),
+      ).resolves.toBe(false);
+    });
+
+    it("detects available and unavailable runtime APIs", async () => {
+      await expect(dedotApi.hasRuntimeApi("DryRunApi")).resolves.toBe(true);
+      delete (mockApiRaw.call as Partial<typeof mockApiRaw.call>).dryRunApi;
+      await expect(dedotApi.hasRuntimeApi("DryRunApi")).resolves.toBe(false);
+    });
+
+    it("maps pallet metadata and identifies extrinsic support", async () => {
+      mockApiRaw.metadata.latest.pallets = [
+        { name: "Balances", index: 10, calls: {} },
+        { name: "System", index: 0, calls: undefined },
+      ];
+
+      await expect(dedotApi.fetchPalletList()).resolves.toEqual([
+        { name: "Balances", index: 10, hasExtrinsics: true },
+        { name: "System", index: 0, hasExtrinsics: false },
+      ]);
+    });
+
+    it("identifies EVM and non-EVM account metadata", async () => {
+      mockApiRaw.metadata.latest.types = [{ path: ["AccountId20"] }];
+      await expect(dedotApi.isEvmChain()).resolves.toBe(true);
+
+      mockApiRaw.metadata.latest.types = [{ path: ["AccountId32"] }];
+      await expect(dedotApi.isEvmChain()).resolves.toBe(false);
+
+      mockApiRaw.metadata.latest.types = [];
+      await expect(dedotApi.isEvmChain()).resolves.toBe(false);
+    });
+
+    it("reads an available RPC method", async () => {
+      const rpcMethod = vi.fn().mockReturnValue("0xvalue");
+      Object.assign(mockApiRaw.rpc, { state_getStorage: rpcMethod });
+
+      await expect(
+        dedotApi.getFromRpc("state", "getStorage", "0xkey"),
+      ).resolves.toBe("0xvalue");
+      expect(rpcMethod).toHaveBeenCalledTimes(2);
+    });
+
+    it("rejects missing and unsupported RPC methods", async () => {
+      await expect(
+        dedotApi.getFromRpc("state", "missing", "0xkey"),
+      ).rejects.toThrow("RPC method state.missing not available");
+
+      Object.assign(mockApiRaw.rpc, {
+        state_empty: vi.fn().mockReturnValue(undefined),
+      });
+      await expect(
+        dedotApi.getFromRpc("state", "empty", "0xkey"),
+      ).rejects.toThrow("RPC method state.empty not available");
+    });
+
+    it("creates and initializes a separate API for another chain", async () => {
+      const init = vi
+        .spyOn(DedotApi.prototype, "init")
+        .mockResolvedValue(undefined);
+
+      const result = await dedotApi.createApiForChain("Astar");
+
+      expect(result).toBeInstanceOf(DedotApi);
+      expect(init).toHaveBeenCalledWith("Astar");
+    });
+  });
+
+  describe("constants and system properties", () => {
+    it("reads constants and returns undefined for missing pallets", async () => {
+      Object.assign(mockApiRaw.consts, {
+        balances: { existentialDeposit: 10n },
+      });
+
+      await expect(
+        dedotApi.getConstant("Balances", "ExistentialDeposit"),
+      ).resolves.toBe(10n);
+      await expect(
+        dedotApi.getConstant("Missing", "Value"),
+      ).resolves.toBeUndefined();
+    });
+
+    it("returns undefined when reading constants throws", async () => {
+      Object.defineProperty(mockApiRaw, "consts", {
+        get() {
+          throw new Error("constants unavailable");
+        },
+      });
+
+      await expect(
+        dedotApi.getConstant("Balances", "Value"),
+      ).resolves.toBeUndefined();
+    });
+
+    it("normalizes scalar and array system properties", async () => {
+      mockApiRaw.rpc.system_properties
+        .mockResolvedValueOnce({
+          ss58Format: 42,
+          tokenSymbol: "DOT",
+          tokenDecimals: 10,
+        })
+        .mockResolvedValueOnce({
+          ss58Format: "invalid",
+          tokenSymbol: ["KSM", "DOT"],
+          tokenDecimals: [12, 10],
+        })
+        .mockResolvedValueOnce(undefined);
+
+      await expect(dedotApi.getSystemProperties()).resolves.toEqual({
+        ss58Format: 42,
+        tokenSymbol: "DOT",
+        tokenDecimals: 10,
+      });
+      await expect(dedotApi.getSystemProperties()).resolves.toEqual({
+        ss58Format: undefined,
+        tokenSymbol: "KSM",
+        tokenDecimals: 12,
+      });
+      await expect(dedotApi.getSystemProperties()).resolves.toEqual({
+        ss58Format: undefined,
+        tokenSymbol: undefined,
+        tokenDecimals: undefined,
+      });
+    });
+  });
+
+  describe("fee API fallbacks", () => {
+    const asset: TAssetInfo = {
+      symbol: "DOT",
+      decimals: 10,
+      location: { parents: 0, interior: { Here: null } },
+    };
+
+    beforeEach(() => {
+      vi.mocked(localizeLocation).mockImplementation(
+        (_chain: TChain, location: TLocation) => location,
+      );
+    });
+
+    it("uses an overridden weight and transforms XCM when requested", async () => {
+      vi.spyOn(dedotApi, "getDeliveryFee").mockResolvedValue(0n);
+      mockApiRaw.call.xcmPaymentApi.queryWeightToAssetFee.mockResolvedValueOnce(
+        {
+          value: "unsupported",
+        },
+      );
+
+      const result = await dedotApi.getXcmPaymentApiFee(
+        "Moonbeam",
+        { raw: true },
+        [],
+        asset,
+        Version.V5,
+        true,
+        { refTime: 1n, proofSize: 2n },
+      );
+
+      expect(result).toBe(0n);
+      expect(transform).toHaveBeenCalledWith({ raw: true });
+      expect(
+        mockApiRaw.call.xcmPaymentApi.queryXcmWeight,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("uses the Bridge Hub execution-fee fallback for an unknown asset", async () => {
+      vi.spyOn(dedotApi, "getDeliveryFee").mockResolvedValue(2n);
+      const fallback = vi
+        .spyOn(dedotApi, "getBridgeHubFallbackExecFee")
+        .mockResolvedValue(30n);
+      mockApiRaw.call.xcmPaymentApi.queryWeightToAssetFee.mockResolvedValueOnce(
+        {
+          success: false,
+          value: { type: "AssetNotFound" },
+        },
+      );
+
+      await expect(
+        dedotApi.getXcmPaymentApiFee(
+          "BridgeHubPolkadot",
+          {},
+          [],
+          asset,
+          Version.V5,
+        ),
+      ).resolves.toBe(32n);
+      expect(fallback).toHaveBeenCalled();
+    });
+
+    it("returns zero when the Bridge Hub relay fee cannot be decoded", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryWeightToAssetFee.mockResolvedValueOnce(
+        {
+          value: {},
+        },
+      );
+
+      await expect(
+        dedotApi.getBridgeHubFallbackExecFee(
+          "BridgeHubPolkadot",
+          { refTime: 1n, proofSize: 2n },
+          asset,
+          Version.V5,
+        ),
+      ).resolves.toBe(0n);
+    });
+
+    it.each([
+      [4n, 9n, 9n],
+      ["4", undefined, 0n],
+      [4, 9n, 9n],
+    ])(
+      "converts a %s Bridge Hub relay fee on Asset Hub",
+      async (relayFee, convertedFee, expected) => {
+        mockApiRaw.call.xcmPaymentApi.queryWeightToAssetFee.mockResolvedValueOnce(
+          {
+            value: relayFee,
+          },
+        );
+        const assetHubApi = {
+          init: vi.fn().mockResolvedValue(undefined),
+          queryRuntimeApi: vi.fn().mockResolvedValue(convertedFee),
+        };
+        vi.spyOn(dedotApi, "clone").mockReturnValue(
+          assetHubApi as unknown as DedotApi,
+        );
+        vi.spyOn(dedotApi, "getRelayChainOf").mockReturnValue("Polkadot");
+
+        await expect(
+          dedotApi.getBridgeHubFallbackExecFee(
+            "BridgeHubPolkadot",
+            { refTime: 1n, proofSize: 2n },
+            asset,
+            Version.V5,
+          ),
+        ).resolves.toBe(expected);
+        expect(assetHubApi.init).toHaveBeenCalledWith("AssetHubPolkadot");
+      },
+    );
+
+    it("returns zero when delivery-fee conversion has no quote", async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
+      vi.spyOn(dedotApi, "queryRuntimeApi").mockResolvedValue(undefined);
+
+      await expect(
+        dedotApi.getDeliveryFee(
+          "Moonbeam",
+          [{}, [{}]],
+          { ...asset, symbol: "USDC" },
+          asset.location,
+          Version.V5,
+        ),
+      ).resolves.toBe(0n);
+    });
+
+    it("propagates unrelated delivery-fee errors", async () => {
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
+      mockApiRaw.call.xcmPaymentApi.queryDeliveryFees.mockRejectedValueOnce(
+        "RPC unavailable",
+      );
+
+      await expect(
+        dedotApi.getDeliveryFee(
+          "Moonbeam",
+          [{}, [{}]],
+          asset,
+          asset.location,
+          Version.V5,
+        ),
+      ).rejects.toBe("RPC unavailable");
+    });
+  });
+
+  describe("additional dry-run result shapes", () => {
+    const asset = {
+      symbol: "DOT",
+      decimals: 10,
+      location: { parents: 0, interior: { Here: null } },
+    } as TAssetInfo;
+
+    it("uses XcmPaymentApi for an explicit fee asset", async () => {
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
+      vi.spyOn(dedotApi, "getXcmPaymentApiFee").mockResolvedValue(12n);
+      mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: {
+            isOk: true,
+            value: { actual_weight: { refTime: 3n, proofSize: 4n } },
+          },
+          forwardedXcms: [],
+          localXcm: { type: "V5", value: [] },
+        },
+      });
+
+      await expect(
+        dedotApi.getDryRunCall({
+          tx: mockTx,
+          address: "5Alice",
+          chain: "Moonbeam",
+          destination: "Acala",
+          version: Version.V5,
+          asset: { ...asset, amount: 1n },
+          feeAsset: asset,
+        }),
+      ).resolves.toEqual(
+        expect.objectContaining({
+          success: true,
+          fee: 12n,
+          weight: { refTime: 3n, proofSize: 4n },
+        }),
+      );
+    });
+
+    it("falls back to the native asset when a custom fee quote fails", async () => {
+      const nativeAsset = { ...asset, symbol: "HDX" };
+      const customAsset = { ...asset, symbol: "USDT" };
+      mockApiRaw.query.multiTransactionPayment.accountCurrencyMap.mockResolvedValue(
+        10,
+      );
+      vi.spyOn(dedotApi, "findAssetInfoOrThrow").mockReturnValue(customAsset);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(
+        nativeAsset,
+      );
+      const getXcmPaymentApiFee = vi
+        .spyOn(dedotApi, "getXcmPaymentApiFee")
+        .mockResolvedValue(undefined as never);
+      mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { isOk: true, value: {} },
+          forwardedXcms: [],
+        },
+      });
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: "5Alice",
+        chain: "Hydration",
+        destination: "Acala",
+        version: Version.V5,
+        asset: { ...asset, amount: 1n },
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: true,
+          fee: 500n,
+          asset: nativeAsset,
+        }),
+      );
+      expect(getXcmPaymentApiFee).toHaveBeenCalledWith(
+        "Hydration",
+        undefined,
+        [],
+        customAsset,
+        Version.V5,
+        false,
+        { refTime: 10n, proofSize: 20n },
+      );
+    });
+
+    it.each([
+      [{ error: { Other: "OtherFailure" } }, "OtherFailure"],
+      [{ error: "StringFailure" }, "StringFailure"],
+      [{ error: { custom: true } }, '{"custom":true}'],
+    ])("extracts execution error shape %#", async (executionError, reason) => {
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
+      mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { isOk: false, value: executionError },
+          forwardedXcms: [],
+        },
+      });
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: "5Alice",
+        chain: "Moonbeam",
+        destination: "Acala",
+        version: Version.V5,
+        asset: { ...asset, amount: 1n },
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          dryRunError: expect.objectContaining({ reason }),
+        }),
+      );
+    });
+
+    it.each([
+      [{ type: "Module", value: { type: "BadModule" } }, "BadModule"],
+      [{ type: "EventFailure" }, "EventFailure"],
+    ])("extracts a dispatched-as error %#", async (eventError, reason) => {
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
+      mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { isOk: true, value: {} },
+          emittedEvents: [
+            {
+              pallet: "Utility",
+              palletEvent: {
+                name: "DispatchedAs",
+                data: { result: { isErr: true, err: eventError } },
+              },
+            },
+          ],
+          forwardedXcms: [],
+        },
+      });
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: "5Alice",
+        chain: "Moonbeam",
+        destination: "Acala",
+        version: Version.V5,
+        asset: { ...asset, amount: 1n },
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          dryRunError: expect.objectContaining({ reason }),
+        }),
+      );
+    });
+
+    it("keeps the first failure when the versioned retry throws", async () => {
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
+      mockApiRaw.call.dryRunApi.dryRunCall
+        .mockResolvedValueOnce({
+          isOk: true,
+          value: {
+            executionResult: {
+              isOk: false,
+              value: {
+                error: { value: { type: "VersionedConversionFailed" } },
+              },
+            },
+            forwardedXcms: [],
+          },
+        })
+        .mockRejectedValueOnce(new Error("retry failed"));
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: "5Alice",
+        chain: "Moonbeam",
+        destination: "Acala",
+        version: Version.V5,
+        asset: { ...asset, amount: 1n },
+      });
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          dryRunError: expect.objectContaining({
+            reason: "VersionedConversionFailed",
+          }),
+        }),
+      );
+    });
+
+    it("extracts a directly encoded destination parachain", () => {
+      expect(
+        dedotApi.extractDestParaId([
+          { value: { interior: { type: "X1", value: { value: 3000 } } } },
+        ]),
+      ).toBe(3000);
+    });
+  });
+
+  describe("additional XCM dry-run failures", () => {
+    const originLocation = {
+      parents: 0,
+      interior: { Here: null },
+    } as TLocation;
+    const asset = { symbol: "DOT" } as TAssetInfo;
+
+    beforeEach(() => {
+      vi.spyOn(dedotApi, "hasDryRunSupport").mockReturnValue(true);
+    });
+
+    it.each([
+      [{ value: { error: { type: "NestedFailure" } } }, "NestedFailure"],
+      [{ value: { value: { type: "DeepFailure" } } }, "DeepFailure"],
+      [{ value: { type: "ValueFailure" } }, "ValueFailure"],
+      [{}, "Incomplete"],
+    ])("extracts incomplete XCM error shape %#", async (error, reason) => {
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { type: "Incomplete", value: { error } },
+          forwardedXcms: [],
+        },
+      });
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: {},
+        chain: "AssetHubPolkadot",
+        asset,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          dryRunError: expect.objectContaining({ reason }),
+        }),
+      );
+    });
+
+    it("serializes an unknown XCM error structure", async () => {
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue({
+        isOk: false,
+        value: { unexpected: 1n },
+      });
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: {},
+        chain: "AssetHubPolkadot",
+        asset,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          success: false,
+          dryRunError: expect.objectContaining({
+            reason: '{"unexpected":"1"}',
+          }),
+        }),
+      );
+    });
+
+    it("fails when XcmPaymentApi does not return a bigint fee", async () => {
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
+      vi.spyOn(dedotApi, "getXcmPaymentApiFee").mockResolvedValue(
+        undefined as never,
+      );
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { type: "Complete", value: {} },
+          forwardedXcms: [],
+        },
+      });
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: {},
+        chain: "AssetHubPolkadot",
+        asset,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual({
+        success: false,
+        dryRunError: { reason: "Failed to retrieve fee from XcmPaymentApi" },
+        asset,
+      });
+    });
   });
 
   describe("disconnect", () => {
@@ -1170,6 +1806,46 @@ describe("DedotApi", () => {
       dedotApi.disconnectAllowed = false;
       await dedotApi.disconnect(false);
       expect(mockApiRaw.disconnect).not.toHaveBeenCalled();
+    });
+
+    it("disconnects an automatically created client when forced", async () => {
+      await dedotApi.disconnect(true);
+      expect(mockApiRaw.disconnect).toHaveBeenCalled();
+    });
+
+    it("disconnects a provided client only when forced", async () => {
+      const ownApi = new DedotApi(mockApi);
+      await ownApi.init("Acala");
+
+      await ownApi.disconnect(false);
+      expect(mockApiRaw.disconnect).not.toHaveBeenCalled();
+
+      await ownApi.disconnect(true);
+      expect(mockApiRaw.disconnect).toHaveBeenCalled();
+    });
+  });
+
+  describe("signAndSubmit", () => {
+    it("signs with a keyring pair created from a path", async () => {
+      vi.mocked(isSenderSigner).mockReturnValue(false);
+      const signAndSend = vi.spyOn(mockTx, "signAndSend");
+
+      await expect(dedotApi.signAndSubmit(mockTx, "//Alice")).resolves.toBe(
+        "0xtxhash",
+      );
+      expect(signAndSend).toHaveBeenCalledWith(
+        expect.objectContaining({ address: "5MockAddress" }),
+      );
+    });
+
+    it("signs directly with a provided signer", async () => {
+      const signer = { address: "5Signer" } as TDedotSigner;
+      vi.mocked(isSenderSigner).mockReturnValue(true);
+      const signAndSend = vi.spyOn(mockTx, "signAndSend");
+
+      await dedotApi.signAndSubmit(mockTx, signer);
+
+      expect(signAndSend).toHaveBeenCalledWith(signer);
     });
   });
 
