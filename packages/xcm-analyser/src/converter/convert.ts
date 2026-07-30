@@ -23,6 +23,11 @@ export const convertLocationToUrlJson = (locationJson: string): string => {
 export const convertLocationToUrl = (args: unknown): string => {
   const { parents, interior } = LocationSchema.parse(args);
   const parentsNum = Number(parents);
+  const pathStart = parentsNum > 0 ? '../'.repeat(parentsNum) : './';
+
+  if (interior === 'Here' || 'Here' in interior) {
+    return pathStart;
+  }
 
   const entries = Object.entries(interior);
   if (entries.length === 0) throw new Error('Interior is empty');
@@ -33,7 +38,6 @@ export const convertLocationToUrl = (args: unknown): string => {
 
   if (!isX1 && junctions.length === 0) throw new Error('Junction array is empty');
 
-  const pathStart = parentsNum > 0 ? '../'.repeat(parentsNum) : './';
   const path = (isX1 ? [junctions] : junctions)
     .map((junction) => convertJunctionToReadable(junction))
     .join('/');

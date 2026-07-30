@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
 import { type Location } from '../types';
-import { convertLocationToUrl, convertXCMToUrls } from './convert';
+import { convertLocationToUrl, convertLocationToUrlJson, convertXCMToUrls } from './convert';
 
 describe('convert', () => {
   it('convert location to URL', () => {
@@ -41,6 +41,38 @@ describe('convert', () => {
 
     const result = convertLocationToUrl(location);
     expect(result).toBe('../../../PalletInstance(50)/GeneralIndex(41)');
+  });
+
+  it('convert local Here location to the current URL', () => {
+    const location: Location = {
+      parents: '0',
+      interior: 'Here',
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('./');
+  });
+
+  it('convert parent Here location object to the parent URL', () => {
+    const location: Location = {
+      parents: '1',
+      interior: {
+        Here: null,
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('../');
+  });
+
+  it('convert Here location JSON to the current URL', () => {
+    const locationJson = JSON.stringify({
+      parents: 0,
+      interior: 'Here',
+    });
+
+    const result = convertLocationToUrlJson(locationJson);
+    expect(result).toBe('./');
   });
 
   it('convert location to URL with parachain interior', () => {
@@ -269,6 +301,22 @@ describe('convert', () => {
 
     const result = convertXCMToUrls(xcmCallArguments);
     expect(result).toStrictEqual([]);
+  });
+
+  it('convert nested Here location from tx arguments', () => {
+    const xcmCallArguments = [
+      {
+        V4: {
+          parents: 1,
+          interior: {
+            Here: null,
+          },
+        },
+      },
+    ];
+
+    const result = convertXCMToUrls(xcmCallArguments);
+    expect(result).toStrictEqual(['../']);
   });
 
   it('convert location to URL with X2 with 3 elements', () => {
