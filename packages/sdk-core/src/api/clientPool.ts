@@ -1,4 +1,4 @@
-import type { ClientCache, TClientKey, TUrl } from '../types'
+import type { ClientCache, TClientEntry, TClientKey, TUrl } from '../types'
 
 export const keyFromWs = (ws: TUrl): TClientKey => {
   return Array.isArray(ws) ? JSON.stringify(ws) : ws
@@ -8,14 +8,32 @@ export const createClientPoolHelpers = <TClient>(
   clientPool: ClientCache<TClient>,
   createClient: (ws: TUrl) => TClient | Promise<TClient>
 ) => {
+  const pendingClients = new Map<TClientKey, Promise<TClientEntry<TClient>>>()
+
   const leaseClient = async (ws: TUrl, ttlMs: number): Promise<TClient> => {
     const key = keyFromWs(ws)
     let entry = clientPool.peek(key)
 
     if (!entry) {
-      const client = await createClient(ws)
-      entry = { client, refs: 0, destroyWanted: false }
-      clientPool.set(key, entry, ttlMs)
+      let pending = pendingClients.get(key)
+      if (!pending) {
+        pending = Promise.resolve()
+          .then(() => createClient(ws))
+          .then(client => {
+            const created = { client, refs: 0, destroyWanted: false }
+            clientPool.set(key, created, ttlMs)
+            return created
+          })
+        pendingClients.set(key, pending)
+      }
+
+      try {
+        entry = await pending
+      } finally {
+        if (pendingClients.get(key) === pending) {
+          pendingClients.delete(key)
+        }
+      }
     }
 
     entry.refs += 1

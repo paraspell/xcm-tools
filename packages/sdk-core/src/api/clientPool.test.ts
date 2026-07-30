@@ -52,6 +52,37 @@ describe('clientPool', () => {
     expect(reviveSpy).toHaveBeenNthCalledWith(2, keyFromWs(ws), 1_000)
   })
 
+  it('leaseClient shares in-flight creation for concurrent leases', async () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
+    const createClient = vi.fn().mockResolvedValueOnce({ id: 1 }).mockResolvedValueOnce({ id: 2 })
+    const { leaseClient } = createClientPoolHelpers(cache, createClient)
+    const ws = 'wss://node'
+
+    const [c1, c2] = await Promise.all([leaseClient(ws, 1_000), leaseClient(ws, 1_000)])
+
+    expect(createClient).toHaveBeenCalledTimes(1)
+    expect(c2).toBe(c1)
+    expect(cache.peek(keyFromWs(ws))?.refs).toBe(2)
+  })
+
+  it('leaseClient retries creation after an in-flight failure', async () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
+    const createClient = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('connection failed'))
+      .mockResolvedValueOnce({ id: 1 })
+    const { leaseClient } = createClientPoolHelpers(cache, createClient)
+    const ws = 'wss://node'
+
+    await expect(leaseClient(ws, 1_000)).rejects.toThrow('connection failed')
+    await expect(leaseClient(ws, 1_000)).resolves.toEqual({ id: 1 })
+
+    expect(createClient).toHaveBeenCalledTimes(2)
+    expect(cache.peek(keyFromWs(ws))?.refs).toBe(1)
+  })
+
   it('leaseClient resets destroyWanted to false', async () => {
     const pingClient = vi.fn().mockResolvedValue(undefined)
     const cache = createClientCache<TFakeClient>(10, pingClient)
