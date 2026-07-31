@@ -109,6 +109,21 @@ describe("XcmTransformer", () => {
         },
       ],
       [
+        {
+          AccountKey20: {
+            network: { Ethereum: { chainId: 1 } },
+            key: "0x03",
+          },
+        },
+        {
+          type: "AccountKey20",
+          value: {
+            network: { type: "Ethereum", value: { chainId: 1 } },
+            key: "0x03",
+          },
+        },
+      ],
+      [
         { SetFeesMode: { jit_withdraw: true } },
         { type: "SetFeesMode", value: { jitWithdraw: true } },
       ],

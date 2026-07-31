@@ -210,6 +210,33 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should preserve a structured AccountKey20 network', () => {
+    const input = {
+      AccountKey20: {
+        network: {
+          Ethereum: {
+            chainId: 1
+          }
+        },
+        key: '0xabcdef1234567890'
+      }
+    }
+    const expected = {
+      type: 'AccountKey20',
+      value: {
+        network: {
+          type: 'Ethereum',
+          value: {
+            chain_id: 1n
+          }
+        },
+        key: '0xabcdef1234567890'
+      }
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should transfer GlobalConsensus', () => {
     const input = {
       GlobalConsensus: {

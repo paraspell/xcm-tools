@@ -14,10 +14,6 @@ const formatNetworkId = (value: unknown): string => {
     return String(value);
   }
 
-  if (Array.isArray(value)) {
-    return value.map(formatNetworkId).join(', ');
-  }
-
   return Object.entries(value)
     .map(([key, nestedValue]) => {
       const formattedValue = formatNetworkId(nestedValue);
