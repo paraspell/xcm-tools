@@ -152,6 +152,24 @@ describe('convert', () => {
     expect(result).toBe('./GlobalConsensus(consensus)');
   });
 
+  it('should preserve object GlobalConsensus details in the URL', () => {
+    const location: Location = {
+      parents: 0,
+      interior: {
+        X1: {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 1,
+            },
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('./GlobalConsensus(Ethereum(chainId: 1))');
+  });
+
   it('convert location to URL with currency and amount location', () => {
     const location: Location = {
       parents: '0',
