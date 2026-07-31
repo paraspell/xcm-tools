@@ -62,6 +62,21 @@ describe("XcmTransformer", () => {
           value: { network: undefined, id: "0x02" },
         },
       ],
+      [
+        {
+          AccountId32: {
+            network: { Ethereum: { chainId: 1 } },
+            id: "0x03",
+          },
+        },
+        {
+          type: "AccountId32",
+          value: {
+            network: { type: "Ethereum", value: { chainId: 1 } },
+            id: "0x03",
+          },
+        },
+      ],
       [{ Id: "Alice" }, { type: "Id", value: "Alice" }],
       [{ Substrate: "Polkadot" }, { type: "Substrate", value: "Polkadot" }],
       [{ OtherReserve: "12" }, { type: "OtherReserve", value: 12 }],

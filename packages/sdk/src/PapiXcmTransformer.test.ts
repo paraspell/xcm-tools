@@ -84,6 +84,33 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should preserve a structured AccountId32 network', () => {
+    const input = {
+      AccountId32: {
+        network: {
+          Ethereum: {
+            chainId: 1
+          }
+        },
+        id: '0x1234abcd'
+      }
+    }
+    const expected = {
+      type: 'AccountId32',
+      value: {
+        network: {
+          type: 'Ethereum',
+          value: {
+            chain_id: 1n
+          }
+        },
+        id: '0x1234abcd'
+      }
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should transform Id correctly', () => {
     const input = {
       Id: {

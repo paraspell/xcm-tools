@@ -16,12 +16,13 @@ export type TJunctionType =
   | 'Plurality'
   | 'GlobalConsensus'
 
-type TNetworkId = string | null
 type TBodyId = string | null
 type TBodyPart = string | null
 type TStringOrNumber = string | number
 type TStringOrNumberOrBigInt = TStringOrNumber | bigint
 type THexString = string
+
+export type TNetworkId = string | null | object
 
 export type TJunctionParachain = {
   Parachain: TStringOrNumberOrBigInt | undefined
@@ -75,7 +76,7 @@ export type TJunctionPlurality = {
 }
 
 export type TJunctionGlobalConsensus = {
-  GlobalConsensus: TNetworkId | object
+  GlobalConsensus: Exclude<TNetworkId, null>
 }
 
 export type TJunction =

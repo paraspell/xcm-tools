@@ -24,7 +24,15 @@ export const GlobalConsensusNetworkSchema = z.union([
       chainId: z.number(),
     }),
   }),
-  z.record(z.string(), z.any()),
+  z.object({
+    ByGenesis: HexString,
+  }),
+  z.object({
+    ByFork: z.object({
+      blockNumber: StringOrNumberOrBigInt,
+      blockHash: HexString,
+    }),
+  }),
   z.string(),
 ]);
 

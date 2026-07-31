@@ -57,7 +57,9 @@ export const transform = (obj: any): any => {
                 ? {
                     type: "Any",
                   }
-                : undefined,
+                : typeof value.network === "object" && value.network !== null
+                  ? transform(value.network)
+                  : undefined,
             id: value.id,
           },
         };
@@ -113,7 +115,9 @@ export const transform = (obj: any): any => {
                 ? {
                     type: "Any",
                   }
-                : undefined,
+                : typeof value.network === "object" && value.network !== null
+                  ? transform(value.network)
+                  : undefined,
             key: value.key,
           },
         };
