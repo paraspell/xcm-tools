@@ -41,4 +41,21 @@ describe('generateNewHigherLimitRequestHtml', () => {
     expect(result).toContain('</body>');
     expect(result).toContain('New higher limit request for submitted:');
   });
+
+  it('should escape HTML entities in user-provided values', () => {
+    const result = generateNewHigherLimitRequestHtml(
+      '<script>alert(1)</script>',
+      'id" onmouseover="alert(2)',
+      '<img src=x onerror=alert(3)>',
+      '500 < 1000',
+    );
+
+    expect(result).not.toContain('<script>');
+    expect(result).not.toContain('onmouseover="alert(2)');
+    expect(result).not.toContain('<img src=x');
+    expect(result).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+    expect(result).toContain('id&#39;');
+    expect(result).toContain('&lt;img src=x onerror=alert(3)&gt;');
+    expect(result).toContain('500 &lt; 1000');
+  });
 });

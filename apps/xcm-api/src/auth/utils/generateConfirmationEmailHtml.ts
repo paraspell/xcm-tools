@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils.js';
+
 export const generateConfirmationEmailHtml = (
   title: string,
   reason: string,
@@ -104,7 +106,7 @@ export const generateConfirmationEmailHtml = (
     
       <!-- start preheader -->
       <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-        ${title}
+        ${escapeHtml(title)}
       </div>
       <!-- end preheader -->
     
@@ -148,7 +150,9 @@ export const generateConfirmationEmailHtml = (
             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-                  <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">${title}</h1>
+                  <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">${escapeHtml(
+                    title,
+                  )}</h1>
                 </td>
               </tr>
             </table>
@@ -182,8 +186,12 @@ export const generateConfirmationEmailHtml = (
               <!-- start copy -->
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; padding-top: 0; padding-bottom: 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 16px;">
-                  <p style="margin: 0; margin-bottom: 12px;">Reason for Higher Limit: <span style="font-weight: bold;">${reason}</span></p>
-                  <p style="margin: 0;">Requested Requests Per Minute: <span style="font-weight: bold;">${requestedLimit}</span></p>
+                    <p style="margin: 0; margin-bottom: 12px;">Reason for Higher Limit: <span style="font-weight: bold;">${escapeHtml(
+                      reason,
+                    )}</span></p>
+                  <p style="margin: 0;">Requested Requests Per Minute: <span style="font-weight: bold;">${escapeHtml(
+                    requestedLimit,
+                  )}</span></p>
                 </td>
               </tr>
               <!-- end copy -->

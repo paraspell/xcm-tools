@@ -3,6 +3,14 @@ import { google } from 'googleapis';
 import * as nodemailer from 'nodemailer';
 const OAuth2 = google.auth.OAuth2;
 
+export const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
 export const sendEmail = async (
   subject: string,
   htmlContent: string,
