@@ -1,6 +1,7 @@
 import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk-core';
 import {
   EXCHANGE_CHAINS,
+  getRelayChainOf,
   getAssetsImpl,
   isExternalChain,
   isSystemAsset,
@@ -56,6 +57,24 @@ describe('getSupportedAssetsTo', () => {
 
     expect(getExchangeAssets).toHaveBeenCalledWith(mockExchange);
     expect(result).toEqual(exchangeAssets);
+  });
+
+  it('should return empty array when "to" chain is in a different relay ecosystem than exchange', () => {
+    const mockExchange: TExchangeChain = 'Hydration';
+    const mockChain = { chain: 'Hydration' } as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
+    vi.mocked(getExchangeAssets).mockReturnValue([abcAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
+    vi.mocked(getRelayChainOf).mockImplementation((chain) => {
+      if (chain === 'Hydration') return 'Kusama';
+      if (chain === 'Astar') return 'Polkadot';
+      return 'Unknown';
+    });
+
+    const toChain: TChain = 'Astar';
+    const result = getSupportedAssetsTo(mockExchange, toChain);
+
+    expect(result).toEqual([]);
   });
 
   it('should filter exchange assets based on "to" assets when exchange is not "Auto select"', () => {

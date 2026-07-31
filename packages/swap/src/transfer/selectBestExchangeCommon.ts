@@ -5,6 +5,7 @@ import {
   findAssetInfo,
   getRelayChainOf,
   isConfig,
+  isExternalChain,
   RoutingResolutionError,
   type TAssetInfo,
   type TChain,
@@ -89,6 +90,10 @@ export const selectBestExchangeCommon = async <
     }
 
     if (from && getRelayChainOf(from) !== getRelayChainOf(dex.chain)) {
+      continue;
+    }
+
+    if (to && !isExternalChain(to) && getRelayChainOf(to) !== getRelayChainOf(dex.chain)) {
       continue;
     }
 

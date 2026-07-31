@@ -3,6 +3,7 @@ import {
   getAssetsImpl,
   isAssetEqual,
   normalizeExchange,
+  getRelayChainOf,
   type TChain,
   type TExchangeInput,
 } from '@paraspell/sdk-core';
@@ -22,8 +23,21 @@ export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
   }
 
   const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
+    ? exchange.flatMap((exchangeChain) => {
+        const chain = createExchangeInstance(exchangeChain).chain;
+        if (from && getRelayChainOf(from) !== getRelayChainOf(chain)) {
+          return [];
+        }
+        return getExchangeAssets(exchangeChain);
+      })
     : getExchangeAssets(exchange);
+
+  if (from && !Array.isArray(exchange)) {
+    const chain = createExchangeInstance(exchange).chain;
+    if (getRelayChainOf(from) !== getRelayChainOf(chain)) {
+      return [];
+    }
+  }
 
   if (!from || (!Array.isArray(exchange) && from === createExchangeInstance(exchange).chain)) {
     return exchangeAssets;

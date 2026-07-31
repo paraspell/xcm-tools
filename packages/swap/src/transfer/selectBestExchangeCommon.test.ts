@@ -15,6 +15,7 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfo: vi.fn(),
   getRelayChainOf: vi.fn(),
+  isExternalChain: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
   RoutingResolutionError: class extends Error {},
   UnsupportedOperationError: class extends Error {},
@@ -104,6 +105,37 @@ describe('selectBestExchangeCommon', () => {
 
     const bestExchange = await selectBestExchangeCommon(baseOptions, originApi, computeAmountOut);
     expect(bestExchange).toBe(fakeDex2);
+  });
+
+  it('skips exchanges that are incompatible with destination ecosystem', async () => {
+    vi.mocked(findAssetInfo).mockReturnValue(asset1);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
+    vi.mocked(getExchangeAsset).mockReturnValue(asset2);
+    vi.mocked(isExternalChain).mockReturnValue(false);
+
+    const fakeDex1 = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    const fakeDex2 = { chain: 'ex2', exchangeChain: 'ex2Ex' } as unknown as ExchangeChain;
+
+    vi.mocked(createExchangeInstance).mockImplementation((exchangeChain) => {
+      return exchangeChain === ('ex1' as TExchangeChain) ? fakeDex1 : fakeDex2;
+    });
+
+    vi.mocked(getRelayChainOf).mockImplementation((chain) => {
+      if (chain === 'originDex') return 'Polkadot';
+      if (chain === 'destDex') return 'Kusama';
+      if (chain === 'ex1') return 'Polkadot';
+      if (chain === 'ex2') return 'Kusama';
+      return 'Unknown';
+    });
+
+    const options = {
+      ...baseOptions,
+      exchange: ['ex1', 'ex2'] as TExchangeChain[],
+    } as TCommonRouterOptions<unknown, unknown, unknown>;
+
+    await expect(
+      selectBestExchangeCommon(options, undefined, () => Promise.resolve(100n)),
+    ).rejects.toThrow('No exchange found that supports asset pair');
   });
 
   it('throws error if no exchange qualifies (assets not found)', async () => {

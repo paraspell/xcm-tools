@@ -1,8 +1,10 @@
 import type { TAssetInfo, TCustomCtx, TExchangeInput } from '@paraspell/sdk-core';
 import {
   EXCHANGE_CHAINS,
+  type TExchangeChain,
   getAssetsImpl,
   isAssetEqual,
+  getRelayChainOf,
   isExternalChain,
   isSystemAsset,
   normalizeExchange,
@@ -10,6 +12,7 @@ import {
 } from '@paraspell/sdk-core';
 
 import { getExchangeAssets } from './getExchangeConfig';
+import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 
 export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
   exchangeInput: TExchangeInput,
@@ -17,27 +20,18 @@ export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
   ctx?: TCustomCtx,
 ): TAssetInfo[] => {
   const exchange = normalizeExchange(exchangeInput);
-  if (exchange === undefined) {
-    const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
-      getExchangeAssets(exchangeChain),
-    ).flat();
-    if (to) {
-      const toAssets = getAssetsImpl(to, ctx);
+  const isMatchingRelay = (exchangeChain: TExchangeChain) => {
+    if (!to || isExternalChain(to)) return true;
 
-      const filteredExchangeAssets = allExchangeAssets.filter((asset) =>
-        toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
-      );
-      if (isExternalChain(to)) {
-        filteredExchangeAssets.push(...allExchangeAssets.filter((asset) => isSystemAsset(asset)));
-      }
-      return filteredExchangeAssets;
-    }
-    return allExchangeAssets;
-  }
+    const chain = createExchangeInstance(exchangeChain).chain;
+    return getRelayChainOf(to) === getRelayChainOf(chain);
+  };
 
-  const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
-    : getExchangeAssets(exchange);
+  const exchangeAssets = (
+    exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange]
+  )
+    .filter((exchangeChain) => isMatchingRelay(exchangeChain))
+    .flatMap((exchangeChain) => getExchangeAssets(exchangeChain));
 
   if (to) {
     const toAssets = getAssetsImpl(to, ctx);

@@ -1,5 +1,5 @@
 import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
+import { getAssetsImpl, getRelayChainOf, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -50,6 +50,34 @@ describe('getSupportedAssetsFrom', () => {
     vi.mocked(isAssetEqual).mockImplementation(
       (a, b) => JSON.stringify(a.location) === JSON.stringify(b.location),
     );
+  });
+
+  it('should reject exchange chain from different relay ecosystems when from chain is set', () => {
+    const fromChain: TSubstrateChain = 'Astar';
+    const exchange: TExchangeChain = 'Hydration';
+
+    vi.mocked(getRelayChainOf).mockImplementation((chain) => {
+      if (chain === 'Astar') return 'Polkadot';
+      if (chain === 'Hydration') return 'Kusama';
+      return 'Unknown';
+    });
+
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'Hydration',
+    } as ExchangeChain);
+
+    const sharedAsset = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: 'Here' },
+    } as TAssetInfo;
+
+    vi.mocked(getExchangeAssets).mockReturnValue([sharedAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([sharedAsset]);
+
+    const result = getSupportedAssetsFrom(fromChain, exchange);
+
+    expect(result).toEqual([]);
   });
 
   it('should return assets from exchange that match chain assets', () => {
