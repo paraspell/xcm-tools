@@ -95,6 +95,19 @@ describe('getSupportedAssets', () => {
     expect(result).toEqual([dotAsset, ajunAsset])
   })
 
+  it('should return empty array when Snowbridge origin is unsupported', () => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
+      if (chain === 'Acala') return [dotAsset, ajunAsset]
+      if (chain === 'Ethereum') return [{ ...dotAsset, assetId: '400' }]
+      return []
+    })
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
+
+    const result = getSupportedAssets('Acala', 'Ethereum')
+
+    expect(result).toEqual([])
+  })
+
   it('should include native MYTH on Mythos -> Ethereum despite different locations', () => {
     const mythosNative: TAssetInfo = {
       symbol: 'MYTH',
