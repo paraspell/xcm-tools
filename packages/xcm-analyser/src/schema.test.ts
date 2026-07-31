@@ -385,6 +385,24 @@ describe('InteriorSchema', () => {
   });
 
   describe('HexString validation in Junctions', () => {
+    it('account junctions should accept object-form network IDs', () => {
+      const accountId32 = JunctionAccountId32.safeParse({
+        AccountId32: {
+          network: { Ethereum: { chainId: 1 } },
+          id: '0x1234',
+        },
+      });
+      const accountKey20 = JunctionAccountKey20.safeParse({
+        AccountKey20: {
+          network: { ByGenesis: `0x${'11'.repeat(32)}` },
+          key: `0x${'22'.repeat(20)}`,
+        },
+      });
+
+      expect(accountId32.success).toBe(true);
+      expect(accountKey20.success).toBe(true);
+    });
+
     it('JunctionAccountId32 should pass for valid hex id', () => {
       const data = {
         AccountId32: {

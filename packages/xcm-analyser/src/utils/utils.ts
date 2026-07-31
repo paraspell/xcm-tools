@@ -9,6 +9,25 @@ import type {
   TJunctionPlurality,
 } from '../types';
 
+const formatNetworkId = (value: unknown): string => {
+  if (typeof value !== 'object' || value === null) {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(formatNetworkId).join(', ');
+  }
+
+  return Object.entries(value)
+    .map(([key, nestedValue]) => {
+      const formattedValue = formatNetworkId(nestedValue);
+      return typeof nestedValue === 'object' && nestedValue !== null
+        ? `${key}(${formattedValue})`
+        : `${key}: ${formattedValue}`;
+    })
+    .join(', ');
+};
+
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
   const junction = Object.fromEntries(
     Object.entries(junctionOriginal).map(([k, v]) => [k.toLowerCase(), v]),
@@ -18,13 +37,13 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     return `Parachain(${junction.parachain})`;
   } else if ('accountid32' in junction) {
     const junct = junction.accountid32 as TJunctionAccountId32['AccountId32'];
-    return `AccountId32(${junct.network}, ${junct.id})`;
+    return `AccountId32(${formatNetworkId(junct.network)}, ${junct.id})`;
   } else if ('accountindex64' in junction) {
     const junct = junction.accountindex64 as TJunctionAccountIndex64['AccountIndex64'];
-    return `AccountIndex64(${junct.network}, ${junct.index})`;
+    return `AccountIndex64(${formatNetworkId(junct.network)}, ${junct.index})`;
   } else if ('accountkey20' in junction) {
     const junct = junction.accountkey20 as TJunctionAccountKey20['AccountKey20'];
-    return `AccountKey20(${junct.network}, ${junct.key})`;
+    return `AccountKey20(${formatNetworkId(junct.network)}, ${junct.key})`;
   } else if ('palletinstance' in junction) {
     return `PalletInstance(${junction.palletinstance})`;
   } else if ('generalindex' in junction) {

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-const NetworkId = z.string().nullable();
 const BodyId = z.string().nullable();
 const BodyPart = z.string().nullable();
 const StringOrNumber = z.union(
@@ -18,6 +17,18 @@ const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
   message:
     "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).",
 });
+
+export const GlobalConsensusNetworkSchema = z.union([
+  z.object({
+    Ethereum: z.object({
+      chainId: z.number(),
+    }),
+  }),
+  z.record(z.string(), z.any()),
+  z.string(),
+]);
+
+const NetworkId = GlobalConsensusNetworkSchema.nullable();
 
 export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
 
@@ -46,16 +57,6 @@ export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
 export const JunctionPlurality = z.object({
   Plurality: z.object({ id: BodyId, part: BodyPart }),
 });
-
-export const GlobalConsensusNetworkSchema = z.union([
-  z.object({
-    Ethereum: z.object({
-      chainId: z.number(),
-    }),
-  }),
-  z.record(z.string(), z.any()),
-  z.string(),
-]);
 
 export const JunctionGlobalConsensus = z.object({ GlobalConsensus: GlobalConsensusNetworkSchema });
 

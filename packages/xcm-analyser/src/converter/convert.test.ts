@@ -74,6 +74,27 @@ describe('convert', () => {
     expect(result).toBe('./AccountId32(null, 0x123)');
   });
 
+  it('preserves an object-form network ID in an account junction', () => {
+    const location: Location = {
+      parents: 0,
+      interior: {
+        X1: {
+          AccountId32: {
+            network: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+            id: '0x1234',
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('./AccountId32(Ethereum(chainId: 1), 0x1234)');
+  });
+
   it('should convert location to URL with AccountIndex64 interior', () => {
     const location: Location = {
       parents: '0',
