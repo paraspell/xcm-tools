@@ -201,6 +201,13 @@ describe('ChannelService', () => {
         active_at: 123456,
         status: 'accepted',
       });
+
+      expect(prisma.$queryRawUnsafe).toHaveBeenCalledWith(
+        expect.stringContaining('msg.ecosystem = ch.ecosystem'),
+        ecosystem,
+        sender,
+        recipient,
+      );
     });
 
     it('should throw when no channel is found', async () => {
