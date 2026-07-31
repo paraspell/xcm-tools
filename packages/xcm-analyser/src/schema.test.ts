@@ -477,3 +477,23 @@ describe('LocationSchema', () => {
     expect(result.success).toBe(false);
   });
 });
+
+
+describe('LocationSchema parents u8 validation (Issue #1991)', () => {
+  it('accepts valid u8 parent counts', () => {
+    expect(LocationSchema.safeParse({ parents: 0, interior: 'Here' }).success).toBe(true);
+    expect(LocationSchema.safeParse({ parents: 255, interior: 'Here' }).success).toBe(true);
+    expect(LocationSchema.safeParse({ parents: 1, interior: { X1: { Parachain: 1000 } } }).success).toBe(true);
+    expect(LocationSchema.safeParse({ parents: '128', interior: 'Here' }).success).toBe(true);
+  });
+  it('rejects parents > 255', () => {
+    expect(LocationSchema.safeParse({ parents: 256, interior: 'Here' }).success).toBe(false);
+    expect(LocationSchema.safeParse({ parents: 1000, interior: 'Here' }).success).toBe(false);
+  });
+  it('rejects negative parents', () => {
+    expect(LocationSchema.safeParse({ parents: -1, interior: 'Here' }).success).toBe(false);
+  });
+  it('rejects non-integer parents', () => {
+    expect(LocationSchema.safeParse({ parents: 1.5, interior: 'Here' }).success).toBe(false);
+  });
+});

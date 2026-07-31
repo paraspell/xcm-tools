@@ -134,6 +134,12 @@ export const InteriorSchema = z.union(
 );
 
 export const LocationSchema = z.object({
-  parents: StringOrNumber,
+  parents: StringOrNumber.refine(
+    (val) => {
+      const n = Number(val);
+      return Number.isSafeInteger(n) && n >= 0 && n <= 255;
+    },
+    { message: 'parents must be a u8 integer (0 to 255)' },
+  ),
   interior: InteriorSchema,
 });
