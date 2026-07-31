@@ -1,3 +1,5 @@
+import { escapeHtml } from './escapeHtml.js';
+
 export const generateConfirmationEmailHtml = (
   title: string,
   reason: string,
@@ -182,8 +184,8 @@ export const generateConfirmationEmailHtml = (
               <!-- start copy -->
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; padding-top: 0; padding-bottom: 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 16px;">
-                  <p style="margin: 0; margin-bottom: 12px;">Reason for Higher Limit: <span style="font-weight: bold;">${reason}</span></p>
-                  <p style="margin: 0;">Requested Requests Per Minute: <span style="font-weight: bold;">${requestedLimit}</span></p>
+                  <p style="margin: 0; margin-bottom: 12px;">Reason for Higher Limit: <span style="font-weight: bold;">${escapeHtml(reason)}</span></p>
+                  <p style="margin: 0;">Requested Requests Per Minute: <span style="font-weight: bold;">${escapeHtml(requestedLimit)}</span></p>
                 </td>
               </tr>
               <!-- end copy -->
