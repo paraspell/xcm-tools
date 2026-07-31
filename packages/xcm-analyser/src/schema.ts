@@ -4,8 +4,8 @@ const NetworkId = z.union([
   z.string().nullable(),
   z.record(z.unknown()),
 ]);
-const BodyId = z.string().nullable();
-const BodyPart = z.string().nullable();
+const BodyId = z.union([z.string().nullable(), z.record(z.unknown())]);
+const BodyPart = z.union([z.string().nullable(), z.record(z.unknown())]);
 const StringOrNumber = z.union(
   [
     z

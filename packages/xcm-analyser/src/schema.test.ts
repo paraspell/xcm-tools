@@ -5,6 +5,7 @@ import {
   JunctionAccountId32,
   JunctionAccountKey20,
   JunctionGeneralKey,
+  JunctionPlurality,
   JunctionPalletInstance,
   JunctionParachain,
   LocationSchema,
@@ -461,6 +462,25 @@ describe('InteriorSchema', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.AccountKey20.network).toEqual({ ByGenesis: { genesisHash: '0x01' } });
+      }
+    });
+
+    it('JunctionPlurality should accept object-form BodyId and BodyPart', () => {
+      const data = {
+        Plurality: {
+          id: { Index: 42 },
+          part: { Members: { count: 3 } },
+        },
+      };
+      const result = JunctionPlurality.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual({
+          Plurality: {
+            id: { Index: 42 },
+            part: { Members: { count: 3 } },
+          },
+        });
       }
     });
 

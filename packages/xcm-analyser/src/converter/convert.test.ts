@@ -421,4 +421,34 @@ describe('convert', () => {
       './AccountId32(Polkadot, 0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b)/Plurality(Unit, null)',
     ]);
   });
+
+  it('convert location to URL with structured Plurality body variants', () => {
+    const xcmCallArguments = [
+      {
+        V3: [
+          {
+            id: {
+              Concrete: {
+                parents: '0',
+                interior: {
+                  X1: {
+                    Plurality: {
+                      id: { Index: 42 },
+                      part: { Members: { count: 3 } },
+                    },
+                  },
+                },
+              },
+            },
+            fun: {
+              Fungible: 'amount',
+            },
+          },
+        ],
+      },
+    ];
+
+    const result = convertXCMToUrls(xcmCallArguments);
+    expect(result).toStrictEqual(['./Plurality(Index: 42, Members(count: 3))']);
+  });
 });
