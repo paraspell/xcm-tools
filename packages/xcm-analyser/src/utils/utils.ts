@@ -9,6 +9,25 @@ import type {
   TJunctionPlurality,
 } from '../types';
 
+const formatGlobalConsensus = (value: unknown): string => {
+  if (typeof value !== 'object' || value === null) {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(formatGlobalConsensus).join(', ');
+  }
+
+  return Object.entries(value)
+    .map(([key, nestedValue]) => {
+      const formattedValue = formatGlobalConsensus(nestedValue);
+      return typeof nestedValue === 'object' && nestedValue !== null
+        ? `${key}(${formattedValue})`
+        : `${key}: ${formattedValue}`;
+    })
+    .join(', ');
+};
+
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
   const junction = Object.fromEntries(
     Object.entries(junctionOriginal).map(([k, v]) => [k.toLowerCase(), v]),
@@ -38,7 +57,7 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     const junct = junction.plurality as TJunctionPlurality['Plurality'];
     return `Plurality(${junct.id}, ${junct.part})`;
   } else if ('globalconsensus' in junction) {
-    return `GlobalConsensus(${junction.globalconsensus})`;
+    return `GlobalConsensus(${formatGlobalConsensus(junction.globalconsensus)})`;
   }
   throw new Error('Unknown junction type');
 };
