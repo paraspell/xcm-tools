@@ -24,7 +24,7 @@ describe('findAssetInfoOrThrow', () => {
 
   it('should return the asset if findAsset finds it directly', () => {
     const chain: TChain = 'Polkadot'
-    const destination: TChain = 'Moonbeam'
+    const destination: TChain = 'Centrifuge'
     vi.mocked(findAssetInfoImpl).mockReturnValue(mockAsset)
 
     const result = findAssetInfoOrThrow(chain, mockCurrencyObject, destination)
@@ -90,7 +90,7 @@ describe('findAssetInfoOrThrow', () => {
   })
 
   it('should throw InvalidCurrencyError if chain is not AssetHubPolkadot and findAsset fails', () => {
-    const chain: TChain = 'Moonbeam'
+    const chain: TChain = 'Centrifuge'
     const destination: TChain = 'Polkadot'
     vi.mocked(findAssetInfoImpl).mockReturnValue(null)
 

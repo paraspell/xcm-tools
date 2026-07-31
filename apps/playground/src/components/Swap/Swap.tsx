@@ -112,7 +112,7 @@ export const Swap = ({ form }: Props) => {
   }, [currencyToMap, currencyOptionId]);
 
   const infoEvmWallet = (
-    <Tooltip label="Required for transfers from EVM chains like Moonbeam">
+    <Tooltip label="Required for transfers from EVM chains like Darwinia">
       <IconInfoCircle size={16} />
     </Tooltip>
   );

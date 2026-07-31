@@ -51,7 +51,7 @@ describe('getOriginXcmFeeInternal', () => {
   const baseOptions: TGetOriginXcmFeeInternalOptions<unknown, unknown, unknown> = {
     api,
     tx: mockTx,
-    origin: 'Moonbeam',
+    origin: 'Darwinia',
     destination: 'Acala',
     sender: 'addr',
     version: Version.V5,
@@ -94,7 +94,7 @@ describe('getOriginXcmFeeInternal', () => {
     expect(paymentInfoSpy).toHaveBeenCalledWith({}, 'addr')
     expect(isSufficientOrigin).toHaveBeenCalledWith(
       api,
-      'Moonbeam',
+      'Darwinia',
       'Acala',
       'addr',
       150n,
@@ -200,7 +200,7 @@ describe('getOriginXcmFeeInternal', () => {
       dryRunError: { reason: 'fail' },
       sufficient: false
     })
-    expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
+    expect(padFee).toHaveBeenCalledWith(888n, 'Darwinia', 'Acala', 'origin')
     expect(paymentInfoSpy).toHaveBeenCalledWith({}, 'addr')
   })
 

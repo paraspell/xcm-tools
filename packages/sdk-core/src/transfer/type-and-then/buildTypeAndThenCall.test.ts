@@ -182,7 +182,7 @@ describe('buildTypeAndThenCall', () => {
       api: mockApi
     }
     const mockReserve: TChainWithApi<unknown, unknown, unknown> = {
-      chain: 'Moonbeam',
+      chain: 'Darwinia',
       api: mockApi
     }
     const mockDest: TChainWithApi<unknown, unknown, unknown> = {

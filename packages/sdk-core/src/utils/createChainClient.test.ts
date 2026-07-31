@@ -29,9 +29,9 @@ describe('createChainClient', () => {
   it('returns the api after awaiting initialization for another chain', async () => {
     const { api, initMock } = createMockApi()
 
-    const result = await createChainClient(api, 'Moonbeam')
+    const result = await createChainClient(api, 'Darwinia')
 
-    expect(initMock).toHaveBeenCalledWith('Moonbeam')
+    expect(initMock).toHaveBeenCalledWith('Darwinia')
     expect(result).toBe(mockApiInstance)
   })
 })

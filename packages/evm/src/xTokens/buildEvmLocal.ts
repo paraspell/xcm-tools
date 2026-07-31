@@ -18,7 +18,7 @@ const abi = [
   }
 ] as const
 
-export const buildMoonbeamLocal = (
+export const buildEvmLocal = (
   from: TChain,
   assetInfo: WithAmount<TAssetInfo>,
   recipient: string

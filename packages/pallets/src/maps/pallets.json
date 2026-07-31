@@ -175,25 +175,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
   },
-  "Interlay": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Tokens",
-        "index": 21
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 91
-      },
-      {
-        "name": "XTokens",
-        "index": 94
-      }
-    ],
-    "nativeAssets": "Tokens",
-    "otherAssets": ["Tokens"]
-  },
   "Heima": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -216,21 +197,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "AssetManager"]
-  },
-  "Moonbeam": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 103
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["System"]
   },
   "AssetHubKusama": {
     "defaultPallet": "PolkadotXcm",
@@ -385,63 +351,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
   },
-  "Kintsugi": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Tokens",
-        "index": 21
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 91
-      },
-      {
-        "name": "XTokens",
-        "index": 94
-      }
-    ],
-    "nativeAssets": "Tokens",
-    "otherAssets": ["Tokens"]
-  },
-  "Moonriver": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 103
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["System"]
-  },
-  "Quartz": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 30
-      },
-      {
-        "name": "XTokens",
-        "index": 38
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 51
-      },
-      {
-        "name": "ForeignAssets",
-        "index": 80
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["ForeignAssets"]
-  },
   "Shiden": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -564,29 +473,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
-  },
-  "Zeitgeist": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "AssetManager",
-        "index": 40
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 122
-      },
-      {
-        "name": "XTokens",
-        "index": 126
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["AssetManager", "Tokens"]
   },
   "Collectives": {
     "defaultPallet": "PolkadotXcm",
@@ -944,36 +830,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "ForeignAssets"]
   },
-  "BridgeHubPaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
-  "CoretimePaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": []
-  },
   "PeoplePaseo": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -992,48 +848,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Assets"]
-  },
-  "AjunaPaseo": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 15
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 35
-      },
-      {
-        "name": "Assets",
-        "index": 90
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
-  "BifrostPaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "Tokens",
-        "index": 71
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Tokens", "Currencies"]
   },
   "HeimaPaseo": {
     "defaultPallet": "PolkadotXcm",
@@ -1107,29 +921,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "ForeignAssets"]
-  },
-  "ZeitgeistPaseo": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "AssetManager",
-        "index": 40
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 122
-      },
-      {
-        "name": "XTokens",
-        "index": 126
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["AssetManager", "Tokens"]
   },
   "Westend": {
     "defaultPallet": "XcmPallet",

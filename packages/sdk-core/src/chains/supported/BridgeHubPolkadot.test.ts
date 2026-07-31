@@ -32,7 +32,7 @@ describe('BridgeHubPolkadot', () => {
     const invalidInput = {
       ...mockInput,
       scenario: 'ParaToPara',
-      destChain: 'Moonbeam'
+      destChain: 'Darwinia'
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     expect(() => chain.transferPolkadotXCM(invalidInput)).toThrow(

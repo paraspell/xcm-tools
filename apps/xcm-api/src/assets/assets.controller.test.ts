@@ -204,7 +204,7 @@ describe('AssetsController', () => {
     it('should return supported destinations for a valid chain and parameters', () => {
       const chain: TChain = 'Acala';
       const params = { currency: { symbol: 'KSM' } };
-      const mockResult: TChain[] = ['Moonbeam', 'Hydration'];
+      const mockResult: TChain[] = ['Darwinia', 'Hydration'];
       const spy = vi
         .spyOn(assetsService, 'getSupportedDestinations')
         .mockReturnValue(mockResult);

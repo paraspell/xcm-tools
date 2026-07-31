@@ -13,10 +13,8 @@ export const PARACHAINS = [
   'Darwinia',
   'EnergyWebX',
   'Hydration',
-  'Interlay',
   'Heima',
   'Jamton',
-  'Moonbeam',
   'CoretimePolkadot',
   'Collectives',
   'Crust',
@@ -31,19 +29,15 @@ export const PARACHAINS = [
   'AssetHubKusama',
   'BridgeHubKusama',
   'Karura',
-  'Kintsugi',
-  'Moonriver',
   'CoretimeKusama',
   'Encointer',
   'Basilisk',
   'BifrostKusama',
   'CrustShadow',
   'Crab',
-  'Quartz',
   'RobonomicsPolkadot',
   'PeopleKusama',
   'Shiden',
-  'Zeitgeist',
   // Westend testnet chains
   'AssetHubWestend',
   'BridgeHubWestend',
@@ -52,17 +46,12 @@ export const PARACHAINS = [
   'Penpal',
   'PeopleWestend',
   // Paseo testnet chains
-  'AjunaPaseo',
   'AssetHubPaseo',
-  'BifrostPaseo',
-  'BridgeHubPaseo',
-  'CoretimePaseo',
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
   'NeuroWebPaseo',
-  'PeoplePaseo',
-  'ZeitgeistPaseo'
+  'PeoplePaseo'
 ] as const
 
 /**

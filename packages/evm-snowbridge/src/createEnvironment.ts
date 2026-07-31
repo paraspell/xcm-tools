@@ -1,4 +1,3 @@
-import { getParaId } from '@paraspell/sdk-core'
 import type { Environment } from '@snowbridge/base-types'
 
 export const createEnvironment = (env: Environment): Environment => ({
@@ -14,10 +13,5 @@ export const createEnvironment = (env: Environment): Environment => ({
         isSufficient: true
       }
     ]
-  },
-  precompiles: { '2004': '0x000000000000000000000000000000000000081A' },
-  ethereumChains: {
-    ...env.ethereumChains,
-    [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
   }
 })

@@ -267,7 +267,7 @@ describe('XTransferService', () => {
       const options: XTransferDto = {
         ...xTransferDto,
         from: 'Acala',
-        to: 'Moonriver',
+        to: 'Shiden',
       };
 
       const builderMockWithError = {
@@ -440,7 +440,7 @@ describe('XTransferService', () => {
     it('should call buildEvm() on the builder and serialize the returned tx', async () => {
       const options: EvmXTransferDto = {
         ...xTransferDto,
-        from: 'Moonbeam',
+        from: 'Darwinia',
         sender: '0xSender',
       };
 
@@ -604,7 +604,7 @@ describe('XTransferService', () => {
     it('should generate batch XCM call for valid transfers', async () => {
       const from: TChain = 'Acala';
       const to1: TChain = 'Basilisk';
-      const to2: TChain = 'Moonriver';
+      const to2: TChain = 'Shiden';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -641,7 +641,7 @@ describe('XTransferService', () => {
     it('should generate batch XCM call for valid transfers', async () => {
       const from: TChain = 'Acala';
       const to1: TChain = 'Basilisk';
-      const to2: TChain = 'Moonriver';
+      const to2: TChain = 'Shiden';
 
       const batchDto: BatchXTransferDto = {
         transfers: [
@@ -716,7 +716,7 @@ describe('XTransferService', () => {
     it('should throw BadRequestException when transfers have different from chains', async () => {
       const from1: TChain = 'Acala';
       const from2: TChain = 'Basilisk';
-      const to: TChain = 'Moonriver';
+      const to: TChain = 'Shiden';
 
       const batchDto: BatchXTransferDto = {
         transfers: [

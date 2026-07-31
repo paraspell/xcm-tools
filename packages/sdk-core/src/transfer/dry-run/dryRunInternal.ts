@@ -9,7 +9,6 @@ import { addXcmVersionHeader, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveCurrency, resolveHopAsset } from '../utils'
-import { inferFeeAsset } from '../utils/inferFeeAsset'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getDryRunError } from './getDryRunError'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
@@ -86,8 +85,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       currentOrigin,
       currentAsset,
       forwardedXcms,
-      hasPassedExchange,
-      isDestination
+      hasPassedExchange
     } = params
 
     const resolvedHopAsset = resolveHopAsset({
@@ -102,10 +100,6 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       swapConfig,
       hasPassedExchange
     })
-
-    const hopAsset = isDestination
-      ? (inferFeeAsset(origin, destination, asset, api) ?? resolvedHopAsset)
-      : resolvedHopAsset
 
     if (!api.hasDryRunSupport(currentChain)) {
       return {
@@ -124,14 +118,14 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       xcm: forwardedXcms[1][0],
       chain: currentChain,
       origin: currentOrigin,
-      asset: hopAsset,
+      asset: resolvedHopAsset,
       version: resolvedVersion,
       feeAsset: resolvedFeeAsset,
       originFee: originDryModified.fee,
       amount
     })
 
-    return { ...hopDryRun, asset: hopAsset }
+    return { ...hopDryRun, asset: resolvedHopAsset }
   }
 
   const traversalResult = await traverseXcmHops<
@@ -157,8 +151,10 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
   })
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${api.getRelayChainOf(origin)}`
+  const relayChain = api.getRelayChainOf(origin)
+  const bridgeHubChain: TSubstrateChain | undefined =
+    relayChain === 'Paseo' ? undefined : `BridgeHub${relayChain}`
+  const assetHubChain: TSubstrateChain = `AssetHub${relayChain}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 

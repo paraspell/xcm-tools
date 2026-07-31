@@ -222,7 +222,7 @@ describe('getExecuteSwapInfo', () => {
   it('uses destination chain when destination is supplied and looks up asset against it', async () => {
     const optionsWithDest = {
       ...baseOptions,
-      destination: { chain: 'Moonbeam', address: 'Carol' },
+      destination: { chain: 'Darwinia', address: 'Carol' },
     } as typeof baseOptions;
 
     const result = await getExecuteSwapInfo(dex, optionsWithDest);
@@ -230,11 +230,11 @@ describe('getExecuteSwapInfo', () => {
     expect(buildDestInfo).toHaveBeenCalledWith(
       expect.objectContaining({
         origin: 'Hydration',
-        destination: 'Moonbeam',
+        destination: 'Darwinia',
         recipient: 'Bob',
       }),
     );
-    expect(result.chain.destination).toBe('Moonbeam');
+    expect(result.chain.destination).toBe('Darwinia');
     expect(result.destination.isExchange).toBeUndefined();
   });
 
@@ -309,7 +309,7 @@ describe('getExecuteSwapInfo', () => {
       result: { fee: 1n, asset: dotAsset, feeType: 'paymentInfo' as const },
     };
     const otherHop = {
-      chain: 'Moonbeam' as const,
+      chain: 'Darwinia' as const,
       result: { fee: 4n, asset: usdtAsset, feeType: 'paymentInfo' as const },
     };
 

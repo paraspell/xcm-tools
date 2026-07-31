@@ -38,12 +38,12 @@ describe('getAssetReserveChain', () => {
   it('returns parachain when paraId is found', () => {
     mockJunctions({ Parachain: 1000 })
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-    vi.mocked(getTChain).mockReturnValue('Moonbeam')
+    vi.mocked(getTChain).mockReturnValue('Darwinia')
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
     expect(getTChain).toHaveBeenCalledWith(1000, 'Polkadot')
-    expect(result).toBe('Moonbeam')
+    expect(result).toBe('Darwinia')
   })
 
   it('uses kusama when origin relay chain is Kusama', () => {

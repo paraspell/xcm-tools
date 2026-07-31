@@ -190,7 +190,7 @@ describe('getRouterFees', () => {
     });
 
     it('adds exchange to hops only when destination exists but origin undefined', async () => {
-      options.destination = { chain: 'Moonbeam', min: 0n } as unknown as TDestinationInfo;
+      options.destination = { chain: 'Darwinia', min: 0n } as unknown as TDestinationInfo;
 
       const result = await getRouterFees(dex, options, false);
 
@@ -201,7 +201,7 @@ describe('getRouterFees', () => {
 
     it('handles both origin and destination - exchange added to hops', async () => {
       options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
-      options.destination = { chain: 'Moonbeam' } as unknown as TDestinationInfo;
+      options.destination = { chain: 'Darwinia' } as unknown as TDestinationInfo;
 
       const result = await getRouterFees(dex, options, false);
 
@@ -248,7 +248,7 @@ describe('getRouterFees', () => {
 
     const localOptions = {
       ...options,
-      destination: { chain: 'Moonbeam' },
+      destination: { chain: 'Darwinia' },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,
       unknown,
@@ -307,7 +307,7 @@ describe('getRouterFees', () => {
     const localOptions = {
       ...options,
       origin: { chain: 'Acala' },
-      destination: { chain: 'Moonbeam' },
+      destination: { chain: 'Darwinia' },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,
       unknown,
@@ -324,7 +324,7 @@ describe('getRouterFees', () => {
       expect.objectContaining({
         buildTx: expect.any(Function),
         origin: 'Acala',
-        destination: 'Moonbeam',
+        destination: 'Darwinia',
         sender: options.sender,
         recipient: options.sender,
         disableFallback: false,
@@ -391,7 +391,7 @@ describe('getRouterFees', () => {
 
     const localOptions = {
       ...options,
-      destination: { chain: 'Moonbeam' },
+      destination: { chain: 'Darwinia' },
     } as TTransformedOptions<
       TBuildTransactionsOptions<unknown, unknown, unknown>,
       unknown,
@@ -431,8 +431,8 @@ describe('getRouterFees', () => {
     } as unknown as ExchangeChain;
 
     const options = {
-      origin: { chain: 'Moonbeam' },
-      destination: { chain: 'Moonbeam' },
+      origin: { chain: 'Darwinia' },
+      destination: { chain: 'Darwinia' },
       exchange: {
         apiType: 'PAPI',
         chain: 'Hydration',

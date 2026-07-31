@@ -35,7 +35,7 @@ describe('Xode', () => {
   })
 
   it('transferPolkadotXCM should throw ScenarioNotSupportedError for unsupported destChain', () => {
-    expect(() => chain.transferPolkadotXCM({ ...mockInput, destChain: 'Moonbeam' })).toThrow(
+    expect(() => chain.transferPolkadotXCM({ ...mockInput, destChain: 'Darwinia' })).toThrow(
       ScenarioNotSupportedError
     )
   })

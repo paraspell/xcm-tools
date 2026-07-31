@@ -1,6 +1,5 @@
 import Acala from '../chains/supported/Acala'
 import Ajuna from '../chains/supported/Ajuna'
-import AjunaPaseo from '../chains/supported/AjunaPaseo'
 import AssetHubKusama from '../chains/supported/AssetHubKusama'
 import AssetHubPaseo from '../chains/supported/AssetHubPaseo'
 import AssetHubPolkadot from '../chains/supported/AssetHubPolkadot'
@@ -8,17 +7,14 @@ import AssetHubWestend from '../chains/supported/AssetHubWestend'
 import Astar from '../chains/supported/Astar'
 import Basilisk from '../chains/supported/Basilisk'
 import BifrostKusama from '../chains/supported/BifrostKusama'
-import BifrostPaseo from '../chains/supported/BifrostPaseo'
 import BifrostPolkadot from '../chains/supported/BifrostPolkadot'
 import BridgeHubKusama from '../chains/supported/BridgeHubKusama'
-import BridgeHubPaseo from '../chains/supported/BridgeHubPaseo'
 import BridgeHubPolkadot from '../chains/supported/BridgeHubPolkadot'
 import BridgeHubWestend from '../chains/supported/BridgeHubWestend'
 import Centrifuge from '../chains/supported/Centrifuge'
 import Collectives from '../chains/supported/Collectives'
 import CollectivesWestend from '../chains/supported/CollectivesWestend'
 import CoretimeKusama from '../chains/supported/CoretimeKusama'
-import CoretimePaseo from '../chains/supported/CoretimePaseo'
 import CoretimePolkadot from '../chains/supported/CoretimePolkadot'
 import CoretimeWestend from '../chains/supported/CoretimeWestend'
 import Crab from '../chains/supported/Crab'
@@ -34,13 +30,9 @@ import Heima from '../chains/supported/Heima'
 import HeimaPaseo from '../chains/supported/HeimaPaseo'
 import Hydration from '../chains/supported/Hydration'
 import HydrationPaseo from '../chains/supported/HydrationPaseo'
-import Interlay from '../chains/supported/Interlay'
 import Jamton from '../chains/supported/Jamton'
 import Karura from '../chains/supported/Karura'
-import Kintsugi from '../chains/supported/Kintsugi'
 import Kusama from '../chains/supported/Kusama'
-import Moonbeam from '../chains/supported/Moonbeam'
-import Moonriver from '../chains/supported/Moonriver'
 import Mythos from '../chains/supported/Mythos'
 import NeuroWeb from '../chains/supported/NeuroWeb'
 import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
@@ -53,14 +45,11 @@ import PeoplePaseo from '../chains/supported/PeoplePaseo'
 import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Polkadot from '../chains/supported/Polkadot'
-import Quartz from '../chains/supported/Quartz'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
 import Westend from '../chains/supported/Westend'
 import Xode from '../chains/supported/Xode'
-import Zeitgeist from '../chains/supported/Zeitgeist'
-import ZeitgeistPaseo from '../chains/supported/ZeitgeistPaseo'
 
 export const chains = <TApi, TRes, TSigner>() => ({
   // Polkadot chains
@@ -77,10 +66,8 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Darwinia: new Darwinia<TApi, TRes, TSigner>(),
   EnergyWebX: new EnergyWebX<TApi, TRes, TSigner>(),
   Hydration: new Hydration<TApi, TRes, TSigner>(),
-  Interlay: new Interlay<TApi, TRes, TSigner>(),
   Heima: new Heima<TApi, TRes, TSigner>(),
   Jamton: new Jamton<TApi, TRes, TSigner>(),
-  Moonbeam: new Moonbeam<TApi, TRes, TSigner>(),
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes, TSigner>(),
   PeoplePolkadot: new PeoplePolkadot<TApi, TRes, TSigner>(),
   RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes, TSigner>(),
@@ -102,12 +89,8 @@ export const chains = <TApi, TRes, TSigner>() => ({
   CrustShadow: new CrustShadow<TApi, TRes, TSigner>(),
   Crab: new Crab<TApi, TRes, TSigner>(),
   Karura: new Karura<TApi, TRes, TSigner>(),
-  Kintsugi: new Kintsugi<TApi, TRes, TSigner>(),
-  Moonriver: new Moonriver<TApi, TRes, TSigner>(),
-  Quartz: new Quartz<TApi, TRes, TSigner>(),
   PeopleKusama: new PeopleKusama<TApi, TRes, TSigner>(),
   Shiden: new Shiden<TApi, TRes, TSigner>(),
-  Zeitgeist: new Zeitgeist<TApi, TRes, TSigner>(),
 
   // Westend chains
   Westend: new Westend<TApi, TRes, TSigner>(),
@@ -121,16 +104,11 @@ export const chains = <TApi, TRes, TSigner>() => ({
   // Paseo chains
   Paseo: new Paseo<TApi, TRes, TSigner>(),
   AssetHubPaseo: new AssetHubPaseo<TApi, TRes, TSigner>(),
-  BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes, TSigner>(),
-  CoretimePaseo: new CoretimePaseo<TApi, TRes, TSigner>(),
   EnergyWebXPaseo: new EnergyWebXPaseo<TApi, TRes, TSigner>(),
   PeoplePaseo: new PeoplePaseo<TApi, TRes, TSigner>(),
-  AjunaPaseo: new AjunaPaseo<TApi, TRes, TSigner>(),
-  BifrostPaseo: new BifrostPaseo<TApi, TRes, TSigner>(),
   HeimaPaseo: new HeimaPaseo<TApi, TRes, TSigner>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes, TSigner>(),
   NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes, TSigner>(),
-  ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes, TSigner>(),
 
   // External chains
   Ethereum: new Ethereum<TApi, TRes, TSigner>(),

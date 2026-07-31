@@ -22,7 +22,7 @@ describe('isNativeAssetTeleport', () => {
   })
 
   it('returns false when neither side is AssetHub', () => {
-    expect(isNativeAssetTeleport(api, 'Moonbeam', 'BifrostPolkadot', asset)).toBe(false)
+    expect(isNativeAssetTeleport(api, 'Darwinia', 'BifrostPolkadot', asset)).toBe(false)
     expect(findNativeAssetInfoOrThrow).not.toHaveBeenCalled()
   })
 
@@ -37,18 +37,18 @@ describe('isNativeAssetTeleport', () => {
 
   it('checks the origin native asset for parachain -> AssetHub', () => {
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    expect(isNativeAssetTeleport(api, 'Moonbeam', 'AssetHubPolkadot', asset)).toBe(true)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Moonbeam')
+    expect(isNativeAssetTeleport(api, 'Darwinia', 'AssetHubPolkadot', asset)).toBe(true)
+    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Darwinia')
   })
 
   it('checks the dest native asset for AssetHub -> parachain', () => {
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    expect(isNativeAssetTeleport(api, 'AssetHubPolkadot', 'Moonbeam', asset)).toBe(true)
-    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Moonbeam')
+    expect(isNativeAssetTeleport(api, 'AssetHubPolkadot', 'Darwinia', asset)).toBe(true)
+    expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Darwinia')
   })
 
   it('returns false when the asset is not the parachain native', () => {
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    expect(isNativeAssetTeleport(api, 'Moonbeam', 'AssetHubPolkadot', asset)).toBe(false)
+    expect(isNativeAssetTeleport(api, 'Darwinia', 'AssetHubPolkadot', asset)).toBe(false)
   })
 })

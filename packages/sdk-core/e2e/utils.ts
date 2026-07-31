@@ -18,7 +18,6 @@ const assetIdRequired: TChain[] = ['Peaq', 'Pendulum']
 export const doesNotSupportParaToRelay: TChain[] = [
   'Peaq',
   'Ajuna',
-  'AjunaPaseo',
   'EnergyWebX',
   'EnergyWebXPaseo'
 ]

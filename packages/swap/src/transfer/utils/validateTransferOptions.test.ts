@@ -111,7 +111,7 @@ describe('validateTransferOptions', () => {
       evmSenderAddress: undefined,
       sender: 'somePolkadotAddress',
       recipient: undefined,
-      from: 'Moonbeam',
+      from: 'Darwinia',
       to: undefined,
     } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 

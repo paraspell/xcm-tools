@@ -3,10 +3,7 @@ import type { TChain } from '@paraspell/sdk-common'
 import type { TChainAssetsInfo } from '../src'
 import { fetchEthereumAssets } from './fetchers/ethereum'
 
-export const chainToQuery: Record<
-  TChain,
-  string | (() => Promise<TChainAssetsInfo>)
-> = {
+export const chainToQuery: Record<TChain, string | (() => Promise<TChainAssetsInfo>)> = {
   // Chain state query: <Pallet>.<Storage> for assets metadata
   Kusama: '',
   Paseo: '',
@@ -14,7 +11,6 @@ export const chainToQuery: Record<
   Westend: '',
   Acala: 'AssetRegistry.AssetMetadatas',
   Ajuna: 'Assets.Metadata',
-  AjunaPaseo: 'Assets.Metadata',
   Astar: 'Assets.Metadata',
   AssetHubKusama: 'Assets.Metadata',
   AssetHubPaseo: 'Assets.Metadata',
@@ -22,17 +18,14 @@ export const chainToQuery: Record<
   AssetHubWestend: 'Assets.Metadata',
   Basilisk: 'AssetRegistry.AssetMetadataMap',
   BifrostKusama: 'AssetRegistry.CurrencyMetadatas',
-  BifrostPaseo: 'AssetRegistry.CurrencyMetadatas',
   BifrostPolkadot: 'AssetRegistry.CurrencyMetadatas',
   BridgeHubKusama: '',
-  BridgeHubPaseo: '',
   BridgeHubPolkadot: '',
   BridgeHubWestend: '',
   Centrifuge: 'OrmlAssetRegistry.Metadata',
   Collectives: '',
   CollectivesWestend: '',
   CoretimeKusama: '',
-  CoretimePaseo: '',
   CoretimePolkadot: '',
   CoretimeWestend: '',
   Crab: 'Assets.Metadata',
@@ -46,12 +39,8 @@ export const chainToQuery: Record<
   HeimaPaseo: 'Assets.Metadata',
   Hydration: 'AssetRegistry.Assets',
   HydrationPaseo: 'AssetRegistry.Assets',
-  Interlay: 'AssetRegistry.Metadata',
   Jamton: 'AssetRegistry.Metadata',
   Karura: 'AssetRegistry.AssetMetadatas',
-  Kintsugi: 'AssetRegistry.Metadata',
-  Moonbeam: 'EvmForeignAssets.AssetsById',
-  Moonriver: 'EvmForeignAssets.AssetsById',
   Mythos: '',
   NeuroWeb: 'ForeignAssets.Metadata',
   NeuroWebPaseo: 'ForeignAssets.Metadata',
@@ -62,13 +51,10 @@ export const chainToQuery: Record<
   PeoplePaseo: '',
   PeoplePolkadot: '',
   PeopleWestend: '',
-  Quartz: 'ForeignAssets.CollectionToForeignAsset',
   RobonomicsPolkadot: '',
   Shiden: 'Assets.Metadata',
   Unique: 'ForeignAssets.CollectionToForeignAsset',
   Xode: 'Assets.Metadata',
-  Zeitgeist: 'AssetRegistry.Metadata',
-  ZeitgeistPaseo: 'AssetRegistry.Metadata',
 
   // External chains
   Ethereum: () => fetchEthereumAssets(['polkadot_mainnet']),

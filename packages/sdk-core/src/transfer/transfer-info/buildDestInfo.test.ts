@@ -53,7 +53,7 @@ describe('buildDestInfo', () => {
     baseOptions = {
       api: mockApi,
       origin: 'AssetHubPolkadot',
-      destination: 'Moonbeam',
+      destination: 'Darwinia',
       recipient: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT },
       originFee: 50000000n,
@@ -70,7 +70,7 @@ describe('buildDestInfo', () => {
     vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
       if (chain === 'AssetHubPolkadot') return 'DOT'
       if (chain === 'AssetHubKusama') return 'KSM'
-      if (chain === 'Moonbeam') return 'GLMR'
+      if (chain === 'Darwinia') return 'GLMR'
       if (chain === 'Ethereum') return 'ETH'
       return 'NATIVE'
     })

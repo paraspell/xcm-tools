@@ -6,16 +6,15 @@ import type { TAssetInfoNoLoc } from '../types'
 import { decodeSymbol, normalizeLocation } from '../utils/codecUtils'
 import { edString } from '../utils'
 
-export const fetchZeitgeistAssets = async (
+export const fetchJamtonAssets = async (
   client: PolkadotClient,
-  chain: TSubstrateChain
+  _chain: TSubstrateChain
 ): Promise<TAssetInfoNoLoc[]> => {
   const api = client.getUnsafeApi()
-  const nativeKey = chain === 'Jamton' ? 'Native' : 'NativeAssetId'
   const entries = await api.query.AssetRegistry.Metadata.getEntries()
 
   return entries
-    .filter(({ keyArgs: [key] }: any) => key?.type !== nativeKey)
+    .filter(({ keyArgs: [key] }: any) => key?.type !== 'Native')
     .map(({ keyArgs: [key], value }: any) => ({
       assetId: String(key.value),
       symbol: decodeSymbol(value.symbol),
@@ -42,24 +41,22 @@ const jamtonLocationOverrides: Record<string, TLocation> = {
   }
 }
 
-export const fetchZeitgeistNativeAssets = async (
+export const fetchJamtonNativeAssets = async (
   client: PolkadotClient,
-  chain: TSubstrateChain
+  _chain: TSubstrateChain
 ): Promise<TAssetInfoNoLoc[]> => {
   const api = client.getUnsafeApi()
-  const nativeKey = chain === 'Jamton' ? 'Native' : 'NativeAssetId'
   const entries = await api.query.AssetRegistry.Metadata.getEntries()
   return entries
-    .filter(({ keyArgs: [key] }: any) => key?.type === nativeKey)
+    .filter(({ keyArgs: [key] }: any) => key?.type === 'Native')
     .map(({ keyArgs: [key], value }: any) => {
       const symbol = decodeSymbol(value.symbol)
-      const location = normalizeLocation(value.location)
       return {
         assetId: String(key.value),
         symbol,
         decimals: value.decimals,
         existentialDeposit: edString(value),
-        location: chain === 'Jamton' ? jamtonLocationOverrides[symbol] : location,
+        location: jamtonLocationOverrides[symbol],
         isNative: true
       }
     })

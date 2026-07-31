@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
 import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
-import { isExternalChain } from '@paraspell/sdk-common'
+import { isExternalChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { PolkadotApi } from '../../../api'
+import { PolkadotApi } from '../../../api'
 import { getParaId } from '../../../chains/config'
 import { getParaEthTransferFees } from '../../../transfer'
 import type { TCreateSwapXcmInternalOptions } from '../../../types'
@@ -14,7 +12,6 @@ import { getRelayChainOf } from '../../chain'
 import { createEthereumBridgeInstructions } from '../../ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../ethereum/generateMessageId'
 import { localizeLocation } from '../../location'
-import { addXcmVersionHeader } from '../../xcm-version'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { createExchangeInstructions, createSwapExecuteXcm } from './createSwapExecuteXcm'
@@ -30,7 +27,6 @@ vi.mock('../../../chains/config')
 vi.mock('../../../transfer', () => ({
   getParaEthTransferFees: vi.fn()
 }))
-vi.mock('../../xcm-version')
 vi.mock('../../location')
 vi.mock('../../asset')
 vi.mock('../../chain')
@@ -41,40 +37,93 @@ vi.mock('./createBaseExecuteXcm')
 vi.mock('./prepareCommonExecuteXcm')
 vi.mock('./isMultiHopSwap')
 
+const createTestApi = (): PolkadotApi<object, object, never> => {
+  const api: PolkadotApi<object, object, never> = Object.create(PolkadotApi.prototype)
+  api.createApiForChain = vi.fn<PolkadotApi<object, object, never>['createApiForChain']>()
+  return api
+}
+
+type TestOptions = TCreateSwapXcmInternalOptions<object, object, never>
+
+const LOCATION: TLocation = {
+  parents: 0,
+  interior: 'Here'
+}
+
+const ASSET: TAsset = {
+  id: LOCATION,
+  fun: { Fungible: 1n }
+}
+
+const ASSETS_FILTER = {
+  Wild: {
+    AllOf: {
+      id: LOCATION,
+      fun: 'Fungible' as const
+    }
+  }
+}
+
+const ASSET_FROM: WithAmount<TAssetInfo> = {
+  symbol: 'DOT',
+  decimals: 10,
+  amount: 2000n,
+  location: LOCATION
+}
+
+const ASSET_TO: WithAmount<TAssetInfo> = {
+  symbol: 'USDT',
+  decimals: 6,
+  amount: 1500n,
+  location: LOCATION
+}
+
+const PREPARED_XCM = {
+  prefix: [{ SetFeesMode: { jit_withdraw: true } }],
+  depositInstruction: {
+    DepositAsset: {
+      assets: ASSETS_FILTER,
+      beneficiary: LOCATION
+    }
+  }
+}
+
+const createOptions = (overrides: Partial<TestOptions> = {}): TestOptions => ({
+  api: createTestApi(),
+  exchangeChain: 'Hydration',
+  assetInfoFrom: ASSET_FROM,
+  assetInfoTo: ASSET_TO,
+  currencyTo: { symbol: ASSET_TO.symbol },
+  sender: 'sender',
+  recipient: 'recipient',
+  calculateMinAmountOut: vi.fn().mockResolvedValue(100n),
+  version: Version.V3,
+  fees: {
+    originFee: 0n,
+    originReserveFee: 10n,
+    exchangeFee: 0n,
+    destReserveFee: 20n
+  },
+  ...overrides
+})
+
 describe('createSwapExecuteXcm', () => {
   beforeEach(() => {
     vi.resetAllMocks()
   })
 
   it('builds a simple swap XCM when no multi-hop and no destChain', async () => {
+    const api = createTestApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(isMultiHopSwap).mockReturnValue(false)
-    vi.mocked(createAsset).mockReturnValue({} as any)
-    vi.mocked(localizeLocation).mockReturnValue({} as any)
-    vi.mocked(createAssetsFilter).mockReturnValue({ Wild: 'All' } as any)
-    vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
-      prefix: ['P1'] as any,
-      depositInstruction: 'D1' as any
-    })
-    vi.mocked(addXcmVersionHeader).mockImplementation((xcm, _v) => ['HDR', ...(xcm as any[])])
+    vi.mocked(createAsset).mockReturnValue(ASSET)
+    vi.mocked(localizeLocation).mockReturnValue(LOCATION)
+    vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
+    vi.mocked(prepareCommonExecuteXcm).mockReturnValue(PREPARED_XCM)
 
-    const options = {
-      api: {
-        findAssetInfoOrThrow: vi.fn().mockReturnValue({ location: {} }),
-        findNativeAssetInfoOrThrow: vi.fn()
-      } as unknown as PolkadotApi<unknown, unknown, unknown>,
-      chain: undefined,
-      exchangeChain: 'Hydration' as any,
-      destChain: undefined,
-      assetInfoFrom: { amount: 2000n, location: {} } as any,
-      assetInfoTo: { amount: 1500n, location: {} } as any,
-      fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 0n, destReserveFee: 20n },
-      recipient: 'addr1',
-      version: 3,
-      paraIdTo: 42
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
-
-    const result = (await createSwapExecuteXcm(options)) as unknown as any[]
+    const options = createOptions({ api })
+    const result = await createSwapExecuteXcm(options)
 
     expect(prepareCommonExecuteXcm).toHaveBeenCalledOnce()
     expect(isMultiHopSwap).toHaveBeenCalledWith(
@@ -82,115 +131,132 @@ describe('createSwapExecuteXcm', () => {
       options.assetInfoFrom,
       options.assetInfoTo
     )
-    expect(result[0]).toBe('HDR')
-    expect(result[1]).toBe('P1')
-    expect(result[2]).toMatchObject({
-      ExchangeAsset: {
-        maximal: false,
-        give: expect.any(Object),
-        want: expect.any(Array)
-      }
+    expect(result).toEqual({
+      [Version.V3]: [
+        ...PREPARED_XCM.prefix,
+        expect.objectContaining({
+          ExchangeAsset: {
+            maximal: false,
+            give: expect.any(Object),
+            want: expect.any(Array)
+          }
+        }),
+        PREPARED_XCM.depositInstruction
+      ]
     })
   })
 
   it('builds a multi-hop swap XCM with destChain and chain provided', async () => {
+    const api = createTestApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')
     vi.mocked(isMultiHopSwap).mockReturnValue(true)
-    vi.mocked(localizeLocation).mockImplementation((_chain, ml) => ml)
-    vi.mocked(createAsset)
-      .mockReturnValueOnce({} as any)
-      .mockReturnValueOnce({} as any)
-      .mockReturnValueOnce({} as any)
-    vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
-      prefix: ['PFX'] as any,
-      depositInstruction: 'DEP' as any
-    })
-    vi.mocked(createBaseExecuteXcm).mockReturnValueOnce(['X1']).mockReturnValueOnce(['X2'])
+    vi.mocked(localizeLocation).mockImplementation((_chain, location) => location)
+    vi.mocked(createAsset).mockReturnValue(ASSET)
+    vi.mocked(prepareCommonExecuteXcm).mockReturnValue(PREPARED_XCM)
+    vi.mocked(createBaseExecuteXcm)
+      .mockReturnValueOnce([{ ClearOrigin: undefined }])
+      .mockReturnValueOnce([{ RefundSurplus: undefined }])
     vi.mocked(getParaId).mockReturnValue(99)
+
     const minOut = 123n
     const calculateMinAmountOut = vi.fn().mockResolvedValue(minOut)
-    vi.mocked(addXcmVersionHeader).mockImplementation((xcm, _v) => ['HEAD', ...(xcm as any[])])
-
-    const options = {
-      api: {
-        findAssetInfoOrThrow: vi.fn().mockReturnValue({ location: {} }),
-        findNativeAssetInfoOrThrow: vi.fn()
-      } as unknown as PolkadotApi<unknown, unknown, unknown>,
-      chain: 'Relay',
-      exchangeChain: 'Kusama' as any,
-      destChain: 'Moonriver' as any,
-      assetInfoFrom: { amount: 2000n, location: {} } as any,
-      assetInfoTo: { amount: 1500n, location: {} } as any,
-      fees: { originFee: 0n, originReserveFee: 5n, exchangeFee: 10n, destReserveFee: 15n },
-      recipient: 'addr2',
-      version: 2,
-      paraIdTo: 77,
-      calculateMinAmountOut
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
+    const options = createOptions({
+      api,
+      chain: 'Kusama',
+      exchangeChain: 'AssetHubKusama',
+      destChain: 'Shiden',
+      calculateMinAmountOut,
+      version: Version.V4,
+      fees: {
+        originFee: 0n,
+        originReserveFee: 5n,
+        exchangeFee: 10n,
+        destReserveFee: 15n
+      }
+    })
 
     const result = await createSwapExecuteXcm(options)
 
     expect(isMultiHopSwap).toHaveBeenCalledWith(
-      'Kusama',
+      'AssetHubKusama',
       options.assetInfoFrom,
       options.assetInfoTo
     )
     expect(createBaseExecuteXcm).toHaveBeenCalledTimes(2)
-    expect(result).toEqual(['HEAD', 'PFX', 'X2'])
+    expect(result).toEqual({
+      [Version.V4]: [...PREPARED_XCM.prefix, { RefundSurplus: undefined }]
+    })
   })
 
   describe('Ethereum destination', () => {
-    const mockApi = {
-      createApiForChain: vi.fn().mockResolvedValue('ahApi'),
-      findAssetInfoOrThrow: vi.fn(),
-      findNativeAssetInfoOrThrow: vi.fn()
+    const mockApi = createTestApi()
+    const createApiForChain = vi.spyOn(mockApi, 'createApiForChain')
+    const findAssetInfoOrThrow = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
+    const findNativeAssetInfoOrThrow = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+
+    const wethFrom: WithAmount<TAssetInfo> = {
+      amount: 5000n,
+      location: { parents: 1, interior: 'Here' },
+      symbol: 'WETH',
+      decimals: 18
     }
 
-    const baseEthOptions = {
-      api: mockApi as any,
-      chain: 'Hydration' as any,
-      exchangeChain: 'AssetHubPolkadot' as any,
-      destChain: 'Ethereum' as any,
-      assetInfoFrom: {
-        amount: 5000n,
-        location: { parents: 1, interior: 'Here' },
-        symbol: 'WETH'
-      } as any,
-      assetInfoTo: { amount: 3000n, location: {}, symbol: 'WETH', assetId: '0x123' } as any,
-      fees: { originFee: 0n, originReserveFee: 10n, exchangeFee: 5n, destReserveFee: 20n },
+    const wethTo: WithAmount<TAssetInfo> = {
+      amount: 3000n,
+      location: LOCATION,
+      symbol: 'WETH',
+      decimals: 18,
+      assetId: '0x123'
+    }
+
+    const baseEthOptions = createOptions({
+      api: mockApi,
+      chain: 'Hydration',
+      exchangeChain: 'AssetHubPolkadot',
+      destChain: 'Ethereum',
+      assetInfoFrom: wethFrom,
+      assetInfoTo: wethTo,
+      currencyTo: { symbol: 'WETH' },
       sender: 'sender1',
       recipient: 'ethAddr',
-      version: 3,
       paraIdTo: 1000,
-      calculateMinAmountOut: vi.fn().mockResolvedValue(100n)
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
+      calculateMinAmountOut: vi.fn().mockResolvedValue(100n),
+      fees: {
+        originFee: 0n,
+        originReserveFee: 10n,
+        exchangeFee: 5n,
+        destReserveFee: 20n
+      }
+    })
 
     beforeEach(() => {
       vi.mocked(isExternalChain).mockReturnValue(true)
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
-      mockApi.findNativeAssetInfoOrThrow = vi.fn().mockReturnValue({
+      createApiForChain.mockResolvedValue(createTestApi())
+      findNativeAssetInfoOrThrow.mockReturnValue({
+        symbol: 'DOT',
+        decimals: 10,
         location: { parents: 1, interior: 'Here' }
       })
       vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 200n])
       vi.mocked(isAssetEqual).mockReturnValue(false)
-      mockApi.findAssetInfoOrThrow = vi.fn().mockReturnValue({
-        location: {},
+      findAssetInfoOrThrow.mockReturnValue({
+        symbol: 'WETH',
+        decimals: 18,
+        location: LOCATION,
         assetId: '0x123'
       })
       vi.mocked(generateMessageId).mockResolvedValue('msg-id-1')
-      vi.mocked(createEthereumBridgeInstructions).mockReturnValue(['SNOW1'])
+      vi.mocked(createEthereumBridgeInstructions).mockReturnValue([{ SetTopic: 'snowbridge' }])
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
-      vi.mocked(createAsset).mockReturnValue({} as any)
-      vi.mocked(createAssetsFilter).mockReturnValue({} as any)
-      vi.mocked(localizeLocation).mockReturnValue({} as any)
+      vi.mocked(createAsset).mockReturnValue(ASSET)
+      vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
+      vi.mocked(localizeLocation).mockReturnValue(LOCATION)
       vi.mocked(getParaId).mockReturnValue(1000)
-      vi.mocked(prepareCommonExecuteXcm).mockReturnValue({
-        prefix: ['PFX'] as any,
-        depositInstruction: 'DEP' as any
-      })
-      vi.mocked(createBaseExecuteXcm).mockReturnValue(['BASE1'])
-      vi.mocked(addXcmVersionHeader).mockImplementation((xcm, _v) => xcm as any)
+      vi.mocked(prepareCommonExecuteXcm).mockReturnValue(PREPARED_XCM)
+      vi.mocked(createBaseExecuteXcm).mockReturnValue([{ ClearOrigin: undefined }])
     })
 
     it('sets up separate fee asset when main asset is not DOT', async () => {
@@ -198,13 +264,12 @@ describe('createSwapExecuteXcm', () => {
 
       await createSwapExecuteXcm(baseEthOptions)
 
-      expect(mockApi.findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Polkadot')
+      expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Polkadot')
 
-      // prepareCommonExecuteXcm should receive feeAssetInfo and useJitWithdraw
       const commonCall = vi.mocked(prepareCommonExecuteXcm).mock.calls[0][0]
       expect(commonCall.feeAssetInfo).toBeDefined()
       expect(commonCall.useJitWithdraw).toBe(true)
-      expect(commonCall.fees.originFee).toBe(700n) // 500 + 200
+      expect(commonCall.fees.originFee).toBe(700n)
     })
 
     it('does not set separate fee asset when main asset IS DOT', async () => {
@@ -212,7 +277,6 @@ describe('createSwapExecuteXcm', () => {
 
       await createSwapExecuteXcm(baseEthOptions)
 
-      // prepareCommonExecuteXcm should have NO feeAssetInfo, originFee = 0
       const commonCall = vi.mocked(prepareCommonExecuteXcm).mock.calls[0][0]
       expect(commonCall.feeAssetInfo).toBeUndefined()
       expect(commonCall.useJitWithdraw).toBe(true)
@@ -228,43 +292,46 @@ describe('createSwapExecuteXcm', () => {
 
     it('uses snowbridge instructions directly when exchange chain is AssetHub', async () => {
       vi.mocked(isAssetEqual).mockReturnValue(false)
-      vi.mocked(createBaseExecuteXcm).mockReturnValue(['BASE1'])
+      vi.mocked(createBaseExecuteXcm).mockReturnValue([{ ClearOrigin: undefined }])
 
-      const ahOptions = {
+      const ahOptions: TestOptions = {
         ...baseEthOptions,
-        exchangeChain: 'AssetHubPolkadot' as any
-      } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
+        exchangeChain: 'AssetHubPolkadot'
+      }
 
       await createSwapExecuteXcm(ahOptions)
 
-      // Only called once for finalXcm (chain → exchangeChain), not for exchangeToDestXcm
       expect(createBaseExecuteXcm).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('createExchangeInstructions', () => {
-    const baseOptions = {
-      api: {
-        findAssetInfoOrThrow: vi.fn().mockReturnValue({ location: {} })
-      } as unknown as PolkadotApi<unknown, unknown, unknown>,
-      chain: undefined,
-      exchangeChain: 'Hydration' as any,
-      assetInfoFrom: { amount: 1000n, location: {} } as any,
-      assetInfoTo: { amount: 500n, location: {} } as any,
-      version: 3,
-      fees: { originFee: 0n, originReserveFee: 0n, exchangeFee: 0n },
+    const api = createTestApi()
+    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
+
+    const baseOptions = createOptions({
+      api,
+      exchangeChain: 'Hydration',
+      assetInfoFrom: {
+        ...ASSET_FROM,
+        amount: 1000n
+      },
+      assetInfoTo: {
+        ...ASSET_TO,
+        amount: 500n
+      },
       calculateMinAmountOut: vi.fn()
-    } as unknown as TCreateSwapXcmInternalOptions<unknown, unknown, unknown>
+    })
 
     beforeEach(() => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
-      vi.mocked(createAssetsFilter).mockReturnValue({} as any)
+      vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
     })
 
     it('uses maximal: false when hasSeparateFeeAsset is false', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
 
-      const result = await createExchangeInstructions(baseOptions, {} as any, {} as any, false)
+      const result = await createExchangeInstructions(baseOptions, ASSET, ASSET, false)
 
       expect(result[0]).toMatchObject({
         ExchangeAsset: { maximal: false }
@@ -274,7 +341,7 @@ describe('createSwapExecuteXcm', () => {
     it('uses maximal: true when hasSeparateFeeAsset is true', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
 
-      const result = await createExchangeInstructions(baseOptions, {} as any, {} as any, true)
+      const result = await createExchangeInstructions(baseOptions, ASSET, ASSET, true)
 
       expect(result[0]).toMatchObject({
         ExchangeAsset: { maximal: true }

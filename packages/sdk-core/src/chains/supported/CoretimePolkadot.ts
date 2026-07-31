@@ -34,7 +34,7 @@ class CoretimePolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
   }
 
   canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
-    return origin !== 'Hydration' && origin !== 'Moonbeam'
+    return origin !== 'Hydration'
   }
 }
 

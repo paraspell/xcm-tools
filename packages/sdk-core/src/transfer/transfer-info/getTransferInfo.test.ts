@@ -204,8 +204,8 @@ describe('getTransferInfo', () => {
         result: { fee: 12345n, asset: { symbol: 'HDX' } }
       },
       {
-        chain: 'Interlay',
-        result: { fee: 56789n, asset: { symbol: 'INTR' } }
+        chain: 'Centrifuge',
+        result: { fee: 56789n, asset: { symbol: 'CFG' } }
       }
     ]
 
@@ -219,13 +219,13 @@ describe('getTransferInfo', () => {
       }
     }
 
-    const mockInterlayHopInfo = {
+    const mockCentrifugeHopInfo = {
       balance: 200n,
-      asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo,
+      asset: { symbol: 'CFG', assetId: 'CFG', decimals: 18 } as TAssetInfo,
       xcmFee: {
         fee: 56789n,
         balance: 200n,
-        asset: { symbol: 'INTR', assetId: 'INTR', decimals: 10 } as TAssetInfo
+        asset: { symbol: 'CFG', assetId: 'CFG', decimals: 18 } as TAssetInfo
       }
     }
 
@@ -238,7 +238,7 @@ describe('getTransferInfo', () => {
 
     vi.mocked(buildHopInfo).mockImplementation(({ chain }) => {
       if (chain === 'Hydration') return Promise.resolve(mockHydraHopInfo)
-      if (chain === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
+      if (chain === 'Centrifuge') return Promise.resolve(mockCentrifugeHopInfo)
       return Promise.resolve({} as THopTransferInfo['result'])
     })
 
@@ -256,7 +256,7 @@ describe('getTransferInfo', () => {
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        chain: 'Interlay',
+        chain: 'Centrifuge',
         fee: mockHopsFromFee[1].result.fee
       })
     )
@@ -269,8 +269,8 @@ describe('getTransferInfo', () => {
         result: mockHydraHopInfo
       },
       {
-        chain: 'Interlay',
-        result: mockInterlayHopInfo
+        chain: 'Centrifuge',
+        result: mockCentrifugeHopInfo
       }
     ])
   })
@@ -281,7 +281,7 @@ describe('getTransferInfo', () => {
       ...baseOptions,
       api: mockApi,
       ahAddress: undefined,
-      origin: 'Moonbeam'
+      origin: 'Darwinia'
     }
 
     const initSpy = vi.spyOn(mockApi, 'init')
@@ -472,7 +472,7 @@ describe('getTransferInfo', () => {
     const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {
       ...baseOptions,
       api: mockApi,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       ahAddress: 'evmAhAddress'
     }
 

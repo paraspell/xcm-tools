@@ -41,7 +41,7 @@
     "@polkadot-api/substrate-bindings": "^0.20.3",
     "@polkadot-labs/hdkd": "^0.0.28",
     "@polkadot-labs/hdkd-helpers": "^0.0.30",
-    "viem": "^2.53.1"
+    "viem": "^2.55.10"
   },
   "peerDependencies": {
     "@paraspell/descriptors": "workspace:*",
@@ -58,9 +58,10 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "@scure/bip32": "^2.2.0",
     "@scure/bip39": "^2.2.0",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "dotenv": "^17.4.2",
-    "rollup": "^4.62.2",
+    "polkadot-api": "^2.2.1",
+    "rollup": "^4.62.3",
     "rollup-plugin-dts": "^6.4.1"
   }
 }

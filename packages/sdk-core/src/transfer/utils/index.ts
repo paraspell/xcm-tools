@@ -1,4 +1,3 @@
-export * from './inferFeeAsset'
 export * from './resolveAsset'
 export * from './resolveCurrency'
 export * from './resolveFeeAsset'

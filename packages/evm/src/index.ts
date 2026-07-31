@@ -11,8 +11,4 @@ registerEvmExtension({
 
 export { buildEvmTransfer, executeEvmTransfer }
 
-export const EVM_ORIGIN_CHAINS = [
-  'Moonbeam',
-  'Moonriver',
-  'Darwinia'
-] as const satisfies readonly TSubstrateChain[]
+export const EVM_ORIGIN_CHAINS = ['Darwinia'] as const satisfies readonly TSubstrateChain[]

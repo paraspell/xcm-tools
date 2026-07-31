@@ -82,7 +82,7 @@ describe('XTransferController', () => {
 
       const evmBody: EvmXTransferDto = {
         ...bodyParams,
-        from: 'Moonbeam',
+        from: 'Darwinia',
         to: 'AssetHubPolkadot',
       };
 

@@ -184,7 +184,7 @@ describe('PapiApi', () => {
       address: 'addr',
       chain: 'Hydration' as const,
       version: Version.V5,
-      destination: 'Moonbeam' as TDestination,
+      destination: 'Darwinia' as TDestination,
       asset: { symbol: 'DOT' } as WithAmount<TAssetInfo>
     })
 
@@ -574,7 +574,7 @@ describe('PapiApi', () => {
   })
 
   describe('getDeliveryFee', () => {
-    const chain: TSubstrateChain = 'Moonbeam'
+    const chain: TSubstrateChain = 'Darwinia'
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
       decimals: 18,
@@ -795,7 +795,7 @@ describe('PapiApi', () => {
   })
 
   describe('getXcmPaymentApiFee', () => {
-    const chain: TSubstrateChain = 'Moonbeam'
+    const chain: TSubstrateChain = 'Darwinia'
     const localXcm = { type: 'V4', value: [] }
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
@@ -1224,7 +1224,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1418,7 +1418,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1457,7 +1457,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1489,7 +1489,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1537,7 +1537,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1582,7 +1582,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1639,7 +1639,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1675,7 +1675,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         useRootOrigin: true,
         version: Version.V5,
@@ -1718,7 +1718,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {
@@ -1778,7 +1778,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         destination: 'Acala',
         version: Version.V5,
         asset: {} as WithAmount<TAssetInfo>
@@ -1835,7 +1835,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         asset: {} as WithAmount<TAssetInfo>,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         version: Version.V5,
         destination: 'Acala'
       })
@@ -1898,14 +1898,14 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         asset: customAsset as WithAmount<TAssetInfo>,
         address: testAddress,
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         version: Version.V5,
         destination: 'Acala'
       })
 
       expect(paymentInfoSpy).toHaveBeenCalledWith(testAddress)
       expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
-        'Moonbeam',
+        'Darwinia',
         undefined,
         [],
         customAsset,
@@ -2539,7 +2539,7 @@ describe('PapiApi', () => {
       })
     })
 
-    it('should get fee from XcmPaymentApi if chain is Moonbeam', () => {
+    it('should get fee from XcmPaymentApi if chain is Darwinia', () => {
       const weight = { ref_time: 11n, proof_size: 22n }
 
       const mockApiResponse = {
@@ -2576,7 +2576,7 @@ describe('PapiApi', () => {
           originLocation,
           xcm: dummyXcm,
           tx: mockTransaction,
-          chain: 'Moonbeam',
+          chain: 'Darwinia',
           origin: 'Acala',
           asset: { symbol: 'AUSD', location: { parents: 0, interior: { Here: null } } }
         } as TDryRunXcmBaseOptions<TPapiTransaction>)

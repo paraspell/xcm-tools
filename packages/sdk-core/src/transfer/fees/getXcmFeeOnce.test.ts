@@ -54,7 +54,7 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown, u
     api: defaultApi,
     builder: {} as unknown,
     origin: 'Acala',
-    destination: 'Moonbeam',
+    destination: 'Darwinia',
     sender: '5Alice',
     recipient: '5Bob',
     currency: 'ACA',
@@ -711,7 +711,7 @@ describe('getXcmFeeOnce', () => {
     vi.mocked(traverseXcmHops).mockResolvedValue({
       hops: [
         {
-          chain: 'Quartz',
+          chain: 'Unique',
           result: {
             fee: 3_000n,
             feeType: 'paymentInfo',
@@ -720,7 +720,7 @@ describe('getXcmFeeOnce', () => {
           }
         }
       ],
-      lastProcessedChain: 'Quartz'
+      lastProcessedChain: 'Unique'
     })
 
     vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
@@ -731,7 +731,7 @@ describe('getXcmFeeOnce', () => {
 
     const res = await getXcmFeeOnce(createOptions())
 
-    expect(res.dryRunError?.chain).toBe('Quartz')
+    expect(res.dryRunError?.chain).toBe('Unique')
     expect(res.dryRunError?.reason).toBe('Custom chain failed')
   })
 
@@ -974,7 +974,7 @@ describe('getXcmFeeOnce', () => {
     const res = await getXcmFeeOnce(createOptions({ api: mockApi }))
 
     expect(getDestXcmFee).toHaveBeenCalledTimes(1)
-    expect(mockCloneApi.init).toHaveBeenCalledWith('Moonbeam', expect.any(Number))
+    expect(mockCloneApi.init).toHaveBeenCalledWith('Darwinia', expect.any(Number))
 
     expect(res.destination).toEqual({
       fee: 1_000n,
@@ -1009,7 +1009,7 @@ describe('getXcmFeeOnce', () => {
 
       const hopResult = await capturedProcessHop({
         api: mockApi,
-        currentChain: 'Moonbeam',
+        currentChain: 'Darwinia',
         currentOrigin: 'Acala',
         currentAsset: { symbol: 'ACA' } as TAssetInfo,
         forwardedXcms: [null, [{ key: 'value' }]],
@@ -1019,11 +1019,11 @@ describe('getXcmFeeOnce', () => {
       return {
         hops: [
           {
-            chain: 'Moonbeam',
+            chain: 'Darwinia',
             result: hopResult
           }
         ],
-        lastProcessedChain: 'Moonbeam',
+        lastProcessedChain: 'Darwinia',
         destination: hopResult
       }
     })
@@ -1066,7 +1066,7 @@ describe('getXcmFeeOnce', () => {
 
       const hopResult = await capturedProcessHop({
         api: mockApi,
-        currentChain: 'Moonbeam',
+        currentChain: 'Darwinia',
         currentOrigin: 'Hydration',
         currentAsset: { symbol: 'ACA' } as TAssetInfo,
         forwardedXcms: [null, [{ key: 'value' }]],
@@ -1076,11 +1076,11 @@ describe('getXcmFeeOnce', () => {
       return {
         hops: [
           {
-            chain: 'Moonbeam',
+            chain: 'Darwinia',
             result: hopResult
           }
         ],
-        lastProcessedChain: 'Moonbeam',
+        lastProcessedChain: 'Darwinia',
         destination: hopResult
       }
     })

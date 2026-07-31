@@ -1,18 +1,17 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import { isMoonbeamWhAsset } from '../../transfer/utils/inferFeeAsset'
 import type {
   IPolkadotXCMTransfer,
   TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, createAsset, handleExecuteTransfer } from '../../utils'
+import { assertHasId, handleExecuteTransfer } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
 class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -49,34 +48,11 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
   async transferPolkadotXCM(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
-    const { destination, assetInfo: asset, api } = input
-
     if (this.shouldUseExecuteTransfer(input)) {
-      return api.deserializeExtrinsics(await handleExecuteTransfer(input))
-    }
-
-    if (isMoonbeamWhAsset(asset.location) && destination === 'Moonbeam') {
-      return this.transferMoonbeamWhAsset(input)
+      return input.api.deserializeExtrinsics(await handleExecuteTransfer(input))
     }
 
     return transferPolkadotXcm(input)
-  }
-
-  transferMoonbeamWhAsset(
-    input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
-  ): Promise<TRes> {
-    const { api, assetInfo, version } = input
-
-    const glmr = api.findAssetInfoOrThrow(this.chain, { symbol: getNativeAssetSymbol('Moonbeam') })
-    const FEE_AMOUNT = 150000000000000000n // 0.15 GLMR
-
-    return transferPolkadotXcm({
-      ...input,
-      overriddenAsset: [
-        { ...createAsset(version, FEE_AMOUNT, glmr.location), isFeeAsset: true },
-        createAsset(version, assetInfo.amount, assetInfo.location)
-      ]
-    })
   }
 
   transferLocalNativeAsset(

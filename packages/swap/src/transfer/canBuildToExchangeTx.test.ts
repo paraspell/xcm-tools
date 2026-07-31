@@ -151,7 +151,7 @@ describe('canBuildToExchangeTx', () => {
   it('should handle TGetBestAmountOutOptions type for options input', async () => {
     vi.mocked(buildToExchangeExtrinsic).mockResolvedValue(mockTx);
     const getBestAmountOutOptions = {
-      from: 'Moonbeam',
+      from: 'Darwinia',
       amount: '5000000000000000000',
       currencyFrom: { symbol: 'GLMR' },
       currencyTo: { symbol: 'DOT' },

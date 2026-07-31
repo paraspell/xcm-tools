@@ -51,7 +51,7 @@ const createOptions = (
     api,
     tx: {} as unknown,
     origin: 'Acala',
-    destination: 'Moonbeam',
+    destination: 'Darwinia',
     sender: '5Alice',
     currency: { symbol: 'ACA', amount: 1_000n },
     ...overrides
@@ -246,7 +246,7 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       success: false,
-      dryRunError: { chainKind: 'destination', chain: 'Moonbeam', reason: 'dest-boom' },
+      dryRunError: { chainKind: 'destination', chain: 'Darwinia', reason: 'dest-boom' },
       origin: { ...originOk, asset: { symbol: 'ACA' } },
       destination: { success: false, dryRunError: { reason: 'dest-boom' } },
       hops: []
@@ -342,7 +342,7 @@ describe('dryRunInternal', () => {
 
         const hopResult = await capturedProcessHop({
           api: createFakeApi(originOk),
-          currentChain: 'Quartz',
+          currentChain: 'Unique',
           currentOrigin: 'Acala',
           currentAsset: { symbol: 'ACA' } as TAssetInfo,
           forwardedXcms: [null, [{ value: [1] }]],
@@ -363,7 +363,7 @@ describe('dryRunInternal', () => {
 
       await dryRunInternal(createOptions(api))
 
-      expect(hasDryRunSupportSpy).toHaveBeenCalledWith('Quartz')
+      expect(hasDryRunSupportSpy).toHaveBeenCalledWith('Unique')
     })
 
     it('handles processHop currency logic: isDestination case', async () => {
@@ -394,7 +394,7 @@ describe('dryRunInternal', () => {
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
-          currentChain: 'Moonbeam',
+          currentChain: 'Darwinia',
           currentOrigin: 'Acala',
           currentAsset: { symbol: 'ACA' } as TAssetInfo,
           forwardedXcms: [null, [{ value: [1] }]],
@@ -444,7 +444,7 @@ describe('dryRunInternal', () => {
 
         const hopResult = await capturedProcessHop({
           api: mockHopApi,
-          currentChain: 'Moonbeam',
+          currentChain: 'Darwinia',
           currentOrigin: 'Hydration',
           currentAsset: { symbol: 'ACA' } as TAssetInfo,
           forwardedXcms: [null, [{ value: [1] }]],
@@ -620,7 +620,7 @@ describe('dryRunInternal', () => {
       vi.mocked(traverseXcmHops).mockResolvedValue({
         hops: [
           {
-            chain: 'Quartz',
+            chain: 'Unique',
             result: { success: false, dryRunError: { reason: 'Custom hop failed' } }
           }
         ]
@@ -632,7 +632,7 @@ describe('dryRunInternal', () => {
       const res = await dryRunInternal(createOptions(api))
 
       expect(res.dryRunError?.reason).toBe('Custom hop failed')
-      expect(res.dryRunError?.chain).toBe('Quartz')
+      expect(res.dryRunError?.chain).toBe('Unique')
     })
 
     it('handles feeAsset resolution', async () => {

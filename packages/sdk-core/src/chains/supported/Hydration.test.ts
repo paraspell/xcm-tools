@@ -1,6 +1,6 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
 import { findAssetInfoByLoc, InvalidCurrencyError } from '@paraspell/assets'
-import { hasJunction, Version } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -12,13 +12,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { getChain, handleExecuteTransfer } from '../../utils'
-import { getParaId } from '../config'
 import type Hydration from './Hydration'
-
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  hasJunction: vi.fn()
-}))
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
@@ -125,64 +119,6 @@ describe('Hydration', () => {
       await hydration.transferPolkadotXCM(input)
 
       expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
-    })
-
-    it('should call transferMoonbeamWhAsset for Moonbeam Wormhole asset', async () => {
-      const mockInput = {
-        assetInfo: {
-          symbol: 'WORM',
-          amount: 500n,
-          location: {
-            parents: 1,
-            interior: {
-              X2: [{ Parachain: getParaId('Moonbeam') }, { PalletInstance: 110 }]
-            }
-          },
-          assetId: '999'
-        },
-        destination: 'Moonbeam',
-        version: hydration.version
-      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
-      vi.mocked(hasJunction).mockReturnValueOnce(true).mockReturnValueOnce(true)
-
-      const transferMoonbeamWhAssetSpy = vi
-        .spyOn(hydration, 'transferMoonbeamWhAsset')
-        .mockResolvedValue('moonbeam-wh-result')
-
-      const result = await hydration.transferPolkadotXCM(mockInput)
-
-      expect(transferMoonbeamWhAssetSpy).toHaveBeenCalledWith(mockInput)
-      expect(result).toBe('moonbeam-wh-result')
-    })
-
-    it('transferMoonbeamWhAsset should call transferPolkadotXcm with overridden fee + asset', async () => {
-      const mockAsset = {
-        symbol: 'WORM',
-        amount: 500n,
-        location: {},
-        assetId: '123'
-      }
-
-      const mockGlmrAsset = {
-        symbol: 'GLMR',
-        location: { parents: 1, interior: 'Here' }
-      } as WithAmount<TAssetInfo>
-
-      vi.spyOn(mockApi, 'findAssetInfoOrThrow').mockReturnValue(mockGlmrAsset)
-
-      const mockInput = {
-        api: mockApi,
-        assetInfo: mockAsset
-      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
-
-      await hydration.transferMoonbeamWhAsset(mockInput)
-
-      expect(transferPolkadotXcm).toHaveBeenCalledWith(
-        expect.objectContaining({
-          overriddenAsset: expect.arrayContaining([expect.anything(), expect.anything()])
-        })
-      )
     })
 
     it('should call transferPolkadotXcm when feeAsset and overriddenAsset are both set', async () => {

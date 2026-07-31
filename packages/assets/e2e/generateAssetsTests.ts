@@ -32,9 +32,7 @@ export const generateAssetsTests = () => {
           it('should have a valid native asset symbol in nativeAssets', () => {
             const nativeSymbol = getNativeAssetSymbol(chain)
             const nativeSymbols = getNativeAssets(chain).map(a => a.symbol)
-            if (chain !== 'BifrostPaseo') {
-              expect(nativeSymbols).toContain(nativeSymbol)
-            }
+            expect(nativeSymbols).toContain(nativeSymbol)
           })
         }
 
@@ -134,10 +132,7 @@ export const generateAssetsTests = () => {
             it('should return native asset symbol from native assets', () => {
               const nativeAssets = getNativeAssets(chain)
               const symbol = getNativeAssetSymbol(chain)
-              // BifrostPaseo is an exception it has only vBNC in native assets
-              if (chain !== 'BifrostPaseo') {
-                expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
-              }
+              expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
             })
           }
         })

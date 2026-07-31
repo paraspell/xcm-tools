@@ -36,18 +36,10 @@
   },
   "dependencies": {
     "@paraspell/sdk-common": "workspace:*",
-    "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "^1.1.6",
-    "@snowbridge/base-types": "^1.1.6",
-    "@snowbridge/contract-types": "^1.1.6",
-    "@snowbridge/provider-ethers": "^1.1.6",
-    "@snowbridge/registry": "^1.1.6",
-    "ethers": "6.16.0",
-    "viem": "^2.53.1"
+    "@paraspell/sdk-core": "workspace:*"
   },
   "peerDependencies": {
     "@polkadot/api": ">= 16.0 < 17",
-    "@polkadot/api-base": ">= 16.0 < 17",
     "@polkadot/types": ">= 16.0 < 17",
     "@polkadot/util": ">= 14",
     "@polkadot/util-crypto": ">= 14"
@@ -59,9 +51,9 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "dotenv": "^17.4.2",
-    "rollup": "^4.62.2",
+    "rollup": "^4.62.3",
     "rollup-plugin-dts": "^6.4.1"
   }
 }

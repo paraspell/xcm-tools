@@ -26,8 +26,8 @@ type TUtilityAdvancedInputs = {
 
 type TUtilitySymbolMode = 'Native' | 'Foreign' | 'Foreign abstract';
 
-const EVM_ORIGIN_CHAIN = 'Moonbeam';
-const EVM_DESTINATION_CHAIN = 'Moonriver';
+const EVM_ORIGIN_CHAIN = 'Darwinia';
+const EVM_DESTINATION_CHAIN = 'Shiden';
 const UTILITY_CUSTOM_FROM = 'Hydration';
 const UTILITY_CUSTOM_TO = 'Acala';
 const UTILITY_NATIVE_SYMBOL = 'HDX';

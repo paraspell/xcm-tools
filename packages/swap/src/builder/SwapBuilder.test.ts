@@ -21,7 +21,7 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 export const transferParams: TTransferBaseOptions<unknown, unknown, unknown> = {
   from: 'Astar',
   exchange: 'Hydration',
-  to: 'Moonbeam',
+  to: 'Darwinia',
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000000000',

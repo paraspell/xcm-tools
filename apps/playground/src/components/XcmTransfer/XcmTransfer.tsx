@@ -425,7 +425,7 @@ export const XcmTransfer = () => {
     if (isEvmMode) {
       if (!EVM_CHAINS.includes(from)) {
         showErrorNotification(
-          `Origin ${from} cannot be used with an Ethereum wallet. Pick an EVM chain (Ethereum, Moonbeam, Moonriver, Darwinia) or connect a Substrate wallet`,
+          `Origin ${from} cannot be used with an Ethereum wallet. Pick an EVM chain (Ethereum or Darwinia) or connect a Substrate wallet`,
         );
         return;
       }

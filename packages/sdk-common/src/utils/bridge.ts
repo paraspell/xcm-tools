@@ -11,7 +11,6 @@ export const ETHEREUM_BRIDGE_ORIGINS: TSubstrateChain[] = [
   'AssetHubWestend',
   'Hydration',
   'BifrostPolkadot',
-  'Moonbeam',
   'Mythos'
 ]
 

@@ -273,7 +273,7 @@ describe('getSwapInfo', () => {
             chain: 'Acala',
             assetFrom: acaAsset,
           },
-          destination: { chain: 'Moonbeam', address: 'Carol' },
+          destination: { chain: 'Darwinia', address: 'Carol' },
         },
         dex,
       });
@@ -288,7 +288,7 @@ describe('getSwapInfo', () => {
       expect(result.destination).toEqual(receivingInfo.destination);
       expect(result.chain).toEqual({
         origin: 'Acala',
-        destination: 'Moonbeam',
+        destination: 'Darwinia',
         ecosystem: 'Polkadot',
       });
       expect(result.hops).toEqual([

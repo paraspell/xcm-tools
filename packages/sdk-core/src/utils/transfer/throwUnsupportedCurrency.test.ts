@@ -26,10 +26,10 @@ describe('throwUnsupportedCurrency', () => {
 
   it('marks the chain as destination when requested', () => {
     const currency = { symbol: 'GLMR' } as TCurrencyInput
-    const destinationChain = 'Moonbeam'
+    const destinationChain = 'Darwinia'
 
     const act = () => throwUnsupportedCurrency(currency, destinationChain, { isDestination: true })
 
-    expect(act).toThrow('Destination chain Moonbeam does not support currency {"symbol":"GLMR"}.')
+    expect(act).toThrow('Destination chain Darwinia does not support currency {"symbol":"GLMR"}.')
   })
 })

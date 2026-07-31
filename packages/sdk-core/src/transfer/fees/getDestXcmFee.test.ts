@@ -53,7 +53,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -87,7 +87,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -122,7 +122,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -157,7 +157,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -196,8 +196,8 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee({
       api,
       forwardedXcms: [[{}], [{}]],
-      origin: 'Moonbeam',
-      prevChain: 'Moonbeam',
+      origin: 'Darwinia',
+      prevChain: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -231,8 +231,8 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: [[{}], [{}]],
-      origin: 'Moonbeam',
-      prevChain: 'Moonbeam',
+      origin: 'Darwinia',
+      prevChain: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -268,8 +268,8 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee({
       api,
       forwardedXcms: [[{}], [{}]],
-      origin: 'Moonbeam',
-      prevChain: 'Moonbeam',
+      origin: 'Darwinia',
+      prevChain: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -311,7 +311,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Astar',
       sender: 'sender',
       recipient: 'dest',
@@ -346,7 +346,7 @@ describe('getDestXcmFee', () => {
     const options = {
       api,
       forwardedXcms: undefined,
-      origin: 'Moonbeam',
+      origin: 'Darwinia',
       destination: 'Ethereum',
       sender: 'sender',
       recipient: 'dest',
