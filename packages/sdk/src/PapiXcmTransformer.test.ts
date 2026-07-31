@@ -111,6 +111,24 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should omit an unsupported string AccountId32 network', () => {
+    const input = {
+      AccountId32: {
+        network: 'polkadot',
+        id: '0x1234abcd'
+      }
+    }
+    const expected = {
+      type: 'AccountId32',
+      value: {
+        network: undefined,
+        id: '0x1234abcd'
+      }
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should transform Id correctly', () => {
     const input = {
       Id: {
