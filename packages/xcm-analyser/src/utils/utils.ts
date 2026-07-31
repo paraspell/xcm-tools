@@ -14,17 +14,45 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     Object.entries(junctionOriginal).map(([k, v]) => [k.toLowerCase(), v]),
   );
 
+  const formatNetwork = (network: unknown): string => {
+    if (network === null || network === undefined) {
+      return String(network);
+    }
+
+    if (typeof network === 'string' || typeof network === 'number' || typeof network === 'boolean') {
+      return String(network);
+    }
+
+    if (Array.isArray(network)) {
+      return `[${network.map((item) => formatNetwork(item)).join(', ')}]`;
+    }
+
+    if (typeof network === 'object') {
+      const entries = Object.entries(network as Record<string, unknown>);
+      if (entries.length === 1) {
+        const [variant, value] = entries[0];
+        return `${variant}(${formatNetwork(value)})`;
+      }
+
+      return `{${entries
+        .map(([key, value]) => `${key}: ${formatNetwork(value)}`)
+        .join(', ')}}`;
+    }
+
+    return String(network);
+  };
+
   if ('parachain' in junction) {
     return `Parachain(${junction.parachain})`;
   } else if ('accountid32' in junction) {
     const junct = junction.accountid32 as TJunctionAccountId32['AccountId32'];
-    return `AccountId32(${junct.network}, ${junct.id})`;
+    return `AccountId32(${formatNetwork(junct.network)}, ${junct.id})`;
   } else if ('accountindex64' in junction) {
     const junct = junction.accountindex64 as TJunctionAccountIndex64['AccountIndex64'];
-    return `AccountIndex64(${junct.network}, ${junct.index})`;
+    return `AccountIndex64(${formatNetwork(junct.network)}, ${junct.index})`;
   } else if ('accountkey20' in junction) {
     const junct = junction.accountkey20 as TJunctionAccountKey20['AccountKey20'];
-    return `AccountKey20(${junct.network}, ${junct.key})`;
+    return `AccountKey20(${formatNetwork(junct.network)}, ${junct.key})`;
   } else if ('palletinstance' in junction) {
     return `PalletInstance(${junction.palletinstance})`;
   } else if ('generalindex' in junction) {
@@ -38,7 +66,7 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     const junct = junction.plurality as TJunctionPlurality['Plurality'];
     return `Plurality(${junct.id}, ${junct.part})`;
   } else if ('globalconsensus' in junction) {
-    return `GlobalConsensus(${junction.globalconsensus})`;
+    return `GlobalConsensus(${formatNetwork(junction.globalconsensus)})`;
   }
   throw new Error('Unknown junction type');
 };

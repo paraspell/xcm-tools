@@ -74,6 +74,23 @@ describe('convert', () => {
     expect(result).toBe('./AccountId32(null, 0x123)');
   });
 
+  it('convert location to URL with object-form network in AccountId32', () => {
+    const location: Location = {
+      parents: 0,
+      interior: {
+        X1: {
+          AccountId32: {
+            network: { Ethereum: { chainId: 1 } },
+            id: '0x123',
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('./AccountId32(Ethereum(chainId: 1), 0x123)');
+  });
+
   it('should convert location to URL with AccountIndex64 interior', () => {
     const location: Location = {
       parents: '0',
@@ -106,6 +123,42 @@ describe('convert', () => {
 
     const result = convertLocationToUrl(location);
     expect(result).toBe('./AccountKey20(null, 0x123)');
+  });
+
+  it('convert location to URL with object-form network in AccountIndex64', () => {
+    const location: Location = {
+      parents: '0',
+      interior: {
+        X1: {
+          AccountIndex64: {
+            network: { ByGenesis: { genesisHash: '0x01' } },
+            index: 100,
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe('./AccountIndex64(ByGenesis(genesisHash: 0x01), 100)');
+  });
+
+  it('convert location to URL with object-form network in AccountKey20', () => {
+    const location: Location = {
+      parents: '0',
+      interior: {
+        X1: {
+          AccountKey20: {
+            network: { ByFork: { forkIdentifier: 'test', at: 2 } },
+            key: '0xabcdef1234567890abcdef1234567890abcdef12',
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+    expect(result).toBe(
+      './AccountKey20(ByFork(forkIdentifier: test, at: 2), 0xabcdef1234567890abcdef1234567890abcdef12)',
+    );
   });
 
   it('should convert location to URL with GeneralKey interior', () => {

@@ -408,6 +408,34 @@ describe('InteriorSchema', () => {
       expect(result.success).toBe(false);
     });
 
+    it('JunctionAccountIndex64 should accept an object-form network', () => {
+      const data = {
+        AccountIndex64: {
+          network: { ByGenesis: { chain: 'kusama' } },
+          index: 100,
+        },
+      };
+      const result = JunctionAccountIndex64.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.AccountIndex64.network).toEqual({ ByGenesis: { chain: 'kusama' } });
+      }
+    });
+
+    it('JunctionAccountId32 should accept an object-form network', () => {
+      const data = {
+        AccountId32: {
+          network: { Ethereum: { chainId: 1 } },
+          id: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+        },
+      };
+      const result = JunctionAccountId32.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.AccountId32.network).toEqual({ Ethereum: { chainId: 1 } });
+      }
+    });
+
     it('JunctionAccountKey20 should pass for valid hex key', () => {
       const data = {
         AccountKey20: { network: 'Kusama', key: '0xabcdef1234567890abcdef1234567890abcdef12' },
@@ -420,6 +448,20 @@ describe('InteriorSchema', () => {
       const data = { AccountKey20: { network: 'Kusama', key: '0xabc' } };
       const result = JunctionAccountKey20.safeParse(data);
       expect(result.success).toBe(true);
+    });
+
+    it('JunctionAccountKey20 should accept an object-form network', () => {
+      const data = {
+        AccountKey20: {
+          network: { ByGenesis: { genesisHash: '0x01' } },
+          key: '0xabcdef1234567890abcdef1234567890abcdef12',
+        },
+      };
+      const result = JunctionAccountKey20.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.AccountKey20.network).toEqual({ ByGenesis: { genesisHash: '0x01' } });
+      }
     });
 
     it('JunctionGeneralKey should pass for valid hex data', () => {

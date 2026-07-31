@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-const NetworkId = z.string().nullable();
+const NetworkId = z.union([
+  z.string().nullable(),
+  z.record(z.unknown()),
+]);
 const BodyId = z.string().nullable();
 const BodyPart = z.string().nullable();
 const StringOrNumber = z.union(
