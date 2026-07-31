@@ -7224,6 +7224,29 @@
         "existentialDeposit": "100000000"
       },
       {
+        "assetId": "50000538",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000538
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "DOT5"
+      },
+      {
         "assetId": "50000534",
         "symbol": "DOT",
         "decimals": 10,
@@ -7268,6 +7291,29 @@
         },
         "existentialDeposit": "1",
         "alias": "VDOT1"
+      },
+      {
+        "assetId": "50000537",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000537
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "DOT4"
       },
       {
         "assetId": "50000520",
@@ -11650,6 +11696,29 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "50000012",
+        "symbol": "KSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000012
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "KSM3"
       },
       {
         "assetId": "10",
