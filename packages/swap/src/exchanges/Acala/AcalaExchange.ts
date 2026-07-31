@@ -31,7 +31,7 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
-    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
+    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation, slippagePct } = options;
 
     const wallet = new Wallet(apiPjs);
     await wallet.isReady;
@@ -97,7 +97,17 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     const amountOutRes = tradeResult.result.output.amount.toString();
     const amountOut = parseUnits(amountOutRes, toToken.decimals);
 
+    // Apply slippage protection like other exchange implementations
+    const slippageMultiplier = Number(slippagePct) / 100;
+    const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
+
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
+
+    if (amountOut < minAmountOut) {
+      throw new AmountTooLowError(
+        `The output amount ${amountOut} is below the minimum acceptable amount ${minAmountOut} after applying slippage.`,
+      );
+    }
 
     if (toToken.symbol === nativeAssetSymbol) {
       const amountOutWithFee = padValueBy(amountOut - toDestTransactionFee, FEE_BUFFER_PCT);
