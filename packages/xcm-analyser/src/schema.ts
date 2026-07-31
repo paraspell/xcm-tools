@@ -19,7 +19,15 @@ const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
     "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).",
 });
 
-export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
+export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt }).refine(
+  (val) => {
+    const v = val.Parachain;
+    if (typeof v === 'bigint') return v >= 0n && v <= 4_294_967_295n;
+    const n = Number(v);
+    return Number.isSafeInteger(n) && n >= 0 && n <= 4_294_967_295;
+  },
+  { message: 'Parachain must be a u32 integer (0 to 4_294_967_295)' },
+);
 
 export const JunctionAccountId32 = z.object({
   AccountId32: z.object({ network: NetworkId, id: HexString }),
@@ -27,19 +35,53 @@ export const JunctionAccountId32 = z.object({
 
 export const JunctionAccountIndex64 = z.object({
   AccountIndex64: z.object({ network: NetworkId, index: StringOrNumberOrBigInt }),
-});
+}).refine(
+  (val) => {
+    const v = val.AccountIndex64.index;
+    if (typeof v === 'bigint') return v >= 0n && v <= 18_446_744_073_709_551_615n;
+    const n = Number(v);
+    return Number.isSafeInteger(n) && n >= 0;
+  },
+  { message: 'AccountIndex64.index must be a u64 integer (0 to 18_446_744_073_709_551_615)' },
+);
 
 export const JunctionAccountKey20 = z.object({
   AccountKey20: z.object({ network: NetworkId, key: HexString }),
 });
 
-export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumberOrBigInt });
+export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumberOrBigInt }).refine(
+  (val) => {
+    const v = val.PalletInstance;
+    if (typeof v === 'bigint') return v >= 0n && v <= 255n;
+    const n = Number(v);
+    return Number.isSafeInteger(n) && n >= 0 && n <= 255;
+  },
+  { message: 'PalletInstance must be a u8 integer (0 to 255)' },
+);
 
-export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumberOrBigInt });
+const U128_MAX = 340_282_366_920_938_463_463_374_607_431_768_211_455n;
+
+export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumberOrBigInt }).refine(
+  (val) => {
+    const v = val.GeneralIndex;
+    if (typeof v === 'bigint') return v >= 0n && v <= U128_MAX;
+    const n = Number(v);
+    return Number.isSafeInteger(n) && n >= 0;
+  },
+  { message: 'GeneralIndex must be a u128 integer (0 to 2^128-1)' },
+);
 
 export const JunctionGeneralKey = z.object({
   GeneralKey: z.object({ length: StringOrNumberOrBigInt, data: HexString }),
-});
+}).refine(
+  (val) => {
+    const v = val.GeneralKey.length;
+    if (typeof v === 'bigint') return v >= 0n && v <= 4_294_967_295n;
+    const n = Number(v);
+    return Number.isSafeInteger(n) && n >= 0 && n <= 4_294_967_295;
+  },
+  { message: 'GeneralKey.length must be a u32 integer (0 to 4_294_967_295)' },
+);
 
 export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
 

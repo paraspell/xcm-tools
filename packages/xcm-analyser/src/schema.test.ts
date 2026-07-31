@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   InteriorSchema,
   JunctionAccountId32,
+  JunctionAccountIndex64,
   JunctionAccountKey20,
+  JunctionGeneralIndex,
   JunctionGeneralKey,
   JunctionPalletInstance,
   JunctionParachain,
@@ -475,5 +477,70 @@ describe('LocationSchema', () => {
     const data = { parents: 'abc', interior: 'Here' };
     const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(false);
+  });
+});
+
+
+describe('Junction range validation (Issue #1995)', () => {
+  describe('JunctionParachain u32', () => {
+    it('accepts valid u32 values', () => {
+      expect(JunctionParachain.safeParse({ Parachain: 0 }).success).toBe(true);
+      expect(JunctionParachain.safeParse({ Parachain: 4_294_967_295 }).success).toBe(true);
+    });
+    it('rejects negative', () => {
+      expect(JunctionParachain.safeParse({ Parachain: -1 }).success).toBe(false);
+    });
+    it('rejects overflow', () => {
+      expect(JunctionParachain.safeParse({ Parachain: 4_294_967_296 }).success).toBe(false);
+    });
+  });
+
+  describe('JunctionPalletInstance u8', () => {
+    it('accepts valid u8 values', () => {
+      expect(JunctionPalletInstance.safeParse({ PalletInstance: 0 }).success).toBe(true);
+      expect(JunctionPalletInstance.safeParse({ PalletInstance: 255 }).success).toBe(true);
+    });
+    it('rejects 256', () => {
+      expect(JunctionPalletInstance.safeParse({ PalletInstance: 256 }).success).toBe(false);
+    });
+    it('rejects negative', () => {
+      expect(JunctionPalletInstance.safeParse({ PalletInstance: -1 }).success).toBe(false);
+    });
+  });
+
+  describe('JunctionAccountIndex64.index u64', () => {
+    it('accepts valid u64 values', () => {
+      expect(JunctionAccountIndex64.safeParse({ AccountIndex64: { network: null, index: 0 } }).success).toBe(true);
+      expect(JunctionAccountIndex64.safeParse({ AccountIndex64: { network: null, index: 12_345 } }).success).toBe(true);
+    });
+    it('accepts bigint u64 max', () => {
+      expect(JunctionAccountIndex64.safeParse({ AccountIndex64: { network: null, index: BigInt('18446744073709551615') } }).success).toBe(true);
+    });
+    it('rejects negative', () => {
+      expect(JunctionAccountIndex64.safeParse({ AccountIndex64: { network: null, index: -1 } }).success).toBe(false);
+    });
+  });
+
+  describe('JunctionGeneralIndex u128', () => {
+    it('accepts valid u128 values', () => {
+      expect(JunctionGeneralIndex.safeParse({ GeneralIndex: 0 }).success).toBe(true);
+      expect(JunctionGeneralIndex.safeParse({ GeneralIndex: BigInt(100) }).success).toBe(true);
+    });
+    it('accepts u128 max', () => {
+      expect(JunctionGeneralIndex.safeParse({ GeneralIndex: BigInt('340282366920938463463374607431768211455') }).success).toBe(true);
+    });
+    it('rejects negative', () => {
+      expect(JunctionGeneralIndex.safeParse({ GeneralIndex: -1 }).success).toBe(false);
+    });
+  });
+
+  describe('JunctionGeneralKey.length u32', () => {
+    it('accepts valid u32 length', () => {
+      expect(JunctionGeneralKey.safeParse({ GeneralKey: { length: 0, data: '0xabcd' } }).success).toBe(true);
+      expect(JunctionGeneralKey.safeParse({ GeneralKey: { length: 32, data: '0xaabbccddeeff' } }).success).toBe(true);
+    });
+    it('rejects negative length', () => {
+      expect(JunctionGeneralKey.safeParse({ GeneralKey: { length: -1, data: '0xabcd' } }).success).toBe(false);
+    });
   });
 });
