@@ -1,4 +1,4 @@
-import { isSnowbridge, isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
+import { isSnowbridge, isSubstrateBridge, ETHEREUM_BRIDGE_ORIGINS, type TChain } from '@paraspell/sdk-common'
 
 import type { TAssetInfo, TCustomCtx } from '../types'
 import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
@@ -32,6 +32,14 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
       const stablecoinAssets = findStablecoinAssets(origin)
       return [...filteredSystemAssets, ...stablecoinAssets]
     } else {
+      // Only origins in ETHEREUM_BRIDGE_ORIGINS support Snowbridge (Ethereum)
+      // transfers. Without this check, getSupportedAssets reports assets for
+      // unsupported routes (e.g. Acala -> Ethereum), contradicting
+      // getSupportedDestinations and the transfer builder.
+      if (!ETHEREUM_BRIDGE_ORIGINS.includes(origin as never)) {
+        return []
+      }
+
       // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
       // so it isn't matched by isAssetEqual. Include it explicitly.
       const mythosNative =
