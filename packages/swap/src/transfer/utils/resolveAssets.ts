@@ -77,7 +77,11 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   const resolvedFeeAssetLocation = feeAssetFromOrigin?.location ?? feeAssetFromExchange?.location;
 
-  if (feeAsset && resolvedFeeAssetLocation) {
+  if (feeAsset && !resolvedFeeAssetLocation) {
+    throw new RoutingResolutionError(`Fee asset ${JSON.stringify(feeAsset)} not found.`);
+  }
+
+  if (resolvedFeeAssetLocation) {
     const sdkAsset = findAssetInfoOrThrow(
       from ?? dex.chain,
       { location: resolvedFeeAssetLocation },

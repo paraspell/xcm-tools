@@ -238,4 +238,20 @@ describe('resolveAssets', () => {
 
     expect(() => resolveAssets(dex, options)).toThrow('is not a valid fee asset');
   });
+
+  it('throws error when feeAsset is not resolved to an exchange or origin asset', () => {
+    const options = {
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'UNKNOWN' },
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      return null;
+    });
+
+    expect(() => resolveAssets(dex, options)).toThrow('not found');
+  });
 });
