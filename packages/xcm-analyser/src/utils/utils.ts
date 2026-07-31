@@ -43,10 +43,6 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
   throw new Error('Unknown junction type');
 };
 
-export function findLocationInObject(obj: unknown): Location | null {
-  return findLocationsInObject(obj)[0] ?? null;
-}
-
 export function findLocationsInObject(obj: unknown): Location[] {
   const locations: Location[] = [];
 
