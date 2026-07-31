@@ -38,7 +38,29 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     const junct = junction.plurality as TJunctionPlurality['Plurality'];
     return `Plurality(${junct.id}, ${junct.part})`;
   } else if ('globalconsensus' in junction) {
-    return `GlobalConsensus(${junction.globalconsensus})`;
+    if (typeof junction.globalconsensus === 'string') {
+      return `GlobalConsensus(${junction.globalconsensus})`;
+    }
+
+    if (
+      junction.globalconsensus &&
+      typeof junction.globalconsensus === 'object' &&
+      !Array.isArray(junction.globalconsensus)
+    ) {
+      const entries = Object.entries(junction.globalconsensus);
+      if (entries.length > 0) {
+        const [network, details] = entries[0];
+        if (details && typeof details === 'object' && !Array.isArray(details)) {
+          const detailParts = Object.entries(details)
+            .map(([key, value]) => `${key}: ${String(value)}`)
+            .join(', ');
+          return `GlobalConsensus(${network}(${detailParts}))`;
+        }
+        return `GlobalConsensus(${network})`;
+      }
+    }
+
+    return `GlobalConsensus(${String(junction.globalconsensus)})`;
   }
   throw new Error('Unknown junction type');
 };
