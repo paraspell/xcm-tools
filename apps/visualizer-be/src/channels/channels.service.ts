@@ -118,7 +118,8 @@ export class ChannelService {
         channels ch
       LEFT JOIN
         messages msg
-          ON msg.origin_para_id = ch.sender
+          ON msg.ecosystem = ch.ecosystem
+         AND msg.origin_para_id = ch.sender
          AND msg.dest_para_id = ch.recipient
       WHERE
         ch.ecosystem = $1
