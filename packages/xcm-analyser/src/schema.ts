@@ -13,6 +13,13 @@ const StringOrNumber = z.union(
   ],
   { error: 'Expected a number or numeric string' },
 );
+const U8StringOrNumber = StringOrNumber.refine(
+  (value) => {
+    const number = Number(value);
+    return Number.isInteger(number) && number >= 0 && number <= 255;
+  },
+  { error: 'Expected an unsigned 8-bit integer (0-255)' },
+);
 const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
 const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
   message:
@@ -134,6 +141,6 @@ export const InteriorSchema = z.union(
 );
 
 export const LocationSchema = z.object({
-  parents: StringOrNumber,
+  parents: U8StringOrNumber,
   interior: InteriorSchema,
 });

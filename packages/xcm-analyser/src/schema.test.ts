@@ -447,12 +447,12 @@ describe('LocationSchema', () => {
     }
   });
 
-  it('should pass with valid parents (string with comma) and Interior { Here: null }', () => {
-    const data = { parents: '1,000', interior: { Here: null } };
+  it('should pass with valid string parents and Interior { Here: null }', () => {
+    const data = { parents: '255', interior: { Here: null } };
     const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data).toEqual({ parents: '1000', interior: { Here: null } });
+      expect(result.data).toEqual({ parents: '255', interior: { Here: null } });
     }
   });
 
@@ -474,6 +474,19 @@ describe('LocationSchema', () => {
   it('should fail if parents is invalid', () => {
     const data = { parents: 'abc', interior: 'Here' };
     const result = LocationSchema.safeParse(data);
+    expect(result.success).toBe(false);
+  });
+
+  it.each([-1, 1.5, 256, Number.MAX_SAFE_INTEGER])(
+    'should reject out-of-range numeric parents: %s',
+    (parents) => {
+      const result = LocationSchema.safeParse({ parents, interior: 'Here' });
+      expect(result.success).toBe(false);
+    },
+  );
+
+  it.each(['256', '1,000'])('should reject out-of-range string parents: %s', (parents) => {
+    const result = LocationSchema.safeParse({ parents, interior: 'Here' });
     expect(result.success).toBe(false);
   });
 });
