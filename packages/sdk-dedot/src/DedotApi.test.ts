@@ -10,6 +10,7 @@ import type {
 import {
   BatchMode,
   isAssetEqual,
+  SubmitTransactionError,
   isSenderSigner,
   localizeLocation,
   RuntimeApiUnavailableError,
@@ -1877,6 +1878,24 @@ describe("DedotApi", () => {
       await expect(
         dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
       ).rejects.toThrow("finalization failed");
+    });
+
+    it("should reject with SubmitTransactionError on dispatchError", async () => {
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({
+            txHash: "0xfinalized",
+            dispatchError: {
+              type: "Module",
+              value: { index: 5, error: 2 },
+            },
+          }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      await expect(
+        dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
+      ).rejects.toThrow(SubmitTransactionError);
     });
   });
 });
