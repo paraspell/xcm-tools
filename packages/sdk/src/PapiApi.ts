@@ -943,7 +943,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     return new Promise((resolve, reject) => {
       tx.signSubmitAndWatch(signer).subscribe({
         next: event => {
-          if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
+          if (event.type === 'finalized') {
             if (!event.ok) {
               reject(new SubmitTransactionError(JSON.stringify(event.dispatchError.value)))
             } else {

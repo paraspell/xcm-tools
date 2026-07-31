@@ -2943,12 +2943,14 @@ describe('PapiApi', () => {
       expect(result).toBe(mockTxHash)
     })
 
-    it('should resolve on txBestBlocksState with found', async () => {
-      const mockTxHash = '0xbestblock'
+    it('should wait for finalization after a transaction appears in a best block', async () => {
+      const bestBlockTxHash = '0xbestblock'
+      const finalizedTxHash = '0xfinalized'
       const mockSubscribe = vi
         .fn()
         .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
-          next({ type: 'txBestBlocksState', found: true, ok: true, txHash: mockTxHash })
+          next({ type: 'txBestBlocksState', found: true, ok: true, txHash: bestBlockTxHash })
+          next({ type: 'finalized', ok: true, txHash: finalizedTxHash })
         })
       const mockTx = {
         signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
@@ -2956,7 +2958,7 @@ describe('PapiApi', () => {
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
-      expect(result).toBe(mockTxHash)
+      expect(result).toBe(finalizedTxHash)
     })
 
     it('should reject with SubmitTransactionError on dispatch error', async () => {
