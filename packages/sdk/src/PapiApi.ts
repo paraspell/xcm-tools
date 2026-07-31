@@ -581,7 +581,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     let usedThirdParam = false
     let deliveryFeeRes: any
 
-    if (forwardedXcm.length > 0) {
+    if (forwardedXcm.length > 1 && Array.isArray(forwardedXcm[1]) && forwardedXcm[1].length > 0) {
       const baseArgs = [forwardedXcm[0], forwardedXcm[1][0]] as const
 
       try {

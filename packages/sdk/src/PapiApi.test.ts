@@ -659,6 +659,21 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
+    it('returns 0n when forwardedXcm has only one element', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const forwardedXcm: any = [{}]
+
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        baseAsset.location,
+        Version.V5
+      )
+
+      expect(res).toBe(0n)
+    })
+
     it('returns 0n when delivery fee response type is Unimplemented', async () => {
       const unsafeApi = papiApi.api.getUnsafeApi()
       const forwardedXcm = [{}, [{}]]
