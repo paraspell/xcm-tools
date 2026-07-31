@@ -5,6 +5,7 @@ import {
   JunctionAccountId32,
   JunctionAccountKey20,
   JunctionGeneralKey,
+  JunctionOnlyChild,
   JunctionPalletInstance,
   JunctionParachain,
   LocationSchema,
@@ -475,5 +476,23 @@ describe('LocationSchema', () => {
     const data = { parents: 'abc', interior: 'Here' };
     const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(false);
+  });
+});
+
+
+describe('JunctionOnlyChild null support (Issue #1993)', () => {
+  it('accepts null OnlyChild', () => {
+    const r = JunctionOnlyChild.safeParse({ OnlyChild: null });
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.OnlyChild).toBeNull();
+  });
+  it('accepts empty string', () => {
+    expect(JunctionOnlyChild.safeParse({ OnlyChild: '' }).success).toBe(true);
+  });
+  it('accepts non-empty string', () => {
+    expect(JunctionOnlyChild.safeParse({ OnlyChild: 'child' }).success).toBe(true);
+  });
+  it('rejects numbers', () => {
+    expect(JunctionOnlyChild.safeParse({ OnlyChild: 123 }).success).toBe(false);
   });
 });
