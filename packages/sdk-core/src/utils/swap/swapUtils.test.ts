@@ -226,6 +226,24 @@ describe('swapUtils', () => {
       )
     })
 
+    it('should accept a string WS URL without throwing (bug bounty #2026)', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(false)
+
+      // Before the fix, typeof 'string' && Array.isArray() was always false,
+      // so a valid wss:// URL would throw UnsupportedOperationError
+      const config = 'wss://rpc.polkadot.io'
+
+      expect(() => convertBuilderConfig(config)).not.toThrow()
+    })
+
+    it('should accept a string array of WS URLs without throwing (bug bounty #2026)', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(false)
+
+      const config = ['wss://rpc.polkadot.io', 'wss://rpc2.polkadot.io']
+
+      expect(() => convertBuilderConfig(config)).not.toThrow()
+    })
+
     it('should return rest without apiOverrides when apiOverrides is undefined in config', () => {
       vi.mocked(guards.isConfig).mockReturnValue(true)
 
