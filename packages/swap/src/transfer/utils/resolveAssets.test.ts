@@ -238,4 +238,58 @@ describe('resolveAssets', () => {
 
     expect(() => resolveAssets(dex, options)).toThrow('is not a valid fee asset');
   });
+
+  it('throws error when feeAsset is not found on the exchange chain', () => {
+    const options = {
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'UNKNOWN' },
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      return null;
+    });
+
+    expect(() => resolveAssets(dex, options)).toThrow(
+      'Fee asset {"symbol":"UNKNOWN"} not found in CHAIN_A.',
+    );
+    expect(findAssetInfoOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('keeps an origin fee asset even when it is unavailable on the exchange chain', () => {
+    const feeAssetFromOrigin: TAssetInfo = {
+      symbol: 'USDT_ORIGIN',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { PalletInstance: 50 } } },
+      isFeeAsset: true,
+    };
+    const options = {
+      from: 'Astar',
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'USDT' },
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    vi.mocked(findAssetInfo)
+      .mockReturnValueOnce({ symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo)
+      .mockReturnValueOnce(feeAssetFromOrigin);
+    vi.mocked(getExchangeAssetByOriginAsset)
+      .mockReturnValueOnce(mockAssetFromExchange)
+      .mockReturnValueOnce(undefined);
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      return null;
+    });
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(feeAssetFromOrigin);
+
+    expect(resolveAssets(dex, options)).toEqual({
+      assetFromOrigin: { symbol: 'BTC_ORIGIN', decimals: 8 },
+      assetFromExchange: mockAssetFromExchange,
+      assetTo: mockAssetTo,
+      feeAssetFromOrigin,
+      feeAssetFromExchange: undefined,
+    });
+  });
 });

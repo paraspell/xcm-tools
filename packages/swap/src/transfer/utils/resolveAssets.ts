@@ -75,6 +75,12 @@ export const resolveAssets = <TApi, TRes, TSigner>(
       : (getExchangeAsset(dex.chain, feeAsset) ?? undefined)
     : undefined;
 
+  if (feeAsset && !feeAssetFromOrigin && !feeAssetFromExchange) {
+    throw new RoutingResolutionError(
+      `Fee asset ${JSON.stringify(feeAsset)} not found in ${from ?? dex.chain}.`,
+    );
+  }
+
   const resolvedFeeAssetLocation = feeAssetFromOrigin?.location ?? feeAssetFromExchange?.location;
 
   if (feeAsset && resolvedFeeAssetLocation) {
