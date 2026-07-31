@@ -12,24 +12,45 @@ import {
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getSupportedAssetsFromImpl } from './getSupportedAssetsFrom';
 
+const filterFeeAssets = <TCustomChain extends string>(
+  supportedAssets: TAssetInfo[],
+  chain: TChain | TCustomChain,
+  ctx?: TCustomCtx,
+): TAssetInfo[] => {
+  const chainAssets = getAssetsImpl(chain, ctx);
+  return supportedAssets.filter((asset) =>
+    chainAssets.some((chainAsset) => chainAsset.isFeeAsset && isAssetEqual(asset, chainAsset)),
+  );
+};
+
+const deduplicateAssets = (assets: TAssetInfo[]): TAssetInfo[] =>
+  assets.filter(
+    (asset, index) =>
+      assets.findIndex(
+        (candidate) => candidate.symbol === asset.symbol && isAssetEqual(candidate, asset),
+      ) === index,
+  );
+
 export const getSupportedFeeAssetsImpl = <TCustomChain extends string = never>(
   from: TChain | TCustomChain | undefined,
   exchangeInput: TExchangeInput,
   ctx?: TCustomCtx,
 ): TAssetInfo[] => {
   const exchange = normalizeExchange(exchangeInput);
-  const supportedAssets = getSupportedAssetsFromImpl(from, exchange, ctx);
 
-  const chains = from
-    ? [from]
-    : (exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange])
-        .map((ex) => createExchangeInstance(ex).chain)
-        .filter((chain, i, arr) => arr.indexOf(chain) === i);
+  if (from !== undefined) {
+    return filterFeeAssets(getSupportedAssetsFromImpl(from, exchange, ctx), from, ctx);
+  }
 
-  const chainAssets = chains.flatMap((chain) => getAssetsImpl(chain, ctx));
+  const exchanges =
+    exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange];
 
-  return supportedAssets.filter((asset) =>
-    chainAssets.some((chainAsset) => chainAsset.isFeeAsset && isAssetEqual(asset, chainAsset)),
+  return deduplicateAssets(
+    exchanges.flatMap((currentExchange) => {
+      const chain = createExchangeInstance(currentExchange).chain;
+      const supportedAssets = getSupportedAssetsFromImpl(undefined, currentExchange, ctx);
+      return filterFeeAssets(supportedAssets, chain, ctx);
+    }),
   );
 };
 

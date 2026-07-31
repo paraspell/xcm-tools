@@ -1,5 +1,5 @@
 import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
+import { EXCHANGE_CHAINS, getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
@@ -99,7 +99,10 @@ describe('getSupportedFeeAssets', () => {
     const result = getSupportedFeeAssets(undefined, undefined);
 
     expect(result).toEqual([feeAsset]);
-    expect(getSupportedAssetsFromImpl).toHaveBeenCalledWith(undefined, undefined, undefined);
+    expect(getSupportedAssetsFromImpl).toHaveBeenCalledTimes(EXCHANGE_CHAINS.length);
+    EXCHANGE_CHAINS.forEach((exchange) => {
+      expect(getSupportedAssetsFromImpl).toHaveBeenCalledWith(undefined, exchange, undefined);
+    });
   });
 
   it('should gather assets from multiple exchanges when exchange is array and from undefined', () => {
@@ -139,6 +142,44 @@ describe('getSupportedFeeAssets', () => {
     vi.mocked(getAssetsImpl).mockReturnValue([nonFeeAsset]);
 
     const result = getSupportedFeeAssets(from, undefined);
+
+    expect(result).toEqual([]);
+  });
+
+  it('should not borrow fee eligibility across selected exchanges', () => {
+    const hydrationAsset: TAssetInfo = {
+      symbol: 'HDX-ASSET',
+      decimals: 12,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2034 }] } },
+    };
+    const acalaAsset: TAssetInfo = {
+      symbol: 'ACA-ASSET',
+      decimals: 12,
+      location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } },
+    };
+    const hydrationFeeAsset: TAssetInfo = {
+      ...acalaAsset,
+      symbol: 'HYDRATION-FEE',
+      isFeeAsset: true,
+    };
+    const acalaFeeAsset: TAssetInfo = {
+      ...hydrationAsset,
+      symbol: 'ACALA-FEE',
+      isFeeAsset: true,
+    };
+
+    vi.mocked(createExchangeInstance).mockImplementation(
+      (exchange) => ({ chain: exchange }) as never,
+    );
+    vi.mocked(getSupportedAssetsFromImpl).mockImplementation((_from, exchange) => {
+      if (Array.isArray(exchange)) return [hydrationAsset, acalaAsset];
+      return exchange === 'Hydration' ? [hydrationAsset] : [acalaAsset];
+    });
+    vi.mocked(getAssetsImpl).mockImplementation((chain) =>
+      chain === 'Hydration' ? [hydrationAsset, hydrationFeeAsset] : [acalaAsset, acalaFeeAsset],
+    );
+
+    const result = getSupportedFeeAssets(undefined, ['Hydration', 'Acala']);
 
     expect(result).toEqual([]);
   });
