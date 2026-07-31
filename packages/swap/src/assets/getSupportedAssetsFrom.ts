@@ -8,6 +8,7 @@ import {
 } from '@paraspell/sdk-core';
 
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
+import { filterCompatibleExchanges } from './filterCompatibleExchanges';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
@@ -21,11 +22,19 @@ export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
     return getAssetsImpl(from, ctx);
   }
 
-  const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
-    : getExchangeAssets(exchange);
+  const exchangeChains = filterCompatibleExchanges(
+    Array.isArray(exchange) ? exchange : [exchange],
+    from,
+    ctx,
+  );
+  const exchangeAssets = exchangeChains.flatMap((exchange) => getExchangeAssets(exchange));
 
-  if (!from || (!Array.isArray(exchange) && from === createExchangeInstance(exchange).chain)) {
+  if (
+    !from ||
+    (exchangeChains.length === 1 &&
+      !Array.isArray(exchange) &&
+      from === createExchangeInstance(exchangeChains[0]).chain)
+  ) {
     return exchangeAssets;
   }
 

@@ -168,4 +168,47 @@ describe('getSupportedAssetsTo', () => {
     expect(isSystemAsset).toHaveBeenCalledTimes(assets1.length + assets2.length);
     expect(result).toEqual([abcAsset, defAsset]);
   });
+
+  it('should not match relative asset locations across relay ecosystems', () => {
+    const dotOnAstar: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: { Here: null } },
+    };
+    const ksmOnAssetHubKusama: TAssetInfo = {
+      symbol: 'KSM',
+      decimals: 12,
+      location: { parents: 1, interior: { Here: null } },
+    };
+
+    vi.mocked(getAssetsImpl).mockReturnValue([dotOnAstar]);
+    vi.mocked(getExchangeAssets).mockReturnValue([ksmOnAssetHubKusama]);
+
+    const result = getSupportedAssetsTo('AssetHubKusama', 'Astar');
+
+    expect(result).toEqual([]);
+  });
+
+  it('should restrict auto select to the destination relay ecosystem', () => {
+    const dotOnAstar: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: { Here: null } },
+    };
+    const ksmOnAssetHubKusama: TAssetInfo = {
+      symbol: 'KSM',
+      decimals: 12,
+      location: { parents: 1, interior: { Here: null } },
+    };
+
+    vi.mocked(getAssetsImpl).mockReturnValue([dotOnAstar]);
+    vi.mocked(getExchangeAssets).mockImplementation((exchange) =>
+      exchange === 'AssetHubKusama' ? [ksmOnAssetHubKusama] : [],
+    );
+
+    const result = getSupportedAssetsTo(undefined, 'Astar');
+
+    expect(result).toEqual([]);
+    expect(getExchangeAssets).not.toHaveBeenCalledWith('AssetHubKusama');
+  });
 });

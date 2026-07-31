@@ -9,6 +9,7 @@ import {
   type TChain,
 } from '@paraspell/sdk-core';
 
+import { filterCompatibleExchanges } from './filterCompatibleExchanges';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
@@ -18,9 +19,10 @@ export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
 ): TAssetInfo[] => {
   const exchange = normalizeExchange(exchangeInput);
   if (exchange === undefined) {
-    const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
+    const compatibleExchanges = filterCompatibleExchanges(EXCHANGE_CHAINS, to, ctx);
+    const allExchangeAssets = compatibleExchanges.flatMap((exchangeChain) =>
       getExchangeAssets(exchangeChain),
-    ).flat();
+    );
     if (to) {
       const toAssets = getAssetsImpl(to, ctx);
 
@@ -35,9 +37,12 @@ export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
     return allExchangeAssets;
   }
 
-  const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
-    : getExchangeAssets(exchange);
+  const compatibleExchanges = filterCompatibleExchanges(
+    Array.isArray(exchange) ? exchange : [exchange],
+    to,
+    ctx,
+  );
+  const exchangeAssets = compatibleExchanges.flatMap((exchange) => getExchangeAssets(exchange));
 
   if (to) {
     const toAssets = getAssetsImpl(to, ctx);

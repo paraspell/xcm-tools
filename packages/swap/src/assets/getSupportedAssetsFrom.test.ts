@@ -154,4 +154,27 @@ describe('getSupportedAssetsFrom', () => {
     expect(result).toEqual([]);
     expect(getAssetsImpl).not.toHaveBeenCalled();
   });
+
+  it('should not match relative asset locations across relay ecosystems', () => {
+    const dotOnAstar: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: { Here: null } },
+    };
+    const ksmOnAssetHubKusama: TAssetInfo = {
+      symbol: 'KSM',
+      decimals: 12,
+      location: { parents: 1, interior: { Here: null } },
+    };
+
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'AssetHubKusama',
+    } as ExchangeChain);
+    vi.mocked(getAssetsImpl).mockReturnValue([dotOnAstar]);
+    vi.mocked(getExchangeAssets).mockReturnValue([ksmOnAssetHubKusama]);
+
+    const result = getSupportedAssetsFrom('Astar', 'AssetHubKusama');
+
+    expect(result).toEqual([]);
+  });
 });

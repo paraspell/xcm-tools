@@ -3,6 +3,7 @@ import {
   applyDecimalAbstraction,
   EXCHANGE_CHAINS,
   findAssetInfo,
+  getChain,
   getRelayChainOf,
   isConfig,
   RoutingResolutionError,
@@ -65,6 +66,14 @@ export const selectBestExchangeCommon = async <
   let triedAnyExchange = false;
   for (const exchangeChain of filteredExchangeChains) {
     const dex = createExchangeInstance(exchangeChain);
+    const exchangeEcosystem = getRelayChainOf(dex.chain);
+
+    if (
+      (from && getRelayChainOf(from) !== exchangeEcosystem) ||
+      (to && getChain(to).ecosystem !== exchangeEcosystem)
+    ) {
+      continue;
+    }
 
     const originSpecified = from && from !== dex.chain;
     const destinationSpecified = to && to !== dex.chain;
@@ -85,10 +94,6 @@ export const selectBestExchangeCommon = async <
     }
 
     if (destinationSpecified && !findAssetInfo(to, { location: assetTo.location })) {
-      continue;
-    }
-
-    if (from && getRelayChainOf(from) !== getRelayChainOf(dex.chain)) {
       continue;
     }
 

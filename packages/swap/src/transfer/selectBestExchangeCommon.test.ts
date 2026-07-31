@@ -1,5 +1,10 @@
 import type { PolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
-import { applyDecimalAbstraction, findAssetInfo } from '@paraspell/sdk-core';
+import {
+  applyDecimalAbstraction,
+  findAssetInfo,
+  getChain,
+  getRelayChainOf,
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -14,6 +19,7 @@ const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfo: vi.fn(),
+  getChain: vi.fn(),
   getRelayChainOf: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
   RoutingResolutionError: class extends Error {},
@@ -61,6 +67,8 @@ describe('selectBestExchangeCommon', () => {
       amount ? (amount as bigint) : 0n,
     );
     vi.clearAllMocks();
+    vi.mocked(getChain).mockReturnValue({ ecosystem: 'Polkadot' } as never);
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot');
   });
 
   it('throws error if assetFromOrigin is not found', async () => {
@@ -194,5 +202,32 @@ describe('selectBestExchangeCommon', () => {
 
     expect(bestExchange).toBe(fakeDex);
     expect(getExchangeAsset).toHaveBeenCalledWith('Acala', optionsWithSameChain.currencyFrom);
+  });
+
+  it('skips exchanges outside the destination relay ecosystem', async () => {
+    const options = {
+      ...baseOptions,
+      from: 'Karura',
+      to: 'Astar',
+      exchange: ['AssetHubKusama'],
+    } as TCommonRouterOptions<unknown, unknown, unknown>;
+
+    vi.mocked(findAssetInfo).mockReturnValue(asset1);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
+    vi.mocked(getExchangeAsset).mockReturnValue(asset2);
+    vi.mocked(getRelayChainOf).mockReturnValue('Kusama');
+    vi.mocked(getChain).mockImplementation(
+      (chain) =>
+        ({
+          ecosystem: chain === 'Astar' ? 'Polkadot' : 'Kusama',
+        }) as never,
+    );
+
+    const fakeDex = { chain: 'AssetHubKusama' } as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
+    const computeAmountOut = vi.fn().mockResolvedValue(100n);
+
+    await expect(selectBestExchangeCommon(options, undefined, computeAmountOut)).rejects.toThrow();
+    expect(computeAmountOut).not.toHaveBeenCalled();
   });
 });
