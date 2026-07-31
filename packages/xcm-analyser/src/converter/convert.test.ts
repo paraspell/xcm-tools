@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
-import { type Location } from '../types';
+import { type Junction, type Location } from '../types';
+import { convertJunctionToReadable } from '../utils/utils';
 import { convertLocationToUrl, convertXCMToUrls } from './convert';
 
 describe('convert', () => {
+  it('rejects an unknown junction passed directly to the formatter', () => {
+    const unknownJunction = { Unknown: 1 } as unknown as Junction;
+
+    expect(() => convertJunctionToReadable(unknownJunction)).toThrow('Unknown junction type');
+  });
+
   it('convert location to URL', () => {
     const location: Location = {
       parents: '0',
@@ -302,6 +309,7 @@ describe('convert', () => {
       '1', // currency_id for KSM
       '100000000000', // amount - 0.1 KSM
       'Unlimited', // dest_weight_limit
+      null,
     ];
 
     const result = convertXCMToUrls(xcmCallArguments);
