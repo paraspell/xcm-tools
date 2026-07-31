@@ -1,5 +1,27 @@
 # Changelog
 
+## [14.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.0.0...sdk-core-v14.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Bug Fixes
+
+* **sdk-core:** Update Hydration endpoints 👨‍💻 ([390a4cf](https://github.com/paraspell/xcm-tools/commit/390a4cf908f0d34d8ac1c8afec9eb5c1941b870b))
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify error handling with new ParaSpell error class ✨ ([8bd3eb6](https://github.com/paraspell/xcm-tools/commit/8bd3eb6b9f27ed51fb1bc0c2535a945d73332d25))
+
+
+### Build System
+
+* Setup OIDC 🪄 ([c296f42](https://github.com/paraspell/xcm-tools/commit/c296f42068890786c802bb6e8301ed6916f8454b))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v13.11.0...sdk-core-v14.0.0) (2026-07-20)
 
 

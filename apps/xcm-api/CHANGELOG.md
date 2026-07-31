@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.0.0...xcm-api-v14.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify error handling with new ParaSpell error class ✨ ([8bd3eb6](https://github.com/paraspell/xcm-tools/commit/8bd3eb6b9f27ed51fb1bc0c2535a945d73332d25))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v13.11.0...xcm-api-v14.0.0) (2026-07-20)
 
 
