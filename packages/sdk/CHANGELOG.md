@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v14.0.0...sdk-v14.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Build System
+
+* Setup OIDC 🪄 ([c296f42](https://github.com/paraspell/xcm-tools/commit/c296f42068890786c802bb6e8301ed6916f8454b))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v13.11.0...sdk-v14.0.0) (2026-07-20)
 
 

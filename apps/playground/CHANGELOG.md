@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.0](https://github.com/paraspell/xcm-tools/compare/playground-v14.0.0...playground-v14.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/playground-v13.11.0...playground-v14.0.0) (2026-07-20)
 
 

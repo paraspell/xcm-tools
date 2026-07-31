@@ -1,5 +1,28 @@
 # Changelog
 
+## [14.1.0](https://github.com/paraspell/xcm-tools/compare/assets-v14.0.0...assets-v14.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Code Refactoring
+
+* **xcm-api:** Simplify error handling with new ParaSpell error class ✨ ([8bd3eb6](https://github.com/paraspell/xcm-tools/commit/8bd3eb6b9f27ed51fb1bc0c2535a945d73332d25))
+
+
+### Build System
+
+* Setup OIDC 🪄 ([c296f42](https://github.com/paraspell/xcm-tools/commit/c296f42068890786c802bb6e8301ed6916f8454b))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([46548b5](https://github.com/paraspell/xcm-tools/commit/46548b52d95ee47c8095995a9196370315a29ce8))
+* **swap:** Update swap assets 📋 ([46548b5](https://github.com/paraspell/xcm-tools/commit/46548b52d95ee47c8095995a9196370315a29ce8))
+
 ## [14.0.0](https://github.com/paraspell/xcm-tools/compare/assets-v13.11.0...assets-v14.0.0) (2026-07-20)
 
 
