@@ -44,6 +44,12 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
 };
 
 export function findLocationInObject(obj: unknown): Location | null {
+  return findLocationsInObject(obj)[0] ?? null;
+}
+
+export function findLocationsInObject(obj: unknown): Location[] {
+  const locations: Location[] = [];
+
   function hasSpecificKeys(value: unknown): boolean {
     return (
       typeof value === 'object' &&
@@ -54,17 +60,16 @@ export function findLocationInObject(obj: unknown): Location | null {
     );
   }
 
-  function searchObject(value: unknown): Location | null {
+  function searchObject(value: unknown): void {
     if (hasSpecificKeys(value)) {
-      return LocationSchema.parse(value);
+      locations.push(LocationSchema.parse(value));
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
-        const result = searchObject((value as Record<string, unknown>)[key]);
-        if (result) return result;
+        searchObject((value as Record<string, unknown>)[key]);
       }
     }
-    return null;
   }
 
-  return searchObject(obj);
+  searchObject(obj);
+  return locations;
 }

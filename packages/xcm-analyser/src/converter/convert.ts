@@ -1,6 +1,6 @@
 import { LocationSchema } from '../schema';
 import type { Junction, JunctionType, Location } from '../types';
-import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
+import { convertJunctionToReadable, findLocationsInObject } from '../utils/utils';
 
 /**
  * Converts a XCM location JSON string into its URL representation.
@@ -48,12 +48,5 @@ export const convertLocationToUrl = (args: unknown): string => {
  * @returns An array of URL representations for each found location.
  */
 export const convertXCMToUrls = (args: unknown[]): string[] => {
-  return args.flatMap((arg) => {
-    const location = findLocationInObject(arg);
-    if (location !== null && location !== undefined) {
-      return [convertLocationToUrl(location)];
-    } else {
-      return [];
-    }
-  });
+  return args.flatMap((arg) => findLocationsInObject(arg).map(convertLocationToUrl));
 };
