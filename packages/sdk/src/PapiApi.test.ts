@@ -659,6 +659,22 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
+    it('returns 0n when forwardedXcm has a single element (bug bounty #2015)', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const forwardedXcm = [{ /* msg */ }] // only one element, length = 1
+
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        baseAsset.location,
+        Version.V5
+      )
+
+      expect(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).not.toHaveBeenCalled()
+      expect(res).toBe(0n)
+    })
+
     it('returns 0n when delivery fee response type is Unimplemented', async () => {
       const unsafeApi = papiApi.api.getUnsafeApi()
       const forwardedXcm = [{}, [{}]]
