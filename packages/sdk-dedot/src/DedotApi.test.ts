@@ -13,6 +13,7 @@ import {
   isSenderSigner,
   localizeLocation,
   RuntimeApiUnavailableError,
+  SubmitTransactionError,
   type TLocation,
   type TSubstrateChain,
   Version,
@@ -1863,6 +1864,24 @@ describe("DedotApi", () => {
 
       expect(signAndSendSpy).toHaveBeenCalled();
       expect(result).toBe(mockTxHash);
+    });
+
+    it("should reject with SubmitTransactionError on dispatch error", async () => {
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({
+            txHash: "0xfailed",
+            dispatchError: {
+              type: "Module",
+              value: { index: 5, error: 2 },
+            },
+          }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      await expect(
+        dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
+      ).rejects.toThrow(SubmitTransactionError);
     });
 
     it("should propagate errors from untilFinalized", async () => {
