@@ -17,8 +17,8 @@ export type TJunctionType =
   | 'GlobalConsensus'
 
 type TNetworkId = string | null
-type TBodyId = string | null
-type TBodyPart = string | null
+type TBodyId = string | null | object
+type TBodyPart = string | null | object
 type TStringOrNumber = string | number
 type TStringOrNumberOrBigInt = TStringOrNumber | bigint
 type THexString = string

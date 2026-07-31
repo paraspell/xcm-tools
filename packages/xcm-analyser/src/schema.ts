@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
 const NetworkId = z.string().nullable();
-const BodyId = z.string().nullable();
-const BodyPart = z.string().nullable();
 const StringOrNumber = z.union(
   [
     z
@@ -18,6 +16,39 @@ const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
   message:
     "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).",
 });
+
+const BodyId = z
+  .union([
+    z.string(),
+    z.object({ Moniker: HexString }),
+    z.object({ Index: StringOrNumberOrBigInt }),
+  ])
+  .nullable();
+
+const BodyPart = z
+  .union([
+    z.string(),
+    z.object({ Members: z.object({ count: StringOrNumberOrBigInt }) }),
+    z.object({
+      Fraction: z.object({
+        nom: StringOrNumberOrBigInt,
+        denom: StringOrNumberOrBigInt,
+      }),
+    }),
+    z.object({
+      AtLeastProportion: z.object({
+        nom: StringOrNumberOrBigInt,
+        denom: StringOrNumberOrBigInt,
+      }),
+    }),
+    z.object({
+      MoreThanProportion: z.object({
+        nom: StringOrNumberOrBigInt,
+        denom: StringOrNumberOrBigInt,
+      }),
+    }),
+  ])
+  .nullable();
 
 export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
 

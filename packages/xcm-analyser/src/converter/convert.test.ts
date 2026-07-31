@@ -354,4 +354,22 @@ describe('convert', () => {
       './AccountId32(Polkadot, 0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b)/Plurality(Unit, null)',
     ]);
   });
+
+  it('converts structured plurality body variants', () => {
+    const location = {
+      parents: '0',
+      interior: {
+        X1: {
+          Plurality: {
+            id: { Index: 42 },
+            part: { Members: { count: 3 } },
+          },
+        },
+      },
+    };
+
+    const result = convertLocationToUrl(location);
+
+    expect(result).toBe('./Plurality(Index: 42, Members(count: 3))');
+  });
 });

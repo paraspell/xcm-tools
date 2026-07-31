@@ -435,6 +435,26 @@ describe('InteriorSchema', () => {
       expect(result.success).toBe(false);
     });
   });
+
+  describe('Plurality structured variants', () => {
+    it.each([
+      [{ Index: 42 }, { Members: { count: 3 } }],
+      [{ Moniker: '0x01020304' }, { Fraction: { nom: 2, denom: 3 } }],
+      ['Executive', { AtLeastProportion: { nom: 2, denom: 3 } }],
+      ['Unit', { MoreThanProportion: { nom: 1, denom: 2 } }],
+    ])('accepts BodyId %o with BodyPart %o', (id, part) => {
+      const result = InteriorSchema.safeParse({
+        X1: {
+          Plurality: {
+            id,
+            part,
+          },
+        },
+      });
+
+      expect(result.success).toBe(true);
+    });
+  });
 });
 
 describe('LocationSchema', () => {

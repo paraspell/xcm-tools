@@ -9,6 +9,25 @@ import type {
   TJunctionPlurality,
 } from '../types';
 
+const formatXcmEnumValue = (value: unknown): string => {
+  if (typeof value !== 'object' || value === null) {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(formatXcmEnumValue).join(', ');
+  }
+
+  return Object.entries(value)
+    .map(([key, nestedValue]) => {
+      const formattedValue = formatXcmEnumValue(nestedValue);
+      return typeof nestedValue === 'object' && nestedValue !== null
+        ? `${key}(${formattedValue})`
+        : `${key}: ${formattedValue}`;
+    })
+    .join(', ');
+};
+
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
   const junction = Object.fromEntries(
     Object.entries(junctionOriginal).map(([k, v]) => [k.toLowerCase(), v]),
@@ -36,7 +55,7 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     return `OnlyChild(${junction.onlychild})`;
   } else if ('plurality' in junction) {
     const junct = junction.plurality as TJunctionPlurality['Plurality'];
-    return `Plurality(${junct.id}, ${junct.part})`;
+    return `Plurality(${formatXcmEnumValue(junct.id)}, ${formatXcmEnumValue(junct.part)})`;
   } else if ('globalconsensus' in junction) {
     return `GlobalConsensus(${junction.globalconsensus})`;
   }
