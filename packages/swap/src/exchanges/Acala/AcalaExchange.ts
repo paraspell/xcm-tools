@@ -31,7 +31,7 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
-    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
+    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation, slippagePct } = options;
 
     const wallet = new Wallet(apiPjs);
     await wallet.isReady;
@@ -80,6 +80,8 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     Logger.log('Original amount', amount);
     Logger.log('Amount modified', amountWithoutFee);
 
+    const slippageMultiplier = Number(slippagePct);
+
     const tradeResult = await firstValueFrom(
       dex.swap({
         path: [fromToken, toToken],
@@ -89,13 +91,22 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
           formatUnits(amountWithoutFee, fromToken.decimals),
           fromToken.decimals,
         ),
+        acceptiveSlippage: slippageMultiplier,
       }),
     );
 
-    const tx = dex.getTradingTx(tradeResult) as unknown as Extrinsic;
-
+    // Apply slippage protection: compute the minimum acceptable output and
+    // pass it as an overwrite to getTradingTx so the constructed extrinsic
+    // includes a slippage floor (matching AssetHub, Bifrost, and Hydration).
     const amountOutRes = tradeResult.result.output.amount.toString();
     const amountOut = parseUnits(amountOutRes, toToken.decimals);
+    const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
+    const minOutputFpn = new FixedPointNumber(
+      formatUnits(minAmountOut, toToken.decimals),
+      toToken.decimals,
+    );
+
+    const tx = dex.getTradingTx(tradeResult, { output: minOutputFpn }) as unknown as Extrinsic;
 
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
 

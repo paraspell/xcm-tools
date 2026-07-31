@@ -72,7 +72,9 @@ vi.mock('@acala-network/sdk-swap', () => ({
       swap = vi.fn().mockImplementation(() => ({
         subscribe: vi.fn(),
       }));
-      getTradingTx = vi.fn().mockImplementation(() => ({}));
+      getTradingTx = vi.fn().mockImplementation((_result: unknown, overwrite?: { output: unknown }) => ({
+        _overwrite: overwrite,
+      }));
     },
   ),
 }));
@@ -184,6 +186,21 @@ describe('AcalaExchange', () => {
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
       expect(result.amountOut).toBe(46199999999998n);
+    });
+
+    it('should apply slippage protection via acceptiveSlippage and getTradingTx overwrite (#2014)', async () => {
+      const options = {
+        ...baseSwapOptions,
+        slippagePct: '5',
+      } as TPjsSwapOptions<unknown, unknown, unknown>;
+
+      const result = await chain.swapCurrency(options, 1n);
+
+      // getTradingTx was called with the overwrite parameter containing the
+      // minimum output amount derived from slippagePct
+      expect(result.tx).toHaveProperty('_overwrite');
+      expect(result.tx._overwrite).toBeDefined();
+      expect(result.tx._overwrite.output).toBeDefined();
     });
 
     it('should throw AmountTooLowError if the amount is too small to cover fees', async () => {
