@@ -118,6 +118,58 @@ describe('getSupportedFeeAssets', () => {
     expect(createExchangeInstance).toHaveBeenCalledWith('Acala');
   });
 
+  it('should not borrow fee eligibility across exchanges when from is undefined and exchange is array', () => {
+    const exchanges: TExchangeChain[] = ['Hydration', 'Acala'];
+    const hydrationSupportedLocation = { parents: 1, interior: 'HydrationHere' };
+    const acalaSupportedLocation = { parents: 2, interior: 'AcalaHere' };
+    const hydrationFeeAsset = {
+      symbol: 'DOT',
+      decimals: 10,
+      assetId: '1',
+      location: hydrationSupportedLocation,
+    };
+    const acalaFeeAsset = {
+      symbol: 'KSM',
+      decimals: 12,
+      assetId: '2',
+      location: acalaSupportedLocation,
+    };
+    const hydrationChainFee = {
+      symbol: 'USDT',
+      decimals: 6,
+      assetId: '3',
+      location: acalaSupportedLocation,
+      isFeeAsset: true,
+    };
+    const acalaChainFee = {
+      symbol: 'LDOT',
+      decimals: 8,
+      assetId: '4',
+      location: hydrationSupportedLocation,
+      isFeeAsset: true,
+    };
+
+    vi.mocked(createExchangeInstance).mockImplementation(
+      (exchange) =>
+        (exchange === 'Hydration' ? { chain: 'Hydration' } : { chain: 'Acala' }) as never,
+    );
+    vi.mocked(getSupportedAssetsFromImpl).mockImplementation((_from, exchange) => {
+      if (Array.isArray(exchange)) return [hydrationFeeAsset, acalaFeeAsset];
+      if (exchange === 'Hydration') return [hydrationFeeAsset];
+      if (exchange === 'Acala') return [acalaFeeAsset];
+      return [];
+    });
+    vi.mocked(getAssetsImpl).mockImplementation((chain) => {
+      if (chain === 'Hydration') return [hydrationChainFee];
+      if (chain === 'Acala') return [acalaChainFee];
+      return [];
+    });
+
+    const result = getSupportedFeeAssets(undefined, exchanges);
+
+    expect(result).toEqual([]);
+  });
+
   it('should filter by location match against chain fee assets', () => {
     const from: TSubstrateChain = 'AssetHubPolkadot';
     const exchange: TExchangeChain = 'Hydration';

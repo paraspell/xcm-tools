@@ -20,6 +20,24 @@ export const getSupportedFeeAssetsImpl = <TCustomChain extends string = never>(
   const exchange = normalizeExchange(exchangeInput);
   const supportedAssets = getSupportedAssetsFromImpl(from, exchange, ctx);
 
+  if (!from && Array.isArray(exchange)) {
+    const supportedByExchange = exchange.flatMap((exchangeChain) => {
+      const chain = createExchangeInstance(exchangeChain).chain;
+      const chainFeeAssets = getAssetsImpl(chain, ctx).filter((asset) => asset.isFeeAsset);
+
+      return getSupportedAssetsFromImpl(undefined, exchangeChain, ctx).filter((asset) =>
+        chainFeeAssets.some((chainAsset) => isAssetEqual(asset, chainAsset)),
+      );
+    });
+
+    const uniqueSupported = new Map<string, TAssetInfo>();
+    for (const asset of supportedByExchange) {
+      const key = JSON.stringify([asset.location, asset.symbol, asset.assetId]);
+      uniqueSupported.set(key, asset);
+    }
+    return [...uniqueSupported.values()];
+  }
+
   const chains = from
     ? [from]
     : (exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange])
