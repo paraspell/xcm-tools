@@ -33,6 +33,9 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     const junct = junction.generalkey as TJunctionGeneralKey['GeneralKey'];
     return `GeneralKey(${junct.length}, ${junct.data})`;
   } else if ('onlychild' in junction) {
+    if (junction.onlychild === null) {
+      return 'OnlyChild';
+    }
     return `OnlyChild(${junction.onlychild})`;
   } else if ('plurality' in junction) {
     const junct = junction.plurality as TJunctionPlurality['Plurality'];

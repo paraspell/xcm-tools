@@ -41,7 +41,7 @@ const mockGeneralIndex: TJunctionGeneralIndex = { GeneralIndex: BigInt(100) };
 const mockGeneralKey: TJunctionGeneralKey = {
   GeneralKey: { length: 32, data: '0xaabbccddeeff' },
 };
-const mockOnlyChild: TJunctionOnlyChild = { OnlyChild: '' };
+const mockOnlyChild: TJunctionOnlyChild = { OnlyChild: null };
 const mockPlurality: TJunctionPlurality = {
   Plurality: { id: 'Executive', part: 'Fellowship' },
 };
@@ -381,6 +381,15 @@ describe('InteriorSchema', () => {
       const data = { PalletInstance: 'abc' };
       const result = JunctionPalletInstance.safeParse(data);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('OnlyChild validation in Junctions', () => {
+    it('JunctionOnlyChild should accept the null payload emitted for the unit variant', () => {
+      const data = { OnlyChild: null };
+      const result = InteriorSchema.safeParse({ X1: [data] });
+
+      expect(result.success).toBe(true);
     });
   });
 

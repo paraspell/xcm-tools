@@ -41,7 +41,7 @@ export const JunctionGeneralKey = z.object({
   GeneralKey: z.object({ length: StringOrNumberOrBigInt, data: HexString }),
 });
 
-export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
+export const JunctionOnlyChild = z.object({ OnlyChild: z.string().nullable() });
 
 export const JunctionPlurality = z.object({
   Plurality: z.object({ id: BodyId, part: BodyPart }),

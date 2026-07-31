@@ -138,6 +138,17 @@ describe('convert', () => {
     expect(result).toBe('./OnlyChild(child)');
   });
 
+  it('should convert a null-valued OnlyChild unit variant', () => {
+    const result = convertLocationToUrl({
+      parents: 0,
+      interior: {
+        X1: [{ OnlyChild: null }],
+      },
+    });
+
+    expect(result).toBe('./OnlyChild');
+  });
+
   it('should convert location to URL with GlobalConsensus interior', () => {
     const location: Location = {
       parents: '0',
