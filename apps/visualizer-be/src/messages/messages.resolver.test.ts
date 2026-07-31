@@ -173,6 +173,52 @@ describe('MessageResolver', () => {
         endTime.getTime(),
       );
     });
+
+    it('should default paraIds to empty array when null (bug bounty #2034)', async () => {
+      const expected = [{ account: '0x456', count: 3 }];
+      const threshold = 5;
+      service.getAccountXcmCounts.mockResolvedValue(expected);
+
+      const result = await resolver.accountCounts(
+        ecosystem,
+        threshold,
+        null,
+        startTime,
+        endTime,
+      );
+
+      expect(result).toEqual(expected);
+      expect(service.getAccountXcmCounts).toHaveBeenCalledWith(
+        ecosystem,
+        [],
+        threshold,
+        startTime.getTime(),
+        endTime.getTime(),
+      );
+    });
+
+    it('should default paraIds to empty array when undefined (bug bounty #2034)', async () => {
+      const expected = [{ account: '0x789', count: 1 }];
+      const threshold = 5;
+      service.getAccountXcmCounts.mockResolvedValue(expected);
+
+      const result = await resolver.accountCounts(
+        ecosystem,
+        threshold,
+        undefined,
+        startTime,
+        endTime,
+      );
+
+      expect(result).toEqual(expected);
+      expect(service.getAccountXcmCounts).toHaveBeenCalledWith(
+        ecosystem,
+        [],
+        threshold,
+        startTime.getTime(),
+        endTime.getTime(),
+      );
+    });
   });
 
   describe('totalMessageCounts', () => {

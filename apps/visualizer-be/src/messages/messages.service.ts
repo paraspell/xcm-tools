@@ -372,7 +372,7 @@ export class MessageService {
 
   async getAccountXcmCounts(
     ecosystem: string,
-    paraIds: number[],
+    paraIds: number[] | null | undefined,
     threshold: number,
     startTime: number,
     endTime: number,
@@ -385,12 +385,13 @@ export class MessageService {
 
     const parameters: (string | number)[] = [ecosystem, startTime, endTime];
 
-    if (paraIds.length > 0) {
-      const inClause = paraIds
+    const paraIdList = paraIds ?? [];
+    if (paraIdList.length > 0) {
+      const inClause = paraIdList
         .map((_, idx) => `$${idx + 4}`) // $4, $5, ...
         .join(', ');
       whereConditions.push(`origin_para_id IN (${inClause})`);
-      parameters.push(...paraIds);
+      parameters.push(...paraIdList);
     }
     parameters.push(threshold);
 

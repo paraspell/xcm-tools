@@ -77,13 +77,14 @@ export class MessageResolver {
   async accountCounts(
     @Args('ecosystem', { type: () => String }) ecosystem: string,
     @Args('threshold', { type: () => Int }) threshold: number,
-    @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
+    @Args('paraIds', { type: () => [Int], nullable: true })
+    paraIds: number[],
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
     return this.messageService.getAccountXcmCounts(
       ecosystem,
-      paraIds,
+      paraIds ?? [],
       threshold,
       startTime.getTime(),
       endTime.getTime(),
