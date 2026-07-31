@@ -942,6 +942,13 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   ): Promise<string> {
     const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
     const result = await tx.signAndSend(account).untilFinalized();
+
+    if (result.dispatchError) {
+      throw new Error(
+        `Extrinsic failed at finalization with dispatch error: ${JSON.stringify(result.dispatchError)}`,
+      );
+    }
+
     return result.txHash;
   }
 }

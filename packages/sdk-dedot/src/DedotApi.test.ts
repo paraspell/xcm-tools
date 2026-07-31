@@ -1878,5 +1878,39 @@ describe("DedotApi", () => {
         dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
       ).rejects.toThrow("finalization failed");
     });
+
+    it("should throw when the finalized result contains a dispatchError (#2011)", async () => {
+      const mockTxHash = "0xfailed";
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({
+            txHash: mockTxHash,
+            dispatchError: {
+              type: "Module",
+              value: { index: 5, error: 2 },
+            },
+          }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      await expect(
+        dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
+      ).rejects.toThrow(/dispatch error/);
+    });
+
+    it("should resolve when dispatchError is undefined (#2011)", async () => {
+      const mockTxHash = "0xsuccess";
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({
+            txHash: mockTxHash,
+            dispatchError: undefined,
+          }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      const result = await dedotApi.signAndSubmitFinalized(mockTx, "//Alice");
+      expect(result).toBe(mockTxHash);
+    });
   });
 });
