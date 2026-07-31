@@ -777,6 +777,21 @@ describe('PolkadotJsApi', () => {
       expect(fee).toBe(304850000n)
     })
 
+    it('returns zero delivery fee for a single forwarded XCM without crashing', async () => {
+      const forwardedXcm: unknown[] = [{ some: 'xcm0' }]
+
+      const fee = await polkadotApi.getDeliveryFee(
+        'AssetHubPolkadot',
+        forwardedXcm,
+        dotAsset,
+        dotAsset.location,
+        Version.V5
+      )
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryDeliveryFees).not.toHaveBeenCalled()
+      expect(fee).toBe(0n)
+    })
+
     it('rethrows errors from queryDeliveryFees when not an arity mismatch', async () => {
       const forwardedXcm0 = { some: 'xcm0' }
       const forwardedXcm1 = { some: 'xcm1' }
