@@ -14,31 +14,50 @@ const StringOrNumber = z.union(
   { error: 'Expected a number or numeric string' },
 );
 const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
+const boundedUnsignedInteger = (max: bigint, bits: number) =>
+  StringOrNumberOrBigInt.refine(
+    (value) => {
+      if (typeof value === 'number') {
+        return Number.isSafeInteger(value) && value >= 0 && BigInt(value) <= max;
+      }
+
+      const integer = typeof value === 'bigint' ? value : BigInt(value);
+      return integer >= BigInt(0) && integer <= max;
+    },
+    { error: `Expected an unsigned ${bits}-bit integer` },
+  );
+const U8StringOrNumberOrBigInt = boundedUnsignedInteger(BigInt('255'), 8);
+const U32StringOrNumberOrBigInt = boundedUnsignedInteger(BigInt('4294967295'), 32);
+const U64StringOrNumberOrBigInt = boundedUnsignedInteger(BigInt('18446744073709551615'), 64);
+const U128StringOrNumberOrBigInt = boundedUnsignedInteger(
+  BigInt('340282366920938463463374607431768211455'),
+  128,
+);
 const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
   message:
     "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).",
 });
 
-export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
+export const JunctionParachain = z.object({ Parachain: U32StringOrNumberOrBigInt });
 
 export const JunctionAccountId32 = z.object({
   AccountId32: z.object({ network: NetworkId, id: HexString }),
 });
 
 export const JunctionAccountIndex64 = z.object({
-  AccountIndex64: z.object({ network: NetworkId, index: StringOrNumberOrBigInt }),
+  AccountIndex64: z.object({ network: NetworkId, index: U64StringOrNumberOrBigInt }),
 });
 
 export const JunctionAccountKey20 = z.object({
   AccountKey20: z.object({ network: NetworkId, key: HexString }),
 });
 
-export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumberOrBigInt });
+export const JunctionPalletInstance = z.object({ PalletInstance: U8StringOrNumberOrBigInt });
 
-export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumberOrBigInt });
+export const JunctionGeneralIndex = z.object({ GeneralIndex: U128StringOrNumberOrBigInt });
 
 export const JunctionGeneralKey = z.object({
-  GeneralKey: z.object({ length: StringOrNumberOrBigInt, data: HexString }),
+  GeneralKey: z.object({ length: U8StringOrNumberOrBigInt, data: HexString }),
 });
 
 export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });

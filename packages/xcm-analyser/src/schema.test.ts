@@ -321,12 +321,12 @@ describe('InteriorSchema', () => {
       }
     });
 
-    it('JunctionParachain should correctly parse BigInt', () => {
-      const data = { Parachain: BigInt(1234567890123) };
+    it('JunctionParachain should correctly parse an in-range BigInt', () => {
+      const data = { Parachain: BigInt(4294967295) };
       const result = JunctionParachain.safeParse(data);
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.Parachain).toBe(BigInt(1234567890123));
+        expect(result.data.Parachain).toBe(BigInt(4294967295));
       }
     });
 
@@ -381,6 +381,44 @@ describe('InteriorSchema', () => {
       const data = { PalletInstance: 'abc' };
       const result = JunctionPalletInstance.safeParse(data);
       expect(result.success).toBe(false);
+    });
+
+    it.each([
+      ['negative Parachain', { Parachain: -1 }],
+      ['Parachain above u32', { Parachain: '4294967296' }],
+      [
+        'AccountIndex64 above u64',
+        { AccountIndex64: { network: null, index: '18446744073709551616' } },
+      ],
+      [
+        'unsafe AccountIndex64 number',
+        { AccountIndex64: { network: null, index: Number.MAX_SAFE_INTEGER + 1 } },
+      ],
+      ['fractional PalletInstance', { PalletInstance: 1.5 }],
+      ['PalletInstance above u8', { PalletInstance: 256 }],
+      ['negative GeneralIndex', { GeneralIndex: BigInt(-1) }],
+      [
+        'GeneralIndex above u128',
+        { GeneralIndex: BigInt('340282366920938463463374607431768211456') },
+      ],
+      ['GeneralKey length above u8', { GeneralKey: { length: 256, data: '0x00' } }],
+    ])('should reject %s', (_name, junction) => {
+      const result = InteriorSchema.safeParse({ X1: junction });
+      expect(result.success).toBe(false);
+    });
+
+    it.each([
+      ['maximum Parachain', { Parachain: '4294967295' }],
+      [
+        'maximum AccountIndex64',
+        { AccountIndex64: { network: null, index: BigInt('18446744073709551615') } },
+      ],
+      ['maximum PalletInstance', { PalletInstance: 255 }],
+      ['maximum GeneralIndex', { GeneralIndex: '340282366920938463463374607431768211455' }],
+      ['maximum GeneralKey length', { GeneralKey: { length: 255, data: '0x00' } }],
+    ])('should accept %s', (_name, junction) => {
+      const result = InteriorSchema.safeParse({ X1: junction });
+      expect(result.success).toBe(true);
     });
   });
 

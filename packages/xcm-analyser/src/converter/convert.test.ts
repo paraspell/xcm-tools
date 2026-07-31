@@ -176,6 +176,25 @@ describe('convert', () => {
     expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
   });
 
+  it.each([
+    { Parachain: -1 },
+    { Parachain: '4294967296' },
+    { AccountIndex64: { network: null, index: '18446744073709551616' } },
+    { AccountIndex64: { network: null, index: Number.MAX_SAFE_INTEGER + 1 } },
+    { PalletInstance: 1.5 },
+    { PalletInstance: 256 },
+    { GeneralIndex: BigInt(-1) },
+    { GeneralIndex: BigInt('340282366920938463463374607431768211456') },
+    { GeneralKey: { length: 256, data: '0x00' } },
+  ])('rejects an out-of-range numeric junction: %o', (junction) => {
+    expect(() =>
+      convertLocationToUrl({
+        parents: 0,
+        interior: { X1: junction },
+      }),
+    ).toThrow(ZodError);
+  });
+
   it('convert location to URL from tx arguments with one location', () => {
     const xcmCallArguments = [
       '1', // currency_id for KSM
