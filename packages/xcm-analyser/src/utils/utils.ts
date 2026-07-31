@@ -38,7 +38,27 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
     const junct = junction.plurality as TJunctionPlurality['Plurality'];
     return `Plurality(${junct.id}, ${junct.part})`;
   } else if ('globalconsensus' in junction) {
-    return `GlobalConsensus(${junction.globalconsensus})`;
+    const gc = junction.globalconsensus;
+    // GlobalConsensus can be a string (e.g. 'Polkadot') or an object
+    // (e.g. { Ethereum: { chainId: 1 } }). Handle both forms to avoid
+    // [object Object] from default string coercion.
+    if (typeof gc === 'string') {
+      return `GlobalConsensus(${gc})`;
+    }
+    if (typeof gc === 'object' && gc !== null) {
+      const entries = Object.entries(gc);
+      if (entries.length > 0) {
+        const [network, fields] = entries[0];
+        if (typeof fields === 'object' && fields !== null) {
+          const fieldStr = Object.entries(fields)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(', ');
+          return `GlobalConsensus(${network}(${fieldStr}))`;
+        }
+        return `GlobalConsensus(${network})`;
+      }
+    }
+    return `GlobalConsensus(${String(gc)})`;
   }
   throw new Error('Unknown junction type');
 };
