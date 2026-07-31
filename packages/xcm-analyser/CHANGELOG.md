@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.11...xcm-analyser-v3.1.0) (2026-07-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Build System
+
+* Setup OIDC 🪄 ([c296f42](https://github.com/paraspell/xcm-tools/commit/c296f42068890786c802bb6e8301ed6916f8454b))
+
 ## [3.0.11](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.10...xcm-analyser-v3.0.11) (2026-06-30)
 
 
