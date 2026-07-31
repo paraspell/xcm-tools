@@ -13,10 +13,10 @@ import { describe, it, expect, vi } from 'vitest'
 describe('signAndSubmitFinalized (#2009)', () => {
   it('should NOT resolve on txBestBlocksState with found: true', async () => {
     // Mock a transaction that emits best-block then finalized
-    const events: any[] = []
+    const _events: unknown[] = []
     const mockTx = {
-      signSubmitAndWatch: (signer: any) => ({
-        subscribe: (handlers: any) => {
+      signSubmitAndWatch: (_signer: unknown) => ({
+        subscribe: (handlers: unknown) => {
           // Emit best block event first (should NOT resolve)
           handlers.next({
             type: 'txBestBlocksState',
@@ -41,7 +41,7 @@ describe('signAndSubmitFinalized (#2009)', () => {
     // with '0xbestblock' - it should resolve with '0xfinalized'
     const promise = new Promise<string>((resolve, reject) => {
       mockTx.signSubmitAndWatch({}).subscribe({
-        next: (event: any) => {
+        next: (event: unknown) => {
           if (event.type === 'finalized') {
             if (!event.ok) {
               reject(new Error('dispatch error'))
@@ -51,7 +51,7 @@ describe('signAndSubmitFinalized (#2009)', () => {
           }
           // txBestBlocksState events are ignored after fix
         },
-        error: (err: any) => reject(err)
+        error: (err: unknown) => reject(err)
       })
     })
 
@@ -62,8 +62,8 @@ describe('signAndSubmitFinalized (#2009)', () => {
 
   it('should reject on finalized event with ok: false', async () => {
     const mockTx = {
-      signSubmitAndWatch: (signer: any) => ({
-        subscribe: (handlers: any) => {
+      signSubmitAndWatch: (_signer: unknown) => ({
+        subscribe: (handlers: unknown) => {
           handlers.next({
             type: 'finalized',
             ok: false,
@@ -76,7 +76,7 @@ describe('signAndSubmitFinalized (#2009)', () => {
 
     const promise = new Promise<string>((resolve, reject) => {
       mockTx.signSubmitAndWatch({}).subscribe({
-        next: (event: any) => {
+        next: (event: unknown) => {
           if (event.type === 'finalized') {
             if (!event.ok) {
               reject(new Error(JSON.stringify(event.dispatchError.value)))
@@ -85,7 +85,7 @@ describe('signAndSubmitFinalized (#2009)', () => {
             }
           }
         },
-        error: (err: any) => reject(err)
+        error: (err: unknown) => reject(err)
       })
     })
 
