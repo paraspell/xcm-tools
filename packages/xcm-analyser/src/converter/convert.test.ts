@@ -313,6 +313,20 @@ describe('convert', () => {
     ]);
   });
 
+  it('convert all locations nested in one argument object', () => {
+    const xcmCallArguments = [
+      {
+        assets: [
+          { id: { Concrete: { parents: '1', interior: { X1: { Parachain: '2000' } } } },
+          { id: { Concrete: { parents: '0', interior: { X1: { PalletInstance: '50' } } } },
+        ],
+      },
+    ];
+
+    const result = convertXCMToUrls(xcmCallArguments);
+    expect(result).toStrictEqual(['../Parachain(2000)', './PalletInstance(50)']);
+  });
+
   it('convert location to URL from tx arguments with no locations', () => {
     const xcmCallArguments = [
       '1', // currency_id for KSM

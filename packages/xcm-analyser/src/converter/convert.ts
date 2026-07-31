@@ -49,11 +49,6 @@ export const convertLocationToUrl = (args: unknown): string => {
  */
 export const convertXCMToUrls = (args: unknown[]): string[] => {
   return args.flatMap((arg) => {
-    const location = findLocationInObject(arg);
-    if (location !== null && location !== undefined) {
-      return [convertLocationToUrl(location)];
-    } else {
-      return [];
-    }
+    return findLocationInObject(arg).map((location) => convertLocationToUrl(location));
   });
 };
