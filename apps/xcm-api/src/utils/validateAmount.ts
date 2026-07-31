@@ -1,4 +1,7 @@
 export const validateAmount = (val: string) => {
-  const num = parseFloat(val);
-  return !isNaN(num) && num > 0;
+  if (!/^\\d+(\\.\\d+)?$/.test(val)) {
+    return false;
+  }
+  const num = Number(val);
+  return Number.isFinite(num) && num > 0;
 };
