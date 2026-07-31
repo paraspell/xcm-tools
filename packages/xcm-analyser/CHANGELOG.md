@@ -1,5 +1,52 @@
 # Changelog
 
+## [4.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.1.0...xcm-analyser-v4.0.0) (2026-07-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* Migrate packages & visualizer-be to ESM only 🪄
+
+### Features
+
+* Perform a monthly check 🪄 ([7bf0ba2](https://github.com/paraspell/xcm-tools/commit/7bf0ba243441aebedbfe8b5b29796492fe86a38c))
+
+
+### Bug Fixes
+
+* **playground:** Add location field zod validation 🔧 ([410347e](https://github.com/paraspell/xcm-tools/commit/410347ee32bbf784a7b8ed54818503ce56d05cbf))
+* Update LICENSES and Sponsor logos ([2e3a881](https://github.com/paraspell/xcm-tools/commit/2e3a881a3d843101bdaf93db945e0a2bb48a7cf3))
+
+
+### Documentation
+
+* Add dedot documentation ([9605794](https://github.com/paraspell/xcm-tools/commit/9605794a00943454c153eb852c05455c80a2a0ba))
+* Remove snyk ([c9385d3](https://github.com/paraspell/xcm-tools/commit/c9385d3c88b72d9fc333a4a6b13cd29d46b804d3))
+* Update documentation links ([eed2f41](https://github.com/paraspell/xcm-tools/commit/eed2f4131c850d04cd6064a14bac8cb0f8e00bcc))
+* Update readmes to be up to date ([864f206](https://github.com/paraspell/xcm-tools/commit/864f206106c545fbbd68d292139ab3224e474bb2))
+
+
+### Code Refactoring
+
+* Improve transfers to Ethereum ✨ ([303f0a2](https://github.com/paraspell/xcm-tools/commit/303f0a2c233bdeb3f8b571766c98576b4c1c1ae3))
+* Update all scripts to use polkadot-api (PAPI) 🪄 ([92499f5](https://github.com/paraspell/xcm-tools/commit/92499f51898cc80d8f81af788536f296d38254da))
+
+
+### Build System
+
+* Migrate packages & visualizer-be to ESM only 🪄 ([2afa5a9](https://github.com/paraspell/xcm-tools/commit/2afa5a94f81adcf3b00c14bb351de6c4c58df16c))
+* Perform a monthly check 🪄 ([a3ae1ed](https://github.com/paraspell/xcm-tools/commit/a3ae1ed6cf634c839a239ff2dc6a562b2b9787f6))
+* Perform a monthly check 🪄 ([1edf4c5](https://github.com/paraspell/xcm-tools/commit/1edf4c503ca6bf69118c5677dc44f392c6fca097))
+* Perform a monthly check 🪄 ([e0a64a1](https://github.com/paraspell/xcm-tools/commit/e0a64a1513786f3c729d1699788f1a47a7b1ed3c))
+* Perform a monthly check 🪄 ([e33f659](https://github.com/paraspell/xcm-tools/commit/e33f659683b48702e7b3d3a9fae4b4fa75f09b93))
+* Perform a monthly check 🪄 ([6d53c32](https://github.com/paraspell/xcm-tools/commit/6d53c32c3e4e9921053528a148c0687c3249c040))
+* Perform a monthly check 🪄 ([0da5837](https://github.com/paraspell/xcm-tools/commit/0da5837c2b424274bf4dfa53afa6dfde5c7e6be6))
+* Perform a monthly maintenance check ⚙️ ([87d1246](https://github.com/paraspell/xcm-tools/commit/87d1246a107ccecb97f7106fc16948a1078d6de6))
+* Perform a monthly maintenance check ⚙️ ([65d72b0](https://github.com/paraspell/xcm-tools/commit/65d72b032251ba023ff5340fce8d737bb884968a))
+* Perform a monthly maintenance check 🔧 ([1d7a4c3](https://github.com/paraspell/xcm-tools/commit/1d7a4c37cbcf94438b29a1c6e2be2874fc49f7db))
+* Setup OIDC 🪄 ([c296f42](https://github.com/paraspell/xcm-tools/commit/c296f42068890786c802bb6e8301ed6916f8454b))
+* Update to TypeScript v6 📦 ([0ecad63](https://github.com/paraspell/xcm-tools/commit/0ecad63ab0c39484572232bd33f7fbc0f3409de2))
+
 ## [3.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.11...xcm-analyser-v3.1.0) (2026-07-31)
 
 
