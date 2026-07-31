@@ -30,9 +30,9 @@ describe('@paraspell/evm', () => {
 
   const baseOptions: TEvmTransferOptions<unknown, unknown, unknown> = {
     api: mockApi,
-    from: 'Moonbeam',
+    from: 'Darwinia',
     to: 'AssetHubPolkadot',
-    currency: { symbol: 'GLMR', amount: '1' },
+    currency: { symbol: 'RING', amount: '1' },
     recipient: '0xRecipient',
     signer
   }

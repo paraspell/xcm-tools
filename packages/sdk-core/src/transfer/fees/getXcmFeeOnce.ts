@@ -15,7 +15,6 @@ import type {
 import { pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
 import { addEthereumBridgeFees, getDryRunError, traverseXcmHops } from '../dry-run'
-import { inferFeeAsset } from '../utils/inferFeeAsset'
 import { resolveCurrency } from '../utils/resolveCurrency'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { resolveHopAsset } from '../utils/resolveHopAsset'
@@ -150,8 +149,7 @@ export const getXcmFeeOnce = async <
       currentOrigin,
       currentAsset,
       forwardedXcms,
-      hasPassedExchange,
-      isDestination
+      hasPassedExchange
     } = params
 
     const resolvedHopAsset = resolveHopAsset({
@@ -167,10 +165,6 @@ export const getXcmFeeOnce = async <
       hasPassedExchange
     })
 
-    const hopAsset = isDestination
-      ? (inferFeeAsset(origin, destination, asset, api) ?? resolvedHopAsset)
-      : resolvedHopAsset
-
     const hopResult = await getDestXcmFee({
       api: hopApi,
       forwardedXcms,
@@ -179,7 +173,7 @@ export const getXcmFeeOnce = async <
       destination: currentChain,
       currency,
       asset,
-      currentAsset: { ...hopAsset, amount: asset.amount },
+      currentAsset: { ...resolvedHopAsset, amount: asset.amount },
       sender,
       recipient,
       version: resolvedVersion,
@@ -248,10 +242,7 @@ export const getXcmFeeOnce = async <
       destination,
       currency,
       asset,
-      currentAsset: {
-        ...(inferFeeAsset(origin, destination, asset, api) ?? asset),
-        amount: asset.amount
-      },
+      currentAsset: { ...asset, amount: asset.amount },
       sender,
       recipient,
       version: resolvedVersion,
@@ -274,8 +265,10 @@ export const getXcmFeeOnce = async <
   }
 
   // Process Ethereum bridge fees
-  const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
-  const assetHubChain: TSubstrateChain = `AssetHub${api.getRelayChainOf(origin)}`
+  const relayChain = api.getRelayChainOf(origin)
+  const bridgeHubChain: TSubstrateChain | undefined =
+    relayChain === 'Paseo' ? undefined : `BridgeHub${relayChain}`
+  const assetHubChain: TSubstrateChain = `AssetHub${relayChain}`
 
   const bridgeHubHop = traversalResult.hops.find(hop => hop.chain === bridgeHubChain)
 
@@ -285,7 +278,6 @@ export const getXcmFeeOnce = async <
 
   // Update bridge hub fee in hops if needed
   if (processedBridgeHub && bridgeHubHop && processedBridgeHub.fee !== bridgeHubHop.result.fee) {
-    const bridgeHubChain: TSubstrateChain = `BridgeHub${api.getRelayChainOf(origin)}`
     const bridgeHubHopIndex = traversalResult.hops.findIndex(hop => hop.chain === bridgeHubChain)
     if (bridgeHubHopIndex !== -1) {
       traversalResult.hops[bridgeHubHopIndex].result = {

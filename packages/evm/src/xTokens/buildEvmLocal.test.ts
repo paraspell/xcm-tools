@@ -1,16 +1,16 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/sdk-core'
 import { encodeFunctionData } from 'viem'
-import { moonbeam } from 'viem/chains'
+import { darwinia } from 'viem/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { buildMoonbeamLocal } from './buildMoonbeamLocal'
+import { buildEvmLocal } from './buildEvmLocal'
 
 vi.mock('viem', async importOriginal => ({
   ...(await importOriginal()),
   encodeFunctionData: vi.fn().mockReturnValue('0xencoded')
 }))
 
-describe('buildMoonbeamLocal', () => {
+describe('buildEvmLocal', () => {
   const recipient = '0x1111111111111111111111111111111111111111'
   const assetAddress = '0xffffffff1fcacbd218edc0eba20fc2308c778080'
 
@@ -28,7 +28,7 @@ describe('buildMoonbeamLocal', () => {
       amount: 5000000n
     }
 
-    const tx = buildMoonbeamLocal('Moonbeam', assetInfo, recipient)
+    const tx = buildEvmLocal('Darwinia', assetInfo, recipient)
 
     expect(encodeFunctionData).toHaveBeenCalledWith({
       abi: expect.any(Array),
@@ -37,7 +37,7 @@ describe('buildMoonbeamLocal', () => {
     })
     expect(tx).toEqual({
       type: 'eip1559',
-      chainId: moonbeam.id,
+      chainId: darwinia.id,
       to: assetAddress,
       data: '0xencoded',
       value: 0n
@@ -53,6 +53,6 @@ describe('buildMoonbeamLocal', () => {
       amount: 5000000n
     }
 
-    expect(() => buildMoonbeamLocal('Moonbeam', assetInfo, 'not-an-address')).toThrow()
+    expect(() => buildEvmLocal('Darwinia', assetInfo, 'not-an-address')).toThrow()
   })
 })

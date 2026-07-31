@@ -123,7 +123,7 @@ describe('getDexConfig', () => {
     };
     const apiMock = makeApi([{ keyArgs: [[poolMlPapi, ACA_PAPI]] }]);
 
-    const cfg = await getDexConfig(apiMock, 'Moonbeam');
+    const cfg = await getDexConfig(apiMock, 'Darwinia');
 
     expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalMl);
     expect(cfg.assets).toEqual([originalMl]);

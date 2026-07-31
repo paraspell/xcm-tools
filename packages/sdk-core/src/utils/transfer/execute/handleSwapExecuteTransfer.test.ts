@@ -48,7 +48,7 @@ const mockApi = {
 
 const ORIGIN_CHAIN: TSubstrateChain = 'Astar'
 const EXCHANGE_CHAIN: TExchangeChain = 'Hydration'
-const DEST_CHAIN: TChain = 'Moonbeam'
+const DEST_CHAIN: TChain = 'Darwinia'
 
 const baseOptions = {
   api: mockApi,

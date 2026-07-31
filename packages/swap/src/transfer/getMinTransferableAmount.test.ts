@@ -67,7 +67,7 @@ const createOptions = (
 ): TBuildTransactionsBaseOptions<unknown, unknown, unknown> => ({
   from: 'Hydration',
   exchange: 'Hydration',
-  to: 'Moonbeam',
+  to: 'Darwinia',
   currencyFrom: { symbol: 'HDX' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000',

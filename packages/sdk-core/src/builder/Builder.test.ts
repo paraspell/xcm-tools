@@ -1539,7 +1539,7 @@ describe('Builder', () => {
       executeTransfer.mockResolvedValue('0xevmhash')
 
       const result = await Builder(mockApi)
-        .from('Moonbeam')
+        .from('Darwinia')
         .to('Polkadot')
         .currency({ symbol: 'GLMR', amount: AMOUNT })
         .sender(walletClient)
@@ -1548,7 +1548,7 @@ describe('Builder', () => {
 
       expect(executeTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'Moonbeam',
+          from: 'Darwinia',
           to: 'Polkadot',
           signer: walletClient,
           recipient: ADDRESS
@@ -1562,7 +1562,7 @@ describe('Builder', () => {
       executeTransfer.mockResolvedValue('0xevmhash2')
 
       const result = await Builder(mockApi)
-        .from('Moonbeam')
+        .from('Darwinia')
         .to('Polkadot')
         .currency({ symbol: 'GLMR', amount: AMOUNT })
         .sender(walletClient)
@@ -1574,26 +1574,26 @@ describe('Builder', () => {
 
     it('build() guards against EVM transfers via assertNotEvmTransfer', async () => {
       await Builder(mockApi)
-        .from('Moonbeam')
+        .from('Darwinia')
         .to('Polkadot')
         .currency({ symbol: 'GLMR', amount: AMOUNT })
         .sender(walletClient)
         .recipient(ADDRESS)
         .build()
 
-      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Moonbeam', walletClient)
+      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Darwinia', walletClient)
     })
 
     it('buildAll() guards against EVM transfers via assertNotEvmTransfer', async () => {
       await Builder(mockApi)
-        .from('Moonbeam')
+        .from('Darwinia')
         .to('Polkadot')
         .currency({ symbol: 'GLMR', amount: AMOUNT })
         .sender(walletClient)
         .recipient(ADDRESS)
         .buildAll()
 
-      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Moonbeam', walletClient)
+      expect(assertNotEvmTransfer).toHaveBeenCalledWith('Darwinia', walletClient)
     })
 
     it('buildEvm() dispatches to the EVM extension with options from the builder', async () => {
@@ -1602,7 +1602,7 @@ describe('Builder', () => {
       buildTransfer.mockResolvedValue('0xserialized')
 
       const result = await Builder(mockApi)
-        .from('Moonbeam')
+        .from('Darwinia')
         .to('Polkadot')
         .currency({ symbol: 'GLMR', amount: AMOUNT })
         .sender('0xsender')
@@ -1612,7 +1612,7 @@ describe('Builder', () => {
       expect(buildTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
-          from: 'Moonbeam',
+          from: 'Darwinia',
           to: 'Polkadot',
           recipient: ADDRESS,
           sender: '0xsender'
@@ -1628,7 +1628,7 @@ describe('Builder', () => {
 
       const result = await Builder(mockApi)
         .from('Ethereum')
-        .to('Moonbeam')
+        .to('Darwinia')
         .currency({ symbol: 'WETH', amount: AMOUNT })
         .sender('0xsender')
         .recipient(ADDRESS)
@@ -1638,7 +1638,7 @@ describe('Builder', () => {
         expect.objectContaining({
           api: mockApi,
           from: 'Ethereum',
-          to: 'Moonbeam',
+          to: 'Darwinia',
           recipient: ADDRESS,
           sender: '0xsender'
         })

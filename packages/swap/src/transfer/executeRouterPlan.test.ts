@@ -41,7 +41,7 @@ describe('executeRouterPlan', () => {
       tx: 'tx1' as unknown as TPapiTransaction,
       type: 'TRANSFER',
       chain: 'Astar',
-      destinationChain: 'Moonbeam',
+      destinationChain: 'Darwinia',
     },
     {
       api: {} as unknown as TPapiApi,
@@ -57,11 +57,11 @@ describe('executeRouterPlan', () => {
   });
 
   test('should execute plan with both EVM and non-EVM transactions', async () => {
-    await executeRouterPlan(mockPlan, { ...baseOptions, destination: 'Moonbeam' });
+    await executeRouterPlan(mockPlan, { ...baseOptions, destination: 'Darwinia' });
     expect(mockOnStatusChange).toHaveBeenCalledTimes(3);
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(1, {
       chain: 'Astar',
-      destinationChain: 'Moonbeam',
+      destinationChain: 'Darwinia',
       type: 'TRANSFER',
       currentStep: 0,
       routerPlan: mockPlan,
@@ -84,7 +84,7 @@ describe('executeRouterPlan', () => {
   });
 
   test('should handle empty plan gracefully', async () => {
-    await executeRouterPlan([], { ...baseOptions, destination: 'Moonbeam' });
+    await executeRouterPlan([], { ...baseOptions, destination: 'Darwinia' });
     expect(mockOnStatusChange).toHaveBeenCalledWith({
       type: 'COMPLETED',
       routerPlan: [],
@@ -96,7 +96,7 @@ describe('executeRouterPlan', () => {
   test('should work without onStatusChange callback', async () => {
     await executeRouterPlan(mockPlan, {
       ...baseOptions,
-      destination: 'Moonbeam',
+      destination: 'Darwinia',
       onStatusChange: undefined,
     });
     expect(mockSignAndSubmitFinalized).toHaveBeenCalledTimes(2);
@@ -110,7 +110,7 @@ describe('executeRouterPlan', () => {
 
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Ethereum');
 
-    await executeRouterPlan(mixedPlan, { ...baseOptions, destination: 'Moonbeam' });
+    await executeRouterPlan(mixedPlan, { ...baseOptions, destination: 'Darwinia' });
 
     expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(1, 'tx1', mockEvmSigner);
     expect(mockSignAndSubmitFinalized).toHaveBeenNthCalledWith(2, 'tx2', mockSigner);

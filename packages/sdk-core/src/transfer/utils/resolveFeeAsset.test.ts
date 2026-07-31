@@ -78,7 +78,7 @@ describe('resolveFeeAsset', () => {
   })
 
   it('throws InvalidParameterError when origin does not support fee assets', () => {
-    const origin = 'Moonbeam'
+    const origin = 'Darwinia'
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = {} as TCurrencyInput
     const findAssetInfoSpy = vi.spyOn(api, 'findAssetInfo')
@@ -102,7 +102,7 @@ describe('resolveFeeAsset', () => {
     ] as TCurrencyInput
     const feeAsset = { symbol: 'FEE' } as TCurrencyInput
 
-    const result = resolveFeeAsset(api, feeAsset, 'Moonbeam', 'Hydration', currency)
+    const result = resolveFeeAsset(api, feeAsset, 'Darwinia', 'Hydration', currency)
 
     expect(result).toEqual({ ...fakeAsset, amount: 5n })
   })

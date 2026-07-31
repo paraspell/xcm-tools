@@ -28,7 +28,7 @@ describe('validateAddress', () => {
 
   it('should not throw when chain is EVM and address is a valid Ethereum address', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
-    const chain: TChain = 'Moonbeam'
+    const chain: TChain = 'Darwinia'
 
     vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(true)
@@ -38,7 +38,7 @@ describe('validateAddress', () => {
 
   it('should throw InvalidAddressError when chain is EVM and address is not a valid Ethereum address', () => {
     const address: TAddress = 'invalid-address'
-    const chain: TChain = 'Moonbeam'
+    const chain: TChain = 'Darwinia'
 
     vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)
@@ -74,7 +74,7 @@ describe('validateAddress', () => {
 
   it('should customize the error message when isDestination is false and chain is EVM and address is invalid', () => {
     const address: TAddress = 'invalid-address'
-    const chain: TChain = 'Moonbeam'
+    const chain: TChain = 'Darwinia'
 
     vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     vi.mocked(isAddress).mockReturnValue(false)

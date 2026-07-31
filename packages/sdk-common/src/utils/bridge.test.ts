@@ -71,7 +71,7 @@ describe('isBridge', () => {
 
   it('returns false when neither bridge type applies', () => {
     const origin: TChain = 'Acala'
-    const destination: TChain = 'Moonbeam'
+    const destination: TChain = 'Darwinia'
 
     expect(isBridge(origin, destination)).toBe(false)
   })

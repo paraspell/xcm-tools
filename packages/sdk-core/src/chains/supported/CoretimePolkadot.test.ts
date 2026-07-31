@@ -33,9 +33,8 @@ describe('CoretimePolkadot', () => {
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
-  it('canReceiveFrom returns false for Hydration and Moonbeam', () => {
+  it('canReceiveFrom returns false for Hydration', () => {
     expect(chain.canReceiveFrom('Hydration')).toBe(false)
-    expect(chain.canReceiveFrom('Moonbeam')).toBe(false)
   })
 
   it('should use typeAndThen when scenario is not ParaToPara', async () => {

@@ -148,7 +148,6 @@ describe('isSystemChain', () => {
     'BridgeHubPolkadot',
     'BridgeHubKusama',
     'BridgeHubWestend',
-    'BridgeHubPaseo',
     'PeoplePolkadot',
     'PeopleKusama',
     'PeopleWestend',
@@ -156,7 +155,6 @@ describe('isSystemChain', () => {
     'CoretimePolkadot',
     'CoretimeKusama',
     'CoretimeWestend',
-    'CoretimePaseo',
     'Collectives',
     'CollectivesWestend',
     'Encointer'

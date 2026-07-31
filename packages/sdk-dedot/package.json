@@ -49,9 +49,9 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "dotenv": "^17.4.2",
-    "rollup": "^4.62.2",
+    "rollup": "^4.62.3",
     "rollup-plugin-dts": "^6.4.1"
   }
 }

@@ -112,45 +112,45 @@ describe('findAssetInfo', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should find asset starting with "xc" for Moonbeam', () => {
+  it('Should find asset starting with "xc" for Centrifuge', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([ztgAsset])
-    const asset = findAssetInfo('Moonbeam', { symbol: 'xcZTG' })
+    const asset = findAssetInfo('Centrifuge', { symbol: 'xcZTG' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+  it('Should find asset starting with "xc" for Centrifuge using Foreign selector', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...ztgAsset,
         symbol: 'xcZTG'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcZTG') })
+    const asset = findAssetInfo('Centrifuge', { symbol: Foreign('xcZTG') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should find asset starting with "xc" for Moonbeam', () => {
+  it('Should find asset starting with "xc" for Centrifuge', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...wethAsset,
         symbol: 'WETH.e'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: 'xcWETH.e' })
+    const asset = findAssetInfo('Centrifuge', { symbol: 'xcWETH.e' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+  it('Should find asset starting with "xc" for Centrifuge using Foreign selector', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...wethAsset,
         symbol: 'WETH.e'
       }
     ])
-    const asset = findAssetInfo('Moonbeam', { symbol: Foreign('xcWETH.e') })
+    const asset = findAssetInfo('Centrifuge', { symbol: Foreign('xcWETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })

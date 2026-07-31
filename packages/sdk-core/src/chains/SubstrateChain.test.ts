@@ -420,7 +420,7 @@ describe('Parachain', () => {
     }
 
     vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
-    vi.mocked(resolveDestChain).mockReturnValue('Moonbeam')
+    vi.mocked(resolveDestChain).mockReturnValue('Darwinia')
 
     const hasMethodSpy = vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
     const deserializeExtrinsicsSpy = vi
@@ -429,7 +429,7 @@ describe('Parachain', () => {
 
     const options = {
       api,
-      to: 'Moonbeam',
+      to: 'Darwinia',
       assetInfo: {
         symbol: 'USDT',
         amount: 100n,

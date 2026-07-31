@@ -23,7 +23,7 @@ describe('validateDestinationAddress', () => {
 
   it('should call validateAddress when destination is defined, not a TLocation, and address is a string', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678'
-    const destination: TDestination = 'Moonbeam'
+    const destination: TDestination = 'Darwinia'
 
     vi.mocked(isTLocation).mockReturnValue(false)
 
@@ -35,7 +35,7 @@ describe('validateDestinationAddress', () => {
 
   it('should propagate InvalidAddressError thrown by validateAddress', () => {
     const address = 'invalid-address'
-    const destination: TDestination = 'Moonbeam'
+    const destination: TDestination = 'Darwinia'
 
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(validateAddress).mockImplementation(() => {

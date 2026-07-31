@@ -32,7 +32,7 @@ describe('resolveHopAsset', () => {
     tx: {},
     originChain: 'Acala',
     currentChain: 'Astar',
-    destination: 'Moonbeam',
+    destination: 'Darwinia',
     asset: { symbol: 'ORIGIN' } as TAssetInfo,
     currency: {} as TCurrencyInputWithAmount,
     hasPassedExchange: false
@@ -93,12 +93,12 @@ describe('resolveHopAsset', () => {
       currentAsset,
       hasPassedExchange: true,
       swapConfig,
-      currentChain: 'Moonbeam'
+      currentChain: 'Darwinia'
     })
 
     expect(findAssetOnDestSpy).toHaveBeenCalledWith(
       swapConfig.exchangeChain,
-      'Moonbeam',
+      'Darwinia',
       swapConfig.currencyTo
     )
     expect(result).toBe(expectedAsset)

@@ -117,7 +117,7 @@ describe('buildExecuteSwapHops', () => {
     const hops = [
       buildHop('AssetHubPolkadot', 1n, dotAsset),
       buildHop('Hydration', 2n, dotAsset),
-      buildHop('Moonbeam', 3n, usdtAsset),
+      buildHop('Darwinia', 3n, usdtAsset),
     ];
 
     const result = await buildExecuteSwapHops({
@@ -144,14 +144,14 @@ describe('buildExecuteSwapHops', () => {
         },
       },
       {
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         result: { asset: usdtAsset, xcmFee: { fee: 3n, asset: usdtAsset } },
       },
     ]);
   });
 
   it('treats every hop as pre-swap when the exchange chain is not in the hops list', async () => {
-    const hops = [buildHop('AssetHubPolkadot', 1n, dotAsset), buildHop('Moonbeam', 2n, dotAsset)];
+    const hops = [buildHop('AssetHubPolkadot', 1n, dotAsset), buildHop('Darwinia', 2n, dotAsset)];
 
     await buildExecuteSwapHops({
       api: mockApi,

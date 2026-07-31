@@ -18,7 +18,7 @@ describe('validateDestinationAddress', () => {
 
   it('should not throw an error when destination is EVM and address is a valid Ethereum address', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678';
-    const destination: TChain = 'Moonbeam';
+    const destination: TChain = 'Darwinia';
 
     vi.mocked(isChainEvm).mockReturnValue(true);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(true);
@@ -30,7 +30,7 @@ describe('validateDestinationAddress', () => {
 
   it('should throw an error when destination is EVM and address is not a valid Ethereum address', () => {
     const address = 'invalid-address';
-    const destination: TChain = 'Moonbeam';
+    const destination: TChain = 'Darwinia';
 
     vi.mocked(isChainEvm).mockReturnValue(true);
     vi.spyOn(ethers, 'isAddress').mockReturnValue(false);

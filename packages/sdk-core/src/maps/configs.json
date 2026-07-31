@@ -229,21 +229,6 @@
       }
     ]
   },
-  "Interlay": {
-    "name": "Interlay",
-    "info": "interlay",
-    "paraId": 2032,
-    "providers": [
-      {
-        "name": "Kintsugi Labs",
-        "endpoint": "wss://api.interlay.io/parachain"
-      },
-      {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-interlay.luckyfriday.io/"
-      }
-    ]
-  },
   "Heima": {
     "name": "Heima",
     "info": "heima",
@@ -267,33 +252,6 @@
       {
         "name": "Jamton",
         "endpoint": "wss://rpc.jamton.network"
-      }
-    ]
-  },
-  "Moonbeam": {
-    "name": "Moonbeam",
-    "info": "moonbeam",
-    "paraId": 2004,
-    "providers": [
-      {
-        "name": "Allnodes",
-        "endpoint": "wss://moonbeam-rpc.publicnode.com"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://moonbeam-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Moonbeam Foundation",
-        "endpoint": "wss://wss.api.moonbeam.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://moonbeam.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "UnitedBloc",
-        "endpoint": "wss://moonbeam.unitedbloc.com"
       }
     ]
   },
@@ -548,48 +506,6 @@
       }
     ]
   },
-  "Kintsugi": {
-    "name": "Kintsugi BTC",
-    "info": "kintsugi",
-    "paraId": 2092,
-    "providers": [
-      {
-        "name": "Kintsugi Labs",
-        "endpoint": "wss://api-kusama.interlay.io/parachain"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://kintsugi.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Moonriver": {
-    "name": "Moonriver",
-    "info": "moonriver",
-    "paraId": 2023,
-    "providers": [
-      {
-        "name": "Allnodes",
-        "endpoint": "wss://moonriver-rpc.publicnode.com"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://moonriver-rpc.n.dwellir.com"
-      },
-      {
-        "name": "Moonbeam Foundation",
-        "endpoint": "wss://wss.api.moonriver.moonbeam.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://moonriver.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "UnitedBloc",
-        "endpoint": "wss://moonriver.unitedbloc.com"
-      }
-    ]
-  },
   "CoretimeKusama": {
     "name": "Coretime",
     "info": "kusamaCoretime",
@@ -696,17 +612,6 @@
       }
     ]
   },
-  "Quartz": {
-    "name": "QUARTZ by UNIQUE",
-    "info": "quartz",
-    "paraId": 2095,
-    "providers": [
-      {
-        "name": "Geo Load Balancer",
-        "endpoint": "wss://ws-quartz.unique.network"
-      }
-    ]
-  },
   "RobonomicsPolkadot": {
     "name": "Robonomics",
     "info": "robonomics",
@@ -761,17 +666,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://shiden.api.onfinality.io/public-ws"
-      }
-    ]
-  },
-  "Zeitgeist": {
-    "name": "Zeitgeist",
-    "info": "zeitgeist",
-    "paraId": 2092,
-    "providers": [
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://zeitgeist.api.onfinality.io/public-ws"
       }
     ]
   },
@@ -861,17 +755,6 @@
       }
     ]
   },
-  "AjunaPaseo": {
-    "name": "Ajuna Network (Paseo)",
-    "info": "Ajuna(paseo)",
-    "paraId": 2051,
-    "providers": [
-      {
-        "name": "BajunNetwork",
-        "endpoint": "wss://rpc-paseo.ajuna.network"
-      }
-    ]
-  },
   "AssetHubPaseo": {
     "name": "Asset Hub",
     "info": "PaseoAssetHub",
@@ -884,47 +767,6 @@
       {
         "name": "TurboFlakes",
         "endpoint": "wss://sys.turboflakes.io/asset-hub-paseo"
-      },
-      {
-        "name": "Zondax",
-        "endpoint": "wss://api2.zondax.ch/pas/assethub/node/rpc"
-      }
-    ]
-  },
-  "BifrostPaseo": {
-    "name": "Bifrost",
-    "info": "Bifrost(Paseo)",
-    "paraId": 2030,
-    "providers": [
-      {
-        "name": "Liebi",
-        "endpoint": "wss://bifrost-rpc.paseo.liebi.com/ws"
-      },
-      {
-        "name": "Liebi2",
-        "endpoint": "wss://bifrost-rpc.paseo2.liebi.com/ws"
-      }
-    ]
-  },
-  "BridgeHubPaseo": {
-    "name": "Bridge Hub",
-    "info": "PaseoBridgeHub",
-    "paraId": 1002,
-    "providers": [
-      {
-        "name": "Zondax",
-        "endpoint": "wss://api2.zondax.ch/pas/bridgehub/node/rpc"
-      }
-    ]
-  },
-  "CoretimePaseo": {
-    "name": "Coretime",
-    "info": "PaseoCoretime",
-    "paraId": 1005,
-    "providers": [
-      {
-        "name": "Zondax",
-        "endpoint": "wss://api2.zondax.ch/pas/coretime/node/rpc"
       }
     ]
   },
@@ -988,17 +830,6 @@
       {
         "name": "interweb",
         "endpoint": "wss://rpc.interweb-it.com/people-paseo"
-      }
-    ]
-  },
-  "ZeitgeistPaseo": {
-    "name": "Zeitgeist Battery Station",
-    "info": "ZeitgeistBatteryStation",
-    "paraId": 2101,
-    "providers": [
-      {
-        "name": "Zeitgeist",
-        "endpoint": "wss://bsr.zeitgeist.pm"
       }
     ]
   },

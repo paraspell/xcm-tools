@@ -187,7 +187,7 @@ describe('createCustomXcm', () => {
           ...mockContext,
           origin: { chain: 'BifrostPolkadot', api: mockApi },
           dest: { chain: 'AssetHubPolkadot', api: mockApi },
-          reserve: { chain: 'Moonbeam', api: mockApi },
+          reserve: { chain: 'Darwinia', api: mockApi },
           isRelayAsset: false
         },
         2,
@@ -489,12 +489,12 @@ describe('createCustomXcm', () => {
     })
 
     it('uses recipient when origin is EVM but destination is not EVM and ahAddress is missing', async () => {
-      vi.spyOn(mockApi, 'isChainEvm').mockImplementation(chain => chain === 'Moonbeam')
+      vi.spyOn(mockApi, 'isChainEvm').mockImplementation(chain => chain === 'Darwinia')
 
       const result = await createCustomXcm(
         {
           ...hopContext,
-          origin: { chain: 'Moonbeam', api: mockApi },
+          origin: { chain: 'Darwinia', api: mockApi },
           options: {
             ...hopContext.options,
             sender: '0xsender',
@@ -519,7 +519,7 @@ describe('createCustomXcm', () => {
         createCustomXcm(
           {
             ...hopContext,
-            origin: { chain: 'Moonbeam', api: mockApi },
+            origin: { chain: 'Darwinia', api: mockApi },
             dest: { chain: 'Ethereum', api: mockApi },
             options: {
               ...hopContext.options,

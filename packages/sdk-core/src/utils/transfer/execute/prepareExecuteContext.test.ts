@@ -18,7 +18,7 @@ describe('prepareExecuteContext', () => {
   const mockFeeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
 
   const chain = 'Acala'
-  const destChain = 'Moonbeam'
+  const destChain = 'Darwinia'
 
   const api = {
     getAssetReserveChain: vi.fn(),
@@ -125,7 +125,7 @@ describe('prepareExecuteContext', () => {
     prepareExecuteContext(mockOptions)
 
     expect(localizeLocationSpy).toHaveBeenCalledWith('Acala', mockLocation)
-    expect(localizeLocation).toHaveBeenCalledWith('Moonbeam', mockLocation)
+    expect(localizeLocation).toHaveBeenCalledWith('Darwinia', mockLocation)
     expect(localizeLocationSpy).toHaveBeenCalledWith('AssetHubPolkadot', mockLocation)
   })
 

@@ -11,33 +11,24 @@ import crabPng from '../../logos/crab.png';
 import crustPng from '../../logos/crust.png';
 import darwiniaPng from '../../logos/darwinia.png';
 import hydrationPng from '../../logos/hydration.png';
-import interlayPng from '../../logos/interlay.png';
-import moonbeamPng from '../../logos/moonbeam.png';
 import mythosPng from '../../logos/mythos.png';
 import neuroWebPng from '../../logos/neuroWeb.png';
 import pendulumPng from '../../logos/pendulum.png';
 import uniquePng from '../../logos/unique.png';
-import zeitgeistPng from '../../logos/zeitgeist.png';
 import { getParachainLogo } from '../../utils/utils';
 
 export const getChainLogo = (chain: TSubstrateChain) => {
   switch (chain) {
     case 'Collectives':
       return collectivesPng;
-    case 'Interlay':
-      return interlayPng;
     case 'Centrifuge':
       return centrifugePng;
-    case 'Zeitgeist':
-      return zeitgeistPng;
     case 'Unique':
       return uniquePng;
     case 'Acala':
       return acalaPng;
     case 'Pendulum':
       return pendulumPng;
-    case 'Moonbeam':
-      return moonbeamPng;
     case 'BifrostPolkadot':
       return bifrostPng;
     case 'Hydration':

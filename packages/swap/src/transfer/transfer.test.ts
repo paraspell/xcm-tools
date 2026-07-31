@@ -142,7 +142,7 @@ describe('transfer', () => {
 
   it('should throw an error if origin chain is EVM and evmSigner is missing', async () => {
     const options = {
-      from: 'Moonbeam',
+      from: 'Darwinia',
       to: 'Astar',
     } as TTransferBaseOptions<unknown, unknown, unknown>;
 

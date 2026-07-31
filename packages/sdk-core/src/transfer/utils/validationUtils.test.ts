@@ -419,14 +419,14 @@ describe('validateTransact', () => {
     expect(() =>
       validateTransact({
         ...baseOptions,
-        from: 'Moonbeam'
+        from: 'Darwinia'
       })
     ).toThrowError(UnsupportedOperationError)
 
     expect(() =>
       validateTransact({
         ...baseOptions,
-        to: 'Moonbeam'
+        to: 'Darwinia'
       })
     ).toThrowError(UnsupportedOperationError)
   })

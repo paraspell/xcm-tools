@@ -143,7 +143,7 @@ describe('dryRunRouter', () => {
     const dryRunResult = createDryRunResult({
       hops: [
         { chain: 'Acala', result: {} },
-        { chain: 'Moonbeam', result: {} },
+        { chain: 'Darwinia', result: {} },
       ],
     } as TDryRunResult);
 
@@ -166,7 +166,7 @@ describe('dryRunRouter', () => {
     expect(result.origin.isExchange).toBe(true);
     expect(result.destination?.isExchange).toBe(true);
     expect(result.hops.find((hop) => hop.chain === 'Acala')?.result.isExchange).toBe(true);
-    expect(result.hops.find((hop) => hop.chain === 'Moonbeam')?.result.isExchange).toBeFalsy();
+    expect(result.hops.find((hop) => hop.chain === 'Darwinia')?.result.isExchange).toBeFalsy();
   });
 
   it('propagates bypass options to the second transaction when the first dry run succeeds', async () => {
@@ -181,7 +181,7 @@ describe('dryRunRouter', () => {
         },
       },
       destination: {
-        chain: 'Moonbeam',
+        chain: 'Darwinia',
         address: 'dest-address',
       },
       exchange: {
@@ -227,7 +227,7 @@ describe('dryRunRouter', () => {
     expect(firstCallArgs.destination).toBe('Hydration');
     expect(firstCallArgs.bypassOptions).toBeUndefined();
 
-    expect(secondCallArgs.destination).toBe('Moonbeam');
+    expect(secondCallArgs.destination).toBe('Darwinia');
     expect(secondCallArgs.bypassOptions).toEqual({
       mintFeeAssets: false,
       sentAssetMintMode: 'preview',
@@ -239,7 +239,7 @@ describe('dryRunRouter', () => {
 
     vi.mocked(buildTransactions).mockResolvedValue([
       createTransaction('Acala'),
-      createTransaction('Moonbeam'),
+      createTransaction('Darwinia'),
       createTransaction('Astar'),
     ]);
 
@@ -284,7 +284,7 @@ describe('dryRunRouterPreview', () => {
           location: { parents: 0, interior: 'Here' },
         },
       },
-      destination: { chain: 'Moonbeam', address: 'dest-address' },
+      destination: { chain: 'Darwinia', address: 'dest-address' },
       exchange: {
         apiType: 'PAPI' as const,
         chain: 'Hydration',
@@ -353,7 +353,7 @@ describe('dryRunTransactions', () => {
         chain: 'BifrostPolkadot',
         assetFrom: { symbol: 'BNC', decimals: 12, location: { parents: 0, interior: 'Here' } },
       },
-      destination: { chain: 'Moonbeam', address: 'dest-address' },
+      destination: { chain: 'Darwinia', address: 'dest-address' },
       exchange: {
         apiType: 'PAPI' as const,
         chain: 'Hydration',

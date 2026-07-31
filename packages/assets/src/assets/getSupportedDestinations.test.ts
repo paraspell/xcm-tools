@@ -34,7 +34,7 @@ vi.mock('./isStableCoinAsset', () => ({
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
-  CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Moonbeam', 'Astar', 'AssetHubPolkadot'],
+  CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Centrifuge', 'Astar', 'AssetHubPolkadot'],
   SUBSTRATE_CHAINS: ['Polkadot', 'BifrostPolkadot', 'Acala', 'Astar', 'Karura'],
   ETHEREUM_BRIDGE_ORIGINS: ['Acala'],
   isExternalChain: isExternalChainMock,
@@ -78,7 +78,7 @@ describe('getSupportedDestinations', () => {
 
     expect(findAssetInfoOnDest).toHaveBeenCalledTimes(4)
     expect(findAssetInfoOnDest).toHaveBeenCalledWith(origin, 'Kusama', currency, asset)
-    expect(result).toEqual(['Acala', 'Moonbeam'])
+    expect(result).toEqual(['Acala', 'Centrifuge'])
   })
 
   it('should exclude the origin chain from results', () => {
@@ -107,7 +107,7 @@ describe('getSupportedDestinations', () => {
         throw new InvalidCurrencyError('Invalid currency for destination')
       })
 
-    expect(getSupportedDestinations(origin, currency)).toEqual(['Acala', 'Moonbeam', 'Astar'])
+    expect(getSupportedDestinations(origin, currency)).toEqual(['Acala', 'Centrifuge', 'Astar'])
   })
 
   it('should re-throw non-InvalidCurrencyError errors from findAssetInfoOrThrow', () => {
@@ -149,14 +149,14 @@ describe('getSupportedDestinations', () => {
     isExternalChainMock.mockImplementation(chain => chain === 'Kusama')
 
     expect(getSupportedDestinations('Acala', currency)).toContain('Kusama')
-    expect(getSupportedDestinations('Moonbeam', currency)).not.toContain('Kusama')
+    expect(getSupportedDestinations('Centrifuge', currency)).not.toContain('Kusama')
   })
 
   it('should handle external origins (reverse Snowbridge) and exclude external-to-external', () => {
     isExternalChainMock.mockImplementation(chain => chain === 'Ethereum')
     const reverse = getSupportedDestinations('Ethereum', currency)
     expect(reverse).toContain('Acala')
-    expect(reverse).not.toContain('Moonbeam')
+    expect(reverse).not.toContain('Centrifuge')
 
     isExternalChainMock.mockReturnValue(true)
     expect(getSupportedDestinations('Ethereum', currency)).toEqual([])

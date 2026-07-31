@@ -14,28 +14,27 @@
     "format:write": "prettier --write src"
   },
   "dependencies": {
-    "@mantine/code-highlight": "^9.4.1",
-    "@mantine/core": "^9.4.1",
-    "@mantine/form": "^9.4.1",
-    "@mantine/hooks": "^9.4.1",
+    "@mantine/code-highlight": "^9.5.0",
+    "@mantine/core": "^9.5.0",
+    "@mantine/hooks": "^9.5.0",
     "@mantinex/dev-icons": "^2.0.0",
-    "@tabler/icons-react": "^3.44.0",
-    "@tsparticles/engine": "4.3.0",
-    "@tsparticles/preset-links": "^4.3.0",
-    "@tsparticles/react": "^4.3.0",
-    "@tsparticles/slim": "4.3.0",
+    "@tabler/icons-react": "^3.46.0",
+    "@tsparticles/engine": "^4.3.2",
+    "@tsparticles/preset-links": "^4.3.2",
+    "@tsparticles/react": "^4.3.2",
+    "@tsparticles/slim": "^4.3.2",
     "highlight.js": "^11.11.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-router": "^8.0.1"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.3.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
-    "postcss": "^8.5.16",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "postcss": "^8.5.25",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
-    "vite": "^8.1.0"
+    "vite": "^8.2.0"
   }
 }

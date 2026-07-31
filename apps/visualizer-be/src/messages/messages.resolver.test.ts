@@ -21,7 +21,7 @@ describe('MessageResolver', () => {
   };
 
   const ecosystem = 'polkadot';
-  const parachains = ['Acala', 'Moonbeam'];
+  const parachains = ['Acala', 'Darwinia'];
   const startTime = new Date('2025-01-01T00:00:00Z');
   const endTime = new Date('2025-01-02T00:00:00Z');
 

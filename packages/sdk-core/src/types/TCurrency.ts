@@ -25,8 +25,6 @@ export type TXcmAsset = { XCM: number | undefined } | { Native: null }
 
 export type TNativeTokenAsset = 'NativeToken'
 
-export type TZeitgeistAsset = 'Ztg'
-
 export type TOtherReserveAsset = {
   OtherReserve: string | bigint | undefined
 }

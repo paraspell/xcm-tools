@@ -32,7 +32,7 @@ describe('prepareCommonExecuteXcm', () => {
     recipient: '5GrpknVvGGrGH3EFuURXeMrWHvbpj3VfER1oX5jFtuGbfzCE',
     version: mockVersion,
     chain: 'Acala',
-    destChain: 'Moonbeam',
+    destChain: 'Darwinia',
     assetInfo: {
       amount: 1000000000000n,
       location: { parents: 1, interior: { Here: null } }

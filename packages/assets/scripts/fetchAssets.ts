@@ -36,7 +36,6 @@ import {
 } from '../../sdk-common/scripts/scriptUtils'
 import { createScriptProgress } from '../../sdk-common/scripts/progress'
 import { getNativeAssetsFetcher, getOtherAssetsFetcher } from './fetchers'
-import { fetchInterlayNativeAssets, fetchKintsugiNativeAssets } from './fetchers/interlay'
 
 const JSON_FILE_PATH = './src/maps/assets.json'
 
@@ -60,7 +59,6 @@ const resolveNativeAssets = async (
     ]
   }
   const defaultNativeAssets = await fetchNativeAssetsDefault(client)
-  if (chain === 'BifrostPaseo') return defaultNativeAssets.slice(0, 1)
   if (chain === 'Hydration') return defaultNativeAssets.map(asset => ({ ...asset, assetId: '0' }))
   return defaultNativeAssets
 }
@@ -75,9 +73,6 @@ const fetchNativeAssets = async (
 
   const defaultNativeAssets = await resolveNativeAssets(chain, client)
 
-  if (chain === 'Interlay') nativeAssets = fetchInterlayNativeAssets(defaultNativeAssets)
-  if (chain === 'Kintsugi') nativeAssets = fetchKintsugiNativeAssets(defaultNativeAssets)
-
   const transformed = nativeAssets.length > 0 ? nativeAssets : defaultNativeAssets
 
   const reordered = transformed.sort((a, b) => {
@@ -91,24 +86,6 @@ const fetchNativeAssets = async (
   const CUSTOM_NATIVE_JUNCTIONS: Partial<Record<TSubstrateChain, TJunction>> = {
     Crab: { PalletInstance: 5 },
     Darwinia: { PalletInstance: 5 },
-    Zeitgeist: {
-      GeneralKey: {
-        length: 2,
-        data: '0x0001000000000000000000000000000000000000000000000000000000000000'
-      }
-    },
-    Interlay: {
-      GeneralKey: {
-        length: 2,
-        data: '0x0002000000000000000000000000000000000000000000000000000000000000'
-      }
-    },
-    Kintsugi: {
-      GeneralKey: {
-        length: 2,
-        data: '0x000c000000000000000000000000000000000000000000000000000000000000'
-      }
-    },
     Ajuna: {
       GeneralKey: {
         length: 4,
@@ -117,8 +94,6 @@ const fetchNativeAssets = async (
     },
     Pendulum: { PalletInstance: 10 },
     NeuroWeb: { PalletInstance: 10 },
-    Moonriver: { PalletInstance: 10 },
-    Moonbeam: { PalletInstance: 10 },
     Hydration: { GeneralIndex: 0 }
   }
 

@@ -92,7 +92,7 @@ describe('resolveScenario', () => {
 
     it('should return "ParaToPara" when origin is not relay chain, destination is not TLocation but also not relay chain', () => {
       const origin: TSubstrateChain = 'Acala'
-      const destination: TDestination = 'Moonbeam'
+      const destination: TDestination = 'Darwinia'
 
       vi.mocked(isRelayChain).mockReturnValueOnce(false).mockReturnValueOnce(false)
       vi.mocked(isTLocation).mockReturnValue(false)
@@ -108,7 +108,7 @@ describe('resolveScenario', () => {
 
     it('should return "ParaToPara" when both origin and destination are parachains', () => {
       const origin: TSubstrateChain = 'Karura'
-      const destination: TDestination = 'Moonriver'
+      const destination: TDestination = 'Shiden'
 
       vi.mocked(isRelayChain).mockReturnValue(false)
       vi.mocked(isTLocation).mockReturnValue(false)

@@ -294,7 +294,7 @@ describe('AssetsService', () => {
 
     it('should return supported destinations for a valid chain', () => {
       const chain = 'Acala';
-      const supportedDestinations = ['Karura', 'Moonbeam'];
+      const supportedDestinations = ['Karura', 'Darwinia'];
       getSupportedDestinationsSpy.mockReturnValue(supportedDestinations);
       const result = service.getSupportedDestinations(chain, {
         currency: { symbol: 'KSM' },

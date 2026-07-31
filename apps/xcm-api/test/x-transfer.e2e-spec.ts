@@ -167,10 +167,13 @@ describe('X-Transfer controller (e2e)', () => {
   it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl}`, async () => {
     const from: TChain = 'AssetHubKusama';
     const to1: TChain = 'Basilisk';
-    const to2: TChain = 'Moonriver';
-    const currency = { id: 1984, amount };
+    const to2: TChain = 'Shiden';
+    const currency = {
+      location: { parents: 1, interior: { Here: null } },
+      amount,
+    };
     const address1 = RECIPIENT;
-    const address2 = EVM_RECIPIENT;
+    const address2 = RECIPIENT;
 
     const builder = Builder()
       .from(from)
@@ -243,7 +246,7 @@ describe('X-Transfer controller (e2e)', () => {
 
   it(`Generate Batch XCM call - Different 'from' Chains - ${xTransferBatchUrl}`, async () => {
     const from1: TChain = 'AssetHubKusama';
-    const from2: TChain = 'Moonriver';
+    const from2: TChain = 'Shiden';
     const to: TChain = 'Basilisk';
     const currency = { symbol: 'USDT', amount };
 
@@ -389,10 +392,13 @@ describe('X-Transfer controller (e2e)', () => {
   it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl}`, async () => {
     const from: TChain = 'AssetHubKusama';
     const to1: TChain = 'Basilisk';
-    const to2: TChain = 'Moonriver';
-    const currency = { id: 1984, amount };
+    const to2: TChain = 'Shiden';
+    const currency = {
+      location: { parents: 1, interior: { Here: null } },
+      amount,
+    };
     const recipient1 = RECIPIENT;
-    const recipient2 = EVM_RECIPIENT;
+    const recipient2 = RECIPIENT;
 
     const builder = Builder()
       .from(from)
@@ -822,7 +828,7 @@ describe('X-Transfer controller (e2e)', () => {
     return request(app.getHttpServer())
       .post('/dry-run')
       .send({
-        from: 'Interlay',
+        from: 'Centrifuge',
         to: 'Astar',
         currency: {
           symbol: 'ACA',

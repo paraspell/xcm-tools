@@ -30,7 +30,7 @@ describe('localizeLocation', () => {
 
     vi.mocked(getParaId).mockImplementation(chain => {
       if (chain === 'Acala') return 2000
-      if (chain === 'Moonbeam') return 2004
+      if (chain === 'Darwinia') return 2004
       if (chain === 'AssetHubPolkadot') return 1000
       if (chain === 'BifrostKusama') return 2001
       return 0
@@ -41,7 +41,7 @@ describe('localizeLocation', () => {
         case 'Acala':
         case 'Astar':
         case 'AssetHubPolkadot':
-        case 'Moonbeam':
+        case 'Darwinia':
           return 'Polkadot'
         case 'AssetHubKusama':
           return 'Kusama'

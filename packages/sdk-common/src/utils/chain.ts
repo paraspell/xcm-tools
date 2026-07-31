@@ -64,7 +64,6 @@ export const isSystemChain = <TCustomChain extends string = never>(
     'BridgeHubPolkadot',
     'BridgeHubKusama',
     'BridgeHubWestend',
-    'BridgeHubPaseo',
     'PeoplePolkadot',
     'PeopleKusama',
     'PeopleWestend',
@@ -72,7 +71,6 @@ export const isSystemChain = <TCustomChain extends string = never>(
     'CoretimePolkadot',
     'CoretimeKusama',
     'CoretimeWestend',
-    'CoretimePaseo',
     'Collectives',
     'Encointer',
     'CollectivesWestend'

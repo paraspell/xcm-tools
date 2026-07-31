@@ -120,7 +120,7 @@ describe('getSwapOriginFee', () => {
         getAmountOut: vi.fn().mockResolvedValue(5000n),
       } as unknown as ExchangeChain;
 
-      options.destination = { chain: 'Moonbeam' } as unknown as TDestinationInfo;
+      options.destination = { chain: 'Darwinia' } as unknown as TDestinationInfo;
       options.exchange = {
         ...options.exchange,
         chain: 'Hydration',

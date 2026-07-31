@@ -19,16 +19,16 @@ describe('getChainLocation', () => {
   it('returns correct location for relay → parachain', () => {
     vi.mocked(getParaIdImpl).mockReturnValue(2000)
 
-    expect(getChainLocation('Polkadot', 'Moonbeam')).toEqual({
+    expect(getChainLocation('Polkadot', 'Darwinia')).toEqual({
       parents: Parents.ZERO,
       interior: { X1: [{ Parachain: 2000 }] }
     })
 
-    expect(getParaIdImpl).toHaveBeenCalledWith('Moonbeam', undefined)
+    expect(getParaIdImpl).toHaveBeenCalledWith('Darwinia', undefined)
   })
 
   it('returns correct location for parachain → relay', () => {
-    expect(getChainLocation('Moonbeam', 'Polkadot')).toEqual({
+    expect(getChainLocation('Darwinia', 'Polkadot')).toEqual({
       parents: Parents.ONE,
       interior: 'Here'
     })
@@ -37,7 +37,7 @@ describe('getChainLocation', () => {
   it('returns correct location for parachain → parachain', () => {
     vi.mocked(getParaIdImpl).mockReturnValue(2001)
 
-    expect(getChainLocation('Moonbeam', 'Acala')).toEqual({
+    expect(getChainLocation('Darwinia', 'Acala')).toEqual({
       parents: Parents.ONE,
       interior: { X1: [{ Parachain: 2001 }] }
     })

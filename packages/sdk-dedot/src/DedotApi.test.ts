@@ -498,7 +498,7 @@ describe("DedotApi", () => {
       address: "addr",
       chain: "Hydration",
       version: Version.V5,
-      destination: "Moonbeam",
+      destination: "Darwinia",
       asset: { symbol: "DOT" } as WithAmount<TAssetInfo>,
     });
 
@@ -599,7 +599,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { symbol: "GLMR" } as WithAmount<TAssetInfo>,
@@ -691,7 +691,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { symbol: "DOT" } as WithAmount<TAssetInfo>,
@@ -736,7 +736,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { symbol: "GLMR" } as WithAmount<TAssetInfo>,
@@ -768,7 +768,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { symbol: "USDT" } as WithAmount<TAssetInfo>,
@@ -802,7 +802,7 @@ describe("DedotApi", () => {
       await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         useRootOrigin: true,
         version: Version.V5,
@@ -849,7 +849,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: testAddress,
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: {} as WithAmount<TAssetInfo>,
@@ -1025,7 +1025,7 @@ describe("DedotApi", () => {
   });
 
   describe("getXcmPaymentApiFee", () => {
-    const chain: TSubstrateChain = "Moonbeam";
+    const chain: TSubstrateChain = "Darwinia";
     const localXcm = { type: "V4", value: [] };
     const baseAsset: TAssetInfo = {
       symbol: "GLMR",
@@ -1056,7 +1056,7 @@ describe("DedotApi", () => {
   });
 
   describe("getDeliveryFee", () => {
-    const chain: TSubstrateChain = "Moonbeam";
+    const chain: TSubstrateChain = "Darwinia";
     const baseAsset: TAssetInfo = {
       symbol: "GLMR",
       decimals: 18,
@@ -1373,7 +1373,7 @@ describe("DedotApi", () => {
       );
 
       const result = await dedotApi.getXcmPaymentApiFee(
-        "Moonbeam",
+        "Darwinia",
         { raw: true },
         [],
         asset,
@@ -1470,7 +1470,7 @@ describe("DedotApi", () => {
 
       await expect(
         dedotApi.getDeliveryFee(
-          "Moonbeam",
+          "Darwinia",
           [{}, [{}]],
           { ...asset, symbol: "USDC" },
           asset.location,
@@ -1487,7 +1487,7 @@ describe("DedotApi", () => {
 
       await expect(
         dedotApi.getDeliveryFee(
-          "Moonbeam",
+          "Darwinia",
           [{}, [{}]],
           asset,
           asset.location,
@@ -1523,7 +1523,7 @@ describe("DedotApi", () => {
         dedotApi.getDryRunCall({
           tx: mockTx,
           address: "5Alice",
-          chain: "Moonbeam",
+          chain: "Darwinia",
           destination: "Acala",
           version: Version.V5,
           asset: { ...asset, amount: 1n },
@@ -1603,7 +1603,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: "5Alice",
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { ...asset, amount: 1n },
@@ -1642,7 +1642,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: "5Alice",
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { ...asset, amount: 1n },
@@ -1676,7 +1676,7 @@ describe("DedotApi", () => {
       const result = await dedotApi.getDryRunCall({
         tx: mockTx,
         address: "5Alice",
-        chain: "Moonbeam",
+        chain: "Darwinia",
         destination: "Acala",
         version: Version.V5,
         asset: { ...asset, amount: 1n },

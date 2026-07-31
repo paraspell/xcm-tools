@@ -233,7 +233,7 @@ describe('PolkadotJsApi', () => {
     it('should return early if already initialized', async () => {
       const leaseClientSpy = vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
 
-      await polkadotApi.init('Moonbeam')
+      await polkadotApi.init('Darwinia')
 
       expect(leaseClientSpy).not.toHaveBeenCalled()
       expect(polkadotApi.api).toBe(mockApiPromise)
@@ -244,10 +244,10 @@ describe('PolkadotJsApi', () => {
     it('should use apiOverrides when provided in config', async () => {
       const polkadotApi = new PolkadotJsApi({
         apiOverrides: {
-          Moonbeam: mockApiPromise
+          Darwinia: mockApiPromise
         }
       })
-      await polkadotApi.init('Moonbeam')
+      await polkadotApi.init('Darwinia')
 
       expect(polkadotApi.api).toBe(mockApiPromise)
     })
@@ -257,12 +257,12 @@ describe('PolkadotJsApi', () => {
         development: true,
         apiOverrides: {
           Acala: mockApiPromise
-          // Moonbeam not provided
+          // Darwinia not provided
         }
       })
 
-      await expect(polkadotApi.init('Moonbeam')).rejects.toThrow(
-        new MissingChainApiError('Moonbeam')
+      await expect(polkadotApi.init('Darwinia')).rejects.toThrow(
+        new MissingChainApiError('Darwinia')
       )
     })
 
@@ -1914,7 +1914,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         chain: 'Hydration',
-        destination: 'Moonbeam',
+        destination: 'Darwinia',
         asset: { ...multiAsset, amount: 100n },
         version: Version.V5
       })
@@ -1975,7 +1975,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address,
-          chain: 'Interlay',
+          chain: 'Centrifuge',
           destination: 'Hydration',
           asset: {} as WithAmount<TAssetInfo>,
           version: Version.V5
@@ -1989,7 +1989,7 @@ describe('PolkadotJsApi', () => {
       tx: {} as Extrinsic,
       address: 'addr',
       chain: 'Hydration',
-      destination: 'Moonbeam',
+      destination: 'Darwinia',
       asset: dotAsset,
       version: Version.V5
     } as TDryRunCallBaseOptions<Extrinsic>
@@ -2198,7 +2198,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          chain: 'Interlay',
+          chain: 'Centrifuge',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions<Extrinsic>)
       ).rejects.toThrow(RuntimeApiUnavailableError)
