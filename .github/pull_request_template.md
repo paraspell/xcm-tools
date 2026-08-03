@@ -24,6 +24,24 @@ Explain the root cause if known and what was done to fix it.
 
 ---
 
+## ✅ Contributor Eligibility
+
+<!--
+Bug bounty submissions must meet ALL of the criteria below to be eligible for a reward.
+Full details: https://paraspell.github.io/docs/contribution-guidelines.html#%E2%9C%85-contributor-eligibility
+-->
+
+- [ ] My GitHub account's commit history is at least 6 months old.
+- [ ] I have set an on-chain identity on the Polkadot People Chain for my AssetHub address and requested a registrar judgement of at least `Reasonable` (verifiable via [Subscan](https://people-polkadot.subscan.io/)).
+- [ ] Every commit in this PR is signed (`-S`) and includes `Signed-off-by` and `AI-Assisted-By: <tool name(s)>` (or `AI-Assisted-By: None`) trailers.
+- [ ] I disclose any AI tools used to help write this fix (or confirm none were used), and I understand and can explain/defend the resulting code myself.
+- [ ] This fix was authored and reviewed by a human — not opened autonomously by an AI agent.
+- [ ] I will respond to maintainer review questions with specific, on-topic answers within 5 days.
+- [ ] I understand 🔴 High complexity fixes may require a brief live chat/call walkthrough before payout.
+- [ ] This is the only bug bounty issue I currently have reserved.
+
+---
+
 ## ✅ Checklist
 
 - [ ] My code follows the project's code style.

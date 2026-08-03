@@ -57,6 +57,23 @@ Add any other context about the problem here.
 
 ---
 
+## ✅ Contributor Eligibility
+
+<!--
+Bug bounty submissions must meet ALL of the criteria below to be eligible for a reward.
+Full details: https://paraspell.github.io/docs/contribution-guidelines.html#%E2%9C%85-contributor-eligibility
+-->
+
+- [ ] My GitHub account's commit history is at least 6 months old.
+- [ ] I have set an on-chain identity on the Polkadot People Chain for my AssetHub address (below) and requested a registrar judgement of at least `Reasonable` (verifiable via [Subscan](https://people-polkadot.subscan.io/)).
+- [ ] I disclose any AI tools used to help write this report (or confirm none were used), and I understand and can explain its contents myself.
+- [ ] This report was authored and submitted by a human — not opened autonomously by an AI agent.
+- [ ] I will respond to maintainer questions with specific, on-topic answers within 5 days.
+- [ ] If I go on to fix this issue myself, I understand every commit must be signed (`-S`) and include `Signed-off-by` and `AI-Assisted-By` trailers.
+- [ ] This is the only bug bounty issue I currently have reserved.
+
+---
+
 ## 💸 Polkadot Asset Hub Address (Optional – for reward eligibility)
 
 <!--
