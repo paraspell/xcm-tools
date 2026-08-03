@@ -1046,17 +1046,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
               }
             }
           ]
@@ -1091,17 +1097,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
               }
             }
           ]
@@ -1375,17 +1387,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x0000000000000000000000002260fac5e5542a773aa44fbcfedf7c193bc2c599"
               }
             }
           ]
@@ -1512,17 +1530,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x3f9610a50630bc7d4530736942ee2bc9e00e8de8"
+              "GeneralIndex": 30
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x00000000000000000000000060a3e35cc302bfa44cb288bc5a4f316fdb1adb42"
               }
             }
           ]
@@ -1583,17 +1607,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xe9f9a2e3deae4093c00fbc57b22bb51a4c05ad88"
+              "GeneralIndex": 1
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0xfcd141e9832caf10ad917495ca0f271b5b293cd47027ea737007ed40eb39a0bd"
               }
             }
           ]
@@ -1679,17 +1709,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xda430218862d3db25de9f61458645dde49a9e9c1"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x000000000000000000000000a3931d71877c0e7a3148cb7eb4463524fec27fbd"
               }
             }
           ]
@@ -1728,6 +1764,22 @@
       {
         "parents": 1,
         "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x6a21891db0940491603f3cca0a9f4dba4c6e810c"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X1": [
             {
               "Parachain": 3344
@@ -1758,17 +1810,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x484ecce6775143d3335ed2c7bcb22151c53b9f49"
+              "GeneralIndex": 21
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x9258181f5ceac8dbffb7030890243caed69a9599d2886d957a9cb7656af3bdb3"
               }
             }
           ]
@@ -1777,17 +1835,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x52b2f622f5676e92dbea3092004eb9ffb85a8d07"
+              "GeneralIndex": 1
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x26759f460ee5f743ed66d27c8f2a5623bf39d53ed575955320661e6e13e0e3da"
               }
             }
           ]
@@ -1802,17 +1866,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x06e605775296e851ff43b4daa541bb0984e9d6fd"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x0000000000000000000000006b175474e89094c44da98b954eedeac495271d0f"
               }
             }
           ]
@@ -2205,6 +2275,22 @@
         "interior": {
           "X2": [
             {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x8184e2f7c477d165772c21f7a2dbbb61a76e7fc4"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
               "Parachain": 2032
             },
             {
@@ -2273,17 +2359,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f"
+              "GeneralIndex": 2
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7"
               }
             }
           ]
@@ -2370,17 +2462,23 @@
       {
         "parents": 1,
         "interior": {
-          "X3": [
+          "X4": [
             {
-              "Parachain": 2004
+              "Parachain": 2034
             },
             {
-              "PalletInstance": 110
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
+              "GeneralIndex": 1
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0x069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001"
               }
             }
           ]
