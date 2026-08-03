@@ -47,9 +47,7 @@ jobs:
 
       - name: Prepare environment
         run: |
-          for app in apps/xcm-api apps/visualizer-be; do
-            echo DATABASE_URL="file:./dev.db" > $app/.env
-          done
+          echo DATABASE_URL="file:./dev.db" > apps/xcm-api/.env
 
       - name: Build project
         run: pnpm build
@@ -74,15 +72,10 @@ jobs:
         env:
           PLAYGROUND_SITE_ID: ${{ secrets.PLAYGROUND_SITE_ID }}
 
-      - name: Publish Visualizer FE
-        run: pnpm exec netlify deploy --prod --site $VISUALIZER_SITE_ID --filter visualizer-fe
-        env:
-          VISUALIZER_SITE_ID: ${{ secrets.VISUALIZER_SITE_ID }}
-
       - name: Publish ParaSpell Website
         run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
 
-  deploy_xcm_api_and_visualizer_be:
+  deploy_xcm_api:
     needs: release-please
     if: needs.release-please.outputs.sdk_core_released == 'true'
     runs-on: self-hosted
@@ -96,12 +89,7 @@ jobs:
       - name: Build XCM API
         run: pnpm --filter xcm-api... build
 
-      - name: Build Visualizer BE
-        run: pnpm --filter visualizer-be... build
-
       - name: Restart PM2 process
-        run: |
-          pm2 reload xcm-api
-          pm2 reload visualizer-be
+        run: pm2 reload xcm-api
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2

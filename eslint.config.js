@@ -99,8 +99,8 @@ export default defineConfig(
   },
   {
     files: [
-      "apps/{playground,visualizer-fe,site}/**/*.ts",
-      "apps/{playground,visualizer-fe,site}/**/*.tsx",
+      "apps/{playground,site}/**/*.ts",
+      "apps/{playground,site}/**/*.tsx",
     ],
     ...reactPlugin.configs.flat?.recommended,
     rules: {

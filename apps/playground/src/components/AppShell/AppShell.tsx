@@ -18,7 +18,6 @@ import {
   IconBrandGithubFilled,
   IconBrandXFilled,
   IconBrightnessDown,
-  IconChartDots3,
   IconExternalLink,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapseFilled,
@@ -305,15 +304,6 @@ export const AppShell = () => {
                 color="gray.6"
               >
                 <IconWorldWww size={12} color="white" />
-              </ActionIcon>
-              <ActionIcon
-                component="a"
-                href="https://xcm-visualizer.paraspell.xyz/"
-                target="_blank"
-                size="sm"
-                color="gray.6"
-              >
-                <IconChartDots3 size={12} color="white" />
               </ActionIcon>
             </Group>
           </Stack>
