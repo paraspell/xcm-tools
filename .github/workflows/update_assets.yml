@@ -35,6 +35,9 @@ jobs:
       - name: Run assets update script
         run: pnpm --filter assets updateAssets
 
+      - name: Rebuild assets package
+        run: pnpm --filter assets build
+
       - name: Run router assets update script
         run: pnpm --filter swap updateAssets
 
