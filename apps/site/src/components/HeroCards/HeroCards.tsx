@@ -1,18 +1,6 @@
 import { CodeHighlight } from "@mantine/code-highlight";
-import {
-  Box,
-  em,
-  Group,
-  Image,
-  Paper,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, em, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-
-import visualizerLogoImg from "../../assets/visualizer_logo.png";
-import visualizerImg from "../../assets/visualizer-mockup-1-compressed.png";
 
 const codeForAnalyser = `
   convertLocationToUrl({
@@ -51,36 +39,6 @@ export const HeroCards = () => {
       ? "1fr 1fr"
       : "1fr 1fr 1fr";
 
-  const visualizer = (
-    <Box>
-      <Paper
-        shadow="xl"
-        p="xl"
-        radius="lg"
-        h={{ base: undefined, md: 475 }}
-        mt={{ base: undefined, md: 150 }}
-        style={{
-          overflow: "hidden",
-          backdropFilter: "blur(2px)",
-          backgroundColor: "rgba(33, 120, 150, 0.14)",
-        }}
-      >
-        <Group align="center" gap="sm">
-          <Title fw={800} order={2}>
-            XCM Visualizer
-          </Title>
-          <Image src={visualizerLogoImg} w={32} h={32} />
-        </Group>
-        <Text size="lg" mt="sm">
-          Visualize XCM interactions within the Polkadot ecosystem.
-        </Text>
-        <Box pt="xl" pos="relative" left={31}>
-          <Image src={visualizerImg} />
-        </Box>
-      </Paper>
-    </Box>
-  );
-
   const sdk = (
     <Box>
       <Paper
@@ -91,6 +49,9 @@ export const HeroCards = () => {
         style={{
           backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <Title fw={800} order={2} c="black">
@@ -146,19 +107,14 @@ export const HeroCards = () => {
   );
 
   const analyser = (
-    <Box
-      style={{
-        gridColumn: isSmallScreen ? "auto" : "2 / 3",
-        zIndex: 1,
-      }}
-    >
+    <Box>
       <Paper
         shadow="xl"
         p="xl"
         pt={21}
         radius="lg"
         h={{ base: undefined, md: 330 }}
-        mt={{ base: undefined, md: -230 }}
+        mt={{ base: undefined, md: 150 }}
         style={{
           backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
@@ -193,9 +149,8 @@ export const HeroCards = () => {
       }}
     >
       <Stack flex={1} gap="xl">
-        {sdk}
         {api}
-        {visualizer}
+        {sdk}
         {analyser}
       </Stack>
     </Group>
@@ -210,11 +165,8 @@ export const HeroCards = () => {
       }}
     >
       <Stack flex={1} gap="xl">
-        {visualizer}
-      </Stack>
-      <Stack flex={1} gap="xl">
-        {sdk}
         {api}
+        {sdk}
         {analyser}
       </Stack>
     </Group>
@@ -230,9 +182,8 @@ export const HeroCards = () => {
         alignItems: "start",
       }}
     >
-      {visualizer}
-      {sdk}
       {api}
+      {sdk}
       {analyser}
     </Group>
   );

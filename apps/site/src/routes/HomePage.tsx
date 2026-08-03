@@ -10,7 +10,6 @@ import { TryIt } from "../components/TryIt/TryIt";
 import { XcmAnalyser } from "../components/XcmAnalyser/XcmAnalyser";
 import { XcmApi } from "../components/XcmApi/XcmApi";
 import { XcmSdk } from "../components/XcmSdk/XcmSdk";
-import { XcmVisualizer } from "../components/XcmVisualizer/XcmVisualizer";
 
 export const HomePage = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -25,7 +24,6 @@ export const HomePage = () => {
           <XcmSdk />
           <XcmApi />
           <XcmAnalyser />
-          <XcmVisualizer />
           <TryIt />
           <Research />
           <ContactUs />

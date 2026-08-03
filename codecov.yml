@@ -55,11 +55,6 @@ flag_management:
       paths:
         - apps/xcm-api
       carryforward: true
-    - name: visualizer-be
-      paths:
-        - apps/visualizer-be
-      carryforward: true
-
 coverage:
   precision: 2
   round: down

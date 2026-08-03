@@ -6,7 +6,6 @@ export const links = [
       { link: "/#xcm-sdk", label: "XCM SDK 🪄" },
       { link: "/#xcm-api", label: "XCM API ⚡️" },
       { link: "/#xcm-analyser", label: "XCM Analyser 🔎" },
-      { link: "/#xcm-visualizer", label: "XCM Visualizer" },
     ],
   },
   { link: "/#features", label: "Features" },

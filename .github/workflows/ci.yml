@@ -36,9 +36,7 @@ jobs:
         run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
-          for app in apps/visualizer-be apps/xcm-api; do
-            echo DATABASE_URL="file:./dev.db" > $app/.env
-          done
+          echo DATABASE_URL="file:./dev.db" > apps/xcm-api/.env
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -204,12 +202,6 @@ jobs:
           use_oidc: true
           directory: packages/evm-snowbridge
           flags: evm-snowbridge
-      - name: Upload Visualizer BE coverage report to Codecov
-        uses: codecov/codecov-action@v7
-        with:
-          use_oidc: true
-          directory: apps/visualizer-be
-          flags: visualizer-be
       - name: Upload XCM API coverage report to Codecov
         uses: codecov/codecov-action@v7
         with:
