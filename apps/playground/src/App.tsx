@@ -16,7 +16,7 @@ import { BrowserRouter } from 'react-router';
 
 import { AppShell } from './components/AppShell/AppShell';
 import { WalletProvider } from './providers/WalletProvider';
-import { theme } from './theme/themeConfig';
+import { theme } from './theme';
 
 hljs.registerLanguage('ts', tsLang);
 

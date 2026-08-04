@@ -3,7 +3,11 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { DedotClient, SubmittableExtrinsic } from 'dedot';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import type {
+  PolkadotClient,
+  PolkadotSigner,
+  TxFinalizedPayload,
+} from 'polkadot-api';
 
 import type { TApi, TTransaction } from './importSdk';
 
@@ -56,34 +60,19 @@ export const submitTransactionPjs = async (
 };
 
 export const submitTransactionPapi = async (
+  api: PolkadotClient,
   tx: TPapiTransaction,
   signer: PolkadotSigner,
   onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
-  return new Promise((resolve, reject) => {
-    return tx.signSubmitAndWatch(signer).subscribe({
-      next: (event) => {
-        if (event.type === 'signed') {
-          if (onSign) onSign();
-        }
+  const signedTx = await tx.sign(signer);
+  if (onSign) onSign();
 
-        if (
-          event.type === 'finalized' ||
-          (event.type === 'txBestBlocksState' && event.found)
-        ) {
-          if (!event.ok) {
-            reject(new Error(JSON.stringify(event.dispatchError.value)));
-          } else {
-            resolve(event);
-          }
-        }
-      },
-      error: (error) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        reject(new Error(error));
-      },
-    });
-  });
+  const result = await api.submit(signedTx);
+  if (!result.ok) {
+    throw new Error(JSON.stringify(result.dispatchError.value));
+  }
+  return result;
 };
 
 export const submitTx = async (
@@ -96,6 +85,7 @@ export const submitTx = async (
 ) => {
   if (apiType === 'PAPI') {
     await submitTransactionPapi(
+      api as PolkadotClient,
       tx as TPapiTransaction,
       signer as PolkadotSigner,
       onSign,
