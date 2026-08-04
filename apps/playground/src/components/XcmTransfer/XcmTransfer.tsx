@@ -121,14 +121,13 @@ export const XcmTransfer = () => {
   };
 
   const handleError = (e: unknown, notifId?: string) => {
-    if (e instanceof Error) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-      showErrorNotification(e.message, notifId);
-      setError(e);
-      closeOutputAlert();
-      openErrorAlert();
-    }
+    const normalizedError = e instanceof Error ? e : new Error(String(e));
+    // eslint-disable-next-line no-console
+    console.error(normalizedError);
+    showErrorNotification(normalizedError.message, notifId);
+    setError(normalizedError);
+    closeOutputAlert();
+    openErrorAlert();
   };
 
   const submitBatch = async (

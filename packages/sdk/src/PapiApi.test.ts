@@ -2924,18 +2924,13 @@ describe('PapiApi', () => {
   })
 
   describe('signAndSubmitFinalized', () => {
-    it('should resolve with txHash on finalized event', async () => {
+    it('should resolve with txHash from finalized submission', async () => {
       const mockTxHash = '0xfinalized'
-      const mockSubscribe = vi
-        .fn()
-        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
-          next({ type: 'finalized', ok: true, txHash: mockTxHash })
-        })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        signAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: mockTxHash })
       } as unknown as TPapiTransaction
 
-      const spy = vi.spyOn(mockTx, 'signSubmitAndWatch')
+      const spy = vi.spyOn(mockTx, 'signAndSubmit')
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
@@ -2943,34 +2938,26 @@ describe('PapiApi', () => {
       expect(result).toBe(mockTxHash)
     })
 
-    it('should resolve on txBestBlocksState with found', async () => {
-      const mockTxHash = '0xbestblock'
-      const mockSubscribe = vi
-        .fn()
-        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
-          next({ type: 'txBestBlocksState', found: true, ok: true, txHash: mockTxHash })
-        })
+    it('should use promise-based finalized submission instead of the event watcher', async () => {
+      const finalizedTxHash = '0xfinalized'
+      const signSubmitAndWatch = vi.fn()
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        signAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: finalizedTxHash }),
+        signSubmitAndWatch
       } as unknown as TPapiTransaction
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
-      expect(result).toBe(mockTxHash)
+      expect(result).toBe(finalizedTxHash)
+      expect(signSubmitAndWatch).not.toHaveBeenCalled()
     })
 
     it('should reject with SubmitTransactionError on dispatch error', async () => {
-      const mockSubscribe = vi
-        .fn()
-        .mockImplementation(({ next }: { next: (event: unknown) => void }) => {
-          next({
-            type: 'finalized',
-            ok: false,
-            dispatchError: { value: { Module: { index: 1, error: 2 } } }
-          })
-        })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        signAndSubmit: vi.fn().mockResolvedValue({
+          ok: false,
+          dispatchError: { value: { Module: { index: 1, error: 2 } } }
+        })
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
@@ -2978,15 +2965,10 @@ describe('PapiApi', () => {
       )
     })
 
-    it('should reject on subscription error', async () => {
+    it('should reject on submission error', async () => {
       const mockError = new Error('connection lost')
-      const mockSubscribe = vi
-        .fn()
-        .mockImplementation(({ error }: { error: (err: unknown) => void }) => {
-          error(mockError)
-        })
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        signAndSubmit: vi.fn().mockRejectedValue(mockError)
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
@@ -2994,14 +2976,9 @@ describe('PapiApi', () => {
       )
     })
 
-    it('should wrap non-Error subscription errors in SubmitTransactionError', async () => {
-      const mockSubscribe = vi
-        .fn()
-        .mockImplementation(({ error }: { error: (err: unknown) => void }) => {
-          error('raw string error')
-        })
+    it('should wrap non-Error submission errors in SubmitTransactionError', async () => {
       const mockTx = {
-        signSubmitAndWatch: vi.fn().mockReturnValue({ subscribe: mockSubscribe })
+        signAndSubmit: vi.fn().mockRejectedValue('raw string error')
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(

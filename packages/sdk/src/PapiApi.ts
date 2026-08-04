@@ -940,22 +940,15 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     sender: TSender<TPapiSigner>
   ): Promise<string> {
     const signer = isSenderSigner(sender) ? sender : createDevSigner(sender)
-    return new Promise((resolve, reject) => {
-      tx.signSubmitAndWatch(signer).subscribe({
-        next: event => {
-          if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
-            if (!event.ok) {
-              reject(new SubmitTransactionError(JSON.stringify(event.dispatchError.value)))
-            } else {
-              resolve(event.txHash)
-            }
-          }
-        },
-        error: error => {
-          reject(error instanceof Error ? error : new SubmitTransactionError(String(error)))
-        }
-      })
-    })
+    try {
+      const result = await tx.signAndSubmit(signer)
+      if (!result.ok) {
+        throw new SubmitTransactionError(JSON.stringify(result.dispatchError.value))
+      }
+      return result.txHash
+    } catch (error) {
+      throw error instanceof Error ? error : new SubmitTransactionError(String(error))
+    }
   }
 }
 
