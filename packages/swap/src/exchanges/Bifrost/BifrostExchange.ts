@@ -90,20 +90,14 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
 
     const nativeSymbol = getNativeAssetSymbol(this.chain);
 
-    if (tokenTo.symbol === nativeSymbol) {
-      const amountOutWithFee = amountOut - padValueBy(toDestTxFee, FEE_BUFFER_PCT);
+    const amountOutWithFee = amountOut - padValueBy(toDestTxFee, FEE_BUFFER_PCT);
+    if (amountOutWithFee <= 0n) throw new AmountTooLowError();
 
-      if (amountOutWithFee <= 0n) throw new AmountTooLowError();
-
-      Logger.log('Amount out with fee:', amountOutWithFee);
-      return { tx: extrinsic[0], amountOut: amountOutWithFee };
-    }
-
-    Logger.log('Calculated amount out:', amountOut);
+    Logger.log('Calculated amount out with fee:', amountOutWithFee);
 
     return {
       tx: extrinsic[0],
-      amountOut,
+      amountOut: amountOutWithFee,
     };
   }
 
