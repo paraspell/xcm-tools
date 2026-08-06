@@ -1392,7 +1392,7 @@ describe('PolkadotJsApi', () => {
         asset: dotAsset,
         weight: { refTime: 1000n, proofSize: 2000n },
         forwardedXcms: expect.any(Object),
-        destParaId: undefined
+        destParaId: 0
       })
     })
 
