@@ -97,6 +97,7 @@ import { AddressTooltip } from '../Tooltip';
 import { Transact } from '../Transact/Transact';
 import { EthAssetActions } from './EthAssetActions';
 import { XcmActionsMenu } from './XcmActionsMenu';
+import { XcmTransferFormSkeleton } from './XcmTransferFormSkeleton';
 
 type Props = {
   onSubmit: (values: TFormValuesTransformed, submitType: TSubmitType) => void;
@@ -106,17 +107,15 @@ type Props = {
   isVisible?: boolean;
 };
 
-export const XcmTransferForm: FC<Props> = ({
+const XcmTransferFormContent: FC<Props> = ({
   onSubmit,
   loading,
   isBatchMode,
   initialValues,
-  isVisible = true,
 }) => {
   const {
     connectWallet,
     selectedAccount,
-    isInitialized,
     isLoadingExtensions,
     selectedEvmAccount,
     getEvmWalletClient,
@@ -161,7 +160,9 @@ export const XcmTransferForm: FC<Props> = ({
       DEFAULT_CURRENCY_ENTRY_BASE,
     ),
     recipient: parseAsWalletAddress.withDefault(
-      selectedAccount?.address ?? DEFAULT_ADDRESS,
+      selectedEvmAccount?.address ??
+        selectedAccount?.address ??
+        DEFAULT_ADDRESS,
     ),
     ahAddress: parseAsString.withDefault(''),
     useApi: parseAsBoolean.withDefault(false),
@@ -541,10 +542,6 @@ export const XcmTransferForm: FC<Props> = ({
     );
   };
 
-  if (!isVisible) {
-    return null;
-  }
-
   return (
     <Paper p="xl" pt={isEvmMode ? 48 : 'xl'} shadow="md" pos="relative">
       <TransferWarningModal
@@ -811,7 +808,7 @@ export const XcmTransferForm: FC<Props> = ({
             <Button
               onClick={onConnectWalletClick}
               data-testid="btn-connect-wallet"
-              loading={!isInitialized || isLoadingExtensions}
+              loading={isLoadingExtensions}
             >
               Connect wallet
             </Button>
@@ -819,5 +816,17 @@ export const XcmTransferForm: FC<Props> = ({
         </Stack>
       </form>
     </Paper>
+  );
+};
+
+export const XcmTransferForm: FC<Props> = ({ isVisible = true, ...props }) => {
+  const { isInitialized } = useWallet();
+
+  if (!isVisible) return null;
+
+  return isInitialized ? (
+    <XcmTransferFormContent {...props} />
+  ) : (
+    <XcmTransferFormSkeleton />
   );
 };
