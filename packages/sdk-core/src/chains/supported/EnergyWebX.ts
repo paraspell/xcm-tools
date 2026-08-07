@@ -36,11 +36,15 @@ class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(input)
+    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
   isRelayToParaEnabled(): boolean {
     return false
+  }
+
+  protected shouldUseReserveTransfer(): boolean {
+    return true
   }
 
   protected getMintConfig(): TMintConfig {

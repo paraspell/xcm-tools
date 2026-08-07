@@ -82,6 +82,12 @@ class OnlyPolkadotXCMParachain extends TestParachainBase {
   }
 }
 
+class ReserveRelayAssetParachain extends OnlyPolkadotXCMParachain {
+  protected shouldUseReserveTransfer() {
+    return true
+  }
+}
+
 class ExecuteTransferParachain extends TestParachainBase {
   transferPolkadotXCM() {
     return 'transferPolkadotXCM called'
@@ -171,7 +177,7 @@ describe('Parachain', () => {
       } as TTransferInternalOptions<unknown, unknown, unknown>
 
       await expect(chain.transfer(options)).rejects.toThrow(
-        'Sending from Acala is temporarily disabled'
+        'Sending DOT from Acala is temporarily disabled'
       )
     })
 
@@ -221,6 +227,35 @@ describe('Parachain', () => {
     } as TTransferInternalOptions<unknown, unknown, unknown>
 
     await expect(chain.transfer(options)).rejects.toThrow(TypeAndThenUnavailableError)
+  })
+
+  it('uses the chain reserve transfer for relay assets when configured', async () => {
+    const chain = new ReserveRelayAssetParachain('Astar', 'TestChain', 'Polkadot', Version.V5)
+    const options = {
+      api,
+      to: 'Hydration',
+      recipient: 'destinationAddress',
+      assetInfo: {
+        symbol: 'DOT',
+        amount: 100n,
+        location: RELAY_LOCATION
+      }
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
+    vi.mocked(resolveDestChain).mockReturnValue('Hydration')
+    vi.mocked(getChain).mockReturnValue({
+      canReceiveFrom: () => true,
+      isReceivingTempDisabled: () => false
+    } as unknown as ReturnType<typeof chains<unknown, unknown, unknown>>['Hydration'])
+
+    const transferPolkadotXCMSpy = vi.spyOn(chain, 'transferPolkadotXCM')
+
+    const result = await chain.transfer(options)
+
+    expect(transferPolkadotXCMSpy).toHaveBeenCalled()
+    expect(createTypeAndThenCall).not.toHaveBeenCalled()
+    expect(result).toBe('transferPolkadotXCM called')
   })
 
   it('should call handleExecuteTransfer if transactOptions.call is specified', async () => {
