@@ -8470,8 +8470,8 @@
     "nativeAssetSymbol": "DOTON",
     "isEVM": false,
     "ss58Prefix": 5589,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "assets": [
       {
         "assetId": "0",
@@ -8549,7 +8549,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "2",
@@ -8571,7 +8572,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "3",
@@ -8619,7 +8621,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ]
   },
