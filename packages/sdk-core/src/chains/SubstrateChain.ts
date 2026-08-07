@@ -138,22 +138,24 @@ abstract class SubstrateChain<
     const isMythAsset = isAssetEqual(mythAsset, asset)
 
     const assetNeedsTypeThen = isRelayAsset || isMythAsset
+    const shouldUseReserveTransfer = isRelayAsset && this.shouldUseReserveTransfer()
 
     const supportsTypeThen = await api.hasMethod(
       api.hasPallet(this.chain, 'XcmPallet') ? 'XcmPallet' : 'PolkadotXcm',
       'transfer_assets_using_type_and_then'
     )
 
-    if (assetNeedsTypeThen && !supportsTypeThen) {
+    const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
+
+    if (assetNeedsTypeThen && !supportsTypeThen && (!shouldUseReserveTransfer || isSubBridge)) {
       throw new TypeAndThenUnavailableError(
         'Relaychain assets require the type-and-then method which is not supported by this chain.'
       )
     }
 
-    const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
-
     const useTypeAndThen =
-      (assetNeedsTypeThen &&
+      (!shouldUseReserveTransfer &&
+        assetNeedsTypeThen &&
         supportsTypeThen &&
         destChain &&
         !isExternalChain(destChain) &&
@@ -286,7 +288,7 @@ abstract class SubstrateChain<
     const isSendingDisabled = this.isSendingTempDisabled(options)
     if (isSendingDisabled) {
       throw new FeatureTemporarilyDisabledError(
-        `Sending from ${this.chain} is temporarily disabled`
+        `Sending ${options.assetInfo.symbol} from ${this.chain} is temporarily disabled`
       )
     }
 
@@ -329,6 +331,10 @@ abstract class SubstrateChain<
   shouldUseExecuteTransfer(
     _options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): boolean {
+    return false
+  }
+
+  protected shouldUseReserveTransfer(): boolean {
     return false
   }
 

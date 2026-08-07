@@ -1,10 +1,11 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
-import { Version } from '@paraspell/sdk-common'
+import { deepEqual, Version } from '@paraspell/sdk-common'
 
+import { RELAY_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TMintConfig, TTransferLocalOptions } from '../../types'
+import type { TMintConfig, TTransferInternalOptions, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
@@ -26,10 +27,20 @@ class Astar<TApi, TRes, TSigner, TCustomChain extends string = never>
     return { useBigIntId: true }
   }
 
+  protected shouldUseReserveTransfer(): boolean {
+    return true
+  }
+
+  isSendingTempDisabled({
+    assetInfo
+  }: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>): boolean {
+    return deepEqual(assetInfo.location, RELAY_LOCATION)
+  }
+
   transferPolkadotXCM(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
-    return transferPolkadotXcm(input, 'transfer_assets_using_type_and_then')
+    return transferPolkadotXcm(input, 'reserve_transfer_assets')
   }
 
   isRelayToParaEnabled(): boolean {

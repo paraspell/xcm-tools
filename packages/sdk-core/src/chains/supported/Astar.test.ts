@@ -1,10 +1,15 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
+import { RELAY_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TTransferInternalOptions,
+  TTransferLocalOptions
+} from '../../types'
 import { getChain } from '../../utils'
 import type Astar from './Astar'
 
@@ -33,12 +38,33 @@ describe('Astar', () => {
     expect(astar.resolveMintConfig(api)).toMatchObject({ useBigIntId: true })
   })
 
-  it('should create typeAndThen call when transferPolkadotXcm is invoked', async () => {
-    await astar.transferPolkadotXCM(mockInput)
-    expect(transferPolkadotXcm).toHaveBeenCalledWith(
-      mockInput,
-      'transfer_assets_using_type_and_then'
+  it('should use reserve transfer', () => {
+    expect(astar['shouldUseReserveTransfer']()).toBe(true)
+  })
+
+  it('temporarily disables sending the relay asset only', () => {
+    const options = {
+      assetInfo: { symbol: 'DOT', amount: 100n, location: RELAY_LOCATION }
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    expect(astar.isSendingTempDisabled(options)).toBe(true)
+    expect(() => astar.throwIfTempDisabled(options)).toThrow(
+      'Sending DOT from Astar is temporarily disabled'
     )
+    expect(
+      astar.isSendingTempDisabled({
+        ...options,
+        assetInfo: {
+          ...options.assetInfo,
+          location: { parents: Parents.ZERO, interior: 'Here' }
+        }
+      })
+    ).toBe(false)
+  })
+
+  it('should create a reserve transfer when transferPolkadotXcm is invoked', async () => {
+    await astar.transferPolkadotXCM(mockInput)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
   })
 
   it('should return false for isRelayToParaEnabled', () => {
