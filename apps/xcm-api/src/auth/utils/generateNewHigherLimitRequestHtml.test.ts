@@ -41,4 +41,24 @@ describe('generateNewHigherLimitRequestHtml', () => {
     expect(result).toContain('</body>');
     expect(result).toContain('New higher limit request for submitted:');
   });
+
+  it('should encode HTML metacharacters in all fields', () => {
+    const injectedLink =
+      '</span><a href="https://attacker.example">Review request</a><span>';
+
+    const result = generateNewHigherLimitRequestHtml(
+      'attacker@example.com',
+      '<script>alert(1)</script>',
+      injectedLink,
+      '500',
+    );
+
+    expect(result).not.toContain('<script>');
+    expect(result).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
+    expect(result).not.toContain('<a href="https://attacker.example">');
+    expect(result).toContain('&lt;/span&gt;&lt;a href=&quot;https://attacker.example&quot;&gt;');
+    expect(result).toContain('&lt;/a&gt;&lt;span&gt;');
+    expect(result).toContain('<html>');
+    expect(result).toContain('</html>');
+  });
 });
