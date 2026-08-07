@@ -1392,7 +1392,7 @@ describe('PolkadotJsApi', () => {
         asset: dotAsset,
         weight: { refTime: 1000n, proofSize: 2000n },
         forwardedXcms: expect.any(Object),
-        destParaId: undefined
+        destParaId: 0
       })
     })
 
@@ -1674,7 +1674,7 @@ describe('PolkadotJsApi', () => {
         asset: feeAsset,
         weight: { refTime: 555n, proofSize: 666n },
         forwardedXcms: expectedForwarded,
-        destParaId: undefined
+        destParaId: 0
       })
 
       paymentInfoSpy.mockRestore()
@@ -2121,7 +2121,8 @@ describe('PolkadotJsApi', () => {
           refTime: 111n,
           proofSize: 222n
         },
-        forwardedXcms: expect.any(Object)
+        forwardedXcms: expect.any(Object),
+        destParaId: 0
       })
     })
 
