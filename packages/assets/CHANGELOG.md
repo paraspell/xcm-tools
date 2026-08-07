@@ -1,5 +1,20 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/assets-v14.1.0...assets-v14.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **assets:** Enable dry-run for Basilisk 🔧 ([948ddc6](https://github.com/paraspell/xcm-tools/commit/948ddc6098a56acbd76fa09376d222dd571a6a3a))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([7956c40](https://github.com/paraspell/xcm-tools/commit/7956c40914d575490a0e83982d8d9c661ce66f1f))
+* **assets:** Update SDK assets 📋 ([4ca01e2](https://github.com/paraspell/xcm-tools/commit/4ca01e2992052a626f87a3917211af0f49efc2c6))
+* **swap:** Update swap assets 📋 ([7956c40](https://github.com/paraspell/xcm-tools/commit/7956c40914d575490a0e83982d8d9c661ce66f1f))
+* **swap:** Update swap assets 📋 ([4ca01e2](https://github.com/paraspell/xcm-tools/commit/4ca01e2992052a626f87a3917211af0f49efc2c6))
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/assets-v14.0.0...assets-v14.1.0) (2026-07-31)
 
 

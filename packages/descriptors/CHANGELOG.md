@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/descriptors-v14.1.0...descriptors-v14.1.1) (2026-08-07)
+
+
+### Miscellaneous Chores
+
+* **descriptors:** Synchronize main versions
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/descriptors-v14.0.0...descriptors-v14.1.0) (2026-07-31)
 
 

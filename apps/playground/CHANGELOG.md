@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/playground-v14.1.0...playground-v14.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **playground:** Fix recipient auto-fill logic 🔧 ([fd61172](https://github.com/paraspell/xcm-tools/commit/fd6117207944480b1664164b9e462a15f6c6481a))
+* Wait for PAPI transaction finalization 🔧 ([3c88db1](https://github.com/paraspell/xcm-tools/commit/3c88db1e6fbc453b8672600d049666263920fcec))
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/playground-v14.0.0...playground-v14.1.0) (2026-07-31)
 
 

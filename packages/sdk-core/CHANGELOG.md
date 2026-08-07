@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.1.0...sdk-core-v14.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use reserve transfer for selected chains 🔧 ([58b64d9](https://github.com/paraspell/xcm-tools/commit/58b64d9c7ddba7e52c30ae004fecb7ff7f2dde33))
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.0.0...sdk-core-v14.1.0) (2026-07-31)
 
 
