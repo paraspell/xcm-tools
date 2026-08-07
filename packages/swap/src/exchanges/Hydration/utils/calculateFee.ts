@@ -40,7 +40,7 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
   const tx = substrateTx.get();
 
   const { partial_fee: swapFee } = await tx.getPaymentInfo(feeCalcAddress);
-  const feeNative = swapFee + toDestTransactionFee + toDestTransactionFee;
+  const feeNative = swapFee + toDestTransactionFee;
 
   Logger.log('XCM to exch. fee:', toDestTransactionFee, nativeAsset.symbol);
   Logger.log('XCM to dest. fee:', toDestTransactionFee, nativeAsset.symbol);

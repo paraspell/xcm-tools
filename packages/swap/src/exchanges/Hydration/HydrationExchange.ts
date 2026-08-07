@@ -109,11 +109,12 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
 
     const currencyToPrice = priceInfo.amount;
 
-    const feeInCurrencyTo =
+    const convertedFee =
       (toDestTransactionFee *
-        pow10n(priceInfo.decimals + currencyToInfo.decimals) *
-        BigInt(FEE_BUFFER_PCT)) /
-      (currencyToPrice * pow10n(nativeCurrencyDecimals) * 100n);
+        pow10n(priceInfo.decimals + currencyToInfo.decimals)) /
+      (currencyToPrice * pow10n(nativeCurrencyDecimals));
+
+    const feeInCurrencyTo = padValueBy(convertedFee, FEE_BUFFER_PCT);
 
     Logger.log('Amount out fee', feeInCurrencyTo, nativeCurrencyInfo.symbol);
 

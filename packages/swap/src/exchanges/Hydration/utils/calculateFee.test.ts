@@ -133,7 +133,7 @@ describe('calculateFee', () => {
       2n,
     );
 
-    expect(result.toString()).toBe('14');
+    expect(result.toString()).toBe('12');
   });
 
   it('should return final fee in currencyFrom if currencyFrom is NOT the native currency', async () => {
@@ -165,6 +165,6 @@ describe('calculateFee', () => {
       'Hydration',
       2n,
     );
-    expect(finalFeeBN.toString()).toBe('7700000000000');
+    expect(finalFeeBN.toString()).toBe('6600000000000');
   });
 });
