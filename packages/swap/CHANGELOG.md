@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.1.0...swap-v14.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* **assets:** Prevent stale swap asset updates 🔧 ([0b3b657](https://github.com/paraspell/xcm-tools/commit/0b3b657057af0355cb631e11b1eb132ff512dc5d))
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.0.0...swap-v14.1.0) (2026-07-31)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v14.1.0...sdk-v14.1.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* Wait for PAPI transaction finalization 🔧 ([3c88db1](https://github.com/paraspell/xcm-tools/commit/3c88db1e6fbc453b8672600d049666263920fcec))
+
 ## [14.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v14.0.0...sdk-v14.1.0) (2026-07-31)
 
 
