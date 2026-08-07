@@ -130,7 +130,7 @@ export const hasDryRunSupportImpl = <TCustomChain extends string = never>(
   ctx?: TCustomCtx
 ): boolean => {
   // These chains have DryRun but it's not working
-  const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
+  const DISABLED_CHAINS: TChain[] = ['Jamton']
   return (
     getAssetsObjectImpl(chain, ctx).supportsDryRunApi &&
     !DISABLED_CHAINS.some(disabled => disabled === chain)
