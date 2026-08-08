@@ -35,8 +35,8 @@ describe('getDestinationLocation', () => {
 
     const [paraIdHex, finalAddress] = result[1] as [string, string]
 
-    // paraId=2000 => 0x7d0 => "0x00000007d0"
-    expect(paraIdHex).toBe('0x00000007d0')
+    // paraId=2000 => 0x7d0 => "0x000007d0"
+    expect(paraIdHex).toBe('0x000007d0')
 
     // accountType='01', addressHex='abc123', '00' at the end
     expect(finalAddress).toBe('0x01abc12300')
@@ -54,7 +54,8 @@ describe('getDestinationLocation', () => {
 
     const [paraIdHex, finalAddress] = result[1] as [string, string]
 
-    expect(paraIdHex).toBe('0x0000000bb8')
+    // paraId=3000 => 0xbb8 => "0x00000bb8"
+    expect(paraIdHex).toBe('0x00000bb8')
 
     expect(finalAddress).toBe('0x03deadbeef00')
   })

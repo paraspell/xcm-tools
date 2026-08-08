@@ -18,5 +18,5 @@ export const getDestinationLocation = <TApi, TRes, TSigner, TCustomChain extends
 
   const paraId = getParaId(destination)
 
-  return [1, paraId ? [`0x0000000${paraId.toString(16)}`, acc] : [acc]]
+  return [1, paraId ? [`0x${paraId.toString(16).padStart(8, '0')}`, acc] : [acc]]
 }
