@@ -1021,6 +1021,12 @@ describe('PapiApi', () => {
       expect(spy).toHaveBeenCalledWith(account, false)
       expect(result).toBe('1234567890abcdef')
     })
+
+    it('should strip the 0x prefix when isPrefixed=false and input is already hex', () => {
+      const address = '0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac'
+      const result = papiApi.accountToHex(address, false)
+      expect(result).toBe('f24ff3a9cf04c71dbc94d0b566f7a27b94566cac')
+    })
   })
 
   describe('accountToUint8a', () => {

@@ -161,7 +161,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   accountToHex(address: string, isPrefixed = true) {
-    if (isHex(address)) return address
+    if (isHex(address)) return isPrefixed ? address : address.slice(2)
     const hex = toHex(AccountId().enc(address))
     return isPrefixed ? hex : hex.slice(2)
   }
