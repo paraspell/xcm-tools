@@ -134,6 +134,9 @@ export const InteriorSchema = z.union(
 );
 
 export const LocationSchema = z.object({
-  parents: StringOrNumber,
+  parents: StringOrNumber.refine(
+    (val) => Number(val) >= 0 && Number(val) <= 8,
+    { message: 'parents must be between 0 and 8' }
+  ),
   interior: InteriorSchema,
 });
