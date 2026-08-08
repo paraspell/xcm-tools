@@ -299,6 +299,12 @@ describe('PolkadotJsApi', () => {
       const result = polkadotApi.accountToHex(address, true)
       expect(result).toBe('0x88ca48e3e1d0f1c50bd6b504e1312d21f5bd45ed147e3c30c77eb5e4d63bdc63')
     })
+
+    it('should strip the 0x prefix when isPrefixed=false and input is already hex', () => {
+      const address = '0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac'
+      const result = polkadotApi.accountToHex(address, false)
+      expect(result).toBe('f24ff3a9cf04c71dbc94d0b566f7a27b94566cac')
+    })
   })
 
   describe('accountToUint8a', () => {

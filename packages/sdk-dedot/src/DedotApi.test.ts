@@ -224,6 +224,13 @@ describe("DedotApi", () => {
       const result = dedotApi.accountToHex("0xabcdef");
       expect(result).toBe("0xabcdef");
     });
+
+    it("strips the 0x prefix when isPrefixed=false and input is already hex", async () => {
+      const { isHex } = await import("dedot/utils");
+      vi.mocked(isHex).mockReturnValueOnce(true);
+      const result = dedotApi.accountToHex("0xabcdef", false);
+      expect(result).toBe("abcdef");
+    });
   });
 
   describe("accountToUint8a", () => {
