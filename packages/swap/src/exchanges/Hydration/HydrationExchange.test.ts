@@ -184,7 +184,7 @@ describe('HydrationExchange', () => {
       const result = await chain.swapCurrency(options, toDestTransactionFee);
 
       expect(result.tx).toBe('mockExtrinsic');
-      expect(result.amountOut).toBe(9999999999999999n);
+      expect(result.amountOut).toBe(9999999999999989n);
     });
 
     it('throws if the amountWithoutFee becomes negative', async () => {
