@@ -1244,7 +1244,7 @@ describe('PolkadotJsApi', () => {
     const hereForwarded = [
       [
         {
-          v4: { parents: 0, interior: { Here: null } }
+          v4: { parents: 0, interior: { here: null } }
         }
       ]
     ] as unknown as object[]
@@ -1392,7 +1392,7 @@ describe('PolkadotJsApi', () => {
         asset: dotAsset,
         weight: { refTime: 1000n, proofSize: 2000n },
         forwardedXcms: expect.any(Object),
-        destParaId: undefined
+        destParaId: 0
       })
     })
 
@@ -1674,7 +1674,7 @@ describe('PolkadotJsApi', () => {
         asset: feeAsset,
         weight: { refTime: 555n, proofSize: 666n },
         forwardedXcms: expectedForwarded,
-        destParaId: undefined
+        destParaId: 0
       })
 
       paymentInfoSpy.mockRestore()
