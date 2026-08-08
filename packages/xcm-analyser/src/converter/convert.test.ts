@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { ZodError } from 'zod';
 
 import { type Location } from '../types';
 import { convertLocationToUrl, convertXCMToUrls } from './convert';
@@ -308,11 +307,10 @@ describe('convert', () => {
       },
     ];
 
-    const t = () => {
-      convertXCMToUrls(xcmCallArguments);
-    };
+    const result = convertXCMToUrls(xcmCallArguments);
 
-    expect(t).toThrow(ZodError);
+    // Invalid location (X2 with 3 elements) is gracefully skipped, not thrown
+    expect(result).toStrictEqual([]);
   });
 
   it('convert location to URL with plurality', () => {

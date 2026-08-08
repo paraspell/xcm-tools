@@ -56,7 +56,8 @@ export function findLocationInObject(obj: unknown): Location | null {
 
   function searchObject(value: unknown): Location | null {
     if (hasSpecificKeys(value)) {
-      return LocationSchema.parse(value);
+      const result = LocationSchema.safeParse(value);
+      return result.success ? result.data : null;
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
         const result = searchObject((value as Record<string, unknown>)[key]);
