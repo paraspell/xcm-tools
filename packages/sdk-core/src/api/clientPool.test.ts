@@ -52,6 +52,55 @@ describe('clientPool', () => {
     expect(reviveSpy).toHaveBeenNthCalledWith(2, keyFromWs(ws), 1_000)
   })
 
+  it('leaseClient shares an in-flight client creation', async () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
+    let resolveClient: (client: TFakeClient) => void = () => undefined
+    const createClient = vi.fn(
+      () =>
+        new Promise<TFakeClient>(resolve => {
+          resolveClient = resolve
+        })
+    )
+    const { leaseClient } = createClientPoolHelpers(cache, createClient)
+    const ws = 'wss://node'
+
+    const firstLease = leaseClient(ws, 1_000)
+    const secondLease = leaseClient(ws, 1_000)
+
+    await Promise.resolve()
+    expect(createClient).toHaveBeenCalledTimes(1)
+
+    resolveClient({ id: 1 })
+    const [first, second] = await Promise.all([firstLease, secondLease])
+
+    expect(second).toBe(first)
+    expect(cache.peek(keyFromWs(ws))?.refs).toBe(2)
+  })
+
+  it('leaseClient retries after an in-flight creation fails', async () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
+    const createClient = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('connection failed'))
+      .mockResolvedValueOnce({ id: 1 })
+    const { leaseClient } = createClientPoolHelpers(cache, createClient)
+    const ws = 'wss://node'
+
+    const results = await Promise.allSettled([leaseClient(ws, 1_000), leaseClient(ws, 1_000)])
+
+    expect(results).toEqual([
+      { status: 'rejected', reason: new Error('connection failed') },
+      { status: 'rejected', reason: new Error('connection failed') }
+    ])
+    expect(createClient).toHaveBeenCalledTimes(1)
+
+    await expect(leaseClient(ws, 1_000)).resolves.toEqual({ id: 1 })
+    expect(createClient).toHaveBeenCalledTimes(2)
+    expect(cache.peek(keyFromWs(ws))?.refs).toBe(1)
+  })
+
   it('leaseClient resets destroyWanted to false', async () => {
     const pingClient = vi.fn().mockResolvedValue(undefined)
     const cache = createClientCache<TFakeClient>(10, pingClient)
