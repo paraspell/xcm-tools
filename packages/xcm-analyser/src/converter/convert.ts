@@ -5,9 +5,7 @@ import { convertJunctionToReadable, findLocationInObject } from '../utils/utils'
 const normalizeInterior = (interior: Location['interior']): Junction[] => {
   if (interior === 'Here' || 'Here' in interior) return [];
 
-  const junctions = Object.values(interior).find((value) => value !== undefined);
-
-  if (junctions === undefined) throw new Error('Interior is empty');
+  const [junctions] = Object.values<Junction | Junction[]>(interior);
 
   return Array.isArray(junctions) ? junctions : [junctions];
 };
@@ -19,7 +17,7 @@ const normalizeInterior = (interior: Location['interior']): Junction[] => {
  * @returns The URL representation of the location.
  */
 export const convertLocationToUrlJson = (locationJson: string): string => {
-  const location = JSON.parse(locationJson) as Location;
+  const location: unknown = JSON.parse(locationJson);
   return convertLocationToUrl(location);
 };
 

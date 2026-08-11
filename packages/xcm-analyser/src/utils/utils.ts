@@ -1,46 +1,43 @@
 import { LocationSchema } from '../schema';
-import type {
-  Junction,
-  Location,
-  TJunctionAccountId32,
-  TJunctionAccountIndex64,
-  TJunctionAccountKey20,
-  TJunctionGeneralKey,
-  TJunctionPlurality,
-} from '../types';
+import type { Junction, Location, TJunctionGlobalConsensus } from '../types';
 
-export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
-  const junction = Object.fromEntries(
-    Object.entries(junctionOriginal).map(([k, v]) => [k.toLowerCase(), v]),
-  );
+const convertGlobalConsensusToReadable = (
+  network: TJunctionGlobalConsensus['GlobalConsensus'],
+): string => {
+  if (typeof network === 'string') return network;
+  if ('ByGenesis' in network) return `ByGenesis(${network.ByGenesis})`;
 
-  if ('parachain' in junction) {
-    return `Parachain(${junction.parachain})`;
-  } else if ('accountid32' in junction) {
-    const junct = junction.accountid32 as TJunctionAccountId32['AccountId32'];
-    return `AccountId32(${junct.network}, ${junct.id})`;
-  } else if ('accountindex64' in junction) {
-    const junct = junction.accountindex64 as TJunctionAccountIndex64['AccountIndex64'];
-    return `AccountIndex64(${junct.network}, ${junct.index})`;
-  } else if ('accountkey20' in junction) {
-    const junct = junction.accountkey20 as TJunctionAccountKey20['AccountKey20'];
-    return `AccountKey20(${junct.network}, ${junct.key})`;
-  } else if ('palletinstance' in junction) {
-    return `PalletInstance(${junction.palletinstance})`;
-  } else if ('generalindex' in junction) {
-    return `GeneralIndex(${junction.generalindex})`;
-  } else if ('generalkey' in junction) {
-    const junct = junction.generalkey as TJunctionGeneralKey['GeneralKey'];
-    return `GeneralKey(${junct.length}, ${junct.data})`;
-  } else if ('onlychild' in junction) {
-    return `OnlyChild(${junction.onlychild})`;
-  } else if ('plurality' in junction) {
-    const junct = junction.plurality as TJunctionPlurality['Plurality'];
-    return `Plurality(${junct.id}, ${junct.part})`;
-  } else if ('globalconsensus' in junction) {
-    return `GlobalConsensus(${junction.globalconsensus})`;
+  if ('ByFork' in network) {
+    const { blockNumber, blockHash } = network.ByFork;
+    return `ByFork(blockNumber: ${blockNumber}, blockHash: ${blockHash})`;
   }
-  throw new Error('Unknown junction type');
+
+  const { chainId } = network.Ethereum;
+  return `Ethereum(chainId: ${chainId})`;
+};
+
+export const convertJunctionToReadable = (junction: Junction): string => {
+  if ('Parachain' in junction) {
+    return `Parachain(${junction.Parachain})`;
+  } else if ('AccountId32' in junction) {
+    return `AccountId32(${junction.AccountId32.network}, ${junction.AccountId32.id})`;
+  } else if ('AccountIndex64' in junction) {
+    return `AccountIndex64(${junction.AccountIndex64.network}, ${junction.AccountIndex64.index})`;
+  } else if ('AccountKey20' in junction) {
+    return `AccountKey20(${junction.AccountKey20.network}, ${junction.AccountKey20.key})`;
+  } else if ('PalletInstance' in junction) {
+    return `PalletInstance(${junction.PalletInstance})`;
+  } else if ('GeneralIndex' in junction) {
+    return `GeneralIndex(${junction.GeneralIndex})`;
+  } else if ('GeneralKey' in junction) {
+    return `GeneralKey(${junction.GeneralKey.length}, ${junction.GeneralKey.data})`;
+  } else if ('OnlyChild' in junction) {
+    return `OnlyChild(${junction.OnlyChild})`;
+  } else if ('Plurality' in junction) {
+    return `Plurality(${junction.Plurality.id}, ${junction.Plurality.part})`;
+  } else {
+    return `GlobalConsensus(${convertGlobalConsensusToReadable(junction.GlobalConsensus)})`;
+  }
 };
 
 export function findLocationInObject(obj: unknown): Location | null {

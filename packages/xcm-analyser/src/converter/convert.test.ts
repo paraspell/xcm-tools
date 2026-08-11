@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
 import { type Location } from '../types';
-import { convertLocationToUrl, convertXCMToUrls } from './convert';
+import { convertLocationToUrl, convertLocationToUrlJson, convertXCMToUrls } from './convert';
+
+const mockHash = `0x${'ab'.repeat(32)}`;
 
 describe('convert', () => {
   it.each([
@@ -150,13 +152,53 @@ describe('convert', () => {
       parents: '0',
       interior: {
         X1: {
-          GlobalConsensus: 'consensus',
+          GlobalConsensus: 'Polkadot',
         },
       },
     };
 
     const result = convertLocationToUrl(location);
-    expect(result).toBe('./GlobalConsensus(consensus)');
+    expect(result).toBe('./GlobalConsensus(Polkadot)');
+  });
+
+  it.each([
+    [{ ByGenesis: mockHash }, `ByGenesis(${mockHash})`],
+    [
+      { ByFork: { blockNumber: 123, blockHash: mockHash } },
+      `ByFork(blockNumber: 123, blockHash: ${mockHash})`,
+    ],
+    [{ Ethereum: { chainId: 1 } }, 'Ethereum(chainId: 1)'],
+  ] as const)('should preserve GlobalConsensus payload data for %#', (network, expected) => {
+    expect(
+      convertLocationToUrl({
+        parents: 0,
+        interior: { X1: { GlobalConsensus: network } },
+      }),
+    ).toBe(`./GlobalConsensus(${expected})`);
+  });
+
+  it('should preserve GlobalConsensus payload data from JSON', () => {
+    expect(
+      convertLocationToUrlJson(
+        JSON.stringify({
+          parents: 0,
+          interior: { X1: { GlobalConsensus: { Ethereum: { chainId: 1 } } } },
+        }),
+      ),
+    ).toBe('./GlobalConsensus(Ethereum(chainId: 1))');
+  });
+
+  it('should preserve GlobalConsensus payload data in nested XCM arguments', () => {
+    expect(
+      convertXCMToUrls([
+        {
+          V5: {
+            parents: 0,
+            interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }] },
+          },
+        },
+      ]),
+    ).toEqual(['./GlobalConsensus(Ethereum(chainId: 1))']);
   });
 
   it('convert location to URL with currency and amount location', () => {

@@ -14,50 +14,69 @@ const StringOrNumber = z.union(
   { error: 'Expected a number or numeric string' },
 );
 const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
-const HexString = z.string().regex(/^0x[0-9a-fA-F]+$/, {
-  message:
-    "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).",
+const hexStringError =
+  "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).";
+const HexString = z
+  .templateLiteral(['0x', z.hex()], { error: hexStringError })
+  .check(z.minLength(3, { error: hexStringError }));
+const HexString32 = z
+  .templateLiteral(['0x', z.hex()], { error: 'Expected a 32-byte hex string' })
+  .check(z.length(66, { error: 'Expected a 32-byte hex string' }));
+
+export const JunctionParachain = z.strictObject({ Parachain: StringOrNumberOrBigInt });
+
+export const JunctionAccountId32 = z.strictObject({
+  AccountId32: z.strictObject({ network: NetworkId, id: HexString }),
 });
 
-export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
-
-export const JunctionAccountId32 = z.object({
-  AccountId32: z.object({ network: NetworkId, id: HexString }),
+export const JunctionAccountIndex64 = z.strictObject({
+  AccountIndex64: z.strictObject({ network: NetworkId, index: StringOrNumberOrBigInt }),
 });
 
-export const JunctionAccountIndex64 = z.object({
-  AccountIndex64: z.object({ network: NetworkId, index: StringOrNumberOrBigInt }),
+export const JunctionAccountKey20 = z.strictObject({
+  AccountKey20: z.strictObject({ network: NetworkId, key: HexString }),
 });
 
-export const JunctionAccountKey20 = z.object({
-  AccountKey20: z.object({ network: NetworkId, key: HexString }),
+export const JunctionPalletInstance = z.strictObject({ PalletInstance: StringOrNumberOrBigInt });
+
+export const JunctionGeneralIndex = z.strictObject({ GeneralIndex: StringOrNumberOrBigInt });
+
+export const JunctionGeneralKey = z.strictObject({
+  GeneralKey: z.strictObject({ length: StringOrNumberOrBigInt, data: HexString }),
 });
 
-export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumberOrBigInt });
+export const JunctionOnlyChild = z.strictObject({ OnlyChild: z.string() });
 
-export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumberOrBigInt });
-
-export const JunctionGeneralKey = z.object({
-  GeneralKey: z.object({ length: StringOrNumberOrBigInt, data: HexString }),
-});
-
-export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
-
-export const JunctionPlurality = z.object({
-  Plurality: z.object({ id: BodyId, part: BodyPart }),
+export const JunctionPlurality = z.strictObject({
+  Plurality: z.strictObject({ id: BodyId, part: BodyPart }),
 });
 
 export const GlobalConsensusNetworkSchema = z.union([
-  z.object({
-    Ethereum: z.object({
-      chainId: z.number(),
+  z.enum([
+    'Polkadot',
+    'Kusama',
+    'Westend',
+    'Rococo',
+    'Wococo',
+    'BitcoinCore',
+    'BitcoinCash',
+    'PolkadotBulletin',
+  ]),
+  z.strictObject({ ByGenesis: HexString32 }),
+  z.strictObject({
+    ByFork: z.strictObject({
+      blockNumber: StringOrNumberOrBigInt,
+      blockHash: HexString32,
     }),
   }),
-  z.record(z.string(), z.any()),
-  z.string(),
+  z.strictObject({
+    Ethereum: z.strictObject({ chainId: StringOrNumberOrBigInt }),
+  }),
 ]);
 
-export const JunctionGlobalConsensus = z.object({ GlobalConsensus: GlobalConsensusNetworkSchema });
+export const JunctionGlobalConsensus = z.strictObject({
+  GlobalConsensus: GlobalConsensusNetworkSchema,
+});
 
 export const JunctionSchema = z.union(
   [
@@ -78,62 +97,60 @@ export const JunctionSchema = z.union(
   },
 );
 
-const Junctions = z.lazy(() =>
-  z
-    .object({
-      X1: z.union([JunctionSchema, z.tuple([JunctionSchema])]).optional(),
-      X2: z.tuple([JunctionSchema, JunctionSchema]).optional(),
-      X3: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema]).optional(),
-      X4: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema]).optional(),
-      X5: z
-        .tuple([JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema])
-        .optional(),
-      X6: z
-        .tuple([
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-        ])
-        .optional(),
-      X7: z
-        .tuple([
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-        ])
-        .optional(),
-      X8: z
-        .tuple([
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-          JunctionSchema,
-        ])
-        .optional(),
-    })
-    .strict()
-    .refine((obj) => Object.keys(obj).length === 1, {
-      error: 'Expected exactly one junction (X1–X8)',
+const Junctions = z.union(
+  [
+    z.strictObject({ X1: z.union([JunctionSchema, z.tuple([JunctionSchema])]) }),
+    z.strictObject({ X2: z.tuple([JunctionSchema, JunctionSchema]) }),
+    z.strictObject({ X3: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema]) }),
+    z.strictObject({
+      X4: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema]),
     }),
+    z.strictObject({
+      X5: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema, JunctionSchema]),
+    }),
+    z.strictObject({
+      X6: z.tuple([
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+      ]),
+    }),
+    z.strictObject({
+      X7: z.tuple([
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+      ]),
+    }),
+    z.strictObject({
+      X8: z.tuple([
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+        JunctionSchema,
+      ]),
+    }),
+  ],
+  { error: 'Expected exactly one junction (X1–X8)' },
 );
 
 export const InteriorSchema = z.union(
-  [z.literal('Here'), z.object({ Here: z.literal(null) }), Junctions],
+  [z.literal('Here'), z.strictObject({ Here: z.literal(null) }), Junctions],
   { error: "Expected 'Here' or junctions (X1–X8)" },
 );
 
-export const LocationSchema = z.object({
+export const LocationSchema = z.strictObject({
   parents: StringOrNumber,
   interior: InteriorSchema,
 });
