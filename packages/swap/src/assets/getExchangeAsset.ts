@@ -41,7 +41,7 @@ export const getExchangeAsset = (
 
     asset = findAssetInfoBySymbol(otherAssets, nativeAssets, currency.symbol);
   } else if ('id' in currency) {
-    asset = findAssetInfoById(otherAssets, currency.id);
+    asset = findAssetInfoById(assets, currency.id);
   } else {
     throw new RoutingResolutionError('Invalid currency input');
   }
