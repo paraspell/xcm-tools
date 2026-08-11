@@ -1,6 +1,16 @@
 import { LocationSchema } from '../schema';
-import type { Junction, JunctionType, Location } from '../types';
+import type { Junction, Location } from '../types';
 import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
+
+const normalizeInterior = (interior: Location['interior']): Junction[] => {
+  if (interior === 'Here' || 'Here' in interior) return [];
+
+  const junctions = Object.values(interior).find((value) => value !== undefined);
+
+  if (junctions === undefined) throw new Error('Interior is empty');
+
+  return Array.isArray(junctions) ? junctions : [junctions];
+};
 
 /**
  * Converts a XCM location JSON string into its URL representation.
@@ -18,23 +28,13 @@ export const convertLocationToUrlJson = (locationJson: string): string => {
  *
  * @param args - The location object.
  * @returns The URL representation of the location.
- * @throws Will throw an error if the interior or junction array is empty.
  */
 export const convertLocationToUrl = (args: unknown): string => {
   const { parents, interior } = LocationSchema.parse(args);
   const parentsNum = Number(parents);
-
-  const entries = Object.entries(interior);
-  if (entries.length === 0) throw new Error('Interior is empty');
-
-  const [, junctions] = entries[0] as [JunctionType, Junction | Junction[]];
-
-  const isX1 = !Array.isArray(junctions);
-
-  if (!isX1 && junctions.length === 0) throw new Error('Junction array is empty');
-
   const pathStart = parentsNum > 0 ? '../'.repeat(parentsNum) : './';
-  const path = (isX1 ? [junctions] : junctions)
+
+  const path = normalizeInterior(interior)
     .map((junction) => convertJunctionToReadable(junction))
     .join('/');
 
