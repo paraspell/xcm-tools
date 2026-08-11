@@ -1,4 +1,9 @@
-import { isSnowbridge, isSubstrateBridge, type TChain } from '@paraspell/sdk-common'
+import {
+  ETHEREUM_BRIDGE_ORIGINS,
+  isSnowbridge,
+  isSubstrateBridge,
+  type TChain
+} from '@paraspell/sdk-common'
 
 import type { TAssetInfo, TCustomCtx } from '../types'
 import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
@@ -11,15 +16,17 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
   destination: TChain | TCustomChain,
   ctx?: TCustomCtx
 ): TAssetInfo[] => {
+  const isSubBridge = isSubstrateBridge(origin, destination)
+  const isSb = isSnowbridge(origin, destination)
+
+  if (isSb && !ETHEREUM_BRIDGE_ORIGINS.some(chain => chain === origin)) return []
+
   const originAssets = getAssetsImpl(origin, ctx)
   const destinationAssets = getAssetsImpl(destination, ctx)
 
   const supportedAssets = originAssets.filter(asset =>
     destinationAssets.some(a => isAssetEqual(a, asset))
   )
-
-  const isSubBridge = isSubstrateBridge(origin, destination)
-  const isSb = isSnowbridge(origin, destination)
 
   if (isSubBridge || isSb) {
     const systemAssets = originAssets.filter(asset => isSystemAsset(asset))

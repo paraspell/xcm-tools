@@ -95,6 +95,10 @@ describe('getSupportedAssets', () => {
     expect(result).toEqual([dotAsset, ajunAsset])
   })
 
+  it('should return no assets for unsupported Snowbridge origins', () => {
+    expect(getSupportedAssets('Acala', 'Ethereum')).toEqual([])
+  })
+
   it('should include native MYTH on Mythos -> Ethereum despite different locations', () => {
     const mythosNative: TAssetInfo = {
       symbol: 'MYTH',
