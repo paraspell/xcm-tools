@@ -5,6 +5,13 @@ import { type Location } from '../types';
 import { convertLocationToUrl, convertXCMToUrls } from './convert';
 
 describe('convert', () => {
+  it.each([
+    [{ parents: '0', interior: 'Here' }, './'],
+    [{ parents: '2', interior: { Here: null } }, '../../'],
+  ] as const)('convert location with Here interior to URL', (location, expected) => {
+    expect(convertLocationToUrl(location)).toBe(expected);
+  });
+
   it('convert location to URL', () => {
     const location: Location = {
       parents: '0',
