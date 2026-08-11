@@ -34,6 +34,7 @@ describe('getExchangeAsset', () => {
     symbol: 'DOT',
     decimals: 10,
     isNative: true,
+    assetId: '0',
     location: { parents: 1, interior: 'Here' },
   };
   const mockForeignAsset: TAssetInfo = {
@@ -106,6 +107,19 @@ describe('getExchangeAsset', () => {
     const result = getExchangeAsset(mockExchange, currency);
     expect(result).toEqual(mockForeignAsset);
     expect(findAssetInfoById).toHaveBeenCalled();
+  });
+
+  test('should include native assets when finding by id', () => {
+    const currency = { id: 0 };
+    vi.mocked(findAssetInfoById).mockReturnValue(mockNativeAsset);
+
+    const result = getExchangeAsset(mockExchange, currency);
+
+    expect(result).toEqual(mockNativeAsset);
+    expect(findAssetInfoById).toHaveBeenCalledWith(
+      [mockNativeAsset, mockForeignAsset],
+      currency.id,
+    );
   });
 
   test('should return null when asset not found', () => {
