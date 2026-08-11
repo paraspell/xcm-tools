@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  GlobalConsensusNetworkSchema,
   InteriorSchema,
   JunctionAccountId32,
   JunctionAccountKey20,
   JunctionGeneralKey,
   JunctionPalletInstance,
   JunctionParachain,
+  JunctionSchema,
   LocationSchema,
 } from './schema';
 import type {
@@ -46,8 +48,10 @@ const mockPlurality: TJunctionPlurality = {
   Plurality: { id: 'Executive', part: 'Fellowship' },
 };
 const mockGlobalConsensus: TJunctionGlobalConsensus = {
-  GlobalConsensus: 'Ethereum',
+  GlobalConsensus: 'Polkadot',
 };
+
+const mockHash = `0x${'ab'.repeat(32)}`;
 
 const allMockJunctions: Junction[] = [
   mockParachain,
@@ -268,6 +272,11 @@ describe('InteriorSchema', () => {
       const result = InteriorSchema.safeParse(data);
       expect(result.success).toBe(false);
     });
+
+    it('should fail when one object contains multiple junction variants', () => {
+      const result = JunctionSchema.safeParse({ Parachain: 1000, GeneralIndex: 1 });
+      expect(result.success).toBe(false);
+    });
   });
 
   describe('Invalid Interior Types', () => {
@@ -408,6 +417,12 @@ describe('InteriorSchema', () => {
       expect(result.success).toBe(false);
     });
 
+    it('JunctionAccountId32 should fail for an empty prefixed hex id', () => {
+      const data = { AccountId32: { network: null, id: '0x' } };
+      const result = JunctionAccountId32.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
     it('JunctionAccountKey20 should pass for valid hex key', () => {
       const data = {
         AccountKey20: { network: 'Kusama', key: '0xabcdef1234567890abcdef1234567890abcdef12' },
@@ -433,6 +448,52 @@ describe('InteriorSchema', () => {
       const data = { GeneralKey: { length: 6, data: 'aabbccddeeff' } };
       const result = JunctionGeneralKey.safeParse(data);
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('GlobalConsensusNetworkSchema', () => {
+    it.each([
+      'Polkadot',
+      'Kusama',
+      'Westend',
+      'Rococo',
+      'Wococo',
+      'BitcoinCore',
+      'BitcoinCash',
+      'PolkadotBulletin',
+    ])('should pass for the %s unit variant', (network) => {
+      expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(true);
+    });
+
+    it.each([
+      { ByGenesis: mockHash },
+      { ByFork: { blockNumber: 123, blockHash: mockHash } },
+      { Ethereum: { chainId: 1 } },
+    ])('should pass for payload variant %#', (network) => {
+      expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(true);
+    });
+
+    it('should normalize numeric strings in payload variants', () => {
+      expect(
+        GlobalConsensusNetworkSchema.parse({
+          ByFork: { blockNumber: '1,234', blockHash: mockHash },
+        }),
+      ).toEqual({ ByFork: { blockNumber: '1234', blockHash: mockHash } });
+
+      expect(GlobalConsensusNetworkSchema.parse({ Ethereum: { chainId: '1,234' } })).toEqual({
+        Ethereum: { chainId: '1234' },
+      });
+    });
+
+    it.each([
+      'UnknownNetwork',
+      { type: 'Polkadot' },
+      { type: 'Ethereum', value: { chainId: 1 } },
+      { Ethereum: { chainId: 'not-a-number' } },
+      { ByGenesis: '0x1234' },
+      { UnsupportedNetwork: null },
+    ])('should fail for unsupported network data %#', (network) => {
+      expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(false);
     });
   });
 });
