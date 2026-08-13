@@ -131,13 +131,13 @@ export const XcmSdk = () => {
           <Button
             variant="outline"
             component="a"
-            href="https://github.com/paraspell/xcm-sdk-template"
+            href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
           >
-            Template project
+            Starter project
           </Button>
         </div>
       </div>

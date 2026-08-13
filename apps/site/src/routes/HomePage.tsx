@@ -9,6 +9,7 @@ import { Sponsors } from "../components/Sponsors/Sponsors";
 import { TryIt } from "../components/TryIt/TryIt";
 import { XcmAnalyser } from "../components/XcmAnalyser/XcmAnalyser";
 import { XcmApi } from "../components/XcmApi/XcmApi";
+import { XcmCli } from "../components/XcmCli/XcmCli";
 import { XcmSdk } from "../components/XcmSdk/XcmSdk";
 
 export const HomePage = () => {
@@ -24,6 +25,7 @@ export const HomePage = () => {
           <XcmSdk />
           <XcmApi />
           <XcmAnalyser />
+          <XcmCli />
           <TryIt />
           <Research />
           <ContactUs />

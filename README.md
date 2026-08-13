@@ -20,14 +20,6 @@ ParaSpell✨ monorepo for XCM-Tool set
 
 <br>
 
-<details><summary><b>Starter templates:</b></summary>  
-<br>
-
-- [XCM SDK (React + Vite) starter template](https://github.com/paraspell/xcm-sdk-template) 🛫: Advanced cross-chain dApp starter template using XCM SDK 
-- [XCM API (React + Vite) starter template](https://github.com/paraspell/xcm-api-template) 🛫: Advanced cross-chain dApp starter template using XCM API
-
-</details>
-
 <details><summary><b>Monorepo infrastructure:</b></summary>
      
 ```

@@ -16,7 +16,7 @@
   </p>
   <p>Supporting every XCM Active Parachain <a href = "https://paraspell.github.io/docs/supported-chains.html"\>[list]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
-   <p>SDK starter template project <a href = "https://github.com/paraspell/xcm-sdk-template" \>[here]</p>
+  <p>Generate XCM SDK starter project <a href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html">[here]</a></p>
 </div>
 
 <br /><br />
