@@ -18,7 +18,7 @@
 
   <p>XCM API downtime monitoring <a href="https://status.paraspell.xyz/">[here]</a></p>
   <p>XCM API documentation <a href="https://paraspell.github.io/docs/xcm-api/getting-started.html">[here]</a></p>
-  <p>XCM API starter template project <a href="https://github.com/paraspell/xcm-api-template">[here]</a></p>
+  <p>Generate XCM API starter project <a href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html">[here]</a></p>
 </div>
 <br /><br />
 

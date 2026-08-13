@@ -10,36 +10,36 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
-  IconApi,
-  IconBrandNodejs,
   IconCheck,
-  IconPackageOff,
+  IconComponents,
+  IconPlugConnected,
+  IconTerminal2,
 } from "@tabler/icons-react";
 
-import classes from "./XcmApi.module.css";
+import classes from "../XcmApi/XcmApi.module.css";
 
 const data = [
   {
-    icon: IconPackageOff,
-    title: "Package-less integration",
+    icon: IconTerminal2,
+    title: "Interactive Scaffolding",
     description:
-      "Integrates easily without the need for packages, allowing for easy deployment and use.",
+      "Answer a few guided prompts and generate a fully configured starter project in seconds.",
   },
   {
-    icon: IconApi,
-    title: "REST API Standards",
+    icon: IconComponents,
+    title: "Multi-Framework Support",
     description:
-      "Follows REST API standards, ensuring easy integration with existing systems.",
+      "Generate projects for React, Vue, or Node.js with your preferred blockchain client.",
   },
   {
-    icon: IconBrandNodejs,
-    title: "Built on NestJS",
+    icon: IconPlugConnected,
+    title: "Optional Extensions",
     description:
-      "Leverages the scalable NestJS framework, ensuring a maintainable backend architecture.",
+      "Extend your project with EVM, Swap, and Snowbridge support right from setup.",
   },
 ];
 
-export const XcmApi = () => {
+export const XcmCli = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const items = data.map((item) => (
@@ -63,13 +63,14 @@ export const XcmApi = () => {
   ));
 
   return (
-    <div className={classes.wrapper} id="xcm-api">
+    <div className={classes.wrapper} id="xcm-cli">
       <div className={classes.body}>
-        <Title className={classes.title}>XCM API ⚡️</Title>
+        <Title className={classes.title}>ParaSpell CLI 🧰</Title>
         <Text c="dimmed" maw={550}>
-          Accelerate your cross-chain interactions with a powerful,
-          developer-friendly API designed for seamless asset transfers between
-          the Polkadot, Kusama, Paseo and Westend ecosystems.
+          Spin up production-ready cross-chain dApps in seconds. Our scaffolding
+          CLI generates a fully configured XCM SDK or XCM API starter project
+          for the Polkadot, Kusama, Paseo and Westend ecosystems, with no manual
+          setup required.
         </Text>
 
         <SimpleGrid
@@ -95,21 +96,19 @@ export const XcmApi = () => {
           }
         >
           <List.Item>
-            <b>Full ParaSpell Feature Support</b> – The API supports all core
-            functions available in other ParaSpell packages, providing a
-            complete solution for cross-chain interactions.
+            <b>Choice of blockchain client</b> – Pick PAPI, Polkadot.js, or
+            Dedot as the underlying client powering your project.
           </List.Item>
           <List.Item>
-            <b>Rate Limiting for Stability</b> – Built-in rate limiting ensures
-            consistent performance, preventing abuse and maintaining stability
-            across all API interactions.
+            <b>Automation friendly</b> – Skip prompts with flags and
+            non-interactive defaults, perfect for CI/CD pipelines.
           </List.Item>
         </List>
 
         <div className={classes.controls}>
           <Button
             component="a"
-            href="https://paraspell.github.io/docs/xcm-api/getting-started.html"
+            href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html"
             target="_blank"
             size="lg"
             radius="lg"
@@ -121,13 +120,13 @@ export const XcmApi = () => {
           <Button
             variant="outline"
             component="a"
-            href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html"
+            href="https://github.com/paraspell/cli"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
           >
-            Starter project
+            GitHub
           </Button>
         </div>
       </div>

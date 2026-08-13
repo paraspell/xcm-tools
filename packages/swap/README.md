@@ -15,7 +15,7 @@
     </a>
   </p>
   <p>How to swap <a href = "https://paraspell.github.io/docs/xcm-sdk/send-xcm.html#swap" \>[here]</p>
-    <p>XCM SDK starter template project <a href = "https://github.com/paraspell/xcm-sdk-template" \>[here]</p>
+  <p>Generate XCM SDK starter project <a href="https://paraspell.github.io/docs/paraspell-cli/getting-started.html">[here]</a></p>
 </div>
 
 <br /><br />
