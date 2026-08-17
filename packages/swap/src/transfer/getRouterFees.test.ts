@@ -238,6 +238,27 @@ describe('getRouterFees', () => {
       expect(result.dryRunError?.reason).toBe('InsufficientBalance');
       expect(result.dryRunError?.chainKind).toBe('origin');
     });
+
+    it('includes failure information when swap chain dry-run fails', async () => {
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: {
+          ...swapFee,
+          dryRunError: { reason: 'NoDeal' },
+        },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      // Raw swap-leg error (TDryRunError) is normalized to TDryRunFailure
+      // with chainKind/chain of the exchange hop
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'hop',
+        chain: exchangeChain,
+      });
+      expect(result.success).toBe(false);
+    });
   });
 
   it('uses execute transfer for AssetHub DEX with destination only (origin undefined)', async () => {

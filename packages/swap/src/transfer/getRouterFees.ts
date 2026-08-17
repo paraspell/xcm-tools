@@ -103,7 +103,12 @@ export const getRouterFees = async <
     ...(!origin && !destination && { fee: 0n }),
   };
 
-  const dryRunError = sendingChain?.dryRunError ?? receivingChain?.dryRunError;
+  const dryRunError =
+    sendingChain?.dryRunError ??
+    receivingChain?.dryRunError ??
+    (swapChain.dryRunError
+      ? { ...swapChain.dryRunError, chainKind: 'hop', chain: exchange.chain }
+      : undefined);
 
   return {
     success: !dryRunError,
