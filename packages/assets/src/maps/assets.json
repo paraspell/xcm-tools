@@ -9322,6 +9322,29 @@
         "existentialDeposit": "1000000"
       },
       {
+        "assetId": "50000013",
+        "symbol": "KSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000013
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "KSM4"
+      },
+      {
         "assetId": "18",
         "symbol": "HEI",
         "decimals": 10,
