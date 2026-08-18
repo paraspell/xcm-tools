@@ -23,7 +23,7 @@
     "otherAssets": ["Assets", "ForeignAssets"]
   },
   "Acala": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -46,7 +46,7 @@
     "otherAssets": ["Currencies", "Tokens"]
   },
   "Astar": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -149,7 +149,7 @@
     "otherAssets": ["Assets", "AssetManager"]
   },
   "Hydration": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -237,7 +237,7 @@
     "otherAssets": []
   },
   "Basilisk": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -329,7 +329,7 @@
     "otherAssets": ["Assets"]
   },
   "Karura": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -352,7 +352,7 @@
     "otherAssets": ["Currencies", "Tokens"]
   },
   "Shiden": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -375,7 +375,7 @@
     "otherAssets": ["Assets"]
   },
   "Unique": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -652,7 +652,7 @@
     "otherAssets": []
   },
   "Ajuna": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -675,7 +675,7 @@
     "otherAssets": ["Assets"]
   },
   "Jamton": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",
@@ -873,7 +873,7 @@
     "otherAssets": ["Assets", "AssetManager"]
   },
   "HydrationPaseo": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "Balances",

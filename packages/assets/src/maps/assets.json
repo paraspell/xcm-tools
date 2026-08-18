@@ -8491,55 +8491,6 @@
         "isNative": true
       },
       {
-        "assetId": "2",
-        "symbol": "jamTON",
-        "decimals": 9,
-        "existentialDeposit": "1000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 22222078
-              }
-            ]
-          }
-        },
-        "isNative": true
-      },
-      {
-        "assetId": "1",
-        "symbol": "stDOT",
-        "decimals": 10,
-        "existentialDeposit": "10000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 2004
-              },
-              {
-                "PalletInstance": 110
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xbc7e02c4178a7df7d3e564323a5c359dc96c4db4"
-                }
-              }
-            ]
-          }
-        },
-        "isNative": true
-      },
-      {
         "assetId": "0",
         "symbol": "DOT",
         "decimals": 10,

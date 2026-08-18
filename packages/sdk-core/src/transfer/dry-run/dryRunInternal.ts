@@ -27,6 +27,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     swapConfig,
     version,
     bypassOptions,
+    keepAlive,
     useRootOrigin = false
   } = options
 
@@ -53,6 +54,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     feeAsset: resolvedFeeAsset,
     version: resolvedVersion,
     bypassOptions,
+    keepAlive,
     useRootOrigin: useRootOrigin || !!bypassOptions
   })
 

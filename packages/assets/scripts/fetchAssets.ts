@@ -112,7 +112,10 @@ const fetchNativeAssets = async (
 
   const cleanAsset = (asset: TAssetInfoNoLoc): TAssetInfoNoLoc => {
     const generatedLoc = getNativeLocation(asset.symbol)
-    const location = asset.location ?? (generatedLoc ? normalizeLocation(generatedLoc) : null)
+    const location =
+      asset.location?.parents === 0 && generatedLoc
+        ? normalizeLocation(generatedLoc)
+        : (asset.location ?? (generatedLoc ? normalizeLocation(generatedLoc) : null))
     return {
       ...asset,
       isNative: true,

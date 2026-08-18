@@ -28,6 +28,7 @@ export type TDryRunBaseOptions<TRes, TCustomChain extends string = never> = {
   swapConfig?: TSwapConfig
   useRootOrigin?: boolean
   bypassOptions?: TBypassOptions
+  keepAlive?: boolean
 }
 
 export type TDryRunOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = WithApi<
@@ -67,6 +68,7 @@ export type TDryRunCallBaseOptions<TRes, TCustomChain extends string = never> = 
   assets?: WithAmount<TAssetInfo>[]
   bypassOptions?: TBypassOptions
   feeAsset?: TAssetInfo
+  keepAlive?: boolean
 }
 
 export type TDryRunBypassOptions<

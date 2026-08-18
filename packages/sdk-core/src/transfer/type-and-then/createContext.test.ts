@@ -193,7 +193,7 @@ describe('createTypeAndThenCallContext', () => {
   it('should create context with non-relay chain as destination', async () => {
     const result = await createTypeAndThenCallContext(mockOptions, {})
 
-    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(mockChain, mockAsset.location, true)
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(mockChain, mockAsset.location, false)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(1, mockDestChain)
     expect(mockClonedApi.init).toHaveBeenNthCalledWith(2, mockReserveChain)
 
@@ -208,6 +208,143 @@ describe('createTypeAndThenCallContext', () => {
       systemAsset: mockSystemAsset,
       options: mockOptions
     })
+  })
+
+  it('keeps the ETH reserve on Asset Hub for AssetHubPolkadot to Hydration', async () => {
+    const ethAsset = {
+      ...mockAsset,
+      symbol: 'ETH',
+      location: {
+        parents: 2,
+        interior: {
+          X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }]
+        }
+      } as TLocation
+    }
+    const options = {
+      ...mockOptions,
+      destination: 'Hydration' as const,
+      assetInfo: ethAsset
+    }
+    getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot')
+
+    const result = await createTypeAndThenCallContext(options, {})
+
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(
+      'AssetHubPolkadot',
+      ethAsset.location,
+      false
+    )
+    expect(result.reserve.chain).toBe('AssetHubPolkadot')
+    expect(result.dest.chain).toBe('Hydration')
+  })
+
+  it('adds an Asset Hub hop for ETH sent from another parachain to Hydration', async () => {
+    const ethAsset = {
+      ...mockAsset,
+      symbol: 'ETH',
+      location: {
+        parents: 2,
+        interior: {
+          X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }]
+        }
+      } as TLocation
+    }
+    const options = {
+      ...mockOptions,
+      chain: 'Acala' as const,
+      destination: 'Hydration' as const,
+      assetInfo: ethAsset
+    }
+    getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot')
+
+    const result = await createTypeAndThenCallContext(options, {})
+
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith('Acala', ethAsset.location, false)
+    expect(result.reserve.chain).toBe('AssetHubPolkadot')
+    expect(result.bridgeHopChain).toBe('AssetHubPolkadot')
+    expect(result.dest.chain).toBe('Hydration')
+  })
+
+  it('requires DOT for a Snowbridge asset sent from Asset Hub to Jamton', async () => {
+    const cgtAsset = {
+      ...mockAsset,
+      symbol: 'CGT',
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
+              }
+            }
+          ]
+        }
+      } as TLocation
+    }
+    const options = {
+      ...mockOptions,
+      destination: 'Jamton' as const,
+      assetInfo: cgtAsset
+    }
+    getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot')
+
+    const result = await createTypeAndThenCallContext(options, { noFeeAsset: true })
+
+    expect(result.isRelayAsset).toBe(false)
+    expect(result.systemAsset).toBe(mockSystemAsset)
+  })
+
+  it('does not add an Asset Hub hop when Asset Hub is already the destination', async () => {
+    const cgtAsset = {
+      ...mockAsset,
+      symbol: 'CGT',
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
+              }
+            }
+          ]
+        }
+      } as TLocation
+    }
+    const options = {
+      ...mockOptions,
+      chain: 'Jamton' as const,
+      destination: 'AssetHubPolkadot' as const,
+      assetInfo: cgtAsset
+    }
+    getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot')
+
+    const result = await createTypeAndThenCallContext(options, {})
+
+    expect(result.reserve.chain).toBe('AssetHubPolkadot')
+    expect(result.dest.chain).toBe('AssetHubPolkadot')
+    expect(result.bridgeHopChain).toBeUndefined()
+  })
+
+  it('resolves an external reserve only when the destination is external', async () => {
+    vi.mocked(isExternalChain).mockImplementation(chain => chain === 'Ethereum')
+    getAssetReserveChainSpy.mockReturnValue('Ethereum')
+
+    const options = {
+      ...mockOptions,
+      destination: 'Ethereum' as const
+    }
+
+    const result = await createTypeAndThenCallContext(options, {})
+
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(mockChain, mockAsset.location, true)
+    expect(result.reserve.chain).toBe('Ethereum')
   })
 
   it('should use origin api for reserve when reserveChain equals origin chain', async () => {

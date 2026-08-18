@@ -129,12 +129,7 @@ export const hasDryRunSupportImpl = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
 ): boolean => {
-  // These chains have DryRun but it's not working
-  const DISABLED_CHAINS: TChain[] = ['Jamton']
-  return (
-    getAssetsObjectImpl(chain, ctx).supportsDryRunApi &&
-    !DISABLED_CHAINS.some(disabled => disabled === chain)
-  )
+  return getAssetsObjectImpl(chain, ctx).supportsDryRunApi
 }
 
 export const hasDryRunSupport = (chain: TChain): boolean => hasDryRunSupportImpl(chain)
@@ -143,12 +138,7 @@ export const hasXcmPaymentApiSupportImpl = <TCustomChain extends string = never>
   chain: TChain | TCustomChain,
   ctx?: TCustomCtx
 ): boolean => {
-  // These chains have XcmPaymentApi but it's not working
-  const DISABLED_CHAINS: TChain[] = ['Basilisk', 'Jamton']
-  return (
-    getAssetsObjectImpl(chain, ctx).supportsXcmPaymentApi &&
-    !DISABLED_CHAINS.some(disabled => disabled === chain)
-  )
+  return getAssetsObjectImpl(chain, ctx).supportsXcmPaymentApi
 }
 
 export const hasXcmPaymentApiSupport = (chain: TChain): boolean =>

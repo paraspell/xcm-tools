@@ -52,6 +52,15 @@ describe('Jamton', () => {
     })
   })
 
+  it('uses custom currency IDs for minting', () => {
+    expect(chain['getMintConfig']()).toEqual({ useCustomCurrencyId: true })
+  })
+
+  it('uses the custom currency ID for local transfers', () => {
+    const api = {} as PolkadotApi<unknown, unknown, unknown>
+    expect(chain['getLocalCurrencyId'](api, usdtAsset)).toEqual({ ForeignAsset: 123 })
+  })
+
   it('should handle native asset', async () => {
     const input = {
       ...baseInput,

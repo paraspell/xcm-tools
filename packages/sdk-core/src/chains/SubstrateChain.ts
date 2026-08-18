@@ -338,6 +338,13 @@ abstract class SubstrateChain<
     return false
   }
 
+  resolveCustomTransferAssets(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    _asset: WithAmount<TAssetInfo>
+  ): WithAmount<TAssetInfo>[] {
+    return []
+  }
+
   createAsset(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: WithAmount<TAssetInfo>,
@@ -425,10 +432,8 @@ abstract class SubstrateChain<
   ): TRes {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
-    assertHasId(asset)
-
     const dest = { Id: recipient }
-    const currencyId = BigInt(asset.assetId)
+    const currencyId = this.getLocalCurrencyId(api, asset)
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({
@@ -451,6 +456,14 @@ abstract class SubstrateChain<
         amount: asset.amount
       }
     })
+  }
+
+  protected getLocalCurrencyId(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ): unknown {
+    assertHasId(asset)
+    return BigInt(asset.assetId)
   }
 
   getBalanceNative(

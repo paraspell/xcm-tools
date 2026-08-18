@@ -183,6 +183,41 @@ describe('createTypeAndThenCall', () => {
     )
   })
 
+  it('includes DOT alongside a Snowbridge asset sent to a parachain', async () => {
+    const cgtLocation: TAssetInfo['location'] = {
+      parents: 2,
+      interior: {
+        X2: [
+          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
+            }
+          }
+        ]
+      }
+    }
+    const snowbridgeContext = {
+      ...mockContext,
+      origin: { api: mockApi, chain: 'AssetHubPolkadot' as const },
+      reserve: { api: mockApi, chain: 'AssetHubPolkadot' as const },
+      dest: { api: mockApi, chain: 'Jamton' as const },
+      isRelayAsset: false,
+      assetInfo: {
+        ...mockContext.assetInfo,
+        symbol: 'CGT',
+        location: cgtLocation
+      }
+    }
+
+    await constructTypeAndThenCall(snowbridgeContext, mockFees)
+
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 300n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenNthCalledWith(2, mockVersion, 1000n, cgtLocation)
+    expect(createCustomXcm).toHaveBeenCalledWith(snowbridgeContext, 2, false, 300n, mockFees)
+  })
+
   it('throws BridgeHaltedError when snowbridge is halted', async () => {
     const snowbridgeContext = {
       ...mockContext,

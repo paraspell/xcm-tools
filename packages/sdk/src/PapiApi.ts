@@ -601,12 +601,13 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       }
     }
 
-    if (deliveryFeeRes?.value?.type === 'Unimplemented') {
+    if (deliveryFeeRes?.success === false || deliveryFeeRes?.value?.type === 'Unimplemented') {
       return 0n
     }
 
+    const deliveryFees = deliveryFeeRes?.value?.value
     const deliveryFeeResolved =
-      deliveryFeeRes?.value?.value.length > 0 ? deliveryFeeRes?.value?.value[0].fun.value : 0n
+      Array.isArray(deliveryFees) && deliveryFees.length > 0 ? deliveryFees[0].fun.value : 0n
 
     const nativeAsset = this.findNativeAssetInfoOrThrow(chain)
 

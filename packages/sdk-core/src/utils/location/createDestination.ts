@@ -1,7 +1,6 @@
 import type { TChain } from '@paraspell/sdk-common'
 import {
   isExternalChain,
-  isSnowbridge,
   isSubstrateBridge,
   isTLocation,
   Parents,
@@ -46,9 +45,9 @@ export const createDestination = <TApi, TRes, TSigner, TCustomChain extends stri
     }
   }
 
-  const isSb = !isLocDestination && isSnowbridge(origin, destination)
+  const isExternalDestination = !isLocDestination && isExternalChain(destination)
 
-  if (isSb) {
+  if (isExternalDestination) {
     return {
       parents: Parents.TWO,
       interior: {

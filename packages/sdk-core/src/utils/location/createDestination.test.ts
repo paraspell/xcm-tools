@@ -41,7 +41,7 @@ describe('createDestination', () => {
     const chainId = 1
 
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
-    vi.mocked(isExternalChain).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(true)
     vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
 
     const location = createDestination(mockApi, Version.V5, origin, destination, chainId)
@@ -54,6 +54,24 @@ describe('createDestination', () => {
             GlobalConsensus: { Ethereum: { chainId: BigInt(chainId) } }
           }
         ]
+      }
+    })
+  })
+
+  it('creates a parachain destination for a parachain-to-parachain transfer', () => {
+    const origin: TSubstrateChain = 'AssetHubPolkadot'
+    const destination: TSubstrateChain = 'Acala'
+    const chainId = 2000
+
+    vi.mocked(isSubstrateBridge).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(false)
+
+    const location = createDestination(mockApi, Version.V5, origin, destination, chainId)
+
+    expect(location).toEqual({
+      parents: Parents.ONE,
+      interior: {
+        X1: [{ Parachain: chainId }]
       }
     })
   })

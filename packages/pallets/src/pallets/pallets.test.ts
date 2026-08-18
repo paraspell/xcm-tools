@@ -30,12 +30,19 @@ describe('getDefaultPallet', () => {
     })
   })
 
-  it('should return xTokens pallet for Acala', () => {
+  it('should return PolkadotXcm pallet for Acala', () => {
     const chain: TChain = 'Acala'
-    const defaultPallet: TPallet = 'XTokens'
+    const defaultPallet: TPallet = 'PolkadotXcm'
     const pallet = getDefaultPallet(chain)
     expect(pallet).toEqual(defaultPallet)
   })
+
+  it.each(['Centrifuge', 'Crust', 'CrustShadow', 'Peaq', 'Pendulum'] as const)(
+    'should return overridden XTokens pallet for %s',
+    chain => {
+      expect(getDefaultPallet(chain)).toBe('XTokens')
+    }
+  )
 })
 
 describe('getSupportedPallets', () => {

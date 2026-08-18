@@ -15,6 +15,7 @@ export const isNativeAssetTeleport = <TApi, TRes, TSigner, TCustomChain extends 
   const isDestAh = dest.includes('AssetHub')
 
   if (isOriginAh === isDestAh) return false
+  if (api.getRelayChainOf(origin) !== api.getRelayChainOf(dest)) return false
 
   const para = isDestAh ? origin : dest
 

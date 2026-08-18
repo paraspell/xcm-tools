@@ -96,6 +96,36 @@ describe('createCustomXcm', () => {
   })
 
   describe('DepositReserveAsset (different chains)', () => {
+    it('does not initiate a teleport when Asset Hub is already the destination', async () => {
+      vi.mocked(isTrustedChain).mockReturnValue(true)
+
+      const result = await createCustomXcm(
+        {
+          ...mockContext,
+          origin: { chain: 'Jamton', api: mockApi },
+          reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+          dest: { chain: 'AssetHubPolkadot', api: mockApi },
+          bridgeHopChain: undefined,
+          isRelayAsset: false,
+          options: {
+            ...mockContext.options,
+            destination: 'AssetHubPolkadot'
+          }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount,
+        {
+          hopFees: 100n,
+          destFee: 200n
+        }
+      )
+
+      expect(result.some(isInitiateTeleportInstruction)).toBe(false)
+      expect(result).toHaveLength(1)
+      expect(isDepositAssetInstruction(result[0])).toBe(true)
+    })
+
     it('uses Definite assets when destFee is not MIN_FEE', async () => {
       const result = await createCustomXcm(
         {

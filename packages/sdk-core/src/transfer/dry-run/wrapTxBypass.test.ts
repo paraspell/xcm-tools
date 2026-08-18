@@ -7,17 +7,21 @@ import { getAssetBalanceInternal } from '../../balance'
 import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
+const { mint, resolveCustomTransferAssets } = vi.hoisted(() => ({
+  resolveCustomTransferAssets: vi.fn(),
+  mint: vi.fn((_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
+    const sym = asset.symbol ?? 'Unknown'
+    const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
+    return asset.isNative
+      ? { balanceTx }
+      : { balanceTx, assetStatusTx: { module: 'Mint', method: `Mint:status:${sym}` } }
+  })
+}))
+
 vi.mock('../../chains/getChainInstance', () => ({
   getSubstrateChainImpl: vi.fn(() => ({
-    mint: vi.fn(
-      (_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
-        const sym = asset.symbol ?? 'Unknown'
-        const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
-        return asset.isNative
-          ? { balanceTx }
-          : { balanceTx, assetStatusTx: { module: 'Mint', method: `Mint:status:${sym}` } }
-      }
-    )
+    resolveCustomTransferAssets,
+    mint
   }))
 }))
 
@@ -55,6 +59,7 @@ const version = Version.V5
 describe('wrapTxBypass', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    resolveCustomTransferAssets.mockReturnValue([])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -219,6 +224,7 @@ describe('wrapTxBypass', () => {
 describe('wrapTxBypass (new branches)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    resolveCustomTransferAssets.mockReturnValue([])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -257,6 +263,34 @@ describe('wrapTxBypass (new branches)', () => {
     const [[batched]] = spies.callBatchMethod.mock.calls
     expect(batched).toContain('dispatchAs(Alice)->ORIG_TX')
     expect(batched.join('|')).not.toMatch(/USDT/)
+  })
+
+  it('adds the existential deposit when previewing a keep-alive transfer', async () => {
+    const { api } = mkApi()
+    const cgt = {
+      symbol: 'CGT',
+      decimals: 18,
+      existentialDeposit: '10',
+      amount: 100n
+    } as WithAmount<TAssetInfo>
+
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+
+    await wrapTxBypass(
+      {
+        api,
+        chain: 'Jamton',
+        address: 'Alice',
+        version,
+        asset: cgt,
+        tx: 'ORIG_TX',
+        keepAlive: true
+      },
+      { mintFeeAssets: false, sentAssetMintMode: 'preview' }
+    )
+
+    const cgtMintCall = mint.mock.calls.find(([, , asset]) => asset.symbol === 'CGT')
+    expect(cgtMintCall?.[2]).toMatchObject({ amount: 110n })
   })
 
   it('mintFeeAssets=false skips native/relay/fee mints and only mints main asset + dispatches original tx', async () => {
@@ -307,6 +341,46 @@ describe('wrapTxBypass (new branches)', () => {
     expect(batched).toEqual([
       'call:Mint:status:USDT',
       'dispatchAs(Alice)->call:Mint:set_balance:USDT',
+      'dispatchAs(Alice)->ORIG_TX'
+    ])
+  })
+
+  it('mints custom transfer assets resolved by the origin chain', async () => {
+    const { api, spies } = mkApi()
+    const wud = {
+      symbol: 'WUD',
+      decimals: 12,
+      amount: 1_000n
+    } as WithAmount<TAssetInfo>
+    const usdt = {
+      symbol: 'USDt',
+      decimals: 6,
+      amount: 180_000n
+    } as WithAmount<TAssetInfo>
+
+    resolveCustomTransferAssets.mockReturnValue([usdt])
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+
+    await wrapTxBypass(
+      {
+        api,
+        chain: 'Jamton',
+        address: 'Alice',
+        version,
+        asset: wud,
+        assets: [wud],
+        tx: 'ORIG_TX'
+      },
+      { mintFeeAssets: false, sentAssetMintMode: 'preview' }
+    )
+
+    expect(resolveCustomTransferAssets).toHaveBeenCalledWith(api, wud)
+    const [[batched]] = spies.callBatchMethod.mock.calls
+    expect(batched).toEqual([
+      'call:Mint:status:USDt',
+      'dispatchAs(Alice)->call:Mint:set_balance:USDt',
+      'call:Mint:status:WUD',
+      'dispatchAs(Alice)->call:Mint:set_balance:WUD',
       'dispatchAs(Alice)->ORIG_TX'
     ])
   })
