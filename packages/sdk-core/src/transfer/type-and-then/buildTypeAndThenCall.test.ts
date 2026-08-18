@@ -154,6 +154,76 @@ describe('buildTypeAndThenCall', () => {
     expect(result.params.fees_transfer_type).toBe('LocalReserve')
   })
 
+  it('uses Hydration as the immediate destination when ETH starts on Asset Hub', () => {
+    const originAndReserve: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
+    const dest: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'Hydration',
+      api: mockApi
+    }
+
+    buildTypeAndThenCall(
+      {
+        ...mockContext,
+        origin: originAndReserve,
+        reserve: originAndReserve,
+        dest,
+        bridgeHopChain: undefined
+      },
+      false,
+      mockCustomXcm,
+      mockAssets
+    )
+
+    expect(getParaIdSpy).toHaveBeenCalledWith('Hydration')
+    expect(createDestination).toHaveBeenCalledWith(
+      mockApi,
+      mockVersion,
+      'AssetHubPolkadot',
+      'Hydration',
+      mockParaId
+    )
+  })
+
+  it('uses Asset Hub as the immediate destination when ETH starts on another parachain', () => {
+    const origin: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'Acala',
+      api: mockApi
+    }
+    const reserve: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
+    const dest: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'Hydration',
+      api: mockApi
+    }
+
+    buildTypeAndThenCall(
+      {
+        ...mockContext,
+        origin,
+        reserve,
+        dest,
+        bridgeHopChain: 'AssetHubPolkadot'
+      },
+      false,
+      mockCustomXcm,
+      mockAssets
+    )
+
+    expect(getParaIdSpy).toHaveBeenCalledWith('AssetHubPolkadot')
+    expect(createDestination).toHaveBeenCalledWith(
+      mockApi,
+      mockVersion,
+      'Acala',
+      'AssetHubPolkadot',
+      mockParaId
+    )
+  })
+
   it('should use DestinationReserve when origin chain does not equal reserveChain', () => {
     vi.mocked(isTrustedChain).mockReturnValue(false)
     const mockOrigin: TChainWithApi<unknown, unknown, unknown> = { chain: 'Polkadot', api: mockApi }

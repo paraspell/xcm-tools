@@ -51,7 +51,7 @@ const resolveReserveChain = <TApi, TRes, TSigner, TCustomChain extends string = 
     return overrideReserve
   }
 
-  return api.getAssetReserveChain(chain, assetLocation, true)
+  return api.getAssetReserveChain(chain, assetLocation, isExternalChain(destination))
 }
 
 export const createTypeAndThenCallContext = async <
@@ -105,9 +105,15 @@ export const createTypeAndThenCallContext = async <
 
   const assetGlobalConsensus = getJunctionValue(assetInfo.location, 'GlobalConsensus')
   const originRelayChain = api.getRelayChainOf(chain)
-  const isAssetHubToExternal = chain.startsWith('AssetHub') && isExternalChain(destination)
+  const isExternalDestination = isExternalChain(destination)
+  const isSnowbridgeAsset = deepEqual(
+    assetGlobalConsensus,
+    getEthereumJunction(api, chain, false).GlobalConsensus
+  )
+  const requiresSystemAsset = isSnowbridgeAsset && !isExternalDestination
+  const isAssetHubToExternal = chain.startsWith('AssetHub') && isExternalDestination
   const isForeignRelayToExternal =
-    isExternalChain(destination) &&
+    isExternalDestination &&
     !chain.startsWith('AssetHub') &&
     assetInfo.location.parents === 2 &&
     RELAYCHAINS.some(
@@ -117,15 +123,19 @@ export const createTypeAndThenCallContext = async <
     )
 
   const isRelayAsset =
+    !requiresSystemAsset &&
     !isForeignRelayToExternal &&
     (isAssetHubToExternal ||
       NO_FEE_ASSET_LOCS.some(loc => deepEqual(assetInfo.location, loc)) ||
       isSubBridge ||
       (overrides.noFeeAsset ?? false))
 
+  const assetHubChain: TSubstrateChain = `AssetHub${originRelayChain}`
   const bridgeHopChain: TSubstrateChain | undefined =
-    !chain.startsWith('AssetHub') && assetGlobalConsensus !== undefined
-      ? `AssetHub${originRelayChain}`
+    !chain.startsWith('AssetHub') &&
+    destination !== assetHubChain &&
+    assetGlobalConsensus !== undefined
+      ? assetHubChain
       : undefined
 
   const destApi = api.clone()

@@ -1,4 +1,4 @@
-import { SUBSTRATE_CHAINS, TSubstrateChain } from '@paraspell/sdk-common'
+import { SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { fetchPalletList } from '../../sdk/src/utils/fetchPalletList'
 import { createScriptProgress } from '../../sdk-common/scripts/progress'
@@ -9,18 +9,26 @@ import {
   handleDataFetching
 } from '../../sdk-common/scripts/scriptUtils'
 import type {
-  TPallet,
-  TPalletMap,
-  TPalletJsonMap,
-  TPalletDetails,
   TAssetsPallet,
-  TPalletEntry
+  TPallet,
+  TPalletDetails,
+  TPalletEntry,
+  TPalletJsonMap,
+  TPalletMap
 } from '../src'
 import { NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
 
 const JSON_FILE_PATH = './src/maps/pallets.json'
 
-const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'XTokens', 'PolkadotXcm']
+const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'PolkadotXcm', 'XTokens']
+
+const defaultPalletOverrides: Partial<Record<TSubstrateChain, TPallet>> = {
+  Centrifuge: 'XTokens',
+  Crust: 'XTokens',
+  CrustShadow: 'XTokens',
+  Peaq: 'XTokens',
+  Pendulum: 'XTokens'
+}
 
 const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain): TPalletMap => {
   const toDetails = (p: TPalletEntry): TPalletDetails => ({
@@ -38,9 +46,11 @@ const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain)
 
   const supportedPallets = palletDetails.filter(pallet => allPallets.includes(pallet.name))
 
-  const defaultPallet = defaultPalletsByPriority.find(pallet =>
-    supportedPallets.map(item => item.name).includes(pallet)
-  ) as TPallet
+  const defaultPallet =
+    defaultPalletOverrides[chain] ??
+    defaultPalletsByPriority.find(pallet =>
+      supportedPallets.map(item => item.name).includes(pallet)
+    )
 
   const nativeAssetsPallet = NATIVE_ASSETS_PALLET_PRIORITY.find(pallet =>
     palletDetails.map(item => item.name).includes(pallet)

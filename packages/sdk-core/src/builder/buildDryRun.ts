@@ -14,7 +14,7 @@ export const buildDryRun = <TApi, TRes, TSigner, TCustomChain extends string = n
   options: TSubstrateTransferBaseOptionsWithSender<TApi, TRes, TSigner>,
   bypassOptions?: TBypassOptions
 ) => {
-  const { to, sender, feeAsset, from, currency, version } = options
+  const { to, sender, feeAsset, from, currency, version, keepAlive } = options
 
   if (isTLocation(to)) {
     throw new InvalidAddressError('Location destination is not supported for XCM fee calculation.')
@@ -29,6 +29,7 @@ export const buildDryRun = <TApi, TRes, TSigner, TCustomChain extends string = n
     currency,
     feeAsset,
     version,
-    bypassOptions
+    bypassOptions,
+    keepAlive: from === to ? (keepAlive ?? true) : false
   })
 }

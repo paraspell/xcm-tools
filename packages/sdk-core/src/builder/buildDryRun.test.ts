@@ -63,7 +63,23 @@ describe('buildDryRun', () => {
       currency: baseOptions.currency,
       sender: baseOptions.sender,
       feeAsset: baseOptions.feeAsset,
-      bypassOptions
+      bypassOptions,
+      keepAlive: false
     })
+  })
+
+  it('defaults keepAlive to true for local transfers', async () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(dryRun).mockResolvedValue({} as TDryRunResult)
+
+    await buildDryRun(api, tx, { ...baseOptions, from: 'Jamton', to: 'Jamton' })
+
+    expect(dryRun).toHaveBeenCalledWith(
+      expect.objectContaining({
+        origin: 'Jamton',
+        destination: 'Jamton',
+        keepAlive: true
+      })
+    )
   })
 })

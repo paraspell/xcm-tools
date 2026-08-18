@@ -1,15 +1,17 @@
 // Contains detailed structure of XCM call construction for Jamton Parachain
 
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import type { IPolkadotXCMTransfer, TMintConfig, TPolkadotXCMTransferOptions } from '../../types'
 import { createAsset } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
+
+const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
 
 class Jamton<TApi, TRes, TSigner, TCustomChain extends string = never>
   extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
@@ -22,6 +24,27 @@ class Jamton<TApi, TRes, TSigner, TCustomChain extends string = never>
   getCustomCurrencyId(_api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>, asset: TAssetInfo) {
     const assetId = Number(asset.assetId)
     return asset.isNative ? { Native: assetId } : { ForeignAsset: assetId }
+  }
+
+  protected getLocalCurrencyId(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ) {
+    return this.getCustomCurrencyId(api, asset)
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { useCustomCurrencyId: true }
+  }
+
+  resolveCustomTransferAssets(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: WithAmount<TAssetInfo>
+  ): WithAmount<TAssetInfo>[] {
+    if (!isSymbolMatch(asset.symbol, 'WUD')) return []
+
+    const usdt = api.findAssetInfoOrThrow(this.chain, { symbol: 'USDt' })
+    return [{ ...usdt, amount: MIN_USDT_AMOUNT, isFeeAsset: true }]
   }
 
   transferPolkadotXCM(
@@ -37,15 +60,16 @@ class Jamton<TApi, TRes, TSigner, TCustomChain extends string = never>
       )
     }
 
-    if (isSymbolMatch(assetInfo.symbol, 'WUD')) {
-      const usdt = api.findAssetInfoOrThrow(this.chain, { symbol: 'USDt' })
-      const MIN_USDT_AMOUNT = 180_000n // 0.18 USDt
+    const additionalAssets = this.resolveCustomTransferAssets(api, assetInfo)
+    if (additionalAssets.length > 0) {
       return transferPolkadotXcm({
         ...input,
-        overriddenAsset: [
-          { ...createAsset(version, MIN_USDT_AMOUNT, usdt.location), isFeeAsset: true },
-          createAsset(version, assetInfo.amount, assetInfo.location)
-        ]
+        overriddenAsset: [...additionalAssets, assetInfo].map(
+          ({ amount, location, isFeeAsset }) => ({
+            ...createAsset(version, amount, location),
+            ...(isFeeAsset && { isFeeAsset: true })
+          })
+        )
       })
     }
 

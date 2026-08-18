@@ -678,6 +678,26 @@ describe('PapiApi', () => {
       expect(res).toBe(0n)
     })
 
+    it('returns 0n when the delivery fee asset is not supported', async () => {
+      const unsafeApi = papiApi.api.getUnsafeApi()
+      const forwardedXcm = [{}, [{}]]
+
+      vi.mocked(unsafeApi.apis.XcmPaymentApi.query_delivery_fees).mockResolvedValue({
+        success: false,
+        value: { type: 'AssetNotFound' }
+      })
+
+      const res = await papiApi.getDeliveryFee(
+        chain,
+        forwardedXcm,
+        baseAsset,
+        baseAsset.location,
+        Version.V5
+      )
+
+      expect(res).toBe(0n)
+    })
+
     it('falls back to 0 delivery fee when AssetConversionApi throws the runtime-entry error', async () => {
       const forwardedXcm = [{}, [{}]]
       vi.mocked(isAssetEqual).mockReturnValue(false)

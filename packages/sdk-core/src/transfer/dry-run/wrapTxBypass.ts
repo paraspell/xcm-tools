@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { isAssetEqual } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
@@ -121,6 +121,10 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
 ) => {
   const { api, chain, address, asset, feeAsset, tx } = dryRunOptions
   const { mintFeeAssets } = options
+  const chainInstance = getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
+    chain,
+    api._customCtx
+  )
 
   const bypassMintAmount = resolveBypassMintAmount(chain)
 
@@ -169,7 +173,9 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
     if (options?.sentAssetMintMode === 'bypass') {
       mintAmount = parseUnits(bypassMintAmount, sentAsset.decimals) + sentAsset.amount
     } else {
-      const missing = calcPreviewMintAmount(balance, sentAsset.amount) ?? 0n
+      const keepAliveBuffer = dryRunOptions.keepAlive ? getEdFromAssetOrThrow(sentAsset) : 0n
+      const desiredBalance = sentAsset.amount + keepAliveBuffer
+      const missing = calcPreviewMintAmount(balance, desiredBalance) ?? 0n
       const total = missing + bonus
       mintAmount = total > 0n ? total : null
     }
@@ -180,7 +186,9 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
   }
 
   // mint assets that are being sent
-  const mintAssetResults = await Promise.all((dryRunOptions.assets ?? [asset]).map(mintSentAsset))
+  const sentAssets = dryRunOptions.assets ?? [asset]
+  const assetsToMint = [...chainInstance.resolveCustomTransferAssets(api, asset), ...sentAssets]
+  const mintAssetResults = await Promise.all(assetsToMint.map(mintSentAsset))
 
   return api.callBatchMethod(
     [
