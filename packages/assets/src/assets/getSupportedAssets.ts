@@ -7,6 +7,7 @@ import {
 
 import type { TAssetInfo, TCustomCtx } from '../types'
 import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
+import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeAsset'
 import { isAssetEqual } from './isAssetEqual'
 import { isSystemAsset } from './isSystemAsset'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
@@ -37,7 +38,8 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
         nativeSymbols.includes(symbol)
       )
       const stablecoinAssets = findStablecoinAssets(origin)
-      return [...filteredSystemAssets, ...stablecoinAssets]
+      const additionalBridgeAssets = supportedAssets.filter(isAdditionalSubstrateBridgeAsset)
+      return [...filteredSystemAssets, ...stablecoinAssets, ...additionalBridgeAssets]
     } else {
       // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
       // so it isn't matched by isAssetEqual. Include it explicitly.

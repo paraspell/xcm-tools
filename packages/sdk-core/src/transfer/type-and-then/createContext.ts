@@ -3,6 +3,7 @@ import {
   deepEqual,
   getJunctionValue,
   isExternalChain,
+  isRelayChain,
   isSnowbridge,
   isSubstrateBridge,
   RELAYCHAINS,
@@ -19,6 +20,21 @@ import type {
 } from '../../types'
 import { assertToIsString, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+
+const PINK_LOCATION: TLocation = {
+  parents: 1,
+  interior: {
+    X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 23 }]
+  }
+}
+
+const requiresSystemAssetByLocation = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  assetLocation: TLocation
+) => {
+  const wudLocation = api.findAssetInfoOrThrow('Jamton', { symbol: 'WUD' }).location
+  return [wudLocation, PINK_LOCATION].some(location => deepEqual(assetLocation, location))
+}
 
 export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -110,7 +126,10 @@ export const createTypeAndThenCallContext = async <
     assetGlobalConsensus,
     getEthereumJunction(api, chain, false).GlobalConsensus
   )
-  const requiresSystemAsset = isSnowbridgeAsset && !isExternalDestination
+  const requiresSystemAsset =
+    !isExternalDestination &&
+    (isSnowbridgeAsset ||
+      (!isRelayChain(destination) && requiresSystemAssetByLocation(api, assetInfo.location)))
   const isAssetHubToExternal = chain.startsWith('AssetHub') && isExternalDestination
   const isForeignRelayToExternal =
     isExternalDestination &&

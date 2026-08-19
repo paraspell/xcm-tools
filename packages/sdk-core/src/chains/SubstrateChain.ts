@@ -338,13 +338,6 @@ abstract class SubstrateChain<
     return false
   }
 
-  resolveCustomTransferAssets(
-    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-    _asset: WithAmount<TAssetInfo>
-  ): WithAmount<TAssetInfo>[] {
-    return []
-  }
-
   createAsset(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: WithAmount<TAssetInfo>,

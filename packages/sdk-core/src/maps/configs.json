@@ -578,6 +578,17 @@
       }
     ]
   },
+  "Curio": {
+    "name": "Curio",
+    "info": "curio",
+    "paraId": 3339,
+    "providers": [
+      {
+        "name": "Curio",
+        "endpoint": "wss://parachain.curioinvest.com/"
+      }
+    ]
+  },
   "CrustShadow": {
     "name": "Crust Shadow",
     "info": "shadow",

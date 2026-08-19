@@ -1,5 +1,4 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { isSymbolMatch } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,14 +6,10 @@ import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { createAsset } from '../../utils'
 import { getChain } from '../../utils/getChain'
 import type Jamton from './Jamton'
 
-vi.mock('@paraspell/assets')
-
 vi.mock('../../pallets/polkadotXcm')
-vi.mock('../../utils')
 
 describe('Jamton', () => {
   let chain: Jamton<unknown, unknown, unknown>
@@ -77,8 +72,6 @@ describe('Jamton', () => {
       ...baseInput,
       assetInfo: { ...usdtAsset, amount: 100n }
     }
-    vi.mocked(isSymbolMatch).mockReturnValue(false)
-
     await chain.transferPolkadotXCM(input)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
@@ -91,8 +84,6 @@ describe('Jamton', () => {
       scenario: 'ParaToPara' as const,
       destination: 'Acala' as const
     }
-    vi.mocked(isSymbolMatch).mockReturnValue(false)
-
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     expect(() => chain.transferPolkadotXCM(input)).toThrow(
       'Transfer from Jamton to "Acala" is not yet supported'
@@ -106,8 +97,6 @@ describe('Jamton', () => {
       scenario: 'ParaToPara' as const,
       destination: 'AssetHubPolkadot' as const
     }
-    vi.mocked(isSymbolMatch).mockReturnValue(false)
-
     await chain.transferPolkadotXCM(input)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
@@ -120,74 +109,31 @@ describe('Jamton', () => {
       scenario: 'ParaToRelay' as const,
       destination: 'Acala' as const
     }
-    vi.mocked(isSymbolMatch).mockReturnValue(false)
-
     await chain.transferPolkadotXCM(input)
 
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 
-  it('should handle WUD symbol with multi-asset transfer', async () => {
-    const mockUsdtAsset = {
-      symbol: 'USDt',
-      location: {}
-    } as TAssetInfo
-
-    const mockApi = {
-      findAssetInfoOrThrow: vi.fn().mockReturnValue(mockUsdtAsset)
-    } as unknown as PolkadotApi<unknown, unknown, unknown>
-    const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
-
+  it.each([
+    ['WUD', 31337],
+    ['PINK', 23]
+  ])('uses the normal transfer path for %s by location', async (symbol, generalIndex) => {
     const input = {
       ...baseInput,
-      api: mockApi,
       assetInfo: {
-        symbol: 'WUD',
-        assetId: '456',
+        symbol,
         amount: 1000n,
-        location: {}
+        location: {
+          parents: 1,
+          interior: {
+            X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: generalIndex }]
+          }
+        }
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
-    vi.mocked(isSymbolMatch).mockReturnValue(true)
-    vi.mocked(createAsset)
-      .mockReturnValueOnce({
-        id: usdtAsset.location,
-        fun: { Fungible: 180_000n }
-      })
-      .mockReturnValueOnce({ id: input.assetInfo.location, fun: { Fungible: 1000n } })
-
     await chain.transferPolkadotXCM(input)
 
-    expect(isSymbolMatch).toHaveBeenCalledWith('WUD', 'WUD')
-    expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Jamton', { symbol: 'USDt' })
-    expect(createAsset).toHaveBeenCalledWith(Version.V4, 180_000n, mockUsdtAsset.location)
-    expect(createAsset).toHaveBeenCalledWith(Version.V4, 1000n, input.assetInfo.location)
-
-    expect(transferPolkadotXcm).toHaveBeenCalledWith({
-      ...input,
-      overriddenAsset: [
-        { id: usdtAsset.location, fun: { Fungible: 180_000n }, isFeeAsset: true },
-        { id: input.assetInfo.location, fun: { Fungible: 1000n } }
-      ]
-    })
-  })
-
-  it('should not treat non-WUD symbols as WUD', async () => {
-    const mockApi = {
-      findAssetInfoOrThrow: vi.fn()
-    } as unknown as PolkadotApi<unknown, unknown, unknown>
-    const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
-    const input = {
-      ...baseInput,
-      api: mockApi,
-      assetInfo: { ...usdtAsset, amount: 100n }
-    }
-    vi.mocked(isSymbolMatch).mockReturnValue(false)
-
-    await chain.transferPolkadotXCM(input)
-
-    expect(findAssetInfoOrThrowSpy).not.toHaveBeenCalled()
     expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 })

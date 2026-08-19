@@ -7,8 +7,7 @@ import { getAssetBalanceInternal } from '../../balance'
 import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
-const { mint, resolveCustomTransferAssets } = vi.hoisted(() => ({
-  resolveCustomTransferAssets: vi.fn(),
+const { mint } = vi.hoisted(() => ({
   mint: vi.fn((_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
     const sym = asset.symbol ?? 'Unknown'
     const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
@@ -20,7 +19,6 @@ const { mint, resolveCustomTransferAssets } = vi.hoisted(() => ({
 
 vi.mock('../../chains/getChainInstance', () => ({
   getSubstrateChainImpl: vi.fn(() => ({
-    resolveCustomTransferAssets,
     mint
   }))
 }))
@@ -59,7 +57,6 @@ const version = Version.V5
 describe('wrapTxBypass', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    resolveCustomTransferAssets.mockReturnValue([])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -123,6 +120,8 @@ describe('wrapTxBypass', () => {
     expect(batched).toEqual(
       expect.arrayContaining([
         'call:Mint:set_balance:ACA',
+        'call:Mint:status:DOT',
+        'dispatchAs(Alice)->call:Mint:set_balance:DOT',
         'call:Mint:status:USDC',
         'dispatchAs(Alice)->call:Mint:set_balance:USDC',
         'call:Mint:status:USDT',
@@ -224,7 +223,6 @@ describe('wrapTxBypass', () => {
 describe('wrapTxBypass (new branches)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    resolveCustomTransferAssets.mockReturnValue([])
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -341,46 +339,6 @@ describe('wrapTxBypass (new branches)', () => {
     expect(batched).toEqual([
       'call:Mint:status:USDT',
       'dispatchAs(Alice)->call:Mint:set_balance:USDT',
-      'dispatchAs(Alice)->ORIG_TX'
-    ])
-  })
-
-  it('mints custom transfer assets resolved by the origin chain', async () => {
-    const { api, spies } = mkApi()
-    const wud = {
-      symbol: 'WUD',
-      decimals: 12,
-      amount: 1_000n
-    } as WithAmount<TAssetInfo>
-    const usdt = {
-      symbol: 'USDt',
-      decimals: 6,
-      amount: 180_000n
-    } as WithAmount<TAssetInfo>
-
-    resolveCustomTransferAssets.mockReturnValue([usdt])
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
-
-    await wrapTxBypass(
-      {
-        api,
-        chain: 'Jamton',
-        address: 'Alice',
-        version,
-        asset: wud,
-        assets: [wud],
-        tx: 'ORIG_TX'
-      },
-      { mintFeeAssets: false, sentAssetMintMode: 'preview' }
-    )
-
-    expect(resolveCustomTransferAssets).toHaveBeenCalledWith(api, wud)
-    const [[batched]] = spies.callBatchMethod.mock.calls
-    expect(batched).toEqual([
-      'call:Mint:status:USDt',
-      'dispatchAs(Alice)->call:Mint:set_balance:USDt',
-      'call:Mint:status:WUD',
-      'dispatchAs(Alice)->call:Mint:set_balance:WUD',
       'dispatchAs(Alice)->ORIG_TX'
     ])
   })

@@ -218,6 +218,36 @@ describe('createTypeAndThenCall', () => {
     expect(createCustomXcm).toHaveBeenCalledWith(snowbridgeContext, 2, false, 300n, mockFees)
   })
 
+  it.each([
+    ['WUD', 31337],
+    ['PINK', 23]
+  ])('includes DOT alongside %s using its Asset Hub location', async (symbol, generalIndex) => {
+    const assetLocation: TAssetInfo['location'] = {
+      parents: 1,
+      interior: {
+        X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: generalIndex }]
+      }
+    }
+    const assetContext = {
+      ...mockContext,
+      origin: { api: mockApi, chain: 'Jamton' as const },
+      reserve: { api: mockApi, chain: 'AssetHubPolkadot' as const },
+      dest: { api: mockApi, chain: 'AssetHubPolkadot' as const },
+      isRelayAsset: false,
+      assetInfo: {
+        ...mockContext.assetInfo,
+        symbol,
+        location: assetLocation
+      }
+    }
+
+    await constructTypeAndThenCall(assetContext, mockFees)
+
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 300n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenNthCalledWith(2, mockVersion, 1000n, assetLocation)
+    expect(createCustomXcm).toHaveBeenCalledWith(assetContext, 2, false, 300n, mockFees)
+  })
+
   it('throws BridgeHaltedError when snowbridge is halted', async () => {
     const snowbridgeContext = {
       ...mockContext,

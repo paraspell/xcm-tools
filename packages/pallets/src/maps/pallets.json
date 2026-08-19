@@ -1012,5 +1012,32 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "ForeignAssets"]
+  },
+  "Curio": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "Balances",
+        "index": 10
+      },
+      {
+        "name": "PolkadotXcm",
+        "index": 41
+      },
+      {
+        "name": "Currencies",
+        "index": 72
+      },
+      {
+        "name": "Tokens",
+        "index": 73
+      },
+      {
+        "name": "XTokens",
+        "index": 75
+      }
+    ],
+    "nativeAssets": "Balances",
+    "otherAssets": ["Currencies", "Tokens"]
   }
 }
