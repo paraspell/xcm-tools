@@ -15832,5 +15832,144 @@
         "isFeeAsset": true
       }
     ]
+  },
+  "Curio": {
+    "relaychainSymbol": "KSM",
+    "nativeAssetSymbol": "CGT",
+    "isEVM": false,
+    "ss58Prefix": 777,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
+    "assets": [
+      {
+        "symbol": "CGT",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x0e186357c323c806c1efdad36d217f7a54b63d18"
+                }
+              }
+            ]
+          }
+        },
+        "isNative": true,
+        "isFeeAsset": true
+      },
+      {
+        "symbol": "KSM",
+        "decimals": 12,
+        "existentialDeposit": "333333333",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isNative": true,
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "0",
+        "symbol": "BSX",
+        "decimals": 12,
+        "existentialDeposit": "1000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2090
+              },
+              {
+                "GeneralIndex": 0
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "2",
+        "symbol": "VAL",
+        "decimals": 18,
+        "existentialDeposit": "1000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2011
+              },
+              {
+                "GeneralKey": {
+                  "length": 32,
+                  "data": "0x0200040000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "3",
+        "symbol": "PSWAP",
+        "decimals": 18,
+        "existentialDeposit": "1000000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2011
+              },
+              {
+                "GeneralKey": {
+                  "length": 32,
+                  "data": "0x0200050000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1",
+        "symbol": "XOR",
+        "decimals": 18,
+        "existentialDeposit": "1000000000000000",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2011
+              },
+              {
+                "GeneralKey": {
+                  "length": 32,
+                  "data": "0x0200000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      }
+    ]
   }
 }

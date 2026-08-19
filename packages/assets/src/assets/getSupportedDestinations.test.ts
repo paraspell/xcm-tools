@@ -4,6 +4,7 @@ import { DuplicateAssetError, InvalidCurrencyError } from '../errors'
 import type { TAssetInfo } from '../types'
 import { getRelayChainSymbol } from './assets'
 import { getSupportedDestinations } from './getSupportedDestinations'
+import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeAsset'
 import { isAssetEqual } from './isAssetEqual'
 import { isStableCoinAsset } from './isStableCoinAsset'
 import { isSystemAsset } from './isSystemAsset'
@@ -20,9 +21,7 @@ vi.mock('./assets', () => ({
   getRelayChainSymbol: vi.fn(() => 'DOT')
 }))
 
-vi.mock('./isAssetEqual', () => ({
-  isAssetEqual: vi.fn()
-}))
+vi.mock('./isAssetEqual')
 
 vi.mock('./isSystemAsset', () => ({
   isSystemAsset: vi.fn(() => false)
@@ -30,6 +29,10 @@ vi.mock('./isSystemAsset', () => ({
 
 vi.mock('./isStableCoinAsset', () => ({
   isStableCoinAsset: vi.fn(() => false)
+}))
+
+vi.mock('./isAdditionalSubstrateBridgeAsset', () => ({
+  isAdditionalSubstrateBridgeAsset: vi.fn(() => false)
 }))
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
@@ -65,6 +68,7 @@ describe('getSupportedDestinations', () => {
     isSubstrateBridgeMock.mockReturnValue(false)
     vi.mocked(isSystemAsset).mockReturnValue(false)
     vi.mocked(isStableCoinAsset).mockReturnValue(false)
+    vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(false)
   })
 
   it('should return destinations where the asset resolves on the destination', () => {
@@ -173,6 +177,10 @@ describe('getSupportedDestinations', () => {
     expect(getSupportedDestinations(origin, currency)).toContain('Kusama')
 
     vi.mocked(isStableCoinAsset).mockReturnValue(false)
+    vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(true)
+    expect(getSupportedDestinations(origin, currency)).toContain('Kusama')
+
+    vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(false)
     expect(getSupportedDestinations(origin, currency)).not.toContain('Kusama')
   })
 

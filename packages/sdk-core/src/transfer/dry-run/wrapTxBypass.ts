@@ -121,10 +121,6 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
 ) => {
   const { api, chain, address, asset, feeAsset, tx } = dryRunOptions
   const { mintFeeAssets } = options
-  const chainInstance = getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(
-    chain,
-    api._customCtx
-  )
 
   const bypassMintAmount = resolveBypassMintAmount(chain)
 
@@ -187,8 +183,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
 
   // mint assets that are being sent
   const sentAssets = dryRunOptions.assets ?? [asset]
-  const assetsToMint = [...chainInstance.resolveCustomTransferAssets(api, asset), ...sentAssets]
-  const mintAssetResults = await Promise.all(assetsToMint.map(mintSentAsset))
+  const mintAssetResults = await Promise.all(sentAssets.map(mintSentAsset))
 
   return api.callBatchMethod(
     [

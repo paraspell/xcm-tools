@@ -61,6 +61,18 @@ describe('isNativeAssetTeleport', () => {
     expect(isAssetEqual).not.toHaveBeenCalled()
   })
 
+  it.each([
+    ['Curio', 'AssetHubKusama'],
+    ['AssetHubKusama', 'Curio']
+  ] as const)('returns false for Curio native asset teleport from %s to %s', (origin, dest) => {
+    getRelayChainOf.mockReturnValue('Kusama')
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+
+    expect(isNativeAssetTeleport(api, origin, dest, asset)).toBe(false)
+    expect(findNativeAssetInfoOrThrow).not.toHaveBeenCalled()
+    expect(isAssetEqual).not.toHaveBeenCalled()
+  })
+
   it('returns false when the asset is not the parachain native', () => {
     vi.mocked(isAssetEqual).mockReturnValue(false)
     expect(isNativeAssetTeleport(api, 'Darwinia', 'AssetHubPolkadot', asset)).toBe(false)

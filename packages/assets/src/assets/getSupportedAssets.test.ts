@@ -50,10 +50,29 @@ describe('getSupportedAssets', () => {
     location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
   }
 
-  it('should return native system assets and stablecoins for substrate bridge transfers', () => {
+  const cgtAsset: TAssetInfo = {
+    symbol: 'CGT2.0',
+    decimals: 18,
+    location: {
+      parents: 2,
+      interior: {
+        X2: [
+          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  it('should return system assets, stablecoins, and additional bridge assets for substrate bridge transfers', () => {
     vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return [dotAsset, ksmAsset, ajunAsset]
-      if (chain === 'AssetHubKusama') return [dotAsset, ksmAsset]
+      if (chain === 'AssetHubPolkadot') return [dotAsset, ksmAsset, ajunAsset, cgtAsset]
+      if (chain === 'AssetHubKusama') return [dotAsset, ksmAsset, cgtAsset]
       return []
     })
     vi.mocked(getNativeAssetSymbolImpl).mockImplementation(chain => {
@@ -64,7 +83,7 @@ describe('getSupportedAssets', () => {
     vi.mocked(findStablecoinAssets).mockReturnValue([usdtAsset])
 
     const result = getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')
-    expect(result).toEqual([dotAsset, ksmAsset, usdtAsset])
+    expect(result).toEqual([dotAsset, ksmAsset, usdtAsset, cgtAsset])
   })
 
   it('should return common assets between origin and destination', () => {

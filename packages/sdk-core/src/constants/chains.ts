@@ -20,6 +20,7 @@ import CoretimeWestend from '../chains/supported/CoretimeWestend'
 import Crab from '../chains/supported/Crab'
 import Crust from '../chains/supported/Crust'
 import CrustShadow from '../chains/supported/CrustShadow'
+import Curio from '../chains/supported/Curio'
 import Darwinia from '../chains/supported/Darwinia'
 import Encointer from '../chains/supported/Encointer'
 import EnergyWebX from '../chains/supported/EnergyWebX'
@@ -86,6 +87,7 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Encointer: new Encointer<TApi, TRes, TSigner>(),
   Basilisk: new Basilisk<TApi, TRes, TSigner>(),
   BifrostKusama: new BifrostKusama<TApi, TRes, TSigner>(),
+  Curio: new Curio<TApi, TRes, TSigner>(),
   CrustShadow: new CrustShadow<TApi, TRes, TSigner>(),
   Crab: new Crab<TApi, TRes, TSigner>(),
   Karura: new Karura<TApi, TRes, TSigner>(),

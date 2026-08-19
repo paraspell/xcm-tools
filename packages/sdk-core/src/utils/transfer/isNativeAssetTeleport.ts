@@ -18,6 +18,7 @@ export const isNativeAssetTeleport = <TApi, TRes, TSigner, TCustomChain extends 
   if (api.getRelayChainOf(origin) !== api.getRelayChainOf(dest)) return false
 
   const para = isDestAh ? origin : dest
+  if (para === 'Curio') return false
 
   return isAssetEqual(api.findNativeAssetInfoOrThrow(para), asset)
 }

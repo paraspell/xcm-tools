@@ -8,6 +8,7 @@ import { fetchAstarAssets } from './astar'
 import { fetchBasiliskAssets } from './basilisk'
 import { fetchBifrostAssets, fetchBifrostNativeAssets } from './bifrost'
 import { fetchCentrifugeAssets, fetchCentrifugeNativeAssets } from './centrifuge'
+import { fetchCurioAssets, fetchCurioNativeAssets } from './curio'
 import { fetchDarwiniaAssets } from './darwinia'
 import { fetchEnergyWebXAssets } from './energyWebX'
 import { fetchHydrationAssets } from './hydration'
@@ -23,6 +24,7 @@ export const getOtherAssetsFetcher = (chain: TSubstrateChain): TAssetsFetcher | 
   if (chain === 'Acala' || chain === 'Karura') return fetchAcalaAssets
   if (chain.startsWith('Bifrost')) return fetchBifrostAssets
   if (chain === 'Centrifuge') return fetchCentrifugeAssets
+  if (chain === 'Curio') return fetchCurioAssets
   if (chain === 'Pendulum') return fetchPendulumAssets
   if (chain === 'Unique') return fetchUniqueAssets
   if (chain === 'Penpal' || chain.startsWith('NeuroWeb')) return fetchPenpalAssets
@@ -42,5 +44,6 @@ export const getNativeAssetsFetcher = (chain: TSubstrateChain): TAssetsFetcher |
   if (chain === 'Jamton') return fetchJamtonNativeAssets
   if (chain === 'Acala' || chain === 'Karura') return fetchAcalaNativeAssets
   if (chain === 'Centrifuge') return fetchCentrifugeNativeAssets
+  if (chain === 'Curio') return fetchCurioNativeAssets
   return undefined
 }

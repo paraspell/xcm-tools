@@ -1,6 +1,7 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
   InvalidCurrencyError,
+  isAdditionalSubstrateBridgeAsset,
   isAssetEqual,
   isBridgedSystemAsset,
   isStableCoinAsset,
@@ -39,11 +40,13 @@ const validateBridgeAsset = <TApi, TRes, TSigner, TCustomChain extends string = 
   const isNativeAsset = isAssetEqual(asset, nativeAsset)
 
   const isBridgedStablecoin = isStableCoinAsset(asset)
+  const isAdditionalBridgedAsset = isAdditionalSubstrateBridgeAsset(asset)
 
   if (!(
     isNativeAsset ||
     isBridgedSystemAsset(asset, [getRelayChainOf(destination)]) ||
-    isBridgedStablecoin
+    isBridgedStablecoin ||
+    isAdditionalBridgedAsset
   )) {
     throw new InvalidCurrencyError(
       `Substrate bridge does not support currency ${JSON.stringify(currency, replaceBigInt)}.`

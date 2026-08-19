@@ -31,6 +31,7 @@ export const chainToQuery: Record<TChain, string | (() => Promise<TChainAssetsIn
   Crab: 'Assets.Metadata',
   Crust: 'Assets.Metadata',
   CrustShadow: 'Assets.Metadata',
+  Curio: 'AssetRegistry.Metadata',
   Darwinia: 'Assets.Metadata',
   Encointer: '',
   EnergyWebX: 'Assets.Metadata',

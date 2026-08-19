@@ -129,6 +129,13 @@ describe('createTypeAndThenCallContext', () => {
     location: RELAY_LOCATION
   }
 
+  const wudLocation: TLocation = {
+    parents: 1,
+    interior: {
+      X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 31337 }]
+    }
+  }
+
   const mockClonedApi = {
     init: vi.fn().mockResolvedValue(undefined)
   }
@@ -136,12 +143,14 @@ describe('createTypeAndThenCallContext', () => {
   const mockApi = {
     clone: vi.fn().mockReturnValue(mockClonedApi),
     init: vi.fn().mockResolvedValue(undefined),
+    findAssetInfoOrThrow: vi.fn(),
     findNativeAssetInfoOrThrow: vi.fn(),
     getAssetReserveChain: vi.fn(),
     getRelayChainOf: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const findNativeAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+  const findAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
   const getAssetReserveChainSpy = vi.spyOn(mockApi, 'getAssetReserveChain')
   const getRelayChainOfSpy = vi.spyOn(mockApi, 'getRelayChainOf')
 
@@ -160,6 +169,11 @@ describe('createTypeAndThenCallContext', () => {
     vi.mocked(isSubstrateBridge).mockReturnValue(false)
     vi.mocked(isTLocation).mockReturnValue(false)
     getAssetReserveChainSpy.mockReturnValue(mockReserveChain)
+    findAssetInfoOrThrowSpy.mockReturnValue({
+      symbol: 'WUD',
+      decimals: 10,
+      location: wudLocation
+    })
     findNativeAssetInfoOrThrowSpy.mockReturnValue(mockSystemAsset)
   })
 
@@ -296,6 +310,52 @@ describe('createTypeAndThenCallContext', () => {
 
     expect(result.isRelayAsset).toBe(false)
     expect(result.systemAsset).toBe(mockSystemAsset)
+  })
+
+  it.each([
+    ['WUD', 31337],
+    ['PINK', 23]
+  ])(
+    'requires DOT for %s by Asset Hub location between parachains',
+    async (symbol, generalIndex) => {
+      const asset = {
+        ...mockAsset,
+        symbol,
+        location: {
+          parents: 1,
+          interior: {
+            X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: generalIndex }]
+          }
+        } as TLocation
+      }
+      const options = {
+        ...mockOptions,
+        chain: 'Jamton' as const,
+        destination: 'AssetHubPolkadot' as const,
+        assetInfo: asset
+      }
+      getAssetReserveChainSpy.mockReturnValue('AssetHubPolkadot')
+
+      const result = await createTypeAndThenCallContext(options, { noFeeAsset: true })
+
+      expect(findAssetInfoOrThrowSpy).toHaveBeenCalledWith('Jamton', { symbol: 'WUD' })
+      expect(result.isRelayAsset).toBe(false)
+      expect(result.systemAsset).toBe(mockSystemAsset)
+    }
+  )
+
+  it('does not require a separate relay asset for WUD sent to the relay chain', async () => {
+    vi.mocked(isRelayChain).mockImplementation(chain => chain === 'Polkadot')
+    const options = {
+      ...mockOptions,
+      chain: 'Jamton' as const,
+      destination: 'Polkadot' as const,
+      assetInfo: { ...mockAsset, symbol: 'WUD', location: wudLocation }
+    }
+
+    const result = await createTypeAndThenCallContext(options, { noFeeAsset: true })
+
+    expect(result.isRelayAsset).toBe(true)
   })
 
   it('does not add an Asset Hub hop when Asset Hub is already the destination', async () => {

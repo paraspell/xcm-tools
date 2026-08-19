@@ -33,6 +33,7 @@ export const PARACHAINS = [
   'Encointer',
   'Basilisk',
   'BifrostKusama',
+  'Curio',
   'CrustShadow',
   'Crab',
   'RobonomicsPolkadot',

@@ -10,6 +10,7 @@ import {
 import { DuplicateAssetError, InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TCurrencyCore } from '../types'
 import { getRelayChainSymbol } from './assets'
+import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeAsset'
 import { isAssetEqual } from './isAssetEqual'
 import { isStableCoinAsset } from './isStableCoinAsset'
 import { isSystemAsset } from './isSystemAsset'
@@ -71,7 +72,11 @@ export const getSupportedDestinations = (origin: TChain, currency: TCurrencyCore
     if (isUnsupportedAssetHubNative(origin, destination, originAsset, nativeAssets)) return false
 
     if (isSubstrateBridge(origin, destination)) {
-      return isSystemAsset(originAsset) || isStableCoinAsset(originAsset)
+      return (
+        isSystemAsset(originAsset) ||
+        isStableCoinAsset(originAsset) ||
+        isAdditionalSubstrateBridgeAsset(originAsset)
+      )
     }
 
     try {

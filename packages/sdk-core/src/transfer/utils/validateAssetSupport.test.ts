@@ -1,5 +1,6 @@
 import {
   InvalidCurrencyError,
+  isAdditionalSubstrateBridgeAsset,
   isAssetEqual,
   isBridgedSystemAsset,
   type TAssetInfo
@@ -32,6 +33,7 @@ vi.mock('@paraspell/sdk-common', async importOriginal => ({
 
 vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {},
+  isAdditionalSubstrateBridgeAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   isBridgedSystemAsset: vi.fn(),
   isStableCoinAsset: vi.fn()
@@ -48,6 +50,7 @@ describe('validateAssetSupport', () => {
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(isBridgedSystemAsset).mockReturnValue(false)
+    vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(false)
   })
 
   it('should not throw when bridged asset matches target relay consensus', () => {
@@ -111,6 +114,39 @@ describe('validateAssetSupport', () => {
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       'Substrate bridge does not support currency {"symbol":"FOREIGN"}.'
     )
+  })
+
+  it('should allow an additional substrate bridge asset', () => {
+    const options = {
+      api: mockApi,
+      from: 'AssetHubPolkadot',
+      to: 'AssetHubKusama',
+      currency: { symbol: 'CGT2.0' }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    const asset = {
+      symbol: 'CGT2.0',
+      decimals: 18,
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
+              }
+            }
+          ]
+        }
+      }
+    } as TAssetInfo
+
+    findAssetInfoOnDestSpy.mockReturnValue(asset)
+    vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(true)
+
+    expect(() => validateAssetSupport(options, true, true, asset)).not.toThrow()
   })
 
   it('should not throw when destination is not AssetHub', () => {
