@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.1.1...sdk-core-v14.2.0) (2026-08-19)
+
+
+### Features
+
+* **sdk-core:** Add Curio chain 🪄 ([15ee1a5](https://github.com/paraspell/xcm-tools/commit/15ee1a58ad83e72683400b3e38a1d03a9707334b))
+
+
+### Bug Fixes
+
+* **sdk-core:** Enable Jamton runtime apis 🔧 ([34cf272](https://github.com/paraspell/xcm-tools/commit/34cf27279ec123d67cb2c9fe2fc238c668eed4dc))
+* **sdk-core:** Fix concurrent client leases cache corruption 🔧 ([0f715de](https://github.com/paraspell/xcm-tools/commit/0f715de026917b47fe019857964cd0561b3c7722))
+
 ## [14.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.1.0...sdk-core-v14.1.1) (2026-08-07)
 
 
