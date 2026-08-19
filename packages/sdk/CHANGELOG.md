@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v14.1.1...sdk-v14.2.0) (2026-08-19)
+
+
+### Bug Fixes
+
+* **sdk-core:** Enable Jamton runtime apis 🔧 ([34cf272](https://github.com/paraspell/xcm-tools/commit/34cf27279ec123d67cb2c9fe2fc238c668eed4dc))
+
+
+### Documentation
+
+* Add CLI info ([84afd0f](https://github.com/paraspell/xcm-tools/commit/84afd0fba0c77cd4b05562bf9400774bc2381bb7))
+
 ## [14.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v14.1.0...sdk-v14.1.1) (2026-08-07)
 
 

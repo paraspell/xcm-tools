@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.2.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.1.1...swap-v14.2.0) (2026-08-19)
+
+
+### Bug Fixes
+
+* **swap:** Resolve native exchange assets also by ID 🔧 ([ce51feb](https://github.com/paraspell/xcm-tools/commit/ce51feb336ded725a3e45d48fc420b15614c7ad0))
+
+
+### Documentation
+
+* Add CLI info ([84afd0f](https://github.com/paraspell/xcm-tools/commit/84afd0fba0c77cd4b05562bf9400774bc2381bb7))
+
 ## [14.1.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.1.0...swap-v14.1.1) (2026-08-07)
 
 

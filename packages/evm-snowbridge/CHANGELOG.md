@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.1.1...evm-snowbridge-v14.2.0) (2026-08-19)
+
+
+### Documentation
+
+* Add CLI info ([84afd0f](https://github.com/paraspell/xcm-tools/commit/84afd0fba0c77cd4b05562bf9400774bc2381bb7))
+
 ## [14.1.1](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.1.0...evm-snowbridge-v14.1.1) (2026-08-07)
 
 

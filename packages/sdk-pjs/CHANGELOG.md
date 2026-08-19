@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.1.1...sdk-pjs-v14.2.0) (2026-08-19)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Use lowercase 'here' key in PJS getDryRunXcm to match toJSON output ([6e6f00a](https://github.com/paraspell/xcm-tools/commit/6e6f00a57bbf00c90412158d4deab6989de74a55)), closes [#2051](https://github.com/paraspell/xcm-tools/issues/2051)
+
 ## [14.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.1.0...sdk-pjs-v14.1.1) (2026-08-07)
 
 
