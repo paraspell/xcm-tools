@@ -5,12 +5,14 @@ import {
   isAssetEqual,
   isBridgedSystemAsset,
   isStableCoinAsset,
+  STABLECOIN_IDS,
   type TAssetInfo
 } from '@paraspell/assets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
+  hasJunction,
   isExternalChain,
   isSnowbridge,
   isTLocation,
@@ -24,6 +26,24 @@ import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { getRelayChainOf, throwUnsupportedCurrency } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 
+const validateSubBridgeRules = (
+  origin: TSubstrateChain,
+  destination: TDestination,
+  asset: TAssetInfo
+) => {
+  const isBlocked =
+    origin === 'AssetHubKusama' &&
+    destination === 'AssetHubPolkadot' &&
+    STABLECOIN_IDS.some(id => hasJunction(asset.location, 'GeneralIndex', id)) &&
+    !hasJunction(asset.location, 'GlobalConsensus')
+
+  if (isBlocked) {
+    throw new InvalidCurrencyError(
+      `The selected asset is not the correct ${asset.symbol} for the Substrate bridge.`
+    )
+  }
+}
+
 const validateBridgeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   origin: TSubstrateChain,
   destination: TDestination,
@@ -35,6 +55,8 @@ const validateBridgeAsset = <TApi, TRes, TSigner, TCustomChain extends string = 
   if (!asset || isTLocation(destination) || isExternalChain(destination) || !isBridge) {
     return
   }
+
+  validateSubBridgeRules(origin, destination, asset)
 
   const nativeAsset = api.findNativeAssetInfoOrThrow(origin)
   const isNativeAsset = isAssetEqual(asset, nativeAsset)

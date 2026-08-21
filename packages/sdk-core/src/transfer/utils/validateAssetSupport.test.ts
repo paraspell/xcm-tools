@@ -3,6 +3,7 @@ import {
   isAdditionalSubstrateBridgeAsset,
   isAssetEqual,
   isBridgedSystemAsset,
+  isStableCoinAsset,
   type TAssetInfo
 } from '@paraspell/assets'
 import { isExternalChain, isTLocation, Parents } from '@paraspell/sdk-common'
@@ -25,6 +26,32 @@ const mockApi = {
 const findNativeAssetInfoOrThrowSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
 const findAssetInfoOnDestSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest')
 
+const AHK_LOCAL_USDT: TAssetInfo = {
+  symbol: 'USDt',
+  decimals: 6,
+  location: {
+    parents: Parents.ONE,
+    interior: {
+      X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }]
+    }
+  }
+}
+
+const AHK_POLKADOT_USDT: TAssetInfo = {
+  ...AHK_LOCAL_USDT,
+  location: {
+    parents: Parents.TWO,
+    interior: {
+      X4: [
+        { GlobalConsensus: { polkadot: null } },
+        { Parachain: 1000 },
+        { PalletInstance: 50 },
+        { GeneralIndex: 1984 }
+      ]
+    }
+  }
+}
+
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
   isExternalChain: vi.fn(),
@@ -36,7 +63,8 @@ vi.mock('@paraspell/assets', () => ({
   isAdditionalSubstrateBridgeAsset: vi.fn(),
   isAssetEqual: vi.fn(),
   isBridgedSystemAsset: vi.fn(),
-  isStableCoinAsset: vi.fn()
+  isStableCoinAsset: vi.fn(),
+  STABLECOIN_IDS: [1984, 1337]
 }))
 
 vi.mock('../../utils')
@@ -147,6 +175,58 @@ describe('validateAssetSupport', () => {
     vi.mocked(isAdditionalSubstrateBridgeAsset).mockReturnValue(true)
 
     expect(() => validateAssetSupport(options, true, true, asset)).not.toThrow()
+  })
+
+  it('should block local AssetHubKusama USDt from bridging to AssetHubPolkadot', () => {
+    const options = {
+      api: mockApi,
+      from: 'AssetHubKusama',
+      to: 'AssetHubPolkadot',
+      currency: { location: AHK_LOCAL_USDT.location, amount: 1n }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    expect(() => validateAssetSupport(options, false, true, AHK_LOCAL_USDT)).toThrow(
+      'The selected asset is not the correct USDt for the Substrate bridge.'
+    )
+  })
+
+  it('should allow the same local USDt location in the reverse direction', () => {
+    const options = {
+      api: mockApi,
+      from: 'AssetHubPolkadot',
+      to: 'AssetHubKusama',
+      currency: { location: AHK_LOCAL_USDT.location, amount: 1n }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    findAssetInfoOnDestSpy.mockReturnValue(AHK_LOCAL_USDT)
+    vi.mocked(isStableCoinAsset).mockReturnValue(true)
+
+    expect(() => validateAssetSupport(options, true, true, AHK_LOCAL_USDT)).not.toThrow()
+  })
+
+  it('should allow local AssetHubKusama USDt outside the Substrate bridge', () => {
+    const options = {
+      api: mockApi,
+      from: 'AssetHubKusama',
+      to: 'AssetHubKusama',
+      currency: { location: AHK_LOCAL_USDT.location, amount: 1n }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    expect(() => validateAssetSupport(options, false, false, AHK_LOCAL_USDT)).not.toThrow()
+  })
+
+  it('should allow AssetHubKusama USDt with Polkadot GlobalConsensus', () => {
+    const options = {
+      api: mockApi,
+      from: 'AssetHubKusama',
+      to: 'AssetHubPolkadot',
+      currency: { location: AHK_POLKADOT_USDT.location, amount: 1n }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    findAssetInfoOnDestSpy.mockReturnValue(AHK_POLKADOT_USDT)
+    vi.mocked(isStableCoinAsset).mockReturnValue(true)
+
+    expect(() => validateAssetSupport(options, true, true, AHK_POLKADOT_USDT)).not.toThrow()
   })
 
   it('should not throw when destination is not AssetHub', () => {
