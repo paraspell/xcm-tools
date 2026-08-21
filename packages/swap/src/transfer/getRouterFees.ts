@@ -103,11 +103,15 @@ export const getRouterFees = async <
     ...(!origin && !destination && { fee: 0n }),
   };
 
+  // The swap is the first leg when there is no sending leg, the last leg
+  // when there is no receiving leg, and a hop in between otherwise
+  const swapChainKind = !sendingChain ? 'origin' : !receivingChain ? 'destination' : 'hop';
+
   const dryRunError =
     sendingChain?.dryRunError ??
     receivingChain?.dryRunError ??
     (swapChain.dryRunError
-      ? { ...swapChain.dryRunError, chainKind: 'hop', chain: exchange.chain }
+      ? { ...swapChain.dryRunError, chainKind: swapChainKind, chain: exchange.chain }
       : undefined);
 
   return {

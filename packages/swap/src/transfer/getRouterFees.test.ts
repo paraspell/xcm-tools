@@ -250,14 +250,51 @@ describe('getRouterFees', () => {
 
       const result = await getRouterFees(dex, options, false);
 
-      // Raw swap-leg error (TDryRunError) is normalized to TDryRunFailure
-      // with chainKind/chain of the exchange hop
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'origin',
+        chain: exchangeChain,
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('classifies swap failure as destination when only origin exists', async () => {
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: {
+          ...swapFee,
+          dryRunError: { reason: 'NoDeal' },
+        },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'destination',
+        chain: exchangeChain,
+      });
+    });
+
+    it('classifies swap failure as hop when origin and destination exist', async () => {
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
+      options.destination = { chain: 'Darwinia' } as unknown as TDestinationInfo;
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: {
+          ...swapFee,
+          dryRunError: { reason: 'NoDeal' },
+        },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
       expect(result.dryRunError).toEqual({
         reason: 'NoDeal',
         chainKind: 'hop',
         chain: exchangeChain,
       });
-      expect(result.success).toBe(false);
     });
   });
 
