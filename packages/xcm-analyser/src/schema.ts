@@ -22,7 +22,6 @@ const HexString = z
 const HexString32 = z
   .templateLiteral(['0x', z.hex()], { error: 'Expected a 32-byte hex string' })
   .check(z.length(66, { error: 'Expected a 32-byte hex string' }));
-
 export const JunctionParachain = z.strictObject({ Parachain: StringOrNumberOrBigInt });
 
 export const JunctionAccountId32 = z.strictObject({
@@ -51,17 +50,49 @@ export const JunctionPlurality = z.strictObject({
   Plurality: z.strictObject({ id: BodyId, part: BodyPart }),
 });
 
+export const GLOBAL_CONSENSUS_NETWORKS = [
+  'polkadot',
+  'kusama',
+  'westend',
+  'rococo',
+  'wococo',
+  'bitcoinCore',
+  'bitcoinCash',
+  'polkadotBulletin',
+] as const;
+
+type TGlobalConsensusNetworkKey = (typeof GLOBAL_CONSENSUS_NETWORKS)[number];
+
+type TGlobalConsensusUnitNetwork = {
+  [K in TGlobalConsensusNetworkKey]: Record<K, null>;
+}[TGlobalConsensusNetworkKey];
+
+const capitalize = <T extends string>(value: T): Capitalize<T> =>
+  (value.charAt(0).toUpperCase() + value.slice(1)) as Capitalize<T>;
+
+const GlobalConsensusUnitNetworkStringSchema = z.enum(GLOBAL_CONSENSUS_NETWORKS.map(capitalize));
+
+const hasExactlyOneGlobalConsensusNetwork = (
+  network: Partial<Record<TGlobalConsensusNetworkKey, null>>,
+): network is TGlobalConsensusUnitNetwork => Object.keys(network).length === 1;
+
+const GlobalConsensusUnitNetworkSchema = z
+  .partialRecord(z.enum(GLOBAL_CONSENSUS_NETWORKS), z.null())
+  .transform((network, ctx) => {
+    if (hasExactlyOneGlobalConsensusNetwork(network)) return network;
+
+    ctx.issues.push({
+      code: 'custom',
+      input: network,
+      message: 'Expected exactly one GlobalConsensus unit network',
+    });
+
+    return z.NEVER;
+  });
+
 export const GlobalConsensusNetworkSchema = z.union([
-  z.enum([
-    'Polkadot',
-    'Kusama',
-    'Westend',
-    'Rococo',
-    'Wococo',
-    'BitcoinCore',
-    'BitcoinCash',
-    'PolkadotBulletin',
-  ]),
+  GlobalConsensusUnitNetworkStringSchema,
+  GlobalConsensusUnitNetworkSchema,
   z.strictObject({ ByGenesis: HexString32 }),
   z.strictObject({
     ByFork: z.strictObject({

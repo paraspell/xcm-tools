@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ZodError } from 'zod';
 
+import { GLOBAL_CONSENSUS_NETWORKS } from '../schema';
 import { type Location } from '../types';
 import { convertLocationToUrl, convertLocationToUrlJson, convertXCMToUrls } from './convert';
 
@@ -152,13 +153,22 @@ describe('convert', () => {
       parents: '0',
       interior: {
         X1: {
-          GlobalConsensus: 'Polkadot',
+          GlobalConsensus: { polkadot: null },
         },
       },
     };
 
     const result = convertLocationToUrl(location);
     expect(result).toBe('./GlobalConsensus(Polkadot)');
+  });
+
+  it('should convert a plain string GlobalConsensus network', () => {
+    expect(
+      convertLocationToUrl({
+        parents: 0,
+        interior: { X1: { GlobalConsensus: 'Polkadot' } },
+      }),
+    ).toBe('./GlobalConsensus(Polkadot)');
   });
 
   it.each([
@@ -186,6 +196,20 @@ describe('convert', () => {
         }),
       ),
     ).toBe('./GlobalConsensus(Ethereum(chainId: 1))');
+  });
+
+  it.each(
+    GLOBAL_CONSENSUS_NETWORKS.map(
+      (network) =>
+        [{ [network]: null }, network.charAt(0).toUpperCase() + network.slice(1)] as const,
+    ),
+  )('should support codec-style GlobalConsensus unit object %#', (network, expected) => {
+    expect(
+      convertLocationToUrl({
+        parents: 0,
+        interior: { X1: { GlobalConsensus: network } },
+      }),
+    ).toBe(`./GlobalConsensus(${expected})`);
   });
 
   it('should preserve GlobalConsensus payload data in nested XCM arguments', () => {
