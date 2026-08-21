@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.2.1...sdk-core-v14.2.2) (2026-08-21)
+
+
+### Bug Fixes
+
+* **assets:** Fix Bifrost native asset locations ⚙️ ([c2572a4](https://github.com/paraspell/xcm-tools/commit/c2572a486c8362e21f530bf25e2dd6a7c72469d3))
+
 ## [14.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.2.0...sdk-core-v14.2.1) (2026-08-21)
 
 
