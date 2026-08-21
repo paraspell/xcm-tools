@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.1.0...xcm-analyser-v3.1.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **xcm-analyser:** Fix GlobalConsensus serialization logic 🛠️ ([517c51e](https://github.com/paraspell/xcm-tools/commit/517c51eee57a59f5759b4261b96df367d04a58a5))
+* **xcm-analyser:** Fix location here handling 🔧 ([33f1e95](https://github.com/paraspell/xcm-tools/commit/33f1e954adbf346c37aa2f10433eec35fc907823))
+* **xcm-api:** Handle lowercase global consensus junctions 🔧 ([55d8492](https://github.com/paraspell/xcm-tools/commit/55d8492cf37a59854aa34206c52d58f71f7a1757))
+
 ## [3.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.0.11...xcm-analyser-v3.1.0) (2026-07-31)
 
 
