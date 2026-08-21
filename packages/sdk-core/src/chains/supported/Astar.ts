@@ -1,11 +1,12 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
+import type { TAssetInfo } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { deepEqual, Version } from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TMintConfig, TTransferInternalOptions, TTransferLocalOptions } from '../../types'
+import type { TMintConfig, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
@@ -31,9 +32,7 @@ class Astar<TApi, TRes, TSigner, TCustomChain extends string = never>
     return true
   }
 
-  isSendingTempDisabled({
-    assetInfo
-  }: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>): boolean {
+  isSendingTempDisabled(assetInfo: TAssetInfo): boolean {
     return deepEqual(assetInfo.location, RELAY_LOCATION)
   }
 
