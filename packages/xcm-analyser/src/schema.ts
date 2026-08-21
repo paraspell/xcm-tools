@@ -182,6 +182,6 @@ export const InteriorSchema = z.union(
 );
 
 export const LocationSchema = z.strictObject({
-  parents: StringOrNumber,
+  parents: StringOrNumber.pipe(z.coerce.number<string | number>().int().min(0).max(255)),
   interior: InteriorSchema,
 });
