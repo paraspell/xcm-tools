@@ -53,6 +53,15 @@ describe('convert', () => {
     expect(result).toBe('../../../PalletInstance(50)/GeneralIndex(41)');
   });
 
+  it('rejects an unbounded parent count before constructing the URL', () => {
+    expect(() =>
+      convertLocationToUrl({
+        parents: '89000000',
+        interior: { X1: { Parachain: '2000' } },
+      }),
+    ).toThrow(ZodError);
+  });
+
   it('convert location to URL with parachain interior', () => {
     const location: Location = {
       parents: '1',
