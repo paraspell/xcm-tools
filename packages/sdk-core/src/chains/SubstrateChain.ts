@@ -285,7 +285,7 @@ abstract class SubstrateChain<
     options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>,
     destChain?: TChain
   ): void {
-    const isSendingDisabled = this.isSendingTempDisabled(options)
+    const isSendingDisabled = this.isSendingTempDisabled(options.assetInfo)
     if (isSendingDisabled) {
       throw new FeatureTemporarilyDisabledError(
         `Sending ${options.assetInfo.symbol} from ${this.chain} is temporarily disabled`
@@ -303,9 +303,7 @@ abstract class SubstrateChain<
     }
   }
 
-  isSendingTempDisabled(
-    _options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
-  ): boolean {
+  isSendingTempDisabled(_asset: TAssetInfo): boolean {
     return false
   }
 

@@ -9,7 +9,6 @@ import {
   TTransferBaseOptionsWithSender,
   getChain,
   isRelayChain,
-  TTransferInternalOptions,
   RELAYCHAINS,
   RELAY_LOCATION,
   isSystemChain,
@@ -27,7 +26,8 @@ import {
   getAssets,
   getRelayChainSymbol,
   isChainEvm,
-  Native
+  Native,
+  type TAssetInfo
 } from '@paraspell/assets'
 
 beforeEach(ctx => {
@@ -256,7 +256,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     }
 
     filteredChains.forEach(chain => {
-      const scenarios = generateTransferScenarios(chain, usingChopsticks)
+      const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
+      const isSendingDisabled = (asset: TAssetInfo) =>
+        chainInstance?.isSendingTempDisabled(asset) ?? false
+
+      const scenarios = generateTransferScenarios(chain, usingChopsticks).filter(
+        ({ asset }) => !isSendingDisabled(asset)
+      )
 
       const relayChainSymbol = getRelayChainSymbol(chain)
 
@@ -266,17 +272,13 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         { symbol: isSystemChain(chain) ? Native(relayChainSymbol) : relayChainSymbol },
         getRelayChainOf(chain)
       )
-      const paraToRelaySupported = relayChainAsset && !doesNotSupportParaToRelay.includes(chain)
+      const paraToRelaySupported =
+        relayChainAsset &&
+        !doesNotSupportParaToRelay.includes(chain) &&
+        !isSendingDisabled(relayChainAsset)
       if (scenarios.length === 0 && !paraToRelaySupported) {
         return
       }
-
-      // Skip temporarily disabled chains
-      const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
-      const isSendingDisabled = chainInstance?.isSendingTempDisabled(
-        {} as TTransferInternalOptions<unknown, unknown, unknown>
-      )
-      if (isSendingDisabled) return
 
       describeGroup(`Transfer scenarios for origin ${chain}`, () => {
         describeGroup('ParaToPara', () => {
@@ -325,7 +327,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           })
         })
 
-        if (relayChainAsset && !doesNotSupportParaToRelay.includes(chain)) {
+        if (paraToRelaySupported) {
           it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
             chain
           )} from ${chain} to Relay`, async () => {

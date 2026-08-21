@@ -1446,14 +1446,21 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
               {
                 "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
         },
-        "isNative": true
+        "isNative": true,
+        "isFeeAsset": true
       },
       {
         "assetId": "6",
@@ -7326,14 +7333,21 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X1": [
+            "X2": [
               {
                 "Parachain": 2001
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
         },
-        "isNative": true
+        "isNative": true,
+        "isFeeAsset": true
       },
       {
         "symbol": "KSM",

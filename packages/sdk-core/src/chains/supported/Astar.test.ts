@@ -47,17 +47,14 @@ describe('Astar', () => {
       assetInfo: { symbol: 'DOT', amount: 100n, location: RELAY_LOCATION }
     } as TTransferInternalOptions<unknown, unknown, unknown>
 
-    expect(astar.isSendingTempDisabled(options)).toBe(true)
+    expect(astar.isSendingTempDisabled(options.assetInfo)).toBe(true)
     expect(() => astar.throwIfTempDisabled(options)).toThrow(
       'Sending DOT from Astar is temporarily disabled'
     )
     expect(
       astar.isSendingTempDisabled({
-        ...options,
-        assetInfo: {
-          ...options.assetInfo,
-          location: { parents: Parents.ZERO, interior: 'Here' }
-        }
+        ...options.assetInfo,
+        location: { parents: Parents.ZERO, interior: 'Here' }
       })
     ).toBe(false)
   })
