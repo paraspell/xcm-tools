@@ -1,4 +1,5 @@
 export * from './assets'
+export * from './consts'
 export * from './errors'
 export * from './guards'
 export * from './location'
