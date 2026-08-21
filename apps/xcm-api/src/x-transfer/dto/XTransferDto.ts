@@ -92,11 +92,19 @@ export const TransactOptionsSchema = z.object({
 });
 
 const AmountSchema = z.union([
-  z.string().refine(validateAmount, {
+  z.templateLiteral([z.number()]).refine(validateAmount, {
     message: 'Amount must be a positive number',
   }),
   z.number().positive({ message: 'Amount must be a positive number' }),
 ]);
+
+const EvmApproveAmountSchema = z
+  .union([z.templateLiteral([z.bigint()]), z.int()])
+  .pipe(
+    z.coerce
+      .bigint<number | `${bigint}`>()
+      .positive({ error: 'Amount must be a positive integer' }),
+  );
 
 export const SymbolSpecifierSchema = z.object({
   type: z.enum(['Native', 'Foreign', 'ForeignAbstract']),
@@ -193,7 +201,7 @@ export const EvmXTransferDtoSchema = XTransferDtoWSenderSchema.extend({
 export const EvmApproveDtoSchema = z
   .object({
     symbol: z.string().min(1, { message: 'Symbol is required' }),
-    amount: AmountSchema,
+    amount: EvmApproveAmountSchema,
   })
   .strip();
 

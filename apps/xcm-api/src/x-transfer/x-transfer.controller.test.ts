@@ -105,7 +105,7 @@ describe('XTransferController', () => {
 
       const approveBody = {
         symbol: 'WETH',
-        amount: '1000',
+        amount: 1000n,
         sender: '0x1111111111111111111111111111111111111111',
       };
 

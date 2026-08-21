@@ -46,4 +46,5 @@ export type TGlobalConsensusStringNetwork = Extract<
 >;
 
 export type Location = z.input<typeof LocationSchema>;
+export type ParsedLocation = z.output<typeof LocationSchema>;
 export type Junction = z.infer<typeof JunctionSchema>;

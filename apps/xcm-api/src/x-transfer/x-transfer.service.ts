@@ -210,7 +210,7 @@ export class XTransferService {
 
   generateEvmApprove({ symbol, amount }: EvmApproveDto) {
     try {
-      const tx = buildApproveToken(symbol, BigInt(amount));
+      const tx = buildApproveToken(symbol, amount);
       return serializeTransaction(tx);
     } catch (e) {
       return handleXcmApiError(e);

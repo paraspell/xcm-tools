@@ -13,4 +13,11 @@ describe('validateAmount', () => {
     expect(validateAmount('-100')).toBe(false);
     expect(validateAmount('-0.5')).toBe(false);
   });
+
+  it.each(['1abc', '1.2.3', 'Infinity', '1e309'])(
+    'should return false for malformed or non-finite amount %s',
+    (amount) => {
+      expect(validateAmount(amount)).toBe(false);
+    },
+  );
 });

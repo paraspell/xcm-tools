@@ -1,8 +1,8 @@
 import { LocationSchema } from '../schema';
-import type { Junction, Location } from '../types';
+import type { Junction, ParsedLocation } from '../types';
 import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
 
-const normalizeInterior = (interior: Location['interior']): Junction[] => {
+const normalizeInterior = (interior: ParsedLocation['interior']): Junction[] => {
   if (interior === 'Here' || 'Here' in interior) return [];
 
   const [junctions] = Object.values<Junction | Junction[]>(interior);
@@ -29,8 +29,7 @@ export const convertLocationToUrlJson = (locationJson: string): string => {
  */
 export const convertLocationToUrl = (args: unknown): string => {
   const { parents, interior } = LocationSchema.parse(args);
-  const parentsNum = Number(parents);
-  const pathStart = parentsNum > 0 ? '../'.repeat(parentsNum) : './';
+  const pathStart = parents > 0 ? '../'.repeat(parents) : './';
 
   const path = normalizeInterior(interior)
     .map((junction) => convertJunctionToReadable(junction))

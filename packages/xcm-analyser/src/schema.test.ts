@@ -552,8 +552,8 @@ describe('LocationSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it.each([-1, 1.5, 256, '256', '1,000', '89000000'])(
-    'should fail if parents is outside the u8 range: %s',
+  it.each([-1, '-1', 1.5, '1.5', 256, '256', '1,000', '89000000'])(
+    'should fail if parents is not a valid u8: %s',
     (parents) => {
       const result = LocationSchema.safeParse({ parents, interior: 'Here' });
       expect(result.success).toBe(false);
