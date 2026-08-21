@@ -1,5 +1,5 @@
 import { LocationSchema } from '../schema';
-import type { Junction, Location, TJunctionGlobalConsensus } from '../types';
+import type { Junction, ParsedLocation, TJunctionGlobalConsensus } from '../types';
 
 const convertGlobalConsensusToReadable = (
   network: TJunctionGlobalConsensus['GlobalConsensus'],
@@ -46,7 +46,7 @@ export const convertJunctionToReadable = (junction: Junction): string => {
   }
 };
 
-export function findLocationInObject(obj: unknown): Location | null {
+export function findLocationInObject(obj: unknown): ParsedLocation | null {
   function hasSpecificKeys(value: unknown): boolean {
     return (
       typeof value === 'object' &&
@@ -57,7 +57,7 @@ export function findLocationInObject(obj: unknown): Location | null {
     );
   }
 
-  function searchObject(value: unknown): Location | null {
+  function searchObject(value: unknown): ParsedLocation | null {
     if (hasSpecificKeys(value)) {
       return LocationSchema.parse(value);
     } else if (typeof value === 'object' && value !== null) {

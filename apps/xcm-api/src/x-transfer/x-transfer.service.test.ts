@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { buildApproveToken } from '@paraspell/evm-snowbridge';
 import type {
   TAssetInfo,
   TChain,
@@ -461,9 +462,10 @@ describe('XTransferService', () => {
     it('should call buildApproveToken and serialize the returned tx', () => {
       const result = service.generateEvmApprove({
         symbol: 'WETH',
-        amount: '1000',
+        amount: 1000n,
       });
 
+      expect(buildApproveToken).toHaveBeenCalledWith('WETH', 1000n);
       expect(typeof result).toBe('string');
       expect(result.startsWith('0x02')).toBe(true);
     });
