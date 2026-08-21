@@ -1446,21 +1446,14 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X2": [
+            "X1": [
               {
                 "Parachain": 2030
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
               }
             ]
           }
         },
-        "isNative": true,
-        "isFeeAsset": true
+        "isNative": true
       },
       {
         "assetId": "6",
@@ -5410,28 +5403,6 @@
         "alias": "dot2"
       },
       {
-        "assetId": "22222078",
-        "symbol": "JAMTON",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 22222078
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000"
-      },
-      {
         "assetId": "50000069",
         "symbol": "LOTY",
         "decimals": 12,
@@ -7355,21 +7326,14 @@
         "location": {
           "parents": 1,
           "interior": {
-            "X2": [
+            "X1": [
               {
                 "Parachain": 2001
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
               }
             ]
           }
         },
-        "isNative": true,
-        "isFeeAsset": true
+        "isNative": true
       },
       {
         "symbol": "KSM",
@@ -8550,7 +8514,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "1",
@@ -9271,6 +9236,29 @@
           }
         },
         "existentialDeposit": "1000000"
+      },
+      {
+        "assetId": "50000013",
+        "symbol": "KSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000013
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "KSM4"
       },
       {
         "assetId": "18",
