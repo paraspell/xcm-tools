@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.2.0...sdk-core-v14.2.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **sdk-core:** Reject incorrect substrate bridge usdt ⚙️ ([1b3f7d5](https://github.com/paraspell/xcm-tools/commit/1b3f7d5cfb40d2fe13b02a36b35b864021af7dcc))
+
 ## [14.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.1.1...sdk-core-v14.2.0) (2026-08-19)
 
 

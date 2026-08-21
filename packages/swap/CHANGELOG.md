@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.2.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.2.0...swap-v14.2.1) (2026-08-21)
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([aecabe2](https://github.com/paraspell/xcm-tools/commit/aecabe2c379fad33dfd8cf464379409b433c8cac))
+* **swap:** Update swap assets 📋 ([aecabe2](https://github.com/paraspell/xcm-tools/commit/aecabe2c379fad33dfd8cf464379409b433c8cac))
+
 ## [14.2.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.1.1...swap-v14.2.0) (2026-08-19)
 
 
