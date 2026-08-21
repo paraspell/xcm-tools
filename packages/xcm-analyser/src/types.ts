@@ -1,6 +1,8 @@
 import type { z } from 'zod';
 
 import type {
+  GLOBAL_CONSENSUS_NETWORKS,
+  GlobalConsensusNetworkSchema,
   JunctionAccountId32,
   JunctionAccountIndex64,
   JunctionAccountKey20,
@@ -37,6 +39,11 @@ export type TJunctionGeneralKey = z.infer<typeof JunctionGeneralKey>;
 export type TJunctionOnlyChild = z.infer<typeof JunctionOnlyChild>;
 export type TJunctionPlurality = z.infer<typeof JunctionPlurality>;
 export type TJunctionGlobalConsensus = z.infer<typeof JunctionGlobalConsensus>;
+export type TGlobalConsensusNetwork = Capitalize<(typeof GLOBAL_CONSENSUS_NETWORKS)[number]>;
+export type TGlobalConsensusStringNetwork = Extract<
+  z.infer<typeof GlobalConsensusNetworkSchema>,
+  string
+>;
 
 export type Location = z.infer<typeof LocationSchema>;
 export type Junction = z.infer<typeof JunctionSchema>;

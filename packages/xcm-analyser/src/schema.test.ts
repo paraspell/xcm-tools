@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
+  GLOBAL_CONSENSUS_NETWORKS,
   GlobalConsensusNetworkSchema,
   InteriorSchema,
   JunctionAccountId32,
@@ -13,6 +14,8 @@ import {
 } from './schema';
 import type {
   Junction,
+  TGlobalConsensusNetwork,
+  TGlobalConsensusStringNetwork,
   TJunctionAccountId32,
   TJunctionAccountIndex64,
   TJunctionAccountKey20,
@@ -452,18 +455,24 @@ describe('InteriorSchema', () => {
   });
 
   describe('GlobalConsensusNetworkSchema', () => {
-    it.each([
-      'Polkadot',
-      'Kusama',
-      'Westend',
-      'Rococo',
-      'Wococo',
-      'BitcoinCore',
-      'BitcoinCash',
-      'PolkadotBulletin',
-    ])('should pass for the %s unit variant', (network) => {
+    it('should infer the exact generated string variants', () => {
+      expectTypeOf<TGlobalConsensusStringNetwork>().toEqualTypeOf<TGlobalConsensusNetwork>();
+    });
+
+    it.each(
+      GLOBAL_CONSENSUS_NETWORKS.map(
+        (network) => network.charAt(0).toUpperCase() + network.slice(1),
+      ),
+    )('should pass for generated string variant %s', (network) => {
       expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(true);
     });
+
+    it.each(GLOBAL_CONSENSUS_NETWORKS.map((network) => ({ [network]: null })))(
+      'should pass for codec-style unit object variant %#',
+      (network) => {
+        expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(true);
+      },
+    );
 
     it.each([
       { ByGenesis: mockHash },
@@ -490,6 +499,11 @@ describe('InteriorSchema', () => {
       { type: 'Polkadot' },
       { type: 'Ethereum', value: { chainId: 1 } },
       { Ethereum: { chainId: 'not-a-number' } },
+      {},
+      { polkadot: undefined },
+      { polkadot: 'invalid' },
+      { polkadot: null, kusama: null },
+      { unknownnetwork: null },
       { ByGenesis: '0x1234' },
       { UnsupportedNetwork: null },
     ])('should fail for unsupported network data %#', (network) => {

@@ -5,15 +5,21 @@ const convertGlobalConsensusToReadable = (
   network: TJunctionGlobalConsensus['GlobalConsensus'],
 ): string => {
   if (typeof network === 'string') return network;
-  if ('ByGenesis' in network) return `ByGenesis(${network.ByGenesis})`;
+  if ('ByGenesis' in network) {
+    return `ByGenesis(${network.ByGenesis})`;
+  }
 
   if ('ByFork' in network) {
     const { blockNumber, blockHash } = network.ByFork;
     return `ByFork(blockNumber: ${blockNumber}, blockHash: ${blockHash})`;
   }
 
-  const { chainId } = network.Ethereum;
-  return `Ethereum(chainId: ${chainId})`;
+  if ('Ethereum' in network) {
+    return `Ethereum(chainId: ${network.Ethereum.chainId})`;
+  }
+
+  const unitNetwork = Object.keys(network)[0];
+  return unitNetwork.charAt(0).toUpperCase() + unitNetwork.slice(1);
 };
 
 export const convertJunctionToReadable = (junction: Junction): string => {
