@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.2.1](https://github.com/paraspell/xcm-tools/compare/assets-v14.2.0...assets-v14.2.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **sdk-core:** Reject incorrect substrate bridge usdt ⚙️ ([1b3f7d5](https://github.com/paraspell/xcm-tools/commit/1b3f7d5cfb40d2fe13b02a36b35b864021af7dcc))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([aecabe2](https://github.com/paraspell/xcm-tools/commit/aecabe2c379fad33dfd8cf464379409b433c8cac))
+* **swap:** Update swap assets 📋 ([aecabe2](https://github.com/paraspell/xcm-tools/commit/aecabe2c379fad33dfd8cf464379409b433c8cac))
+
 ## [14.2.0](https://github.com/paraspell/xcm-tools/compare/assets-v14.1.1...assets-v14.2.0) (2026-08-19)
 
 

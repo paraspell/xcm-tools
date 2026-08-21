@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/descriptors",
-  "version": "14.2.0",
+  "version": "14.2.1",
   "description": "ParaSpell Polkadot-api type descriptors",
   "repository": {
     "type": "git",
