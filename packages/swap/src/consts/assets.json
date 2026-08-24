@@ -1030,22 +1030,6 @@
       {
         "parents": 1,
         "interior": {
-          "X2": [
-            {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 21,
-                "data": "0x025a4d6acdc4e3e5ab15717f407afe957f7a2425780000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
           "X4": [
             {
               "Parachain": 2034
@@ -1063,32 +1047,6 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X1": [
-            {
-              "Parachain": 2086
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2034
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x6b9ac524ec8f08c49ec80176b138d16eb461c3d8"
               }
             }
           ]
@@ -1115,22 +1073,6 @@
                 "length": 32,
                 "data": "0x000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
               }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X3": [
-            {
-              "Parachain": 2094
-            },
-            {
-              "PalletInstance": 53
-            },
-            {
-              "GeneralIndex": 2
             }
           ]
         }
@@ -1224,19 +1166,6 @@
         "interior": {
           "X2": [
             {
-              "Parachain": 2004
-            },
-            {
-              "PalletInstance": 10
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
               "Parachain": 2032
             },
             {
@@ -1321,44 +1250,12 @@
         "interior": {
           "X2": [
             {
-              "Parachain": 2030
-            },
-            {
-              "GeneralKey": {
-                "length": 2,
-                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
               "Parachain": 2034
             },
             {
               "AccountKey20": {
                 "network": null,
                 "key": "0x69003a65189f6ed993d3bd3e2b74f1db39f405ce"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 21,
-                "data": "0x02f4c723e61709d90f89939c1852f516e373d418a80000000000000000000000"
               }
             }
           ]
@@ -1483,45 +1380,12 @@
         "interior": {
           "X2": [
             {
-              "Parachain": 2046
-            },
-            {
-              "PalletInstance": 5
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
               "Parachain": 2030
             },
             {
               "GeneralKey": {
                 "length": 2,
                 "data": "0x0903000000000000000000000000000000000000000000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xcccccccccc33d538dbc2ee4feab0a7a1ff4e8a94"
               }
             }
           ]
@@ -1634,35 +1498,6 @@
         "interior": {
           "X2": [
             {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 21,
-                "data": "0x0254a37a01cd75b616d63e0ab665bffdb0143c52ae0000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 3417
-            },
-            {
-              "GeneralIndex": 0
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
               "Parachain": 2031
             },
             {
@@ -1764,52 +1599,6 @@
       {
         "parents": 1,
         "interior": {
-          "X2": [
-            {
-              "Parachain": 2034
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x6a21891db0940491603f3cca0a9f4dba4c6e810c"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X1": [
-            {
-              "Parachain": 3344
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x1abaea1f7c830bd89acc67ec4af516284b1bc33c"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
           "X4": [
             {
               "Parachain": 2034
@@ -1883,22 +1672,6 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x0000000000000000000000006b175474e89094c44da98b954eedeac495271d0f"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 21,
-                "data": "0x0207df96d1341a7d16ba1ad431e2c847d978bc2bce0000000000000000000000"
               }
             }
           ]
@@ -1980,26 +1753,6 @@
         }
       },
       {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
-              }
-            }
-          ]
-        }
-      },
-      {
         "parents": 1,
         "interior": {
           "X3": [
@@ -2071,56 +1824,6 @@
             {
               "AccountKey20": {
                 "network": null,
-                "key": "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X1": [
-            {
-              "Parachain": 2035
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xd166337499e176bbc38a1fbd113ab144e5bd2df7"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
                 "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
               }
             }
@@ -2138,22 +1841,6 @@
               "AccountKey20": {
                 "network": null,
                 "key": "0x35774c305aaf441a102d47988d35f0f5428471b3"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 2,
-                "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
               }
             }
           ]
@@ -2230,42 +1917,10 @@
         "interior": {
           "X2": [
             {
-              "Parachain": 2092
-            },
-            {
-              "GeneralKey": {
-                "length": 2,
-                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
               "Parachain": 2094
             },
             {
               "PalletInstance": 10
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2000
-            },
-            {
-              "GeneralKey": {
-                "length": 21,
-                "data": "0x02c80084af223c8b598536178d9361dc55bfda68180000000000000000000000"
-              }
             }
           ]
         }
@@ -2315,34 +1970,6 @@
       {
         "parents": 1,
         "interior": {
-          "X5": [
-            {
-              "Parachain": 2094
-            },
-            {
-              "PalletInstance": 53
-            },
-            {
-              "GeneralIndex": 2
-            },
-            {
-              "GeneralKey": {
-                "length": 4,
-                "data": "0x4555524300000000000000000000000000000000000000000000000000000000"
-              }
-            },
-            {
-              "GeneralKey": {
-                "length": 32,
-                "data": "0xcf4f5a26e2090bb3adcf02c7a9d73dbfe6659cc690461475b86437fa49c71136"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
           "X2": [
             {
               "Parachain": 2034
@@ -2376,42 +2003,6 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2004
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x9c4c6eaad9b926ba09f702f4ad880ef71998ef18"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x8236a87084f8b84306f72007f36f2618a5634494"
               }
             }
           ]
@@ -2479,26 +2070,6 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
               }
             }
           ]

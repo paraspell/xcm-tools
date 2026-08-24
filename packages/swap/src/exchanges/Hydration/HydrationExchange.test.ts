@@ -55,6 +55,7 @@ describe('HydrationExchange', () => {
 
     mockTradeRouter = {
       getBestSell: vi.fn(),
+      getPools: vi.fn(),
       getSpotPrice: vi.fn(),
     } as unknown as TradeRouter;
 
@@ -289,13 +290,23 @@ describe('HydrationExchange', () => {
       const mockAssets = [
         { symbol: 'ABC', id: 1 },
         { symbol: 'XYZ', id: 2 },
+        { symbol: 'UNPOOLED', id: 3 },
       ] as Asset[];
 
       vi.spyOn(mockAssetClient, 'getSupported').mockResolvedValue(mockAssets);
+      vi.spyOn(mockTradeRouter, 'getPools').mockResolvedValue([
+        { tokens: [{ id: 1 }, { id: 2 }] },
+      ] as never);
 
       vi.mocked(getAssets).mockReturnValue([
         { symbol: 'ABC', decimals: 12, assetId: '1', location: { parents: 0, interior: 'Here' } },
         { symbol: 'XYZ', decimals: 12, assetId: '2', location: { parents: 1, interior: 'Here' } },
+        {
+          symbol: 'UNPOOLED',
+          decimals: 12,
+          assetId: '3',
+          location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
+        },
       ]);
 
       const result = await chain.getDexConfig(apiPapi);

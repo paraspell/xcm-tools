@@ -149,11 +149,11 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
     });
 
     describe('Hydration', () => {
-      it('should build a swap extrinsic without error on Hydration - BNC to ASTR', async () => {
+      it('should build a swap extrinsic without error on Hydration - USDT to ASTR', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('BifrostPolkadot')
-          .currency({ symbol: 'BNC', amount: 300 })
+          .currency({ symbol: 'USDT', amount: 300 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .swap({ currencyTo: { symbol: 'ASTR' }, exchange: 'Hydration' })
