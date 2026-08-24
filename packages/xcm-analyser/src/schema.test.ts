@@ -5,7 +5,9 @@ import {
   GlobalConsensusNetworkSchema,
   InteriorSchema,
   JunctionAccountId32,
+  JunctionAccountIndex64,
   JunctionAccountKey20,
+  JunctionGeneralIndex,
   JunctionGeneralKey,
   JunctionPalletInstance,
   JunctionParachain,
@@ -36,13 +38,13 @@ const mockAccountId32: TJunctionAccountId32 = {
   },
 };
 const mockAccountIndex64: TJunctionAccountIndex64 = {
-  AccountIndex64: { network: 'Polkadot', index: 12345 },
+  AccountIndex64: { network: 'Polkadot', index: 12345n },
 };
 const mockAccountKey20: TJunctionAccountKey20 = {
   AccountKey20: { network: 'Kusama', key: '0xabcdef1234567890abcdef1234567890abcdef12' },
 };
 const mockPalletInstance: TJunctionPalletInstance = { PalletInstance: 50 };
-const mockGeneralIndex: TJunctionGeneralIndex = { GeneralIndex: BigInt(100) };
+const mockGeneralIndex: TJunctionGeneralIndex = { GeneralIndex: 100n };
 const mockGeneralKey: TJunctionGeneralKey = {
   GeneralKey: { length: 32, data: '0xaabbccddeeff' },
 };
@@ -314,74 +316,89 @@ describe('InteriorSchema', () => {
     });
   });
 
-  describe('StringOrNumber and StringOrNumberOrBigInt in Junctions', () => {
-    it('JunctionParachain should correctly parse string number', () => {
-      const data = { Parachain: '1,234' };
-      const result = JunctionParachain.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.Parachain).toBe('1234');
-      }
-    });
-
-    it('JunctionParachain should correctly parse actual number', () => {
-      const data = { Parachain: 1234 };
-      const result = JunctionParachain.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.Parachain).toBe(1234);
-      }
-    });
-
-    it('JunctionParachain should correctly parse BigInt', () => {
-      const data = { Parachain: BigInt(1234567890123) };
-      const result = JunctionParachain.safeParse(data);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.Parachain).toBe(BigInt(1234567890123));
-      }
-    });
-
-    it('JunctionGeneralIndex should correctly parse string number with commas (using .parse)', () => {
-      const dataInterior = { X1: { GeneralIndex: '1,234,567' } };
-      const parsedData = InteriorSchema.parse(dataInterior);
-
-      expect(parsedData).toMatchObject({
-        X1: {
-          GeneralIndex: '1234567',
-        },
+  describe('Unsigned integer junction fields', () => {
+    it('accepts u8 and u32 fields as numbers', () => {
+      const parachain = JunctionParachain.parse({ Parachain: 4_294_967_295 });
+      const palletInstance = JunctionPalletInstance.parse({ PalletInstance: 255 });
+      const generalKey = JunctionGeneralKey.parse({
+        GeneralKey: { length: 32, data: '0x00' },
       });
+
+      expect(parachain.Parachain).toBe(4_294_967_295);
+      expect(palletInstance.PalletInstance).toBe(255);
+      expect(generalKey.GeneralKey.length).toBe(32);
+      expectTypeOf(parachain.Parachain).toEqualTypeOf<number>();
+      expectTypeOf(palletInstance.PalletInstance).toEqualTypeOf<number>();
+      expectTypeOf(generalKey.GeneralKey.length).toEqualTypeOf<number>();
     });
 
-    it('JunctionGeneralIndex should correctly parse plain string number', () => {
-      const dataInterior = { X1: { GeneralIndex: '1234567' } };
-      const parsedData = InteriorSchema.parse(dataInterior);
-      expect(parsedData).toMatchObject({
-        X1: {
-          GeneralIndex: '1234567',
-        },
+    it('normalizes u64 and u128 fields to bigints', () => {
+      const accountIndex = JunctionAccountIndex64.parse({
+        AccountIndex64: { network: null, index: 12345n },
       });
+      const generalIndex = JunctionGeneralIndex.parse({ GeneralIndex: '1,234,567' });
+
+      expect(accountIndex.AccountIndex64.index).toBe(12345n);
+      expect(generalIndex.GeneralIndex).toBe(1234567n);
+      expectTypeOf(accountIndex.AccountIndex64.index).toEqualTypeOf<bigint>();
+      expectTypeOf(generalIndex.GeneralIndex).toEqualTypeOf<bigint>();
     });
 
-    it('JunctionGeneralIndex should correctly parse actual number', () => {
-      const dataInterior = { X1: { GeneralIndex: 1234567 } };
-      const parsedData = InteriorSchema.parse(dataInterior);
-      expect(parsedData).toMatchObject({
-        X1: {
-          GeneralIndex: 1234567,
-        },
-      });
-    });
+    const boundedJunctionCases = [
+      {
+        name: 'Parachain u32',
+        parse: (value: unknown) => JunctionParachain.safeParse({ Parachain: value }),
+        valid: [0, 4_294_967_295],
+        invalid: [-1, '-1', 1.5, '1.5', 4_294_967_296, 4_294_967_295n, '4294967295'],
+      },
+      {
+        name: 'AccountIndex64.index u64',
+        parse: (value: unknown) =>
+          JunctionAccountIndex64.safeParse({ AccountIndex64: { network: null, index: value } }),
+        valid: [0, 18_446_744_073_709_551_615n, '18,446,744,073,709,551,615'],
+        invalid: [-1, '-1', 1.5, '1.5', Number.MAX_SAFE_INTEGER + 1, '18446744073709551616'],
+      },
+      {
+        name: 'PalletInstance u8',
+        parse: (value: unknown) => JunctionPalletInstance.safeParse({ PalletInstance: value }),
+        valid: [0, 255],
+        invalid: [-1, '-1', 1.5, '1.5', 256, 255n, '255'],
+      },
+      {
+        name: 'GeneralIndex u128',
+        parse: (value: unknown) => JunctionGeneralIndex.safeParse({ GeneralIndex: value }),
+        valid: [
+          0,
+          340_282_366_920_938_463_463_374_607_431_768_211_455n,
+          '340,282,366,920,938,463,463,374,607,431,768,211,455',
+        ],
+        invalid: [
+          -1n,
+          '-1',
+          1.5,
+          '1.5',
+          Number.MAX_SAFE_INTEGER + 1,
+          '340282366920938463463374607431768211456',
+        ],
+      },
+      {
+        name: 'GeneralKey.length u8',
+        parse: (value: unknown) =>
+          JunctionGeneralKey.safeParse({ GeneralKey: { length: value, data: '0x00' } }),
+        valid: [0, 255],
+        invalid: [-1, '-1', 1.5, '1.5', 256, 255n, '255'],
+      },
+    ];
 
-    it('JunctionGeneralIndex should correctly parse BigInt', () => {
-      const dataInterior = { X1: { GeneralIndex: BigInt(9876543210987) } };
-      const parsedData = InteriorSchema.parse(dataInterior);
-      expect(parsedData).toMatchObject({
-        X1: {
-          GeneralIndex: BigInt(9876543210987),
-        },
+    for (const { name, parse, valid, invalid } of boundedJunctionCases) {
+      it.each(valid)(`${name} accepts valid boundary value: %s`, (value) => {
+        expect(parse(value).success).toBe(true);
       });
-    });
+
+      it.each(invalid)(`${name} rejects invalid value: %s`, (value) => {
+        expect(parse(value).success).toBe(false);
+      });
+    }
 
     it('JunctionPalletInstance should fail for invalid string number format', () => {
       const data = { PalletInstance: '1,2,3' };
@@ -482,16 +499,47 @@ describe('InteriorSchema', () => {
       expect(GlobalConsensusNetworkSchema.safeParse(network).success).toBe(true);
     });
 
-    it('should normalize numeric strings in payload variants', () => {
+    it('should normalize u64 payload variants to bigints', () => {
       expect(
         GlobalConsensusNetworkSchema.parse({
           ByFork: { blockNumber: '1,234', blockHash: mockHash },
         }),
-      ).toEqual({ ByFork: { blockNumber: '1234', blockHash: mockHash } });
+      ).toEqual({ ByFork: { blockNumber: 1234n, blockHash: mockHash } });
 
       expect(GlobalConsensusNetworkSchema.parse({ Ethereum: { chainId: '1,234' } })).toEqual({
-        Ethereum: { chainId: '1234' },
+        Ethereum: { chainId: 1234n },
       });
+
+      expect(GlobalConsensusNetworkSchema.parse({ Ethereum: { chainId: 1234 } })).toEqual({
+        Ethereum: { chainId: 1234n },
+      });
+    });
+
+    it('should enforce the u64 range for payload variants', () => {
+      const maxUint64 = 18_446_744_073_709_551_615n;
+      const overUint64 = '18446744073709551616';
+
+      expect(
+        GlobalConsensusNetworkSchema.parse({
+          ByFork: { blockNumber: maxUint64.toString(), blockHash: mockHash },
+        }),
+      ).toEqual({ ByFork: { blockNumber: maxUint64, blockHash: mockHash } });
+      expect(
+        GlobalConsensusNetworkSchema.parse({
+          Ethereum: { chainId: 18_446_744_073_709_551_615n },
+        }),
+      ).toEqual({ Ethereum: { chainId: maxUint64 } });
+
+      expect(
+        GlobalConsensusNetworkSchema.safeParse({
+          ByFork: { blockNumber: overUint64, blockHash: mockHash },
+        }).success,
+      ).toBe(false);
+      expect(
+        GlobalConsensusNetworkSchema.safeParse({
+          Ethereum: { chainId: Number.MAX_SAFE_INTEGER + 1 },
+        }).success,
+      ).toBe(false);
     });
 
     it.each([
@@ -522,8 +570,8 @@ describe('LocationSchema', () => {
     }
   });
 
-  it('should pass with maximum parents as a string and Interior { Here: null }', () => {
-    const data = { parents: '255', interior: { Here: null } };
+  it('should pass with maximum parents and Interior { Here: null }', () => {
+    const data = { parents: 255, interior: { Here: null } };
     const result = LocationSchema.safeParse(data);
     expect(result.success).toBe(true);
     if (result.success) {
@@ -552,7 +600,7 @@ describe('LocationSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it.each([-1, '-1', 1.5, '1.5', 256, '256', '1,000', '89000000'])(
+  it.each([-1, 1.5, 256, '0', '255', 'abc'])(
     'should fail if parents is not a valid u8: %s',
     (parents) => {
       const result = LocationSchema.safeParse({ parents, interior: 'Here' });

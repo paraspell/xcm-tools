@@ -9,19 +9,19 @@ const mockHash = `0x${'ab'.repeat(32)}`;
 
 describe('convert', () => {
   it.each([
-    [{ parents: '0', interior: 'Here' }, './'],
-    [{ parents: '2', interior: { Here: null } }, '../../'],
+    [{ parents: 0, interior: 'Here' }, './'],
+    [{ parents: 2, interior: { Here: null } }, '../../'],
   ] as const)('convert location with Here interior to URL', (location, expected) => {
     expect(convertLocationToUrl(location)).toBe(expected);
   });
 
   it('convert location to URL', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X2: [
           {
-            PalletInstance: '50',
+            PalletInstance: 50,
           },
           {
             GeneralIndex: '41',
@@ -36,11 +36,11 @@ describe('convert', () => {
 
   it('convert location to URL with parents', () => {
     const location: Location = {
-      parents: '3',
+      parents: 3,
       interior: {
         X2: [
           {
-            PalletInstance: '50',
+            PalletInstance: 50,
           },
           {
             GeneralIndex: '41',
@@ -56,18 +56,18 @@ describe('convert', () => {
   it('rejects an unbounded parent count before constructing the URL', () => {
     expect(() =>
       convertLocationToUrl({
-        parents: '89000000',
-        interior: { X1: { Parachain: '2000' } },
+        parents: 89_000_000,
+        interior: { X1: { Parachain: 2000 } },
       }),
     ).toThrow(ZodError);
   });
 
   it('convert location to URL with parachain interior', () => {
     const location: Location = {
-      parents: '1',
+      parents: 1,
       interior: {
         X1: {
-          Parachain: '2006',
+          Parachain: 2006,
         },
       },
     };
@@ -78,7 +78,7 @@ describe('convert', () => {
 
   it('convert location to URL with account interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           AccountId32: {
@@ -95,7 +95,7 @@ describe('convert', () => {
 
   it('should convert location to URL with AccountIndex64 interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           AccountIndex64: {
@@ -112,7 +112,7 @@ describe('convert', () => {
 
   it('should convert location to URL with AccountKey20 interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           AccountKey20: {
@@ -129,11 +129,11 @@ describe('convert', () => {
 
   it('should convert location to URL with GeneralKey interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           GeneralKey: {
-            length: '10',
+            length: 10,
             data: '0xabc',
           },
         },
@@ -145,7 +145,7 @@ describe('convert', () => {
 
   it('should convert location to URL with OnlyChild interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           OnlyChild: 'child',
@@ -159,7 +159,7 @@ describe('convert', () => {
 
   it('should convert location to URL with GlobalConsensus interior', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           GlobalConsensus: { polkadot: null },
@@ -236,9 +236,9 @@ describe('convert', () => {
 
   it('convert location to URL with currency and amount location', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
-        X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
+        X2: [{ PalletInstance: 50 }, { GeneralIndex: '1984' }],
       },
     };
 
@@ -248,9 +248,9 @@ describe('convert', () => {
 
   it('convert location to URL with currency and amount location with comma', () => {
     const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
-        X2: [{ PalletInstance: '50' }, { GeneralIndex: '1,984' }],
+        X2: [{ PalletInstance: 50 }, { GeneralIndex: '1,984' }],
       },
     };
 
@@ -265,11 +265,11 @@ describe('convert', () => {
       {
         // dest
         V3: {
-          parents: '1',
+          parents: 1,
           interior: {
             X2: [
               {
-                Parachain: '2001', // BifrostKusama paraId
+                Parachain: 2001, // BifrostKusama paraId
               },
               {
                 AccountId32: {
@@ -294,17 +294,17 @@ describe('convert', () => {
     const xcmCallArguments = [
       {
         V3: {
-          parents: '1',
+          parents: 1,
           interior: {
             X1: {
-              Parachain: '2006',
+              Parachain: 2006,
             },
           },
         },
       },
       {
         V3: {
-          parents: '0',
+          parents: 0,
           interior: {
             X1: {
               AccountId32: {
@@ -320,9 +320,9 @@ describe('convert', () => {
           {
             id: {
               Concrete: {
-                parents: '0',
+                parents: 0,
                 interior: {
-                  X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
+                  X2: [{ PalletInstance: 50 }, { GeneralIndex: '1984' }],
                 },
               },
             },
@@ -360,11 +360,11 @@ describe('convert', () => {
           {
             id: {
               Concrete: {
-                parents: '0',
+                parents: 0,
                 interior: {
                   X2: [
                     {
-                      Parachain: '2001', // BifrostKusama paraId
+                      Parachain: 2001, // BifrostKusama paraId
                     },
                     {
                       AccountId32: {
@@ -404,7 +404,7 @@ describe('convert', () => {
           {
             id: {
               Concrete: {
-                parents: '0',
+                parents: 0,
                 interior: {
                   X2: [
                     {

@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mantine/hooks";
 
 const codeForAnalyser = `
   convertLocationToUrl({
-  parents: '1',
+  parents: 1,
   interior: { 
     X1: { Parachain: 2000 }
 }}) 
