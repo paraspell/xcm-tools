@@ -170,10 +170,17 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
     const sdk = await createSdkContext(api);
 
     try {
-      const assets = await sdk.client.asset.getSupported();
+      const [assets, pools] = await Promise.all([
+        sdk.client.asset.getSupported(),
+        sdk.api.router.getPools(),
+      ]);
       const sdkAssets = getAssets(this.chain);
+      const poolAssetIds = new Set(
+        pools.flatMap(({ tokens }) => tokens.map(({ id }) => id.toString())),
+      );
 
       const transformedAssets: TAssetInfo[] = assets
+        .filter(({ id }) => poolAssetIds.has(id.toString()))
         .map(({ symbol, id }) => {
           const asset =
             sdkAssets.find((a) => !a.isNative && a.assetId === id.toString()) ??

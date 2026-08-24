@@ -52,11 +52,11 @@ import { convertLocationToUrl } from '@paraspell/xcm-analyser';
 
 //Define the location you wish to convert to URL
 /*const location: Location = {
-      parents: '0',
+      parents: 0,
       interior: {
         X2: [
           {
-            PalletInstance: '50',
+            PalletInstance: 50,
           },
           {
             GeneralIndex: '41',
@@ -82,11 +82,11 @@ import { convertLocationToUrlJson } from '@paraspell/xcm-analyser';
 
 //Define location JSON
 /*const locationJson = `{
-      "parents": "3",
+      "parents": 3,
       "interior": {
         "X2": [
           {
-            "PalletInstance": "50"
+            "PalletInstance": 50
           },
           {
             "GeneralIndex": "41"
@@ -114,17 +114,17 @@ import { convertXCMToUrls } from '@paraspell/xcm-analyser';
 /*const xcmCallArguments = [
   {
     V3: {
-      parents: '1',
+      parents: 1,
       interior: {
         X1: {
-          Parachain: '2006',
+          Parachain: 2006,
         },
       },
     },
   },
   {
     V3: {
-      parents: '0',
+      parents: 0,
       interior: {
         X1: {
           AccountId32: {
@@ -140,9 +140,9 @@ import { convertXCMToUrls } from '@paraspell/xcm-analyser';
       {
         id: {
           Concrete: {
-            parents: '0',
+            parents: 0,
             interior: {
-              X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
+              X2: [{ PalletInstance: 50 }, { GeneralIndex: '1984' }],
             },
           },
         },
