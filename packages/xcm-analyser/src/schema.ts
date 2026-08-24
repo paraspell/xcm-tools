@@ -3,17 +3,31 @@ import { z } from 'zod';
 const NetworkId = z.string().nullable();
 const BodyId = z.string().nullable();
 const BodyPart = z.string().nullable();
-const StringOrNumber = z.union(
-  [
+const NumericString = z
+  .string()
+  .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
+  .transform((value) => value.replace(/,/g, ''));
+const IntegerAsBigInt = z
+  .union([NumericString, z.int(), z.bigint()], {
+    error: 'Expected an integer, bigint or integer string',
+  })
+  .transform((value) => BigInt(value));
+const createNumberUint = (bits: number) =>
+  z
+    .int()
+    .nonnegative()
+    .max(2 ** bits - 1);
+const createBigIntUint = (bits: bigint) =>
+  IntegerAsBigInt.pipe(
     z
-      .string()
-      .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
-      .transform((s) => s.replace(/,/g, '')),
-    z.number(),
-  ],
-  { error: 'Expected a number or numeric string' },
-);
-const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
+      .bigint()
+      .nonnegative()
+      .max((1n << bits) - 1n),
+  );
+const Uint8 = createNumberUint(8);
+const Uint32 = createNumberUint(32);
+const Uint64 = createBigIntUint(64n);
+const Uint128 = createBigIntUint(128n);
 const hexStringError =
   "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).";
 const HexString = z
@@ -22,26 +36,26 @@ const HexString = z
 const HexString32 = z
   .templateLiteral(['0x', z.hex()], { error: 'Expected a 32-byte hex string' })
   .check(z.length(66, { error: 'Expected a 32-byte hex string' }));
-export const JunctionParachain = z.strictObject({ Parachain: StringOrNumberOrBigInt });
+export const JunctionParachain = z.strictObject({ Parachain: Uint32 });
 
 export const JunctionAccountId32 = z.strictObject({
   AccountId32: z.strictObject({ network: NetworkId, id: HexString }),
 });
 
 export const JunctionAccountIndex64 = z.strictObject({
-  AccountIndex64: z.strictObject({ network: NetworkId, index: StringOrNumberOrBigInt }),
+  AccountIndex64: z.strictObject({ network: NetworkId, index: Uint64 }),
 });
 
 export const JunctionAccountKey20 = z.strictObject({
   AccountKey20: z.strictObject({ network: NetworkId, key: HexString }),
 });
 
-export const JunctionPalletInstance = z.strictObject({ PalletInstance: StringOrNumberOrBigInt });
+export const JunctionPalletInstance = z.strictObject({ PalletInstance: Uint8 });
 
-export const JunctionGeneralIndex = z.strictObject({ GeneralIndex: StringOrNumberOrBigInt });
+export const JunctionGeneralIndex = z.strictObject({ GeneralIndex: Uint128 });
 
 export const JunctionGeneralKey = z.strictObject({
-  GeneralKey: z.strictObject({ length: StringOrNumberOrBigInt, data: HexString }),
+  GeneralKey: z.strictObject({ length: Uint8, data: HexString }),
 });
 
 export const JunctionOnlyChild = z.strictObject({ OnlyChild: z.string() });
@@ -96,12 +110,12 @@ export const GlobalConsensusNetworkSchema = z.union([
   z.strictObject({ ByGenesis: HexString32 }),
   z.strictObject({
     ByFork: z.strictObject({
-      blockNumber: StringOrNumberOrBigInt,
+      blockNumber: Uint64,
       blockHash: HexString32,
     }),
   }),
   z.strictObject({
-    Ethereum: z.strictObject({ chainId: StringOrNumberOrBigInt }),
+    Ethereum: z.strictObject({ chainId: Uint64 }),
   }),
 ]);
 
@@ -173,15 +187,15 @@ const Junctions = z.union(
       ]),
     }),
   ],
-  { error: 'Expected exactly one junction (X1–X8)' },
+  { error: 'Expected exactly one junction (X1-X8)' },
 );
 
 export const InteriorSchema = z.union(
   [z.literal('Here'), z.strictObject({ Here: z.literal(null) }), Junctions],
-  { error: "Expected 'Here' or junctions (X1–X8)" },
+  { error: "Expected 'Here' or junctions (X1-X8)" },
 );
 
 export const LocationSchema = z.strictObject({
-  parents: StringOrNumber.pipe(z.coerce.number<string | number>().int().min(0).max(255)),
+  parents: Uint8,
   interior: InteriorSchema,
 });

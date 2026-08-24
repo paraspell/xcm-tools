@@ -24,10 +24,10 @@ describe('XCM Analyser controller (e2e)', () => {
       .post('/xcm-analyser')
       .send({
         location: {
-          parents: '0',
+          parents: 0,
           exterior: {
             X1: {
-              Parachain: '2000',
+              Parachain: 2000,
             },
           },
         },
@@ -50,10 +50,10 @@ describe('XCM Analyser controller (e2e)', () => {
       .post('/xcm-analyser')
       .send({
         location: {
-          parents: '0',
+          parents: 0,
           interior: {
             X1: {
-              Parachain: '2000',
+              Parachain: 2000,
             },
           },
         },

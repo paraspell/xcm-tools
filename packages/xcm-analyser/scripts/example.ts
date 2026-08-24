@@ -3,9 +3,9 @@ import type { Location } from '../src/types';
 import { convertLocationToUrl, convertXCMToUrls } from '../src/converter/convert';
 
 const location: Location = {
-  parents: '1',
+  parents: 1,
   interior: {
-    X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
+    X2: [{ PalletInstance: 50 }, { GeneralIndex: '1984' }],
   },
 };
 
@@ -21,11 +21,11 @@ const xcmCallArguments = [
   {
     // dest
     V3: {
-      parents: '1',
+      parents: 1,
       interior: {
         X2: [
           {
-            Parachain: '2001', // BifrostKusama paraId
+            Parachain: 2001, // BifrostKusama paraId
           },
           {
             AccountId32: {
