@@ -1,15 +1,8 @@
 import { LocationSchema } from '../schema';
-import type {
-  Junction,
-  ParsedLocation,
-  TJunctionGlobalConsensus,
-  TJunctionPlurality,
-} from '../types';
+import type { Junction, ParsedLocation, TJunctionPlurality, TNetworkId } from '../types';
 
-const convertGlobalConsensusToReadable = (
-  network: TJunctionGlobalConsensus['GlobalConsensus'],
-): string => {
-  if (typeof network === 'string') return network;
+const convertNetworkToReadable = (network: TNetworkId): string => {
+  if (network === null || typeof network === 'string') return String(network);
   if ('ByGenesis' in network) {
     return `ByGenesis(${network.ByGenesis})`;
   }
@@ -55,11 +48,14 @@ export const convertJunctionToReadable = (junction: Junction): string => {
   if ('Parachain' in junction) {
     return `Parachain(${junction.Parachain})`;
   } else if ('AccountId32' in junction) {
-    return `AccountId32(${junction.AccountId32.network}, ${junction.AccountId32.id})`;
+    const { network, id } = junction.AccountId32;
+    return `AccountId32(${convertNetworkToReadable(network)}, ${id})`;
   } else if ('AccountIndex64' in junction) {
-    return `AccountIndex64(${junction.AccountIndex64.network}, ${junction.AccountIndex64.index})`;
+    const { network, index } = junction.AccountIndex64;
+    return `AccountIndex64(${convertNetworkToReadable(network)}, ${index})`;
   } else if ('AccountKey20' in junction) {
-    return `AccountKey20(${junction.AccountKey20.network}, ${junction.AccountKey20.key})`;
+    const { network, key } = junction.AccountKey20;
+    return `AccountKey20(${convertNetworkToReadable(network)}, ${key})`;
   } else if ('PalletInstance' in junction) {
     return `PalletInstance(${junction.PalletInstance})`;
   } else if ('GeneralIndex' in junction) {
@@ -72,7 +68,7 @@ export const convertJunctionToReadable = (junction: Junction): string => {
     const { id, part } = junction.Plurality;
     return `Plurality(${convertBodyIdToReadable(id)}, ${convertBodyPartToReadable(part)})`;
   } else {
-    return `GlobalConsensus(${convertGlobalConsensusToReadable(junction.GlobalConsensus)})`;
+    return `GlobalConsensus(${convertNetworkToReadable(junction.GlobalConsensus)})`;
   }
 };
 

@@ -5,7 +5,7 @@ import { GLOBAL_CONSENSUS_NETWORKS } from '../schema';
 import { type Location } from '../types';
 import { convertLocationToUrl, convertLocationToUrlJson, convertXCMToUrls } from './convert';
 
-const mockHash = `0x${'ab'.repeat(32)}`;
+const mockHash: `0x${string}` = `0x${'ab'.repeat(32)}`;
 
 describe('convert', () => {
   it.each([
@@ -420,6 +420,30 @@ describe('convert', () => {
     };
 
     expect(t).toThrow(ZodError);
+  });
+
+  it.each([
+    [{ polkadot: null }, 'Polkadot'],
+    [{ ByGenesis: mockHash }, `ByGenesis(${mockHash})`],
+    [
+      { ByFork: { blockNumber: 1, blockHash: mockHash } },
+      `ByFork(blockNumber: 1, blockHash: ${mockHash})`,
+    ],
+    [{ Ethereum: { chainId: 1 } }, 'Ethereum(chainId: 1)'],
+  ] as const)('convert location with object network in AccountId32 to URL', (network, expected) => {
+    const location: Location = {
+      parents: 0,
+      interior: {
+        X1: {
+          AccountId32: {
+            network,
+            id: '0x1234',
+          },
+        },
+      },
+    };
+
+    expect(convertLocationToUrl(location)).toBe(`./AccountId32(${expected}, 0x1234)`);
   });
 
   it('convert location to URL from tx arguments with no locations', () => {

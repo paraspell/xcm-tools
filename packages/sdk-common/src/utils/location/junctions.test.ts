@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { Parents, type TLocation } from '../../types'
+import { Parents, type TJunctionAccountId32, type TLocation } from '../../types'
 import { flattenJunctions } from './flattenJunctions'
 import { getJunctionValue, hasJunction } from './junctions'
 
@@ -102,7 +102,7 @@ describe('getJunctionValue', () => {
   })
 
   it('returns complex object values correctly', () => {
-    const accountValue = { id: '0x123', network: 'Polkadot' }
+    const accountValue: TJunctionAccountId32['AccountId32'] = { id: '0x123', network: 'Polkadot' }
     const location: TLocation = { parents: Parents.ZERO, interior: {} }
     vi.mocked(flattenJunctions).mockReturnValue([{ AccountId32: accountValue }])
     expect(getJunctionValue(location, 'AccountId32')).toEqual(accountValue)

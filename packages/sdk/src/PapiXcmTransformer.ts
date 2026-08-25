@@ -40,12 +40,7 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: {
-            network:
-              value.network === 'any'
-                ? {
-                    type: 'Any'
-                  }
-                : undefined,
+            network: undefined,
             id: value.id
           }
         }
@@ -96,12 +91,7 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: {
-            network:
-              value.network === 'any'
-                ? {
-                    type: 'Any'
-                  }
-                : undefined,
+            network: undefined,
             key: value.key
           }
         }

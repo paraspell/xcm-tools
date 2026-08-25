@@ -15,6 +15,7 @@ import type {
   JunctionPlurality,
   JunctionSchema,
   LocationSchema,
+  NetworkId,
 } from './schema';
 
 export type JunctionType =
@@ -39,6 +40,7 @@ export type TJunctionGeneralKey = z.infer<typeof JunctionGeneralKey>;
 export type TJunctionOnlyChild = z.infer<typeof JunctionOnlyChild>;
 export type TJunctionPlurality = z.infer<typeof JunctionPlurality>;
 export type TJunctionGlobalConsensus = z.infer<typeof JunctionGlobalConsensus>;
+export type TNetworkId = z.infer<typeof NetworkId>;
 export type TGlobalConsensusNetwork = Capitalize<(typeof GLOBAL_CONSENSUS_NETWORKS)[number]>;
 export type TGlobalConsensusStringNetwork = Extract<
   z.infer<typeof GlobalConsensusNetworkSchema>,
