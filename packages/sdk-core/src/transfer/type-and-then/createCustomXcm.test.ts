@@ -82,7 +82,7 @@ describe('createCustomXcm', () => {
 
   const mockBeneficiary: TLocation = {
     parents: 0,
-    interior: { X1: { AccountId32: { network: 'Any', id: '0x123' } } }
+    interior: { X1: { AccountId32: { network: null, id: '0x123' } } }
   }
 
   beforeEach(() => {

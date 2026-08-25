@@ -16,7 +16,28 @@ export type TJunctionType =
   | 'Plurality'
   | 'GlobalConsensus'
 
-type TNetworkId = string | null
+type TNetworkKey =
+  | 'polkadot'
+  | 'kusama'
+  | 'paseo'
+  | 'westend'
+  | 'rococo'
+  | 'wococo'
+  | 'bitcoinCore'
+  | 'bitcoinCash'
+  | 'polkadotBulletin'
+
+type TUnitNetworkId = {
+  [K in TNetworkKey]: Record<K, null>
+}[TNetworkKey]
+
+type TNetworkId =
+  | Capitalize<TNetworkKey>
+  | TUnitNetworkId
+  | { ByGenesis: THexString }
+  | { ByFork: { blockNumber: TStringOrNumberOrBigInt; blockHash: THexString } }
+  | { Ethereum: { chainId: TStringOrNumberOrBigInt } }
+  | null
 type TBodyId = string | { Moniker: THexString } | { Index: TStringOrNumberOrBigInt } | null
 type TBodyPart =
   | string

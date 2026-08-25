@@ -49,10 +49,10 @@ describe("XcmTransformer", () => {
 
     it.each([
       [
-        { AccountId32: { network: "any", id: "0x01" } },
+        { AccountId32: { network: null, id: "0x01" } },
         {
           type: "AccountId32",
-          value: { network: { type: "Any" }, id: "0x01" },
+          value: { network: undefined, id: "0x01" },
         },
       ],
       [
@@ -80,10 +80,10 @@ describe("XcmTransformer", () => {
         { type: "Ethereum", value: { chainId: 1 } },
       ],
       [
-        { AccountKey20: { network: "any", key: "0x01" } },
+        { AccountKey20: { network: null, key: "0x01" } },
         {
           type: "AccountKey20",
-          value: { network: { type: "Any" }, key: "0x01" },
+          value: { network: undefined, key: "0x01" },
         },
       ],
       [

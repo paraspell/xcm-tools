@@ -481,6 +481,41 @@ describe('InteriorSchema', () => {
     });
   });
 
+  describe('Account junction NetworkId variants', () => {
+    const validNetworks = [
+      { polkadot: null },
+      { ByGenesis: mockHash },
+      { ByFork: { blockNumber: 1, blockHash: mockHash } },
+      { Ethereum: { chainId: 1 } },
+    ];
+
+    it.each(validNetworks)('accepts object network %j in account junctions', (network) => {
+      expect(
+        JunctionAccountId32.safeParse({ AccountId32: { network, id: '0x1234' } }).success,
+      ).toBe(true);
+      expect(
+        JunctionAccountIndex64.safeParse({ AccountIndex64: { network, index: 1n } }).success,
+      ).toBe(true);
+      expect(
+        JunctionAccountKey20.safeParse({ AccountKey20: { network, key: '0x1234' } }).success,
+      ).toBe(true);
+    });
+
+    const invalidNetworks = [
+      { polkadot: null, kusama: null },
+      { ByGenesis: '0x12' },
+      { ByFork: { blockNumber: 1 } },
+      { Ethereum: { chainId: 'abc' } },
+      { Unknown: null },
+    ];
+
+    it.each(invalidNetworks)('rejects invalid object network %j', (network) => {
+      expect(
+        JunctionAccountId32.safeParse({ AccountId32: { network, id: '0x1234' } }).success,
+      ).toBe(false);
+    });
+  });
+
   describe('JunctionPlurality body variants', () => {
     const validBodies: TJunctionPlurality['Plurality'][] = [
       { id: 'Unit', part: null },

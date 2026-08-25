@@ -68,16 +68,14 @@ describe('transform', () => {
   it('should transform AccountId32 correctly', () => {
     const input = {
       AccountId32: {
-        network: 'any',
+        network: null,
         id: '0x1234abcd'
       }
     }
     const expected = {
       type: 'AccountId32',
       value: {
-        network: {
-          type: 'Any'
-        },
+        network: undefined,
         id: '0x1234abcd'
       }
     }
@@ -216,7 +214,7 @@ describe('transform', () => {
       X1: [
         {
           AccountId32: {
-            network: 'any',
+            network: null,
             id: '0x12345678'
           }
         }
@@ -227,9 +225,7 @@ describe('transform', () => {
       value: {
         type: 'AccountId32',
         value: {
-          network: {
-            type: 'Any'
-          },
+          network: undefined,
           id: '0x12345678'
         }
       }
@@ -356,12 +352,12 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
-  it('should handle nested arrays and objects - AccountKey20 V2', () => {
+  it('should handle nested arrays and objects - AccountKey20', () => {
     const input = [
       {
         AccountKey20: {
           key: '0xabcdef',
-          network: 'any'
+          network: null
         }
       },
       {
@@ -373,7 +369,7 @@ describe('transform', () => {
       {
         type: 'AccountKey20',
         value: {
-          network: { type: 'Any' },
+          network: undefined,
           key: '0xabcdef'
         }
       },
@@ -468,7 +464,7 @@ describe('transform', () => {
       X1: [
         {
           AccountId32: {
-            network: 'any',
+            network: null,
             id: '0x12345678'
           }
         },
@@ -483,7 +479,7 @@ describe('transform', () => {
         {
           type: 'AccountId32',
           value: {
-            network: { type: 'Any' },
+            network: undefined,
             id: '0x12345678'
           }
         },

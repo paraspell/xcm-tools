@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-const NetworkId = z.string().nullable();
 const NumericString = z
   .string()
   .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
@@ -37,50 +36,6 @@ const createFixedHexString = (bytes: number) => {
 };
 const HexString4 = createFixedHexString(4);
 const HexString32 = createFixedHexString(32);
-export const JunctionParachain = z.strictObject({ Parachain: Uint32 });
-
-export const JunctionAccountId32 = z.strictObject({
-  AccountId32: z.strictObject({ network: NetworkId, id: HexString }),
-});
-
-export const JunctionAccountIndex64 = z.strictObject({
-  AccountIndex64: z.strictObject({ network: NetworkId, index: Uint64 }),
-});
-
-export const JunctionAccountKey20 = z.strictObject({
-  AccountKey20: z.strictObject({ network: NetworkId, key: HexString }),
-});
-
-export const JunctionPalletInstance = z.strictObject({ PalletInstance: Uint8 });
-
-export const JunctionGeneralIndex = z.strictObject({ GeneralIndex: Uint128 });
-
-export const JunctionGeneralKey = z.strictObject({
-  GeneralKey: z.strictObject({ length: Uint8, data: HexString }),
-});
-
-export const JunctionOnlyChild = z.strictObject({ OnlyChild: z.string().nullable() });
-
-const BodyId = z.union([
-  z.string().nullable(),
-  z.strictObject({ Moniker: HexString4 }),
-  z.strictObject({ Index: Uint32 }),
-]);
-
-const BodyPartFraction = z.strictObject({ nom: Uint32, denom: Uint32 });
-
-const BodyPart = z.union([
-  z.string().nullable(),
-  z.strictObject({ Members: z.strictObject({ count: Uint32 }) }),
-  z.strictObject({ Fraction: BodyPartFraction }),
-  z.strictObject({ AtLeastProportion: BodyPartFraction }),
-  z.strictObject({ MoreThanProportion: BodyPartFraction }),
-]);
-
-export const JunctionPlurality = z.strictObject({
-  Plurality: z.strictObject({ id: BodyId, part: BodyPart }),
-});
-
 export const GLOBAL_CONSENSUS_NETWORKS = [
   'polkadot',
   'kusama',
@@ -135,6 +90,52 @@ export const GlobalConsensusNetworkSchema = z.union([
     Ethereum: z.strictObject({ chainId: Uint64 }),
   }),
 ]);
+
+export const NetworkId = GlobalConsensusNetworkSchema.nullable();
+
+export const JunctionParachain = z.strictObject({ Parachain: Uint32 });
+
+export const JunctionAccountId32 = z.strictObject({
+  AccountId32: z.strictObject({ network: NetworkId, id: HexString }),
+});
+
+export const JunctionAccountIndex64 = z.strictObject({
+  AccountIndex64: z.strictObject({ network: NetworkId, index: Uint64 }),
+});
+
+export const JunctionAccountKey20 = z.strictObject({
+  AccountKey20: z.strictObject({ network: NetworkId, key: HexString }),
+});
+
+export const JunctionPalletInstance = z.strictObject({ PalletInstance: Uint8 });
+
+export const JunctionGeneralIndex = z.strictObject({ GeneralIndex: Uint128 });
+
+export const JunctionGeneralKey = z.strictObject({
+  GeneralKey: z.strictObject({ length: Uint8, data: HexString }),
+});
+
+export const JunctionOnlyChild = z.strictObject({ OnlyChild: z.string().nullable() });
+
+const BodyId = z.union([
+  z.string().nullable(),
+  z.strictObject({ Moniker: HexString4 }),
+  z.strictObject({ Index: Uint32 }),
+]);
+
+const BodyPartFraction = z.strictObject({ nom: Uint32, denom: Uint32 });
+
+const BodyPart = z.union([
+  z.string().nullable(),
+  z.strictObject({ Members: z.strictObject({ count: Uint32 }) }),
+  z.strictObject({ Fraction: BodyPartFraction }),
+  z.strictObject({ AtLeastProportion: BodyPartFraction }),
+  z.strictObject({ MoreThanProportion: BodyPartFraction }),
+]);
+
+export const JunctionPlurality = z.strictObject({
+  Plurality: z.strictObject({ id: BodyId, part: BodyPart }),
+});
 
 export const JunctionGlobalConsensus = z.strictObject({
   GlobalConsensus: GlobalConsensusNetworkSchema,
