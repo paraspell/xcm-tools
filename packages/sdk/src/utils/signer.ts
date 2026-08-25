@@ -6,7 +6,7 @@ import { getEvmPrivateKeyHex, isSenderSigner } from '@paraspell/sdk-core'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { AccountId } from 'polkadot-api'
-import { getPolkadotSigner } from 'polkadot-api/signer'
+import { getTxCreator } from 'polkadot-api/tx-creator'
 
 import type { TPapiSigner } from '../types'
 
@@ -26,7 +26,7 @@ const createSr25519Keypair = (path: string) => {
 
 export const createSr25519Signer = (path: string) => {
   const keyPair = createSr25519Keypair(path)
-  return getPolkadotSigner(keyPair.publicKey, 'Sr25519', keyPair.sign)
+  return getTxCreator(keyPair.publicKey, 'Sr25519', keyPair.sign)
 }
 
 export const resolveEcdsaAddress = (privateKey: Uint8Array): Uint8Array =>
@@ -34,7 +34,7 @@ export const resolveEcdsaAddress = (privateKey: Uint8Array): Uint8Array =>
 
 export const createEcdsaSigner = (privateKey: Uint8Array) => {
   const publicAddress = resolveEcdsaAddress(privateKey)
-  return getPolkadotSigner(publicAddress, 'Ecdsa', input => signEcdsa(input, privateKey))
+  return getTxCreator(publicAddress, 'Ecdsa', input => signEcdsa(input, privateKey))
 }
 
 const getEvmPrivateKey = (path: string) => {

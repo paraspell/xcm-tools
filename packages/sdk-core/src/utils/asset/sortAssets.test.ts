@@ -139,6 +139,20 @@ describe('sortAssets', () => {
       expect(getLocation(sorted[2]).interior).toEqual({ X1: { GeneralIndex: 30 } })
     })
 
+    it('sorts assets with bigint, string and number GeneralIndex values', () => {
+      const assets = [
+        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 30n } } }),
+        createAsset({ parents: 1, interior: { X1: { GeneralIndex: '10' } } }),
+        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 20 } } })
+      ]
+
+      const sorted = sortAssets([...assets])
+
+      expect(getLocation(sorted[0]).interior).toEqual({ X1: { GeneralIndex: '10' } })
+      expect(getLocation(sorted[1]).interior).toEqual({ X1: { GeneralIndex: 20 } })
+      expect(getLocation(sorted[2]).interior).toEqual({ X1: { GeneralIndex: 30n } })
+    })
+
     it('places assets without GeneralIndex after those with GeneralIndex', () => {
       const assets = [
         createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } }),

@@ -5,7 +5,7 @@ import type { Signer } from '@polkadot/api/types';
 import type { DedotClient, SubmittableExtrinsic } from 'dedot';
 import type {
   PolkadotClient,
-  PolkadotSigner,
+  TxCreator,
   TxFinalizedPayload,
 } from 'polkadot-api';
 
@@ -62,10 +62,10 @@ export const submitTransactionPjs = async (
 export const submitTransactionPapi = async (
   api: PolkadotClient,
   tx: TPapiTransaction,
-  signer: PolkadotSigner,
+  signer: TxCreator,
   onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
-  const signedTx = await tx.sign(signer);
+  const signedTx = await tx.create(signer);
   if (onSign) onSign();
 
   const result = await api.submit(signedTx);
@@ -79,7 +79,7 @@ export const submitTx = async (
   apiType: TApiType,
   api: TApi,
   tx: TTransaction,
-  signer: PolkadotSigner | Signer,
+  signer: TxCreator | Signer,
   senderAddress: string,
   onSign?: () => void,
 ) => {
@@ -87,7 +87,7 @@ export const submitTx = async (
     await submitTransactionPapi(
       api as PolkadotClient,
       tx as TPapiTransaction,
-      signer as PolkadotSigner,
+      signer as TxCreator,
       onSign,
     );
   } else if (apiType === 'DEDOT') {

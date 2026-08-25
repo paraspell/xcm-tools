@@ -57,7 +57,7 @@ export const Swap = ({ form }: Props) => {
       .find((a) => a.address === evmAccount.address);
     if (!account) return;
 
-    form.setFieldValue('swapOptions.evmSigner', account.polkadotSigner);
+    form.setFieldValue('swapOptions.evmSigner', account.txCreator);
     form.setFieldValue('swapOptions.evmInjectorAddress', evmAccount.address);
   }, [evmAccount, injectedExtension]);
 

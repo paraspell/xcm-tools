@@ -1,7 +1,7 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
@@ -101,7 +101,7 @@ const mintBonusForSent = <TApi, TRes, TSigner, TCustomChain extends string = nev
   const preminted = [native, relay, feeAsset]
     .filter((a): a is TAssetInfo => !!a)
     .filter(a => {
-      const k = JSON.stringify(a.location)
+      const k = JSON.stringify(a.location, replaceBigInt)
       if (seen.has(k)) return false
       seen.add(k)
       return true

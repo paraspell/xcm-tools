@@ -20,7 +20,7 @@ type TNetworkId = string | null
 type TBodyId = string | null
 type TBodyPart = string | null
 type TStringOrNumber = string | number
-type TStringOrNumberOrBigInt = TStringOrNumber | bigint
+export type TStringOrNumberOrBigInt = TStringOrNumber | bigint
 type THexString = string
 
 export type TJunctionParachain = {

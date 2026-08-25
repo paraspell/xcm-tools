@@ -19,7 +19,6 @@ import {
   type TUrl,
 } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
-import type { PolkadotSigner } from 'polkadot-api';
 import type { WalletClient } from 'viem';
 
 import type {
@@ -192,13 +191,13 @@ export const addSwapToBuilder = <
   builder: GeneralBuilder<T>,
   transformedCurrencyTo: TCurrencyEntryBaseTransformed,
   swapOptions: TSwapOptions,
-  signer: PolkadotSigner | Signer,
+  signer: TPapiSigner | Signer,
   sender: string,
 ) => {
   const { exchange, slippage, evmSigner, evmInjectorAddress } = swapOptions;
 
   return builder
-    .sender({ ...signer, address: sender } as unknown as PolkadotSigner)
+    .sender({ ...signer, address: sender } as unknown as TPapiSigner)
     .swap({
       currencyTo: determineCurrency(transformedCurrencyTo),
       exchange,
@@ -233,7 +232,7 @@ export const setupBaseBuilder = (
   builder: GeneralBuilder,
   formValues: TFormValuesTransformed,
   sender: string,
-  signer: PolkadotSigner | Signer,
+  signer: TPapiSigner | Signer,
 ) => {
   const {
     from,

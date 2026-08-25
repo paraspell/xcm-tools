@@ -1,5 +1,10 @@
 import { extractAssetLocation, type TAsset } from '@paraspell/assets'
-import { getJunctionValue, hasJunction, type TLocation } from '@paraspell/sdk-common'
+import {
+  getJunctionValue,
+  hasJunction,
+  type TLocation,
+  type TStringOrNumberOrBigInt
+} from '@paraspell/sdk-common'
 
 const isHere = (loc: TLocation): boolean => {
   return loc.interior === 'Here' || loc.interior?.Here !== undefined
@@ -22,8 +27,8 @@ export const sortAssets = <T extends TAsset>(assets: T[]) =>
     const aHasGlobal = hasJunction(aLoc, 'GlobalConsensus')
     const bHasGlobal = hasJunction(bLoc, 'GlobalConsensus')
 
-    const aGeneralIndex = getJunctionValue<number>(aLoc, 'GeneralIndex')
-    const bGeneralIndex = getJunctionValue<number>(bLoc, 'GeneralIndex')
+    const aGeneralIndex = getJunctionValue<TStringOrNumberOrBigInt>(aLoc, 'GeneralIndex')
+    const bGeneralIndex = getJunctionValue<TStringOrNumberOrBigInt>(bLoc, 'GeneralIndex')
 
     const getPriority = (isHere: boolean, hasGlobal: boolean): number => {
       if (isHere) return 0
@@ -40,5 +45,7 @@ export const sortAssets = <T extends TAsset>(assets: T[]) =>
     if (aGeneralIndex === undefined) return 1
     if (bGeneralIndex === undefined) return -1
 
-    return aGeneralIndex - bGeneralIndex
+    const aIndex = BigInt(aGeneralIndex)
+    const bIndex = BigInt(bGeneralIndex)
+    return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0
   })

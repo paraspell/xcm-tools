@@ -51,7 +51,7 @@
     "mixpanel": "^0.23.0",
     "nodemailer": "^9.0.5",
     "pg": "^8.23.0",
-    "polkadot-api": "^2.2.2",
+    "polkadot-api": "^3.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "ua-parser-js": "^2.0.10",

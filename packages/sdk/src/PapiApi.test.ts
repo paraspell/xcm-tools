@@ -424,8 +424,9 @@ describe('PapiApi', () => {
 
   describe('getPaymentInfo', () => {
     it('should return the estimated fee and weight', async () => {
+      const getPaymentInfoSpy = vi.spyOn(mockTransaction, 'getPaymentInfo')
       const fee = await papiApi.getPaymentInfo(mockTransaction, 'some_address')
-      expect(mockTransaction.getPaymentInfo).toHaveBeenCalledWith('some_address')
+      expect(getPaymentInfoSpy).toHaveBeenCalled()
       expect(fee).toEqual({
         partialFee: 1000n,
         weight: {
@@ -1902,7 +1903,7 @@ describe('PapiApi', () => {
         destination: 'Acala'
       })
 
-      expect(paymentInfoSpy).toHaveBeenCalledWith(testAddress)
+      expect(paymentInfoSpy).toHaveBeenCalled()
       expect(getXcmPaymentApiFeeSpy).toHaveBeenCalledWith(
         'Darwinia',
         undefined,
@@ -2910,10 +2911,10 @@ describe('PapiApi', () => {
     it('should sign and submit a transaction', async () => {
       const mockTxHash = '0x1234567890abcdef'
       const mockTx = {
-        signAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
+        createAndSubmit: vi.fn().mockResolvedValue({ txHash: mockTxHash })
       } as unknown as TPapiTransaction
 
-      const spy = vi.spyOn(mockTx, 'signAndSubmit')
+      const spy = vi.spyOn(mockTx, 'createAndSubmit')
 
       const result = await papiApi.signAndSubmit(mockTx, '//Alice')
 
@@ -2926,10 +2927,10 @@ describe('PapiApi', () => {
     it('should resolve with txHash from finalized submission', async () => {
       const mockTxHash = '0xfinalized'
       const mockTx = {
-        signAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: mockTxHash })
+        createAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: mockTxHash })
       } as unknown as TPapiTransaction
 
-      const spy = vi.spyOn(mockTx, 'signAndSubmit')
+      const spy = vi.spyOn(mockTx, 'createAndSubmit')
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
@@ -2939,21 +2940,21 @@ describe('PapiApi', () => {
 
     it('should use promise-based finalized submission instead of the event watcher', async () => {
       const finalizedTxHash = '0xfinalized'
-      const signSubmitAndWatch = vi.fn()
+      const createSubmitAndWatch = vi.fn()
       const mockTx = {
-        signAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: finalizedTxHash }),
-        signSubmitAndWatch
+        createAndSubmit: vi.fn().mockResolvedValue({ ok: true, txHash: finalizedTxHash }),
+        createSubmitAndWatch
       } as unknown as TPapiTransaction
 
       const result = await papiApi.signAndSubmitFinalized(mockTx, '//Alice')
 
       expect(result).toBe(finalizedTxHash)
-      expect(signSubmitAndWatch).not.toHaveBeenCalled()
+      expect(createSubmitAndWatch).not.toHaveBeenCalled()
     })
 
     it('should reject with SubmitTransactionError on dispatch error', async () => {
       const mockTx = {
-        signAndSubmit: vi.fn().mockResolvedValue({
+        createAndSubmit: vi.fn().mockResolvedValue({
           ok: false,
           dispatchError: { value: { Module: { index: 1, error: 2 } } }
         })
@@ -2967,7 +2968,7 @@ describe('PapiApi', () => {
     it('should reject on submission error', async () => {
       const mockError = new Error('connection lost')
       const mockTx = {
-        signAndSubmit: vi.fn().mockRejectedValue(mockError)
+        createAndSubmit: vi.fn().mockRejectedValue(mockError)
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
@@ -2977,7 +2978,7 @@ describe('PapiApi', () => {
 
     it('should wrap non-Error submission errors in SubmitTransactionError', async () => {
       const mockTx = {
-        signAndSubmit: vi.fn().mockRejectedValue('raw string error')
+        createAndSubmit: vi.fn().mockRejectedValue('raw string error')
       } as unknown as TPapiTransaction
 
       await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(

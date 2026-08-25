@@ -38,6 +38,7 @@
   "dependencies": {
     "@noble/hashes": "^2.3.0",
     "@paraspell/sdk-core": "workspace:*",
+    "@polkadot-api/signers-common": "^0.3.0",
     "@polkadot-api/substrate-bindings": "^0.21.0",
     "@polkadot-labs/hdkd": "^0.0.31",
     "@polkadot-labs/hdkd-helpers": "^0.0.33",
@@ -45,7 +46,7 @@
   },
   "peerDependencies": {
     "@paraspell/descriptors": "workspace:*",
-    "polkadot-api": ">= 2 < 3"
+    "polkadot-api": ">= 3 < 4"
   },
   "devDependencies": {
     "@acala-network/chopsticks": "^1.5.1",
@@ -60,7 +61,7 @@
     "@scure/bip39": "^2.3.0",
     "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "polkadot-api": "^2.2.2",
+    "polkadot-api": "^3.0.0",
     "rollup": "^4.62.5",
     "rollup-plugin-dts": "^6.5.1"
   }

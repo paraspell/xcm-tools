@@ -1,6 +1,7 @@
 import type { Asset } from '@galacticcouncil/sdk-next';
 import type { TradeRouter } from '@galacticcouncil/sdk-next/sor';
 import type { TxBuilderFactory } from '@galacticcouncil/sdk-next/tx';
+import { getPaymentInfo } from '@paraspell/sdk';
 import {
   findNativeAssetInfoOrThrow,
   padValueBy,
@@ -39,7 +40,7 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
 
   const tx = substrateTx.get();
 
-  const { partial_fee: swapFee } = await tx.getPaymentInfo(feeCalcAddress);
+  const { partial_fee: swapFee } = await getPaymentInfo(tx, feeCalcAddress);
   const feeNative = swapFee + toDestTransactionFee + toDestTransactionFee;
 
   Logger.log('XCM to exch. fee:', toDestTransactionFee, nativeAsset.symbol);

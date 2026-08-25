@@ -2,7 +2,7 @@ import type { TApiType, TTransactionContext } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { DedotClient } from 'dedot';
-import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import type { PolkadotClient, TxCreator } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
 
 import type { TApiTransaction, TProgressSwapEvent } from '../types';
@@ -13,9 +13,9 @@ import { submitTx } from './submitTransaction';
 const selectSigner = (
   type: string,
   index: number,
-  signer: PolkadotSigner | Signer,
-  evmSigner?: PolkadotSigner | Signer,
-): PolkadotSigner | Signer =>
+  signer: TxCreator | Signer,
+  evmSigner?: TxCreator | Signer,
+): TxCreator | Signer =>
   type === 'TRANSFER' && index === 0 ? signer : (evmSigner ?? signer);
 
 const txFromHex = async (
@@ -45,9 +45,9 @@ export const submitApiTransactions = async ({
 }: {
   transactions: TApiTransaction[];
   apiType: TApiType;
-  signer: PolkadotSigner | Signer;
+  signer: TxCreator | Signer;
   senderAddress: string;
-  evmSigner?: PolkadotSigner | Signer;
+  evmSigner?: TxCreator | Signer;
   onStatusChange?: (status: TProgressSwapEvent) => void;
 }) => {
   const { createChainClient } = await importSdk(apiType);
@@ -88,9 +88,9 @@ export const submitSdkTransactions = async ({
 }: {
   txContexts: TTransactionContext<TApi, TTransaction>[];
   apiType: TApiType;
-  signer: PolkadotSigner | Signer;
+  signer: TxCreator | Signer;
   senderAddress: string;
-  evmSigner?: PolkadotSigner | Signer;
+  evmSigner?: TxCreator | Signer;
   onStatusChange?: (status: TProgressSwapEvent) => void;
 }) => {
   for (const [index, txContext] of txContexts.entries()) {

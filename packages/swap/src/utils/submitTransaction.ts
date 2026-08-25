@@ -1,15 +1,15 @@
 import { type TPapiTransaction, UnsupportedOperationError } from '@paraspell/sdk';
-import { InvalidTxError, type PolkadotSigner, type TxFinalizedPayload } from 'polkadot-api';
+import { InvalidTxError, type TxCreator, type TxFinalizedPayload } from 'polkadot-api';
 
 export const submitTransaction = async (
   tx: TPapiTransaction,
-  signer: PolkadotSigner,
+  signer: TxCreator,
   onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
   return new Promise((resolve, reject) => {
-    tx.signSubmitAndWatch(signer).subscribe({
+    tx.createSubmitAndWatch(signer).subscribe({
       next: (event) => {
-        if (event.type === 'signed') {
+        if (event.type === 'created') {
           onSign?.();
         }
 
@@ -26,9 +26,9 @@ export const submitTransaction = async (
       },
       error: (error) => {
         if (error instanceof InvalidTxError) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const typedErr = error.error;
-          reject(new UnsupportedOperationError(`Invalid transaction: ${JSON.stringify(typedErr)}`));
+          reject(
+            new UnsupportedOperationError(`Invalid transaction: ${JSON.stringify(error.error)}`),
+          );
         } else {
           reject(error instanceof Error ? error : new UnsupportedOperationError(String(error)));
         }
