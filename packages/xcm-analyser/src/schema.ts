@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
 const NetworkId = z.string().nullable();
-const BodyId = z.string().nullable();
-const BodyPart = z.string().nullable();
 const NumericString = z
   .string()
   .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
@@ -33,9 +31,12 @@ const hexStringError =
 const HexString = z
   .templateLiteral(['0x', z.hex()], { error: hexStringError })
   .check(z.minLength(3, { error: hexStringError }));
-const HexString32 = z
-  .templateLiteral(['0x', z.hex()], { error: 'Expected a 32-byte hex string' })
-  .check(z.length(66, { error: 'Expected a 32-byte hex string' }));
+const createFixedHexString = (bytes: number) => {
+  const error = `Expected a ${bytes}-byte hex string`;
+  return z.templateLiteral(['0x', z.hex()], { error }).check(z.length(2 + bytes * 2, { error }));
+};
+const HexString4 = createFixedHexString(4);
+const HexString32 = createFixedHexString(32);
 export const JunctionParachain = z.strictObject({ Parachain: Uint32 });
 
 export const JunctionAccountId32 = z.strictObject({
@@ -59,6 +60,22 @@ export const JunctionGeneralKey = z.strictObject({
 });
 
 export const JunctionOnlyChild = z.strictObject({ OnlyChild: z.string().nullable() });
+
+const BodyId = z.union([
+  z.string().nullable(),
+  z.strictObject({ Moniker: HexString4 }),
+  z.strictObject({ Index: Uint32 }),
+]);
+
+const BodyPartFraction = z.strictObject({ nom: Uint32, denom: Uint32 });
+
+const BodyPart = z.union([
+  z.string().nullable(),
+  z.strictObject({ Members: z.strictObject({ count: Uint32 }) }),
+  z.strictObject({ Fraction: BodyPartFraction }),
+  z.strictObject({ AtLeastProportion: BodyPartFraction }),
+  z.strictObject({ MoreThanProportion: BodyPartFraction }),
+]);
 
 export const JunctionPlurality = z.strictObject({
   Plurality: z.strictObject({ id: BodyId, part: BodyPart }),

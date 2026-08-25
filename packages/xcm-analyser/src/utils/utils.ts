@@ -1,5 +1,10 @@
 import { LocationSchema } from '../schema';
-import type { Junction, ParsedLocation, TJunctionGlobalConsensus } from '../types';
+import type {
+  Junction,
+  ParsedLocation,
+  TJunctionGlobalConsensus,
+  TJunctionPlurality,
+} from '../types';
 
 const convertGlobalConsensusToReadable = (
   network: TJunctionGlobalConsensus['GlobalConsensus'],
@@ -22,6 +27,30 @@ const convertGlobalConsensusToReadable = (
   return unitNetwork.charAt(0).toUpperCase() + unitNetwork.slice(1);
 };
 
+const convertBodyIdToReadable = (id: TJunctionPlurality['Plurality']['id']): string => {
+  if (id === null || typeof id === 'string') return String(id);
+  if ('Moniker' in id) return `Moniker(${id.Moniker})`;
+  return `Index(${id.Index})`;
+};
+
+const convertBodyPartToReadable = (part: TJunctionPlurality['Plurality']['part']): string => {
+  if (part === null || typeof part === 'string') return String(part);
+  if ('Members' in part) return `Members(count: ${part.Members.count})`;
+
+  if ('Fraction' in part) {
+    const { nom, denom } = part.Fraction;
+    return `Fraction(nom: ${nom}, denom: ${denom})`;
+  }
+
+  if ('AtLeastProportion' in part) {
+    const { nom, denom } = part.AtLeastProportion;
+    return `AtLeastProportion(nom: ${nom}, denom: ${denom})`;
+  }
+
+  const { nom, denom } = part.MoreThanProportion;
+  return `MoreThanProportion(nom: ${nom}, denom: ${denom})`;
+};
+
 export const convertJunctionToReadable = (junction: Junction): string => {
   if ('Parachain' in junction) {
     return `Parachain(${junction.Parachain})`;
@@ -40,13 +69,14 @@ export const convertJunctionToReadable = (junction: Junction): string => {
   } else if ('OnlyChild' in junction) {
     return junction.OnlyChild === null ? 'OnlyChild' : `OnlyChild(${junction.OnlyChild})`;
   } else if ('Plurality' in junction) {
-    return `Plurality(${junction.Plurality.id}, ${junction.Plurality.part})`;
+    const { id, part } = junction.Plurality;
+    return `Plurality(${convertBodyIdToReadable(id)}, ${convertBodyPartToReadable(part)})`;
   } else {
     return `GlobalConsensus(${convertGlobalConsensusToReadable(junction.GlobalConsensus)})`;
   }
 };
 
-export function findLocationInObject(obj: unknown): ParsedLocation | null {
+export function findLocationsInObject(obj: unknown): ParsedLocation[] {
   function hasSpecificKeys(value: unknown): boolean {
     return (
       typeof value === 'object' &&
@@ -57,17 +87,18 @@ export function findLocationInObject(obj: unknown): ParsedLocation | null {
     );
   }
 
-  function searchObject(value: unknown): ParsedLocation | null {
+  const locations: ParsedLocation[] = [];
+
+  function searchObject(value: unknown): void {
     if (hasSpecificKeys(value)) {
-      return LocationSchema.parse(value);
+      locations.push(LocationSchema.parse(value));
     } else if (typeof value === 'object' && value !== null) {
-      for (const key of Object.keys(value)) {
-        const result = searchObject((value as Record<string, unknown>)[key]);
-        if (result) return result;
+      for (const item of Object.values(value)) {
+        searchObject(item);
       }
     }
-    return null;
   }
 
-  return searchObject(obj);
+  searchObject(obj);
+  return locations;
 }

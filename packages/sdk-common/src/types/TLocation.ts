@@ -17,8 +17,14 @@ export type TJunctionType =
   | 'GlobalConsensus'
 
 type TNetworkId = string | null
-type TBodyId = string | null
-type TBodyPart = string | null
+type TBodyId = string | { Moniker: THexString } | { Index: TStringOrNumberOrBigInt } | null
+type TBodyPart =
+  | string
+  | { Members: { count: TStringOrNumberOrBigInt } }
+  | { Fraction: { nom: TStringOrNumberOrBigInt; denom: TStringOrNumberOrBigInt } }
+  | { AtLeastProportion: { nom: TStringOrNumberOrBigInt; denom: TStringOrNumberOrBigInt } }
+  | { MoreThanProportion: { nom: TStringOrNumberOrBigInt; denom: TStringOrNumberOrBigInt } }
+  | null
 type TStringOrNumber = string | number
 export type TStringOrNumberOrBigInt = TStringOrNumber | bigint
 type THexString = string

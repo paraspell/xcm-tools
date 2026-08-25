@@ -11,6 +11,7 @@ import {
   JunctionGeneralKey,
   JunctionPalletInstance,
   JunctionParachain,
+  JunctionPlurality,
   JunctionSchema,
   LocationSchema,
 } from './schema';
@@ -476,6 +477,44 @@ describe('InteriorSchema', () => {
       // Missing 0x
       const data = { GeneralKey: { length: 6, data: 'aabbccddeeff' } };
       const result = JunctionGeneralKey.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('JunctionPlurality body variants', () => {
+    const validBodies: TJunctionPlurality['Plurality'][] = [
+      { id: 'Unit', part: null },
+      { id: null, part: 'Voice' },
+      { id: { Moniker: '0x646f7421' }, part: 'Voice' },
+      { id: { Index: 42 }, part: { Members: { count: 3 } } },
+      { id: { Index: 4_294_967_295 }, part: { Fraction: { nom: 1, denom: 2 } } },
+      { id: 'Technical', part: { AtLeastProportion: { nom: 1, denom: 3 } } },
+      { id: 'Executive', part: { MoreThanProportion: { nom: 2, denom: 3 } } },
+    ];
+
+    it.each(validBodies)('accepts valid Plurality body %j', (body) => {
+      const result = JunctionPlurality.safeParse({ Plurality: body });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual({ Plurality: body });
+      }
+    });
+
+    const invalidBodies = [
+      { id: { Moniker: '0x646f74' }, part: null },
+      { id: { Moniker: 'dot!' }, part: null },
+      { id: { Index: -1 }, part: null },
+      { id: { Index: '42' }, part: null },
+      { id: { Unknown: 1 }, part: null },
+      { id: null, part: { Members: 3 } },
+      { id: null, part: { Members: { count: 4_294_967_296 } } },
+      { id: null, part: { Fraction: { nom: 1 } } },
+      { id: null, part: { AtLeastProportion: { nom: 1, denom: 2, extra: 3 } } },
+      { id: null, part: { Unknown: { nom: 1, denom: 2 } } },
+    ];
+
+    it.each(invalidBodies)('rejects invalid Plurality body %j', (body) => {
+      const result = JunctionPlurality.safeParse({ Plurality: body });
       expect(result.success).toBe(false);
     });
   });

@@ -342,6 +342,86 @@ describe('convert', () => {
     ]);
   });
 
+  it('convert location to URL from a single argument containing multiple locations', () => {
+    const xcmCallArguments = [
+      {
+        V3: [
+          {
+            id: {
+              Concrete: {
+                parents: 1,
+                interior: 'Here',
+              },
+            },
+            fun: {
+              Fungible: '1000000000',
+            },
+          },
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: 50 }, { GeneralIndex: '1984' }],
+                },
+              },
+            },
+            fun: {
+              Fungible: '5000000',
+            },
+          },
+        ],
+      },
+    ];
+
+    const result = convertXCMToUrls(xcmCallArguments);
+    expect(result).toStrictEqual(['../', './PalletInstance(50)/GeneralIndex(1984)']);
+  });
+
+  it('throws ZodError when an argument mixes valid and invalid locations', () => {
+    const xcmCallArguments = [
+      {
+        V3: [
+          {
+            id: {
+              Concrete: {
+                parents: 1,
+                interior: 'Here',
+              },
+            },
+            fun: {
+              Fungible: '1000000000',
+            },
+          },
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X1: {
+                    AccountId32: {
+                      network: { Any: null },
+                      id: '0x1234',
+                    },
+                  },
+                },
+              },
+            },
+            fun: {
+              Fungible: '5000000',
+            },
+          },
+        ],
+      },
+    ];
+
+    const t = () => {
+      convertXCMToUrls(xcmCallArguments);
+    };
+
+    expect(t).toThrow(ZodError);
+  });
+
   it('convert location to URL from tx arguments with no locations', () => {
     const xcmCallArguments = [
       '1', // currency_id for KSM
@@ -435,5 +515,35 @@ describe('convert', () => {
     expect(result).toStrictEqual([
       './AccountId32(Polkadot, 0x84fc49ce30071ea611731838cc7736113c1ec68fbc47119be8a0805066df9b2b)/Plurality(Unit, null)',
     ]);
+  });
+
+  it.each([
+    [
+      { id: { Index: 42 }, part: { Members: { count: 3 } } },
+      './Plurality(Index(42), Members(count: 3))',
+    ],
+    [
+      { id: { Moniker: '0x646f7421' }, part: { Fraction: { nom: 1, denom: 2 } } },
+      './Plurality(Moniker(0x646f7421), Fraction(nom: 1, denom: 2))',
+    ],
+    [
+      { id: 'Technical', part: { AtLeastProportion: { nom: 1, denom: 3 } } },
+      './Plurality(Technical, AtLeastProportion(nom: 1, denom: 3))',
+    ],
+    [
+      { id: null, part: { MoreThanProportion: { nom: 2, denom: 3 } } },
+      './Plurality(null, MoreThanProportion(nom: 2, denom: 3))',
+    ],
+  ] as const)('convert location with structured plurality body to URL', (plurality, expected) => {
+    const location: Location = {
+      parents: 0,
+      interior: {
+        X1: {
+          Plurality: plurality,
+        },
+      },
+    };
+
+    expect(convertLocationToUrl(location)).toBe(expected);
   });
 });
