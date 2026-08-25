@@ -56,11 +56,9 @@ const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain)
     palletDetails.map(item => item.name).includes(pallet)
   ) as TAssetsPallet
 
-  const otherAssetsPallets = chain.startsWith('Moon')
-    ? (['System'] as TAssetsPallet[])
-    : (OTHER_ASSETS_PALLET_PRIORITY.filter(pallet =>
-        palletDetails.map(item => item.name).includes(pallet)
-      ) as TAssetsPallet[])
+  const otherAssetsPallets = OTHER_ASSETS_PALLET_PRIORITY.filter(pallet =>
+    palletDetails.map(item => item.name).includes(pallet)
+  ) as TAssetsPallet[]
 
   const additionalOtherPallets = OTHER_ASSETS_PALLET_PRIORITY.filter(pallet =>
     palletDetailsWithoutExtrinsics.map(item => item.name).includes(pallet)

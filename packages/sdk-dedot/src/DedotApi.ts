@@ -235,10 +235,6 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     return tx.paymentInfo(address);
   }
 
-  getEvmStorage(contract: string, slot: string): Promise<string> {
-    return this.api.query.evm.accountStorages(contract, slot);
-  }
-
   getMethod(tx: TDedotExtrinsic): string {
     return lowercaseFirstLetter(tx.call.palletCall.name);
   }

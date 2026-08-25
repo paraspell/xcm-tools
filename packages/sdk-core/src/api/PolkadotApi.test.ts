@@ -98,7 +98,6 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   getPaymentInfo = () => Promise.resolve({ partialFee: 0n, weight: { refTime: 0n, proofSize: 0n } })
   getXcmWeight = () => Promise.resolve({ refTime: 0n, proofSize: 0n })
   getXcmPaymentApiFee = () => Promise.resolve(0n)
-  getEvmStorage = () => Promise.resolve('')
   getFromRpc = () => Promise.resolve('')
   blake2AsHex = () => ''
   clone = () => new ConcreteApi()

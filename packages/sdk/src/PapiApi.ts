@@ -7,7 +7,7 @@
 
 import { blake2b } from '@noble/hashes/blake2.js'
 import { bytesToHex } from '@noble/hashes/utils.js'
-import type { ahp, bridgeHub, moonbeam } from '@paraspell/descriptors'
+import type { ahp, bridgeHub } from '@paraspell/descriptors'
 import { hydration } from '@paraspell/descriptors'
 import type {
   TAssetInfo,
@@ -152,12 +152,6 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
   private get hydrationApi() {
     return (this._hydrationApi ??= this.api.getTypedApi(hydration))
-  }
-
-  private _moonbeamApi?: TypedApi<typeof moonbeam, false>
-
-  private get moonbeamApi() {
-    return (this._moonbeamApi ??= this.api.getUnsafeApi<typeof moonbeam>())
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -321,10 +315,6 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
         refTime: ref_time
       }
     }
-  }
-
-  getEvmStorage(contract: string, slot: string): Promise<string> {
-    return this.moonbeamApi.query.EVM.AccountStorages.getKey(contract, slot)
   }
 
   async getFromRpc(module: string, method: string, key: string): Promise<string> {

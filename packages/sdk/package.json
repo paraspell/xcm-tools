@@ -36,32 +36,32 @@
     "test:e2e:chopsticks": "vitest run --config ./vitest.config.chopsticks.e2e.ts"
   },
   "dependencies": {
-    "@noble/hashes": "^2.2.0",
+    "@noble/hashes": "^2.3.0",
     "@paraspell/sdk-core": "workspace:*",
-    "@polkadot-api/substrate-bindings": "^0.20.3",
-    "@polkadot-labs/hdkd": "^0.0.28",
-    "@polkadot-labs/hdkd-helpers": "^0.0.30",
-    "viem": "^2.55.10"
+    "@polkadot-api/substrate-bindings": "^0.21.0",
+    "@polkadot-labs/hdkd": "^0.0.31",
+    "@polkadot-labs/hdkd-helpers": "^0.0.33",
+    "viem": "^2.55.19"
   },
   "peerDependencies": {
     "@paraspell/descriptors": "workspace:*",
     "polkadot-api": ">= 2 < 3"
   },
   "devDependencies": {
-    "@acala-network/chopsticks": "^1.5.0",
+    "@acala-network/chopsticks": "^1.5.1",
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@codecov/rollup-plugin": "^2.0.1",
-    "@noble/curves": "^2.2.0",
+    "@noble/curves": "^2.3.0",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@scure/bip32": "^2.2.0",
-    "@scure/bip39": "^2.2.0",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@scure/bip32": "^2.3.0",
+    "@scure/bip39": "^2.3.0",
+    "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "polkadot-api": "^2.2.1",
-    "rollup": "^4.62.3",
-    "rollup-plugin-dts": "^6.4.1"
+    "polkadot-api": "^2.2.2",
+    "rollup": "^4.62.5",
+    "rollup-plugin-dts": "^6.5.1"
   }
 }

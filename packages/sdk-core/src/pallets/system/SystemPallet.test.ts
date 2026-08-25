@@ -1,71 +1,22 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { concat, getAddress, keccak256, pad } from 'viem'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { assertHasId, formatAssetIdToERC20 } from '../../utils'
+import { UnsupportedOperationError } from '../../errors'
 import { SystemPallet } from './SystemPallet'
 
-vi.mock('../../utils')
-
-vi.mock('viem', () => ({
-  concat: vi.fn((xs: unknown[]) => `concat:${(xs as string[]).join('+')}`),
-  getAddress: vi.fn((k: string) => `addr:${k}`),
-  parseUnits: vi.fn(),
-  formatUnits: vi.fn(),
-  keccak256: vi.fn((x: unknown) => `keccak:${String(x)}`),
-  pad: vi.fn((v: unknown, opts: { size: number }) => `pad:${String(v)}:${opts.size}`),
-  toHex: vi.fn((v: unknown) => `hex:${String(v)}`)
-}))
-
-describe('SystemPallet.setBalance', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    vi.mocked(formatAssetIdToERC20).mockImplementation(() => `0xERC20`)
-  })
-
-  it('builds set_storage with encoded amount at the calculated slot', async () => {
+describe('SystemPallet.mint', () => {
+  it('throws because the System pallet cannot mint', () => {
     const pallet = new SystemPallet('System')
-    const address = '0xAlice'
-    const asset = { assetId: '123', amount: 321n } as WithAmount<TAssetInfo>
-    const api = {
-      getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
-    } as unknown as PolkadotApi<unknown, unknown, unknown>
 
-    const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:0:32`
-    const expectedAmount = `pad:hex:321:32`
-
-    const spy = vi.spyOn(api, 'getEvmStorage')
-
-    const res = await pallet.mint(api, address, asset, 0n)
-
-    expect(assertHasId).toHaveBeenCalledWith(asset)
-    expect(formatAssetIdToERC20).toHaveBeenCalledWith('123')
-    expect(getAddress).toHaveBeenCalledWith(address)
-    expect(pad).toHaveBeenCalledWith('hex:321', { size: 32 })
-    expect(concat).toHaveBeenCalled()
-    expect(keccak256).toHaveBeenCalled()
-    expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)
-
-    expect(res.balanceTx.module).toBe('System')
-    expect(res.balanceTx.method).toBe('set_storage')
-    expect(res.balanceTx.params.items).toEqual([['0xSTORAGEKEY', expectedAmount]])
-  })
-
-  it('uses wormhole balance slot when asset id starts with 0x', async () => {
-    const pallet = new SystemPallet('System')
-    const address = '0xAlice'
-    const asset = { assetId: '0x1234', amount: 1n } as WithAmount<TAssetInfo>
-    const api = {
-      getEvmStorage: vi.fn(async () => Promise.resolve('0xSTORAGEKEY'))
-    } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-    const spy = vi.spyOn(api, 'getEvmStorage')
-
-    await pallet.mint(api, address, asset, 0n)
-
-    const expectedSlot = `keccak:concat:pad:addr:${address}:32+pad:hex:5:32`
-    expect(spy).toHaveBeenCalledWith('0xERC20', expectedSlot)
+    expect(() =>
+      pallet.mint(
+        {} as PolkadotApi<unknown, unknown, unknown>,
+        'Alice',
+        {} as WithAmount<TAssetInfo>,
+        0n
+      )
+    ).toThrow(UnsupportedOperationError)
   })
 })
 

@@ -9,6 +9,5 @@ export const whitelist: WhitelistEntriesByChain = {
     'api.AssetConversionApi.*'
   ],
   bridgeHub: ['query.EthereumOutboundQueue.OperatingMode'],
-  hydration: ['query.MultiTransactionPayment.AccountCurrencyMap'],
-  moonbeam: ['query.EVM.AccountStorages']
+  hydration: ['query.MultiTransactionPayment.AccountCurrencyMap']
 }

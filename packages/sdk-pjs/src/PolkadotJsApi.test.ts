@@ -150,11 +150,6 @@ describe('PolkadotJsApi', () => {
         }
       },
       query: {
-        evm: {
-          accountStorages: {
-            key: vi.fn().mockResolvedValue('0x1234567890abcdef')
-          }
-        },
         multiTransactionPayment: {
           accountCurrencyMap: vi.fn()
         },
@@ -525,18 +520,6 @@ describe('PolkadotJsApi', () => {
 
       expect(spy).toHaveBeenCalledWith(address)
       expect(partialFee).toBe(1000n)
-    })
-  })
-
-  describe('getEvmStorage', () => {
-    it('should return the EVM storage value as bigint', async () => {
-      const address = 'some_address'
-      const key = 'some_key'
-
-      const result = await polkadotApi.getEvmStorage(address, key)
-
-      expect(mockApiPromise.query.evm.accountStorages.key).toHaveBeenCalledWith(address, key)
-      expect(result).toBe('0x1234567890abcdef')
     })
   })
 

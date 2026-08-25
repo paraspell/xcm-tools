@@ -137,11 +137,6 @@ describe('PapiApi', () => {
         }
       },
       query: {
-        EVM: {
-          AccountStorages: {
-            getValue: vi.fn()
-          }
-        },
         MultiTransactionPayment: {
           AccountCurrencyMap: {
             getValue: vi.fn()
@@ -438,22 +433,6 @@ describe('PapiApi', () => {
           proofSize: 0n
         }
       })
-    })
-  })
-
-  describe('getEvmStorage', () => {
-    it('should return the EVM storage as bigint', async () => {
-      const unsafeApi = papiApi.api.getUnsafeApi()
-
-      unsafeApi.query.EVM.AccountStorages.getKey = vi.fn().mockResolvedValue(3000n)
-
-      const storage = await papiApi.getEvmStorage('some_address', 'some_slot')
-
-      expect(unsafeApi.query.EVM.AccountStorages.getKey).toHaveBeenCalledWith(
-        'some_address',
-        'some_slot'
-      )
-      expect(storage).toBe(3000n)
     })
   })
 

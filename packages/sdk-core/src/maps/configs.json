@@ -612,17 +612,6 @@
       }
     ]
   },
-  "Crab": {
-    "name": "Crab",
-    "info": "crab",
-    "paraId": 2105,
-    "providers": [
-      {
-        "name": "Darwinia",
-        "endpoint": "wss://crab-rpc.darwinia.network/"
-      }
-    ]
-  },
   "RobonomicsPolkadot": {
     "name": "Robonomics",
     "info": "robonomics",
@@ -811,17 +800,6 @@
       {
         "name": "Galactic Council",
         "endpoint": "wss://paseo-rpc.play.hydration.cloud"
-      }
-    ]
-  },
-  "NeuroWebPaseo": {
-    "name": "NeuroWeb Testnet",
-    "info": "NeuroWeb",
-    "paraId": 2043,
-    "providers": [
-      {
-        "name": "TraceLabs",
-        "endpoint": "wss://parachain-testnet-rpc.origin-trail.network/"
       }
     ]
   },

@@ -6,25 +6,19 @@
       "wsUrl": "wss://polkadot-asset-hub-rpc.polkadot.io",
       "metadata": ".papi/metadata/ahp.scale",
       "genesis": "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
-      "codeHash": "0xd8c8c132cd1f51504af2cd45c8dd7c5565dff0a4e9d7fde72daa8975c58ef961"
+      "codeHash": "0x80019b852cb8dbd47f5c13dc9a56eb5a30b9d68440d681e9959ecd25f3751de9"
     },
     "bridgeHub": {
       "wsUrl": "wss://polkadot-bridge-hub-rpc.polkadot.io",
       "metadata": ".papi/metadata/bridgeHub.scale",
       "genesis": "0xdcf691b5a3fbe24adc99ddc959c0561b973e329b1aef4c4b22e7bb2ddecb4464",
-      "codeHash": "0xd6cec5904b600adf1ee51f681def68e76c9e277d00e7d36ed85d2f761793bfe5"
+      "codeHash": "0xd9f89a2efaa44b2dd2aa10b8237f24a497542aa1a035878f24096f645e749998"
     },
     "hydration": {
       "wsUrl": "wss://rpc.hydradx.cloud",
       "metadata": ".papi/metadata/hydration.scale",
       "genesis": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
-      "codeHash": "0x906f5ac6f0b88e52361b92a2011b1379e12133c846aa5a12913202f9e8921253"
-    },
-    "moonbeam": {
-      "wsUrl": "wss://wss.api.moonbeam.network",
-      "metadata": ".papi/metadata/moonbeam.scale",
-      "genesis": "0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d",
-      "codeHash": "0x43eff74f05632950d049db14806c5637158687280031e71279467a3a929f2757"
+      "codeHash": "0xd3b64a653eac65e5d5b1e948e21dce151b980d1779baa63e78418e18c3e3f1fe"
     }
   },
   "options": {
