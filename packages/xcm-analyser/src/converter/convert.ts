@@ -1,6 +1,6 @@
 import { LocationSchema } from '../schema';
 import type { Junction, ParsedLocation } from '../types';
-import { convertJunctionToReadable, findLocationInObject } from '../utils/utils';
+import { convertJunctionToReadable, findLocationsInObject } from '../utils/utils';
 
 const normalizeInterior = (interior: ParsedLocation['interior']): Junction[] => {
   if (interior === 'Here' || 'Here' in interior) return [];
@@ -45,12 +45,7 @@ export const convertLocationToUrl = (args: unknown): string => {
  * @returns An array of URL representations for each found location.
  */
 export const convertXCMToUrls = (args: unknown[]): string[] => {
-  return args.flatMap((arg) => {
-    const location = findLocationInObject(arg);
-    if (location !== null && location !== undefined) {
-      return [convertLocationToUrl(location)];
-    } else {
-      return [];
-    }
-  });
+  return args.flatMap((arg) =>
+    findLocationsInObject(arg).map((location) => convertLocationToUrl(location)),
+  );
 };
