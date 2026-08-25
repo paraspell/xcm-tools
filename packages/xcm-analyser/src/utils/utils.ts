@@ -38,7 +38,7 @@ export const convertJunctionToReadable = (junction: Junction): string => {
   } else if ('GeneralKey' in junction) {
     return `GeneralKey(${junction.GeneralKey.length}, ${junction.GeneralKey.data})`;
   } else if ('OnlyChild' in junction) {
-    return `OnlyChild(${junction.OnlyChild})`;
+    return junction.OnlyChild === null ? 'OnlyChild' : `OnlyChild(${junction.OnlyChild})`;
   } else if ('Plurality' in junction) {
     return `Plurality(${junction.Plurality.id}, ${junction.Plurality.part})`;
   } else {
