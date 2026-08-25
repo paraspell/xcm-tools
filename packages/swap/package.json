@@ -49,8 +49,8 @@
     "@crypto-dex-sdk/math": "^0.1.5",
     "@crypto-dex-sdk/parachains-bifrost": "^0.1.5",
     "@crypto-dex-sdk/token-lists": "^0.1.4",
-    "@galacticcouncil/descriptors": "^2.6.0",
-    "@galacticcouncil/sdk-next": "^1.5.1",
+    "@galacticcouncil/descriptors": "^2.7.0",
+    "@galacticcouncil/sdk-next": "^2.1.0",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@paraspell/sdk-core": "workspace:*",
@@ -59,9 +59,9 @@
     "@polkadot/types": "^16.5.6",
     "@polkadot/util": "^14.0.3",
     "@zenlink-types/bifrost": "^1.7.7",
-    "ethers": "~5.7.0",
+    "ethers": "^5.8.0",
     "ethers-v6": "npm:ethers@6.17.0",
-    "polkadot-api": "^2.2.1",
+    "polkadot-api": "^2.2.2",
     "react": "^19.2.8",
     "rxjs": "^7.8.2"
   },
@@ -72,10 +72,10 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "rollup": "^4.62.3",
-    "rollup-plugin-dts": "^6.4.1",
-    "tsx": "^4.23.1"
+    "rollup": "^4.62.5",
+    "rollup-plugin-dts": "^6.5.1",
+    "tsx": "^4.23.12"
   }
 }

@@ -187,10 +187,6 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     }
   }
 
-  getEvmStorage(contract: string, slot: string): Promise<string> {
-    return Promise.resolve(this.api.query.evm.accountStorages.key(contract, slot))
-  }
-
   getMethod(tx: Extrinsic): string {
     return tx.method.method
   }

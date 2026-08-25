@@ -84,7 +84,6 @@ const fetchNativeAssets = async (
   const paraId = getParaId(chain)
 
   const CUSTOM_NATIVE_JUNCTIONS: Partial<Record<TSubstrateChain, TJunction>> = {
-    Crab: { PalletInstance: 5 },
     Darwinia: { PalletInstance: 5 },
     Ajuna: {
       GeneralKey: {

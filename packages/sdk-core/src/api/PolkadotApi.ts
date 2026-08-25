@@ -307,7 +307,6 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     version: Version,
     transformXcm: boolean
   ): Promise<bigint>
-  abstract getEvmStorage(contract: string, slot: string): Promise<string>
   abstract getFromRpc(module: string, method: string, key: string): Promise<string>
   abstract blake2AsHex(data: Uint8Array): string
   abstract clone(): PolkadotApi<TApi, TRes, TSigner, TCustomChain>

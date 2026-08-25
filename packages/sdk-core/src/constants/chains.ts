@@ -17,7 +17,6 @@ import CollectivesWestend from '../chains/supported/CollectivesWestend'
 import CoretimeKusama from '../chains/supported/CoretimeKusama'
 import CoretimePolkadot from '../chains/supported/CoretimePolkadot'
 import CoretimeWestend from '../chains/supported/CoretimeWestend'
-import Crab from '../chains/supported/Crab'
 import Crust from '../chains/supported/Crust'
 import CrustShadow from '../chains/supported/CrustShadow'
 import Curio from '../chains/supported/Curio'
@@ -36,7 +35,6 @@ import Karura from '../chains/supported/Karura'
 import Kusama from '../chains/supported/Kusama'
 import Mythos from '../chains/supported/Mythos'
 import NeuroWeb from '../chains/supported/NeuroWeb'
-import NeuroWebPaseo from '../chains/supported/NeuroWebPaseo'
 import Paseo from '../chains/supported/Paseo'
 import Peaq from '../chains/supported/Peaq'
 import Pendulum from '../chains/supported/Pendulum'
@@ -89,7 +87,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   BifrostKusama: new BifrostKusama<TApi, TRes, TSigner>(),
   Curio: new Curio<TApi, TRes, TSigner>(),
   CrustShadow: new CrustShadow<TApi, TRes, TSigner>(),
-  Crab: new Crab<TApi, TRes, TSigner>(),
   Karura: new Karura<TApi, TRes, TSigner>(),
   PeopleKusama: new PeopleKusama<TApi, TRes, TSigner>(),
   Shiden: new Shiden<TApi, TRes, TSigner>(),
@@ -110,7 +107,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   PeoplePaseo: new PeoplePaseo<TApi, TRes, TSigner>(),
   HeimaPaseo: new HeimaPaseo<TApi, TRes, TSigner>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes, TSigner>(),
-  NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes, TSigner>(),
 
   // External chains
   Ethereum: new Ethereum<TApi, TRes, TSigner>(),

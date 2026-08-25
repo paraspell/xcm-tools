@@ -35,7 +35,6 @@ export const PARACHAINS = [
   'BifrostKusama',
   'Curio',
   'CrustShadow',
-  'Crab',
   'RobonomicsPolkadot',
   'PeopleKusama',
   'Shiden',
@@ -51,7 +50,6 @@ export const PARACHAINS = [
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
-  'NeuroWebPaseo',
   'PeoplePaseo'
 ] as const
 

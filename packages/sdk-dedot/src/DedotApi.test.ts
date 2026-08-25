@@ -110,9 +110,6 @@ const createMockApi = (mockTx: TDedotExtrinsic) => ({
     },
   },
   query: {
-    evm: {
-      accountStorages: vi.fn().mockResolvedValue("0xstorage"),
-    },
     multiTransactionPayment: {
       accountCurrencyMap: vi.fn(),
     },
@@ -382,17 +379,6 @@ describe("DedotApi", () => {
         partialFee: 1000n,
         weight: { refTime: 10n, proofSize: 20n },
       });
-    });
-  });
-
-  describe("getEvmStorage", () => {
-    it("returns storage value", async () => {
-      const result = await dedotApi.getEvmStorage("contract", "slot");
-      expect(mockApiRaw.query.evm.accountStorages).toHaveBeenCalledWith(
-        "contract",
-        "slot",
-      );
-      expect(result).toBe("0xstorage");
     });
   });
 

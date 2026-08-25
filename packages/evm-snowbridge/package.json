@@ -37,11 +37,11 @@
   "author": "",
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "^1.1.12",
-    "@snowbridge/base-types": "^1.1.12",
-    "@snowbridge/provider-viem": "^1.1.12",
-    "@snowbridge/registry": "^1.1.12",
-    "viem": "^2.55.10"
+    "@snowbridge/api": "^1.1.13",
+    "@snowbridge/base-types": "^1.1.13",
+    "@snowbridge/provider-viem": "^1.1.13",
+    "@snowbridge/registry": "^1.1.13",
+    "viem": "^2.55.19"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
@@ -50,9 +50,9 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "rollup": "^4.62.3",
-    "rollup-plugin-dts": "^6.4.1"
+    "rollup": "^4.62.5",
+    "rollup-plugin-dts": "^6.5.1"
   }
 }

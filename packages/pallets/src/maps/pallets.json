@@ -309,25 +309,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Assets", "AssetManager"]
   },
-  "Crab": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 5
-      },
-      {
-        "name": "Assets",
-        "index": 7
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 33
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets"]
-  },
   "Karura": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -898,29 +879,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
-  },
-  "NeuroWebPaseo": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 10
-      },
-      {
-        "name": "Assets",
-        "index": 14
-      },
-      {
-        "name": "ForeignAssets",
-        "index": 16
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets", "ForeignAssets"]
   },
   "Westend": {
     "defaultPallet": "XcmPallet",

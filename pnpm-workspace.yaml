@@ -7,6 +7,10 @@ overrides:
   "@polkadot/types": 16.5.6
   "@polkadot-api/json-rpc-provider": ^0.2.0
   "@crypto-dex-sdk/chain": 0.1.2
+packageExtensions:
+  eslint-plugin-tsdoc:
+    peerDependencies:
+      eslint: "*"
 allowBuilds:
   "@apollo/protobufjs": true
   "@parcel/watcher": true
