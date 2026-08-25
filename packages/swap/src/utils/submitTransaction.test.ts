@@ -1,5 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
-import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import { InvalidTxError, type TxCreator, type TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { submitTransaction } from './submitTransaction';
@@ -9,7 +9,7 @@ const buildTxMock = () => {
   let onError: (err: unknown) => void = () => {};
 
   const txMock: TPapiTransaction = {
-    signSubmitAndWatch: vi.fn(() => ({
+    createSubmitAndWatch: vi.fn(() => ({
       subscribe(observer: { next: typeof onNext; error: typeof onError }) {
         onNext = observer.next;
         onError = observer.error;
@@ -26,18 +26,18 @@ const buildTxMock = () => {
   return { txMock, emit };
 };
 
-const signerStub = {} as PolkadotSigner;
+const signerStub = {} as TxCreator;
 
 describe('submitTransaction', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('invokes onSign when a "signed" event is received', async () => {
+  it('invokes onSign when a "created" event is received', async () => {
     const { txMock, emit } = buildTxMock();
     const onSign = vi.fn();
 
     const promise = submitTransaction(txMock, signerStub, onSign);
 
-    emit.next({ type: 'signed' });
+    emit.next({ type: 'created' });
     const okEvt = { type: 'finalized', ok: true } as unknown as TxFinalizedPayload;
     emit.next(okEvt);
 
@@ -68,6 +68,18 @@ describe('submitTransaction', () => {
     });
 
     await expect(promise).rejects.toThrow('BadOrigin');
+  });
+
+  it('rejects with UnsupportedOperationError on InvalidTxError', async () => {
+    const { txMock, emit } = buildTxMock();
+
+    const promise = submitTransaction(txMock, signerStub);
+
+    emit.error(new InvalidTxError({ type: 'Invalid', value: { type: 'Payment' } }));
+
+    await expect(promise).rejects.toThrow(
+      'Invalid transaction: {"type":"Invalid","value":{"type":"Payment"}}',
+    );
   });
 
   it('rejects when the observable errors', async () => {

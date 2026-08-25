@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PolkadotApi, TApiOrUrl, TBuilderOptions, TSubstrateChain } from '@paraspell/sdk-core'
 import { createChainClient as createChainClientInternal } from '@paraspell/sdk-core'
+import { getFakeTxCreator } from 'polkadot-api/tx-creator'
 
 import PapiApi from '../PapiApi'
 import type { TPapiApi, TPapiSigner, TPapiTransaction } from '../types'
@@ -55,3 +56,6 @@ export const findFailingEvent = (result: any) =>
       event.value.type === 'DispatchedAs' &&
       event.value.value.result.success === false
   )
+
+export const getPaymentInfo = (tx: TPapiTransaction, address: string) =>
+  tx.getPaymentInfo(getFakeTxCreator(address))

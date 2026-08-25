@@ -1,6 +1,12 @@
 import { extractAssetLocation, normalizeLocation } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
-import { deepEqual, getJunctionValue, isExternalChain, isTrustedChain } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  getJunctionValue,
+  isExternalChain,
+  isTrustedChain,
+  replaceBigInt
+} from '@paraspell/sdk-common'
 
 import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
@@ -37,7 +43,7 @@ const resolveSnowbridgeMessageId = <TApi, TRes, TSigner, TCustomChain extends st
     origin.api,
     sender,
     origin.api.getParaId(origin.chain),
-    JSON.stringify(assetInfo.location),
+    JSON.stringify(assetInfo.location, replaceBigInt),
     JSON.stringify(recipient),
     assetInfo.amount
   )

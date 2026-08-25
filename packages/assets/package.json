@@ -48,7 +48,7 @@
     "@snowbridge/registry": "^1.1.13",
     "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "polkadot-api": "^2.2.2",
+    "polkadot-api": "^3.0.0",
     "rollup": "^4.62.5",
     "rollup-plugin-dts": "^6.5.1",
     "tsx": "^4.23.12"

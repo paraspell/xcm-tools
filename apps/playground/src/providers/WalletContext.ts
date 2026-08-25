@@ -1,7 +1,6 @@
-import type { TApiType } from '@paraspell/sdk';
+import type { TApiType, TPapiSigner } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import type { EIP6963ProviderDetail } from 'mipd';
-import type { PolkadotSigner } from 'polkadot-api';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
 import { createContext } from 'react';
 import type { Chain, WalletClient } from 'viem';
@@ -20,7 +19,7 @@ type WalletState = {
   setAccounts: (accounts: TWalletAccount[]) => void;
   apiType: TApiType;
   setApiType: (type: TApiType) => void;
-  getSigner: () => Promise<PolkadotSigner | Signer>;
+  getSigner: () => Promise<TPapiSigner | Signer>;
   connectWallet: () => Promise<void>;
   changeAccount: () => Promise<void>;
   handleApiSwitch: (value: TApiType) => void;
@@ -44,7 +43,7 @@ const defaultWalletState: WalletState = {
   setAccounts: () => {},
   apiType: 'PJS',
   setApiType: () => {},
-  getSigner: () => Promise.resolve({} as PolkadotSigner),
+  getSigner: () => Promise.resolve({} as TPapiSigner),
   connectWallet: () => Promise.resolve(),
   changeAccount: () => Promise.resolve(),
   handleApiSwitch: (_value: TApiType) => {},

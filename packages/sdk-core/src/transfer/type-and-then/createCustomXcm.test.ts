@@ -1,6 +1,6 @@
 import { isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
-import { isTrustedChain, Version } from '@paraspell/sdk-common'
+import { isTrustedChain, replaceBigInt, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -92,6 +92,9 @@ describe('createCustomXcm', () => {
     vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
     vi.spyOn(mockApi, 'localizeLocation').mockImplementation((_chain, location) => location)
     vi.mocked(isTrustedChain).mockReturnValue(false)
+    vi.mocked(replaceBigInt).mockImplementation((_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
     vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
   })
 

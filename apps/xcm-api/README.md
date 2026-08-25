@@ -644,7 +644,7 @@ const response = await fetch('https://api.paraspell.xyz/v2/pallets/:chain/index?
 // Return Chain support for DryRun
 const response = await fetch('https://api.paraspell.xyz/v2/chains/:chain/has-dry-run-support');
 
-// Returns a JSON array of true EVM compatible chains (Chains that support only substrate EVM are not included. For example 'Crab')
+// Returns a JSON array of true EVM compatible chains (Chains that support only substrate EVM are not included.)
 const response = await fetch('https://api.paraspell.xyz/v2/chains/evm');
 
 //Returns all pallets for local transfers of native assets for specific chain.

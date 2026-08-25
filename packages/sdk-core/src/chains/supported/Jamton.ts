@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Jamton Parachain
 
 import type { TAssetInfo } from '@paraspell/assets'
-import { Version } from '@paraspell/sdk-common'
+import { replaceBigInt, Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
@@ -42,7 +42,7 @@ class Jamton<TApi, TRes, TSigner, TCustomChain extends string = never>
 
     if (scenario === 'ParaToPara' && destination !== 'AssetHubPolkadot') {
       throw new ScenarioNotSupportedError(
-        `Transfer from ${this.chain} to ${JSON.stringify(destination)} is not yet supported`
+        `Transfer from ${this.chain} to ${JSON.stringify(destination, replaceBigInt)} is not yet supported`
       )
     }
 
