@@ -64,7 +64,7 @@ export type TJunctionGeneralKey = {
 }
 
 export type TJunctionOnlyChild = {
-  OnlyChild: string
+  OnlyChild: string | null
 }
 
 export type TJunctionPlurality = {

@@ -109,6 +109,15 @@ describe('InteriorSchema', () => {
         }
       });
 
+      it('should pass for X1 with a null-valued OnlyChild unit junction', () => {
+        const data = { X1: [{ OnlyChild: null }] };
+        const result = InteriorSchema.safeParse(data);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual({ X1: [{ OnlyChild: null }] });
+        }
+      });
+
       it('should pass for X1 with a tuple containing a single JunctionSchema object', () => {
         const data = { X1: [mockAccountId32] };
         const result = InteriorSchema.safeParse(data);
