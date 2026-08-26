@@ -3,7 +3,8 @@ import {
   applyDecimalAbstraction,
   EXCHANGE_CHAINS,
   findAssetInfo,
-  getRelayChainOf,
+  getSupportedAssetsImpl,
+  isAssetEqual,
   isConfig,
   RoutingResolutionError,
   type TAssetInfo,
@@ -71,7 +72,7 @@ export const selectBestExchangeCommon = async <
 
     const assetFromExchange =
       originSpecified && assetFromOrigin
-        ? getExchangeAssetByOriginAsset(dex.chain, assetFromOrigin)
+        ? getExchangeAssetByOriginAsset(from, dex.chain, assetFromOrigin)
         : getExchangeAsset(dex.chain, currencyFrom);
 
     if (!assetFromExchange) {
@@ -84,11 +85,10 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
-    if (destinationSpecified && !findAssetInfo(to, { location: assetTo.location })) {
-      continue;
-    }
-
-    if (from && getRelayChainOf(from) !== getRelayChainOf(dex.chain)) {
+    if (
+      destinationSpecified &&
+      !getSupportedAssetsImpl(dex.chain, to).some((asset) => isAssetEqual(asset, assetTo))
+    ) {
       continue;
     }
 

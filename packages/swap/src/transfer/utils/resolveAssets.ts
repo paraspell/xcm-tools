@@ -1,4 +1,10 @@
-import { findAssetInfo, findAssetInfoOrThrow, RoutingResolutionError } from '@paraspell/sdk-core';
+import {
+  findAssetInfo,
+  findAssetInfoOrThrow,
+  getSupportedAssetsImpl,
+  isAssetEqual,
+  RoutingResolutionError,
+} from '@paraspell/sdk-core';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeChain from '../../exchanges/ExchangeChain';
@@ -32,7 +38,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   const assetFromExchange =
     originSpecified && assetFromOrigin
-      ? getExchangeAssetByOriginAsset(dex.chain, assetFromOrigin)
+      ? getExchangeAssetByOriginAsset(from, dex.chain, assetFromOrigin)
       : getExchangeAsset(dex.chain, currencyFrom);
 
   if (!assetFromExchange) {
@@ -54,7 +60,10 @@ export const resolveAssets = <TApi, TRes, TSigner>(
     );
   }
 
-  if (destinationSpecified && !findAssetInfo(to, { location: assetTo.location })) {
+  if (
+    destinationSpecified &&
+    !getSupportedAssetsImpl(dex.chain, to).some((asset) => isAssetEqual(asset, assetTo))
+  ) {
     throw new RoutingResolutionError(
       `Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`,
     );
@@ -70,8 +79,8 @@ export const resolveAssets = <TApi, TRes, TSigner>(
   }
 
   const feeAssetFromExchange = feeAsset
-    ? feeAssetFromOrigin
-      ? getExchangeAssetByOriginAsset(dex.chain, feeAssetFromOrigin)
+    ? from && feeAssetFromOrigin
+      ? getExchangeAssetByOriginAsset(from, dex.chain, feeAssetFromOrigin)
       : (getExchangeAsset(dex.chain, feeAsset) ?? undefined)
     : undefined;
 

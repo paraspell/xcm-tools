@@ -65,7 +65,9 @@ const clientPool = createClientCache<TPjsApi>(
     await client.rpc.system.properties()
   },
   (_key, entry) => {
-    void entry.client.disconnect()
+    entry.client.disconnect().catch(() => {
+      /* ignore */
+    })
   },
   EXTENSION_MS
 )

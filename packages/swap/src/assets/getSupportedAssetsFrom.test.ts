@@ -1,5 +1,10 @@
 import type { TAssetInfo, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { getAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
+import {
+  findAssetInfoOnDestImpl,
+  getAssetsImpl,
+  getSupportedAssetsImpl,
+  isAssetEqual,
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -9,7 +14,9 @@ import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
+  findAssetInfoOnDestImpl: vi.fn(),
   getAssetsImpl: vi.fn(),
+  getSupportedAssetsImpl: vi.fn(),
   isAssetEqual: vi.fn(),
 }));
 
@@ -50,6 +57,9 @@ describe('getSupportedAssetsFrom', () => {
     vi.mocked(isAssetEqual).mockImplementation(
       (a, b) => JSON.stringify(a.location) === JSON.stringify(b.location),
     );
+    vi.mocked(findAssetInfoOnDestImpl).mockImplementation((_origin, _dest, _currency, asset) =>
+      asset ? asset : null,
+    );
   });
 
   it('should return assets from exchange that match chain assets', () => {
@@ -64,6 +74,7 @@ describe('getSupportedAssetsFrom', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([hdxAsset, wudAsset]);
 
     vi.mocked(getAssetsImpl).mockReturnValue([wudAsset, acaAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([wudAsset, acaAsset]);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -124,6 +135,7 @@ describe('getSupportedAssetsFrom', () => {
 
     const fromAssets = [usdtAsset];
     vi.mocked(getAssetsImpl).mockReturnValue(fromAssets);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue(fromAssets);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -141,6 +153,7 @@ describe('getSupportedAssetsFrom', () => {
     vi.mocked(getExchangeAssets).mockReturnValue([hdxAsset]);
 
     vi.mocked(getAssetsImpl).mockReturnValue([acaAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([acaAsset]);
 
     const result = getSupportedAssetsFrom(fromChain, exchange);
 
@@ -153,5 +166,64 @@ describe('getSupportedAssetsFrom', () => {
 
     expect(result).toEqual([]);
     expect(getAssetsImpl).not.toHaveBeenCalled();
+  });
+
+  it('should return empty array when no assets are transferable to the exchange', () => {
+    const fromChain: TSubstrateChain = 'Astar';
+    const exchange: TExchangeChain = 'AssetHubKusama';
+
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'AssetHubKusama',
+    } as ExchangeChain);
+
+    vi.mocked(getExchangeAssets).mockReturnValue([wudAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([wudAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
+
+    const result = getSupportedAssetsFrom(fromChain, exchange);
+
+    expect(result).toEqual([]);
+    expect(findAssetInfoOnDestImpl).not.toHaveBeenCalled();
+  });
+
+  it('should include a bridged asset resolved to a different exchange location', () => {
+    const dotOnAssetHubKusama: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 2, interior: { X1: [{ GlobalConsensus: { polkadot: null } }] } },
+    };
+    const dotOnAssetHubPolkadot: TAssetInfo = {
+      symbol: 'DOT',
+      decimals: 10,
+      location: { parents: 1, interior: { Here: null } },
+    };
+
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'AssetHubPolkadot',
+    } as ExchangeChain);
+
+    vi.mocked(getExchangeAssets).mockReturnValue([dotOnAssetHubPolkadot]);
+    vi.mocked(getAssetsImpl).mockReturnValue([dotOnAssetHubKusama]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([dotOnAssetHubKusama]);
+    vi.mocked(findAssetInfoOnDestImpl).mockReturnValue(dotOnAssetHubPolkadot);
+
+    const result = getSupportedAssetsFrom('AssetHubKusama', 'AssetHubPolkadot');
+
+    expect(result).toEqual([dotOnAssetHubKusama]);
+  });
+
+  it('should exclude assets that cannot be resolved on the exchange', () => {
+    vi.mocked(createExchangeInstance).mockReturnValue({
+      chain: 'AssetHubPolkadot',
+    } as ExchangeChain);
+
+    vi.mocked(getExchangeAssets).mockReturnValue([wudAsset]);
+    vi.mocked(getAssetsImpl).mockReturnValue([wudAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([wudAsset]);
+    vi.mocked(findAssetInfoOnDestImpl).mockReturnValue(null);
+
+    const result = getSupportedAssetsFrom('AssetHubKusama', 'AssetHubPolkadot');
+
+    expect(result).toEqual([]);
   });
 });

@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../types'
-import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
+import { getAssetsImpl, getNativeAssetSymbolImpl, getRelayChainSymbolImpl } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
@@ -68,6 +68,10 @@ describe('getSupportedAssets', () => {
       }
     }
   }
+
+  beforeEach(() => {
+    vi.resetAllMocks()
+  })
 
   it('should return system assets, stablecoins, and additional bridge assets for substrate bridge transfers', () => {
     vi.mocked(getAssetsImpl).mockImplementation(chain => {
@@ -185,5 +189,31 @@ describe('getSupportedAssets', () => {
 
     const result = getSupportedAssets('Ajuna', 'Polkadot')
     expect(result).toEqual([])
+  })
+
+  it('should return no assets when origin is external and destination is not a Snowbridge origin', () => {
+    expect(getSupportedAssets('Ethereum', 'Acala')).toEqual([])
+    expect(getAssetsImpl).not.toHaveBeenCalled()
+  })
+
+  it('should return common assets when origin is Ethereum and destination is a Snowbridge origin', () => {
+    vi.mocked(getAssetsImpl).mockImplementation(chain => {
+      if (chain === 'Ethereum') return [cgtAsset]
+      if (chain === 'AssetHubPolkadot') return [cgtAsset, dotAsset]
+      return []
+    })
+    vi.mocked(findStablecoinAssets).mockReturnValue([])
+
+    const result = getSupportedAssets('Ethereum', 'AssetHubPolkadot')
+    expect(result).toEqual([cgtAsset])
+  })
+
+  it('should return no assets when origin and destination are in different ecosystems', () => {
+    vi.mocked(getRelayChainSymbolImpl).mockImplementation(chain =>
+      chain === 'Astar' ? 'DOT' : 'KSM'
+    )
+
+    expect(getSupportedAssets('Astar', 'AssetHubKusama')).toEqual([])
+    expect(getAssetsImpl).not.toHaveBeenCalled()
   })
 })

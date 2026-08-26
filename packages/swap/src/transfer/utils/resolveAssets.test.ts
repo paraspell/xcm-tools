@@ -1,4 +1,9 @@
-import { findAssetInfo, findAssetInfoOrThrow, type TAssetInfo } from '@paraspell/sdk-core';
+import {
+  findAssetInfo,
+  findAssetInfoOrThrow,
+  getSupportedAssetsImpl,
+  type TAssetInfo,
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
@@ -10,6 +15,7 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
   ...(await importOriginal()),
   findAssetInfo: vi.fn(),
   findAssetInfoOrThrow: vi.fn(),
+  getSupportedAssetsImpl: vi.fn(),
 }));
 
 vi.mock('../../assets');
@@ -22,6 +28,7 @@ const dex = {
 describe('resolveAssets', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
   });
 
   const mockAssetFromExchange: TAssetInfo = {
@@ -160,7 +167,6 @@ describe('resolveAssets', () => {
       return null;
     });
 
-    vi.mocked(findAssetInfo).mockReturnValueOnce(null);
     expect(() => resolveAssets(dex, options)).toThrow();
   });
 
@@ -176,9 +182,10 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       return null;
     });
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetTo);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([mockAssetTo]);
 
     const result = resolveAssets(dex, options);
+    expect(getSupportedAssetsImpl).toHaveBeenCalledWith(dex.chain, 'Acala');
     expect(result).toEqual({
       assetFromOrigin: undefined,
       assetFromExchange: mockAssetFromExchange,
@@ -202,9 +209,14 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       return null;
     });
-    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetTo);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([mockAssetTo]);
 
     const result = resolveAssets(dex, options);
+    expect(getExchangeAssetByOriginAsset).toHaveBeenCalledWith(
+      'Astar',
+      dex.chain,
+      mockAssetFromOrigin,
+    );
     expect(result).toEqual({
       assetFromOrigin: mockAssetFromOrigin,
       assetFromExchange: mockAssetFromExchange,

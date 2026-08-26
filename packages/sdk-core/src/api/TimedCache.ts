@@ -49,7 +49,11 @@ export const createClientCache = <T>(
     clearTimeout(timers.get(k))
     timers.delete(k)
     data.delete(k)
-    onEviction?.(k, w.value)
+    try {
+      onEviction?.(k, w.value)
+    } catch {
+      /* ignore */
+    }
   }
 
   const evictIfNeeded = () => {

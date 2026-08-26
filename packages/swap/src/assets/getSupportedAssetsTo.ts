@@ -1,10 +1,8 @@
 import type { TAssetInfo, TCustomCtx, TExchangeInput } from '@paraspell/sdk-core';
 import {
   EXCHANGE_CHAINS,
-  getAssetsImpl,
+  getSupportedAssetsImpl,
   isAssetEqual,
-  isExternalChain,
-  isSystemAsset,
   normalizeExchange,
   type TChain,
 } from '@paraspell/sdk-core';
@@ -17,47 +15,26 @@ export const getSupportedAssetsToImpl = <TCustomChain extends string = never>(
   ctx?: TCustomCtx,
 ): TAssetInfo[] => {
   const exchange = normalizeExchange(exchangeInput);
-  if (exchange === undefined) {
-    const allExchangeAssets = EXCHANGE_CHAINS.map((exchangeChain) =>
-      getExchangeAssets(exchangeChain),
-    ).flat();
-    if (to) {
-      const toAssets = getAssetsImpl(to, ctx);
 
-      const filteredExchangeAssets = allExchangeAssets.filter((asset) =>
-        toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
-      );
-      if (isExternalChain(to)) {
-        filteredExchangeAssets.push(...allExchangeAssets.filter((asset) => isSystemAsset(asset)));
-      }
-      return filteredExchangeAssets;
-    }
-    return allExchangeAssets;
-  }
+  const exchanges =
+    exchange === undefined ? EXCHANGE_CHAINS : Array.isArray(exchange) ? exchange : [exchange];
 
-  const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
-    : getExchangeAssets(exchange);
+  return exchanges.flatMap((ex) => {
+    const exchangeAssets = getExchangeAssets(ex);
 
-  if (to) {
-    const toAssets = getAssetsImpl(to, ctx);
-    const filteredExchangeAssets = exchangeAssets.filter((asset) =>
-      toAssets.some((toAsset) => isAssetEqual(asset, toAsset)),
+    if (!to || to === ex) return exchangeAssets;
+
+    const transferableAssets = getSupportedAssetsImpl(ex, to, ctx);
+    return exchangeAssets.filter((asset) =>
+      transferableAssets.some((transferable) => isAssetEqual(transferable, asset)),
     );
-    if (isExternalChain(to)) {
-      filteredExchangeAssets.push(...exchangeAssets.filter((asset) => isSystemAsset(asset)));
-    }
-    return filteredExchangeAssets;
-  }
-
-  return exchangeAssets;
+  });
 };
 
 /**
- * Retrieves the list of assets supported for transfer to the destination chain.
+ * Retrieves the list of assets supported for transfer from the exchange chain to the destination chain.
  *
- * @param origin - The origin chain.
- * @param exchange - The exchange chain or 'Auto select'.
+ * @param exchangeInput - The exchange chain or 'Auto select'.
  * @param to - The destination chain.
  * @returns An array of supported assets.
  */

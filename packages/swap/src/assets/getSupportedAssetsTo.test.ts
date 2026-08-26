@@ -1,10 +1,5 @@
 import type { TAssetInfo, TChain, TExchangeChain } from '@paraspell/sdk-core';
-import {
-  EXCHANGE_CHAINS,
-  getAssetsImpl,
-  isExternalChain,
-  isSystemAsset,
-} from '@paraspell/sdk-core';
+import { EXCHANGE_CHAINS, getSupportedAssetsImpl, isAssetEqual } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
@@ -14,9 +9,8 @@ import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  getAssetsImpl: vi.fn(),
-  isExternalChain: vi.fn(),
-  isSystemAsset: vi.fn(),
+  getSupportedAssetsImpl: vi.fn(),
+  isAssetEqual: vi.fn(),
 }));
 
 vi.mock('../exchanges/ExchangeChainFactory');
@@ -43,12 +37,13 @@ describe('getSupportedAssetsTo', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(isAssetEqual).mockImplementation(
+      (a, b) => JSON.stringify(a.location) === JSON.stringify(b.location),
+    );
   });
 
   it('should return exchange assets directly when "to" is undefined and exchange is not "Auto select"', () => {
     const mockExchange: TExchangeChain = 'Acala';
-    const mockChain = { chain: 'Acala' } as ExchangeChain;
-    vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
 
@@ -58,50 +53,36 @@ describe('getSupportedAssetsTo', () => {
     expect(result).toEqual(exchangeAssets);
   });
 
-  it('should filter exchange assets based on "to" assets when exchange is not "Auto select"', () => {
+  it('should filter exchange assets based on transferable assets when exchange is not "Auto select"', () => {
     const mockExchange: TExchangeChain = 'Acala';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
     const toChain: TChain = 'Astar';
-    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([abcAsset]);
 
     const result = getSupportedAssetsTo(mockExchange, toChain);
 
-    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
+    expect(getSupportedAssetsImpl).toHaveBeenCalledWith('Acala', toChain, undefined);
     expect(result).toEqual([abcAsset]);
   });
 
-  it('should append system assets when destination chain is external', () => {
+  it('should return exchange assets directly when "to" equals the exchange chain', () => {
     const mockExchange: TExchangeChain = 'Acala';
     const mockChain = { chain: 'Acala' } as ExchangeChain;
     vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
     const exchangeAssets = [abcAsset, defAsset];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
-    const toChain: TChain = 'Astar';
-    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
-    vi.mocked(isExternalChain).mockReturnValue(true);
-    vi.mocked(isSystemAsset).mockImplementation((asset) => asset.symbol === 'DEF');
 
-    const result = getSupportedAssetsTo(mockExchange, toChain);
+    const result = getSupportedAssetsTo(mockExchange, 'Acala');
 
-    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
-    expect(isExternalChain).toHaveBeenCalledWith(toChain);
-    expect(isSystemAsset).toHaveBeenCalledTimes(exchangeAssets.length);
-    expect(result).toEqual([abcAsset, defAsset]);
+    expect(result).toEqual(exchangeAssets);
+    expect(getSupportedAssetsImpl).not.toHaveBeenCalled();
   });
 
   it('should return flattened assets from all exchange chains when exchange is "Auto select" and "to" is undefined', () => {
     const exchange = undefined;
-    const chain1 = 'Acala';
-    const chain2 = 'BifrostPolkadot';
-
-    vi.mocked(createExchangeInstance).mockImplementation((exchange: TExchangeChain) => {
-      if (exchange === 'Acala') return { chain: chain1 } as ExchangeChain;
-      if (exchange === 'BifrostPolkadot') return { chain: chain2 } as ExchangeChain;
-      return {} as ExchangeChain;
-    });
 
     const assets1 = [abcAsset];
     const assets2 = [defAsset];
@@ -117,7 +98,7 @@ describe('getSupportedAssetsTo', () => {
     expect(result).toEqual([...assets1, ...assets2]);
   });
 
-  it('should filter flattened assets based on "to" assets when exchange is "Auto select"', () => {
+  it('should filter flattened assets based on transferable assets when exchange is "Auto select"', () => {
     const exchange = undefined;
     const chain1 = 'Acala';
     const chain2 = 'BifrostPolkadot';
@@ -125,7 +106,7 @@ describe('getSupportedAssetsTo', () => {
     vi.mocked(createExchangeInstance).mockImplementation((exchange: TExchangeChain) => {
       if (exchange === 'Acala') return { chain: chain1 } as ExchangeChain;
       if (exchange === 'BifrostPolkadot') return { chain: chain2 } as ExchangeChain;
-      return {} as ExchangeChain;
+      return { chain: exchange } as ExchangeChain;
     });
 
     const assets1 = [abcAsset];
@@ -137,35 +118,24 @@ describe('getSupportedAssetsTo', () => {
     });
 
     const toChain = 'Astar';
-    vi.mocked(getAssetsImpl).mockReturnValue([defAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([defAsset]);
 
     const result = getSupportedAssetsTo(exchange, toChain);
 
-    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
+    expect(getSupportedAssetsImpl).toHaveBeenCalledWith(chain1, toChain, undefined);
+    expect(getSupportedAssetsImpl).toHaveBeenCalledWith(chain2, toChain, undefined);
     expect(result).toEqual([defAsset]);
   });
 
-  it('should append system assets when exchange is "Auto select" and destination chain is external', () => {
-    const exchange = undefined;
+  it('should exclude exchanges with no transferable assets to the destination', () => {
+    const mockExchange: TExchangeChain = 'AssetHubKusama';
+    const mockChain = { chain: 'AssetHubKusama' } as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(mockChain);
+    vi.mocked(getExchangeAssets).mockReturnValue([abcAsset, defAsset]);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
 
-    const assets1 = [abcAsset];
-    const assets2 = [defAsset];
-    vi.mocked(getExchangeAssets).mockImplementation((exchange) => {
-      if (exchange === 'Acala') return assets1;
-      if (exchange === 'BifrostPolkadot') return assets2;
-      return [];
-    });
+    const result = getSupportedAssetsTo(mockExchange, 'Astar');
 
-    const toChain: TChain = 'Astar';
-    vi.mocked(getAssetsImpl).mockReturnValue([abcAsset]);
-    vi.mocked(isExternalChain).mockReturnValue(true);
-    vi.mocked(isSystemAsset).mockImplementation((asset) => asset.symbol === 'DEF');
-
-    const result = getSupportedAssetsTo(exchange, toChain);
-
-    expect(getAssetsImpl).toHaveBeenCalledWith(toChain, undefined);
-    expect(isExternalChain).toHaveBeenCalledWith(toChain);
-    expect(isSystemAsset).toHaveBeenCalledTimes(assets1.length + assets2.length);
-    expect(result).toEqual([abcAsset, defAsset]);
+    expect(result).toEqual([]);
   });
 });

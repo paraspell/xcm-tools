@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import type { PolkadotApi } from '@paraspell/sdk-core';
-import { createChainClient, findAssetInfo } from '@paraspell/sdk-core';
+import { createChainClient, findAssetInfo, getSupportedAssetsImpl } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import {
@@ -30,6 +30,7 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   createChainClient: vi.fn(),
   findAssetInfo: vi.fn(),
+  getSupportedAssetsImpl: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
 }));
 
@@ -54,6 +55,7 @@ describe('prepareTransformedOptions', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
   });
 
   test('calls selectBestExchange if exchange is undefined', async () => {
@@ -197,6 +199,7 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(getExchangeAsset).mockReturnValue(astrAsset);
     vi.mocked(createChainClient).mockResolvedValue({});
     vi.mocked(supportsExchangePair).mockReturnValue(true);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([astrAsset]);
     vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
 
     const result = await prepareTransformedOptions({ ...mockOptions, api: mockApi });
@@ -236,6 +239,7 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(findAssetInfo).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(acaAsset);
     vi.mocked(getExchangeAsset).mockReturnValue(astrAsset);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([astrAsset]);
     vi.mocked(supportsExchangePair).mockReturnValue(false);
 
     await expect(prepareTransformedOptions({ ...mockOptions, api: mockApi })).rejects.toThrow(

@@ -57,6 +57,19 @@ describe('createClientCache', () => {
     expect(onEviction).toHaveBeenCalledWith('victim', expect.any(Object))
   })
 
+  it('swallows a throwing onEviction and still removes the entry', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const onEviction = vi.fn(() => {
+      throw new Error('teardown failed')
+    })
+    const cache = createClientCache<TFakeClient>(10, pingClient, onEviction)
+    cache.set('victim', entry(0), 1_000)
+
+    expect(() => vi.advanceTimersByTime(1_001)).not.toThrow()
+    expect(onEviction).toHaveBeenCalledTimes(1)
+    expect(cache.has('victim')).toBe(false)
+  })
+
   it('extends once when refs > 0, then evicts after extensionMs', () => {
     const EXT_MS = 3_000
     const pingClient = vi.fn().mockResolvedValue(undefined)
