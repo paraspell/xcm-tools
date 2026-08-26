@@ -1,3 +1,4 @@
+import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
@@ -54,5 +55,27 @@ describe('PolkadotJsApi client pool hooks', () => {
 
     await api.disconnect(false)
     expect(apiMocks.disconnectMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('attaches a rejection handler when disconnect fails on eviction', async () => {
+    let catchSpy: MockInstance | undefined
+
+    apiMocks.disconnectMock.mockImplementationOnce(() => {
+      const rejected = Promise.reject(new Error('socket already closed'))
+      catchSpy = vi.spyOn(rejected, 'catch')
+      return rejected
+    })
+
+    const api = new PolkadotJsApi('wss://test')
+
+    await api.init('Acala', 10)
+
+    vi.advanceTimersByTime(11)
+    await Promise.resolve()
+    await Promise.resolve()
+
+    await api.disconnect(false)
+
+    expect(catchSpy).toHaveBeenCalledTimes(1)
   })
 })

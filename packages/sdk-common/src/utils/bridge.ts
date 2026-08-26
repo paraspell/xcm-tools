@@ -1,18 +1,23 @@
-import type { TChain, TSubstrateChain } from '../types'
+import type { TChain, TExternalChain, TSubstrateChain } from '../types'
 import { isExternalChain } from './chain'
 
 const COMPATIBLE_BRIDGES: [TSubstrateChain, TSubstrateChain][] = [
   ['AssetHubPolkadot', 'AssetHubKusama']
 ]
 
-export const ETHEREUM_BRIDGE_ORIGINS: TSubstrateChain[] = [
-  'AssetHubPolkadot',
-  'AssetHubPaseo',
-  'AssetHubWestend',
-  'Hydration',
-  'BifrostPolkadot',
-  'Mythos'
-]
+const ETHEREUM_BRIDGE_ORIGINS_MAP: Record<TExternalChain, TSubstrateChain[]> = {
+  Ethereum: ['AssetHubPolkadot', 'Hydration', 'BifrostPolkadot', 'Mythos'],
+  EthereumTestnet: ['AssetHubPaseo', 'AssetHubWestend']
+}
+
+export const ETHEREUM_BRIDGE_ORIGINS: TSubstrateChain[] = Object.values(
+  ETHEREUM_BRIDGE_ORIGINS_MAP
+).flat()
+
+export const isEthereumBridgeOrigin = <TCustomChain extends string = never>(
+  chain: TChain | TCustomChain,
+  externalChain: TExternalChain
+): boolean => ETHEREUM_BRIDGE_ORIGINS_MAP[externalChain].some(c => c === chain)
 
 export const isSubstrateBridge = <TCustomChain extends string = never>(
   origin: TChain | TCustomChain,

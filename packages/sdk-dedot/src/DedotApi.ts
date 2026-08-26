@@ -72,7 +72,9 @@ const clientPool = createClientCache<TDedotApi>(
     await client.rpc.system_chain();
   },
   (_key, entry) => {
-    void entry.client.disconnect();
+    entry.client.disconnect().catch(() => {
+      /* ignore */
+    });
   },
   EXTENSION_MS,
 );

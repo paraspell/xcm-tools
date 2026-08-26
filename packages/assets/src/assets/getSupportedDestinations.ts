@@ -1,6 +1,5 @@
 import {
   CHAINS,
-  ETHEREUM_BRIDGE_ORIGINS,
   isExternalChain,
   isSubstrateBridge,
   SUBSTRATE_CHAINS,
@@ -12,21 +11,10 @@ import type { TAssetInfo, TCurrencyCore } from '../types'
 import { getRelayChainSymbol } from './assets'
 import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeAsset'
 import { isAssetEqual } from './isAssetEqual'
+import { isDestinationReachable } from './isDestinationReachable'
 import { isStableCoinAsset } from './isStableCoinAsset'
 import { isSystemAsset } from './isSystemAsset'
 import { findAssetInfoOnDest, findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from './search'
-
-const isDestinationReachable = (origin: TChain, destination: TChain): boolean => {
-  if (isExternalChain(origin) || isExternalChain(destination)) {
-    const substrateSide = isExternalChain(origin) ? destination : origin
-    if (isExternalChain(substrateSide)) return false
-    return ETHEREUM_BRIDGE_ORIGINS.includes(substrateSide)
-  }
-
-  if (isSubstrateBridge(origin, destination)) return true
-
-  return getRelayChainSymbol(origin) === getRelayChainSymbol(destination)
-}
 
 const isUnsupportedAssetHubNative = (
   origin: TChain,

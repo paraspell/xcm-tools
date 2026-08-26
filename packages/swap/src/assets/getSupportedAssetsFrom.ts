@@ -1,13 +1,14 @@
 import type { TAssetInfo, TCustomCtx } from '@paraspell/sdk-core';
 import {
   getAssetsImpl,
+  getSupportedAssetsImpl,
   isAssetEqual,
   normalizeExchange,
   type TChain,
   type TExchangeInput,
 } from '@paraspell/sdk-core';
 
-import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
+import { resolveOriginAssetOnExchange } from './getExchangeAssetByOriginAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
 export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
@@ -21,17 +22,38 @@ export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
     return getAssetsImpl(from, ctx);
   }
 
-  const exchangeAssets = Array.isArray(exchange)
-    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
-    : getExchangeAssets(exchange);
+  const exchanges = Array.isArray(exchange) ? exchange : [exchange];
 
-  if (!from || (!Array.isArray(exchange) && from === createExchangeInstance(exchange).chain)) {
-    return exchangeAssets;
+  if (!from || (!Array.isArray(exchange) && from === exchange)) {
+    return exchanges.flatMap((ex) => getExchangeAssets(ex));
   }
+
+  const entries = exchanges.map((ex) => ({
+    exchange: ex,
+    exchangeAssets: getExchangeAssets(ex),
+    transferableAssets: from === ex ? undefined : getSupportedAssetsImpl(from, ex, ctx),
+  }));
 
   const fromAssets = getAssetsImpl(from, ctx);
   return fromAssets.filter((fromAsset) =>
-    exchangeAssets.some((exchangeAsset) => isAssetEqual(fromAsset, exchangeAsset)),
+    entries.some(({ exchange: ex, exchangeAssets, transferableAssets }) => {
+      if (transferableAssets === undefined) {
+        return exchangeAssets.some((exchangeAsset) => isAssetEqual(exchangeAsset, fromAsset));
+      }
+
+      const assetOnExchange = resolveOriginAssetOnExchange(
+        from,
+        ex,
+        transferableAssets,
+        fromAsset,
+        ctx,
+      );
+
+      return (
+        assetOnExchange !== null &&
+        exchangeAssets.some((exchangeAsset) => isAssetEqual(exchangeAsset, assetOnExchange))
+      );
+    }),
   );
 };
 
@@ -39,7 +61,7 @@ export const getSupportedAssetsFromImpl = <TCustomChain extends string = never>(
  * Retrieves the list of assets supported for transfer from the origin chain to the exchange chain.
  *
  * @param from - The origin chain.
- * @param exchange - The exchange chain or 'Auto select'.
+ * @param exchangeInput - The exchange chain or 'Auto select'.
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsFrom = (

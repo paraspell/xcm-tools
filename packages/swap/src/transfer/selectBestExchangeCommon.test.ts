@@ -1,5 +1,9 @@
 import type { PolkadotApi, TAssetInfo, TExchangeChain, TParachain } from '@paraspell/sdk-core';
-import { applyDecimalAbstraction, findAssetInfo } from '@paraspell/sdk-core';
+import {
+  applyDecimalAbstraction,
+  findAssetInfo,
+  getSupportedAssetsImpl,
+} from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -14,7 +18,7 @@ const mockApi = { getConfig: () => undefined } as unknown as PolkadotApi<unknown
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   findAssetInfo: vi.fn(),
-  getRelayChainOf: vi.fn(),
+  getSupportedAssetsImpl: vi.fn(),
   applyDecimalAbstraction: vi.fn(),
   RoutingResolutionError: class extends Error {},
   UnsupportedOperationError: class extends Error {},
@@ -61,6 +65,7 @@ describe('selectBestExchangeCommon', () => {
       amount ? (amount as bigint) : 0n,
     );
     vi.clearAllMocks();
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([asset2]);
   });
 
   it('throws error if assetFromOrigin is not found', async () => {
@@ -194,5 +199,36 @@ describe('selectBestExchangeCommon', () => {
 
     expect(bestExchange).toBe(fakeDex);
     expect(getExchangeAsset).toHaveBeenCalledWith('Acala', optionsWithSameChain.currencyFrom);
+  });
+
+  it('passes the origin chain when resolving the exchange asset', async () => {
+    vi.mocked(findAssetInfo).mockReturnValue(asset1);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
+    vi.mocked(getExchangeAsset).mockReturnValue(asset2);
+
+    const fakeDex = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
+
+    await selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(100n));
+
+    expect(getExchangeAssetByOriginAsset).toHaveBeenCalledWith(baseOptions.from, 'ex1', asset1);
+  });
+
+  it('skips exchanges that cannot transfer the target asset to the destination', async () => {
+    vi.mocked(findAssetInfo).mockReturnValue(asset1);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(asset1);
+    vi.mocked(getExchangeAsset).mockReturnValue(asset2);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
+
+    const fakeDex = { chain: 'ex1', exchangeChain: 'ex1Ex' } as unknown as ExchangeChain;
+    vi.mocked(createExchangeInstance).mockReturnValue(fakeDex);
+
+    const computeAmountOut = vi.fn().mockResolvedValue(100n);
+
+    await expect(
+      selectBestExchangeCommon(baseOptions, undefined, computeAmountOut),
+    ).rejects.toThrow();
+
+    expect(computeAmountOut).not.toHaveBeenCalled();
   });
 });

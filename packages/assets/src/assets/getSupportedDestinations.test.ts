@@ -6,6 +6,7 @@ import { getRelayChainSymbol } from './assets'
 import { getSupportedDestinations } from './getSupportedDestinations'
 import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeAsset'
 import { isAssetEqual } from './isAssetEqual'
+import { isDestinationReachable } from './isDestinationReachable'
 import { isStableCoinAsset } from './isStableCoinAsset'
 import { isSystemAsset } from './isSystemAsset'
 import { findAssetInfoOnDest, findAssetInfoOrThrow, findNativeAssetInfoOrThrow } from './search'
@@ -23,6 +24,10 @@ vi.mock('./assets', () => ({
 
 vi.mock('./isAssetEqual')
 
+vi.mock('./isDestinationReachable', () => ({
+  isDestinationReachable: vi.fn(() => true)
+}))
+
 vi.mock('./isSystemAsset', () => ({
   isSystemAsset: vi.fn(() => false)
 }))
@@ -39,7 +44,6 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
   CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Centrifuge', 'Astar', 'AssetHubPolkadot'],
   SUBSTRATE_CHAINS: ['Polkadot', 'BifrostPolkadot', 'Acala', 'Astar', 'Karura'],
-  ETHEREUM_BRIDGE_ORIGINS: ['Acala'],
   isExternalChain: isExternalChainMock,
   isSubstrateBridge: isSubstrateBridgeMock
 }))
@@ -57,6 +61,7 @@ describe('getSupportedDestinations', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(isDestinationReachable).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockImplementation(chain => (chain === 'Karura' ? 'KSM' : 'DOT'))
     vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(
       chain => ({ symbol: nativeSymbols[chain] ?? chain }) as TAssetInfo
@@ -141,29 +146,14 @@ describe('getSupportedDestinations', () => {
   })
 
   it('should exclude destinations that are not reachable', () => {
-    vi.mocked(getRelayChainSymbol).mockImplementation(chain => (chain === 'Kusama' ? 'KSM' : 'DOT'))
+    vi.mocked(isDestinationReachable).mockImplementation(
+      (_origin, destination) => destination !== 'Kusama'
+    )
 
     const result = getSupportedDestinations(origin, currency)
 
     expect(result).not.toContain('Kusama')
     expect(findAssetInfoOnDest).not.toHaveBeenCalledWith(origin, 'Kusama', currency, asset)
-  })
-
-  it('should gate external (Snowbridge) destinations by ETHEREUM_BRIDGE_ORIGINS', () => {
-    isExternalChainMock.mockImplementation(chain => chain === 'Kusama')
-
-    expect(getSupportedDestinations('Acala', currency)).toContain('Kusama')
-    expect(getSupportedDestinations('Centrifuge', currency)).not.toContain('Kusama')
-  })
-
-  it('should handle external origins (reverse Snowbridge) and exclude external-to-external', () => {
-    isExternalChainMock.mockImplementation(chain => chain === 'Ethereum')
-    const reverse = getSupportedDestinations('Ethereum', currency)
-    expect(reverse).toContain('Acala')
-    expect(reverse).not.toContain('Centrifuge')
-
-    isExternalChainMock.mockReturnValue(true)
-    expect(getSupportedDestinations('Ethereum', currency)).toEqual([])
   })
 
   it('should restrict Substrate-bridge destinations to bridge-supported assets', () => {

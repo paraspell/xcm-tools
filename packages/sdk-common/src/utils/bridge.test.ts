@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { TChain } from '../types'
-import { isBridge, isSnowbridge, isSubstrateBridge } from './bridge'
+import { isBridge, isEthereumBridgeOrigin, isSnowbridge, isSubstrateBridge } from './bridge'
 
 describe('isSubstrateBridge', () => {
   it('returns true when both chains map to a supported bridge pair', () => {
@@ -74,5 +74,23 @@ describe('isBridge', () => {
     const destination: TChain = 'Darwinia'
 
     expect(isBridge(origin, destination)).toBe(false)
+  })
+})
+
+describe('isEthereumBridgeOrigin', () => {
+  it('should pair mainnet substrate chains with Ethereum', () => {
+    expect(isEthereumBridgeOrigin('AssetHubPolkadot', 'Ethereum')).toBe(true)
+    expect(isEthereumBridgeOrigin('Hydration', 'Ethereum')).toBe(true)
+    expect(isEthereumBridgeOrigin('AssetHubPolkadot', 'EthereumTestnet')).toBe(false)
+  })
+
+  it('should pair testnet substrate chains with EthereumTestnet', () => {
+    expect(isEthereumBridgeOrigin('AssetHubPaseo', 'EthereumTestnet')).toBe(true)
+    expect(isEthereumBridgeOrigin('AssetHubWestend', 'EthereumTestnet')).toBe(true)
+    expect(isEthereumBridgeOrigin('AssetHubPaseo', 'Ethereum')).toBe(false)
+  })
+
+  it('should reject chains that bridge to no external chain', () => {
+    expect(isEthereumBridgeOrigin('Acala', 'Ethereum')).toBe(false)
   })
 })
