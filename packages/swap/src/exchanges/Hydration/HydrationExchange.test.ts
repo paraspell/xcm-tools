@@ -37,6 +37,7 @@ describe('HydrationExchange', () => {
   let mockTxBuilderFactory: TxBuilderFactory;
   let mockTradeRouter: TradeRouter;
   let mockAssetClient: AssetClient;
+  let mockDestroy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -63,11 +64,13 @@ describe('HydrationExchange', () => {
       getSupported: vi.fn(),
     } as unknown as AssetClient;
 
+    mockDestroy = vi.fn();
+
     vi.mocked(createSdkContext).mockResolvedValue({
       api: { router: mockTradeRouter },
       client: { asset: mockAssetClient },
       tx: mockTxBuilderFactory,
-      destroy: vi.fn(),
+      destroy: mockDestroy,
     } as unknown as SdkCtx);
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
@@ -133,6 +136,7 @@ describe('HydrationExchange', () => {
       await expect(chain.swapCurrency(options, toDestTransactionFee)).rejects.toThrow(
         InvalidCurrencyError,
       );
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
     });
 
     it('throws if currencyTo does not exist', async () => {
@@ -249,6 +253,7 @@ describe('HydrationExchange', () => {
 
       expect(tradeSpy).toHaveBeenCalledWith(mockTrade);
       expect(slippageSpy).toHaveBeenCalledWith(1);
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
     });
 
     it('throws AmountTooLowError if final amountOut is negative after fees', async () => {
@@ -348,6 +353,22 @@ describe('HydrationExchange', () => {
       const amountOut = await chain.getAmountOut(options);
 
       expect(amountOut).toBe(100n);
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
+    });
+
+    it('destroys the sdk context when the asset lookup fails', async () => {
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValue(undefined);
+
+      const options = {
+        assetFrom: { symbol: 'DOT' },
+        assetTo: { symbol: 'HDX' },
+        amount: 100n,
+        origin: {},
+        apiPapi,
+      } as TPapiGetAmountOutOptions<unknown, unknown, unknown>;
+
+      await expect(chain.getAmountOut(options)).rejects.toThrow(InvalidCurrencyError);
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
     });
   });
 });

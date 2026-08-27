@@ -34,136 +34,147 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
   ): Promise<TSingleSwapResult<TRes>> {
     const { apiPapi, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
+    const sdk = await createSdkContext(apiPapi);
+
     const {
       api: { router: tradeRouter },
       client: { asset: assetClient },
       tx: txBuilderFactory,
-    } = await createSdkContext(apiPapi);
+    } = sdk;
 
-    const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
-    const currencyToInfo = await getAssetInfo(assetClient, assetTo);
+    try {
+      const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
+      const currencyToInfo = await getAssetInfo(assetClient, assetTo);
 
-    if (currencyFromInfo === undefined) {
-      throw new InvalidCurrencyError("Currency from doesn't exist");
-    } else if (currencyToInfo === undefined) {
-      throw new InvalidCurrencyError("Currency to doesn't exist");
+      if (currencyFromInfo === undefined) {
+        throw new InvalidCurrencyError("Currency from doesn't exist");
+      } else if (currencyToInfo === undefined) {
+        throw new InvalidCurrencyError("Currency to doesn't exist");
+      }
+
+      const tradeFee = await calculateFee(
+        options,
+        tradeRouter,
+        txBuilderFactory,
+        currencyFromInfo,
+        currencyToInfo,
+        currencyFromInfo.decimals,
+        this.chain,
+        toDestTransactionFee,
+      );
+      const amountWithoutFee = origin ? amount - tradeFee : amount;
+
+      if (amountWithoutFee <= 0n) throw new AmountTooLowError();
+
+      const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
+
+      Logger.log('Original amount', amount);
+      Logger.log('Amount modified', amountWithoutFee);
+
+      const trade = await tradeRouter.getBestSell(
+        currencyFromInfo.id,
+        currencyToInfo.id,
+        amountNormalized,
+      );
+
+      const substrateTx = await txBuilderFactory
+        .trade(trade)
+        .withSlippage(Number(slippagePct))
+        .withBeneficiary(sender)
+        .build();
+
+      const tx = substrateTx.get();
+
+      const amountOut = trade.amountOut;
+
+      const nativeCurrencyInfo = await getAssetInfo(assetClient, {
+        symbol: getNativeAssetSymbol(this.chain),
+      });
+
+      if (nativeCurrencyInfo === undefined) {
+        throw new InvalidCurrencyError('Native currency not found');
+      }
+
+      const { decimals: nativeCurrencyDecimals } = findNativeAssetInfoOrThrow(this.chain);
+
+      let priceInfo = await tradeRouter.getSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
+
+      if (currencyToInfo.id === nativeCurrencyInfo.id) {
+        priceInfo = {
+          amount: parseUnits('1', nativeCurrencyDecimals),
+          decimals: nativeCurrencyDecimals,
+        };
+      }
+
+      if (priceInfo === undefined) {
+        throw new UnableToComputeError('Price not found');
+      }
+
+      const currencyToPrice = priceInfo.amount;
+
+      const feeInCurrencyTo =
+        (toDestTransactionFee *
+          pow10n(priceInfo.decimals + currencyToInfo.decimals) *
+          BigInt(FEE_BUFFER_PCT)) /
+        (currencyToPrice * pow10n(nativeCurrencyDecimals) * 100n);
+
+      Logger.log('Amount out fee', feeInCurrencyTo, nativeCurrencyInfo.symbol);
+
+      const amountOutModified = amountOut - feeInCurrencyTo;
+
+      if (amountOutModified <= 0n) throw new AmountTooLowError();
+
+      Logger.log('Amount out original', amountOut);
+      Logger.log('Amount out modified', amountOutModified);
+
+      return { tx, amountOut: amountOutModified };
+    } finally {
+      sdk.destroy();
     }
-
-    const tradeFee = await calculateFee(
-      options,
-      tradeRouter,
-      txBuilderFactory,
-      currencyFromInfo,
-      currencyToInfo,
-      currencyFromInfo.decimals,
-      this.chain,
-      toDestTransactionFee,
-    );
-    const amountWithoutFee = origin ? amount - tradeFee : amount;
-
-    if (amountWithoutFee <= 0n) throw new AmountTooLowError();
-
-    const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
-
-    Logger.log('Original amount', amount);
-    Logger.log('Amount modified', amountWithoutFee);
-
-    const trade = await tradeRouter.getBestSell(
-      currencyFromInfo.id,
-      currencyToInfo.id,
-      amountNormalized,
-    );
-
-    const substrateTx = await txBuilderFactory
-      .trade(trade)
-      .withSlippage(Number(slippagePct))
-      .withBeneficiary(sender)
-      .build();
-
-    const tx = substrateTx.get();
-
-    const amountOut = trade.amountOut;
-
-    const nativeCurrencyInfo = await getAssetInfo(assetClient, {
-      symbol: getNativeAssetSymbol(this.chain),
-    });
-
-    if (nativeCurrencyInfo === undefined) {
-      throw new InvalidCurrencyError('Native currency not found');
-    }
-
-    const { decimals: nativeCurrencyDecimals } = findNativeAssetInfoOrThrow(this.chain);
-
-    let priceInfo = await tradeRouter.getSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
-
-    if (currencyToInfo.id === nativeCurrencyInfo.id) {
-      priceInfo = {
-        amount: parseUnits('1', nativeCurrencyDecimals),
-        decimals: nativeCurrencyDecimals,
-      };
-    }
-
-    if (priceInfo === undefined) {
-      throw new UnableToComputeError('Price not found');
-    }
-
-    const currencyToPrice = priceInfo.amount;
-
-    const feeInCurrencyTo =
-      (toDestTransactionFee *
-        pow10n(priceInfo.decimals + currencyToInfo.decimals) *
-        BigInt(FEE_BUFFER_PCT)) /
-      (currencyToPrice * pow10n(nativeCurrencyDecimals) * 100n);
-
-    Logger.log('Amount out fee', feeInCurrencyTo, nativeCurrencyInfo.symbol);
-
-    const amountOutModified = amountOut - feeInCurrencyTo;
-
-    if (amountOutModified <= 0n) throw new AmountTooLowError();
-
-    Logger.log('Amount out original', amountOut);
-    Logger.log('Amount out modified', amountOutModified);
-
-    return { tx, amountOut: amountOutModified };
   }
 
   async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPapiGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
   ): Promise<bigint> {
     const { apiPapi, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
+    const sdk = await createSdkContext(apiPapi);
 
     const {
       api: { router: tradeRouter },
       client: { asset: assetClient },
-    } = await createSdkContext(apiPapi);
+    } = sdk;
 
-    const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
-    const currencyToInfo = await getAssetInfo(assetClient, assetTo);
+    try {
+      const currencyFromInfo = await getAssetInfo(assetClient, assetFrom);
+      const currencyToInfo = await getAssetInfo(assetClient, assetTo);
 
-    if (currencyFromInfo === undefined) {
-      throw new InvalidCurrencyError("Currency from doesn't exist");
+      if (currencyFromInfo === undefined) {
+        throw new InvalidCurrencyError("Currency from doesn't exist");
+      }
+
+      if (currencyToInfo === undefined) {
+        throw new InvalidCurrencyError("Currency to doesn't exist");
+      }
+
+      const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+      const amountWithoutFee = padValueBy(amount, pctDestFee);
+
+      const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
+
+      const trade = await tradeRouter.getBestSell(
+        currencyFromInfo.id,
+        currencyToInfo.id,
+        amountNormalized,
+      );
+
+      const amountOut = trade.amountOut;
+
+      const slippageMultiplier = Number(slippagePct);
+
+      return padValueBy(amountOut, -slippageMultiplier);
+    } finally {
+      sdk.destroy();
     }
-
-    if (currencyToInfo === undefined) {
-      throw new InvalidCurrencyError("Currency to doesn't exist");
-    }
-
-    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-    const amountWithoutFee = padValueBy(amount, pctDestFee);
-
-    const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
-
-    const trade = await tradeRouter.getBestSell(
-      currencyFromInfo.id,
-      currencyToInfo.id,
-      amountNormalized,
-    );
-
-    const amountOut = trade.amountOut;
-
-    const slippageMultiplier = Number(slippagePct);
-
-    return padValueBy(amountOut, -slippageMultiplier);
   }
 
   async getDexConfig(api: TPapiApi): Promise<TDexConfigStored> {
