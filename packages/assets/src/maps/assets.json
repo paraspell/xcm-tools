@@ -8503,6 +8503,25 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "4",
+        "symbol": "KSM",
+        "decimals": 12,
+        "existentialDeposit": "10000000000",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1",
         "symbol": "WUD",
         "decimals": 10,
