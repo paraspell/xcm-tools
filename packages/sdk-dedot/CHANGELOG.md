@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.2.2...sdk-dedot-v14.3.0) (2026-08-29)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([13a6105](https://github.com/paraspell/xcm-tools/commit/13a61053d4c03950ef7aa79c313cdd2cfce8e494))
+
+
+### Bug Fixes
+
+* **swap:** Improve asset support checks 🔧 ([5cb3057](https://github.com/paraspell/xcm-tools/commit/5cb305789bb8c4ddfad316ec6d9451f17b5c9483))
+* **xcm-analyser:** Fix Network location types 🔧 ([02cd0a0](https://github.com/paraspell/xcm-tools/commit/02cd0a08e7fbc51c72ae462b54fffc01bad3fa0b))
+
 ## [14.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.2.1...sdk-dedot-v14.2.2) (2026-08-21)
 
 
