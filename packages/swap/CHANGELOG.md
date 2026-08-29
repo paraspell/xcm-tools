@@ -1,5 +1,24 @@
 # Changelog
 
+## [14.3.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.2.2...swap-v14.3.0) (2026-08-29)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([13a6105](https://github.com/paraspell/xcm-tools/commit/13a61053d4c03950ef7aa79c313cdd2cfce8e494))
+
+
+### Bug Fixes
+
+* **swap:** Fix Hydration pools validation 🔧 ([a1014c6](https://github.com/paraspell/xcm-tools/commit/a1014c61f544e5a548ced8180b847e2581fa9836))
+* **swap:** Handle hydration sdk disconnect 🔧 ([08497cc](https://github.com/paraspell/xcm-tools/commit/08497cc0d7d0b0fb300955d29b3a056c057e763d))
+* **swap:** Improve asset support checks 🔧 ([5cb3057](https://github.com/paraspell/xcm-tools/commit/5cb305789bb8c4ddfad316ec6d9451f17b5c9483))
+
+
+### Build System
+
+* Update to papi v3 🪄 ([6d37d78](https://github.com/paraspell/xcm-tools/commit/6d37d7806c578dd6e1bdf7bca02395c369be97c6))
+
 ## [14.2.2](https://github.com/paraspell/xcm-tools/compare/swap-v14.2.1...swap-v14.2.2) (2026-08-21)
 
 
