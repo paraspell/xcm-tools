@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.1.1...xcm-analyser-v3.2.0) (2026-08-31)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([13a6105](https://github.com/paraspell/xcm-tools/commit/13a61053d4c03950ef7aa79c313cdd2cfce8e494))
+
+
+### Bug Fixes
+
+* **swap:** Fix Hydration pools validation 🔧 ([a1014c6](https://github.com/paraspell/xcm-tools/commit/a1014c61f544e5a548ced8180b847e2581fa9836))
+* **xcm-analyser:** Add support for null OnlyChild 🪄 ([5d1eec5](https://github.com/paraspell/xcm-tools/commit/5d1eec554bec1af1f3761a0789da2537368bd837))
+* **xcm-analyser:** Fix Network location types 🔧 ([02cd0a0](https://github.com/paraspell/xcm-tools/commit/02cd0a08e7fbc51c72ae462b54fffc01bad3fa0b))
+* **xcm-analyser:** Fix parents upper bounds 🔧 ([f1feac5](https://github.com/paraspell/xcm-tools/commit/f1feac5345cf767ce7c09f5d6949fa086f097263))
+* **xcm-analyser:** Fix Plurality Body schema 🔧 ([41e5512](https://github.com/paraspell/xcm-tools/commit/41e5512a0e897fca87a83688c47f9f0da62f836b))
+* **xcm-analyser:** Use proper data types for junction properties 🔧 ([42440fb](https://github.com/paraspell/xcm-tools/commit/42440fb96f958c626f8ca035bb17b299147f0d2e))
+* **xcm-api:** Improve amount parsing 🛠️ ([a8455db](https://github.com/paraspell/xcm-tools/commit/a8455dbb26817edd2dc7717996e2426f90a558ef))
+
 ## [3.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.1.0...xcm-analyser-v3.1.1) (2026-08-21)
 
 
