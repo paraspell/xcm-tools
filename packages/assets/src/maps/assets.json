@@ -2667,6 +2667,9 @@
         "symbol": "HUSDe",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2690,6 +2693,10 @@
         "symbol": "HOLLAR",
         "decimals": 18,
         "existentialDeposit": "20000000000000000",
+        "erc20": {
+          "balanceSlot": 3,
+          "contract": "0x531a654d1696ed52e7275a8cede955e82620f99a"
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2698,10 +2705,7 @@
                 "Parachain": 2034
               },
               {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
-                }
+                "GeneralIndex": 222
               }
             ]
           }
@@ -2713,6 +2717,9 @@
         "symbol": "aSOL",
         "decimals": 9,
         "existentialDeposit": "221956",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2736,6 +2743,9 @@
         "symbol": "aSIGIL",
         "decimals": 18,
         "existentialDeposit": "20000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2759,6 +2769,9 @@
         "symbol": "GETH",
         "decimals": 18,
         "existentialDeposit": "8202803876747",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2806,6 +2819,9 @@
         "symbol": "aDOT",
         "decimals": 10,
         "existentialDeposit": "54125333",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2829,6 +2845,9 @@
         "symbol": "aapyUSD",
         "decimals": 18,
         "existentialDeposit": "14705882352941200",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2852,6 +2871,9 @@
         "symbol": "HUSDT",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -2949,6 +2971,9 @@
         "symbol": "GIGAHDX",
         "decimals": 12,
         "existentialDeposit": "0",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3190,6 +3215,9 @@
         "symbol": "a3-Pool",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3236,6 +3264,9 @@
         "symbol": "HUSDS",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3310,6 +3341,9 @@
         "symbol": "atBTC",
         "decimals": 18,
         "existentialDeposit": "208779411374",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3443,6 +3477,9 @@
         "symbol": "HEURC",
         "decimals": 18,
         "existentialDeposit": "17241379310344828",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3640,6 +3677,9 @@
         "symbol": "aPAXG",
         "decimals": 18,
         "existentialDeposit": "4675946889957",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3813,6 +3853,9 @@
         "symbol": "aUSDT",
         "decimals": 6,
         "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -3936,6 +3979,9 @@
         "symbol": "uBIL",
         "decimals": 18,
         "existentialDeposit": "20000000000000000",
+        "erc20": {
+          "balanceSlot": 51
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4201,6 +4247,9 @@
         "symbol": "aUSDC",
         "decimals": 6,
         "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4224,6 +4273,9 @@
         "symbol": "aEURC",
         "decimals": 6,
         "existentialDeposit": "17241",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4299,6 +4351,9 @@
         "symbol": "avDOT",
         "decimals": 10,
         "existentialDeposit": "36627790",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4322,6 +4377,9 @@
         "symbol": "aETH",
         "decimals": 18,
         "existentialDeposit": "8202803876747",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4461,6 +4519,9 @@
         "symbol": "HUSDC",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4507,6 +4568,9 @@
         "symbol": "aWBTC",
         "decimals": 8,
         "existentialDeposit": "40",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4669,6 +4733,9 @@
         "symbol": "BIL",
         "decimals": 18,
         "existentialDeposit": "20000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4767,6 +4834,9 @@
         "symbol": "GDOT",
         "decimals": 18,
         "existentialDeposit": "5290724013368937",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4873,6 +4943,9 @@
         "symbol": "GSOL",
         "decimals": 18,
         "existentialDeposit": "221802682843910",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -4896,6 +4969,9 @@
         "symbol": "aPRIME",
         "decimals": 6,
         "existentialDeposit": "9901",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14000,6 +14076,9 @@
         "symbol": "HUSDe",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14023,6 +14102,10 @@
         "symbol": "HOLLAR",
         "decimals": 18,
         "existentialDeposit": "0",
+        "erc20": {
+          "balanceSlot": 3,
+          "contract": "0x531a654d1696ed52e7275a8cede955e82620f99a"
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14031,10 +14114,7 @@
                 "Parachain": 2034
               },
               {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
-                }
+                "GeneralIndex": 222
               }
             ]
           }
@@ -14046,6 +14126,9 @@
         "symbol": "GETH",
         "decimals": 18,
         "existentialDeposit": "8202803876747",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14093,6 +14176,9 @@
         "symbol": "aDOT",
         "decimals": 10,
         "existentialDeposit": "54125333",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14116,6 +14202,9 @@
         "symbol": "HUSDT",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14392,6 +14481,9 @@
         "symbol": "a3-Pool",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14438,6 +14530,9 @@
         "symbol": "HUSDS",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14512,6 +14607,9 @@
         "symbol": "atBTC",
         "decimals": 18,
         "existentialDeposit": "208779411374",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -14878,6 +14976,9 @@
         "symbol": "aUSDT",
         "decimals": 6,
         "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15166,6 +15267,9 @@
         "symbol": "aUSDC",
         "decimals": 6,
         "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15241,6 +15345,9 @@
         "symbol": "avDOT",
         "decimals": 10,
         "existentialDeposit": "36627790",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15264,6 +15371,9 @@
         "symbol": "aETH",
         "decimals": 18,
         "existentialDeposit": "8202803876747",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15376,6 +15486,9 @@
         "symbol": "HUSDC",
         "decimals": 18,
         "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15422,6 +15535,9 @@
         "symbol": "aWBTC",
         "decimals": 8,
         "existentialDeposit": "40",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {
@@ -15659,6 +15775,9 @@
         "symbol": "GDOT",
         "decimals": 18,
         "existentialDeposit": "5290724013368937",
+        "erc20": {
+          "balanceSlot": 52
+        },
         "location": {
           "parents": 1,
           "interior": {

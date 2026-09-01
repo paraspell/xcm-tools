@@ -10,6 +10,46 @@ vi.mock('../../utils')
 
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
+describe('CurrenciesPallet.getBalance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('queries the CurrenciesApi runtime api with a numeric asset id', async () => {
+    const pallet = new CurrenciesPallet('Currencies')
+    const queryRuntimeApi = vi.fn().mockResolvedValue({ free: '2294586420888330679986894' })
+    const api = { queryRuntimeApi } as unknown as PolkadotApi<unknown, unknown, unknown>
+    const asset = {
+      symbol: 'HOLLAR',
+      assetId: '222',
+      erc20: { balanceSlot: 3, contract: '0x531a654d1696ed52e7275a8cede955e82620f99a' }
+    } as TAssetInfo
+
+    const result = await pallet.getBalance(api, '7L53Addr', asset)
+
+    expect(queryRuntimeApi).toHaveBeenCalledWith({
+      module: 'CurrenciesApi',
+      method: 'account',
+      params: [222, '7L53Addr']
+    })
+    expect(result).toBe(2294586420888330679986894n)
+  })
+
+  it('returns zero when the runtime api yields no account data', async () => {
+    const pallet = new CurrenciesPallet('Currencies')
+    const api = {
+      queryRuntimeApi: vi.fn().mockResolvedValue(undefined)
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    const result = await pallet.getBalance(api, '7L53Addr', {
+      symbol: 'HOLLAR',
+      assetId: '222'
+    } as TAssetInfo)
+
+    expect(result).toBe(0n)
+  })
+})
+
 describe('CurrenciesPallet.mint', () => {
   beforeEach(() => {
     vi.clearAllMocks()

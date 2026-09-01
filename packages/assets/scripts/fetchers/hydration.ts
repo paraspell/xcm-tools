@@ -2,9 +2,11 @@
 import {
   getJunctionValue,
   hasJunction,
+  TJunctionAccountKey20,
   type TLocation,
   type TSubstrateChain
 } from '@paraspell/sdk-common'
+import { Binary, Keccak256 } from '@polkadot-api/substrate-bindings'
 import type { PolkadotClient } from 'polkadot-api'
 
 import { createChainClient } from '../../../sdk-common/scripts/scriptUtils'
@@ -17,15 +19,70 @@ const ALLOWED_AH_ASSET_SYMBOLS = ['BILL']
 
 const EXCLUDED_ASSET_IDS = ['1000099']
 
-const hydrationLocationOverrides: Record<string, TLocation> = {
-  '42': {
-    parents: 2,
-    interior: {
-      X2: [
-        { GlobalConsensus: { Ethereum: { chainId: 1 } } },
-        { AccountKey20: { network: null, key: '0x1abaea1f7c830bd89acc67ec4af516284b1bc33c' } }
-      ]
-    }
+const word = (hex: string) => hex.padStart(64, '0')
+
+const ERC20_PROBE_ACCOUNT = word('11'.repeat(20))
+const ERC20_PROBE_BALANCE = '0x' + word((10n ** 18n).toString(16))
+const ERC20_BALANCE_OF_SELECTOR = '0x70a08231'
+const ERC20_MAX_BALANCE_SLOT = 64
+
+const detectErc20BalanceSlot = async (client: PolkadotClient, contract: string) => {
+  for (let slot = 0; slot < ERC20_MAX_BALANCE_SLOT; slot++) {
+    const slotKey = Binary.toHex(
+      Keccak256(Binary.fromHex(`0x${ERC20_PROBE_ACCOUNT}${word(slot.toString(16))}`))
+    )
+
+    const balance = await client._request<string>('eth_call', [
+      { to: contract, data: ERC20_BALANCE_OF_SELECTOR + ERC20_PROBE_ACCOUNT },
+      'latest',
+      { [contract]: { stateDiff: { [slotKey]: ERC20_PROBE_BALANCE } } }
+    ])
+
+    if (balance !== '0x' && BigInt(balance) > 0n) return slot
+  }
+
+  throw new Error(`Unable to detect the ERC20 balance slot of ${contract}`)
+}
+
+const resolveErc20Info = async (
+  client: PolkadotClient,
+  location: TLocation | undefined,
+  finalLocation: TLocation | undefined
+) => {
+  const contract =
+    location &&
+    getJunctionValue<TJunctionAccountKey20['AccountKey20']>(location, 'AccountKey20')?.key
+  if (!contract) throw new Error(`Missing ERC20 contract in ${JSON.stringify(location)}`)
+  const balanceSlot = await detectErc20BalanceSlot(client, contract)
+  return finalLocation && hasJunction(finalLocation, 'AccountKey20')
+    ? { balanceSlot }
+    : { balanceSlot, contract }
+}
+
+const HOLLAR_OVERRIDE = {
+  location: { parents: 1, interior: { X2: [{ Parachain: 2034 }, { GeneralIndex: 222 }] } },
+  isFeeAsset: true
+}
+
+const hydrationAssetOverrides: Partial<
+  Record<TSubstrateChain, Record<string, { location: TLocation; isFeeAsset?: boolean }>>
+> = {
+  Hydration: {
+    '42': {
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            { AccountKey20: { network: null, key: '0x1abaea1f7c830bd89acc67ec4af516284b1bc33c' } }
+          ]
+        }
+      }
+    },
+    '222': HOLLAR_OVERRIDE
+  },
+  HydrationPaseo: {
+    '222': HOLLAR_OVERRIDE
   }
 }
 
@@ -72,13 +129,19 @@ export const fetchHydrationAssets = async (
           }
         }
 
+        const override = hydrationAssetOverrides[chain]?.[assetId]
+        const finalLocation = override?.location ?? location
+
         return {
           assetId,
           symbol,
           decimals,
           existentialDeposit: edString(value),
-          location:
-            location ?? (chain === 'Hydration' ? hydrationLocationOverrides[assetId] : undefined)
+          ...(value.asset_type.type === 'Erc20' && {
+            erc20: await resolveErc20Info(client, location, finalLocation)
+          }),
+          location: finalLocation,
+          ...(override?.isFeeAsset && { isFeeAsset: true })
         }
       })
     )
