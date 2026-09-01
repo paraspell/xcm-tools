@@ -34,4 +34,20 @@ describe('generateConfirmationEmailHtml', () => {
     expect(result).toContain('</body>');
     expect(result).toContain('Your request has been submitted successfully.');
   });
+
+  it('should escape HTML metacharacters in user-supplied values', () => {
+    const injectedLink =
+      '</span><a href="https://attacker.example">Review request</a><span>';
+
+    const result = generateConfirmationEmailHtml(
+      injectedLink,
+      injectedLink,
+      injectedLink,
+    );
+
+    expect(result).not.toContain('<a href="https://attacker.example">');
+    expect(result).toContain(
+      '&lt;/span&gt;&lt;a href=&quot;https://attacker.example&quot;&gt;Review request&lt;/a&gt;&lt;span&gt;',
+    );
+  });
 });
