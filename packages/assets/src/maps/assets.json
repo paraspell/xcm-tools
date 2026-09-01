@@ -8503,6 +8503,25 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "4",
+        "symbol": "KSM",
+        "decimals": 12,
+        "existentialDeposit": "10000000000",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1",
         "symbol": "WUD",
         "decimals": 10,
@@ -9428,6 +9447,29 @@
         "existentialDeposit": "100",
         "isFeeAsset": true,
         "alias": "USDt2"
+      },
+      {
+        "assetId": "50000014",
+        "symbol": "KSM",
+        "decimals": 12,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000014
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "KSM5"
       },
       {
         "symbol": "sUSDe",
