@@ -1,9 +1,12 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { isAssetEqual } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
+import type { PolkadotApi } from '../../api'
+import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -11,7 +14,8 @@ import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
-import { assertHasId, handleExecuteTransfer } from '../../utils'
+import type { TSetBalanceRes } from '../../types/TAssets'
+import { assertHasId, buildErc20StorageMint, handleExecuteTransfer } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
 class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -29,6 +33,21 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
 
   protected getMintConfig(): TMintConfig {
     return { useIdPrefix: false }
+  }
+
+  mint(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    assetInfo: WithAmount<TAssetInfo>,
+    balance: bigint
+  ): Promise<TSetBalanceRes> {
+    if (assetInfo.erc20) {
+      return Promise.resolve(
+        buildErc20StorageMint(api, address, assetInfo, assetInfo.erc20, balance + assetInfo.amount)
+      )
+    }
+
+    return super.mint(api, address, assetInfo, balance)
   }
 
   shouldUseExecuteTransfer(
@@ -85,14 +104,40 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
     )
   }
 
+  getBalanceForeign(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    if (!asset.erc20) return super.getBalanceForeign(api, address, asset)
+
+    return getPalletInstance('Currencies').getBalance(api, address, asset)
+  }
+
   transferLocalNonNativeAsset(
     options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
   ): TRes {
-    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive, balance } = options
 
     assertHasId(asset)
 
     const currencyId = Number(asset.assetId)
+
+    if (asset.erc20) {
+      const amount = isAmountAll
+        ? balance - (keepAlive ? getEdFromAssetOrThrow(asset) : 0n)
+        : asset.amount
+
+      return api.deserializeExtrinsics({
+        module: 'Currencies',
+        method: 'transfer',
+        params: {
+          dest: recipient,
+          currency_id: currencyId,
+          amount
+        }
+      })
+    }
 
     if (isAmountAll) {
       return api.deserializeExtrinsics({

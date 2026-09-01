@@ -894,10 +894,7 @@
               "Parachain": 2034
             },
             {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x531a654d1696ed52e7275a8cede955e82620f99a"
-              }
+              "GeneralIndex": 222
             }
           ]
         }

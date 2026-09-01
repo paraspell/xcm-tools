@@ -1,5 +1,11 @@
 import type { TChain, TLocation } from '@paraspell/sdk-common'
 
+export type TErc20Info = {
+  balanceSlot: number
+  // Only set when the asset location does not have AccountKey20 junction
+  contract?: string
+}
+
 export type TAssetInfo = {
   decimals: number
   symbol: string
@@ -8,6 +14,8 @@ export type TAssetInfo = {
   location: TLocation
   existentialDeposit?: string
   isFeeAsset?: boolean
+  // Hydration only - ERC20 assets
+  erc20?: TErc20Info
   alias?: string
 }
 

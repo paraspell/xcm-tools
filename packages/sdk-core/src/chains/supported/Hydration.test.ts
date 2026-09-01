@@ -1,10 +1,11 @@
-import type { TAssetInfo } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { findAssetInfoByLoc, InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
+import { getPalletInstance } from '../../pallets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   TPolkadotXCMTransferOptions,
@@ -12,6 +13,8 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { getChain, handleExecuteTransfer } from '../../utils'
+import { buildErc20StorageMint } from '../../utils/asset/hydrationErc20Mint'
+import SubstrateChain from '../SubstrateChain'
 import type Hydration from './Hydration'
 
 vi.mock('@paraspell/assets', async importActual => ({
@@ -21,6 +24,9 @@ vi.mock('@paraspell/assets', async importActual => ({
 
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
+vi.mock('../../utils/asset/hydrationErc20Mint')
+
+const HOLLAR_ERC20 = { balanceSlot: 3, contract: '0x531a654d1696ed52e7275a8cede955e82620f99a' }
 
 describe('Hydration', () => {
   let hydration: Hydration<unknown, unknown, unknown>
@@ -284,6 +290,71 @@ describe('Hydration', () => {
     })
   })
 
+  describe('getBalanceForeign', () => {
+    it('reads ERC20 balances through the Currencies pallet', async () => {
+      const asset = { symbol: 'HOLLAR', assetId: '222', erc20: HOLLAR_ERC20 } as TAssetInfo
+      const spy = vi
+        .spyOn(getPalletInstance('Currencies'), 'getBalance')
+        .mockResolvedValue(2294586420888330679986894n)
+
+      const result = await hydration.getBalanceForeign(mockApi, '7L53Addr', asset)
+
+      expect(spy).toHaveBeenCalledWith(mockApi, '7L53Addr', asset)
+      expect(result).toBe(2294586420888330679986894n)
+    })
+
+    it('falls back to the default pallets for non-ERC20 assets', async () => {
+      const asset = { symbol: 'DOT', assetId: '5' } as TAssetInfo
+      const spy = vi.spyOn(SubstrateChain.prototype, 'getBalanceForeign').mockResolvedValue(42n)
+
+      const result = await hydration.getBalanceForeign(mockApi, '7L53Addr', asset)
+
+      expect(spy).toHaveBeenCalledWith(mockApi, '7L53Addr', asset)
+      expect(result).toBe(42n)
+    })
+  })
+
+  describe('mint', () => {
+    const erc20Asset = {
+      symbol: 'HOLLAR',
+      assetId: '222',
+      erc20: HOLLAR_ERC20,
+      amount: 1000n
+    } as WithAmount<TAssetInfo>
+
+    it('mints ERC20 assets through an EVM storage override', async () => {
+      const balanceTx = {
+        module: 'System',
+        method: 'set_storage',
+        params: { items: [] }
+      } as unknown as TSerializedExtrinsics
+      vi.mocked(buildErc20StorageMint).mockReturnValue({ balanceTx })
+
+      const res = await hydration.mint(mockApi, '7Addr', erc20Asset, 500n)
+
+      expect(buildErc20StorageMint).toHaveBeenCalledWith(
+        mockApi,
+        '7Addr',
+        erc20Asset,
+        HOLLAR_ERC20,
+        1500n
+      )
+      expect(res).toEqual({ balanceTx })
+    })
+
+    it('uses the default mint for non-ERC20 assets', async () => {
+      const asset = { symbol: 'DOT', assetId: '5', amount: 1000n } as WithAmount<TAssetInfo>
+      const superMint = vi
+        .spyOn(SubstrateChain.prototype, 'mint')
+        .mockResolvedValue({ balanceTx: {} as TSerializedExtrinsics })
+
+      await hydration.mint(mockApi, '7Addr', asset, 0n)
+
+      expect(buildErc20StorageMint).not.toHaveBeenCalled()
+      expect(superMint).toHaveBeenCalledWith(mockApi, '7Addr', asset, 0n)
+    })
+  })
+
   describe('transferLocalNonNativeAsset', () => {
     it('should throw InvalidCurrencyError if asset is not a foreign asset', () => {
       const mockInput = {
@@ -323,6 +394,83 @@ describe('Hydration', () => {
           dest: mockInput.recipient,
           currency_id: 123,
           amount: BigInt(mockInput.assetInfo.amount)
+        }
+      })
+    })
+
+    it('should use Currencies.transfer for ERC20 assets', () => {
+      const mockInput = {
+        api: mockApi,
+        assetInfo: { symbol: 'HOLLAR', assetId: '222', erc20: HOLLAR_ERC20, amount: 1000n },
+        recipient: '0x1234567890abcdef'
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
+      hydration.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Currencies',
+        method: 'transfer',
+        params: {
+          dest: mockInput.recipient,
+          currency_id: 222,
+          amount: 1000n
+        }
+      })
+    })
+
+    it('should transfer the full balance for ERC20 assets when amount is ALL', () => {
+      const mockInput = {
+        api: mockApi,
+        assetInfo: { symbol: 'HOLLAR', assetId: '222', erc20: HOLLAR_ERC20, amount: 1n },
+        recipient: '0x1234567890abcdef',
+        isAmountAll: true,
+        balance: 5000n
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
+      hydration.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Currencies',
+        method: 'transfer',
+        params: {
+          dest: mockInput.recipient,
+          currency_id: 222,
+          amount: 5000n
+        }
+      })
+    })
+
+    it('should leave the ED behind for ERC20 assets when amount is ALL and keepAlive is set', () => {
+      const mockInput = {
+        api: mockApi,
+        assetInfo: {
+          symbol: 'HOLLAR',
+          assetId: '222',
+          erc20: HOLLAR_ERC20,
+          existentialDeposit: '20000000000000000',
+          amount: 1n
+        },
+        recipient: '0x1234567890abcdef',
+        isAmountAll: true,
+        keepAlive: true,
+        balance: 20000000000005000n
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
+
+      hydration.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Currencies',
+        method: 'transfer',
+        params: {
+          dest: mockInput.recipient,
+          currency_id: 222,
+          amount: 5000n
         }
       })
     })

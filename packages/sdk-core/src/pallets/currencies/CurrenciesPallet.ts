@@ -2,7 +2,6 @@ import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
-import { UnsupportedOperationError } from '../../errors'
 import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
 import { BaseAssetsPallet } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
@@ -43,7 +42,19 @@ export class CurrenciesPallet extends BaseAssetsPallet {
     })
   }
 
-  getBalance(): Promise<bigint> {
-    throw new UnsupportedOperationError('No balance support.')
+  async getBalance<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    address: string,
+    asset: TAssetInfo
+  ): Promise<bigint> {
+    assertHasId(asset)
+
+    const account = await api.queryRuntimeApi<{ free: bigint }>({
+      module: 'CurrenciesApi',
+      method: 'account',
+      params: [Number(asset.assetId), address]
+    })
+
+    return account?.free !== undefined ? BigInt(account.free) : 0n
   }
 }
