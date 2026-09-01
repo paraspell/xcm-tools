@@ -46,6 +46,7 @@ import {
   RELAY_LOCATION,
   replaceBigInt,
   RuntimeApiUnavailableError,
+  SubmitTransactionError,
   UnsupportedOperationError,
   wrapTxBypass,
 } from "@paraspell/sdk-core";
@@ -940,6 +941,9 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   ): Promise<string> {
     const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
     const result = await tx.signAndSend(account).untilFinalized();
+    if (result.dispatchError) {
+      throw new SubmitTransactionError(JSON.stringify(result.dispatchError));
+    }
     return result.txHash;
   }
 }
