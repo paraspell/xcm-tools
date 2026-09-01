@@ -250,4 +250,62 @@ describe('resolveAssets', () => {
 
     expect(() => resolveAssets(dex, options)).toThrow('is not a valid fee asset');
   });
+
+  it('throws error when feeAsset is not found on the exchange chain', () => {
+    const options = {
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'UNKNOWN' },
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      return null;
+    });
+
+    expect(() => resolveAssets(dex, options)).toThrow(
+      'Fee asset {"symbol":"UNKNOWN"} not found in CHAIN_A.',
+    );
+    expect(findAssetInfoOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('keeps origin fee asset when it has no representation on the exchange chain', () => {
+    const mockFeeAssetFromOrigin: TAssetInfo = {
+      symbol: 'USDT_ORIGIN',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { PalletInstance: 50 } } },
+      isFeeAsset: true,
+    };
+
+    const options = {
+      from: 'Astar',
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { symbol: 'USDT' },
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    const mockAssetFromOrigin = { symbol: 'BTC_ORIGIN', decimals: 8 } as TAssetInfo;
+
+    vi.mocked(findAssetInfo)
+      .mockReturnValueOnce(mockAssetFromOrigin)
+      .mockReturnValueOnce(mockFeeAssetFromOrigin);
+    vi.mocked(getExchangeAssetByOriginAsset)
+      .mockReturnValueOnce(mockAssetFromExchange)
+      .mockReturnValueOnce(undefined);
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
+      return null;
+    });
+    vi.mocked(findAssetInfoOrThrow).mockReturnValue(mockFeeAssetFromOrigin);
+
+    const result = resolveAssets(dex, options);
+    expect(result).toEqual({
+      assetFromOrigin: mockAssetFromOrigin,
+      assetFromExchange: mockAssetFromExchange,
+      assetTo: mockAssetTo,
+      feeAssetFromOrigin: mockFeeAssetFromOrigin,
+      feeAssetFromExchange: undefined,
+    });
+  });
 });
