@@ -32,7 +32,9 @@ describe('localizeLocation', () => {
       if (chain === 'Acala') return 2000
       if (chain === 'Darwinia') return 2004
       if (chain === 'AssetHubPolkadot') return 1000
+      if (chain === 'AssetHubKusama') return 1000
       if (chain === 'BifrostKusama') return 2001
+      if (chain === 'Curio') return 3339
       return 0
     })
 
@@ -46,6 +48,7 @@ describe('localizeLocation', () => {
         case 'AssetHubKusama':
           return 'Kusama'
         case 'BifrostKusama':
+        case 'Curio':
           return 'Kusama'
         default:
           return 'Polkadot'
@@ -347,6 +350,68 @@ describe('localizeLocation', () => {
       }
 
       const result = localizeLocation('AssetHubKusama', input)
+
+      expect(result).toEqual(input)
+    })
+
+    it('should keep location unchanged when it targets another ecosystem and origin shares the target ecosystem', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X4: [
+            { GlobalConsensus: { polkadot: null } },
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 1984 }
+          ]
+        }
+      }
+
+      const result = localizeLocation('AssetHubKusama', input, 'Curio')
+
+      expect(result).toEqual(input)
+    })
+
+    it('should keep location unchanged in the reverse direction', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X4: [
+            { GlobalConsensus: { polkadot: null } },
+            { Parachain: 1000 },
+            { PalletInstance: 50 },
+            { GeneralIndex: 1984 }
+          ]
+        }
+      }
+
+      const result = localizeLocation('Curio', input, 'AssetHubKusama')
+
+      expect(result).toEqual(input)
+    })
+
+    it('should keep a bare global-consensus location unchanged within the same ecosystem', () => {
+      const input: TLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X1: [{ GlobalConsensus: { polkadot: null } }]
+        }
+      }
+
+      expect(localizeLocation('AssetHubKusama', input, 'Curio')).toEqual(input)
+      expect(localizeLocation('Curio', input, 'AssetHubKusama')).toEqual(input)
+    })
+
+    it('should detect the consensus anchor regardless of interior key order', () => {
+      const input = {
+        parents: Parents.TWO,
+        interior: {
+          X2: [{ Parachain: 1000 }, { PalletInstance: 50 }],
+          X1: [{ GlobalConsensus: { polkadot: null } }]
+        }
+      } as unknown as TLocation
+
+      const result = localizeLocation('AssetHubKusama', input, 'Curio')
 
       expect(result).toEqual(input)
     })

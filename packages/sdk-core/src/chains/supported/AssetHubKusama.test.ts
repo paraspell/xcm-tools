@@ -37,11 +37,21 @@ describe('transferPolkadotXCM', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
-  it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
+  it('throws ScenarioNotSupportedError for bridged DOT transfers in para to para scenarios', () => {
     const input = {
       ...mockInput,
       assetInfo: { symbol: 'DOT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+  })
+
+  it('allows bridged DOT transfers when destination is Curio', async () => {
+    const input = {
+      ...mockInput,
+      assetInfo: { symbol: 'DOT' },
+      destination: 'Curio'
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+    await chain.transferPolkadotXCM(input)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
   })
 })

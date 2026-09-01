@@ -15873,6 +15873,53 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "5",
+        "symbol": "DOT",
+        "decimals": 10,
+        "existentialDeposit": "100000000",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "4",
+        "symbol": "USDT",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "location": {
+          "parents": 2,
+          "interior": {
+            "X4": [
+              {
+                "GlobalConsensus": {
+                  "polkadot": null
+                }
+              },
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1",
         "symbol": "XOR",
         "decimals": 18,
