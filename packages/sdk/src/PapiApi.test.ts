@@ -2965,6 +2965,19 @@ describe('PapiApi', () => {
       )
     })
 
+    it('should include the error type for dispatch errors that carry no value', async () => {
+      const mockTx = {
+        createAndSubmit: vi.fn().mockResolvedValue({
+          ok: false,
+          dispatchError: { type: 'BadOrigin', value: undefined }
+        })
+      } as unknown as TPapiTransaction
+
+      await expect(papiApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        '{"type":"BadOrigin"}'
+      )
+    })
+
     it('should reject on submission error', async () => {
       const mockError = new Error('connection lost')
       const mockTx = {
