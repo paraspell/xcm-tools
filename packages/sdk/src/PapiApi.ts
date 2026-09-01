@@ -935,7 +935,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     try {
       const result = await tx.createAndSubmit(signer)
       if (!result.ok) {
-        throw new SubmitTransactionError(JSON.stringify(result.dispatchError.value))
+        throw new SubmitTransactionError(JSON.stringify(result.dispatchError))
       }
       return result.txHash
     } catch (error) {
