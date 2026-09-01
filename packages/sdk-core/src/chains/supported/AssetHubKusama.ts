@@ -22,9 +22,14 @@ class AssetHubKusama<TApi, TRes, TSigner, TCustomChain extends string = never>
   transferPolkadotXCM(
     input: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
-    const { assetInfo: asset, scenario } = input
+    const { assetInfo: asset, scenario, destination } = input
 
-    if (scenario === 'ParaToPara' && asset.symbol === 'DOT' && asset.assetId === undefined) {
+    if (
+      scenario === 'ParaToPara' &&
+      asset.symbol === 'DOT' &&
+      asset.assetId === undefined &&
+      destination !== 'Curio'
+    ) {
       throw new ScenarioNotSupportedError(
         'Bridged DOT cannot currently be transfered from AssetHubKusama, if you are sending different DOT asset, please specify {id: <DOTID>}.'
       )

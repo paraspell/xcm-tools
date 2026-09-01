@@ -149,14 +149,14 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
     });
 
     describe('Hydration', () => {
-      it('should build a swap extrinsic without error on Hydration - USDT to ASTR', async () => {
+      it('should build a swap extrinsic without error on Hydration - USDT to vDOT', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('BifrostPolkadot')
           .currency({ symbol: 'USDT', amount: 300 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-          .swap({ currencyTo: { symbol: 'ASTR' }, exchange: 'Hydration' })
+          .swap({ currencyTo: { symbol: 'vDOT' }, exchange: 'Hydration' })
           .buildAll();
 
         expect(txs).toBeDefined();
@@ -263,11 +263,11 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
     });
 
     describe('Auto exchange selection', () => {
-      it('should build a swap extrinsic without error for ASTR to DOT', async () => {
+      it('should build a swap extrinsic without error for USDT to DOT', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('Polkadot')
-          .currency({ symbol: 'ASTR', amount: 100 })
+          .currency({ symbol: 'USDT', amount: 100 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .swap({ currencyTo: { symbol: 'DOT' } })
@@ -277,11 +277,11 @@ export const generateSwapE2eTests = <TApi, TRes, TSigner>(
         expect(txs.length).toBe(2);
       });
 
-      it('should build a swap extrinsic without error for ASTR to DOT - 2 exchanges', async () => {
+      it('should build a swap extrinsic without error for USDT to DOT - 2 exchanges', async () => {
         const txs = await Builder()
           .from('Astar')
           .to('Polkadot')
-          .currency({ symbol: 'ASTR', amount: 1000 })
+          .currency({ symbol: 'USDT', amount: 1000 })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .swap({

@@ -1,6 +1,7 @@
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
+  flattenJunctions,
   getJunctionValue,
   hasJunction,
   isExternalChain,
@@ -46,12 +47,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
 
   const ecosystemDiffers = targetRelay && originRelay && originRelay !== targetRelay
 
-  const junctions =
-    location.interior === 'Here'
-      ? []
-      : Object.values(location.interior)
-          .flat()
-          .filter(junction => typeof junction === 'object' && junction !== null)
+  const junctions = location.interior === 'Here' ? [] : flattenJunctions(location.interior)
   const junctionCount = junctions.length
 
   const isLocationOnTargetRelay = targetRelay !== undefined && locationRelay === targetRelay
@@ -59,7 +55,14 @@ const localizeLocationInner = <TCustomChain extends string = never>(
   // Check if target is an external chain and location's GlobalConsensus matches it
   const isLocationOnTargetExternal = isExternalChain(chain) && locationRelay === chain.toLowerCase()
 
-  if (!origin && locationRelay && targetRelay && locationRelay !== targetRelay) {
+  const isConsensusAnchored = junctions.findIndex(junction => 'GlobalConsensus' in junction) === 0
+
+  if (
+    locationRelay &&
+    targetRelay &&
+    locationRelay !== targetRelay &&
+    (!origin || (!ecosystemDiffers && isConsensusAnchored))
+  ) {
     return location
   }
 
@@ -160,9 +163,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     !hasGlobalConsensus &&
     originRelay !== undefined
   ) {
-    const junctions = Object.values(newInterior)
-      .flat()
-      .filter(junction => typeof junction === 'object' && junction !== null)
+    const junctions = flattenJunctions(newInterior)
 
     const updatedJunctions = [{ GlobalConsensus: { [originRelay]: null } }, ...junctions]
 
