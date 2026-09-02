@@ -1,7 +1,7 @@
 {
   "name": "@paraspell/playground",
   "private": true,
-  "version": "14.3.0",
+  "version": "14.3.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

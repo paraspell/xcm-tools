@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.3.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.0...swap-v14.3.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **assets:** Update Curio assets 🔧 ([97beb78](https://github.com/paraspell/xcm-tools/commit/97beb78d694c41c3f45e94d44d914c27a6dc5309))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([bf4249c](https://github.com/paraspell/xcm-tools/commit/bf4249c5bef0f89c07c64858015199b5e2a51fe9))
+* **swap:** Update swap assets 📋 ([bf4249c](https://github.com/paraspell/xcm-tools/commit/bf4249c5bef0f89c07c64858015199b5e2a51fe9))
+
 ## [14.3.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.2.2...swap-v14.3.0) (2026-08-29)
 
 
