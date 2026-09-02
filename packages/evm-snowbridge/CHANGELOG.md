@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.2](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.3.1...evm-snowbridge-v14.3.2) (2026-09-02)
+
+
+### Continuous Integration
+
+* Fix git pull command 🔧 ([c60b98c](https://github.com/paraspell/xcm-tools/commit/c60b98c3ae459c3aa32aa74670d7fcbc05e7655e))
+
 ## [14.3.1](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.3.0...evm-snowbridge-v14.3.1) (2026-09-02)
 
 
