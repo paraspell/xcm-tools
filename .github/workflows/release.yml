@@ -80,6 +80,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull latest changes
+        env:
+          GIT_TERMINAL_PROMPT: '0'
         run: git pull
 
       - name: Install dependencies
