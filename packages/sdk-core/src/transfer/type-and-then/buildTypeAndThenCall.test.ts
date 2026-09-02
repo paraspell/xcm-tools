@@ -244,6 +244,34 @@ describe('buildTypeAndThenCall', () => {
     expect(result.params.fees_transfer_type).toBe('DestinationReserve')
   })
 
+  it('should keep the fee asset on LocalReserve when a substrate bridge asset reserves on the destination', () => {
+    vi.mocked(isTrustedChain).mockReturnValue(true)
+    const mockOrigin: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubKusama',
+      api: mockApi
+    }
+    const mockReserve: TChainWithApi<unknown, unknown, unknown> = {
+      chain: 'AssetHubPolkadot',
+      api: mockApi
+    }
+
+    const result = buildTypeAndThenCall(
+      {
+        ...mockContext,
+        origin: mockOrigin,
+        reserve: mockReserve,
+        dest: { chain: 'AssetHubPolkadot', api: mockApi },
+        isSubBridge: true
+      },
+      false,
+      mockCustomXcm,
+      mockAssets
+    )
+
+    expect(result.params.assets_transfer_type).toBe('DestinationReserve')
+    expect(result.params.fees_transfer_type).toBe('LocalReserve')
+  })
+
   it('should use Teleport when forwarding a parachain native asset to/from AssetHub', () => {
     vi.mocked(isTrustedChain).mockReturnValue(false)
     vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
