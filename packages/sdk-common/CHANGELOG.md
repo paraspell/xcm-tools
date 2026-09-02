@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.3.0...sdk-common-v14.3.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **assets:** Update Curio assets 🔧 ([97beb78](https://github.com/paraspell/xcm-tools/commit/97beb78d694c41c3f45e94d44d914c27a6dc5309))
+
 ## [14.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.2.2...sdk-common-v14.3.0) (2026-08-29)
 
 
