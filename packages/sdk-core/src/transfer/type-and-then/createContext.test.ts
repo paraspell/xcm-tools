@@ -99,6 +99,26 @@ describe('getBridgeReserve', () => {
     expect(result).toBe(originChain)
   })
 
+  it('returns the Ethereum bridge asset hub when a snowbridge asset crosses a substrate bridge', () => {
+    const ethLocation: TLocation = {
+      parents: 2,
+      interior: {
+        X2: [
+          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+          { AccountKey20: { network: null, key: '0x0e186357c323c806c1efdad36d217f7a54b63d18' } }
+        ]
+      }
+    }
+
+    expect(getBridgeReserve(bridgeMockApi, 'AssetHubKusama', 'AssetHubPolkadot', ethLocation)).toBe(
+      'AssetHubPolkadot'
+    )
+
+    expect(getBridgeReserve(bridgeMockApi, 'AssetHubPolkadot', 'AssetHubKusama', ethLocation)).toBe(
+      'AssetHubPolkadot'
+    )
+  })
+
   it('returns destination when relay consensus matches location', () => {
     const relayLocation: TLocation = {
       parents: 2,

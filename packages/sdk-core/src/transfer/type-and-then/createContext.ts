@@ -42,13 +42,18 @@ export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends strin
   destination: TChain,
   location: TLocation
 ): TChain | TCustomChain => {
+  const assetConsensus = getJunctionValue(location, 'GlobalConsensus')
+  const ethereumConsensus = getEthereumJunction(api, chain, false).GlobalConsensus
+
+  if (!isExternalChain(destination) && deepEqual(assetConsensus, ethereumConsensus)) {
+    return 'AssetHubPolkadot'
+  }
+
   const expectedConsensus = isExternalChain(destination)
-    ? getEthereumJunction(api, chain, false).GlobalConsensus
+    ? ethereumConsensus
     : { [getRelayChainOf(destination).toLowerCase()]: null }
 
-  const isDestReserve = deepEqual(getJunctionValue(location, 'GlobalConsensus'), expectedConsensus)
-
-  return isDestReserve ? destination : chain
+  return deepEqual(assetConsensus, expectedConsensus) ? destination : chain
 }
 
 const resolveReserveChain = <TApi, TRes, TSigner, TCustomChain extends string = never>(

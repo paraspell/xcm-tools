@@ -1,12 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  getJunctionValue,
+  isExternalChain,
+  isSubstrateBridge,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import type { HopProcessParams, TDryRunChainResult } from '../../types'
 import { type TDryRunOptions, type TDryRunResult } from '../../types'
 import { addXcmVersionHeader, pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
+import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { getBridgeDestFee } from '../fees/getBridgeDestFee'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveCurrency, resolveHopAsset } from '../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -184,9 +192,45 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
     }
   }
 
+  const resolveBridgeDestination = async (): Promise<TDryRunChainResult | undefined> => {
+    if (isExternalChain(destination) || !isSubstrateBridge(origin, destination)) return undefined
+
+    const destApi = api.clone()
+
+    await destApi.init(destination)
+
+    const systemAsset = api.findNativeAssetInfoOrThrow(api.getRelayChainOf(origin))
+
+    const hasSystemFeeAsset = deepEqual(
+      getJunctionValue(asset.location, 'GlobalConsensus'),
+      getEthereumJunction(api, origin, false).GlobalConsensus
+    )
+
+    const destAsset = hasSystemFeeAsset
+      ? api.findAssetInfoOrThrow(destination, { symbol: systemAsset.symbol })
+      : (api.findAssetInfoOnDest(origin, destination, currency, asset) ?? asset)
+
+    return {
+      success: true,
+      fee: await getBridgeDestFee(
+        api,
+        destApi,
+        origin,
+        destination,
+        asset,
+        destAsset,
+        hasSystemFeeAsset,
+        sender,
+        resolvedVersion
+      ),
+      asset: destAsset,
+      forwardedXcms: []
+    }
+  }
+
   const result = {
     origin: originDryModified,
-    destination: traversalResult.destination,
+    destination: traversalResult.destination ?? (await resolveBridgeDestination()),
     hops: traversalResult.hops
   }
 

@@ -38,6 +38,7 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
     dest,
     assetInfo,
     bridgeHopChain,
+    isSubBridge,
     options: { version, pallet, method, overriddenAsset }
   } = context
 
@@ -54,6 +55,8 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
   )
 
   const transferType = bridgeHopChain ? 'DestinationReserve' : resolveTransferType(context)
+
+  const feesTransferType = isSubBridge && !isDotAsset ? 'LocalReserve' : transferType
 
   const feeAsset = Array.isArray(overriddenAsset) ? overriddenAsset.find(a => a.isFeeAsset) : null
 
@@ -76,7 +79,7 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
       assets: addXcmVersionHeader(assets, version),
       assets_transfer_type: transferType,
       remote_fees_id: addXcmVersionHeader(feeMultiAsset.id, version),
-      fees_transfer_type: transferType,
+      fees_transfer_type: feesTransferType,
       custom_xcm_on_dest: addXcmVersionHeader(customXcm, version),
       weight_limit: 'Unlimited'
     }
