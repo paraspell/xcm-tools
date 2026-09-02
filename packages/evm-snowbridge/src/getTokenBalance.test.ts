@@ -123,6 +123,7 @@ describe('getTokenBalance', () => {
     await getTokenBalance(signer, 'WETH')
 
     expect(signer.getAddresses).toHaveBeenCalled()
+
     expect(erc20Balance).toHaveBeenCalledWith(expect.anything(), WETH_ADDRESS, fallback, GATEWAY)
   })
 
