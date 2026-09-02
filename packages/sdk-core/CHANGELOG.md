@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.2...sdk-core-v14.3.3) (2026-09-02)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix CGT substrate bridge transfer 🔧 ([c541a50](https://github.com/paraspell/xcm-tools/commit/c541a5002b93017210db427e76290c1700e76698))
+
 ## [14.3.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.1...sdk-core-v14.3.2) (2026-09-02)
 
 

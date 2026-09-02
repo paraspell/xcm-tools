@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.3](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.3.2...sdk-dedot-v14.3.3) (2026-09-02)
+
+
+### Miscellaneous Chores
+
+* **sdk-dedot:** Synchronize main versions
+
 ## [14.3.2](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.3.1...sdk-dedot-v14.3.2) (2026-09-02)
 
 
