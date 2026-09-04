@@ -5087,6 +5087,29 @@
         "alias": "WETH1"
       },
       {
+        "assetId": "50000546",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000546
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "DOT6"
+      },
+      {
         "assetId": "50000075",
         "symbol": "BILL",
         "decimals": 12,
@@ -5455,6 +5478,29 @@
         "alias": "DOT5"
       },
       {
+        "assetId": "50000545",
+        "symbol": "USDt",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000545
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "USDt5"
+      },
+      {
         "assetId": "50000534",
         "symbol": "DOT",
         "decimals": 10,
@@ -5614,6 +5660,29 @@
         },
         "existentialDeposit": "10000",
         "alias": "USDt2"
+      },
+      {
+        "assetId": "50000547",
+        "symbol": "DOT",
+        "decimals": 10,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000547
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "DOT7"
       },
       {
         "assetId": "201",
