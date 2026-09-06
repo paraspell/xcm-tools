@@ -139,7 +139,9 @@ const createMockApi = (mockTx: TDedotExtrinsic) => ({
       quotePriceExactTokensForTokens: vi.fn().mockResolvedValue(42n),
     },
   },
-  registry: {},
+  registry: {
+    findErrorMeta: vi.fn(),
+  },
   metadata: {
     latest: {
       pallets: [] as Array<{
@@ -1852,18 +1854,25 @@ describe("DedotApi", () => {
       expect(result).toBe(mockTxHash);
     });
 
-    it("should throw SubmitTransactionError when finalized with a module dispatch error", async () => {
+    it("should throw SubmitTransactionError with decoded module error when finalized with a dispatch error", async () => {
+      const dispatchError = {
+        type: "Module",
+        value: { index: 5, error: "0x02000000" },
+      };
       const mockTx = {
         signAndSend: vi.fn().mockReturnValue({
           untilFinalized: vi.fn().mockResolvedValue({
             txHash: "0xfailed",
-            dispatchError: {
-              type: "Module",
-              value: { index: 5, error: "0x02000000" },
-            },
+            dispatchError,
           }),
         }),
       } as unknown as TDedotExtrinsic;
+
+      mockApiRaw.registry.findErrorMeta.mockReturnValue({
+        pallet: "Balances",
+        name: "InsufficientBalance",
+        docs: ["Balance too low to send value."],
+      });
 
       await expect(
         dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
@@ -1871,8 +1880,28 @@ describe("DedotApi", () => {
       await expect(
         dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
       ).rejects.toThrow(
-        '{"type":"Module","value":{"index":5,"error":"0x02000000"}}',
+        "Balances.InsufficientBalance: Balance too low to send value.",
       );
+      expect(mockApiRaw.registry.findErrorMeta).toHaveBeenCalledWith(
+        dispatchError,
+      );
+    });
+
+    it("should fall back to the raw dispatch error when no error metadata is found", async () => {
+      const mockTx = {
+        signAndSend: vi.fn().mockReturnValue({
+          untilFinalized: vi.fn().mockResolvedValue({
+            txHash: "0xfailed",
+            dispatchError: { type: "BadOrigin" },
+          }),
+        }),
+      } as unknown as TDedotExtrinsic;
+
+      mockApiRaw.registry.findErrorMeta.mockReturnValue(undefined);
+
+      await expect(
+        dedotApi.signAndSubmitFinalized(mockTx, "//Alice"),
+      ).rejects.toThrow('{"type":"BadOrigin"}');
     });
 
     it("should propagate errors from untilFinalized", async () => {
