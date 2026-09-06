@@ -1,4 +1,4 @@
-import type { TGetXcmFeeResult } from '@paraspell/sdk-core';
+import type { TDryRunFailure, TGetXcmFeeResult } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
@@ -103,7 +103,13 @@ export const getRouterFees = async <
     ...(!origin && !destination && { fee: 0n }),
   };
 
-  const dryRunError = sendingChain?.dryRunError ?? receivingChain?.dryRunError;
+  const swapDryRunError: TDryRunFailure<TCustomChain> | undefined = swapChain.dryRunError && {
+    ...swapChain.dryRunError,
+    chainKind: !sendingChain ? 'origin' : !receivingChain ? 'destination' : 'hop',
+    chain: exchange.chain,
+  };
+
+  const dryRunError = sendingChain?.dryRunError ?? swapDryRunError ?? receivingChain?.dryRunError;
 
   return {
     success: !dryRunError,
