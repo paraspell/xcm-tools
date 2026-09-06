@@ -942,7 +942,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const account = isSenderSigner(sender) ? sender : createKeyringPair(sender);
     const result = await tx.signAndSend(account).untilFinalized();
     if (result.dispatchError) {
-      throw new SubmitTransactionError(JSON.stringify(result.dispatchError));
+      const meta = this.api.registry.findErrorMeta(result.dispatchError);
+      throw new SubmitTransactionError(
+        meta
+          ? `${meta.pallet}.${meta.name}: ${meta.docs.join(" ")}`
+          : JSON.stringify(result.dispatchError),
+      );
     }
     return result.txHash;
   }

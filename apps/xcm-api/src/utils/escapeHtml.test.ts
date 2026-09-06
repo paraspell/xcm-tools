@@ -15,4 +15,8 @@ describe('escapeHtml', () => {
     expect(escapeHtml('Increase API usage')).toBe('Increase API usage');
     expect(escapeHtml('')).toBe('');
   });
+
+  it('should coerce non-string values before escaping', () => {
+    expect(escapeHtml(500)).toBe('500');
+  });
 });
