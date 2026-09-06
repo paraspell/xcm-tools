@@ -238,6 +238,97 @@ describe('getRouterFees', () => {
       expect(result.dryRunError?.reason).toBe('InsufficientBalance');
       expect(result.dryRunError?.chainKind).toBe('origin');
     });
+
+    it('classifies swap chain failure as origin when no origin is specified', async () => {
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: { ...swapFee, dryRunError: { reason: 'NoDeal' } },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.success).toBe(false);
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'origin',
+        chain: exchangeChain,
+      });
+    });
+
+    it('classifies swap chain failure as destination when only origin is specified', async () => {
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: { ...swapFee, dryRunError: { reason: 'NoDeal' } },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.success).toBe(false);
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'destination',
+        chain: exchangeChain,
+      });
+    });
+
+    it('classifies swap chain failure as hop when origin and destination are specified', async () => {
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
+      options.destination = { chain: 'Darwinia' } as unknown as TDestinationInfo;
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: { ...swapFee, dryRunError: { reason: 'NoDeal' } },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.success).toBe(false);
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'hop',
+        chain: exchangeChain,
+      });
+    });
+
+    it('prefers sending chain failure over swap chain failure', async () => {
+      options.origin = { chain: 'Acala' } as unknown as TOriginInfo<unknown>;
+      vi.mocked(getToExchangeFee).mockResolvedValue({
+        ...toExchangeFeeValue,
+        dryRunError: { reason: 'InsufficientBalance', chainKind: 'origin', chain: 'Acala' },
+      });
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: { ...swapFee, dryRunError: { reason: 'NoDeal' } },
+        amountOut: swapAmountOut,
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.dryRunError).toEqual({
+        reason: 'InsufficientBalance',
+        chainKind: 'origin',
+        chain: 'Acala',
+      });
+    });
+
+    it('prefers swap chain failure over receiving chain failure', async () => {
+      options.destination = { chain: 'Darwinia' } as unknown as TDestinationInfo;
+      vi.mocked(getSwapFee).mockResolvedValue({
+        result: { ...swapFee, dryRunError: { reason: 'NoDeal' } },
+        amountOut: swapAmountOut,
+      });
+      vi.mocked(getFromExchangeFee).mockResolvedValue({
+        ...toDestFeeValue,
+        dryRunError: { reason: 'Filtered', chainKind: 'destination', chain: 'Darwinia' },
+      });
+
+      const result = await getRouterFees(dex, options, false);
+
+      expect(result.dryRunError).toEqual({
+        reason: 'NoDeal',
+        chainKind: 'origin',
+        chain: exchangeChain,
+      });
+    });
   });
 
   it('uses execute transfer for AssetHub DEX with destination only (origin undefined)', async () => {
