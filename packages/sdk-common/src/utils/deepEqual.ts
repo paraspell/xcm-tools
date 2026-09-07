@@ -2,8 +2,13 @@ export const isPrimitive = (obj: unknown): boolean => {
   return obj !== Object(obj)
 }
 
+const isNumeric = (value: unknown): value is number | bigint =>
+  typeof value === 'number' || typeof value === 'bigint'
+
 export const deepEqual = (obj1: unknown, obj2: unknown): boolean => {
   if (obj1 === obj2) return true
+
+  if (isNumeric(obj1) && isNumeric(obj2)) return obj1 == obj2
 
   if (isPrimitive(obj1) && isPrimitive(obj2)) return obj1 === obj2
 

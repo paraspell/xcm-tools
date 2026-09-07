@@ -1,4 +1,5 @@
 import type { TJunctionType, TLocation } from '../../types'
+import { deepEqual } from '../deepEqual'
 import { flattenJunctions } from './flattenJunctions'
 
 const findMatchingJunction = (location: TLocation, junctionType: TJunctionType) => {
@@ -42,9 +43,5 @@ export const hasJunction = (
   }
 
   const jv = (matchingJunction as Record<string, unknown>)[junctionType]
-  try {
-    return JSON.stringify(jv) === JSON.stringify(junctionValue)
-  } catch {
-    return jv === junctionValue
-  }
+  return deepEqual(jv, junctionValue)
 }
