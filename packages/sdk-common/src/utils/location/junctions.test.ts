@@ -63,7 +63,7 @@ describe('hasJunction', () => {
     expect(hasJunction(location, 'Parachain')).toBe(false)
   })
 
-  it('returns true when a matching junction exists and JSON.stringify fails', () => {
+  it('compares bigint junction values by numeric value', () => {
     const location: TLocation = {
       parents: Parents.ZERO,
       interior: {
@@ -72,6 +72,8 @@ describe('hasJunction', () => {
     }
     vi.mocked(flattenJunctions).mockReturnValue([{ Parachain: 1000n }])
     expect(hasJunction(location, 'Parachain', 1000n)).toBe(true)
+    expect(hasJunction(location, 'Parachain', 1000)).toBe(true)
+    expect(hasJunction(location, 'Parachain', 1001n)).toBe(false)
   })
 })
 

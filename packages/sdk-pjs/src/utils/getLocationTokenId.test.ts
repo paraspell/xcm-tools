@@ -50,6 +50,24 @@ describe('getLocationTokenId', () => {
     expect(getOtherAssets).toHaveBeenCalledWith(mockChain)
   })
 
+  it('should match comma-formatted GeneralIndex values against the asset id', () => {
+    const location: TLocation = {
+      parents: 1,
+      interior: {
+        X2: [{ PalletInstance: '50' }, { GeneralIndex: '1,984' }]
+      }
+    }
+
+    const foreignAssets: TAssetInfo[] = [
+      { assetId: '1984', symbol: 'USDT', decimals: 6, location },
+      { assetId: '1337', symbol: 'USDC', decimals: 6, location }
+    ]
+
+    vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
+
+    expect(getLocationTokenId(location, mockChain)).toBe('USDT')
+  })
+
   it('should return null if foreign asset is not found', () => {
     const location: TLocation = {
       parents: 1,

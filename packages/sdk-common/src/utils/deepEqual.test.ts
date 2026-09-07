@@ -213,4 +213,12 @@ describe('deepEqual', () => {
     }
     expect(deepEqual(objA, objB)).toBe(false)
   })
+
+  it('should compare bigint and number values numerically', () => {
+    expect(deepEqual(1337n, 1337)).toBe(true)
+    expect(deepEqual(1337, 1337n)).toBe(true)
+    expect(deepEqual(1338n, 1337)).toBe(false)
+    expect(deepEqual(1n, true)).toBe(false)
+    expect(deepEqual({ GeneralIndex: 1337n }, { GeneralIndex: 1337 })).toBe(true)
+  })
 })

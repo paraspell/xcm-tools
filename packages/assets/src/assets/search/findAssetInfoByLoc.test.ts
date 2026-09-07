@@ -21,7 +21,19 @@ const usdt: TAssetInfo = {
   }
 }
 
-const assets = [relayNative, usdt]
+const usdc: TAssetInfo = {
+  symbol: 'USDC',
+  assetId: '1337',
+  decimals: 6,
+  location: {
+    parents: 1,
+    interior: {
+      X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337 }]
+    }
+  }
+}
+
+const assets = [relayNative, usdt, usdc]
 
 describe('findAssetInfoByLoc', () => {
   it('matches the canonical { Here: null } object form', () => {
@@ -59,5 +71,15 @@ describe('findAssetInfoByLoc', () => {
       interior: 'Here'
     })
     expect(result).toBeUndefined()
+  })
+
+  it('matches bigint junction values against numeric asset locations', () => {
+    const result = findAssetInfoByLoc(assets, {
+      parents: 1,
+      interior: {
+        X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337n }]
+      }
+    })
+    expect(result).toBe(usdc)
   })
 })

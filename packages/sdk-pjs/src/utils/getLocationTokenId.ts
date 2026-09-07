@@ -20,8 +20,8 @@ export const getLocationTokenId = (location: TLocation, chain: TSubstrateChain):
     hasJunction(location, 'PalletInstance', '50') &&
     hasJunction(location, 'GeneralIndex')
   ) {
-    const assetId = getJunctionValue<string>(location, 'GeneralIndex')
-    return foreignAssets.find(asset => asset.assetId === String(assetId))?.symbol ?? null
+    const assetId = String(getJunctionValue(location, 'GeneralIndex')).replace(/,/g, '')
+    return foreignAssets.find(asset => asset.assetId === assetId)?.symbol ?? null
   }
 
   return null
