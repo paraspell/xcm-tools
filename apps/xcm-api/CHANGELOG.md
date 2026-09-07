@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.3.3...xcm-api-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **swap:** Fix swap fee assets relaychain checks 🔧 ([0a19a8f](https://github.com/paraspell/xcm-tools/commit/0a19a8ffd196e99ceac886add7d8c46e8d4016eb))
+* **xcm-api:** Escape html in contact form 🔧 ([96c4b3c](https://github.com/paraspell/xcm-tools/commit/96c4b3ca52a838c92ea84da3475c713d378da1f1))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.3.2...xcm-api-v14.3.3) (2026-09-02)
 
 

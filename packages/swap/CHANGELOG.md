@@ -1,5 +1,15 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.3...swap-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Hydration Erc20 assets minting 🪙 ([ba5ca0a](https://github.com/paraspell/xcm-tools/commit/ba5ca0ac036c75a7ac1239235024c814b4438324))
+* **swap:** Fix dropped swap dryRun error 🛠️ ([6eb6471](https://github.com/paraspell/xcm-tools/commit/6eb6471e10dd1559fb2bb2040e4a477a3f861b7e))
+* **swap:** Fix swap fee assets relaychain checks 🔧 ([0a19a8f](https://github.com/paraspell/xcm-tools/commit/0a19a8ffd196e99ceac886add7d8c46e8d4016eb))
+* **swap:** Handle exchange scenario fee asset resolution 🪄 ([9e20374](https://github.com/paraspell/xcm-tools/commit/9e2037434462deef00f38dd58c5e06f05e25d641))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.2...swap-v14.3.3) (2026-09-02)
 
 
