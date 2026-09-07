@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.3.3...sdk-common-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Handle junction bigint values 🔧 ([a3a6b8f](https://github.com/paraspell/xcm-tools/commit/a3a6b8f74230881bc879f62c6ab0aa124e293be2))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.3.2...sdk-common-v14.3.3) (2026-09-02)
 
 

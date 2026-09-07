@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.3.3...sdk-dedot-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **sdk-dedot:** Check dispatch error after tx is finalized ⚙️ ([f74bc27](https://github.com/paraspell/xcm-tools/commit/f74bc27215aae029fccaad761fea35146759f1c7))
+* **swap:** Fix swap fee assets relaychain checks 🔧 ([0a19a8f](https://github.com/paraspell/xcm-tools/commit/0a19a8ffd196e99ceac886add7d8c46e8d4016eb))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.3.2...sdk-dedot-v14.3.3) (2026-09-02)
 
 

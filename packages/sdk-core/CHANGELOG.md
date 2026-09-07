@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.3...sdk-core-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Hydration Erc20 assets minting 🪙 ([ba5ca0a](https://github.com/paraspell/xcm-tools/commit/ba5ca0ac036c75a7ac1239235024c814b4438324))
+* **sdk-core:** Rollback EnergyWebX back to reserve_transfer_assets 🔧 ([470c25b](https://github.com/paraspell/xcm-tools/commit/470c25b6095ec747dc7096c1d5a27e61851ba5f0))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.2...sdk-core-v14.3.3) (2026-09-02)
 
 

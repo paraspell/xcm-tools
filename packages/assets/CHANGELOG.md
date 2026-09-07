@@ -1,5 +1,19 @@
 # Changelog
 
+## [14.3.4](https://github.com/paraspell/xcm-tools/compare/assets-v14.3.3...assets-v14.3.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Hydration Erc20 assets minting 🪙 ([ba5ca0a](https://github.com/paraspell/xcm-tools/commit/ba5ca0ac036c75a7ac1239235024c814b4438324))
+* **sdk-core:** Handle junction bigint values 🔧 ([a3a6b8f](https://github.com/paraspell/xcm-tools/commit/a3a6b8f74230881bc879f62c6ab0aa124e293be2))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([4c01eae](https://github.com/paraspell/xcm-tools/commit/4c01eaef3246a0829961afb451d18de8d50ffc89))
+* **swap:** Update swap assets 📋 ([4c01eae](https://github.com/paraspell/xcm-tools/commit/4c01eaef3246a0829961afb451d18de8d50ffc89))
+
 ## [14.3.3](https://github.com/paraspell/xcm-tools/compare/assets-v14.3.2...assets-v14.3.3) (2026-09-02)
 
 
