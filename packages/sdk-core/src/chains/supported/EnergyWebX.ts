@@ -36,7 +36,9 @@ class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
       throw new ScenarioNotSupportedError({ chain: this.chain, scenario })
     }
 
-    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    // EnergyWebX has to stay on reserve_transfer_assets for now.
+    // limited_reserve_transfer_assets causes 'Extrinsic is now allowed error'
+    return transferPolkadotXcm(input, 'reserve_transfer_assets')
   }
 
   isRelayToParaEnabled(): boolean {
