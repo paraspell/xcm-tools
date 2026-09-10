@@ -8,6 +8,7 @@
 import { lowercaseFirstLetter, snakeToCamel } from "@paraspell/sdk-common";
 import type {
   TAssetInfo,
+  TBridgedXcmParams,
   TBridgeStatus,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
@@ -33,6 +34,7 @@ import {
   addXcmVersionHeader,
   BatchMode,
   createAssetId,
+  createBridgedXcmPrefix,
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
@@ -45,6 +47,7 @@ import {
   PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
+  RoutingResolutionError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   UnsupportedOperationError,
@@ -615,8 +618,8 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     if (
       chain.startsWith("BridgeHub") &&
-      execFeeRes?.success === false &&
-      execFeeRes?.value?.type === "AssetNotFound"
+      execFeeRes?.isErr &&
+      execFeeRes.err === "AssetNotFound"
     ) {
       execFee = await this.getBridgeHubFallbackExecFee(
         chain,
@@ -710,7 +713,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const fallbackExecFeeRes =
       await this.api.call.xcmPaymentApi.queryWeightToAssetFee(
         weightValue,
-        addXcmVersionHeader(RELAY_LOCATION, version),
+        transform(addXcmVersionHeader(RELAY_LOCATION, version)),
       );
 
     const fallbackOk = fallbackExecFeeRes?.value;
@@ -842,6 +845,35 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       },
       asset,
     };
+  }
+
+  createBridgedForwardedXcms(forwardedXcm: any, params: TBridgedXcmParams) {
+    const version: Version = forwardedXcm.type;
+
+    const exportMessage = forwardedXcm.value.find(
+      (instruction: any) => instruction.type === "ExportMessage",
+    );
+
+    if (!exportMessage) {
+      throw new RoutingResolutionError(
+        "ExportMessage instruction not found in the forwarded XCM",
+      );
+    }
+
+    const destination = addXcmVersionHeader(params.destination, version);
+
+    return [
+      transform(destination),
+      [
+        {
+          type: version,
+          value: [
+            ...transform(createBridgedXcmPrefix(version, params)),
+            ...exportMessage.value.xcm,
+          ],
+        },
+      ],
+    ];
   }
 
   async getBridgeStatus() {

@@ -151,7 +151,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     return {
       parents: Parents.TWO,
       interior: {
-        X2: [{ GlobalConsensus: { [originRelay]: null } }, { Parachain: resolveParaId(origin) }]
+        X1: [{ GlobalConsensus: { [originRelay]: null } }]
       }
     }
   }

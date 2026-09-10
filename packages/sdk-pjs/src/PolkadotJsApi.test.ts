@@ -13,6 +13,7 @@ import {
   localizeLocation,
   MissingChainApiError,
   RELAY_LOCATION,
+  RoutingResolutionError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   type TLocation,
@@ -2261,6 +2262,54 @@ describe('PolkadotJsApi', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()
       expect(status).toEqual('Normal')
+    })
+  })
+
+  describe('createBridgedForwardedXcms', () => {
+    const params = {
+      palletIndex: 53,
+      relay: 'Polkadot' as const,
+      paraId: 1000,
+      destination: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
+    }
+
+    beforeEach(() => {
+      vi.mocked(addXcmVersionHeader).mockImplementation((xcm, version) => ({ [version]: xcm }))
+    })
+
+    it('prepends the bridge origin instructions to the exported xcm', () => {
+      const forwardedXcm = {
+        v5: [
+          { unpaidExecution: {} },
+          { exportMessage: { network: 'Kusama', destination: {}, xcm: [{ clearOrigin: null }] } }
+        ]
+      }
+
+      expect(polkadotApi.createBridgedForwardedXcms(forwardedXcm, params)).toEqual([
+        { V5: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } } },
+        [
+          {
+            V5: [
+              { DescendOrigin: { X1: [{ PalletInstance: 53 }] } },
+              { UniversalOrigin: { GlobalConsensus: { polkadot: null } } },
+              { DescendOrigin: { X1: [{ Parachain: 1000 }] } },
+              { clearOrigin: null }
+            ]
+          }
+        ]
+      ])
+    })
+
+    it('throws when the forwarded xcm has no ExportMessage', () => {
+      expect(() => polkadotApi.createBridgedForwardedXcms({ v5: [] }, params)).toThrow(
+        RoutingResolutionError
+      )
+    })
+
+    it('throws when the forwarded xcm version is unknown', () => {
+      expect(() => polkadotApi.createBridgedForwardedXcms({ v9: [] }, params)).toThrow(
+        RoutingResolutionError
+      )
     })
   })
 
