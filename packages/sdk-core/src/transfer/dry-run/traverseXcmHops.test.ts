@@ -1,4 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
+import { getPalletIndex } from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -8,6 +9,10 @@ import type { HopTraversalConfig } from '../../types'
 import { getParaEthTransferFees } from '../eth-transfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
+vi.mock('@paraspell/pallets', async importActual => ({
+  ...(await importActual()),
+  getPalletIndex: vi.fn()
+}))
 vi.mock('../../chains/getTChain')
 vi.mock('../eth-transfer')
 vi.mock('../../constants', async importOriginal => ({
@@ -238,6 +243,98 @@ describe('traverseXcmHops', () => {
 
     await expect(traverseXcmHops(config)).rejects.toThrow('Processing failed')
     expect(disconnectSpy).toHaveBeenCalled()
+  })
+
+  describe('substrate bridge', () => {
+    const exportXcm = { value: ['export'] }
+    const bridgedXcms = [[], [{ value: ['bridged'] }]]
+
+    const arrange = (relayOf: (chain: string) => string) => {
+      const createBridgedSpy = vi.fn().mockReturnValue(bridgedXcms)
+      const processHopSpy = vi
+        .fn()
+        .mockResolvedValueOnce({ fee: 1n })
+        .mockResolvedValueOnce({ fee: 2n })
+
+      const api = {
+        ...mockApi,
+        getRelayChainOf: vi.fn().mockImplementation(relayOf),
+        getParaId: vi
+          .fn()
+          .mockImplementation((chain: string) => (chain.startsWith('AssetHub') ? 1000 : 1002)),
+        createBridgedForwardedXcms: createBridgedSpy
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+      const config: HopTraversalConfig<unknown, unknown, unknown, unknown> = {
+        api,
+        origin: 'AssetHubPolkadot',
+        destination: 'AssetHubKusama',
+        asset,
+        initialForwardedXcms: [[], [exportXcm]],
+        initialDestParaId: 1002,
+        processHop: processHopSpy,
+        shouldContinue: vi.fn().mockReturnValue(true),
+        extractNextHopData: vi
+          .fn()
+          .mockReturnValue({ forwardedXcms: [[], []], destParaId: undefined })
+      }
+
+      vi.mocked(getTSubstrateChain).mockImplementation((_paraId, relay) =>
+        relay === 'Kusama' ? 'AssetHubKusama' : 'BridgeHubPolkadot'
+      )
+
+      return { config, createBridgedSpy, processHopSpy }
+    }
+
+    const relayOfChain = (chain: string) => (chain.endsWith('Kusama') ? 'Kusama' : 'Polkadot')
+
+    it('synthesizes the destination hop from the exported message', async () => {
+      const { config, createBridgedSpy, processHopSpy } = arrange(relayOfChain)
+      vi.mocked(getPalletIndex).mockReturnValue(53)
+
+      const result = await traverseXcmHops(config)
+
+      expect(getPalletIndex).toHaveBeenCalledWith('BridgeHubKusama', 'BridgePolkadotMessages')
+      expect(createBridgedSpy).toHaveBeenCalledWith(exportXcm, {
+        palletIndex: 53,
+        relay: 'Polkadot',
+        paraId: 1000,
+        destination: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
+      })
+      expect(getTSubstrateChain).toHaveBeenLastCalledWith(1000, 'Kusama')
+      expect(processHopSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          currentChain: 'AssetHubKusama',
+          currentOrigin: 'BridgeHubKusama',
+          forwardedXcms: bridgedXcms,
+          isDestination: true
+        })
+      )
+      expect(result).toEqual({
+        hops: [{ chain: 'BridgeHubPolkadot', result: { fee: 1n } }],
+        destination: { fee: 2n },
+        lastProcessedChain: 'AssetHubKusama'
+      })
+    })
+
+    it('throws when the bridge messages pallet index is unknown', async () => {
+      const { config } = arrange(relayOfChain)
+      vi.mocked(getPalletIndex).mockReturnValue(undefined)
+
+      await expect(traverseXcmHops(config)).rejects.toThrow(RoutingResolutionError)
+    })
+
+    it('keeps the regular hop data when the relay has no bridge config', async () => {
+      const { config, createBridgedSpy } = arrange(() => 'Westend')
+
+      const result = await traverseXcmHops(config)
+
+      expect(createBridgedSpy).not.toHaveBeenCalled()
+      expect(result).toEqual({
+        hops: [{ chain: 'BridgeHubPolkadot', result: { fee: 1n } }],
+        lastProcessedChain: 'BridgeHubPolkadot'
+      })
+    })
   })
 })
 

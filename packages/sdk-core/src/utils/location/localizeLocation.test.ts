@@ -272,7 +272,7 @@ describe('localizeLocation', () => {
       expect(result).toEqual({
         parents: Parents.TWO,
         interior: {
-          X2: [{ GlobalConsensus: { kusama: null } }, { Parachain: 2001 }]
+          X1: [{ GlobalConsensus: { kusama: null } }]
         }
       })
     })

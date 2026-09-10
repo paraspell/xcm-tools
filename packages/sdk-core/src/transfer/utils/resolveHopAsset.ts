@@ -1,6 +1,7 @@
 import { type TAssetInfo } from '@paraspell/assets'
 import { isExternalChain } from '@paraspell/sdk-common'
 
+import { RELAY_LOCATION } from '../../constants'
 import type { TResolveHopParams } from '../../types'
 import { getRelayChainOf } from '../../utils'
 
@@ -21,7 +22,12 @@ export const resolveHopAsset = <TApi, TRes, TSigner, TCustomChain extends string
     (typeof destination === 'string' && isExternalChain(destination)) || isRelayAssetIncluded
 
   if (useRelayAssetAsFee) {
-    return api.findNativeAssetInfoOrThrow(getRelayChainOf(currentChain))
+    const originRelay = api.getRelayChainOf(originChain)
+    return getRelayChainOf(currentChain) === originRelay
+      ? api.findNativeAssetInfoOrThrow(originRelay)
+      : api.findAssetInfoOrThrow(currentChain, {
+          location: api.localizeLocation(currentChain, RELAY_LOCATION, originChain)
+        })
   }
 
   if (hasPassedExchange && swapConfig && currentChain !== swapConfig.exchangeChain) {

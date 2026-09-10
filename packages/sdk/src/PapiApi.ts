@@ -11,6 +11,7 @@ import type { ahp, bridgeHub } from '@paraspell/descriptors'
 import { hydration } from '@paraspell/descriptors'
 import type {
   TAssetInfo,
+  TBridgedXcmParams,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunError,
@@ -35,6 +36,7 @@ import {
   BatchMode,
   buildDryRunError,
   createAssetId,
+  createBridgedXcmPrefix,
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
@@ -51,6 +53,7 @@ import {
   PolkadotApi,
   RELAY_LOCATION,
   replaceBigInt,
+  RoutingResolutionError,
   RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
@@ -863,6 +866,30 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       forwardedXcms,
       destParaId
     })
+  }
+
+  createBridgedForwardedXcms(forwardedXcm: any, params: TBridgedXcmParams) {
+    const version: Version = forwardedXcm.type
+
+    const exportMessage = forwardedXcm.value.find(
+      (instruction: any) => instruction.type === 'ExportMessage'
+    )
+
+    if (!exportMessage) {
+      throw new RoutingResolutionError('ExportMessage instruction not found in the forwarded XCM')
+    }
+
+    const destination = addXcmVersionHeader(params.destination, version)
+
+    return [
+      transform(destination),
+      [
+        {
+          type: version,
+          value: [...transform(createBridgedXcmPrefix(version, params)), ...exportMessage.value.xcm]
+        }
+      ]
+    ]
   }
 
   async getBridgeStatus() {

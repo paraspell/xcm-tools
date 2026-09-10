@@ -117,6 +117,7 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
     })
 
   getBridgeStatus = (): Promise<TBridgeStatus> => Promise.resolve('Normal')
+  createBridgedForwardedXcms = () => []
   disconnect = () => Promise.resolve()
   validateSubstrateAddress = () => true
   deriveAddress = () => ''
