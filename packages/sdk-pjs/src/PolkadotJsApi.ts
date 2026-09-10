@@ -7,6 +7,7 @@
 import { lowercaseFirstLetter, snakeToCamel } from '@paraspell/sdk-common'
 import type {
   TAssetInfo,
+  TBridgedXcmParams,
   TBridgeStatus,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
@@ -25,13 +26,13 @@ import type {
   TSubstrateChain,
   TSystemProperties,
   TUrl,
-  TWeight,
-  Version
+  TWeight
 } from '@paraspell/sdk-core'
 import {
   addXcmVersionHeader,
   BatchMode,
   createAssetId,
+  createBridgedXcmPrefix,
   createClientCache,
   createClientPoolHelpers,
   EXTENSION_MS,
@@ -44,9 +45,11 @@ import {
   normalizeLocation,
   PolkadotApi,
   RELAY_LOCATION,
+  RoutingResolutionError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   UnsupportedOperationError,
+  Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
 import { buildDryRunError, resolveModuleError } from '@paraspell/sdk-core'
@@ -753,6 +756,34 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     const fee = BigInt(feeAmount.replace(/,/g, ''))
 
     return { success: true, fee, asset, weight, forwardedXcms, destParaId }
+  }
+
+  createBridgedForwardedXcms(forwardedXcm: any, params: TBridgedXcmParams) {
+    const [versionKey] = Object.keys(forwardedXcm)
+
+    const version = Object.values(Version).find(v => v.toLowerCase() === versionKey.toLowerCase())
+
+    if (!version) {
+      throw new RoutingResolutionError(`Unsupported XCM version ${versionKey} in the forwarded XCM`)
+    }
+
+    const exportMessage = forwardedXcm[versionKey].find(
+      (instruction: any) => 'exportMessage' in instruction
+    )
+
+    if (!exportMessage) {
+      throw new RoutingResolutionError('ExportMessage instruction not found in the forwarded XCM')
+    }
+
+    return [
+      addXcmVersionHeader(params.destination, version),
+      [
+        addXcmVersionHeader(
+          [...createBridgedXcmPrefix(version, params), ...exportMessage.exportMessage.xcm],
+          version
+        )
+      ]
+    ]
   }
 
   async getBridgeStatus() {

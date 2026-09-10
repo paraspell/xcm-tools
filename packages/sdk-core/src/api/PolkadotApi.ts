@@ -46,6 +46,7 @@ import type {
   BatchMode,
   TApiOrUrl,
   TApiType,
+  TBridgedXcmParams,
   TBridgeStatus,
   TBuilderOptions,
   TCustomChainEntryHydrated,
@@ -320,6 +321,8 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     options: TDryRunXcmBaseOptions<TRes, TCustomChain>
   ): Promise<TDryRunChainResult>
   abstract getBridgeStatus(): Promise<TBridgeStatus>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  abstract createBridgedForwardedXcms(forwardedXcm: any, params: TBridgedXcmParams): any
   abstract disconnect(force?: boolean): Promise<void>
   abstract validateSubstrateAddress(address: string): boolean
   abstract deriveAddress(path: string): string

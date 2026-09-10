@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  deepEqual,
-  getJunctionValue,
-  isExternalChain,
-  isSubstrateBridge,
-  type TSubstrateChain
-} from '@paraspell/sdk-common'
+import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type {
@@ -20,12 +14,10 @@ import type {
 } from '../../types'
 import { pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { addEthereumBridgeFees, getDryRunError, traverseXcmHops } from '../dry-run'
 import { resolveCurrency } from '../utils/resolveCurrency'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { resolveHopAsset } from '../utils/resolveHopAsset'
-import { getBridgeDestFee } from './getBridgeDestFee'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 
@@ -265,35 +257,6 @@ export const getXcmFeeOnce = async <
     destFeeType = destFallback.feeType
     destSufficient = destFallback.sufficient
     destAsset = api.findNativeAssetInfoOrThrow(destination)
-  } else if (!isExternalChain(destination) && isSubstrateBridge(origin, destination)) {
-    const destApi = api.clone()
-
-    await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-
-    const systemAsset = api.findNativeAssetInfoOrThrow(api.getRelayChainOf(origin))
-
-    const hasSystemFeeAsset = deepEqual(
-      getJunctionValue(asset.location, 'GlobalConsensus'),
-      getEthereumJunction(api, origin, false).GlobalConsensus
-    )
-
-    destAsset = hasSystemFeeAsset
-      ? api.findAssetInfoOrThrow(destination, { symbol: systemAsset.symbol })
-      : (api.findAssetInfoOnDest(origin, destination, currency, asset) ?? asset)
-
-    destFee = await getBridgeDestFee(
-      api,
-      destApi,
-      origin,
-      destination,
-      asset,
-      destAsset,
-      hasSystemFeeAsset,
-      recipient,
-      resolvedVersion
-    )
-    destFeeType = 'dryRun'
-    destSufficient = true
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'

@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../api'
 import type { HopProcessParams, HopTraversalResult, TDryRunOptions } from '../../types'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { getBridgeDestFee } from '../fees/getBridgeDestFee'
 import { resolveHopAsset } from '../utils'
 import { dryRunInternal } from './dryRunInternal'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
@@ -23,7 +22,6 @@ vi.mock('../../utils')
 vi.mock('../utils/resolveFeeAsset')
 vi.mock('../utils/resolveHopAsset')
 vi.mock('./traverseXcmHops')
-vi.mock('../fees/getBridgeDestFee')
 vi.mock('../fees/getDestXcmFee', () => ({
   createOriginLocation: vi.fn().mockReturnValue({})
 }))
@@ -725,78 +723,6 @@ describe('dryRunInternal', () => {
           destination: 'Ethereum'
         })
       )
-    })
-  })
-
-  describe('substrate bridge destination', () => {
-    const ETH_LOCATION = {
-      parents: 2,
-      interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }] }
-    }
-    const DOT_LOCATION = {
-      parents: 2,
-      interior: { X1: [{ GlobalConsensus: { polkadot: null } }] }
-    }
-    const bridgedSystemAsset = { symbol: 'KSM', decimals: 12 } as TAssetInfo
-
-    const arrange = (originLocation: unknown) => {
-      const api = createFakeApi({
-        success: true,
-        fee: 1_000n,
-        forwardedXcms: [null, [{ value: [1] }]],
-        destParaId: 1002
-      })
-      vi.spyOn(api, 'getRelayChainOf').mockReturnValue('Kusama')
-      vi.spyOn(api, 'findAssetInfoOrThrow').mockImplementation(chain =>
-        chain === 'AssetHubPolkadot'
-          ? bridgedSystemAsset
-          : ({ symbol: 'X', decimals: 12, location: originLocation } as TAssetInfo)
-      )
-      vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue({ symbol: 'KSM' } as TAssetInfo)
-      vi.mocked(traverseXcmHops).mockResolvedValue({
-        hops: [{ chain: 'BridgeHubKusama', result: { success: true, fee: 10n } }],
-        lastProcessedChain: 'BridgeHubKusama'
-      } as unknown as HopTraversalResult<unknown>)
-      vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
-      vi.mocked(getBridgeDestFee).mockResolvedValue(4321n)
-      return api
-    }
-
-    it('adds a destination result when the traversal stops at the bridge', async () => {
-      const api = arrange(ETH_LOCATION)
-
-      const res = await dryRunInternal(
-        createOptions(api, { origin: 'AssetHubKusama', destination: 'AssetHubPolkadot' })
-      )
-
-      expect(res.destination).toEqual({
-        success: true,
-        fee: 4321n,
-        asset: bridgedSystemAsset,
-        forwardedXcms: []
-      })
-    })
-
-    it('pays with the transferred asset when it is not a Snowbridge asset', async () => {
-      const api = arrange(DOT_LOCATION)
-      const destAsset = { symbol: 'DOT' } as TAssetInfo
-      vi.spyOn(api, 'findAssetInfoOnDest').mockReturnValue(destAsset)
-
-      await dryRunInternal(
-        createOptions(api, { origin: 'AssetHubKusama', destination: 'AssetHubPolkadot' })
-      )
-
-      const [, , , , , feeAsset, hasSystemFeeAsset] = vi.mocked(getBridgeDestFee).mock.calls[0]
-      expect([feeAsset, hasSystemFeeAsset]).toEqual([destAsset, false])
-    })
-
-    it('leaves the destination undefined when the pair is not a substrate bridge', async () => {
-      const api = arrange(DOT_LOCATION)
-
-      const res = await dryRunInternal(createOptions(api))
-
-      expect(res.destination).toBeUndefined()
-      expect(getBridgeDestFee).not.toHaveBeenCalled()
     })
   })
 })

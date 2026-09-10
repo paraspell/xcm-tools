@@ -5,7 +5,14 @@ import type {
   TCurrencyInputWithAmount,
   WithAmount
 } from '@paraspell/assets'
-import type { TChain, TParachain, TSubstrateChain, Version } from '@paraspell/sdk-common'
+import type {
+  TChain,
+  TLocation,
+  TParachain,
+  TRelaychain,
+  TSubstrateChain,
+  Version
+} from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
 import type { WithApi } from './TApi'
@@ -14,6 +21,13 @@ import type { TDestination, TWeight } from './TTransfer'
 export type TSwapConfig = {
   currencyTo: TCurrencyCore
   exchangeChain: TParachain
+}
+
+export type TBridgedXcmParams = {
+  palletIndex: number
+  relay: TRelaychain
+  paraId: number
+  destination: TLocation
 }
 
 export type TDryRunBaseOptions<TRes, TCustomChain extends string = never> = {

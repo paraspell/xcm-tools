@@ -480,6 +480,10 @@
       {
         "name": "PolkadotXcm",
         "index": 31
+      },
+      {
+        "name": "BridgeKusamaMessages",
+        "index": 53
       }
     ],
     "nativeAssets": "Balances",
@@ -495,6 +499,10 @@
       {
         "name": "PolkadotXcm",
         "index": 31
+      },
+      {
+        "name": "BridgePolkadotMessages",
+        "index": 53
       }
     ],
     "nativeAssets": "Balances",
