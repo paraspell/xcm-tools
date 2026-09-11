@@ -16,7 +16,7 @@ import type {
   TPalletJsonMap,
   TPalletMap
 } from '../src'
-import { NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
+import { BRIDGE_PALLETS, NATIVE_ASSETS_PALLET_PRIORITY, OTHER_ASSETS_PALLET_PRIORITY } from '../src'
 
 const JSON_FILE_PATH = './src/maps/pallets.json'
 
@@ -41,7 +41,8 @@ const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain)
   const allPallets = [
     ...defaultPalletsByPriority,
     ...NATIVE_ASSETS_PALLET_PRIORITY,
-    ...OTHER_ASSETS_PALLET_PRIORITY
+    ...OTHER_ASSETS_PALLET_PRIORITY,
+    ...BRIDGE_PALLETS
   ] as readonly string[]
 
   const supportedPallets = palletDetails.filter(pallet => allPallets.includes(pallet.name))
@@ -51,6 +52,8 @@ const composePalletMapObject = (pallets: TPalletEntry[], chain: TSubstrateChain)
     defaultPalletsByPriority.find(pallet =>
       supportedPallets.map(item => item.name).includes(pallet)
     )
+
+  if (!defaultPallet) throw new Error(`No XCM pallet found on ${chain}`)
 
   const nativeAssetsPallet = NATIVE_ASSETS_PALLET_PRIORITY.find(pallet =>
     palletDetails.map(item => item.name).includes(pallet)

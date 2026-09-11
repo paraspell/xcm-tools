@@ -2,14 +2,63 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { isExternalChain, type TChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { BRIDGE_PALLETS, getPalletIndex } from '@paraspell/pallets'
+import {
+  isExternalChain,
+  isSubstrateBridge,
+  isSubstrateChain,
+  type TChain,
+  type TSubstrateChain
+} from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { getTSubstrateChain } from '../../chains/getTChain'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { RoutingResolutionError } from '../../errors'
 import type { HopTraversalConfig, HopTraversalResult } from '../../types'
+import { getChainLocation } from '../../utils'
 import { getParaEthTransferFees } from '../eth-transfer'
+
+const resolveBridgedHop = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  origin: TSubstrateChain | TCustomChain,
+  destination: TChain,
+  currentChain: TSubstrateChain,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  forwardedXcms: any
+) => {
+  if (isExternalChain(destination) || !isSubstrateBridge(origin, destination)) return undefined
+
+  const originRelay = api.getRelayChainOf(origin)
+  const destBridgeHub = `BridgeHub${api.getRelayChainOf(destination)}`
+  const messagesPallet = BRIDGE_PALLETS.find(pallet => pallet === `Bridge${originRelay}Messages`)
+
+  if (
+    !messagesPallet ||
+    !isSubstrateChain(destBridgeHub) ||
+    currentChain !== `BridgeHub${originRelay}`
+  )
+    return undefined
+
+  const palletIndex = getPalletIndex(destBridgeHub, messagesPallet)
+
+  if (palletIndex === undefined) {
+    throw new RoutingResolutionError(
+      `Unable to find ${messagesPallet} pallet index on ${destBridgeHub}`
+    )
+  }
+
+  return {
+    forwardedXcms: api.createBridgedForwardedXcms(forwardedXcms[1][0], {
+      palletIndex,
+      relay: originRelay,
+      paraId: api.getParaId(origin),
+      destination: getChainLocation(destBridgeHub, destination, api._customCtx)
+    }),
+    destParaId: api.getParaId(destination),
+    currentOrigin: destBridgeHub
+  }
+}
 
 export const traverseXcmHops = async <
   TApi,
@@ -56,7 +105,7 @@ export const traverseXcmHops = async <
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTSubstrateChain(nextParaId, api.getRelayChainOf(origin))
+    const nextChain = getTSubstrateChain(nextParaId, api.getRelayChainOf(currentOrigin))
 
     if (!nextChain) {
       throw new RoutingResolutionError(`Unable to find TChain for paraId ${nextParaId}`)
@@ -109,10 +158,13 @@ export const traverseXcmHops = async <
         )
       }
 
-      const { forwardedXcms: newXcms, destParaId } = extractNextHopData(hopResult)
-      forwardedXcms = newXcms
-      nextParaId = destParaId
-      currentOrigin = nextChain
+      const next = resolveBridgedHop(api, origin, destination, nextChain, forwardedXcms) ?? {
+        ...extractNextHopData(hopResult),
+        currentOrigin: nextChain
+      }
+      forwardedXcms = next.forwardedXcms
+      nextParaId = next.destParaId
+      currentOrigin = next.currentOrigin
     } finally {
       await hopApi.disconnect()
     }

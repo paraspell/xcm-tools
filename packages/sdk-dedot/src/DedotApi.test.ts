@@ -8,10 +8,13 @@ import type {
   WithAmount,
 } from "@paraspell/sdk-core";
 import {
+  addXcmVersionHeader,
   BatchMode,
   isAssetEqual,
   isSenderSigner,
   localizeLocation,
+  RELAY_LOCATION,
+  RoutingResolutionError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   type TLocation,
@@ -478,6 +481,67 @@ describe("DedotApi", () => {
         mockApiRaw.query.ethereumOutboundQueue.operatingMode,
       ).toHaveBeenCalled();
       expect(result).toBe("Normal");
+    });
+  });
+
+  describe("createBridgedForwardedXcms", () => {
+    const params = {
+      palletIndex: 53,
+      relay: "Polkadot" as const,
+      paraId: 1000,
+      destination: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
+    };
+
+    beforeEach(() => {
+      vi.mocked(transform).mockImplementation(<T>(value: T) => value);
+      vi.mocked(addXcmVersionHeader).mockImplementation((xcm, version) => ({
+        [version]: xcm,
+      }));
+    });
+
+    afterEach(() => {
+      vi.mocked(transform).mockReturnValue({ transformed: true });
+      vi.mocked(addXcmVersionHeader).mockReset();
+    });
+
+    it("prepends the bridge origin instructions to the exported xcm", () => {
+      const forwardedXcm = {
+        type: "V5",
+        value: [
+          { type: "UnpaidExecution", value: {} },
+          {
+            type: "ExportMessage",
+            value: {
+              network: {},
+              destination: {},
+              xcm: [{ type: "ClearOrigin" }],
+            },
+          },
+        ],
+      };
+
+      expect(dedotApi.createBridgedForwardedXcms(forwardedXcm, params)).toEqual(
+        [
+          { V5: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } } },
+          [
+            {
+              type: "V5",
+              value: [
+                { DescendOrigin: { X1: [{ PalletInstance: 53 }] } },
+                { UniversalOrigin: { GlobalConsensus: { polkadot: null } } },
+                { DescendOrigin: { X1: [{ Parachain: 1000 }] } },
+                { type: "ClearOrigin" },
+              ],
+            },
+          ],
+        ],
+      );
+    });
+
+    it("throws when the forwarded xcm has no ExportMessage", () => {
+      expect(() => {
+        dedotApi.createBridgedForwardedXcms({ type: "V5", value: [] }, params);
+      }).toThrow(RoutingResolutionError);
     });
   });
 
@@ -1385,8 +1449,8 @@ describe("DedotApi", () => {
         .mockResolvedValue(30n);
       mockApiRaw.call.xcmPaymentApi.queryWeightToAssetFee.mockResolvedValueOnce(
         {
-          success: false,
-          value: { type: "AssetNotFound" },
+          isErr: true,
+          err: "AssetNotFound",
         },
       );
 
@@ -1448,6 +1512,9 @@ describe("DedotApi", () => {
             Version.V5,
           ),
         ).resolves.toBe(expected);
+        expect(transform).toHaveBeenCalledWith(
+          addXcmVersionHeader(RELAY_LOCATION, Version.V5),
+        );
         expect(assetHubApi.init).toHaveBeenCalledWith("AssetHubPolkadot");
       },
     );
