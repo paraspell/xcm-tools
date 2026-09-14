@@ -6,7 +6,7 @@ import type { PolkadotApi } from '../../../api'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
 import { createBeneficiaryLocation } from '../../location'
-import { createAssetsFilter } from './createAssetsFilter'
+import { createAllCountedFilter, createAssetsFilter } from './createAssetsFilter'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
 import { prepareExecuteContext } from './prepareExecuteContext'
@@ -26,6 +26,7 @@ describe('prepareCommonExecuteXcm', () => {
     interior: { X1: { AccountId32: { id: 'address' } } }
   } as TLocation
   const mockAssetsFilter = { Wild: 'All' } as unknown as ReturnType<typeof createAssetsFilter>
+  const mockAllCountedFilter = { Wild: { AllCounted: 2 } }
 
   const baseOptions = {
     api: mockApi,
@@ -54,6 +55,7 @@ describe('prepareCommonExecuteXcm', () => {
     vi.mocked(sortAssets).mockReturnValue([mockAsset])
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)
     vi.mocked(createAssetsFilter).mockReturnValue(mockAssetsFilter)
+    vi.mocked(createAllCountedFilter).mockReturnValue(mockAllCountedFilter)
   })
 
   it('creates XCM without fee asset', () => {
@@ -106,10 +108,18 @@ describe('prepareCommonExecuteXcm', () => {
       {
         BuyExecution: {
           fees: mockFeeAsset,
-          weight_limit: 'Unlimited'
+          weight_limit: { Limited: { ref_time: 1n, proof_size: 1n } }
         }
       }
     ])
+
+    expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
+    expect(result.depositInstruction).toEqual({
+      DepositAsset: {
+        assets: mockAssetsFilter,
+        beneficiary: mockBeneficiary
+      }
+    })
   })
 
   it('uses fee asset for BuyExecution when available', () => {
@@ -175,12 +185,25 @@ describe('prepareCommonExecuteXcm', () => {
     expect(createAssetsFilter).toHaveBeenCalledWith(customAsset, mockVersion)
   })
 
+  it('deposits only the custom assetToDeposit even when a fee asset is present', () => {
+    const customAsset = { id: {}, fun: { Fungible: 500n } } as TAsset
+    vi.mocked(prepareExecuteContext).mockReturnValue({
+      ...mockContext,
+      feeAssetLocalized: mockFeeAsset
+    })
+
+    const result = prepareCommonExecuteXcm(baseOptions, customAsset)
+
+    expect(createAssetsFilter).toHaveBeenCalledWith(customAsset, mockVersion)
+    expect(result.depositInstruction.DepositAsset.assets).toBe(mockAssetsFilter)
+  })
+
   it('uses assetLocalizedToDest when no custom deposit asset', () => {
     prepareCommonExecuteXcm(baseOptions)
     expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)
   })
 
-  it('uses Unlimited weight for pre-V5 BuyExecution (separate fee asset)', () => {
+  it('buys a minimal Limited weight with a separate fee asset so delivery fees can be paid in it', () => {
     const contextWithFee = {
       ...mockContext,
       feeAssetLocalized: mockFeeAsset
@@ -196,7 +219,9 @@ describe('prepareCommonExecuteXcm', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const buyExecution = result.prefix[1] as any
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(buyExecution.BuyExecution.weight_limit).toEqual('Unlimited')
+    expect(buyExecution.BuyExecution.weight_limit).toEqual({
+      Limited: { ref_time: 1n, proof_size: 1n }
+    })
   })
 
   it('emits BuyExecution (not PayFees) on V5 for a separate fee asset', () => {
@@ -214,7 +239,10 @@ describe('prepareCommonExecuteXcm', () => {
     } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
     expect(result.prefix[1]).toEqual({
-      BuyExecution: { fees: mockFeeAsset, weight_limit: 'Unlimited' }
+      BuyExecution: {
+        fees: mockFeeAsset,
+        weight_limit: { Limited: { ref_time: 1n, proof_size: 1n } }
+      }
     })
     // No RefundSurplus in the prefix — next instruction is the deposit
     expect(result.prefix[2]).toBeUndefined()

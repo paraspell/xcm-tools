@@ -3,6 +3,8 @@ import type { Version } from '@paraspell/sdk-common'
 
 import { createAssetId } from '../../asset'
 
+export const createAllCountedFilter = (count: number) => ({ Wild: { AllCounted: count } })
+
 export const createAssetsFilter = (asset: TAsset, version: Version) => {
   const location = extractAssetLocation(asset)
   const id = createAssetId(version, location)

@@ -1,15 +1,22 @@
-import { getNativeAssetSymbol, isAssetEqual, Native, type TAsset } from '@paraspell/assets'
+import {
+  getNativeAssetSymbol,
+  isAssetEqual,
+  Native,
+  type TAsset,
+  type TAssetInfo
+} from '@paraspell/assets'
 import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
 import { getParaEthTransferFees } from '../../../transfer'
-import type { TCreateSwapXcmInternalOptions } from '../../../types'
+import type { TCreateSwapXcmInternalOptions, TTransferFeeEstimates } from '../../../types'
 import { createAsset } from '../../asset'
 import { getRelayChainOf } from '../../chain'
 import { createEthereumBridgeInstructions } from '../../ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../ethereum/generateMessageId'
 import { localizeLocation } from '../../location'
 import { addXcmVersionHeader } from '../../xcm-version'
+import { getFeeAssetInfo } from '../getFeeAssetInfo'
 import { createAssetsFilter } from './createAssetsFilter'
 import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
@@ -24,7 +31,7 @@ export const createExchangeInstructions = async <
   options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner, TCustomChain>,
   assetFrom: TAsset,
   assetTo: TAsset,
-  hasSeparateFeeAsset: boolean
+  separateFeeAssetInfo?: TAssetInfo
 ) => {
   const {
     api,
@@ -36,6 +43,8 @@ export const createExchangeInstructions = async <
     calculateMinAmountOut,
     fees: { originReserveFee, exchangeFee }
   } = options
+
+  const hasSeparateFeeAsset = separateFeeAssetInfo !== undefined
 
   const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
@@ -57,7 +66,8 @@ export const createExchangeInstructions = async <
   // Multi-hop through native asset
 
   const nativeAmountOut = await calculateMinAmountOut(
-    BigInt(assetInfoFrom.amount) - (chain ? originReserveFee + exchangeFee : 0n),
+    BigInt(assetInfoFrom.amount) -
+      (chain && !hasSeparateFeeAsset ? originReserveFee + exchangeFee : 0n),
     nativeAsset
   )
 
@@ -72,12 +82,15 @@ export const createExchangeInstructions = async <
       ExchangeAsset: {
         give: createAssetsFilter(assetFrom, version),
         want: [assetNative],
-        maximal: false
+        maximal: hasSeparateFeeAsset
       }
     },
     {
       ExchangeAsset: {
-        give: createAssetsFilter(assetNative, version),
+        give:
+          separateFeeAssetInfo && isAssetEqual(separateFeeAssetInfo, nativeAsset)
+            ? { Definite: [assetNative] }
+            : createAssetsFilter(assetNative, version),
         want: [assetTo],
         maximal: true
       }
@@ -101,7 +114,7 @@ export const createSwapExecuteXcm = async <
     assetInfoFrom,
     assetInfoTo,
     feeAssetInfo,
-    fees: { originFee, originReserveFee, destReserveFee },
+    fees: { originFee, originReserveFee, exchangeFee, destReserveFee, destFee },
     sender,
     recipient,
     version,
@@ -137,10 +150,8 @@ export const createSwapExecuteXcm = async <
   )
 
   // For Ethereum destination, use DOT as feeAsset for bridge fees
-  let ethFeeAssetInfo
+  let ethFeeAssetInfo: TAssetInfo | undefined
   let ethBridgeFee = 0n
-  // Whether main asset IS DOT — no separate fee asset needed
-  let isMainAssetDot = false
   if (isEthereumDest) {
     const nativeFeeAssetInfo = api.findNativeAssetInfoOrThrow(
       getRelayChainOf(chain ?? exchangeChain)
@@ -149,16 +160,27 @@ export const createSwapExecuteXcm = async <
     const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
     ethBridgeFee = bridgeFee + executionFee
 
-    isMainAssetDot = isAssetEqual(assetInfoFrom, nativeFeeAssetInfo)
-    if (!isMainAssetDot) {
+    if (!isAssetEqual(assetInfoFrom, nativeFeeAssetInfo)) {
       ethFeeAssetInfo = nativeFeeAssetInfo
     }
   }
 
   // Ethereum fee asset takes precedence over user-provided feeAssetInfo
-  const resolvedFeeAssetInfo = ethFeeAssetInfo ?? feeAssetInfo
+  const resolvedFeeAssetInfo = isEthereumDest
+    ? ethFeeAssetInfo
+    : getFeeAssetInfo(assetInfoFrom, feeAssetInfo)
 
-  const hasSeparateFeeAsset = (isEthereumDest && !isMainAssetDot) || !!feeAssetInfo
+  const hasSeparateFeeAsset = resolvedFeeAssetInfo !== undefined
+
+  const createLegFees = (reserveFee: bigint, destFee: bigint): TTransferFeeEstimates => ({
+    originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
+    reserveFee: ethFeeAssetInfo ? ethBridgeFee : reserveFee,
+    destFee: isEthereumDest ? ethBridgeFee : destFee
+  })
+
+  const feeAssetBudget = ethFeeAssetInfo
+    ? ethBridgeFee
+    : originFee + originReserveFee + exchangeFee + destReserveFee + destFee
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
     {
@@ -170,8 +192,9 @@ export const createSwapExecuteXcm = async <
       useJitWithdraw: isEthereumDest,
       recipient,
       fees: {
-        originFee: hasSeparateFeeAsset ? ethBridgeFee || originFee : originFee,
-        reserveFee: originReserveFee
+        originFee: hasSeparateFeeAsset ? feeAssetBudget : originFee,
+        reserveFee: 0n,
+        destFee: 0n
       },
       version
     },
@@ -182,7 +205,7 @@ export const createSwapExecuteXcm = async <
     options,
     assetFrom,
     assetTo,
-    isEthereumDest && hasSeparateFeeAsset
+    resolvedFeeAssetInfo
   )
 
   let exchangeToDestXcm: unknown[]
@@ -223,14 +246,10 @@ export const createSwapExecuteXcm = async <
             destChain: resolvedDestChain!,
             assetInfo: assetInfoTo,
             feeAssetInfo: ethFeeAssetInfo,
-            useFeeAssetOnHops: hasSeparateFeeAsset,
             paraIdTo: getParaId(resolvedDestChain!),
             version,
             recipient,
-            fees: {
-              originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n,
-              reserveFee: destReserveFee
-            },
+            fees: createLegFees(destReserveFee, destFee),
             suffixXcm: snowbridgeInstructions
           })
   } else if (destChain) {
@@ -239,11 +258,11 @@ export const createSwapExecuteXcm = async <
       chain: exchangeChain,
       destChain,
       assetInfo: assetInfoTo,
+      feeAssetInfo: resolvedFeeAssetInfo,
       paraIdTo,
       version,
       recipient,
-      // Deal with this after feeAsset is supported
-      fees: { originFee: 0n, reserveFee: destReserveFee },
+      fees: createLegFees(destReserveFee, destFee),
       suffixXcm: [depositInstruction]
     })
   } else {
@@ -256,12 +275,11 @@ export const createSwapExecuteXcm = async <
         chain,
         destChain: exchangeChain,
         assetInfo: assetInfoFrom,
-        feeAssetInfo: ethFeeAssetInfo,
-        useFeeAssetOnHops: hasSeparateFeeAsset,
+        feeAssetInfo: resolvedFeeAssetInfo,
         paraIdTo: getParaId(exchangeChain),
         version,
         recipient,
-        fees: { originFee: hasSeparateFeeAsset ? ethBridgeFee : 0n, reserveFee: originReserveFee },
+        fees: createLegFees(originReserveFee, exchangeFee),
         suffixXcm: [...exchangeInstructions, ...exchangeToDestXcm]
       })
     : [...exchangeInstructions, ...exchangeToDestXcm]

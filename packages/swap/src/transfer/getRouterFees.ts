@@ -9,6 +9,7 @@ import {
   getSwapExecuteXcmFee,
   getToExchangeFee,
   isFilteredError,
+  validateRoutedFeeAsset,
 } from './utils';
 
 export const getRouterFees = async <
@@ -51,6 +52,8 @@ export const getRouterFees = async <
       // Fall through to three-leg path
     }
   }
+
+  validateRoutedFeeAsset(options);
 
   // 1. Get fees for origin -> exchange (optional)
   const sendingChain =

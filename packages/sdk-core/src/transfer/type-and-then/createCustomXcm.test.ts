@@ -301,6 +301,35 @@ describe('createCustomXcm', () => {
       expect(buyExecution.weight_limit).toBe('Unlimited')
     })
 
+    it('pays destination fees with the user-defined fee asset', async () => {
+      const feeLocation: TLocation = {
+        parents: 1,
+        interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+      }
+
+      const result = await createCustomXcm(
+        {
+          ...mockContext,
+          isRelayAsset: false,
+          feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation }
+        },
+        2,
+        false,
+        mockContext.assetInfo.amount,
+        { hopFees: 100n, destFee: 200n }
+      )
+
+      const depositReserveAsset = result.find(isDepositReserveInstruction)!.DepositReserveAsset
+      const buyExecution = depositReserveAsset.xcm.find(isBuyExecutionStep)!.BuyExecution
+
+      expect(buyExecution.fees.id).toEqual(feeLocation)
+      expect(buyExecution.fees.fun.Fungible).toBe(200n)
+      expect(depositReserveAsset.assets.Definite).toEqual([
+        { id: RELAY_LOCATION, fun: { Fungible: 1000000n } },
+        { id: feeLocation, fun: { Fungible: 300n } }
+      ])
+    })
+
     it('calculates BuyExecution fees correctly without DOT', async () => {
       const result = await createCustomXcm(
         { ...mockContext, isRelayAsset: false },

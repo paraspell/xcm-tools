@@ -18,6 +18,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 
 describe('buildTypeAndThenCall', () => {
   const mockApi = {
+    getAssetReserveChain: vi.fn(),
     getParaId: vi.fn(),
     getXcmPallet: vi.fn(),
     localizeLocation: vi.fn()
@@ -317,6 +318,80 @@ describe('buildTypeAndThenCall', () => {
     expect(result.params.remote_fees_id).toEqual({ [mockVersion]: RELAY_LOCATION })
   })
 
+  describe('user-defined fee asset', () => {
+    const feeLocation: TLocation = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+    const feeAssetInfo = { symbol: 'USDT', decimals: 6, location: feeLocation }
+    const context = {
+      ...mockContext,
+      origin: { chain: 'Hydration', api: mockApi },
+      reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+      dest: { chain: 'Astar', api: mockApi },
+      feeAssetInfo
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+    it('pays remote fees with the fee asset and resolves its own transfer type', () => {
+      const result = buildTypeAndThenCall(
+        { ...context, feeReserveChain: 'AssetHubPolkadot' },
+        false,
+        mockCustomXcm,
+        mockAssets
+      )
+
+      expect(result.params.remote_fees_id).toEqual({ [mockVersion]: feeLocation })
+      expect(result.params.assets_transfer_type).toBe('DestinationReserve')
+      expect(result.params.fees_transfer_type).toBe('DestinationReserve')
+    })
+
+    it('uses LocalReserve for a fee asset reserved on the origin', () => {
+      const result = buildTypeAndThenCall(
+        { ...context, feeReserveChain: 'Hydration' },
+        false,
+        mockCustomXcm,
+        mockAssets
+      )
+
+      expect(result.params.assets_transfer_type).toBe('DestinationReserve')
+      expect(result.params.fees_transfer_type).toBe('LocalReserve')
+    })
+
+    it('teleports the fee asset when it teleports natively', () => {
+      vi.mocked(isNativeAssetTeleport).mockImplementation(
+        (_api, _o, _d, asset) => asset === feeAssetInfo
+      )
+
+      const result = buildTypeAndThenCall(
+        { ...context, feeReserveChain: 'Hydration' },
+        false,
+        mockCustomXcm,
+        mockAssets
+      )
+
+      expect(result.params.assets_transfer_type).toBe('DestinationReserve')
+      expect(result.params.fees_transfer_type).toBe('Teleport')
+    })
+
+    it('types the fee of a multi-asset transfer by the fee asset carried in assetInfo', () => {
+      const multiAssetContext = {
+        ...mockContext,
+        origin: { chain: 'AssetHubPolkadot', api: mockApi },
+        reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+        dest: { chain: 'AssetHubKusama', api: mockApi },
+        isSubBridge: true,
+        assetInfo: { ...feeAssetInfo, amount: 1n },
+        feeReserveChain: 'AssetHubKusama',
+        options: { ...mockContext.options, overriddenAsset: mockAssets }
+      } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+      const result = buildTypeAndThenCall(multiAssetContext, true, mockCustomXcm, mockAssets)
+
+      expect(result.params.assets_transfer_type).toBe('LocalReserve')
+      expect(result.params.fees_transfer_type).toBe('DestinationReserve')
+    })
+  })
+
   it('should always set weight_limit to Unlimited', () => {
     const result = buildTypeAndThenCall(mockContext, false, mockCustomXcm, mockAssets)
     expect(result.params.weight_limit).toBe('Unlimited')
@@ -325,7 +400,7 @@ describe('buildTypeAndThenCall', () => {
   it('should use fee asset from overriddenAsset array when provided', () => {
     const overriddenFeeAssetId: TLocation = {
       parents: 1,
-      interior: { X1: { Parachain: 9999 } }
+      interior: { X1: [{ Parachain: 9999 }] }
     }
 
     const overriddenAssets: TAssetWithFee[] = [

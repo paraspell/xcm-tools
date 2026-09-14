@@ -1,8 +1,7 @@
-import { normalizeLocation, type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
+import { extractAssetLocation, normalizeLocation } from '@paraspell/assets'
+import type { TLocation } from '@paraspell/sdk-common'
+import { isExternalChain } from '@paraspell/sdk-common'
 
-import type { PolkadotApi } from '../../api'
-import { RELAY_LOCATION } from '../../constants'
 import { BridgeHaltedError } from '../../errors'
 import type {
   TPolkadotXCMTransferOptions,
@@ -15,34 +14,32 @@ import { createAsset, normalizeAmount, parseUnits, sortAssets } from '../../util
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
-import { createTypeAndThenCallContext } from './createContext'
+import { createTypeAndThenCallContext, getFeeAssetLocation } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 
 const buildAssets = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-  chain: TSubstrateChain | TCustomChain,
-  asset: WithAmount<TAssetInfo>,
-  feeAmount: bigint,
-  isRelayAsset: boolean,
-  { version, overriddenAsset }: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
+  context: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
+  feeAmount: bigint
 ) => {
+  const {
+    origin: { api, chain },
+    assetInfo,
+    isRelayAsset,
+    options: { version, overriddenAsset }
+  } = context
+
+  const localize = (amount: bigint, location: TLocation) =>
+    createAsset(version, amount, normalizeLocation(api.localizeLocation(chain, location), version))
+
   if (overriddenAsset) {
-    return overriddenAsset
-  }
-
-  const assets = []
-
-  if (!isRelayAsset) {
-    assets.push(createAsset(version, feeAmount, RELAY_LOCATION))
-  }
-
-  assets.push(
-    createAsset(
-      version,
-      asset.amount,
-      normalizeLocation(api.localizeLocation(chain, asset.location), version)
+    return sortAssets(
+      overriddenAsset.map(asset => localize(asset.fun.Fungible, extractAssetLocation(asset)))
     )
-  )
+  }
+
+  const assets = isRelayAsset ? [] : [localize(feeAmount, getFeeAssetLocation(context))]
+
+  assets.push(localize(assetInfo.amount, assetInfo.location))
 
   return sortAssets(assets)
 }
@@ -61,7 +58,7 @@ const DEFAULT_SYSTEM_ASSET_AMOUNT = '1'
 const DEFAULT_SYSTEM_ASSET_AMOUNT_EXTERNAL = '10'
 
 const resolveSystemAssetAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  { systemAsset, dest }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
+  { systemAsset, feeAssetInfo, dest }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   isForFeeCalc: boolean,
   fees: TTypeAndThenFees
 ) => {
@@ -69,7 +66,7 @@ const resolveSystemAssetAmount = <TApi, TRes, TSigner, TCustomChain extends stri
     const defaultAmount = isExternalChain(dest.chain)
       ? DEFAULT_SYSTEM_ASSET_AMOUNT_EXTERNAL
       : DEFAULT_SYSTEM_ASSET_AMOUNT
-    return parseUnits(defaultAmount, systemAsset.decimals)
+    return parseUnits(defaultAmount, (feeAssetInfo ?? systemAsset).decimals)
   }
   return normalizeAmount(fees.destFee + fees.hopFees)
 }
@@ -83,9 +80,10 @@ export const constructTypeAndThenCall = async <
   context: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
   fees: TTypeAndThenFees | null = null
 ): Promise<TSerializedExtrinsics> => {
-  const { origin, assetInfo, isRelayAsset, options } = context
-
-  const { overriddenAsset } = options
+  const {
+    isRelayAsset,
+    options: { overriddenAsset }
+  } = context
 
   const assetCount = resolveAssetCount(overriddenAsset, isRelayAsset)
 
@@ -106,14 +104,7 @@ export const constructTypeAndThenCall = async <
     resolvedFees
   )
 
-  const assets = buildAssets(
-    origin.api,
-    origin.chain,
-    assetInfo,
-    systemAssetAmount,
-    isRelayAsset,
-    options
-  )
+  const assets = buildAssets(context, systemAssetAmount)
 
   return buildTypeAndThenCall(context, isRelayAsset, customXcm, assets)
 }

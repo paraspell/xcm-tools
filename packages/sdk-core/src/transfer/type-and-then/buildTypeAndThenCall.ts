@@ -1,19 +1,27 @@
-import { normalizeLocation, type TAsset } from '@paraspell/assets'
+import {
+  extractAssetLocation,
+  normalizeLocation,
+  type TAsset,
+  type TAssetInfo
+} from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import { isTrustedChain } from '@paraspell/sdk-common'
+import { isTrustedChain, type TChain } from '@paraspell/sdk-common'
 
-import { RELAY_LOCATION } from '../../constants'
 import type { TSerializedExtrinsics, TTypeAndThenCallContext } from '../../types'
 import { addXcmVersionHeader, createAsset, isNativeAssetTeleport } from '../../utils'
 import { createDestination } from '../../utils/location'
+import { getFeeAssetLocation } from './createContext'
 
-export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>({
-  origin,
-  reserve,
-  dest,
-  isSubBridge,
-  assetInfo
-}: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>) => {
+export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  {
+    origin,
+    reserve,
+    dest,
+    isSubBridge
+  }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
+  assetInfo: TAssetInfo,
+  assetReserveChain: TChain | TCustomChain
+) => {
   // Direct A → C: when origin is reserve OR dest is reserve, check origin <-> dest trust
   // Hop A → B → C: when reserve differs from both, check origin <-> reserve trust
   const isDirect = origin.chain === reserve.chain || dest.chain === reserve.chain
@@ -22,7 +30,7 @@ export const resolveTransferType = <TApi, TRes, TSigner, TCustomChain extends st
     (isTrustedChain(origin.chain) && isTrustedChain(chainToCheck)) ||
     isNativeAssetTeleport(origin.api, origin.chain, chainToCheck, assetInfo)
   if (canTeleport && !isSubBridge) return 'Teleport'
-  if (origin.chain === reserve.chain) return 'LocalReserve'
+  if (origin.chain === assetReserveChain) return 'LocalReserve'
   return 'DestinationReserve'
 }
 
@@ -37,12 +45,14 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
     reserve,
     dest,
     assetInfo,
+    feeAssetInfo,
+    feeReserveChain,
     bridgeHopChain,
     isSubBridge,
     options: { version, pallet, method, overriddenAsset }
   } = context
 
-  const feeAssetLocation = !isDotAsset ? RELAY_LOCATION : assetInfo.location
+  const feeAssetLocation = getFeeAssetLocation(context)
 
   const finalDest = bridgeHopChain ?? (origin.chain === reserve.chain ? dest.chain : reserve.chain)
 
@@ -54,19 +64,32 @@ export const buildTypeAndThenCall = <TApi, TRes, TSigner, TCustomChain extends s
     origin.api.getParaId(finalDest)
   )
 
-  const transferType = bridgeHopChain ? 'DestinationReserve' : resolveTransferType(context)
+  const transferType = bridgeHopChain
+    ? 'DestinationReserve'
+    : resolveTransferType(context, assetInfo, reserve.chain)
 
-  const feesTransferType = isSubBridge && !isDotAsset ? 'LocalReserve' : transferType
+  const resolveFeesTransferType = () => {
+    if (feeReserveChain !== undefined) {
+      return resolveTransferType(context, feeAssetInfo ?? assetInfo, feeReserveChain)
+    }
+    return isSubBridge && !isDotAsset ? 'LocalReserve' : transferType
+  }
 
-  const feeAsset = Array.isArray(overriddenAsset) ? overriddenAsset.find(a => a.isFeeAsset) : null
+  const feesTransferType = resolveFeesTransferType()
 
-  const feeMultiAsset =
-    feeAsset ??
-    createAsset(
-      version,
-      assetInfo.amount,
-      normalizeLocation(origin.api.localizeLocation(origin.chain, feeAssetLocation), version)
+  const overriddenFeeAsset = overriddenAsset?.find(asset => asset.isFeeAsset)
+
+  const feeMultiAsset = createAsset(
+    version,
+    assetInfo.amount,
+    normalizeLocation(
+      origin.api.localizeLocation(
+        origin.chain,
+        overriddenFeeAsset ? extractAssetLocation(overriddenFeeAsset) : feeAssetLocation
+      ),
+      version
     )
+  )
 
   const module = (pallet as TPallet) ?? origin.api.getXcmPallet(origin.chain)
   const methodName = method ?? 'transfer_assets_using_type_and_then'

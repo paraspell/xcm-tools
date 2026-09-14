@@ -68,8 +68,17 @@ const dryRunTransaction = async <TApi, TRes, TSigner, TCustomChain extends strin
   destChain?: TChain,
   bypassOptions?: TBypassOptions,
 ): Promise<TDryRunResult<TCustomChain>> => {
-  const { api, exchange, sender, evmSenderAddress, destination, currencyFrom, currencyTo, amount } =
-    options;
+  const {
+    api,
+    exchange,
+    sender,
+    evmSenderAddress,
+    destination,
+    currencyFrom,
+    currencyTo,
+    feeAsset,
+    amount,
+  } = options;
   const { tx, chain } = transaction;
 
   assertCurrencyCore(currencyTo);
@@ -91,6 +100,7 @@ const dryRunTransaction = async <TApi, TRes, TSigner, TCustomChain extends strin
       ...currencyFrom,
       amount: BigInt(amount),
     },
+    feeAsset,
     bypassOptions,
   });
 };

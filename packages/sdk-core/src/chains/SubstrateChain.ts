@@ -25,7 +25,7 @@ import {
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getPalletInstance } from '../pallets'
 import { handleTransactUsingSend, transferPolkadotXcm } from '../pallets/polkadotXcm'
-import { createTypeAndThenCall } from '../transfer'
+import { createTypeAndThenCall, validateFeeAssetSupport } from '../transfer'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
@@ -159,7 +159,6 @@ abstract class SubstrateChain<
         supportsTypeThen &&
         destChain &&
         !isExternalChain(destChain) &&
-        !feeAsset &&
         (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
       isSubBridge
 
@@ -215,12 +214,10 @@ abstract class SubstrateChain<
       const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
 
       // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
-      const isExternalAssetViaAh =
-        isExternalAsset && !isAHOrigin && !isAHDest && !isEthDest && !feeAsset
+      const isExternalAssetViaAh = isExternalAsset && !isAHOrigin && !isAHDest && !isEthDest
 
       // External asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
-      const isExternalAssetToAh =
-        isExternalAsset && isAHDest && !isAHOrigin && !isEthDest && !feeAsset
+      const isExternalAssetToAh = isExternalAsset && isAHDest && !isAHOrigin && !isEthDest
 
       if (isExternalAssetViaAh || isExternalAssetToAh || useTypeAndThen) {
         // Validate that the chain-specific transfer wouldn't reject this scenario.
@@ -229,7 +226,8 @@ abstract class SubstrateChain<
           supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this) &&
           !isSubBridge
         ) {
-          await this.transferPolkadotXCM(options)
+          const tx = await this.transferPolkadotXCM(options)
+          if (this.shouldUseExecuteTransfer(options)) return tx
         }
 
         const call = await createTypeAndThenCall(options)
@@ -248,6 +246,8 @@ abstract class SubstrateChain<
         return this.transferPolkadotXCM(options)
       }
     } else if (supportsXTokens<TApi, TRes, TSigner, TCustomChain>(this)) {
+      validateFeeAssetSupport(asset, feeAsset, overriddenAsset, 'XTokens')
+
       const input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain> = {
         api,
         asset,

@@ -1,4 +1,4 @@
-import type { TAssetInfo, TCurrencyInputWithAmount } from '@paraspell/assets'
+import { isAssetEqual, type TAssetInfo, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -103,6 +103,97 @@ describe('resolveHopAsset', () => {
     expect(findSpy).toHaveBeenCalledWith('AssetHubPolkadot', { location })
     expect(findNativeSpy).not.toHaveBeenCalled()
     expect(result).toBe(bridgedRelayAsset)
+  })
+
+  describe('fee asset', () => {
+    const feeAsset = { symbol: 'USDC', location: { parents: 1, interior: 'Here' } } as TAssetInfo
+    const currentAsset = { symbol: 'DOT' } as TAssetInfo
+
+    it('returns the fee asset registered on the hop chain when a separate fee asset pays hop fees', () => {
+      const hopFeeAsset = { symbol: 'USDC' } as TAssetInfo
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      const findInfoSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(hopFeeAsset)
+
+      const result = resolveHopAsset({ ...baseParams, currentAsset, feeAsset })
+
+      expect(isAssetEqual).toHaveBeenCalledWith(baseParams.asset, feeAsset)
+      expect(findInfoSpy).toHaveBeenCalledWith(
+        'Acala',
+        'Astar',
+        { location: feeAsset.location },
+        feeAsset
+      )
+      expect(result).toBe(hopFeeAsset)
+    })
+
+    it('falls back to the origin fee asset when the hop chain does not register it', () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(null)
+
+      const result = resolveHopAsset({ ...baseParams, currentAsset, feeAsset })
+
+      expect(result).toBe(feeAsset)
+    })
+
+    it('takes precedence over the relay asset included in a TypeAndThen transfer', () => {
+      vi.spyOn(mockApi, 'getTypeThenAssetCount').mockReturnValue(2)
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      const hopFeeAsset = { symbol: 'USDC' } as TAssetInfo
+      const findInfoSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(hopFeeAsset)
+      const findNativeSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+
+      const result = resolveHopAsset({ ...baseParams, currentAsset, feeAsset })
+
+      expect(findNativeSpy).not.toHaveBeenCalled()
+      expect(findInfoSpy).toHaveBeenCalledWith(
+        'Acala',
+        'Astar',
+        { location: feeAsset.location },
+        feeAsset
+      )
+      expect(result).toBe(hopFeeAsset)
+    })
+
+    it('ignores the fee asset when it equals the transferred asset', () => {
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      const findInfoSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(null)
+
+      const result = resolveHopAsset({ ...baseParams, currentAsset, feeAsset })
+
+      expect(findInfoSpy).toHaveBeenCalledWith(
+        'Acala',
+        'Astar',
+        baseParams.currency,
+        baseParams.asset
+      )
+      expect(result).toBe(currentAsset)
+    })
+
+    it('takes precedence over the post-swap asset for swap transfers', () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      const hopFeeAsset = { symbol: 'USDC' } as TAssetInfo
+      const findInfoSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(hopFeeAsset)
+      const findOnDestSpy = vi.spyOn(mockApi, 'findAssetOnDestOrThrow')
+      const swapConfig: TSwapConfig = { exchangeChain: 'Astar', currencyTo: { symbol: 'USDT' } }
+
+      const result = resolveHopAsset({
+        ...baseParams,
+        currentChain: 'Darwinia',
+        currentAsset,
+        feeAsset,
+        swapConfig,
+        hasPassedExchange: true
+      })
+
+      expect(findOnDestSpy).not.toHaveBeenCalled()
+      expect(findInfoSpy).toHaveBeenCalledWith(
+        'Acala',
+        'Darwinia',
+        { location: feeAsset.location },
+        feeAsset
+      )
+      expect(result).toBe(hopFeeAsset)
+    })
   })
 
   it('returns the post-swap asset when swap has been performed and the hop is not on the exchange chain', () => {

@@ -6,6 +6,7 @@ import { pickCompatibleXcmVersion } from '../../utils'
 import { padFee } from '../../utils/fees'
 import { resolveCurrency } from '../utils/resolveCurrency'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
+import { supportsFeeAssetPayment } from '../utils/supportsFeeAssetPayment'
 import { isSufficientOrigin } from './isSufficient'
 
 export const getOriginXcmFeeInternal = async <
@@ -34,6 +35,8 @@ export const getOriginXcmFeeInternal = async <
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
+  const originFeeAsset = supportsFeeAssetPayment(origin) ? resolvedFeeAsset : undefined
+
   const { assets, asset } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
@@ -48,12 +51,12 @@ export const getOriginXcmFeeInternal = async <
       sender,
       paddedFee,
       asset,
-      resolvedFeeAsset
+      originFeeAsset
     )
 
     return {
       fee: paddedFee,
-      asset: resolvedFeeAsset ?? api.findNativeAssetInfoOrThrow(origin),
+      asset: originFeeAsset ?? api.findNativeAssetInfoOrThrow(origin),
       feeType: 'paymentInfo',
       sufficient
     }

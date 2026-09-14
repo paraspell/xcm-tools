@@ -1,9 +1,9 @@
-import { MissingParameterError } from '@paraspell/sdk-core';
+import { MissingParameterError, ScenarioNotSupportedError } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
-import { validateTransferOptions } from './validateTransferOptions';
+import { validateRoutedFeeAsset, validateTransferOptions } from './validateTransferOptions';
 
 vi.mock('../../utils/validateDestinationAddress');
 
@@ -116,5 +116,17 @@ describe('validateTransferOptions', () => {
     } as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
     expect(() => validateTransferOptions(mockOptions)).toThrow(MissingParameterError);
+  });
+});
+
+describe('validateRoutedFeeAsset', () => {
+  it('should throw when a fee asset is set', () => {
+    expect(() => validateRoutedFeeAsset({ feeAsset: { symbol: 'USDT' } })).toThrow(
+      ScenarioNotSupportedError,
+    );
+  });
+
+  it('should not throw without a fee asset', () => {
+    expect(() => validateRoutedFeeAsset({ feeAsset: undefined })).not.toThrow();
   });
 });

@@ -1,15 +1,16 @@
 import { type TAsset, type TAssetInfo } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
-import { isTrustedChain } from '@paraspell/sdk-common'
+import { deepEqual, isTrustedChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../../api'
-import { UnsupportedOperationError } from '../../../errors'
+import { RELAY_LOCATION } from '../../../constants'
+import { ScenarioNotSupportedError, UnsupportedOperationError } from '../../../errors'
 import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
-import { createAssetsFilter } from './createAssetsFilter'
+import { createAllCountedFilter, createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
 const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
@@ -18,6 +19,21 @@ const updateAsset = (asset: TAsset, amount: bigint): TAsset => ({
     Fungible: amount
   }
 })
+
+const isTeleportLeg = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  from: TChain | TCustomChain,
+  to: TChain | TCustomChain,
+  assetInfo: TAssetInfo
+) => (isTrustedChain(from) && isTrustedChain(to)) || isNativeAssetTeleport(api, from, to, assetInfo)
+
+const isTeleportableAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  from: TChain | TCustomChain,
+  to: TChain | TCustomChain,
+  assetInfo: TAssetInfo
+) =>
+  deepEqual(assetInfo.location, RELAY_LOCATION) || isNativeAssetTeleport(api, from, to, assetInfo)
 
 const getInstructionType = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -42,10 +58,7 @@ const getInstructionType = <TApi, TRes, TSigner, TCustomChain extends string = n
   }
 
   // Trusted chains (or native-asset teleports to/from AssetHub) can teleport
-  if (
-    (isTrustedChain(origin) && isTrustedChain(destination)) ||
-    isNativeAssetTeleport(api, origin, destination, assetInfo)
-  ) {
+  if (isTeleportLeg(api, origin, destination, assetInfo)) {
     return 'InitiateTeleport'
   }
 
@@ -65,10 +78,7 @@ const getInitiateTransferType = <TApi, TRes, TSigner, TCustomChain extends strin
   assetInfo: TAssetInfo,
   reserveChain?: TChain | TCustomChain
 ) => {
-  if (
-    (isTrustedChain(origin) && isTrustedChain(destination)) ||
-    isNativeAssetTeleport(api, origin, destination, assetInfo)
-  ) {
+  if (isTeleportLeg(api, origin, destination, assetInfo)) {
     return 'Teleport'
   }
 
@@ -87,11 +97,11 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     chain,
     destChain,
     assetInfo,
+    feeAssetInfo,
     fees: { originFee, reserveFee },
     version,
     paraIdTo,
     transactOptions,
-    useFeeAssetOnHops,
     suffixXcm = []
   } = options
 
@@ -101,13 +111,16 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     assetLocalizedToReserve,
     assetLocalizedToDest,
     feeAsset,
+    feeAssetLocalized,
     feeAssetLocalizedToReserve,
     feeAssetLocalizedToDest,
+    feeReserveChain,
     reserveChain
   } = prepareExecuteContext(options)
 
-  const hopFeeAssetToReserve = useFeeAssetOnHops ? feeAssetLocalizedToReserve : undefined
-  const hopFeeAssetToDest = useFeeAssetOnHops ? feeAssetLocalizedToDest : undefined
+  const isReserveDest = reserveChain === destChain
+
+  const hopFeeAssetToReserve = isReserveDest ? feeAssetLocalizedToDest : feeAssetLocalizedToReserve
 
   // When fees are paid in a separate asset, originFee is denominated in that asset's
   // currency and must not be subtracted from the transfer amount.
@@ -121,6 +134,12 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     )
   }
 
+  if (feeReserveChain !== undefined && feeReserveChain !== reserveChain) {
+    throw new ScenarioNotSupportedError(
+      `Fee asset cannot pay fees on hops and destination because its reserve chain (${feeReserveChain}) differs from the reserve chain of the transferred asset (${reserveChain}).`
+    )
+  }
+
   const transferType = getInstructionType(
     api,
     version,
@@ -131,44 +150,62 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     transactOptions
   )
 
-  const routingAssetsFilter = feeAsset
-    ? { Wild: { AllCounted: 2 } }
-    : createAssetsFilter(assetLocalized, version)
+  const createRoutingFilter = (asset: TAsset) =>
+    feeAsset ? createAllCountedFilter(2) : createAssetsFilter(asset, version)
 
-  const isReserveDest = reserveChain === destChain
+  const routingAssetsFilter = createRoutingFilter(assetLocalized)
 
-  const resolvedDepositInstruction = isReserveDest
-    ? suffixXcm
-    : [
-        {
-          DepositReserveAsset: {
-            assets: createAssetsFilter(assetLocalizedToReserve, version),
-            dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
-            xcm: [
-              ...createBuyExecution(
-                hopFeeAssetToDest ??
-                  updateAsset(
-                    assetLocalizedToDest,
-                    reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
-                  )
-              ),
-              ...suffixXcm
-            ]
-          }
+  const assertFeeAssetTeleportable = (from: TChain | TCustomChain, to: TChain | TCustomChain) => {
+    if (feeAsset && feeAssetInfo && !isTeleportableAsset(api, from, to, feeAssetInfo)) {
+      throw new ScenarioNotSupportedError(
+        `Fee asset ${feeAssetInfo.symbol} cannot be teleported from ${from} to ${to}, so it cannot pay fees there.`
+      )
+    }
+  }
+
+  const reserveToDestInstruction = isTeleportLeg(api, reserveChain ?? chain, destChain, assetInfo)
+    ? 'InitiateTeleport'
+    : 'DepositReserveAsset'
+
+  const createReserveToDestXcm = () => {
+    if (isReserveDest) return suffixXcm
+
+    if (reserveToDestInstruction === 'InitiateTeleport') {
+      assertFeeAssetTeleportable(reserveChain ?? chain, destChain)
+    }
+
+    return [
+      {
+        [reserveToDestInstruction]: {
+          assets: createRoutingFilter(assetLocalizedToReserve),
+          dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
+          xcm: [
+            ...createBuyExecution(
+              feeAssetLocalizedToDest ??
+                updateAsset(
+                  assetLocalizedToDest,
+                  reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
+                )
+            ),
+            ...suffixXcm
+          ]
         }
-      ]
+      }
+    ]
+  }
 
   let mainInstructions
 
   switch (transferType) {
     case 'InitiateTransfer': {
       const transferFilter = getInitiateTransferType(api, chain, destChain, assetInfo, reserveChain)
+      if (transferFilter === 'Teleport') assertFeeAssetTeleportable(chain, destChain)
       mainInstructions = [
         {
           InitiateTransfer: {
             destination: destLocation,
             remote_fees: {
-              [transferFilter]: routingAssetsFilter
+              [transferFilter]: createAssetsFilter(feeAssetLocalized ?? assetLocalized, version)
             },
             preserve_origin: true,
             assets: [
@@ -190,6 +227,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
     case 'InitiateTeleport':
       // Use teleport for trusted chains
+      assertFeeAssetTeleportable(chain, destChain)
       mainInstructions = [
         {
           InitiateTeleport: {
@@ -197,7 +235,8 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
             dest: destLocation,
             xcm: [
               ...createBuyExecution(
-                hopFeeAssetToDest ?? updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
+                feeAssetLocalizedToDest ??
+                  updateAsset(assetLocalizedToDest, amount - originFeeDeduction)
               ),
               ...suffixXcm
             ]
@@ -208,6 +247,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
     case 'InitiateTeleportToReserve':
       // Teleport to reserve chain first
+      assertFeeAssetTeleportable(chain, reserveChain)
       mainInstructions = [
         {
           InitiateTeleport: {
@@ -219,7 +259,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
                   updateAsset(assetLocalizedToReserve, amount - originFeeDeduction)
               ),
               // Then deposit to final destination
-              ...resolvedDepositInstruction
+              ...createReserveToDestXcm()
             ]
           }
         }
@@ -241,7 +281,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
               ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
-              ...resolvedDepositInstruction
+              ...createReserveToDestXcm()
             ]
           }
         }
@@ -249,7 +289,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
       break
 
     case 'DepositAsset':
-      mainInstructions = resolvedDepositInstruction
+      mainInstructions = createReserveToDestXcm()
   }
 
   return mainInstructions

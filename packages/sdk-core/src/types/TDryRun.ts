@@ -189,6 +189,7 @@ export type TResolveHopParams<TApi, TRes, TSigner, TCustomChain extends string =
   asset: TAssetInfo
   currentAsset: TAssetInfo
   currency: TCurrencyInputWithAmount
+  feeAsset?: TAssetInfo
   swapConfig?: TSwapConfig
   hasPassedExchange: boolean
 }

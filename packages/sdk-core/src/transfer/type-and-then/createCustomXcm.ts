@@ -8,13 +8,19 @@ import {
   replaceBigInt
 } from '@paraspell/sdk-common'
 
-import { RELAY_LOCATION } from '../../constants'
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
-import { assertSender, createAsset, isNativeAssetTeleport, normalizeAmount } from '../../utils'
+import {
+  assertSender,
+  createAsset,
+  isNativeAssetTeleport,
+  normalizeAmount,
+  sortAssets
+} from '../../utils'
 import { createBeneficiaryLocation, createDestination } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { getFeeAssetLocation } from './createContext'
 
 const resolveBuyExecutionAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   { isRelayAsset, assetInfo }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>,
@@ -93,7 +99,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
   const messageId = await resolveSnowbridgeMessageId(context)
   const setTopic = messageId ? [{ SetTopic: messageId }] : []
 
-  const feeAssetLocation = !isRelayAsset ? RELAY_LOCATION : assetInfo.location
+  const feeAssetLocation = getFeeAssetLocation(context)
 
   const feeLocLocalized = origin.api.localizeLocation(dest.chain, feeAssetLocation, origin.chain)
 
@@ -151,7 +157,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
         createAsset(
           version,
           hopFees + destFee,
-          origin.api.localizeLocation(reserve.chain, RELAY_LOCATION)
+          origin.api.localizeLocation(reserve.chain, feeAssetLocation)
         )
       )
 
@@ -181,7 +187,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
           }
         }
       : {
-          Definite: assetsFilter
+          Definite: sortAssets(assetsFilter)
         }
 
     const buyExecutionAsset = isExternalChain(dest.chain)

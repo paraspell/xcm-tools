@@ -356,7 +356,6 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const {
       tx,
       address,
-      feeAsset,
       chain,
       destination,
       version,
@@ -369,6 +368,9 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!supportsDryRunApi) {
       throw new RuntimeApiUnavailableError(chain, "DryRunApi");
     }
+
+    const feeAsset =
+      this.getMethod(tx) === "execute" ? options.feeAsset : undefined;
 
     const basePayload = {
       type: "System",
@@ -387,7 +389,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         )
       : tx;
 
-    let resolvedFeeAsset = await this.resolveFeeAsset(options);
+    let resolvedFeeAsset = await this.resolveFeeAsset({
+      ...options,
+      feeAsset,
+    });
 
     const performDryRunCall = (includeVersion: boolean) => {
       const versionNum = Number(version.charAt(1));
@@ -566,7 +571,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       } else {
         resolvedFeeAsset = {
           isCustomAsset: false,
-          asset: this.resolveDefaultFeeAsset(options),
+          asset: this.resolveDefaultFeeAsset({ ...options, feeAsset }),
         };
       }
     }
@@ -939,6 +944,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         const key = api === undefined ? this.getChainProviders(chain) : api;
         releaseClient(key);
       }
+    }
+
+    if (force || typeof api !== "object" || Array.isArray(api)) {
+      this.resetChain();
     }
 
     return Promise.resolve();

@@ -504,10 +504,7 @@ const XcmTransferFormContent: FC<Props> = ({
 
   const colorScheme = useComputedColorScheme();
 
-  const feeAssetDisabled =
-    form.values.currencies.length <= 1 &&
-    from !== 'AssetHubPolkadot' &&
-    from !== 'Hydration';
+  const feeAssetDisabled = isExternalChain(to);
 
   const showAhAddress =
     isChainEvmImpl(from, { customChainAssets }) &&
@@ -729,6 +726,7 @@ const XcmTransferFormContent: FC<Props> = ({
           </Stack>
 
           <CurrencySelection
+            key={from}
             form={form}
             fieldPath="feeAsset"
             label="Fee asset"

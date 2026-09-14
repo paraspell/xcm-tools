@@ -8,6 +8,7 @@ import {
   getSwapExecuteOriginXcmFee,
   getToExchangeOriginFee,
   isFilteredError,
+  validateRoutedFeeAsset,
 } from './utils';
 
 export const getSwapOriginFee = async <
@@ -37,6 +38,8 @@ export const getSwapOriginFee = async <
       // Fall through to routed path
     }
   }
+
+  validateRoutedFeeAsset(options);
 
   // Origin chain is upstream from the exchange — fee is the cost of origin -> exchange
   if (origin && origin.chain !== exchange.chain) {

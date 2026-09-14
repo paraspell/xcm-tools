@@ -1563,6 +1563,7 @@ describe("DedotApi", () => {
     it("uses XcmPaymentApi for an explicit fee asset", async () => {
       vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
       vi.spyOn(dedotApi, "getXcmPaymentApiFee").mockResolvedValue(12n);
+      vi.spyOn(dedotApi, "getMethod").mockReturnValue("execute");
       mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
         isOk: true,
         value: {
@@ -1591,6 +1592,39 @@ describe("DedotApi", () => {
           fee: 12n,
           weight: { refTime: 3n, proofSize: 4n },
         }),
+      );
+    });
+
+    it("quotes the origin fee in the native asset when the fee asset call is not execute", async () => {
+      const nativeAsset = { ...asset, symbol: "HDX" };
+      const feeAsset = { ...asset, symbol: "USDT" };
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
+      vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(
+        nativeAsset,
+      );
+      const getXcmPaymentApiFee = vi.spyOn(dedotApi, "getXcmPaymentApiFee");
+      mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
+        isOk: true,
+        value: {
+          executionResult: { isOk: true, value: {} },
+          forwardedXcms: [],
+          localXcm: { type: "V5", value: [] },
+        },
+      });
+
+      const result = await dedotApi.getDryRunCall({
+        tx: mockTx,
+        address: "5Alice",
+        chain: "Darwinia",
+        destination: "Acala",
+        version: Version.V5,
+        asset: { ...asset, amount: 1n },
+        feeAsset,
+      });
+
+      expect(getXcmPaymentApiFee).not.toHaveBeenCalled();
+      expect(result).toEqual(
+        expect.objectContaining({ success: true, asset: nativeAsset }),
       );
     });
 
@@ -1867,6 +1901,7 @@ describe("DedotApi", () => {
     it("disconnects an automatically created client when forced", async () => {
       await dedotApi.disconnect(true);
       expect(mockApiRaw.disconnect).toHaveBeenCalled();
+      expect(dedotApi._chain).toBeUndefined();
     });
 
     it("disconnects a provided client only when forced", async () => {
@@ -1875,9 +1910,11 @@ describe("DedotApi", () => {
 
       await ownApi.disconnect(false);
       expect(mockApiRaw.disconnect).not.toHaveBeenCalled();
+      expect(ownApi._chain).toBe("Acala");
 
       await ownApi.disconnect(true);
       expect(mockApiRaw.disconnect).toHaveBeenCalled();
+      expect(ownApi._chain).toBeUndefined();
     });
   });
 

@@ -1,5 +1,9 @@
 import type { TAsset, TAssetInfo, TAssetWithFee } from '@paraspell/assets'
-import { findNativeAssetInfoOrThrow, normalizeLocation } from '@paraspell/assets'
+import {
+  extractAssetLocation,
+  findNativeAssetInfoOrThrow,
+  normalizeLocation
+} from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -12,7 +16,7 @@ import { createAsset, getRelayChainOf, normalizeAmount, parseUnits, sortAssets }
 import { getBridgeStatus } from '../getBridgeStatus'
 import { buildTypeAndThenCall } from './buildTypeAndThenCall'
 import { computeAllFees } from './computeFees'
-import { createTypeAndThenCallContext } from './createContext'
+import { createTypeAndThenCallContext, getFeeAssetLocation } from './createContext'
 import { createCustomXcm } from './createCustomXcm'
 import {
   constructTypeAndThenCall,
@@ -90,6 +94,27 @@ describe('createTypeAndThenCall', () => {
     vi.mocked(normalizeAmount).mockImplementation(value => value)
     vi.mocked(getRelayChainOf).mockReturnValue(mockChain)
     vi.mocked(sortAssets).mockImplementation(assets => assets)
+    vi.mocked(getFeeAssetLocation).mockReturnValue(RELAY_LOCATION)
+  })
+
+  it('sizes and places the fee asset by the user-defined fee asset when provided', async () => {
+    const usdtLocation: TAssetInfo['location'] = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+    const feeAssetInfo: TAssetInfo = { symbol: 'USDT', decimals: 6, location: usdtLocation }
+    vi.mocked(getFeeAssetLocation).mockReturnValue(usdtLocation)
+
+    await constructTypeAndThenCall({ ...mockContext, feeAssetInfo })
+
+    expect(parseUnits).toHaveBeenCalledWith('1', 6)
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 1n, usdtLocation)
+    expect(createAsset).toHaveBeenNthCalledWith(
+      2,
+      mockVersion,
+      1000n,
+      mockContext.assetInfo.location
+    )
   })
 
   it('should handle DOT asset with RELAY_LOCATION', async () => {
@@ -303,7 +328,7 @@ describe('createTypeAndThenCall', () => {
     expect(spy).toHaveBeenCalledWith(mockSerializedCall)
   })
 
-  it('should pass through overriddenAsset when it is an array', async () => {
+  it('localizes and sorts overriddenAsset entries for the origin chain', async () => {
     const overriddenAssets: TAssetWithFee[] = [
       {
         id: DOT_LOCATION,
@@ -322,6 +347,7 @@ describe('createTypeAndThenCall', () => {
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     const localizeLocationSpy = vi.spyOn(mockApi, 'localizeLocation')
+    vi.mocked(extractAssetLocation).mockImplementation(asset => asset.id as TAssetInfo['location'])
 
     vi.mocked(createAsset).mockClear()
     localizeLocationSpy.mockClear()
@@ -331,15 +357,20 @@ describe('createTypeAndThenCall', () => {
     const result = await constructTypeAndThenCall(contextWithOverriddenArray, mockFees)
 
     expect(result).toBe(mockSerializedCall)
+    expect(localizeLocationSpy).toHaveBeenCalledWith(mockChain, DOT_LOCATION)
+    expect(localizeLocationSpy).toHaveBeenCalledWith(mockChain, { parents: 0, interior: 'Here' })
+    expect(createAsset).toHaveBeenNthCalledWith(1, mockVersion, 123n, DOT_LOCATION)
+    expect(createAsset).toHaveBeenNthCalledWith(2, mockVersion, 456n, {
+      parents: 0,
+      interior: 'Here'
+    })
+    expect(sortAssets).toHaveBeenCalledWith([mockAsset, mockAsset])
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(
       contextWithOverriddenArray,
       false,
       mockCustomXcm,
-      overriddenAssets
+      [mockAsset, mockAsset]
     )
-    expect(createAsset).not.toHaveBeenCalled()
-    expect(localizeLocationSpy).not.toHaveBeenCalled()
-    expect(sortAssets).not.toHaveBeenCalled()
   })
 })
 

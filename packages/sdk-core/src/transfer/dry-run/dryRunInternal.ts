@@ -99,6 +99,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
       asset,
       currentAsset,
       currency,
+      feeAsset: resolvedFeeAsset,
       swapConfig,
       hasPassedExchange
     })

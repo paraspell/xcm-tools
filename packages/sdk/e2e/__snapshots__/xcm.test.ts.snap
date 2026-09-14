@@ -1,5 +1,176 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`XCM - e2e > Auto API create > should create transfer tx from Acala to Astar - WS url 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 10000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 10000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "Here",
+                    },
+                    "parents": 1,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 2006,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 9585861378n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "Here",
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Auto API create > should create transfer tx from Acala to Astar - WS url array 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -1159,6 +1330,21 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHu
   "params": {
     "amount": 5000000000000n,
     "id": 50000011,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubKusama - (KSM) 6`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000n,
+    "id": 50000014,
     "target": {
       "type": "Id",
       "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
@@ -2979,6 +3165,36 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHu
 }
 `;
 
+exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (DOT) 7`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Assets",
+  "params": {
+    "amount": 50000000000n,
+    "id": 50000547,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (DOT) 8`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Assets",
+  "params": {
+    "amount": 500000000000000000000n,
+    "id": 3,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (EQ) 1`] = `
 {
   "method": "transfer_keep_alive",
@@ -4188,6 +4404,21 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHu
 `;
 
 exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (USDt) 4`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000n,
+    "id": 50000495,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on AssetHubPolkadot - (USDt) 5`] = `
 {
   "method": "transfer_keep_alive",
   "module": "Assets",
@@ -6613,6 +6844,24 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Curio -
 }
 `;
 
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Curio - (DOT) 1`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Tokens",
+  "params": {
+    "amount": 50000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 5,
+    },
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Curio - (KSM) 1`] = `
 {
   "method": "transfer_keep_alive",
@@ -6642,6 +6891,24 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Curio -
     "currency_id": {
       "type": "ForeignAsset",
       "value": 3,
+    },
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Curio - (USDT) 1`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Tokens",
+  "params": {
+    "amount": 5000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 4,
     },
     "dest": {
       "type": "Id",
@@ -6744,6 +7011,20 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Encoint
       "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "value": 5000000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on EnergyWebX - (EWT) 1`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Balances",
+  "params": {
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "value": 5000000000000000000n,
   },
 }
 `;
@@ -8970,6 +9251,24 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Jamton 
       "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "value": 5000000000000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Jamton - (KSM) 1`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Tokens",
+  "params": {
+    "amount": 5000000000000n,
+    "currency_id": {
+      "type": "ForeignAsset",
+      "value": 4,
+    },
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
   },
 }
 `;
@@ -13279,6 +13578,400 @@ exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should c
       "value": {
         "interior": {
           "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to Darwinia - (DOT) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 50000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 50000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "Here",
+                    },
+                    "parents": 1,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 2046,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 49586641378n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "Here",
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountKey20",
+                        "value": {
+                          "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Acala > ParaToPara > should create transfer tx from Acala to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 5000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "X2",
+                      "value": [
+                        {
+                          "type": "PalletInstance",
+                          "value": 50,
+                        },
+                        {
+                          "type": "GeneralIndex",
+                          "value": 1337n,
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 3345,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4958192n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X3",
+                        "value": [
+                          {
+                            "type": "Parachain",
+                            "value": 1000,
+                          },
+                          {
+                            "type": "PalletInstance",
+                            "value": 50,
+                          },
+                          {
+                            "type": "GeneralIndex",
+                            "value": 1337n,
+                          },
+                        ],
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X3",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+            {
+              "type": "PalletInstance",
+              "value": 50,
+            },
+            {
+              "type": "GeneralIndex",
+              "value": 1337n,
+            },
+          ],
         },
         "parents": 1,
       },
@@ -19560,6 +20253,200 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara
           },
           "parents": 1,
         },
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Darwinia - (DOT) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 50000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountKey20",
+                  "value": {
+                    "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2046,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 3345,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X2",
+          "value": [
+            {
+              "type": "PalletInstance",
+              "value": 50,
+            },
+            {
+              "type": "GeneralIndex",
+              "value": 1337n,
+            },
+          ],
+        },
+        "parents": 0,
       },
     },
     "weight_limit": {
@@ -26794,6 +27681,229 @@ exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara 
             {
               "type": "GeneralIndex",
               "value": 1984n,
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin BifrostPolkadot > ParaToPara > should create transfer tx from BifrostPolkadot to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 5000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "X2",
+                      "value": [
+                        {
+                          "type": "PalletInstance",
+                          "value": 50,
+                        },
+                        {
+                          "type": "GeneralIndex",
+                          "value": 1337n,
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 3345,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4958192n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X3",
+                        "value": [
+                          {
+                            "type": "Parachain",
+                            "value": 1000,
+                          },
+                          {
+                            "type": "PalletInstance",
+                            "value": 50,
+                          },
+                          {
+                            "type": "GeneralIndex",
+                            "value": 1337n,
+                          },
+                        ],
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X3",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+            {
+              "type": "PalletInstance",
+              "value": 50,
+            },
+            {
+              "type": "GeneralIndex",
+              "value": 1337n,
             },
           ],
         },
@@ -35190,6 +36300,569 @@ exports[`XCM - e2e > Transfer scenarios for origin Encointer > should create tra
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Acala - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Ajuna - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2051,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to AssetHubPolkadot - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Astar - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2006,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to BifrostPolkadot - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2030,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Centrifuge - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2031,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to EnergyWebX - (EWT) 1`] = `
+{
+  "method": "transfer_keep_alive",
+  "module": "Balances",
+  "params": {
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "value": 5000000000000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Hydration - (EWT) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2034,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin EnergyWebX > ParaToPara > should create transfer tx from EnergyWebX to Pendulum - (USDC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V3",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "type": "Concrete",
+            "value": {
+              "interior": {
+                "type": "X3",
+                "value": [
+                  {
+                    "type": "Parachain",
+                    "value": 1000,
+                  },
+                  {
+                    "type": "PalletInstance",
+                    "value": 50,
+                  },
+                  {
+                    "type": "GeneralIndex",
+                    "value": 1337n,
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V3",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2094,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin EnergyWebXPaseo > ParaToPara > should create transfer tx from EnergyWebXPaseo to AssetHubPaseo - (USDC) 1`] = `
 {
   "method": "limited_reserve_transfer_assets",
@@ -36628,6 +38301,452 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Darwinia - (USDT) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1984n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 5000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "X2",
+                      "value": [
+                        {
+                          "type": "PalletInstance",
+                          "value": 50,
+                        },
+                        {
+                          "type": "GeneralIndex",
+                          "value": 1984n,
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 2046,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4958276n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X3",
+                        "value": [
+                          {
+                            "type": "Parachain",
+                            "value": 1000,
+                          },
+                          {
+                            "type": "PalletInstance",
+                            "value": 50,
+                          },
+                          {
+                            "type": "GeneralIndex",
+                            "value": 1984n,
+                          },
+                        ],
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountKey20",
+                        "value": {
+                          "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X3",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+            {
+              "type": "PalletInstance",
+              "value": 50,
+            },
+            {
+              "type": "GeneralIndex",
+              "value": 1984n,
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to EnergyWebX - (USDC) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X3",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 1000,
+                },
+                {
+                  "type": "PalletInstance",
+                  "value": 50,
+                },
+                {
+                  "type": "GeneralIndex",
+                  "value": 1337n,
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 5000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "X2",
+                      "value": [
+                        {
+                          "type": "PalletInstance",
+                          "value": 50,
+                        },
+                        {
+                          "type": "GeneralIndex",
+                          "value": 1337n,
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 3345,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4958192n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X3",
+                        "value": [
+                          {
+                            "type": "Parachain",
+                            "value": 1000,
+                          },
+                          {
+                            "type": "PalletInstance",
+                            "value": 50,
+                          },
+                          {
+                            "type": "GeneralIndex",
+                            "value": 1337n,
+                          },
+                        ],
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X3",
+          "value": [
+            {
+              "type": "Parachain",
+              "value": 1000,
+            },
+            {
+              "type": "PalletInstance",
+              "value": 50,
+            },
+            {
+              "type": "GeneralIndex",
+              "value": 1337n,
+            },
+          ],
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Hydration - (HDX) 1`] = `
 {
   "method": "transfer_keep_alive",
@@ -36635,6 +38754,201 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
   "params": {
     "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     "value": 5000000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Jamton - (KSM) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X1",
+              "value": {
+                "type": "GlobalConsensus",
+                "value": {
+                  "type": "Kusama",
+                },
+              },
+            },
+            "parents": 2,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 5000000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "GlobalConsensus",
+                        "value": {
+                          "type": "Kusama",
+                        },
+                      },
+                    },
+                    "parents": 2,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 3397,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 4989567169046n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "X1",
+                        "value": {
+                          "type": "GlobalConsensus",
+                          "value": {
+                            "type": "Kusama",
+                          },
+                        },
+                      },
+                      "parents": 2,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountId32",
+                        "value": {
+                          "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GlobalConsensus",
+            "value": {
+              "type": "Kusama",
+            },
+          },
+        },
+        "parents": 2,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
   },
 }
 `;
@@ -38037,6 +40351,101 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > should create tra
           "type": "Here",
         },
         "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin HydrationPaseo > ParaToPara > should create transfer tx from HydrationPaseo to AssetHubPaseo - (HOLLAR) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X1",
+              "value": {
+                "type": "GeneralIndex",
+                "value": 222n,
+              },
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "GeneralIndex",
+            "value": 222n,
+          },
+        },
+        "parents": 0,
       },
     },
     "weight_limit": {
@@ -43519,6 +45928,177 @@ exports[`XCM - e2e > Transfer scenarios for origin NeuroWeb > ParaToPara > shoul
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin NeuroWeb > ParaToPara > should create transfer tx from NeuroWeb to Darwinia - (DOT) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 50000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "SetAppendix",
+          "value": [
+            {
+              "type": "DepositAsset",
+              "value": {
+                "assets": {
+                  "type": "Wild",
+                  "value": {
+                    "type": "AllCounted",
+                    "value": 1,
+                  },
+                },
+                "beneficiary": {
+                  "interior": {
+                    "type": "X1",
+                    "value": {
+                      "type": "AccountId32",
+                      "value": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": undefined,
+                      },
+                    },
+                  },
+                  "parents": 0,
+                },
+              },
+            },
+          ],
+        },
+        {
+          "type": "DepositReserveAsset",
+          "value": {
+            "assets": {
+              "type": "Definite",
+              "value": [
+                {
+                  "fun": {
+                    "type": "Fungible",
+                    "value": 50000000000n,
+                  },
+                  "id": {
+                    "interior": {
+                      "type": "Here",
+                    },
+                    "parents": 1,
+                  },
+                },
+              ],
+            },
+            "dest": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "Parachain",
+                  "value": 2046,
+                },
+              },
+              "parents": 1,
+            },
+            "xcm": [
+              {
+                "type": "BuyExecution",
+                "value": {
+                  "fees": {
+                    "fun": {
+                      "type": "Fungible",
+                      "value": 49586641378n,
+                    },
+                    "id": {
+                      "interior": {
+                        "type": "Here",
+                      },
+                      "parents": 1,
+                    },
+                  },
+                  "weight_limit": {
+                    "type": "Unlimited",
+                  },
+                },
+              },
+              {
+                "type": "DepositAsset",
+                "value": {
+                  "assets": {
+                    "type": "Wild",
+                    "value": {
+                      "type": "AllCounted",
+                      "value": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "type": "X1",
+                      "value": {
+                        "type": "AccountKey20",
+                        "value": {
+                          "key": "0x1501C1413e4178c38567Ada8945A80351F7B8496",
+                          "network": undefined,
+                        },
+                      },
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 1000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "DestinationReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin NeuroWeb > ParaToPara > should create transfer tx from NeuroWeb to Hydration - (NEURO) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -48133,6 +50713,93 @@ exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > shoul
 `;
 
 exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > should create transfer tx from Polkadot to Centrifuge - (DOT) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "XcmPallet",
+  "params": {
+    "assets": {
+      "type": "V4",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 50000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 0,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V4",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2031,
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V4",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 0,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Polkadot > ParaToPara > should create transfer tx from Polkadot to Centrifuge - (DOT) 2`] = `
 {
   "method": "transfer_assets_using_type_and_then",
   "module": "XcmPallet",

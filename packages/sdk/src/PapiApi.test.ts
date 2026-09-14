@@ -1,6 +1,7 @@
 import type {
   TAssetInfo,
   TDestination,
+  TDryRunCallBaseOptions,
   TDryRunXcmBaseOptions,
   TPallet,
   TSerializedExtrinsics,
@@ -527,6 +528,45 @@ describe('PapiApi', () => {
       await papiApi.disconnect(false)
 
       expect(destroySpy).not.toHaveBeenCalled()
+    })
+
+    it('clears the chain and cached apis after releasing a pooled client', async () => {
+      papiApi = new PapiApi()
+      const leaseClientSpy = vi.spyOn(papiApi, 'leaseClient').mockResolvedValue(mockPolkadotClient)
+      vi.spyOn(papiApi, 'getChainProviders').mockReturnValue(['ws://dummy:9944'])
+      const getUnsafeApiSpy = vi.mocked(mockPolkadotClient.getUnsafeApi)
+      getUnsafeApiSpy.mockClear()
+
+      await papiApi.init(mockChain)
+      await papiApi.getConstant('System', 'Version')
+      await papiApi.getConstant('System', 'Version')
+
+      expect(getUnsafeApiSpy).toHaveBeenCalledTimes(1)
+
+      await papiApi.disconnect()
+
+      expect(papiApi._chain).toBeUndefined()
+
+      await papiApi.init(mockChain)
+      await papiApi.getConstant('System', 'Version')
+
+      expect(leaseClientSpy).toHaveBeenCalledTimes(2)
+      expect(getUnsafeApiSpy).toHaveBeenCalledTimes(2)
+    })
+
+    it('releases the previous client when initialized with a different chain', async () => {
+      papiApi = new PapiApi()
+      const leaseClientSpy = vi.spyOn(papiApi, 'leaseClient').mockResolvedValue(mockPolkadotClient)
+      const providersSpy = vi
+        .spyOn(papiApi, 'getChainProviders')
+        .mockReturnValue(['ws://dummy:9944'])
+
+      await papiApi.init('Acala')
+      await papiApi.init('Hydration')
+
+      expect(providersSpy).toHaveBeenCalledWith('Acala')
+      expect(leaseClientSpy).toHaveBeenCalledTimes(2)
+      expect(papiApi._chain).toBe('Hydration')
     })
 
     it('resolves the client from apiOverrides for a non-custom chain when _config is a builder config', async () => {
@@ -1855,6 +1895,61 @@ describe('PapiApi', () => {
         ])
         expect(result.destParaId).toBe(2000)
       }
+    })
+
+    it('prices the origin fee in the fee asset only for execute calls', async () => {
+      const successResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
+          },
+          local_xcm: { type: 'V5', value: [] },
+          forwarded_xcms: []
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(successResponse)
+
+      const nativeAsset = { symbol: 'DOT' } as TAssetInfo
+      const feeAsset = { symbol: 'USDT' } as TAssetInfo
+
+      vi.spyOn(papiApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
+      vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
+      const getMethodSpy = vi.spyOn(papiApi, 'getMethod')
+      const xcmFeeSpy = vi.spyOn(papiApi, 'getXcmPaymentApiFee').mockResolvedValue(42n)
+
+      const options: TDryRunCallBaseOptions<TPapiTransaction> = {
+        tx: mockTransaction,
+        asset: {} as WithAmount<TAssetInfo>,
+        address: testAddress,
+        chain: 'AssetHubPolkadot',
+        destination: 'AssetHubKusama',
+        version: Version.V5,
+        feeAsset
+      }
+
+      getMethodSpy.mockReturnValue('transfer_assets_using_type_and_then')
+      const typeAndThenResult = await papiApi.getDryRunCall(options)
+
+      expect(xcmFeeSpy).not.toHaveBeenCalled()
+      expect(computeOriginFee).toHaveBeenCalledWith(
+        successResponse,
+        'AssetHubPolkadot',
+        1000n,
+        false
+      )
+      expect(typeAndThenResult).toEqual(
+        expect.objectContaining({ success: true, fee: 500n, asset: nativeAsset })
+      )
+
+      getMethodSpy.mockReturnValue('execute')
+      const executeResult = await papiApi.getDryRunCall(options)
+
+      expect(xcmFeeSpy).toHaveBeenCalledTimes(1)
+      expect(executeResult).toEqual(
+        expect.objectContaining({ success: true, fee: 42n, asset: feeAsset })
+      )
     })
 
     it('uses tx.getPaymentInfo weight override when local_xcm is missing and fee asset is custom', async () => {
