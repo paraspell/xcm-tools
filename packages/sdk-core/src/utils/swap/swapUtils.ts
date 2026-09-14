@@ -78,6 +78,7 @@ export const createSwapBuilder = <TApi, TRes, TSigner, TCustomChain extends stri
     from,
     to,
     currency,
+    feeAsset,
     swapOptions: { currencyTo, evmSenderAddress, exchange, slippage, onStatusChange },
     sender,
     recipient: address
@@ -97,6 +98,7 @@ export const createSwapBuilder = <TApi, TRes, TSigner, TCustomChain extends stri
     .to(to)
     .currencyFrom(currency)
     .currencyTo(currencyTo)
+    .feeAsset(feeAsset)
     .amount(currency.amount)
     .sender(sender)
     .evmSenderAddress(evmSenderAddress)

@@ -1,11 +1,11 @@
 import type { TAssetInfo, TCurrencyInput } from '@paraspell/assets'
 import { InvalidCurrencyError, isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
-import { isTLocation } from '@paraspell/sdk-common'
+import { isExternalChain, isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError, UnsupportedOperationError } from '../../errors'
 import { abstractDecimals, throwUnsupportedCurrency } from '../../utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
@@ -16,7 +16,9 @@ vi.mock('../../utils')
 
 const createApi = () =>
   ({
-    findAssetInfo: vi.fn()
+    findAssetInfo: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn(),
+    getRelayChainOf: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('resolveFeeAsset', () => {
@@ -24,6 +26,7 @@ describe('resolveFeeAsset', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(isExternalChain).mockReturnValue(false)
     api = createApi()
   })
 
@@ -77,16 +80,62 @@ describe('resolveFeeAsset', () => {
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(feeAsset, origin)
   })
 
-  it('throws InvalidParameterError when origin does not support fee assets', () => {
-    const origin = 'Darwinia'
-    const feeCurrency = {} as TCurrencyInput
-    const feeAsset = {} as TCurrencyInput
-    const findAssetInfoSpy = vi.spyOn(api, 'findAssetInfo')
+  it('throws when a non-relay fee asset is used for an external destination', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(true)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    const relayAsset = { symbol: 'DOT' } as TAssetInfo
+    const feeAssetInfo = { symbol: 'USDT' } as TAssetInfo
+    const transferredAsset = { symbol: 'WETH' } as TAssetInfo
+    vi.spyOn(api, 'findAssetInfo')
+      .mockReturnValueOnce(feeAssetInfo)
+      .mockReturnValueOnce(transferredAsset)
+    vi.spyOn(api, 'getRelayChainOf').mockReturnValue('Polkadot')
+    const findNativeSpy = vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(relayAsset)
 
-    expect(() => resolveFeeAsset(api, feeAsset, origin, 'Hydration', feeCurrency)).toThrow(
-      new ScenarioNotSupportedError(`Fee asset is not supported on ${origin}`)
+    expect(() =>
+      resolveFeeAsset(api, { symbol: 'USDT' }, 'AssetHubPolkadot', 'Ethereum', {} as TCurrencyInput)
+    ).toThrow(ScenarioNotSupportedError)
+    expect(findNativeSpy).toHaveBeenCalledWith('Polkadot')
+    expect(isAssetEqual).toHaveBeenCalledWith(feeAssetInfo, relayAsset)
+    expect(isAssetEqual).toHaveBeenCalledWith(feeAssetInfo, transferredAsset)
+  })
+
+  it('allows a fee asset equal to the transferred asset for an external destination', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(true)
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a === b)
+    const wethAsset = { symbol: 'WETH' } as TAssetInfo
+    vi.spyOn(api, 'findAssetInfo').mockReturnValue(wethAsset)
+    vi.spyOn(api, 'getRelayChainOf').mockReturnValue('Polkadot')
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+
+    const result = resolveFeeAsset(api, { symbol: 'WETH' }, 'AssetHubPolkadot', 'Ethereum', {
+      symbol: 'WETH',
+      amount: 1n
+    } as TCurrencyInput)
+
+    expect(result).toBe(wethAsset)
+  })
+
+  it('allows the relay asset as fee asset for an external destination', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(isExternalChain).mockReturnValue(true)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    const relayAsset = { symbol: 'DOT' } as TAssetInfo
+    vi.spyOn(api, 'findAssetInfo').mockReturnValue(relayAsset)
+    vi.spyOn(api, 'getRelayChainOf').mockReturnValue('Polkadot')
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(relayAsset)
+
+    const result = resolveFeeAsset(
+      api,
+      { symbol: 'DOT' },
+      'AssetHubPolkadot',
+      'Ethereum',
+      {} as TCurrencyInput
     )
-    expect(findAssetInfoSpy).not.toHaveBeenCalled()
+
+    expect(result).toBe(relayAsset)
   })
 
   it('resolves the fee asset for an array currency on any origin', () => {
@@ -105,6 +154,23 @@ describe('resolveFeeAsset', () => {
     const result = resolveFeeAsset(api, feeAsset, 'Darwinia', 'Hydration', currency)
 
     expect(result).toEqual({ ...fakeAsset, amount: 5n })
+  })
+
+  it('throws when more than one non-fee asset is sent', () => {
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.spyOn(api, 'findAssetInfo').mockReturnValue({ symbol: 'FEE' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+
+    const currency = [
+      { symbol: 'FEE', amount: 1n },
+      { symbol: 'B', amount: 2n },
+      { symbol: 'C', amount: 3n }
+    ] as TCurrencyInput
+    const feeAsset = { symbol: 'FEE' } as TCurrencyInput
+
+    expect(() => resolveFeeAsset(api, feeAsset, 'Hydration', 'Astar', currency)).toThrow(
+      UnsupportedOperationError
+    )
   })
 
   it('throws when the fee asset is not one of the provided assets', () => {

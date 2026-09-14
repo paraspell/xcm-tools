@@ -1,6 +1,7 @@
 import { getXcmPallet } from '@paraspell/pallets'
 
 import { UnsupportedOperationError } from '../../errors'
+import { validateFeeAssetSupport } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
 import {
   addXcmVersionHeader,
@@ -25,6 +26,9 @@ export const handleTransactUsingSend = async <
   recipient,
   paraIdTo,
   asset,
+  assetInfo,
+  feeAssetInfo,
+  overriddenAsset,
   transactOptions
 }: TPolkadotXCMTransferOptions<
   TApi,
@@ -32,6 +36,8 @@ export const handleTransactUsingSend = async <
   TSigner,
   TCustomChain
 >): Promise<TSerializedExtrinsics> => {
+  validateFeeAssetSupport(assetInfo, feeAssetInfo, overriddenAsset, 'send')
+
   const dest = createDestination(api, version, chain, destination, paraIdTo)
 
   if (!transactOptions?.call) {

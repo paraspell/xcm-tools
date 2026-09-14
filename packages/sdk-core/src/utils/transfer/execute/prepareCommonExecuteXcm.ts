@@ -1,5 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
 
+import { MIN_WEIGHT } from '../../../constants'
 import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
@@ -28,7 +29,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
   })
 
   if (feeAssetLocalized && !useJitWithdraw) {
-    prefix.push(...createBuyExecution(feeAssetLocalized))
+    prefix.push(...createBuyExecution(feeAssetLocalized, MIN_WEIGHT))
   } else {
     prefix.push({
       SetFeesMode: {

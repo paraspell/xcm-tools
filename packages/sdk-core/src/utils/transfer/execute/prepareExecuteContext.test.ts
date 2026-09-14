@@ -34,7 +34,9 @@ describe('prepareExecuteContext', () => {
       location: mockLocation
     },
     fees: {
-      originFee: 100000000n
+      originFee: 100000000n,
+      reserveFee: 20000000n,
+      destFee: 30000000n
     },
     version: Version.V3
   } as TCreateTransferXcmOptions<unknown, unknown, unknown>
@@ -71,6 +73,7 @@ describe('prepareExecuteContext', () => {
       feeAssetLocalized: undefined,
       feeAssetLocalizedToDest: undefined,
       feeAssetLocalizedToReserve: undefined,
+      feeReserveChain: undefined,
       reserveChain: 'AssetHubPolkadot'
     })
   })
@@ -86,17 +89,29 @@ describe('prepareExecuteContext', () => {
     vi.mocked(isAssetEqual).mockReturnValue(false)
 
     const localizeLocationSpy = vi.spyOn(api, 'localizeLocation')
+    const getAssetReserveChainSpy = vi
+      .spyOn(api, 'getAssetReserveChain')
+      .mockReturnValueOnce('AssetHubPolkadot')
+      .mockReturnValueOnce('Hydration')
 
     const result = prepareExecuteContext(optionsWithFee)
 
     expect(createAsset).toHaveBeenCalledTimes(8) // 4 base + 4 fee assets
     expect(localizeLocationSpy).toHaveBeenCalledTimes(4) // 2 base + 2 fee assets
     expect(localizeLocation).toHaveBeenCalledTimes(2) // 1 base + 1 fee asset
+    expect(getAssetReserveChainSpy).toHaveBeenCalledWith(chain, mockFeeLocation)
+
+    // withdrawn fee asset covers all legs, hops get their own leg amounts
+    expect(createAsset).toHaveBeenCalledWith(Version.V3, 150000000n, mockFeeLocation)
+    expect(createAsset).toHaveBeenCalledWith(Version.V3, 150000000n, mockLocalizedLocation)
+    expect(createAsset).toHaveBeenCalledWith(Version.V3, 30000000n, mockLocalizedLocation)
+    expect(createAsset).toHaveBeenCalledWith(Version.V3, 20000000n, mockLocalizedLocation)
 
     expect(result.feeAsset).toBe(mockAsset)
     expect(result.feeAssetLocalized).toBe(mockAsset)
     expect(result.feeAssetLocalizedToDest).toBe(mockAsset)
     expect(result.feeAssetLocalizedToReserve).toBe(mockAsset)
+    expect(result.feeReserveChain).toBe('Hydration')
   })
 
   it('does not create fee assets when fee asset equals main asset', () => {
@@ -108,6 +123,7 @@ describe('prepareExecuteContext', () => {
     } as TCreateTransferXcmOptions<unknown, unknown, unknown>
 
     vi.mocked(isAssetEqual).mockReturnValue(true)
+    const getAssetReserveChainSpy = vi.spyOn(api, 'getAssetReserveChain')
 
     const result = prepareExecuteContext(optionsWithFee)
 
@@ -117,6 +133,8 @@ describe('prepareExecuteContext', () => {
     expect(result.feeAssetLocalized).toBeUndefined()
     expect(result.feeAssetLocalizedToDest).toBeUndefined()
     expect(result.feeAssetLocalizedToReserve).toBeUndefined()
+    expect(result.feeReserveChain).toBeUndefined()
+    expect(getAssetReserveChainSpy).toHaveBeenCalledTimes(1)
   })
 
   it('localizes to different chains correctly', () => {

@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { TAssetInfo } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,6 +10,7 @@ import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '..
 import * as dryRunModule from '../../../transfer/dry-run/dryRunInternal'
 import type { TCreateSwapXcmOptions, TExchangeChain } from '../../../types'
 import { type TDryRunResult } from '../../../types'
+import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 import { handleSwapExecuteTransfer } from './handleSwapExecuteTransfer'
 
 vi.mock('../../fees/padFee', () => ({
@@ -23,7 +26,7 @@ vi.mock('./createExecuteCall', () => ({
 }))
 
 vi.mock('./createSwapExecuteXcm', () => ({
-  createSwapExecuteXcm: () => 'mocked-xcm'
+  createSwapExecuteXcm: vi.fn()
 }))
 
 vi.mock('./isMultiHopSwap', () => ({
@@ -274,5 +277,98 @@ describe('handleSwapExecuteTransfer', () => {
 
     const result = await handleSwapExecuteTransfer(optionsSameChain)
     expect(result).toMatch(/^tx:/)
+  })
+
+  describe('separate fee asset', () => {
+    const feeAssetInfo = {
+      symbol: 'USDC',
+      decimals: 6,
+      location: { parents: 1, interior: 'Here' }
+    } as TAssetInfo
+
+    const dryRunWithDest = {
+      ...mockDryRunResult(true, true),
+      destination: { success: true, fee: 300n }
+    } as unknown as TDryRunResult
+
+    it('uses a generous fee asset budget for the first dry run and the extracted fees after', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      const dryRunSpy = vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRunWithDest)
+      const options = { ...baseOptions, feeAssetInfo }
+
+      await handleSwapExecuteTransfer(options)
+
+      expect(dryRunSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ feeAsset: { location: feeAssetInfo.location } })
+      )
+
+      const dummy = 100_000_000n
+      const [firstCall, finalCall] = vi.mocked(createSwapExecuteXcm).mock.calls
+      expect(firstCall[0].fees).toEqual({
+        originFee: dummy,
+        originReserveFee: dummy,
+        exchangeFee: dummy,
+        destReserveFee: dummy,
+        destFee: dummy
+      })
+      expect(finalCall[0].fees).toEqual({
+        originFee: 510n,
+        originReserveFee: 110n,
+        exchangeFee: 210n,
+        destReserveFee: 160n,
+        destFee: 310n
+      })
+      expect(options.calculateMinAmountOut).toHaveBeenCalledWith(2000n)
+    })
+
+    it('surfaces the dry run failure instead of an amount error when fees are paid separately', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      const failed = {
+        ...mockDryRunResult(true, true),
+        dryRunError: { chainKind: 'hop', chain: EXCHANGE_CHAIN, reason: 'NotHoldingFees' }
+      } as unknown as TDryRunResult
+      vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(failed)
+
+      await expect(handleSwapExecuteTransfer({ ...baseOptions, feeAssetInfo })).rejects.toThrow(
+        DryRunFailedError
+      )
+    })
+
+    it('keeps minimal dummy fees on the destination leg when the fee asset is the swapped asset', async () => {
+      vi.mocked(isAssetEqual).mockImplementation(asset => asset === baseOptions.assetInfoTo)
+      vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRunWithDest)
+      const options = { ...baseOptions, feeAssetInfo }
+
+      await handleSwapExecuteTransfer(options)
+
+      const [firstCall] = vi.mocked(createSwapExecuteXcm).mock.calls
+      const dummy = 100_000_000n
+      expect(firstCall[0].fees).toEqual({
+        originFee: dummy,
+        originReserveFee: dummy,
+        exchangeFee: dummy,
+        destReserveFee: 1000n,
+        destFee: 1000n
+      })
+    })
+
+    it('ignores a fee asset equal to the swapped asset', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRunWithDest)
+      const options = { ...baseOptions, feeAssetInfo }
+
+      await handleSwapExecuteTransfer(options)
+
+      const [firstCall, finalCall] = vi.mocked(createSwapExecuteXcm).mock.calls
+      expect(firstCall[0].fees).toEqual({
+        originFee: 0n,
+        originReserveFee: 1000n,
+        exchangeFee: 0n,
+        destReserveFee: 1000n,
+        destFee: 1000n
+      })
+      expect(finalCall[0].fees.originFee).toBe(0n)
+      expect(options.calculateMinAmountOut).toHaveBeenCalledWith(1680n)
+    })
   })
 })

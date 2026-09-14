@@ -97,6 +97,18 @@ describe('handleExecuteTransfer', () => {
     await expect(handleExecuteTransfer(input)).rejects.toThrow(AmountTooLowError)
   })
 
+  it('should throw error when the origin cannot pay fees in the fee asset', async () => {
+    const input = {
+      ...mockInput,
+      chain: 'Acala',
+      feeAssetInfo: { symbol: 'USDT', decimals: 6 }
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+    await expect(handleExecuteTransfer(input)).rejects.toThrow(
+      'Fee asset is not supported on Acala'
+    )
+  })
+
   it('should throw error when unable to determine destination chain', async () => {
     const input = {
       ...mockInput,
@@ -110,17 +122,56 @@ describe('handleExecuteTransfer', () => {
     )
   })
 
-  it('should throw error when amount is smaller than calculated fee (different fee asset)', async () => {
+  it('should pay hop and destination fees with a separate fee asset without checking them against the amount', async () => {
     const input = {
       ...mockInput,
       sender: '0xvalid',
       assetInfo: { ...mockInput.assetInfo, amount: 1200n },
-      feeAssetInfo: { symbol: 'USDT' },
+      feeAssetInfo: { symbol: 'USDT', decimals: 6 },
       feeCurrency: { symbol: 'USDT' }
     } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(5000))
+
+    vi.mocked(createDirectExecuteXcm).mockResolvedValue(mockXcm)
+    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
+    vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 12000n })
+
+    const dryRunResult = {
+      origin: { success: true, fee: 1000n },
+      hops: [{ chain: 'IntermediateChain', result: { success: true, fee: 1000n } }],
+      destination: { success: true, fee: 3000n }
+    } as unknown as TDryRunResult
+    vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
+
+    await expect(handleExecuteTransfer(input)).resolves.toBe('finalTx')
+
+    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        fees: { originFee: 100000000n, reserveFee: 100000000n, destFee: 100000000n }
+      })
+    )
+    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        fees: { originFee: 1400n, reserveFee: 1400n, destFee: 4200n }
+      })
+    )
+  })
+
+  it('should keep checking the amount against the reserve fee when the fee asset equals the transferred asset', async () => {
+    const input = {
+      ...mockInput,
+      sender: '0xvalid',
+      assetInfo: { ...mockInput.assetInfo, amount: 1200n },
+      feeAssetInfo: { symbol: 'DOT', decimals: 10 },
+      feeCurrency: { symbol: 'DOT' }
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+
+    vi.mocked(isAssetEqual).mockReturnValue(true)
 
     vi.mocked(createDirectExecuteXcm).mockResolvedValue(mockXcm)
     vi.mocked(createExecuteCall).mockReturnValue('mockCall' as unknown as TSerializedExtrinsics)
@@ -133,6 +184,13 @@ describe('handleExecuteTransfer', () => {
     vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
 
     await expect(handleExecuteTransfer(input)).rejects.toThrow(AmountTooLowError)
+
+    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        fees: { originFee: 1000000000000n, reserveFee: 1000n, destFee: 1000n }
+      })
+    )
   })
 
   it('should throw error if origin dry run fails', async () => {
@@ -198,7 +256,8 @@ describe('handleExecuteTransfer', () => {
       version: Version.V4,
       fees: {
         originFee: 1000n,
-        reserveFee: 1000n
+        reserveFee: 1000n,
+        destFee: 1000n
       },
       paraIdTo: mockInput.paraIdTo
     })
@@ -216,7 +275,8 @@ describe('handleExecuteTransfer', () => {
       version: Version.V4,
       fees: {
         originFee: 1400n, // 1000 padded by 40%
-        reserveFee: 2800n // 2000 padded by 40%
+        reserveFee: 2800n, // 2000 padded by 40%
+        destFee: 1400n // MIN_FEE padded by 40%
       },
       paraIdTo: mockInput.paraIdTo
     })
@@ -266,9 +326,39 @@ describe('handleExecuteTransfer', () => {
       version: Version.V4,
       fees: {
         originFee: 2100n,
-        reserveFee: 1400n
+        reserveFee: 1400n,
+        destFee: 1400n
       },
       paraIdTo: mockInput.paraIdTo
     })
+  })
+
+  it('should fall back to MIN_FEE for reserve and destination fees when their dry runs fail', async () => {
+    const input = {
+      ...mockInput,
+      sender: '0xvalid',
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
+    }
+
+    vi.mocked(createDirectExecuteXcm).mockResolvedValue(mockXcm)
+    vi.mocked(createExecuteCall).mockReturnValue('finalTx' as unknown as TSerializedExtrinsics)
+    vi.spyOn(mockApi, 'deserializeExtrinsics').mockReturnValue('mockTx')
+    vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 15000n })
+
+    const dryRunResult = {
+      origin: { success: true, fee: 1000n },
+      hops: [{ chain: 'IntermediateChain', result: { success: false } }],
+      destination: { success: false }
+    } as unknown as TDryRunResult
+    vi.mocked(dryRunInternal).mockResolvedValue(dryRunResult)
+
+    await handleExecuteTransfer(input)
+
+    expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        fees: { originFee: 1400n, reserveFee: 1400n, destFee: 1400n }
+      })
+    )
   })
 })

@@ -1,3 +1,4 @@
+import { extractAssetLocation } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import {
   deepEqual,
@@ -20,6 +21,7 @@ import type {
 } from '../../types'
 import { assertToIsString, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { getFeeAssetInfo } from '../../utils/transfer/getFeeAssetInfo'
 
 const PINK_LOCATION: TLocation = {
   parents: 1,
@@ -35,6 +37,13 @@ const requiresSystemAssetByLocation = <TApi, TRes, TSigner, TCustomChain extends
   const wudLocation = api.findAssetInfoOrThrow('Jamton', { symbol: 'WUD' }).location
   return [wudLocation, PINK_LOCATION].some(location => deepEqual(assetLocation, location))
 }
+
+export const getFeeAssetLocation = <TApi, TRes, TSigner, TCustomChain extends string = never>({
+  feeAssetInfo,
+  isRelayAsset,
+  assetInfo
+}: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>): TLocation =>
+  feeAssetInfo?.location ?? (isRelayAsset ? assetInfo.location : RELAY_LOCATION)
 
 export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -84,21 +93,30 @@ export const createTypeAndThenCallContext = async <
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TTypeAndThenOverrides
 ): Promise<TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>> => {
-  const { api, chain, destination, assetInfo } = options
+  const { api, chain, destination, assetInfo, overriddenAsset } = options
 
   assertToIsString(destination)
 
   const isSubBridge = isSubstrateBridge(chain, destination)
   const isSb = isSnowbridge(chain, destination)
 
+  // For multi-asset transfers `assetInfo` is the fee asset, so the reserve is taken from the transferred asset
+  const transferredAsset = overriddenAsset?.find(asset => !asset.isFeeAsset)
+
   const reserveChain = resolveReserveChain(
     api,
     chain,
     destination,
-    assetInfo.location,
+    transferredAsset ? extractAssetLocation(transferredAsset) : assetInfo.location,
     isSubBridge,
     overrides.reserveChain
   )
+
+  const feeAssetInfo = getFeeAssetInfo(assetInfo, options.feeAssetInfo)
+  const feeAssetLocation = transferredAsset ? assetInfo.location : feeAssetInfo?.location
+
+  const feeReserveChain =
+    feeAssetLocation && resolveReserveChain(api, chain, destination, feeAssetLocation, isSubBridge)
 
   const NO_FEE_ASSET_LOCS = [
     RELAY_LOCATION,
@@ -147,6 +165,7 @@ export const createTypeAndThenCallContext = async <
     )
 
   const isRelayAsset =
+    !feeAssetInfo &&
     !requiresSystemAsset &&
     !isForeignRelayToExternal &&
     (isAssetHubToExternal ||
@@ -187,6 +206,8 @@ export const createTypeAndThenCallContext = async <
     isSnowbridge: isSb,
     isRelayAsset,
     assetInfo,
+    feeAssetInfo,
+    feeReserveChain,
     options,
     systemAsset,
     bridgeHopChain

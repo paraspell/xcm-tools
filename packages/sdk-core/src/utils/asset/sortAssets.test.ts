@@ -1,269 +1,125 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { type TAsset } from '@paraspell/assets'
-import { type TLocation } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import type { TAsset } from '@paraspell/assets'
+import type { TLocation } from '@paraspell/sdk-common'
+import { describe, expect, it } from 'vitest'
 
-import { sortAssets } from './sortAssets'
+import { compareLocationOrder, sortAssets } from './sortAssets'
 
-vi.mock('@paraspell/assets', () => ({
-  extractAssetLocation: vi.fn((asset: TAsset) => {
-    if ('Concrete' in asset.id) {
-      return asset.id.Concrete
-    }
-    return asset.id
+const ETHEREUM = { GlobalConsensus: { Ethereum: { chainId: 1 } } }
+const CGT: TLocation = {
+  parents: 2,
+  interior: {
+    X2: [
+      ETHEREUM,
+      { AccountKey20: { network: null, key: '0x0e186357c323c806c1efdad36d217f7a54b63d18' } }
+    ]
+  }
+}
+const KSM: TLocation = { parents: 2, interior: { X1: [{ GlobalConsensus: { kusama: null } }] } }
+const DOT_FROM_KUSAMA: TLocation = {
+  parents: 2,
+  interior: { X1: [{ GlobalConsensus: { polkadot: null } }] }
+}
+const USDT_FROM_KUSAMA: TLocation = {
+  parents: 2,
+  interior: {
+    X4: [
+      { GlobalConsensus: { polkadot: null } },
+      { Parachain: 1000 },
+      { PalletInstance: 50 },
+      { GeneralIndex: 1984 }
+    ]
+  }
+}
+const RELAY: TLocation = { parents: 1, interior: { Here: null } }
+const USDT: TLocation = {
+  parents: 1,
+  interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+}
+const USDC: TLocation = {
+  parents: 1,
+  interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337 }] }
+}
+const PARA: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
+
+const asset = (location: TLocation): TAsset => ({ id: location, fun: { Fungible: 1n } })
+const locations = (assets: TAsset[]) => assets.map(a => a.id)
+
+describe('compareLocationOrder', () => {
+  it('orders by parents first', () => {
+    expect(compareLocationOrder({ parents: 0, interior: 'Here' }, RELAY)).toBeLessThan(0)
+    expect(compareLocationOrder(KSM, RELAY)).toBeGreaterThan(0)
   })
-}))
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  hasJunction: vi.fn((loc: TLocation, junction: string) => {
-    if (junction === 'GlobalConsensus' && loc.interior && typeof loc.interior === 'object') {
-      if ('X2' in loc.interior && Array.isArray(loc.interior.X2)) {
-        const firstJunction = loc.interior.X2[0]
-        return (
-          firstJunction && typeof firstJunction === 'object' && 'GlobalConsensus' in firstJunction
-        )
-      }
-    }
-    return false
-  }),
-  getJunctionValue: vi.fn((loc: TLocation, junction: string) => {
-    if (junction === 'GeneralIndex' && loc.interior && typeof loc.interior === 'object') {
-      if ('X1' in loc.interior && 'GeneralIndex' in (loc.interior.X1 || {})) {
-        return (loc.interior.X1 as any).GeneralIndex
-      }
-      if (
-        'X2' in loc.interior &&
-        loc.interior.X2?.[1] &&
-        'GeneralIndex' in (loc.interior.X2[1] || {})
-      ) {
-        return (loc.interior.X2[1] as any).GeneralIndex
-      }
-    }
-    return undefined
+  it('orders Here before any junctions and shorter junction lists first', () => {
+    expect(compareLocationOrder(RELAY, USDT)).toBeLessThan(0)
+    expect(compareLocationOrder(PARA, USDT)).toBeLessThan(0)
+    expect(compareLocationOrder(KSM, CGT)).toBeLessThan(0)
+    expect(compareLocationOrder(CGT, USDT_FROM_KUSAMA)).toBeLessThan(0)
   })
-}))
+
+  it('orders junctions of the same length by variant and then by value', () => {
+    expect(compareLocationOrder(USDC, USDT)).toBeLessThan(0)
+    expect(
+      compareLocationOrder(
+        { parents: 1, interior: { X1: { Parachain: 1000 } } },
+        { parents: 1, interior: { X1: { PalletInstance: 1 } } }
+      )
+    ).toBeLessThan(0)
+    expect(
+      compareLocationOrder(
+        { parents: 1, interior: { X1: { Parachain: 1000 } } },
+        { parents: 1, interior: { X1: { Parachain: '2000' } } }
+      )
+    ).toBeLessThan(0)
+  })
+
+  it('orders global consensus by network id in either notation', () => {
+    expect(compareLocationOrder(DOT_FROM_KUSAMA, KSM)).toBeLessThan(0)
+    expect(compareLocationOrder(KSM, { parents: 2, interior: { X1: [ETHEREUM] } })).toBeLessThan(0)
+    expect(
+      compareLocationOrder(
+        { parents: 2, interior: { X1: [{ GlobalConsensus: 'Polkadot' }] } },
+        { parents: 2, interior: { X1: [{ GlobalConsensus: { kusama: null } }] } }
+      )
+    ).toBeLessThan(0)
+    expect(
+      compareLocationOrder(
+        { parents: 2, interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }] } },
+        { parents: 2, interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 11155111 } } }] } }
+      )
+    ).toBeLessThan(0)
+  })
+
+  it('returns 0 for equal locations', () => {
+    expect(compareLocationOrder(CGT, { ...CGT })).toBe(0)
+    expect(compareLocationOrder(RELAY, { parents: 1, interior: 'Here' })).toBe(0)
+  })
+})
 
 describe('sortAssets', () => {
-  const createAsset = (location: TLocation): TAsset => ({
-    id: { Concrete: location },
-    fun: { Fungible: 1000n }
+  it('sorts a bridged asset with a foreign-consensus fee asset', () => {
+    expect(locations(sortAssets([asset(CGT), asset(KSM)]))).toEqual([KSM, CGT])
+    expect(locations(sortAssets([asset(CGT), asset(DOT_FROM_KUSAMA)]))).toEqual([
+      DOT_FROM_KUSAMA,
+      CGT
+    ])
+    expect(locations(sortAssets([asset(USDT_FROM_KUSAMA), asset(CGT)]))).toEqual([
+      CGT,
+      USDT_FROM_KUSAMA
+    ])
   })
 
-  const getLocation = (asset: TAsset): TLocation => {
-    if ('Concrete' in asset.id) {
-      return asset.id.Concrete
-    }
-    return asset.id
-  }
-
-  describe('sorting by parents', () => {
-    it('sorts assets with different parent counts', () => {
-      const assets = [
-        createAsset({ parents: 2, interior: 'Here' }),
-        createAsset({ parents: 0, interior: 'Here' }),
-        createAsset({ parents: 1, interior: 'Here' })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).parents).toBe(0)
-      expect(getLocation(sorted[1]).parents).toBe(1)
-      expect(getLocation(sorted[2]).parents).toBe(2)
-    })
+  it('sorts local assets after the relay asset and by general index', () => {
+    expect(locations(sortAssets([asset(USDT), asset(USDC), asset(RELAY), asset(PARA)]))).toEqual([
+      RELAY,
+      PARA,
+      USDC,
+      USDT
+    ])
   })
 
-  describe('sorting by location type (same parents)', () => {
-    it('prioritizes Here locations first', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } }),
-        createAsset({ parents: 1, interior: 'Here' }),
-        createAsset({
-          parents: 1,
-          interior: { X2: [{ GlobalConsensus: 'Polkadot' }, { Parachain: 1000 }] }
-        })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toBe('Here')
-    })
-
-    it('handles Here as object format', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } }),
-        createAsset({ parents: 1, interior: { Here: null } }),
-        createAsset({
-          parents: 1,
-          interior: { X2: [{ GlobalConsensus: 'Polkadot' }, { Parachain: 1000 }] }
-        })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toEqual({ Here: null })
-    })
-
-    it('prioritizes non-GlobalConsensus over GlobalConsensus', () => {
-      const assets = [
-        createAsset({
-          parents: 1,
-          interior: { X2: [{ GlobalConsensus: 'Polkadot' }, { Parachain: 1000 }] }
-        }),
-        createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toEqual({ X1: { Parachain: 2000 } })
-      expect(getLocation(sorted[1]).interior).toEqual({
-        X2: [{ GlobalConsensus: 'Polkadot' }, { Parachain: 1000 }]
-      })
-    })
-  })
-
-  describe('sorting by GeneralIndex (same parents and priority)', () => {
-    it('sorts assets by GeneralIndex value', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 30 } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 10 } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 20 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toEqual({ X1: { GeneralIndex: 10 } })
-      expect(getLocation(sorted[1]).interior).toEqual({ X1: { GeneralIndex: 20 } })
-      expect(getLocation(sorted[2]).interior).toEqual({ X1: { GeneralIndex: 30 } })
-    })
-
-    it('sorts assets with bigint, string and number GeneralIndex values', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 30n } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: '10' } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 20 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toEqual({ X1: { GeneralIndex: '10' } })
-      expect(getLocation(sorted[1]).interior).toEqual({ X1: { GeneralIndex: 20 } })
-      expect(getLocation(sorted[2]).interior).toEqual({ X1: { GeneralIndex: 30n } })
-    })
-
-    it('places assets without GeneralIndex after those with GeneralIndex', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 10 } } }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 20 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(getLocation(sorted[0]).interior).toEqual({ X1: { GeneralIndex: 10 } })
-      expect(getLocation(sorted[1]).interior).toEqual({ X1: { GeneralIndex: 20 } })
-      expect(getLocation(sorted[2]).interior).toEqual({ X1: { Parachain: 2000 } })
-    })
-
-    it('maintains order when both assets have no GeneralIndex', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X1: { Parachain: 2000 } } }),
-        createAsset({ parents: 1, interior: { X1: { Parachain: 1000 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      expect(sorted).toEqual(assets)
-    })
-  })
-
-  describe('complex sorting scenarios', () => {
-    it('sorts complex mix of assets correctly', () => {
-      const assets = [
-        // Group 1: parents=0
-        createAsset({ parents: 0, interior: { X1: { GeneralIndex: 50 } } }),
-        createAsset({ parents: 0, interior: 'Here' }),
-
-        // Group 2: parents=1
-        createAsset({
-          parents: 1,
-          interior: { X2: [{ GlobalConsensus: 'Kusama' }, { Parachain: 2000 }] }
-        }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 10 } } }),
-        createAsset({ parents: 1, interior: 'Here' }),
-        createAsset({ parents: 1, interior: { X1: { GeneralIndex: 30 } } }),
-
-        // Group 3: parents=2
-        createAsset({ parents: 2, interior: { X1: { Parachain: 1000 } } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      // Check parents=0 group
-      expect(getLocation(sorted[0]).parents).toBe(0)
-      expect(getLocation(sorted[0]).interior).toBe('Here')
-      expect(getLocation(sorted[1]).parents).toBe(0)
-      expect(getLocation(sorted[1]).interior).toEqual({ X1: { GeneralIndex: 50 } })
-
-      expect(getLocation(sorted[2]).parents).toBe(1)
-      expect(getLocation(sorted[2]).interior).toBe('Here')
-      expect(getLocation(sorted[3]).parents).toBe(1)
-      expect(getLocation(sorted[3]).interior).toEqual({ X1: { GeneralIndex: 10 } })
-      expect(getLocation(sorted[4]).parents).toBe(1)
-      expect(getLocation(sorted[4]).interior).toEqual({ X1: { GeneralIndex: 30 } })
-      expect(getLocation(sorted[5]).parents).toBe(1)
-      expect(getLocation(sorted[5]).interior).toEqual({
-        X2: [{ GlobalConsensus: 'Kusama' }, { Parachain: 2000 }]
-      })
-
-      expect(getLocation(sorted[6]).parents).toBe(2)
-    })
-  })
-
-  describe('edge cases', () => {
-    it('handles empty array', () => {
-      const result = sortAssets([])
-      expect(result).toEqual([])
-    })
-
-    it('handles single element array', () => {
-      const assets = [createAsset({ parents: 1, interior: 'Here' })]
-      const result = sortAssets([...assets])
-      expect(result).toEqual(assets)
-    })
-
-    it('mutates the original array', () => {
-      const assets = [
-        createAsset({ parents: 2, interior: 'Here' }),
-        createAsset({ parents: 1, interior: 'Here' })
-      ]
-
-      const result = sortAssets(assets)
-
-      expect(result).toBe(assets)
-      expect(getLocation(assets[0]).parents).toBe(1)
-    })
-  })
-
-  describe('GeneralIndex in X2 locations', () => {
-    it('sorts by GeneralIndex in X2 second position', () => {
-      const assets = [
-        createAsset({ parents: 1, interior: { X2: [{ Parachain: 1000 }, { GeneralIndex: 30 }] } }),
-        createAsset({ parents: 1, interior: { X2: [{ Parachain: 1000 }, { GeneralIndex: 10 }] } }),
-        createAsset({ parents: 1, interior: { X2: [{ Parachain: 1000 }, { GeneralIndex: 20 }] } })
-      ]
-
-      const sorted = sortAssets([...assets])
-
-      const loc0 = getLocation(sorted[0]).interior as any
-      const loc1 = getLocation(sorted[1]).interior as any
-      const loc2 = getLocation(sorted[2]).interior as any
-
-      expect(loc0.X2[1].GeneralIndex).toBe(10)
-      expect(loc1.X2[1].GeneralIndex).toBe(20)
-      expect(loc2.X2[1].GeneralIndex).toBe(30)
-    })
+  it('sorts in place and returns the same array', () => {
+    const assets = [asset(CGT), asset(KSM)]
+    expect(sortAssets(assets)).toBe(assets)
   })
 })

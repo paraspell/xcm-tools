@@ -55,6 +55,7 @@ const createInitialOptions = () =>
     recipient: 'recipient',
     slippagePct: '0.5',
     evmSenderAddress: '0xSender',
+    feeAsset: { symbol: 'DOT' },
   }) as TBuildTransactionsOptions<unknown, unknown, unknown>;
 
 const createOptions = (
@@ -161,6 +162,7 @@ describe('dryRunRouter', () => {
         destination: 'Acala',
         sender: '0xSender',
         currency: expect.objectContaining({ amount: 1000n }),
+        feeAsset: { symbol: 'DOT' },
       }),
     );
     expect(result.origin.isExchange).toBe(true);

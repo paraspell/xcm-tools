@@ -132,4 +132,25 @@ describe('computeAllFees', () => {
     expect(padValueBy).toHaveBeenNthCalledWith(1, 25n, FEE_PADDING)
     expect(padValueBy).toHaveBeenNthCalledWith(2, 5n, FEE_PADDING)
   })
+
+  it('sums hop fees by the user-defined fee asset when provided', async () => {
+    const feeAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    }
+    const feeDetail: TXcmFeeDetail = { fee: 0n, feeType: 'dryRun', asset: feeAssetInfo }
+
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      success: true,
+      origin: feeDetail,
+      destination: { ...feeDetail, fee: 5n },
+      hops: [{ chain: 'AssetHubPolkadot', result: { ...feeDetail, fee: 10n } }]
+    })
+
+    const result = await computeAllFees({ ...context, feeAssetInfo }, buildTx)
+
+    expect(isAssetEqual).toHaveBeenCalledWith(feeAssetInfo, feeAssetInfo)
+    expect(result).toEqual({ hopFees: 10n, destFee: 5n })
+  })
 })

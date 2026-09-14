@@ -37,6 +37,7 @@ export const EXTENSION_MS = 5 * 60_000 // 5 minutes
 
 export const MAX_U64 = (1n << 64n) - 1n
 
+export const MIN_WEIGHT: TWeight = { proofSize: 1n, refTime: 1n }
 export const MAX_WEIGHT: TWeight = { proofSize: MAX_U64, refTime: MAX_U64 }
 
 export const BYPASS_MINT_AMOUNT = '1000'

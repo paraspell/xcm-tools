@@ -23,6 +23,8 @@ export type TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain extends st
   isSnowbridge: boolean
   isRelayAsset: boolean
   assetInfo: WithAmount<TAssetInfo>
+  feeAssetInfo?: TAssetInfo
+  feeReserveChain?: TChain | TCustomChain
   systemAsset: TAssetInfo
   bridgeHopChain?: TSubstrateChain
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>

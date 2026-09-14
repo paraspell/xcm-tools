@@ -15,15 +15,15 @@ const sumHopFees = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   result: TGetXcmFeeResult<false, TCustomChain>,
   {
     assetInfo,
+    feeAssetInfo,
     isRelayAsset,
     systemAsset
   }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>
 ): bigint => {
+  const feeAsset = isRelayAsset ? assetInfo : (feeAssetInfo ?? systemAsset)
   return result.hops.reduce((acc, hop) => {
     // only add if asset is equal
-    return isAssetEqual(hop.result.asset, isRelayAsset ? assetInfo : systemAsset)
-      ? acc + hop.result.fee
-      : acc
+    return isAssetEqual(hop.result.asset, feeAsset) ? acc + hop.result.fee : acc
   }, 0n)
 }
 

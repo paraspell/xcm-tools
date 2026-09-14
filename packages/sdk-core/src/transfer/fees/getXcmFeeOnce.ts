@@ -161,6 +161,7 @@ export const getXcmFeeOnce = async <
       asset,
       currentAsset,
       currency,
+      feeAsset: resolvedFeeAsset,
       swapConfig,
       hasPassedExchange
     })

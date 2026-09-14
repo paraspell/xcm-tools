@@ -23,6 +23,7 @@ import { getRelayChainOf } from '../../chain'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
+import { getFeeAssetInfo } from '../getFeeAssetInfo'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
@@ -92,7 +93,8 @@ const extractFeesFromDryRun = <TCustomChain extends string = never>(
     originFee: 0n,
     originReserveFee: 0n,
     exchangeFee: 0n,
-    destReserveFee: 0n
+    destReserveFee: 0n,
+    destFee: 0n
   }
 
   const hops = dryRunResult.hops
@@ -185,6 +187,10 @@ const extractFeesFromDryRun = <TCustomChain extends string = never>(
     }
   }
 
+  if (destChain && dryRunResult.destination?.success) {
+    fees.destFee = padValueBy(dryRunResult.destination.fee, FEE_PADDING_PERCENTAGE)
+  }
+
   return fees
 }
 
@@ -236,14 +242,17 @@ export const handleSwapExecuteTransfer = async <
 
   const isEthereumDest = destChain !== undefined && isExternalChain(destChain)
 
+  const separateFeeAssetInfo = isEthereumDest ? undefined : getFeeAssetInfo(assetFrom, feeAssetInfo)
+
   // When main asset is DOT and dest is Ethereum, fees come from the same asset
   // (no separate fee asset needed). Only skip fee validation when currencies differ.
   const hasSeparateFeeAsset =
-    isEthereumDest &&
-    !isAssetEqual(
-      assetFrom,
-      api.findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain))
-    )
+    separateFeeAssetInfo !== undefined ||
+    (isEthereumDest &&
+      !isAssetEqual(
+        assetFrom,
+        api.findNativeAssetInfoOrThrow(getRelayChainOf(chain ?? exchangeChain))
+      ))
 
   const internalOptions = {
     ...options,
@@ -273,15 +282,22 @@ export const handleSwapExecuteTransfer = async <
 
   const FEE_ASSET_AMOUNT = 100
 
-  const dummyOriginFee = feeAssetInfo
-    ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
-    : 0n
+  const dummyFeeAssetAmount = separateFeeAssetInfo
+    ? parseUnits(FEE_ASSET_AMOUNT.toString(), separateFeeAssetInfo.decimals)
+    : undefined
+
+  const dummyDestFee =
+    (separateFeeAssetInfo &&
+      getFeeAssetInfo(assetTo, separateFeeAssetInfo) &&
+      dummyFeeAssetAmount) ??
+    MIN_FEE
 
   const fees: TSwapFeeEstimates = {
-    originFee: dummyOriginFee,
-    originReserveFee: MIN_FEE,
-    exchangeFee: 0n,
-    destReserveFee: MIN_FEE
+    originFee: dummyFeeAssetAmount ?? 0n,
+    originReserveFee: dummyFeeAssetAmount ?? MIN_FEE,
+    exchangeFee: dummyFeeAssetAmount ?? 0n,
+    destReserveFee: dummyDestFee,
+    destFee: dummyDestFee
   }
 
   const totalFeesPre = calculateTotalFees(chain, fees)
@@ -307,6 +323,8 @@ export const handleSwapExecuteTransfer = async <
   })
 
   if (firstDryRunResult.dryRunError?.reason === 'NotHoldingFees') {
+    if (separateFeeAssetInfo) throw new DryRunFailedError(firstDryRunResult.dryRunError)
+
     throw new AmountTooLowError(
       `Asset amount is too low to cover the fees, please increase the amount.`
     )
@@ -325,7 +343,7 @@ export const handleSwapExecuteTransfer = async <
 
   // Set originFee from dry run origin fee (padded), same as handleExecuteTransfer
   extractedFees.originFee =
-    feeAssetInfo && firstDryRunResult.origin.success
+    separateFeeAssetInfo && firstDryRunResult.origin.success
       ? padValueBy(firstDryRunResult.origin.fee, FEE_PADDING_PERCENTAGE)
       : 0n
 

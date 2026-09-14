@@ -24,6 +24,7 @@ const mockBuilderInstance = {
   to: vi.fn().mockReturnThis(),
   currencyFrom: vi.fn().mockReturnThis(),
   currencyTo: vi.fn().mockReturnThis(),
+  feeAsset: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
   sender: vi.fn().mockReturnThis(),
   evmSenderAddress: vi.fn().mockReturnThis(),
@@ -121,6 +122,7 @@ describe('swapUtils', () => {
         amount: '1000000000'
       })
       expect(mockBuilderInstance.currencyTo).toHaveBeenCalledWith({ symbol: 'GLMR' })
+      expect(mockBuilderInstance.feeAsset).toHaveBeenCalledWith(undefined)
       expect(mockBuilderInstance.amount).toHaveBeenCalledWith('1000000000')
       expect(mockBuilderInstance.sender).toHaveBeenCalledWith('5G7abc...')
       expect(mockBuilderInstance.evmSenderAddress).toHaveBeenCalledWith(undefined)
@@ -128,6 +130,12 @@ describe('swapUtils', () => {
       expect(mockBuilderInstance.slippagePct).toHaveBeenCalledWith('1')
       expect(mockBuilderInstance.onStatusChange).not.toHaveBeenCalled()
       expect(result).toBe(mockBuilderInstance)
+    })
+
+    it('should forward the fee asset to the swap builder', () => {
+      const options = createBaseOptions({ feeAsset: { symbol: 'USDT' } })
+      createSwapBuilder(options)
+      expect(mockBuilderInstance.feeAsset).toHaveBeenCalledWith({ symbol: 'USDT' })
     })
 
     it('should call onStatusChange when provided', () => {

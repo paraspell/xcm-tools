@@ -1,9 +1,10 @@
-import { isAssetEqual, type TAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createAsset } from '../../asset'
 import { localizeLocation } from '../../location'
+import { getFeeAssetInfo } from '../getFeeAssetInfo'
 
 export type TExecuteContext<TCustomChain extends string = never> = {
   amount: bigint
@@ -15,6 +16,7 @@ export type TExecuteContext<TCustomChain extends string = never> = {
   feeAssetLocalized?: TAsset
   feeAssetLocalizedToDest?: TAsset
   feeAssetLocalizedToReserve?: TAsset
+  feeReserveChain?: TChain | TCustomChain
   reserveChain: TChain | TCustomChain
 }
 
@@ -24,7 +26,7 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
   destChain,
   assetInfo,
   feeAssetInfo,
-  fees: { originFee },
+  fees: { originFee, reserveFee, destFee },
   version
 }: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>): TExecuteContext<TCustomChain> => {
   const amount = assetInfo.amount
@@ -48,29 +50,30 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
     api.localizeLocation(reserveChain ?? chain, assetInfo.location)
   )
 
+  const resolvedFeeAssetInfo = getFeeAssetInfo(assetInfo, feeAssetInfo)
+  const feeAssetTotal = originFee + reserveFee + destFee
+
   const feeAsset =
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(version, originFee, feeAssetInfo.location)
-      : undefined
+    resolvedFeeAssetInfo && createAsset(version, feeAssetTotal, resolvedFeeAssetInfo.location)
 
   const feeAssetLocalized =
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(version, originFee, api.localizeLocation(chain, feeAssetInfo.location))
-      : undefined
+    resolvedFeeAssetInfo &&
+    createAsset(version, feeAssetTotal, api.localizeLocation(chain, resolvedFeeAssetInfo.location))
 
   const feeAssetLocalizedToDest =
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(version, originFee, localizeLocation(destChain, feeAssetInfo.location))
-      : undefined
+    resolvedFeeAssetInfo &&
+    createAsset(version, destFee, localizeLocation(destChain, resolvedFeeAssetInfo.location))
 
   const feeAssetLocalizedToReserve =
-    feeAssetInfo && !isAssetEqual(assetInfo, feeAssetInfo)
-      ? createAsset(
-          version,
-          originFee,
-          api.localizeLocation(reserveChain ?? chain, feeAssetInfo.location)
-        )
-      : undefined
+    resolvedFeeAssetInfo &&
+    createAsset(
+      version,
+      reserveFee,
+      api.localizeLocation(reserveChain ?? chain, resolvedFeeAssetInfo.location)
+    )
+
+  const feeReserveChain =
+    resolvedFeeAssetInfo && api.getAssetReserveChain(chain, resolvedFeeAssetInfo.location)
 
   return {
     amount,
@@ -82,6 +85,7 @@ export const prepareExecuteContext = <TApi, TRes, TSigner, TCustomChain extends 
     feeAssetLocalized,
     feeAssetLocalizedToDest,
     feeAssetLocalizedToReserve,
+    feeReserveChain,
     reserveChain
   }
 }

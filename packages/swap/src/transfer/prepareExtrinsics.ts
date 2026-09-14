@@ -7,6 +7,7 @@ import {
   buildToExchangeExtrinsic,
   canUseExecuteTransfer,
   isFilteredError,
+  validateRoutedFeeAsset,
 } from './utils';
 
 export const prepareExtrinsics = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -30,6 +31,8 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner, TCustomChain extend
       // Fall through to three-leg path
     }
   }
+
+  validateRoutedFeeAsset(options);
 
   // 1. Create transfer origin -> exchange (optional)
   const toExchangeTx =

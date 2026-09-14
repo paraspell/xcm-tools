@@ -368,7 +368,6 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       chain,
       destination,
       address,
-      feeAsset,
       bypassOptions,
       version,
       useRootOrigin = false
@@ -376,6 +375,8 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     if (!this.hasDryRunSupport(chain)) {
       throw new RuntimeApiUnavailableError(chain, 'DryRunApi')
     }
+
+    const feeAsset = this.getMethod(tx) === 'execute' ? options.feeAsset : undefined
 
     const basePayload = {
       type: 'system',
@@ -476,7 +477,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const isSuccess = getExecutionSuccessFromResult(result)
 
-    const resolvedFeeAsset = await this.resolveFeeAsset(options)
+    const resolvedFeeAsset = await this.resolveFeeAsset({ ...options, feeAsset })
 
     if (!isSuccess) {
       const failure = extractFailureReasonFromResult(result)
@@ -941,7 +942,19 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
       }
     }
 
+    if (force || typeof api !== 'object' || Array.isArray(api)) {
+      this.resetChain()
+    }
+
     return Promise.resolve()
+  }
+
+  protected override resetChain(): void {
+    this._untypedApi = undefined
+    this._ahpApi = undefined
+    this._bridgeHubApi = undefined
+    this._hydrationApi = undefined
+    super.resetChain()
   }
 
   deriveAddress(sender: TSender<TPapiSigner>): string {

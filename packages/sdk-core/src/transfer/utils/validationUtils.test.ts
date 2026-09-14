@@ -1,7 +1,10 @@
 import {
   InvalidCurrencyError,
+  isAssetEqual,
   isChainEvm,
   isSymbolSpecifier,
+  type TAssetInfo,
+  type TAssetWithFee,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -25,6 +28,7 @@ import {
   validateAssetSpecifiers,
   validateCurrency,
   validateDestination,
+  validateFeeAssetSupport,
   validateTransact
 } from './validationUtils'
 
@@ -41,6 +45,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 vi.mock('@paraspell/assets', () => ({
   getNativeAssets: vi.fn(),
   InvalidCurrencyError: class extends Error {},
+  isAssetEqual: vi.fn(),
   isSymbolSpecifier: vi.fn(),
   isChainEvm: vi.fn()
 }))
@@ -92,6 +97,30 @@ describe('validateCurrency', () => {
     const currency = [{}] as TCurrencyInput
 
     expect(() => validateCurrency(currency)).toThrow('Please provide more than one asset')
+  })
+})
+
+describe('validateFeeAssetSupport', () => {
+  const asset = { symbol: 'DOT' } as TAssetInfo
+  const feeAsset = { symbol: 'USDT' } as TAssetInfo
+
+  it('throws when a fee asset is used with a method that cannot pay fees in it', () => {
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    expect(() =>
+      validateFeeAssetSupport(asset, feeAsset, undefined, 'limited_teleport_assets')
+    ).toThrow(
+      new ScenarioNotSupportedError('Fee asset cannot be used with limited_teleport_assets')
+    )
+  })
+
+  it('allows overridden assets, a fee asset equal to the sent asset and no fee asset', () => {
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    expect(() =>
+      validateFeeAssetSupport(asset, feeAsset, [{ isFeeAsset: true } as TAssetWithFee], 'XTokens')
+    ).not.toThrow()
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    expect(() => validateFeeAssetSupport(asset, asset, undefined, 'XTokens')).not.toThrow()
+    expect(() => validateFeeAssetSupport(asset, undefined, undefined, 'XTokens')).not.toThrow()
   })
 })
 

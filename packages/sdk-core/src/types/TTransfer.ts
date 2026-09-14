@@ -292,9 +292,13 @@ export type TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain extends stri
   balance: bigint
 }
 
+/**
+ * Fee estimates per leg. When a separate fee asset is used, all values are denominated in the fee asset.
+ */
 export type TTransferFeeEstimates = {
   originFee: bigint
   reserveFee: bigint
+  destFee: bigint
 }
 
 export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = never> = {
@@ -307,7 +311,6 @@ export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = ne
   sender?: string
   version: Version
   useJitWithdraw?: boolean
-  useFeeAssetOnHops?: boolean
   // refactor this
   paraIdTo?: number
   transactOptions?: TTransactOptions<TRes>
@@ -345,6 +348,7 @@ export type TSwapFeeEstimates = {
   originReserveFee: bigint
   exchangeFee: bigint
   destReserveFee: bigint
+  destFee: bigint
 }
 
 export type TCreateSwapXcmInternalOptions<

@@ -204,6 +204,58 @@ describe('getOriginXcmFeeInternal', () => {
     expect(paymentInfoSpy).toHaveBeenCalledWith({}, 'addr')
   })
 
+  it('quotes the origin fee in the native asset when the origin cannot pay fees in the fee asset', async () => {
+    const usdt: TAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      location: { parents: 0, interior: { X1: { GeneralIndex: 1984 } } }
+    }
+    const usdc: TAssetInfo = {
+      symbol: 'USDC',
+      decimals: 6,
+      location: { parents: 0, interior: { X1: { GeneralIndex: 1337 } } }
+    }
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    vi.spyOn(api, 'findAssetInfo').mockImplementation((_chain, currency) => {
+      if ('symbol' in currency && currency.symbol === 'USDT') return usdt
+      if ('symbol' in currency && currency.symbol === 'USDC') return usdc
+      return null
+    })
+    const options = {
+      ...baseOptions,
+      currency: [
+        { symbol: 'USDT', amount: 100n },
+        { symbol: 'USDC', amount: 200n }
+      ],
+      feeAsset: { symbol: 'USDC' }
+    }
+
+    hasDryRunSupportSpy.mockReturnValue(true)
+    const getDryRunCallSpy = vi.spyOn(api, 'getDryRunCall')
+
+    await getOriginXcmFeeInternal(options)
+
+    expect(getDryRunCallSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ feeAsset: { ...usdc, amount: 200n } })
+    )
+
+    hasDryRunSupportSpy.mockReturnValue(false)
+    vi.mocked(padFee).mockReturnValue(150n)
+
+    const res = await getOriginXcmFeeInternal(options)
+
+    expect(res.asset).toBe(nativeAsset)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'Darwinia',
+      'Acala',
+      'addr',
+      150n,
+      { ...usdc, amount: 200n },
+      undefined
+    )
+  })
+
   it('resolves the designated fee asset for an array currency', async () => {
     const usdt: TAssetInfo = {
       symbol: 'USDT',

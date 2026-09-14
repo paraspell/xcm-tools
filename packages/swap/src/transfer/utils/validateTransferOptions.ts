@@ -1,4 +1,9 @@
-import { InvalidAddressError, isChainEvm, MissingParameterError } from '@paraspell/sdk-core';
+import {
+  InvalidAddressError,
+  isChainEvm,
+  MissingParameterError,
+  ScenarioNotSupportedError,
+} from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
 
 import type { TBuildTransactionsOptions } from '../../types';
@@ -31,5 +36,15 @@ export const validateTransferOptions = <TApi, TRes, TSigner, TCustomChain extend
 
   if (from && isChainEvm(from) && !evmSenderAddress) {
     throw new MissingParameterError('evmSenderAddress', 'EVM sender address is required');
+  }
+};
+
+export const validateRoutedFeeAsset = <TApi, TRes, TSigner, TCustomChain extends string = never>({
+  feeAsset,
+}: Pick<TBuildTransactionsOptions<TApi, TRes, TSigner, TCustomChain>, 'feeAsset'>) => {
+  if (feeAsset) {
+    throw new ScenarioNotSupportedError(
+      'Fee asset is only supported for swaps that use the execute transfer',
+    );
   }
 };

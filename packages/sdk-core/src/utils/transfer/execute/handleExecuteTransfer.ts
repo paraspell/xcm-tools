@@ -1,20 +1,26 @@
 import { MAX_WEIGHT, MIN_FEE } from '../../../constants'
-import { AmountTooLowError, DryRunFailedError, RoutingResolutionError } from '../../../errors'
+import {
+  AmountTooLowError,
+  DryRunFailedError,
+  RoutingResolutionError,
+  ScenarioNotSupportedError
+} from '../../../errors'
 import { dryRunInternal } from '../../../transfer'
-import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../../types'
+import { supportsFeeAssetPayment } from '../../../transfer/utils/supportsFeeAssetPayment'
+import type {
+  TDryRunChainResult,
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics
+} from '../../../types'
 import { assertAddressIsString, assertSender } from '../..'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
+import { getFeeAssetInfo } from '../getFeeAssetInfo'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 
-const getReserveFeeFromHops = (hops: THopInfo[] | undefined): bigint => {
-  if (!hops || hops.length === 0 || !hops[0].result.success) {
-    return MIN_FEE
-  }
-
-  return hops[0].result.fee
-}
+const getFeeFromResult = (result?: TDryRunChainResult): bigint =>
+  result?.success ? result.fee : MIN_FEE
 
 const FEE_PADDING_PERCENTAGE = 40
 
@@ -43,6 +49,10 @@ export const handleExecuteTransfer = async <
 
   assertSender(sender)
   assertAddressIsString(recipient)
+
+  if (feeAssetInfo && !supportsFeeAssetPayment(chain)) {
+    throw new ScenarioNotSupportedError(`Fee asset is not supported on ${chain}`)
+  }
 
   const checkAmount = (fee: bigint) => {
     if (assetInfo.amount <= fee) throw new AmountTooLowError()
@@ -76,13 +86,17 @@ export const handleExecuteTransfer = async <
     ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
     : MIN_FEE
 
+  const resolvedFeeAssetInfo = getFeeAssetInfo(assetInfo, feeAssetInfo)
+  const hopFeeAmount = resolvedFeeAssetInfo ? feeAssetAmount : MIN_FEE
+
   const call = createExecuteCall(
     chain,
     await createDirectExecuteXcm({
       ...internalOptions,
       fees: {
         originFee: feeAssetAmount,
-        reserveFee: MIN_FEE
+        reserveFee: hopFeeAmount,
+        destFee: hopFeeAmount
       }
     }),
     MAX_WEIGHT
@@ -108,19 +122,21 @@ export const handleExecuteTransfer = async <
     })
   }
 
-  const originFeeEstimate = dryRunResult.origin.fee
-  const originFee = padValueBy(originFeeEstimate, FEE_PADDING_PERCENTAGE)
+  const originFee = padValueBy(dryRunResult.origin.fee, FEE_PADDING_PERCENTAGE)
+  const reserveFee = padValueBy(
+    getFeeFromResult(dryRunResult.hops.at(0)?.result),
+    FEE_PADDING_PERCENTAGE
+  )
+  const destFee = padValueBy(getFeeFromResult(dryRunResult.destination), FEE_PADDING_PERCENTAGE)
 
-  const reserveFeeEstimate = getReserveFeeFromHops(dryRunResult.hops)
-  const reserveFee = padValueBy(reserveFeeEstimate, FEE_PADDING_PERCENTAGE)
-
-  checkAmount(reserveFee)
+  if (!resolvedFeeAssetInfo) checkAmount(reserveFee)
 
   const xcm = await createDirectExecuteXcm({
     ...internalOptions,
     fees: {
       originFee,
-      reserveFee
+      reserveFee,
+      destFee
     }
   })
 

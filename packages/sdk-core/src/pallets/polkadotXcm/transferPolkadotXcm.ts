@@ -4,7 +4,7 @@ import { getXcmPallet, type TPallet } from '@paraspell/pallets'
 import { isExternalChain } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import { createTypeAndThenCall } from '../../transfer'
+import { createTypeAndThenCall, validateFeeAssetSupport } from '../../transfer'
 import type { TPolkadotXcmMethod, TSerializedExtrinsics } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
@@ -24,6 +24,7 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner, TCustomChain exte
     beneficiaryLocation,
     asset: multiAsset,
     overriddenAsset,
+    feeAssetInfo,
     pallet,
     version,
     method: methodOverride,
@@ -34,6 +35,8 @@ export const transferPolkadotXcm = async <TApi, TRes, TSigner, TCustomChain exte
     const noFeeAsset = !(typeof destination !== 'object' && isExternalChain(destination))
     return api.deserializeExtrinsics(await createTypeAndThenCall(options, { noFeeAsset }))
   }
+
+  validateFeeAssetSupport(asset, feeAssetInfo, overriddenAsset, methodOverride ?? method)
 
   const resolvedMultiAssets = maybeOverrideAssets(
     version,

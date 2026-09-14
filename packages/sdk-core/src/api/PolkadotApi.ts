@@ -236,8 +236,12 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     clientTtlMs: number = DEFAULT_TTL_MS,
     destination?: TDestination
   ): Promise<void> {
-    if (this._chain !== undefined || isExternalChain(chain)) {
+    if (this._chain === chain || isExternalChain(chain)) {
       return
+    }
+
+    if (this._chain !== undefined) {
+      await this.disconnect()
     }
 
     this._ttlMs = clientTtlMs
@@ -259,6 +263,10 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
 
   setCustomCtx(ctx: TFullCustomCtx): void {
     this._customCtx = ctx
+  }
+
+  protected resetChain(): void {
+    this._chain = undefined
   }
 
   private async hydrateCustomChain(chain: TChain | TCustomChain): Promise<void> {

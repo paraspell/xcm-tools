@@ -376,14 +376,32 @@ describe('PolkadotApi', () => {
   })
 
   describe('init', () => {
-    it('should return early if chain is already set', async () => {
+    it('should return early if the same chain is already set', async () => {
       const instance = new ConcreteApi()
       instance._chain = 'Acala'
+      const disconnectSpy = vi.spyOn(instance, 'disconnect')
+
+      await instance.init('Acala')
+
+      expect(instance._chain).toBe('Acala')
+      expect(disconnectSpy).not.toHaveBeenCalled()
+      expect(resolveChainApi).not.toHaveBeenCalled()
+    })
+
+    it('should disconnect and re-initialize when a different chain is requested', async () => {
+      const fakeApi = { fake: true }
+      vi.mocked(resolveChainApi).mockResolvedValue(fakeApi)
+
+      const instance = new ConcreteApi()
+      instance._chain = 'Acala'
+      const disconnectSpy = vi.spyOn(instance, 'disconnect')
 
       await instance.init('Hydration')
 
-      expect(instance._chain).toBe('Acala')
-      expect(resolveChainApi).not.toHaveBeenCalled()
+      expect(disconnectSpy).toHaveBeenCalledOnce()
+      expect(instance._chain).toBe('Hydration')
+      expect(instance._api).toBe(fakeApi)
+      expect(resolveChainApi).toHaveBeenCalledOnce()
     })
 
     it('should return early for external chains', async () => {
@@ -413,12 +431,12 @@ describe('PolkadotApi', () => {
       expect(typeof createApiArg).toBe('function')
     })
 
-    it('should not re-initialize when called twice', async () => {
+    it('should not re-initialize when called twice with the same chain', async () => {
       vi.mocked(resolveChainApi).mockResolvedValue({ first: true })
 
       const instance = new ConcreteApi()
       await instance.init('Acala')
-      await instance.init('Hydration')
+      await instance.init('Acala')
 
       expect(instance._chain).toBe('Acala')
       expect(resolveChainApi).toHaveBeenCalledOnce()

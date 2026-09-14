@@ -258,6 +258,55 @@ describe('Parachain', () => {
     expect(result).toBe('transferPolkadotXCM called')
   })
 
+  it('uses type-and-then with a user fee asset and validates the scenario with it', async () => {
+    const chain = new TestParachain('Astar', 'TestChain', 'Polkadot', Version.V5)
+    const feeAsset = {
+      symbol: 'USDT',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    } as TAssetInfo
+    const options = {
+      api,
+      to: 'Hydration',
+      recipient: 'destinationAddress',
+      sender: '5FMockSender',
+      assetInfo: {
+        symbol: 'DOT',
+        amount: 100n,
+        location: RELAY_LOCATION
+      },
+      feeAsset
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    const mockCall: TSerializedExtrinsics = {
+      module: 'PolkadotXcm',
+      method: 'transfer_assets_using_type_and_then',
+      params: {}
+    }
+    vi.mocked(createTypeAndThenCall).mockResolvedValue(mockCall)
+    vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
+    vi.mocked(resolveDestChain).mockReturnValue('Hydration')
+    vi.mocked(getChain).mockReturnValue({
+      canReceiveFrom: () => true,
+      isReceivingTempDisabled: () => false
+    } as unknown as ReturnType<typeof chains<unknown, unknown, unknown>>['Hydration'])
+    const deserializeExtrinsicsSpy = vi
+      .spyOn(api, 'deserializeExtrinsics')
+      .mockResolvedValue('callResult')
+    const transferPolkadotXCMSpy = vi.spyOn(chain, 'transferPolkadotXCM')
+
+    const result = await chain.transfer(options)
+
+    expect(transferPolkadotXCMSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ feeAssetInfo: feeAsset })
+    )
+    expect(createTypeAndThenCall).toHaveBeenCalledWith(
+      expect.objectContaining({ feeAssetInfo: feeAsset })
+    )
+    expect(deserializeExtrinsicsSpy).toHaveBeenCalledWith(mockCall)
+    expect(result).toBe('callResult')
+  })
+
   it('should call handleExecuteTransfer if transactOptions.call is specified', async () => {
     const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V5)
     const options = {

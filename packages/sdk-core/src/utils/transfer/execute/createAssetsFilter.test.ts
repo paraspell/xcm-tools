@@ -2,7 +2,7 @@ import { extractAssetLocation, type TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { createAssetsFilter } from './createAssetsFilter'
+import { createAllCountedFilter, createAssetsFilter } from './createAssetsFilter'
 
 vi.mock('@paraspell/assets')
 
@@ -24,5 +24,11 @@ describe('createAssetsFilter', () => {
         }
       }
     })
+  })
+})
+
+describe('createAllCountedFilter', () => {
+  it('should create a wild filter counting the given number of assets', () => {
+    expect(createAllCountedFilter(2)).toEqual({ Wild: { AllCounted: 2 } })
   })
 })

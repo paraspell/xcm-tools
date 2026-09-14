@@ -16,6 +16,7 @@ import {
   createToExchangeBuilder,
   isFilteredError,
   prepareTransformedOptions,
+  validateRoutedFeeAsset,
   validateTransferOptions,
 } from '../utils';
 import { getExecuteSwapInfo } from './getExecuteSwapInfo';
@@ -78,6 +79,8 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
       // Fall through to routed path
     }
   }
+
+  validateRoutedFeeAsset(options);
 
   const { api, origin, exchange, currencyTo, destination, amount, sender, evmSenderAddress } =
     options;

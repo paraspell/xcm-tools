@@ -2,6 +2,8 @@ import {
   InvalidCurrencyError,
   isChainEvm,
   isSymbolSpecifier,
+  type TAssetInfo,
+  type TAssetWithFee,
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
@@ -18,6 +20,7 @@ import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
 import type { TDestination, TSubstrateTransferOptions } from '../../types'
 import { compareAddresses, getChain } from '../../utils'
+import { getFeeAssetInfo } from '../../utils/transfer/getFeeAssetInfo'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if (Array.isArray(currency)) {
@@ -34,6 +37,17 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
         'Overridden assets cannot be used without specifying fee asset'
       )
     }
+  }
+}
+
+export const validateFeeAssetSupport = (
+  assetInfo: TAssetInfo,
+  feeAsset: TAssetInfo | undefined,
+  overriddenAsset: TAssetWithFee[] | undefined,
+  method: string
+) => {
+  if (getFeeAssetInfo(assetInfo, feeAsset) && !overriddenAsset) {
+    throw new ScenarioNotSupportedError(`Fee asset cannot be used with ${method}`)
   }
 }
 

@@ -1,4 +1,10 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import {
+  extractAssetLocation,
+  isAssetEqual,
+  type TAssetInfo,
+  type TAssetWithFee,
+  type WithAmount
+} from '@paraspell/assets'
 import {
   isExternalChain,
   isRelayChain,
@@ -12,10 +18,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
-import type { TPolkadotXCMTransferOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
-import { createTypeAndThenCallContext, getBridgeReserve } from './createContext'
+import {
+  createTypeAndThenCallContext,
+  getBridgeReserve,
+  getFeeAssetLocation
+} from './createContext'
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal()),
@@ -222,6 +232,84 @@ describe('createTypeAndThenCallContext', () => {
       systemAsset: mockSystemAsset,
       options
     })
+  })
+
+  it('marks a user-defined fee asset as separate and disables the relay fee asset', async () => {
+    const feeAssetInfo: TAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    }
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+
+    const result = await createTypeAndThenCallContext(
+      { ...mockOptions, assetInfo: { ...mockAsset, location: RELAY_LOCATION }, feeAssetInfo },
+      {}
+    )
+
+    expect(isAssetEqual).toHaveBeenCalledWith(
+      expect.objectContaining({ location: RELAY_LOCATION }),
+      feeAssetInfo
+    )
+    expect(result.feeAssetInfo).toBe(feeAssetInfo)
+    expect(result.isRelayAsset).toBe(false)
+  })
+
+  it('resolves the fee reserve from the user-defined fee asset', async () => {
+    const feeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    getAssetReserveChainSpy.mockReturnValueOnce('Polkadot').mockReturnValueOnce('Hydration')
+
+    const result = await createTypeAndThenCallContext(
+      { ...mockOptions, feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation } },
+      {}
+    )
+
+    expect(getAssetReserveChainSpy).toHaveBeenNthCalledWith(2, mockChain, feeLocation, false)
+    expect(result.reserve.chain).toBe('Polkadot')
+    expect(result.feeReserveChain).toBe('Hydration')
+  })
+
+  it('takes the reserve from the transferred asset of a multi-asset transfer', async () => {
+    const transferredLocation: TLocation = {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 1 } } }] }
+    }
+    const overriddenAsset: TAssetWithFee[] = [
+      { id: mockAsset.location, fun: { Fungible: 1n }, isFeeAsset: true },
+      { id: transferredLocation, fun: { Fungible: 2n } }
+    ]
+    vi.mocked(extractAssetLocation).mockImplementation(asset => asset.id as TLocation)
+    getAssetReserveChainSpy.mockReturnValueOnce('AssetHubPolkadot').mockReturnValueOnce('Polkadot')
+
+    const result = await createTypeAndThenCallContext({ ...mockOptions, overriddenAsset }, {})
+
+    expect(getAssetReserveChainSpy).toHaveBeenNthCalledWith(
+      1,
+      mockChain,
+      transferredLocation,
+      false
+    )
+    expect(getAssetReserveChainSpy).toHaveBeenNthCalledWith(2, mockChain, mockAsset.location, false)
+    expect(result.reserve.chain).toBe('AssetHubPolkadot')
+    expect(result.feeReserveChain).toBe('Polkadot')
+    expect(result.feeAssetInfo).toBeUndefined()
+  })
+
+  it('ignores a fee asset equal to the transferred asset', async () => {
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+
+    const result = await createTypeAndThenCallContext(
+      {
+        ...mockOptions,
+        assetInfo: { ...mockAsset, location: RELAY_LOCATION },
+        feeAssetInfo: mockAsset
+      },
+      {}
+    )
+
+    expect(result.feeAssetInfo).toBeUndefined()
+    expect(result.isRelayAsset).toBe(true)
   })
 
   it('should create context with non-relay chain as destination', async () => {
@@ -509,5 +597,31 @@ describe('createTypeAndThenCallContext', () => {
     const result = await createTypeAndThenCallContext(options, {})
 
     expect(result.isRelayAsset).toBe(false)
+  })
+
+  describe('getFeeAssetLocation', () => {
+    const assetLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
+    const feeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    const context = {
+      assetInfo: { location: assetLocation }
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+    it('prefers the user-defined fee asset', () => {
+      expect(
+        getFeeAssetLocation({
+          ...context,
+          isRelayAsset: false,
+          feeAssetInfo: { location: feeLocation } as TAssetInfo
+        })
+      ).toBe(feeLocation)
+    })
+
+    it('uses the transferred asset when it pays its own fees', () => {
+      expect(getFeeAssetLocation({ ...context, isRelayAsset: true })).toBe(assetLocation)
+    })
+
+    it('falls back to the relay asset', () => {
+      expect(getFeeAssetLocation({ ...context, isRelayAsset: false })).toBe(RELAY_LOCATION)
+    })
   })
 })

@@ -1149,6 +1149,11 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).not.toHaveBeenCalled()
+      expect(polkadotApi._chain).toBeUndefined()
+
+      await polkadotApi.init(mockChain)
+
+      expect(leaseClientSpy).toHaveBeenCalledTimes(2)
 
       mockDisconnect.mockRestore()
       leaseClientSpy.mockRestore()
@@ -1158,9 +1163,11 @@ describe('PolkadotJsApi', () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
       polkadotApi = new PolkadotJsApi(mockApiPromise)
+      await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).not.toHaveBeenCalled()
+      expect(polkadotApi._chain).toBe(mockChain)
 
       mockDisconnect.mockRestore()
     })
@@ -1331,6 +1338,7 @@ describe('PolkadotJsApi', () => {
 
     beforeEach(() => {
       mockExtrinsic = {
+        method: { method: 'transferAssetsUsingTypeAndThen' },
         paymentInfo: vi.fn().mockResolvedValue({
           partialFee: { toBigInt: () => 1000n },
           weight: {
@@ -1625,6 +1633,7 @@ describe('PolkadotJsApi', () => {
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
 
       vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
+      vi.spyOn(polkadotApi, 'getMethod').mockReturnValue('execute')
 
       const feeAsset = usdtAsset
 
@@ -1844,6 +1853,7 @@ describe('PolkadotJsApi', () => {
     it('prefers feeAsset metadata when provided (currency and asset fields)', async () => {
       const resp = makeSuccessResponse()
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.spyOn(polkadotApi, 'getMethod').mockReturnValue('execute')
 
       const feeAsset = usdtAsset
       const asset = dotAsset
@@ -1859,6 +1869,41 @@ describe('PolkadotJsApi', () => {
       })
 
       expect(result.asset).toEqual(feeAsset)
+    })
+
+    it('quotes the origin fee in the native asset when feeAsset is provided but the call is not execute', async () => {
+      const resp = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Ok: true } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: { ok: {} },
+            local_xcm: { instructions: [] },
+            forwardedXcms: []
+          }
+        })
+      } as unknown as Codec
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
+      const xcmFeeSpy = vi.spyOn(polkadotApi, 'getXcmPaymentApiFee')
+      const paymentInfoSpy = vi.spyOn(mockExtrinsic, 'paymentInfo')
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { ...dotAsset, amount: 100n },
+        feeAsset: usdtAsset,
+        version: Version.V5
+      })
+
+      expect(xcmFeeSpy).not.toHaveBeenCalled()
+      expect(paymentInfoSpy).toHaveBeenCalled()
+      expect(result).toEqual(
+        expect.objectContaining({ success: true, fee: 1000n, asset: dotAsset })
+      )
     })
 
     it('falls back to native asset when MultiTransactionPayment fee lookup fails', async () => {
