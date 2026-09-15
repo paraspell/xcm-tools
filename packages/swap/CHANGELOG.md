@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.5](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.4...swap-v14.3.5) (2026-09-15)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix fee asset reserve selection logic 🔧 ([49b83bc](https://github.com/paraspell/xcm-tools/commit/49b83bcf6124b7cdfd36d495e3a8492f7e03b373))
+
 ## [14.3.4](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.3...swap-v14.3.4) (2026-09-07)
 
 
