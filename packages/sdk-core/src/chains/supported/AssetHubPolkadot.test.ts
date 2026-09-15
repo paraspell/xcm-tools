@@ -47,6 +47,7 @@ describe('AssetHubPolkadot', () => {
     }),
     createAccountId: vi.fn().mockReturnValue('0x0000000000000000'),
     findNativeAssetInfoOrThrow: vi.fn(),
+    getAssetReserveChain: vi.fn(),
     clone: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 

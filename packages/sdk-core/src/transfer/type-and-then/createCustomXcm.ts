@@ -156,7 +156,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
       assetsFilter.push(
         createAsset(
           version,
-          hopFees + destFee,
+          normalizeAmount(hopFees + destFee),
           origin.api.localizeLocation(reserve.chain, feeAssetLocation)
         )
       )

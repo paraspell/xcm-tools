@@ -259,7 +259,7 @@ const XcmTransferFormContent: FC<Props> = ({
   );
 
   const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
-    useFeeCurrencyOptions(from);
+    useFeeCurrencyOptions(from, to);
 
   const { options: mergedCurrencyOptions, map: mergedCurrencyMap } =
     useMergedCurrencyOptions(from, activeCurrencyOptions, activeCurrencyMap);
@@ -504,8 +504,6 @@ const XcmTransferFormContent: FC<Props> = ({
 
   const colorScheme = useComputedColorScheme();
 
-  const feeAssetDisabled = isExternalChain(to);
-
   const showAhAddress =
     isChainEvmImpl(from, { customChainAssets }) &&
     isChainEvmImpl(to, { customChainAssets }) &&
@@ -726,14 +724,13 @@ const XcmTransferFormContent: FC<Props> = ({
           </Stack>
 
           <CurrencySelection
-            key={from}
+            key={currencyKey}
             form={form}
             fieldPath="feeAsset"
             label="Fee asset"
             description="This asset will be used to pay fees"
             fieldValue={feeAsset}
             currencyOptions={feeCurrencyOptions}
-            disabled={feeAssetDisabled}
             required={false}
             onClear={onFeeAssetClear}
             dataTestId="select-fee-currency"

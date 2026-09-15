@@ -16,6 +16,7 @@ import type {
 } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
 import { assertHasId, buildErc20StorageMint, handleExecuteTransfer } from '../../utils'
+import { hasMatchingFeeAssetReserve } from '../../utils/transfer/getFeeAssetInfo'
 import SubstrateChain from '../SubstrateChain'
 
 class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -61,7 +62,10 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
     const isNativeAsset = isAssetEqual(nativeAsset, asset)
     const isNativeFeeAsset = isAssetEqual(nativeAsset, feeAsset)
 
-    return !isNativeAsset || !isNativeFeeAsset
+    return (
+      (!isNativeAsset || !isNativeFeeAsset) &&
+      hasMatchingFeeAssetReserve(api, this.chain, asset, feeAsset)
+    )
   }
 
   async transferPolkadotXCM(

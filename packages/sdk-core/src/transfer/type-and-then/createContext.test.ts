@@ -18,6 +18,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
@@ -258,7 +259,7 @@ describe('createTypeAndThenCallContext', () => {
   it('resolves the fee reserve from the user-defined fee asset', async () => {
     const feeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    getAssetReserveChainSpy.mockReturnValueOnce('Polkadot').mockReturnValueOnce('Hydration')
+    getAssetReserveChainSpy.mockReturnValueOnce('Polkadot').mockReturnValueOnce('Polkadot')
 
     const result = await createTypeAndThenCallContext(
       { ...mockOptions, feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation } },
@@ -267,7 +268,20 @@ describe('createTypeAndThenCallContext', () => {
 
     expect(getAssetReserveChainSpy).toHaveBeenNthCalledWith(2, mockChain, feeLocation, false)
     expect(result.reserve.chain).toBe('Polkadot')
-    expect(result.feeReserveChain).toBe('Hydration')
+    expect(result.feeReserveChain).toBe('Polkadot')
+  })
+
+  it('throws when the fee asset reserve is neither the origin nor the routed chain', async () => {
+    const feeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    getAssetReserveChainSpy.mockReturnValueOnce('Polkadot').mockReturnValueOnce('Hydration')
+
+    await expect(
+      createTypeAndThenCallContext(
+        { ...mockOptions, feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation } },
+        {}
+      )
+    ).rejects.toThrow(ScenarioNotSupportedError)
   })
 
   it('takes the reserve from the transferred asset of a multi-asset transfer', async () => {
@@ -280,7 +294,9 @@ describe('createTypeAndThenCallContext', () => {
       { id: transferredLocation, fun: { Fungible: 2n } }
     ]
     vi.mocked(extractAssetLocation).mockImplementation(asset => asset.id as TLocation)
-    getAssetReserveChainSpy.mockReturnValueOnce('AssetHubPolkadot').mockReturnValueOnce('Polkadot')
+    getAssetReserveChainSpy
+      .mockReturnValueOnce('AssetHubPolkadot')
+      .mockReturnValueOnce('AssetHubPolkadot')
 
     const result = await createTypeAndThenCallContext({ ...mockOptions, overriddenAsset }, {})
 
@@ -292,7 +308,7 @@ describe('createTypeAndThenCallContext', () => {
     )
     expect(getAssetReserveChainSpy).toHaveBeenNthCalledWith(2, mockChain, mockAsset.location, false)
     expect(result.reserve.chain).toBe('AssetHubPolkadot')
-    expect(result.feeReserveChain).toBe('Polkadot')
+    expect(result.feeReserveChain).toBe('AssetHubPolkadot')
     expect(result.feeAssetInfo).toBeUndefined()
   })
 

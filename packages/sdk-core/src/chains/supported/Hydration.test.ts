@@ -194,7 +194,8 @@ describe('Hydration', () => {
     const OTHER_LOC = { parents: 1, interior: 'Here' }
 
     const api = {
-      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'HDX', location: HDX_LOC })
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'HDX', location: HDX_LOC }),
+      getAssetReserveChain: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const opts = (extra: object) =>
