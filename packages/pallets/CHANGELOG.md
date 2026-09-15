@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.5](https://github.com/paraspell/xcm-tools/compare/pallets-v14.3.4...pallets-v14.3.5) (2026-09-15)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use xcms from export message in substrate bridge calls 🔧 ([d852e87](https://github.com/paraspell/xcm-tools/commit/d852e87ee8fae19d771fd0f04466970ab0f7ba2c))
+
 ## [14.3.4](https://github.com/paraspell/xcm-tools/compare/pallets-v14.3.3...pallets-v14.3.4) (2026-09-07)
 
 

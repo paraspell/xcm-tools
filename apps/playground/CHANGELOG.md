@@ -1,5 +1,14 @@
 # Changelog
 
+## [14.3.5](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.4...playground-v14.3.5) (2026-09-15)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add type and then fallback when reserves do not match in execute 🔧 ([07eddfb](https://github.com/paraspell/xcm-tools/commit/07eddfb95202520fd3f8a887a6b923048d059097))
+* **sdk-core:** Fix fee asset reserve selection logic 🔧 ([49b83bc](https://github.com/paraspell/xcm-tools/commit/49b83bcf6124b7cdfd36d495e3a8492f7e03b373))
+* **sdk-core:** Use xcms from export message in substrate bridge calls 🔧 ([d852e87](https://github.com/paraspell/xcm-tools/commit/d852e87ee8fae19d771fd0f04466970ab0f7ba2c))
+
 ## [14.3.4](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.3...playground-v14.3.4) (2026-09-07)
 
 
