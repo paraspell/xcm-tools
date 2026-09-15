@@ -11,6 +11,7 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { handleExecuteTransfer } from '../../utils/transfer'
+import { hasMatchingFeeAssetReserve } from '../../utils/transfer/getFeeAssetInfo'
 import SubstrateChain from '../SubstrateChain'
 
 class AssetHubPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -38,7 +39,10 @@ class AssetHubPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
     const isNativeAsset = isAssetEqual(nativeAsset, assetInfo)
     const isNativeFeeAsset = isAssetEqual(nativeAsset, feeAssetInfo)
 
-    return !isNativeAsset || !isNativeFeeAsset
+    return (
+      (!isNativeAsset || !isNativeFeeAsset) &&
+      hasMatchingFeeAssetReserve(api, this.chain, assetInfo, feeAssetInfo)
+    )
   }
 
   async transferPolkadotXCM(

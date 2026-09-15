@@ -47,6 +47,7 @@ import {
 } from '../utils'
 import { createAsset, pickOtherMintPallet } from '../utils/asset'
 import { resolveParaId } from '../utils/resolveParaId'
+import { getFeeAssetInfo } from '../utils/transfer/getFeeAssetInfo'
 import { resolveScenario } from '../utils/transfer/resolveScenario'
 import Chain from './Chain'
 
@@ -238,6 +239,7 @@ abstract class SubstrateChain<
       if (supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this)) {
         if (
           this.shouldUseNativeAssetTeleport(transferOptions) &&
+          !getFeeAssetInfo(asset, feeAsset) &&
           !this.shouldUseExecuteTransfer(options)
         ) {
           return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')

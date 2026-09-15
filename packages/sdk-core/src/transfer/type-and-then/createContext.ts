@@ -14,6 +14,7 @@ import {
 
 import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import type {
   TPolkadotXCMTransferOptions,
   TTypeAndThenCallContext,
@@ -180,6 +181,18 @@ export const createTypeAndThenCallContext = async <
     assetGlobalConsensus !== undefined
       ? assetHubChain
       : undefined
+
+  const routedChain = bridgeHopChain ?? (reserveChain === chain ? destination : reserveChain)
+
+  if (
+    feeReserveChain !== undefined &&
+    feeReserveChain !== chain &&
+    feeReserveChain !== routedChain
+  ) {
+    throw new ScenarioNotSupportedError(
+      `Fee asset cannot pay fees on ${routedChain} because its reserve chain (${feeReserveChain}) is neither the origin nor ${routedChain}`
+    )
+  }
 
   const destApi = api.clone()
   await destApi.init(destination)
