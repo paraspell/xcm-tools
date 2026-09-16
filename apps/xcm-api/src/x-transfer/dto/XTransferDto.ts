@@ -23,9 +23,14 @@ const StringOrNumber = z
   ])
   .transform((value) => BigInt(value));
 
+const WsUrlSchema = z.url({
+  protocol: /^wss$/,
+  error: 'Endpoint must be a wss:// URL',
+});
+
 const ProviderEntrySchema = z.object({
   name: z.string().min(1),
-  endpoint: z.string().min(1),
+  endpoint: WsUrlSchema,
 });
 
 export const CustomAssetInfoSchema = z.object({
@@ -70,7 +75,7 @@ export const CustomChainsMapSchema = z.record(
 export const BuilderOptionsSchema = z
   .object({
     apiOverrides: z
-      .record(z.string(), z.union([z.string(), z.array(z.string())]))
+      .record(z.string(), z.union([WsUrlSchema, z.array(WsUrlSchema)]))
       .optional(),
     development: z.boolean().optional(),
     abstractDecimals: z.boolean().optional(),
