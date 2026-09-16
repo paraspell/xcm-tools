@@ -2,8 +2,10 @@ import { CHAINS, getAssets } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
 import {
+  BuilderOptionsSchema,
   CurrencyCoreWithAmountSchema,
   CustomAssetInfoSchema,
+  CustomChainInputSchema,
   EvmApproveDtoSchema,
 } from './XTransferDto.js';
 
@@ -55,4 +57,49 @@ describe('amount schemas', () => {
       ).toBe(false);
     },
   );
+});
+
+describe('endpoint schemas', () => {
+  const customChain = (endpoint: string) => ({
+    paraId: 2000,
+    ecosystem: 'Polkadot',
+    providers: [{ name: 'Custom', endpoint }],
+    xcmVersion: 'V5',
+  });
+
+  it('accepts wss endpoints in apiOverrides and custom chain providers', () => {
+    expect(
+      BuilderOptionsSchema.safeParse({
+        apiOverrides: {
+          Polkadot: 'wss://rpc.polkadot.io',
+          Hydration: ['wss://rpc.hydradx.cloud', 'wss://hydration.ibp.network'],
+        },
+      }).success,
+    ).toBe(true);
+    expect(
+      CustomChainInputSchema.safeParse(customChain('wss://rpc.custom.io'))
+        .success,
+    ).toBe(true);
+  });
+
+  it.each([
+    'ws://rpc.polkadot.io',
+    'http://127.0.0.1:5432',
+    'https://169.254.169.254/latest/meta-data/',
+    'rpc.polkadot.io',
+    '',
+  ])('rejects non-wss endpoint %s', (endpoint) => {
+    expect(
+      BuilderOptionsSchema.safeParse({ apiOverrides: { Polkadot: endpoint } })
+        .success,
+    ).toBe(false);
+    expect(
+      BuilderOptionsSchema.safeParse({
+        apiOverrides: { Polkadot: ['wss://rpc.polkadot.io', endpoint] },
+      }).success,
+    ).toBe(false);
+    expect(
+      CustomChainInputSchema.safeParse(customChain(endpoint)).success,
+    ).toBe(false);
+  });
 });

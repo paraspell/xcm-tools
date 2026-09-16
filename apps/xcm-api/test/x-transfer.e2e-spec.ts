@@ -1072,7 +1072,7 @@ describe('X-Transfer controller (e2e)', () => {
         sender,
         recipient,
         currency: {
-          symbol: { type: 'Native', value: 'ASTR' },
+          symbol: 'USDT',
           amount: '1000',
         },
         swapOptions: {
@@ -1482,7 +1482,7 @@ describe('X-Transfer controller (e2e)', () => {
     const from: TChain = 'Astar';
     const to: TChain = 'BifrostPolkadot';
     const currency: TCurrencyInputWithAmount = {
-      symbol: { type: 'Native', value: 'ASTR' },
+      symbol: 'USDT',
       amount: '1000',
     };
     const builder = Builder();
@@ -1519,7 +1519,7 @@ describe('X-Transfer controller (e2e)', () => {
         currency,
         swapOptions,
       })
-      .expect(201)
+      .expect((res) => expect(res.status, JSON.stringify(res.body)).toBe(201))
       .expect(({ body }) => {
         expect(body).toHaveLength(expectedResponse.length);
 
