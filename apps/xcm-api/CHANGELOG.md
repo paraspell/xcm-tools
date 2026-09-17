@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.6](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.3.5...xcm-api-v14.3.6) (2026-09-17)
+
+
+### Bug Fixes
+
+* **xcm-api:** Add api overrides URL validation 🔧 ([0b6f2a8](https://github.com/paraspell/xcm-tools/commit/0b6f2a8c93b10b985d1936c18ee0a6446995777b))
+
 ## [14.3.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.3.4...xcm-api-v14.3.5) (2026-09-15)
 
 

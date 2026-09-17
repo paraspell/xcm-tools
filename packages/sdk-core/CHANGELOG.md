@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.5...sdk-core-v14.3.6) (2026-09-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix getTransferableAmount fee calculations 🔧 ([2d42411](https://github.com/paraspell/xcm-tools/commit/2d42411bac8cc19440ddf6815caf50af9c711757))
+
 ## [14.3.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.4...sdk-core-v14.3.5) (2026-09-15)
 
 
