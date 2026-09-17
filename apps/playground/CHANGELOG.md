@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.3.6](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.5...playground-v14.3.6) (2026-09-17)
+
+
+### Miscellaneous Chores
+
+* **playground:** Synchronize main versions
+
 ## [14.3.5](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.4...playground-v14.3.5) (2026-09-15)
 
 
