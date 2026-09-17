@@ -118,6 +118,53 @@ describe('getTransferableAmount', () => {
     expect(result).toBe(0n)
   })
 
+  test('does not subtract the fee when the selected fee asset does not pay the origin fee', async () => {
+    const balance = 1000n
+    const ed = 100n
+    const dot = { symbol: 'DOT', decimals: 10 } as TAssetInfo
+
+    findAssetInfoOrThrowSpy.mockReturnValue(dot)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOTON' } as TAssetInfo)
+    vi.mocked(resolveFeeAsset).mockReturnValue(dot)
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 200n,
+      asset: { symbol: 'DOTON' }
+    } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount({ ...baseOptions, feeAsset: { symbol: 'DOT' } })
+
+    expect(result).toBe(balance - ed)
+    expect(getOriginXcmFee).toHaveBeenCalledWith(
+      expect.objectContaining({ feeAsset: { symbol: 'DOT' } })
+    )
+  })
+
+  test('subtracts the fee for native asset paid in native when a fee asset is selected', async () => {
+    const balance = 1000n
+    const ed = 100n
+    const fee = 200n
+    const doton = { symbol: 'DOTON', decimals: 18 } as TAssetInfo
+
+    findAssetInfoOrThrowSpy.mockReturnValue(doton)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(doton)
+    vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee, asset: doton } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount({
+      ...baseOptions,
+      currency: { symbol: 'DOTON', amount: 1000n },
+      feeAsset: { symbol: 'DOT' }
+    })
+
+    expect(result).toBe(balance - ed - fee)
+  })
+
   test('throws error when XCM fee is undefined for native asset', async () => {
     findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'DOT',
@@ -160,6 +207,7 @@ describe('getTransferableAmount', () => {
   const mockResolvedAssets = (assets: WithAmount<TAssetInfo>[]) => {
     vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
     vi.mocked(resolveCurrency).mockReturnValue({ assets, asset: usdt })
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
   }
 
   test('returns per-asset transferable amounts in input order for currency arrays', async () => {
@@ -169,7 +217,10 @@ describe('getTransferableAmount', () => {
     mockResolvedAssets([usdt, usdc])
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(1000n).mockResolvedValueOnce(500n)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee,
+      asset: { symbol: 'USDT' }
+    } as TXcmFeeDetail)
 
     const result = await getTransferableAmount(currenciesOptions)
 
@@ -183,11 +234,47 @@ describe('getTransferableAmount', () => {
     mockResolvedAssets([usdt, usdc])
     vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(250n).mockResolvedValueOnce(500n)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 200n } as TXcmFeeDetail)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 200n,
+      asset: { symbol: 'USDT' }
+    } as TXcmFeeDetail)
 
     const result = await getTransferableAmount(currenciesOptions)
 
     expect(result).toEqual([0n, 400n])
+  })
+
+  test('does not subtract origin fee from any element when it is paid in an asset outside the array', async () => {
+    const ed = 100n
+
+    mockResolvedAssets([usdt, usdc])
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(1000n).mockResolvedValueOnce(500n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 200n,
+      asset: { symbol: 'DOTON' }
+    } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(currenciesOptions)
+
+    expect(result).toEqual([1000n - ed, 500n - ed])
+  })
+
+  test('subtracts origin fee from the element it is paid in even when it is not the fee element', async () => {
+    const fee = 200n
+    const ed = 100n
+
+    mockResolvedAssets([usdt, usdc])
+    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(ed)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValueOnce(1000n).mockResolvedValueOnce(500n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee,
+      asset: { symbol: 'USDC' }
+    } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(currenciesOptions)
+
+    expect(result).toEqual([1000n - ed, 500n - ed - fee])
   })
 
   test('throws error when XCM fee is undefined for currency arrays', async () => {

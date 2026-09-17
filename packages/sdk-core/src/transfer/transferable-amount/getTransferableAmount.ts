@@ -29,8 +29,8 @@ const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends str
     currency
   }: TGetTransferableAmountOptions<TApi, TRes, TSigner, TCustomChain, TCurrencyInputWithAmount>,
   feeCurrency: TCurrencyInputWithAmount
-): Promise<bigint> => {
-  const { fee } = await getOriginXcmFee({
+) => {
+  const result = await getOriginXcmFee({
     api,
     buildTx,
     origin: chain,
@@ -42,13 +42,13 @@ const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends str
     disableFallback: false
   })
 
-  if (fee === undefined) {
+  if (result.fee === undefined) {
     throw new UnableToComputeError(
       `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on chain ${chain}.`
     )
   }
 
-  return fee
+  return result
 }
 
 const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -94,13 +94,14 @@ const getTransferableAmountForAsset = async <
   const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
   const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
 
-  const paysOriginInSendingAsset =
-    (!resolvedFeeAsset && isNativeAsset) ||
-    (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+  const mayPayOriginInSendingAsset =
+    isNativeAsset || (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
 
-  const fee = paysOriginInSendingAsset
+  const originFee = mayPayOriginInSendingAsset
     ? await getOriginFeeOrThrow(options, { ...currency, amount })
-    : 0n
+    : undefined
+
+  const fee = originFee && isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
 
   return computeTransferableAmount(api, sender, chain, asset, fee)
 }
@@ -124,11 +125,17 @@ const getTransferableAmountForAssets = async <
 
   const { assets } = resolveCurrency(api, currency, resolvedFeeAsset, chain, destination)
 
-  const fee = await getOriginFeeOrThrow(options, currency)
+  const originFee = await getOriginFeeOrThrow(options, currency)
 
   return Promise.all(
     assets.map(asset =>
-      computeTransferableAmount(api, sender, chain, asset, asset.isFeeAsset ? fee : 0n)
+      computeTransferableAmount(
+        api,
+        sender,
+        chain,
+        asset,
+        isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
+      )
     )
   )
 }
