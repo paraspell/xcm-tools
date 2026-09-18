@@ -3260,6 +3260,32 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1105",
+        "symbol": "a3-Pool-MRL",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xabfb92906f9c8d90bf6e2686c9e39906669c1843"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1112",
         "symbol": "HUSDS",
         "decimals": 18,
@@ -3674,6 +3700,32 @@
         },
         "isFeeAsset": true,
         "alias": "EURC2"
+      },
+      {
+        "assetId": "1143",
+        "symbol": "a2-Pool-PRIME",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xc2b44f574b8c8440c0d5665f0039b49523139851"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "15",
@@ -4442,6 +4494,32 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1146",
+        "symbol": "a2-Pool-apyUSD",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xfb28f7502f24d18e1b1d4a65d3ce5252f35753d2"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000626",
         "symbol": "sUSDS",
         "decimals": 18,
@@ -4913,6 +4991,32 @@
         },
         "isFeeAsset": true,
         "alias": "USDT3"
+      },
+      {
+        "assetId": "11055",
+        "symbol": "a2-Pool-BIL",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xad26c74993ea492663de92452506d947c9ff178d"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "37",
@@ -6172,7 +6276,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000000"
+        "existentialDeposit": "1000000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "sUSDe",
