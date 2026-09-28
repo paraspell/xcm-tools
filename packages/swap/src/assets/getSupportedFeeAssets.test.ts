@@ -10,6 +10,7 @@ describe('getSupportedFeeAssets', () => {
   const feeAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     assetId: '1',
     location: { parents: 0, interior: 'Here' },
     isFeeAsset: true,
@@ -18,6 +19,7 @@ describe('getSupportedFeeAssets', () => {
   const nonFeeAsset: TAssetInfo = {
     symbol: 'HDX',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '2',
     location: { parents: 1, interior: 'Here' },
   };
@@ -25,6 +27,7 @@ describe('getSupportedFeeAssets', () => {
   const anotherFeeAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
+    existentialDeposit: '1000',
     assetId: '3',
     location: { parents: 2, interior: 'Here' },
     isFeeAsset: true,
@@ -106,6 +109,7 @@ describe('getSupportedFeeAssets', () => {
     const hydrationDot: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       assetId: '5',
       location: { parents: 1, interior: 'Here' },
       isFeeAsset: true,
@@ -114,6 +118,7 @@ describe('getSupportedFeeAssets', () => {
     const acalaDot: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       assetId: '{"Token":"DOT"}',
       location: { parents: 1, interior: 'Here' },
     };

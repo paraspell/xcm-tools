@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Version } from '../..'
@@ -87,8 +87,8 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns per-asset min amounts in input order for currency arrays', async () => {
-    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '10' } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '10' } as TAssetInfo
 
     vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
     vi.mocked(resolveCurrency).mockReturnValue({
@@ -100,7 +100,6 @@ describe('getMinTransferableAmountInternal', () => {
     })
     findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
     // origin fee (USDT, paid by the fee asset) = 2; destination fee (USDT) = 7
@@ -133,8 +132,8 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('returns zeros for all assets when dryRun reports failureReason for currency arrays', async () => {
-    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '10' } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '10' } as TAssetInfo
 
     vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
     vi.mocked(resolveCurrency).mockReturnValue({
@@ -146,7 +145,6 @@ describe('getMinTransferableAmountInternal', () => {
     })
     findAssetOnDestOrThrowSpy.mockReturnValue(usdt)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
@@ -174,13 +172,12 @@ describe('getMinTransferableAmountInternal', () => {
 
   it('adds origin/hops/destination (matching asset), ED (when dest balance is 0), plus 1', async () => {
     const asset = { symbol: 'ASSET', decimals: 12 } as TAssetInfo
-    const destAsset = { symbol: 'ASSET', location: {} } as TAssetInfo
+    const destAsset = { symbol: 'ASSET', location: {}, existentialDeposit: '10' } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
 
     mockResolvedAsset(asset)
     findAssetOnDestOrThrowSpy.mockReturnValue(destAsset)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
     // Fees: origin(A)=2 + hop(A)=3 + hop(B ignored)=5 + destination(A)=7
@@ -234,8 +231,8 @@ describe('getMinTransferableAmountInternal', () => {
   })
 
   it('no ED when dest balance > 0; origin fee counts when feeAsset resolves to sending asset', async () => {
-    const asset = { symbol: 'A' } as TAssetInfo
-    const destAssetNoLoc = { symbol: 'A' } as TAssetInfo
+    const asset = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
+    const destAssetNoLoc = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
     const nativeAsset = { symbol: 'B' } as TAssetInfo
     const resolvedFee = { symbol: 'A' } as TAssetInfo
 
@@ -244,7 +241,6 @@ describe('getMinTransferableAmountInternal', () => {
     findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue(resolvedFee)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(999n) // ignored due to balance>0
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
       origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 5n, feeType: 'dryRun' },
@@ -274,10 +270,10 @@ describe('getMinTransferableAmountInternal', () => {
     mockResolvedAsset({ symbol: 'A' } as TAssetInfo)
     findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'A',
-      location: {}
+      location: {},
+      existentialDeposit: '1'
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'A' } as TAssetInfo)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
@@ -303,10 +299,10 @@ describe('getMinTransferableAmountInternal', () => {
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'B' } as TAssetInfo)
     findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'B',
-      location: {}
+      location: {},
+      existentialDeposit: '4'
     } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(4n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'B' }, fee: 9n },
       hops: [{ result: { asset: { symbol: 'B' }, fee: 8n } }],
@@ -329,12 +325,12 @@ describe('getMinTransferableAmountInternal', () => {
     } as TAssetInfo)
     findAssetOnDestOrThrowSpy.mockReturnValue({
       symbol: 'ASSET',
-      location: {}
+      location: {},
+      existentialDeposit: '0'
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'ASSET'
     } as TAssetInfo)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(0n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: undefined,
@@ -354,7 +350,6 @@ describe('getMinTransferableAmountInternal', () => {
 
 describe('getMinTransferableAmount', () => {
   it('sets disconnectAllowed to false, then restores to true and disconnects', async () => {
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(0n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1n)
     vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getXcmFee).mockResolvedValue({
@@ -382,7 +377,8 @@ describe('getMinTransferableAmount', () => {
       findAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A', decimals: 10 }),
       findAssetOnDestOrThrow: vi.fn().mockReturnValue({
         symbol: 'A',
-        location: {}
+        location: {},
+        existentialDeposit: '0'
       }),
       findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A' })
     } as unknown as PolkadotApi<unknown, unknown, unknown>

@@ -36,6 +36,7 @@ describe('getAssetInfo', () => {
     const currency: TAssetInfo = {
       symbol: 'HDX',
       decimals: 12,
+      existentialDeposit: '1000',
       assetId: '2',
       location: { parents: 0, interior: 'Here' },
     };

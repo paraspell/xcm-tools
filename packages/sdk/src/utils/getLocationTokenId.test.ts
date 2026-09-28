@@ -48,8 +48,8 @@ describe('getLocationTokenId', () => {
     }
 
     const foreignAssets: TAssetInfo[] = [
-      { assetId: '123', symbol: 'USDT', decimals: 6, location },
-      { assetId: '456', symbol: 'ETH', decimals: 18, location }
+      { assetId: '123', symbol: 'USDT', decimals: 6, existentialDeposit: '1000', location },
+      { assetId: '456', symbol: 'ETH', decimals: 18, existentialDeposit: '1000', location }
     ]
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)
@@ -72,8 +72,8 @@ describe('getLocationTokenId', () => {
     }
 
     const foreignAssets: TAssetInfo[] = [
-      { assetId: '123', symbol: 'USDT', decimals: 6, location },
-      { assetId: '456', symbol: 'ETH', decimals: 18, location }
+      { assetId: '123', symbol: 'USDT', decimals: 6, existentialDeposit: '1000', location },
+      { assetId: '456', symbol: 'ETH', decimals: 18, existentialDeposit: '1000', location }
     ]
 
     vi.mocked(getOtherAssets).mockReturnValue(foreignAssets)

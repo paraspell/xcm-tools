@@ -10,6 +10,7 @@ const altLocation: TLocation = { parents: 1, interior: { X1: [{ Parachain: 2000 
 const assetA: TAssetInfo = {
   symbol: 'ABC',
   decimals: 12,
+  existentialDeposit: '1000',
   assetId: '1',
   location: locA,
 };
@@ -17,6 +18,7 @@ const assetA: TAssetInfo = {
 const assetB: TAssetInfo = {
   symbol: 'XYZ',
   decimals: 12,
+  existentialDeposit: '1000',
   assetId: '2',
   location: locB,
 };

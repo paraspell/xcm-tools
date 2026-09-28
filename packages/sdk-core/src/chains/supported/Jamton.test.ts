@@ -25,6 +25,7 @@ describe('Jamton', () => {
     symbol: 'USDT',
     assetId: '123',
     decimals: 6,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: {

@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isSymbolMatch } from '@paraspell/assets'
+import { isSymbolMatch } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -14,7 +14,7 @@ vi.mock('../../balance')
 describe('isSufficientOrigin', () => {
   const mockApi = {
     getNativeAssetSymbol: vi.fn(),
-    getExistentialDepositOrThrow: vi.fn()
+    getExistentialDeposit: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
   const origin = 'Acala'
   const destination = 'Astar'
@@ -30,12 +30,11 @@ describe('isSufficientOrigin', () => {
       if (chain === 'Astar') return 'ASTR'
       return 'DOT'
     })
-    vi.spyOn(mockApi, 'getExistentialDepositOrThrow').mockImplementation(chain => {
+    vi.spyOn(mockApi, 'getExistentialDeposit').mockImplementation(chain => {
       if (chain === origin) return 50n
       if (chain === destination) return 30n
       return 10n
     })
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(50n)
     vi.mocked(getBalanceInternal).mockResolvedValue(1000n)
   })
 
@@ -56,7 +55,7 @@ describe('isSufficientOrigin', () => {
   it('returns true when native asset to both origin and destination with sufficient balance', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
 
-    const edSpy = vi.spyOn(mockApi, 'getExistentialDepositOrThrow')
+    const edSpy = vi.spyOn(mockApi, 'getExistentialDeposit')
 
     const result = await isSufficientOrigin(
       mockApi,
@@ -102,7 +101,7 @@ describe('isSufficientOrigin', () => {
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200n)
 
-    const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
     const result = await isSufficientOrigin(
       mockApi,
       origin,
@@ -119,7 +118,6 @@ describe('isSufficientOrigin', () => {
       address: sender,
       asset: { ...nonNativeAsset, amount }
     })
-    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith({ ...nonNativeAsset, amount })
     expect(result).toBe(true)
   })
 
@@ -129,7 +127,7 @@ describe('isSufficientOrigin', () => {
     })
     vi.mocked(getBalanceInternal).mockResolvedValue(100n) // 100 - 50 - 100 = -50
 
-    const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
     const result = await isSufficientOrigin(
       mockApi,
       origin,
@@ -149,7 +147,7 @@ describe('isSufficientOrigin', () => {
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(30n) // 30 - 50 = -20
 
-    const nonNativeAsset = { symbol: 'USDT' } as TAssetInfo
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
     const result = await isSufficientOrigin(
       mockApi,
       origin,
@@ -186,7 +184,7 @@ describe('isSufficientOrigin', () => {
 describe('isSufficientDestination', () => {
   const mockApi = {
     getNativeAssetSymbol: vi.fn(),
-    getExistentialDepositOrThrow: vi.fn()
+    getExistentialDeposit: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
   const destination = 'Astar'
   const address = 'Bob'
@@ -197,7 +195,7 @@ describe('isSufficientDestination', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(mockApi, 'getNativeAssetSymbol').mockReturnValue('ASTR')
-    vi.spyOn(mockApi, 'getExistentialDepositOrThrow').mockReturnValue(30n)
+    vi.spyOn(mockApi, 'getExistentialDeposit').mockReturnValue(30n)
     vi.mocked(getBalanceInternal).mockResolvedValue(200n)
   })
 
@@ -220,7 +218,7 @@ describe('isSufficientDestination', () => {
   it('returns true when native asset with sufficient balance', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
 
-    const edSpy = vi.spyOn(mockApi, 'getExistentialDepositOrThrow')
+    const edSpy = vi.spyOn(mockApi, 'getExistentialDeposit')
 
     const result = await isSufficientDestination(
       mockApi,
@@ -244,7 +242,7 @@ describe('isSufficientDestination', () => {
   it('returns false when native asset with insufficient balance', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
     vi.mocked(getBalanceInternal).mockResolvedValue(50n)
-    vi.spyOn(mockApi, 'getExistentialDepositOrThrow').mockReturnValue(200n)
+    vi.spyOn(mockApi, 'getExistentialDeposit').mockReturnValue(200n)
 
     const result = await isSufficientDestination(
       mockApi,
@@ -261,7 +259,7 @@ describe('isSufficientDestination', () => {
   it('handles edge case where balance + amount equals existential deposit + fee', async () => {
     vi.mocked(isSymbolMatch).mockReturnValue(true)
     vi.mocked(getBalanceInternal).mockResolvedValue(30n)
-    vi.spyOn(mockApi, 'getExistentialDepositOrThrow').mockReturnValue(50n)
+    vi.spyOn(mockApi, 'getExistentialDeposit').mockReturnValue(50n)
 
     const result = await isSufficientDestination(
       mockApi,

@@ -239,7 +239,12 @@ describe('handleSwapExecuteTransfer', () => {
       success: false,
       origin: {
         success: false,
-        asset: { symbol: 'ACA', decimals: 12, location: { parents: 0, interior: 'Here' } },
+        asset: {
+          symbol: 'ACA',
+          decimals: 12,
+          existentialDeposit: '1000',
+          location: { parents: 0, interior: 'Here' }
+        },
         dryRunError: { reason: 'Origin execution failed' }
       },
       hops: []

@@ -34,6 +34,7 @@ vi.mock('../maps/assets.json', () => ({
 const overlayAsset = (overrides: Partial<TCustomAssetInfo> = {}): TCustomAssetInfo => ({
   symbol: 'CUST',
   decimals: 10,
+  existentialDeposit: '1000',
   location: { parents: 1, interior: { X1: { GeneralIndex: '999' } } },
   ...overrides
 })
@@ -89,11 +90,13 @@ describe('mergeCustomAssets', () => {
     {
       symbol: 'A',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { Parachain: 1 } } }
     },
     {
       symbol: 'B',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { Parachain: 2 } } }
     }
   ]
@@ -115,6 +118,7 @@ describe('mergeCustomAssets', () => {
       {
         symbol: 'C',
         decimals: 6,
+        existentialDeposit: '1000',
         location: { parents: 0, interior: { X1: { Parachain: 3 } } }
       }
     ]
@@ -126,6 +130,7 @@ describe('mergeCustomAssets', () => {
       {
         symbol: 'A-NEW',
         decimals: 18,
+        existentialDeposit: '1000',
         location: { parents: 0, interior: { X1: { Parachain: 1 } } }
       }
     ]
@@ -142,6 +147,7 @@ describe('isCustomAsset', () => {
   const asset: TAssetInfo = {
     symbol: 'CUST',
     decimals: 6,
+    existentialDeposit: '1000',
     location: customLocation
   }
 
@@ -168,6 +174,7 @@ describe('isCustomAsset', () => {
     const otherAsset: TAssetInfo = {
       symbol: 'OTHER',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { GeneralIndex: '1' } } }
     }
     const ctx: TCustomCtx = { customAssets: { Acala: [otherAsset] } }

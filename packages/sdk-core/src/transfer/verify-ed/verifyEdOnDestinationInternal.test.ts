@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, normalizeSymbol } from '@paraspell/assets'
+import { normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -54,7 +54,8 @@ describe('verifyEdOnDestinationInternal', () => {
 
   const asset = {
     symbol: 'DOT',
-    decimals: 10
+    decimals: 10,
+    existentialDeposit: '10000000000'
   } as TAssetInfo
 
   const xcmFeeRes = {
@@ -76,7 +77,6 @@ describe('verifyEdOnDestinationInternal', () => {
     buildTx.mockClear()
     vi.mocked(validateAddress).mockImplementation(() => {})
     findAssetOnDestOrThrowSpy.mockReturnValue(asset)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue(xcmFeeRes)
     vi.mocked(normalizeSymbol).mockImplementation(symbol =>
@@ -87,8 +87,8 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('returns true only when every asset passes the ED check for currency arrays', async () => {
-    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '100' } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '100' } as TAssetInfo
 
     vi.mocked(resolveCurrency).mockReturnValue({
       assets: [
@@ -98,7 +98,6 @@ describe('verifyEdOnDestinationInternal', () => {
       asset: { ...usdt, amount: 1000000n, isFeeAsset: true }
     })
     findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
@@ -127,8 +126,8 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('returns false when any asset fails the ED check for currency arrays', async () => {
-    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '3000000' } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '3000000' } as TAssetInfo
 
     vi.mocked(resolveCurrency).mockReturnValue({
       assets: [
@@ -138,7 +137,6 @@ describe('verifyEdOnDestinationInternal', () => {
       asset: { ...usdt, amount: 1000000n, isFeeAsset: true }
     })
     findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(3000000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
@@ -159,8 +157,8 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('does not subtract the destination fee from assets that do not pay it', async () => {
-    const usdt = { symbol: 'USDT', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', decimals: 6 } as TAssetInfo
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '1900000' } as TAssetInfo
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '1900000' } as TAssetInfo
 
     vi.mocked(resolveCurrency).mockReturnValue({
       assets: [
@@ -170,7 +168,6 @@ describe('verifyEdOnDestinationInternal', () => {
       asset: { ...usdt, amount: 5000000n, isFeeAsset: true }
     })
     findAssetOnDestOrThrowSpy.mockReturnValueOnce(usdt).mockReturnValueOnce(usdc)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1900000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
@@ -247,7 +244,6 @@ describe('verifyEdOnDestinationInternal', () => {
       mockDestination,
       mockCurrency
     )
-    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(asset)
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
       address: mockAddress,
       chain: mockDestination,
@@ -272,7 +268,6 @@ describe('verifyEdOnDestinationInternal', () => {
       currency: { ...defaultOptions.currency, amount: 10000000000n }
     }
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10000000000n)
 
     const result = await verifyEdOnDestinationInternal(opts)
     expect(result).toBe(false)

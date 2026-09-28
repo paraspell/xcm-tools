@@ -44,7 +44,7 @@ type TAssetEntry = {
   decimals: number;
   location: string;
   isNative?: boolean;
-  existentialDeposit?: string;
+  existentialDeposit: string;
 };
 
 const selectOrigin = async (page: Page, chain: string) => {
@@ -120,9 +120,7 @@ const fillAssetEntry = async (
     .getByPlaceholder('{ "parents": 1, "interior": "Here" }')
     .nth(index)
     .fill(location);
-  if (existentialDeposit !== undefined) {
-    await scope.getByPlaceholder('0.01').nth(index).fill(existentialDeposit);
-  }
+  await scope.getByPlaceholder('0.01').nth(index).fill(existentialDeposit);
   if (isNative) {
     await scope
       .getByRole('checkbox', { name: 'Native', exact: true })
@@ -153,6 +151,7 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
         symbol: 'XCTEST',
         decimals: 12,
         location: SAME_LOCATION,
+        existentialDeposit: '0.01',
       });
       await modal.getByRole('button', { name: 'Save' }).click();
       await expect(modal).not.toBeVisible();
@@ -224,11 +223,13 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
         symbol: 'AAA',
         decimals: 10,
         location: SAME_LOCATION,
+        existentialDeposit: '0.01',
       });
       await fillAssetEntry(modal, 1, {
         symbol: 'BBB',
         decimals: 12,
         location: SAME_LOCATION,
+        existentialDeposit: '0.01',
       });
 
       await modal.getByRole('button', { name: 'Save' }).click();
@@ -255,6 +256,7 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
         symbol: 'AAA',
         decimals: 10,
         location: SAME_LOCATION,
+        existentialDeposit: '0.01',
       });
       await expect(modal.getByText(DUPLICATE_LOCATION_ERROR)).toHaveCount(0);
     },
@@ -292,6 +294,7 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
         symbol: 'EDITME',
         decimals: 12,
         location: uniqueLocation(2001),
+        existentialDeposit: '0.01',
       });
 
       await appPage.getByTestId('select-currency').first().click();
@@ -336,6 +339,7 @@ basePjsTest.describe('Custom chains & custom assets E2E Tests', () => {
         symbol: 'REMOVEME',
         decimals: 10,
         location: uniqueLocation(2002),
+        existentialDeposit: '0.01',
       });
 
       await appPage.getByTestId('select-currency').first().click();
@@ -558,6 +562,7 @@ basePjsTest.describe('Custom chain transfer wallet signing', () => {
         symbol: 'DOT',
         decimals: 10,
         location: DOT_LOCATION,
+        existentialDeposit: '0.01',
         isNative: true,
       });
 
@@ -630,6 +635,7 @@ basePjsTest.describe('Custom chain destination transfer wallet signing', () => {
         symbol: 'DOT',
         decimals: 10,
         location: DOT_LOCATION,
+        existentialDeposit: '0.01',
       });
 
       await modal.getByPlaceholder('MyChain').click();
@@ -710,6 +716,7 @@ const BOMBOKLA_IMPORT_CONFIG = {
               interior: { X1: [{ Parachain: 213489 }] },
             },
             isNative: true,
+            existentialDeposit: '100000000',
           },
           {
             symbol: 'BOMBO',

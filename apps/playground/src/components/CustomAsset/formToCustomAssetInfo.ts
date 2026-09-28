@@ -10,12 +10,10 @@ export const formToCustomAssetInfo = (
   decimals: Number(values.decimals),
   location: JSON.parse(values.location.trim()) as TLocation,
   ...(values.assetId.trim() && { assetId: values.assetId.trim() }),
-  ...(values.existentialDeposit.trim() && {
-    existentialDeposit: parseUnits(
-      values.existentialDeposit.trim(),
-      Number(values.decimals),
-    ).toString(),
-  }),
+  existentialDeposit: parseUnits(
+    values.existentialDeposit.trim(),
+    Number(values.decimals),
+  ).toString(),
   ...(values.isNative && { isNative: true }),
   ...(values.forceOverride && { forceOverride: true }),
 });

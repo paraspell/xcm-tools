@@ -45,6 +45,7 @@ describe('selectBestExchangeCommon', () => {
   const asset1: TAssetInfo = {
     symbol: 'AAA',
     decimals: 8,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here',
@@ -54,6 +55,7 @@ describe('selectBestExchangeCommon', () => {
   const asset2: TAssetInfo = {
     symbol: 'BBB',
     decimals: 8,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: 'Here',

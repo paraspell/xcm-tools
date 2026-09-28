@@ -29,6 +29,7 @@ const findAssetInfoOnDestSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest')
 const AHK_LOCAL_USDT: TAssetInfo = {
   symbol: 'USDt',
   decimals: 6,
+  existentialDeposit: '1000',
   location: {
     parents: Parents.ONE,
     interior: {
@@ -484,6 +485,7 @@ describe('validateEthereumAsset', () => {
     const asset: TAssetInfo = {
       symbol: 'WRONG',
       decimals: 18,
+      existentialDeposit: '1000',
       location: {
         parents: Parents.TWO,
         interior: {
@@ -504,6 +506,7 @@ describe('validateEthereumAsset', () => {
     const asset: TAssetInfo = {
       symbol: 'NOLOC',
       decimals: 18,
+      existentialDeposit: '1000',
       location: {
         parents: Parents.ZERO,
         interior: { Here: null }

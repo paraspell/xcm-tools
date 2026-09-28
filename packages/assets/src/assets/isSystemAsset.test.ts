@@ -7,6 +7,7 @@ import { isBridgedSystemAsset, isSystemAsset } from './isSystemAsset'
 const createAsset = (location: TAssetInfo['location']): TAssetInfo => ({
   symbol: 'TEST',
   decimals: 12,
+  existentialDeposit: '1000',
   location
 })
 

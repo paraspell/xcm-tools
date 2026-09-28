@@ -157,10 +157,7 @@ export const generateAssetsTests = () => {
           it('should return existential deposit for all assets', () => {
             const assets = getAssets(chain)
             assets.forEach(asset => {
-              const deposit = asset.existentialDeposit
-              if (deposit !== undefined) {
-                expect(deposit).toBeTypeOf('string')
-              }
+              expect(asset.existentialDeposit).toBeTypeOf('string')
             })
           })
         })

@@ -26,6 +26,7 @@ describe('traverseXcmHops', () => {
   const asset: TAssetInfo = {
     symbol: 'ASSET1',
     decimals: 12,
+    existentialDeposit: '1000',
     location: { parents: 0, interior: 'Here' }
   }
 

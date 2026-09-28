@@ -8,6 +8,7 @@ describe('compareLocations', () => {
   const dotAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: 'Here' }
   }
 

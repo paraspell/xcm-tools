@@ -60,6 +60,7 @@ describe('buildHopInfo', () => {
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
+      existentialDeposit: '1000',
       location: {} as TLocation
     })
   })
@@ -88,6 +89,7 @@ describe('buildHopInfo', () => {
         symbol: 'USDT',
         assetId: '1984',
         decimals: 6,
+        existentialDeposit: '1000',
         location: {}
       },
       xcmFee: {
@@ -135,6 +137,7 @@ describe('buildHopInfo', () => {
       symbol: 'OTHER',
       assetId: 'otherId',
       decimals: 12,
+      existentialDeposit: '1000',
       location: {
         parents: 1,
         interior: 'Here'

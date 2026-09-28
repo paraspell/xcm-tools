@@ -41,6 +41,7 @@ describe('getModifiedCurrencySelection', () => {
       {
         symbol: 'DOT',
         decimals: 10,
+        existentialDeposit: '1000',
         location: { parents: Parents.ONE, interior: 'Here' }
       }
     ])

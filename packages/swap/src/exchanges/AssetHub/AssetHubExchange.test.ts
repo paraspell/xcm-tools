@@ -42,8 +42,14 @@ describe('AssetHubExchange', () => {
     baseSwapOptions = {
       apiType: 'GENERIC',
       api: mockPolkadotApi as unknown as PolkadotApi<unknown, unknown, unknown>,
-      assetFrom: { symbol: 'ASSET1', decimals: 10, isNative: true, location: assetFromML },
-      assetTo: { symbol: 'ASSET2', decimals: 10, location: assetToML },
+      assetFrom: {
+        symbol: 'ASSET1',
+        decimals: 10,
+        existentialDeposit: '1000',
+        isNative: true,
+        location: assetFromML,
+      },
+      assetTo: { symbol: 'ASSET2', decimals: 10, existentialDeposit: '1000', location: assetToML },
       amount: 1000n,
       sender: 'sender',
       slippagePct: '5',
@@ -159,6 +165,7 @@ describe('AssetHubExchange', () => {
     const assetNative = {
       symbol: 'NATIVE',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { Here: null } },
     };
 
@@ -316,6 +323,7 @@ describe('AssetHubExchange', () => {
     const assetNative = {
       symbol: 'NATIVE',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { Here: null } },
     };
 

@@ -74,7 +74,7 @@ export const CustomAssetModal: FC<Props> = ({
       symbol: isNotEmpty('Symbol is required'),
       decimals: isNotEmpty('Decimals required'),
       existentialDeposit: matches(
-        /^(\d+(\.\d+)?)?$/,
+        /^\d+(\.\d+)?$/,
         'Existential deposit must be a valid amount',
       ),
       location: (value, values) => {

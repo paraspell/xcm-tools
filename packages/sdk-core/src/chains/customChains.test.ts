@@ -57,6 +57,7 @@ describe('normalizeCustomChains', () => {
     const asset: TCustomAssetInfo = {
       symbol: 'X',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { Parachain: 1 } } }
     }
     const result = normalizeCustomChains({
@@ -79,6 +80,7 @@ describe('normalizeCustomChains', () => {
     const asset: TCustomAssetInfo = {
       symbol: 'NAT',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' }
     }
     normalizeCustomChains({ MyCustom: baseInput({ assets: [asset] }) })
@@ -148,8 +150,8 @@ describe('normalizeCustomChains', () => {
     const input: TCustomChainsMap = {
       MyCustom: baseInput({
         assets: [
-          { symbol: 'A', decimals: 12, location: dupLoc },
-          { symbol: 'B', decimals: 12, location: dupLoc }
+          { symbol: 'A', decimals: 12, existentialDeposit: '1000', location: dupLoc },
+          { symbol: 'B', decimals: 12, existentialDeposit: '1000', location: dupLoc }
         ]
       })
     }
@@ -188,6 +190,7 @@ describe('buildCustomChainAssetsInfo', () => {
     assets: [],
     nativeAssetSymbol: 'CUS',
     nativeAssetDecimals: 12,
+    nativeExistentialDeposit: '1000000000',
     xcmPallet: 'PolkadotXcm',
     isEVM: false,
     supportsDryRunApi: true,
@@ -200,6 +203,7 @@ describe('buildCustomChainAssetsInfo', () => {
     const foreign: TAssetInfo = {
       symbol: 'X',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { Parachain: 1 } } }
     }
     const info = buildCustomChainAssetsInfo(hydrated({ ss58Prefix: 7, assets: [foreign] }))
@@ -215,7 +219,8 @@ describe('buildCustomChainAssetsInfo', () => {
           symbol: 'CUS',
           decimals: 12,
           location: { parents: 1, interior: { X1: [{ Parachain: 4242 }] } },
-          isNative: true
+          isNative: true,
+          existentialDeposit: '1000000000'
         },
         foreign
       ]
@@ -226,6 +231,7 @@ describe('buildCustomChainAssetsInfo', () => {
     const userNative: TAssetInfo = {
       symbol: 'CUS',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { Parachain: 4242 } } },
       isNative: true
     }
@@ -242,6 +248,12 @@ describe('buildCustomChainAssetsInfo', () => {
     expect(() => buildCustomChainAssetsInfo(hydrated({ nativeAssetSymbol: undefined }))).toThrow(
       CustomChainInvalidError
     )
+  })
+
+  it('throws CustomChainInvalidError when nativeExistentialDeposit is missing', () => {
+    expect(() =>
+      buildCustomChainAssetsInfo(hydrated({ nativeExistentialDeposit: undefined }))
+    ).toThrow(CustomChainInvalidError)
   })
 
   it('throws CustomChainInvalidError when nativeAssetDecimals is missing', () => {

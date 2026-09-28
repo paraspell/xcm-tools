@@ -1,5 +1,4 @@
 import { getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
-import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
@@ -25,7 +24,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
 
   const destAsset = api.findAssetOnDestOrThrow(origin, destination, currency)
 
-  const edDest = getEdFromAssetOrThrow(destAsset)
+  const edDest = BigInt(destAsset.existentialDeposit)
 
   const destBalance = await getAssetBalanceInternal({
     api: destApi,

@@ -29,6 +29,7 @@ describe('findAssetInfo', () => {
   const dotAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     assetId: '1',
     location: {
       parents: 1,
@@ -39,6 +40,7 @@ describe('findAssetInfo', () => {
   const ksmAsset: TAssetInfo = {
     symbol: 'KSM',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '1',
     location: {
       parents: 2,
@@ -49,6 +51,7 @@ describe('findAssetInfo', () => {
   const ztgAsset: TAssetInfo = {
     symbol: 'ZTG',
     decimals: 18,
+    existentialDeposit: '1000',
     assetId: '2',
     location: {
       parents: 1,
@@ -59,6 +62,7 @@ describe('findAssetInfo', () => {
   const wethAsset: TAssetInfo = {
     symbol: 'WETH',
     decimals: 18,
+    existentialDeposit: '1000',
     assetId: '3',
     location: MOCK_ETH_LOCATION
   }
@@ -66,6 +70,7 @@ describe('findAssetInfo', () => {
   const glmrAsset: TAssetInfo = {
     symbol: 'GLMR',
     decimals: 18,
+    existentialDeposit: '1000',
     assetId: '4',
     location: {
       parents: 1,
@@ -455,6 +460,7 @@ describe('findAssetInfo', () => {
         assetId: '2',
         symbol: 'dot',
         decimals: 12,
+        existentialDeposit: '1000',
         location: usdtLoc
       }
     ])
@@ -475,6 +481,7 @@ describe('findAssetInfo', () => {
         assetId: '2',
         symbol: 'dot',
         decimals: 12,
+        existentialDeposit: '1000',
         location: usdtLoc
       }
     ])
@@ -506,6 +513,7 @@ describe('findAssetInfo', () => {
         assetId: '2',
         symbol: 'dot',
         decimals: 12,
+        existentialDeposit: '1000',
         location: {
           parents: 1,
           interior: {

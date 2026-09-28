@@ -17,6 +17,7 @@ describe('isStableCoinAsset', () => {
     const asset: TAssetInfo = {
       symbol: 'TEST',
       decimals: 12,
+      existentialDeposit: '1000',
       location: stableLocation(STABLECOIN_IDS[0])
     }
 
@@ -28,6 +29,7 @@ describe('isStableCoinAsset', () => {
     const asset: TAssetInfo = {
       symbol: 'TEST',
       decimals: 12,
+      existentialDeposit: '1000',
       location: {
         parents: Parents.ZERO,
         interior: {
@@ -43,6 +45,7 @@ describe('isStableCoinAsset', () => {
     const asset: TAssetInfo = {
       symbol: 'TEST',
       decimals: 12,
+      existentialDeposit: '1000',
       location: {
         parents: 1,
         interior: 'Here'

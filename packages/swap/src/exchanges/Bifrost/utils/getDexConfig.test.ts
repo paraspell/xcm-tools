@@ -63,6 +63,7 @@ const makeSdkAssets = (): TAssetInfo[] => [
     symbol: 'btc',
     assetId: '1',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here',
@@ -72,6 +73,7 @@ const makeSdkAssets = (): TAssetInfo[] => [
     symbol: 'eth',
     assetId: '2',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: 'Here',

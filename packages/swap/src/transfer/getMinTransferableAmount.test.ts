@@ -1,6 +1,6 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
-import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk-core';
+import { getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -24,7 +24,7 @@ vi.mock('./utils');
 vi.mock('./fees');
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
-  getExistentialDepositOrThrow: vi.fn(),
+  getExistentialDeposit: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
 }));
 
@@ -33,6 +33,7 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 const createRouterAsset = (symbol: string, decimals = 12): TAssetInfo => ({
   symbol,
   decimals,
+  existentialDeposit: '1000',
   assetId: `${symbol}-ID`,
   location: { parents: 1, interior: 'Here' },
 });
@@ -148,7 +149,7 @@ describe('getMinTransferableAmount', () => {
       amount: '1000',
       api: mockApi,
     });
-    expect(getExistentialDepositOrThrow).not.toHaveBeenCalled();
+    expect(getExistentialDeposit).not.toHaveBeenCalled();
     expect(getSwapFee).not.toHaveBeenCalled();
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
@@ -162,7 +163,7 @@ describe('getMinTransferableAmount', () => {
       }),
     });
 
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(42n);
+    vi.mocked(getExistentialDeposit).mockReturnValue(42n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
     const result = await getMinTransferableAmount({ ...createOptions(), api: mockApi });
@@ -180,7 +181,7 @@ describe('getMinTransferableAmount', () => {
       }),
     });
 
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10n);
+    vi.mocked(getExistentialDeposit).mockReturnValue(10n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
     const swapDetail: TXcmFeeDetail = {
       fee: 20n,

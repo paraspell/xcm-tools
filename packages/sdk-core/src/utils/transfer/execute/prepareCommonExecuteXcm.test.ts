@@ -198,6 +198,16 @@ describe('prepareCommonExecuteXcm', () => {
     expect(result.depositInstruction.DepositAsset.assets).toBe(mockAssetsFilter)
   })
 
+  it('deposits all assets when the fee asset deposit is requested', () => {
+    const customAsset = { id: {}, fun: { Fungible: 500n } } as TAsset
+
+    const result = prepareCommonExecuteXcm(baseOptions, customAsset, true)
+
+    expect(createAllCountedFilter).toHaveBeenCalledWith(2)
+    expect(createAssetsFilter).not.toHaveBeenCalled()
+    expect(result.depositInstruction.DepositAsset.assets).toBe(mockAllCountedFilter)
+  })
+
   it('uses assetLocalizedToDest when no custom deposit asset', () => {
     prepareCommonExecuteXcm(baseOptions)
     expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)

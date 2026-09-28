@@ -560,6 +560,7 @@ describe('Parachain', () => {
       {
         symbol: 'DOT',
         decimals: 10,
+        existentialDeposit: '1000',
         isNative: true,
         amount: 1000n,
         location: RELAY_LOCATION

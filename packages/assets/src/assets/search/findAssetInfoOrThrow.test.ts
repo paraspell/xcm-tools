@@ -45,6 +45,7 @@ describe('findAssetInfoOrThrow', () => {
     const ethereumAsset: TAssetInfo = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       assetId: 'USDT_ETH',
       location: { parents: 2, interior: 'Here' }
     }

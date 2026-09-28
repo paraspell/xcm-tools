@@ -1,5 +1,4 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import type { TBuildOriginInfoOptions, TOriginXcmFeeInfo, TSelectedCurrencyInfo } from '../../types'
@@ -31,7 +30,7 @@ export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends 
     const balanceAfter = balance - assetAmount
 
     return {
-      sufficient: balanceAfter >= getEdFromAssetOrThrow(asset),
+      sufficient: balanceAfter >= BigInt(asset.existentialDeposit),
       balance,
       balanceAfter,
       asset

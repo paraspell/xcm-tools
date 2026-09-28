@@ -5,12 +5,13 @@ import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { sortAssets } from '../../asset'
 import { createBeneficiaryLocation } from '../../location'
-import { createAssetsFilter } from './createAssetsFilter'
+import { createAllCountedFilter, createAssetsFilter } from './createAssetsFilter'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
 export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   options: TCreateTransferXcmOptions<TApi, TRes, TSigner, TCustomChain>,
-  assetToDeposit?: TAsset
+  assetToDeposit?: TAsset,
+  depositFeeAsset = false
 ) => {
   const { api, useJitWithdraw, recipient, version } = options
 
@@ -46,7 +47,9 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
 
   const depositInstruction = {
     DepositAsset: {
-      assets: createAssetsFilter(assetToDeposit ?? assetLocalizedToDest, version),
+      assets: depositFeeAsset
+        ? createAllCountedFilter(2)
+        : createAssetsFilter(assetToDeposit ?? assetLocalizedToDest, version),
       beneficiary
     }
   }

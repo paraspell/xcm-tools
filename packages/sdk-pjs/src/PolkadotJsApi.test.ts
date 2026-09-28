@@ -68,6 +68,7 @@ describe('PolkadotJsApi', () => {
   const dotAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here'
@@ -77,6 +78,7 @@ describe('PolkadotJsApi', () => {
   const ksmAsset: TAssetInfo = {
     symbol: 'KSM',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 0,
       interior: {
@@ -88,6 +90,7 @@ describe('PolkadotJsApi', () => {
   const usdtAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: {

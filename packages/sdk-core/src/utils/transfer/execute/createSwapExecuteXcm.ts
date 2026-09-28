@@ -182,6 +182,23 @@ export const createSwapExecuteXcm = async <
     ? ethBridgeFee
     : originFee + originReserveFee + exchangeFee + destReserveFee + destFee
 
+  const isFeeLeftoverAboveEd = () => {
+    if (
+      isEthereumDest ||
+      !resolvedFeeAssetInfo ||
+      !getFeeAssetInfo(assetInfoTo, resolvedFeeAssetInfo)
+    )
+      return false
+    const finalFeeAsset = api.findAssetInfo(destChain ?? exchangeChain, {
+      location: resolvedFeeAssetInfo.location
+    })
+    return (
+      finalFeeAsset !== null &&
+      feeAssetBudget - (originReserveFee + exchangeFee + destReserveFee + destFee) >=
+        BigInt(finalFeeAsset.existentialDeposit)
+    )
+  }
+
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
     {
       api,
@@ -198,7 +215,8 @@ export const createSwapExecuteXcm = async <
       },
       version
     },
-    assetToLocalizedToDest
+    assetToLocalizedToDest,
+    isFeeLeftoverAboveEd()
   )
 
   const exchangeInstructions = await createExchangeInstructions(

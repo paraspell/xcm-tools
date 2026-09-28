@@ -85,6 +85,7 @@ describe('AssetHubPolkadot', () => {
         {
           symbol: 'DOT',
           decimals: 10,
+          existentialDeposit: '1000',
           assetId: '',
           location: {
             parents: 1,

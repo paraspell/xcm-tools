@@ -29,8 +29,20 @@ vi.mock('@paraspell/sdk-core', async (importActual) => ({
   findAssetInfoOrThrow: vi.fn(),
 }));
 
-const assetA: TAssetInfo = { symbol: 'ABC', assetId: '1', decimals: 12, location: locA };
-const assetB: TAssetInfo = { symbol: 'XYZ', assetId: '2', decimals: 12, location: locB };
+const assetA: TAssetInfo = {
+  symbol: 'ABC',
+  assetId: '1',
+  decimals: 12,
+  existentialDeposit: '1000',
+  location: locA,
+};
+const assetB: TAssetInfo = {
+  symbol: 'XYZ',
+  assetId: '2',
+  decimals: 12,
+  existentialDeposit: '1000',
+  location: locB,
+};
 
 describe('exchange-config helpers', () => {
   it('getExchangeConfig → returns the config object for a known exchange', () => {

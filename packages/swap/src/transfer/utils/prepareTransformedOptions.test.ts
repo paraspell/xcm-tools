@@ -38,6 +38,7 @@ describe('prepareTransformedOptions', () => {
   const acaAsset: TAssetInfo = {
     symbol: 'ACA',
     decimals: 8,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here',
@@ -47,6 +48,7 @@ describe('prepareTransformedOptions', () => {
   const astrAsset: TAssetInfo = {
     symbol: 'ASTR',
     decimals: 8,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: 'Here',

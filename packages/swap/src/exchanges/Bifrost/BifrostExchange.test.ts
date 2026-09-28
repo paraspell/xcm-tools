@@ -163,12 +163,18 @@ describe('BifrostExchange', () => {
             assetFrom: {
               symbol: 'KSM',
               decimals: 12,
+              existentialDeposit: '1000',
               location: {
                 parents: 0,
                 interior: 'Here',
               },
             },
-            assetTo: { symbol: 'BNC', decimals: 12, location: { parents: 1, interior: 'Here' } },
+            assetTo: {
+              symbol: 'BNC',
+              decimals: 12,
+              existentialDeposit: '1000',
+              location: { parents: 1, interior: 'Here' },
+            },
           },
           mockToDestTransactionFee,
         ),

@@ -33,6 +33,7 @@ describe('getMythosOriginFee', () => {
     const findNativeSpy = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'MYTH',
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
     vi.spyOn(mockClone, 'queryRuntimeApi').mockResolvedValue(200n)
@@ -62,6 +63,7 @@ describe('getMythosOriginFee', () => {
     vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
       symbol: 'MYTH',
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: [] }
     } as TAssetInfo)
     vi.spyOn(mockClone, 'queryRuntimeApi').mockResolvedValue(undefined)

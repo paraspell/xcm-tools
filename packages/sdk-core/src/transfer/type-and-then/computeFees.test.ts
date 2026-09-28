@@ -1,9 +1,10 @@
-import { isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual, type TAssetWithFee } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { RELAY_LOCATION } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import type { TTxFactory, TTypeAndThenCallContext, TXcmFeeDetail } from '../../types'
 import { assertAddressIsString, assertSender, padValueBy } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
@@ -66,6 +67,35 @@ describe('computeAllFees', () => {
     expect(assertAddressIsString).toHaveBeenCalled()
     expect(getXcmFeeInternal).not.toHaveBeenCalled()
     expect(padValueBy).not.toHaveBeenCalled()
+  })
+
+  it('throws when fee asset is used and dry run is not supported', async () => {
+    hasDryRunSupportMock.mockReturnValue(false)
+
+    const feeAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      existentialDeposit: '1000',
+      location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    }
+
+    await expect(computeAllFees({ ...context, feeAssetInfo }, buildTx)).rejects.toThrow(
+      ScenarioNotSupportedError
+    )
+    expect(getXcmFeeInternal).not.toHaveBeenCalled()
+  })
+
+  it('throws when overridden assets are used and dry run is not supported', async () => {
+    hasDryRunSupportMock.mockReturnValue(false)
+
+    const overriddenAsset: TAssetWithFee[] = [
+      { id: RELAY_LOCATION, fun: { Fungible: 1n }, isFeeAsset: true }
+    ]
+
+    await expect(
+      computeAllFees({ ...context, options: { ...context.options, overriddenAsset } }, buildTx)
+    ).rejects.toThrow(ScenarioNotSupportedError)
+    expect(getXcmFeeInternal).not.toHaveBeenCalled()
   })
 
   it('returns computed fees when dry run is supported', async () => {
@@ -133,10 +163,30 @@ describe('computeAllFees', () => {
     expect(padValueBy).toHaveBeenNthCalledWith(2, 5n, FEE_PADDING)
   })
 
+  it('sums hop fees by the overridden fee asset for currency arrays', async () => {
+    const feeDetail: TXcmFeeDetail = { fee: 0n, feeType: 'dryRun', asset: context.assetInfo }
+
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      success: true,
+      origin: feeDetail,
+      destination: { ...feeDetail, fee: 5n },
+      hops: [{ chain: 'AssetHubPolkadot', result: { ...feeDetail, fee: 10n } }]
+    })
+
+    const overriddenAsset: TAssetWithFee[] = [
+      { id: RELAY_LOCATION, fun: { Fungible: 1n }, isFeeAsset: true }
+    ]
+
+    await computeAllFees({ ...context, options: { ...context.options, overriddenAsset } }, buildTx)
+
+    expect(isAssetEqual).toHaveBeenCalledWith(context.assetInfo, context.assetInfo)
+  })
+
   it('sums hop fees by the user-defined fee asset when provided', async () => {
     const feeAssetInfo = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
     }
     const feeDetail: TXcmFeeDetail = { fee: 0n, feeType: 'dryRun', asset: feeAssetInfo }

@@ -94,15 +94,13 @@ export const AssetsAccordion: FC<{ assets: TAssetInfo[] }> = ({ assets }) => {
                       {asset.assetId}
                     </DetailRow>
                   )}
-                  {asset.existentialDeposit !== undefined && (
-                    <DetailRow labelW={120} label="Existential dep.">
-                      {formatUnits(
-                        BigInt(asset.existentialDeposit),
-                        asset.decimals,
-                      )}{' '}
-                      {asset.symbol}
-                    </DetailRow>
-                  )}
+                  <DetailRow labelW={120} label="Existential dep.">
+                    {formatUnits(
+                      BigInt(asset.existentialDeposit),
+                      asset.decimals,
+                    )}{' '}
+                    {asset.symbol}
+                  </DetailRow>
                   {asset.alias !== undefined && (
                     <DetailRow labelW={120} label="Alias">
                       {asset.alias}

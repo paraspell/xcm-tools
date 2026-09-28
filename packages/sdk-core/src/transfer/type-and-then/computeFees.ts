@@ -1,5 +1,6 @@
 import { isAssetEqual } from '@paraspell/assets'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import type {
   TGetXcmFeeResult,
   TTxFactory,
@@ -17,10 +18,11 @@ const sumHopFees = <TApi, TRes, TSigner, TCustomChain extends string = never>(
     assetInfo,
     feeAssetInfo,
     isRelayAsset,
-    systemAsset
+    systemAsset,
+    options: { overriddenAsset }
   }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>
 ): bigint => {
-  const feeAsset = isRelayAsset ? assetInfo : (feeAssetInfo ?? systemAsset)
+  const feeAsset = isRelayAsset || overriddenAsset ? assetInfo : (feeAssetInfo ?? systemAsset)
   return result.hops.reduce((acc, hop) => {
     // only add if asset is equal
     return isAssetEqual(hop.result.asset, feeAsset) ? acc + hop.result.fee : acc
@@ -34,13 +36,19 @@ export const computeAllFees = async <TApi, TRes, TSigner, TCustomChain extends s
   const {
     origin,
     dest,
-    options: { sender, recipient, currency, feeCurrency, version }
+    feeAssetInfo,
+    options: { sender, recipient, currency, feeCurrency, version, overriddenAsset }
   } = context
 
   assertSender(sender)
   assertAddressIsString(recipient)
 
   if (!origin.api.hasDryRunSupport(context.origin.chain)) {
+    if (feeAssetInfo || overriddenAsset) {
+      throw new ScenarioNotSupportedError(
+        `Fee asset cannot be used on ${origin.chain} because it does not support dry run.`
+      )
+    }
     return null
   }
 

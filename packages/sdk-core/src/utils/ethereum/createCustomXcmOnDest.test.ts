@@ -77,6 +77,7 @@ describe('createCustomXcmOnDest', () => {
   const ethAsset = {
     symbol: 'WETH',
     decimals: 18,
+    existentialDeposit: '1000',
     assetId: '0xethAsset',
     location: ethLocation
   }

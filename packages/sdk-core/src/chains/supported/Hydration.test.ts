@@ -111,6 +111,7 @@ describe('Hydration', () => {
         assetId: '0x1234567890abcdef',
         symbol: 'WETH',
         decimals: 18,
+        existentialDeposit: '1000',
         location: {
           parents: 2,
           interior: 'Here'

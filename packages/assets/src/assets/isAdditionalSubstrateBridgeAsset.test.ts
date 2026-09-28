@@ -7,6 +7,7 @@ describe('isAdditionalSubstrateBridgeAsset', () => {
   const cgt: TAssetInfo = {
     symbol: 'CGT2.0',
     decimals: 18,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: {

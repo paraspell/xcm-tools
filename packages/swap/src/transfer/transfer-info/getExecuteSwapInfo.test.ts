@@ -40,18 +40,21 @@ const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 const dotAsset: TAssetInfo = {
   symbol: 'DOT',
   decimals: 10,
+  existentialDeposit: '1000',
   location: { parents: 1, interior: 'Here' },
 };
 
 const usdtAsset: TAssetInfo = {
   symbol: 'USDT',
   decimals: 6,
+  existentialDeposit: '1000',
   location: { parents: 0, interior: 'Here' },
 };
 
 const acaAsset: TAssetInfo = {
   symbol: 'ACA',
   decimals: 12,
+  existentialDeposit: '1000',
   location: { parents: 0, interior: 'Here' },
 };
 

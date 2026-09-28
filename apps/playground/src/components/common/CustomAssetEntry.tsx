@@ -91,7 +91,7 @@ export const CustomAssetEntry = <T,>({
           </Grid.Col>
           <Grid.Col span={6}>
             <TextInput
-              label="Existential deposit (optional)"
+              label="Existential deposit"
               placeholder="0.01"
               key={form.key(`${prefix}existentialDeposit`)}
               {...form.getInputProps(`${prefix}existentialDeposit`)}

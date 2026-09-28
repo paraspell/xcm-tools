@@ -24,6 +24,7 @@ describe('buildEvmLocal', () => {
       symbol: 'xcDOT',
       assetId: assetAddress,
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' },
       amount: 5000000n
     }
@@ -49,6 +50,7 @@ describe('buildEvmLocal', () => {
       symbol: 'xcDOT',
       assetId: assetAddress,
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' },
       amount: 5000000n
     }

@@ -151,12 +151,14 @@ describe('createTypeAndThenCallContext', () => {
     amount: 1000n,
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
   }
 
   const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 12,
+    existentialDeposit: '1000',
     location: RELAY_LOCATION
   }
 
@@ -203,6 +205,7 @@ describe('createTypeAndThenCallContext', () => {
     findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'WUD',
       decimals: 10,
+      existentialDeposit: '1000',
       location: wudLocation
     })
     findNativeAssetInfoOrThrowSpy.mockReturnValue(mockSystemAsset)
@@ -239,6 +242,7 @@ describe('createTypeAndThenCallContext', () => {
     const feeAssetInfo: TAssetInfo = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
     }
     vi.mocked(isAssetEqual).mockReturnValue(false)
@@ -262,7 +266,15 @@ describe('createTypeAndThenCallContext', () => {
     getAssetReserveChainSpy.mockReturnValueOnce('Polkadot').mockReturnValueOnce('Polkadot')
 
     const result = await createTypeAndThenCallContext(
-      { ...mockOptions, feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation } },
+      {
+        ...mockOptions,
+        feeAssetInfo: {
+          symbol: 'USDT',
+          decimals: 6,
+          existentialDeposit: '1000',
+          location: feeLocation
+        }
+      },
       {}
     )
 
@@ -278,7 +290,15 @@ describe('createTypeAndThenCallContext', () => {
 
     await expect(
       createTypeAndThenCallContext(
-        { ...mockOptions, feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation } },
+        {
+          ...mockOptions,
+          feeAssetInfo: {
+            symbol: 'USDT',
+            decimals: 6,
+            existentialDeposit: '1000',
+            location: feeLocation
+          }
+        },
         {}
       )
     ).rejects.toThrow(ScenarioNotSupportedError)

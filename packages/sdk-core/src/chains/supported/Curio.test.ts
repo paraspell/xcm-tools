@@ -22,6 +22,7 @@ describe('Curio', () => {
   const nativeAsset: TAssetInfo = {
     symbol: 'KSM',
     decimals: 12,
+    existentialDeposit: '1000',
     isNative: true,
     location: { parents: 1, interior: { Here: null } }
   }
@@ -29,6 +30,7 @@ describe('Curio', () => {
   const foreignAsset: TAssetInfo = {
     symbol: 'BSX',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '0',
     location: {
       parents: 1,

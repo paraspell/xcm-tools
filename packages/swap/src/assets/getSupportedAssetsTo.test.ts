@@ -20,6 +20,7 @@ describe('getSupportedAssetsTo', () => {
   const abcAsset: TAssetInfo = {
     symbol: 'ABC',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 0,
       interior: 'Here',
@@ -29,6 +30,7 @@ describe('getSupportedAssetsTo', () => {
   const defAsset: TAssetInfo = {
     symbol: 'DEF',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here',

@@ -67,6 +67,7 @@ const ASSETS_FILTER = {
 const ASSET_FROM: WithAmount<TAssetInfo> = {
   symbol: 'DOT',
   decimals: 10,
+  existentialDeposit: '1000',
   amount: 2000n,
   location: LOCATION
 }
@@ -74,6 +75,7 @@ const ASSET_FROM: WithAmount<TAssetInfo> = {
 const ASSET_TO: WithAmount<TAssetInfo> = {
   symbol: 'USDT',
   decimals: 6,
+  existentialDeposit: '1000',
   amount: 1500n,
   location: LOCATION
 }
@@ -222,7 +224,8 @@ describe('createSwapExecuteXcm', () => {
       amount: 5000n,
       location: { parents: 1, interior: 'Here' },
       symbol: 'WETH',
-      decimals: 18
+      decimals: 18,
+      existentialDeposit: '1000'
     }
 
     const wethTo: WithAmount<TAssetInfo> = {
@@ -230,6 +233,7 @@ describe('createSwapExecuteXcm', () => {
       location: LOCATION,
       symbol: 'WETH',
       decimals: 18,
+      existentialDeposit: '1000',
       assetId: '0x123'
     }
 
@@ -261,6 +265,7 @@ describe('createSwapExecuteXcm', () => {
       findNativeAssetInfoOrThrow.mockReturnValue({
         symbol: 'DOT',
         decimals: 10,
+        existentialDeposit: '1000',
         location: { parents: 1, interior: 'Here' }
       })
       vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 200n])
@@ -268,6 +273,7 @@ describe('createSwapExecuteXcm', () => {
       findAssetInfoOrThrow.mockReturnValue({
         symbol: 'WETH',
         decimals: 18,
+        existentialDeposit: '1000',
         location: LOCATION,
         assetId: '0x123'
       })
@@ -290,8 +296,9 @@ describe('createSwapExecuteXcm', () => {
 
       expect(findNativeAssetInfoOrThrow).toHaveBeenCalledWith('Polkadot')
 
-      const commonCall = vi.mocked(prepareCommonExecuteXcm).mock.calls[0][0]
+      const [commonCall, , depositFeeAsset] = vi.mocked(prepareCommonExecuteXcm).mock.calls[0]
       expect(commonCall.feeAssetInfo).toBeDefined()
+      expect(depositFeeAsset).toBe(false)
       expect(commonCall.useJitWithdraw).toBe(true)
       expect(commonCall.fees).toEqual({ originFee: 700n, reserveFee: 0n, destFee: 0n })
 
@@ -352,6 +359,7 @@ describe('createSwapExecuteXcm', () => {
     const FEE_ASSET: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
     }
 
@@ -364,9 +372,11 @@ describe('createSwapExecuteXcm', () => {
     }
 
     const api = createTestApi()
+    const findAssetInfo = vi.spyOn(api, 'findAssetInfo')
 
     beforeEach(() => {
       vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
+      findAssetInfo.mockReturnValue(FEE_ASSET)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
       vi.mocked(createAsset).mockReturnValue(ASSET)
@@ -444,6 +454,85 @@ describe('createSwapExecuteXcm', () => {
       const { suffixXcm } = vi.mocked(createBaseExecuteXcm).mock.calls[1][0]
       expect(suffixXcm?.[0]).toMatchObject({ ExchangeAsset: { maximal: false } })
     })
+    it('deposits the fee asset when its leftover reaches the final chain ED', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      findAssetInfo.mockReturnValue({ ...FEE_ASSET, existentialDeposit: '1' })
+
+      await createSwapExecuteXcm(
+        createOptions({
+          api,
+          chain: 'AssetHubPolkadot',
+          destChain: 'Astar',
+          feeAssetInfo: FEE_ASSET,
+          fees
+        })
+      )
+
+      expect(findAssetInfo).toHaveBeenCalledWith('Astar', { location: FEE_ASSET.location })
+      expect(vi.mocked(prepareCommonExecuteXcm).mock.calls[0][2]).toBe(true)
+    })
+
+    it('deposits only the swapped asset when the fee asset leftover is below the final chain ED', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+
+      await createSwapExecuteXcm(
+        createOptions({
+          api,
+          chain: 'AssetHubPolkadot',
+          destChain: 'Astar',
+          feeAssetInfo: FEE_ASSET,
+          fees
+        })
+      )
+
+      expect(vi.mocked(prepareCommonExecuteXcm).mock.calls[0][2]).toBe(false)
+    })
+
+    it('checks the fee asset ED on the exchange chain when it is the final chain', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      findAssetInfo.mockReturnValue({ ...FEE_ASSET, existentialDeposit: '1' })
+
+      await createSwapExecuteXcm(
+        createOptions({ api, chain: 'AssetHubPolkadot', feeAssetInfo: FEE_ASSET, fees })
+      )
+
+      expect(findAssetInfo).toHaveBeenCalledWith('Hydration', { location: FEE_ASSET.location })
+      expect(vi.mocked(prepareCommonExecuteXcm).mock.calls[0][2]).toBe(true)
+    })
+
+    it('deposits only the swapped asset when the fee asset is not found on the final chain', async () => {
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      findAssetInfo.mockReturnValue(null)
+
+      await createSwapExecuteXcm(
+        createOptions({
+          api,
+          chain: 'AssetHubPolkadot',
+          destChain: 'Astar',
+          feeAssetInfo: FEE_ASSET,
+          fees
+        })
+      )
+
+      expect(vi.mocked(prepareCommonExecuteXcm).mock.calls[0][2]).toBe(false)
+    })
+
+    it('does not deposit the fee asset separately when it equals the received asset', async () => {
+      vi.mocked(isAssetEqual).mockImplementation((a, b) => a === b)
+
+      await createSwapExecuteXcm(
+        createOptions({
+          api,
+          chain: 'AssetHubPolkadot',
+          destChain: 'Astar',
+          feeAssetInfo: ASSET_TO,
+          fees
+        })
+      )
+
+      expect(findAssetInfo).not.toHaveBeenCalled()
+      expect(vi.mocked(prepareCommonExecuteXcm).mock.calls[0][2]).toBe(false)
+    })
   })
 
   describe('createExchangeInstructions', () => {
@@ -464,7 +553,12 @@ describe('createSwapExecuteXcm', () => {
       calculateMinAmountOut: vi.fn()
     })
 
-    const feeAssetInfo: TAssetInfo = { symbol: 'USDC', decimals: 6, location: LOCATION }
+    const feeAssetInfo: TAssetInfo = {
+      symbol: 'USDC',
+      decimals: 6,
+      existentialDeposit: '1000',
+      location: LOCATION
+    }
 
     beforeEach(() => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')

@@ -109,7 +109,13 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     origin.chain
   )
 
-  const asset = createAsset(version, assetInfo.amount, assetLocLocalized)
+  const transferredAsset = overriddenAsset?.find(asset => !asset.isFeeAsset)
+
+  const depositLocLocalized = transferredAsset
+    ? origin.api.localizeLocation(dest.chain, extractAssetLocation(transferredAsset), origin.chain)
+    : assetLocLocalized
+
+  const asset = createAsset(version, assetInfo.amount, depositLocLocalized)
 
   const allOfSelector = {
     AllOf: {
@@ -118,11 +124,28 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     }
   }
 
+  const isFeeLeftoverAboveEd = () => {
+    const destFeeAsset = origin.api.findAssetInfoOnDest(
+      origin.chain,
+      dest.chain,
+      { location: assetInfo.location },
+      assetInfo
+    )
+    return (
+      destFeeAsset !== null &&
+      assetInfo.amount - hopFees - destFee >= BigInt(destFeeAsset.existentialDeposit)
+    )
+  }
+
+  const depositsFeeAsset =
+    overriddenAsset !== undefined &&
+    (isForFeeCalc || isExternalChain(dest.chain) || isFeeLeftoverAboveEd())
+
   const depositInstruction = {
     DepositAsset: {
       assets: {
         Wild:
-          assetCount > 1 && !overriddenAsset
+          assetCount > 1 && !depositsFeeAsset
             ? allOfSelector
             : {
                 AllCounted: assetCount
