@@ -89,6 +89,22 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 22222012
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X2": [
@@ -1216,6 +1232,22 @@
             {
               "AccountKey20": {
                 "network": null,
+                "key": "0xabfb92906f9c8d90bf6e2686c9e39906669c1843"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
                 "key": "0x7e3ce0257506c3e1f96a2a9b25a9440959b0d453"
               }
             }
@@ -1392,6 +1424,22 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x00000000000000000000000060a3e35cc302bfa44cb288bc5a4f316fdb1adb42"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc2b44f574b8c8440c0d5665f0039b49523139851"
               }
             }
           ]
@@ -1767,6 +1815,22 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xfb28f7502f24d18e1b1d4a65d3ce5252f35753d2"
+              }
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X2": [
@@ -1959,6 +2023,22 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xad26c74993ea492663de92452506d947c9ff178d"
               }
             }
           ]
