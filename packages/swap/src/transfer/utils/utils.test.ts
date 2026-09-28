@@ -74,6 +74,7 @@ describe('transfer utils', () => {
   const astrAsset: TAssetInfo = {
     symbol: 'ASTR',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '0x1234567890abcdef',
     location: { parents: 1, interior: 'Here' },
   };
@@ -81,6 +82,7 @@ describe('transfer utils', () => {
   const glmrAsset: TAssetInfo = {
     symbol: 'GLMR',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '0xabcdef1234567890',
     location: { parents: 1, interior: 'Here' },
   };

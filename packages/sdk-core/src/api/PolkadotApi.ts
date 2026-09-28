@@ -8,7 +8,7 @@ import {
   findNativeAssetInfoOrThrowImpl,
   getAssetsImpl,
   getAssetsObjectImpl,
-  getExistentialDepositOrThrowImpl,
+  getExistentialDepositImpl,
   getNativeAssetsImpl,
   getNativeAssetSymbolImpl,
   getOtherAssetsImpl,
@@ -191,8 +191,8 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     return hasXcmPaymentApiSupportImpl(chain, this._customCtx)
   }
 
-  getExistentialDepositOrThrow(chain: TChain | TCustomChain, currency?: TCurrencyCore): bigint {
-    return getExistentialDepositOrThrowImpl(chain, currency, this._customCtx)
+  getExistentialDeposit(chain: TChain | TCustomChain, currency?: TCurrencyCore): bigint {
+    return getExistentialDepositImpl(chain, currency, this._customCtx)
   }
 
   hasPallet(chain: TSubstrateChain | TCustomChain, pallet: TPallet): boolean {

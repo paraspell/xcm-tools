@@ -1,10 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import {
-  getEdFromAssetOrThrow,
-  isAssetEqual,
-  isSymbolMatch,
-  normalizeSymbol
-} from '@paraspell/assets'
+import { isAssetEqual, isSymbolMatch, normalizeSymbol } from '@paraspell/assets'
 import { isExternalChain, isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal } from '../../balance'
@@ -143,7 +138,7 @@ export const verifyEdOnDestinationInternal = async <
     method === 'transfer_assets_using_type_and_then' || method === 'transferAssetsUsingTypeAndThen'
 
   const verifyAsset = async ({ destAsset, amount, paysDestFee }: (typeof destAssets)[number]) => {
-    const ed = getEdFromAssetOrThrow(destAsset)
+    const ed = BigInt(destAsset.existentialDeposit)
 
     const balance = await getAssetBalanceInternal({
       address: recipient,

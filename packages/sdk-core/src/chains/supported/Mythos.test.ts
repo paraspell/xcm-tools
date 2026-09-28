@@ -29,6 +29,7 @@ vi.mock('../../utils/fees/getMythosOriginFee')
 const ethAsset: TAssetInfo = {
   symbol: 'MYTH',
   decimals: 12,
+  existentialDeposit: '1000',
   assetId: '0x123',
   location: { parents: 2, interior: { X2: [] } }
 }

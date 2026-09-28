@@ -6,6 +6,7 @@ import { findAssetInfoByLoc } from './findAssetInfoByLoc'
 const relayNative: TAssetInfo = {
   symbol: 'DOT',
   decimals: 10,
+  existentialDeposit: '1000',
   location: { parents: 1, interior: { Here: null } }
 }
 
@@ -13,6 +14,7 @@ const usdt: TAssetInfo = {
   symbol: 'USDT',
   assetId: '1984',
   decimals: 6,
+  existentialDeposit: '1000',
   location: {
     parents: 1,
     interior: {
@@ -25,6 +27,7 @@ const usdc: TAssetInfo = {
   symbol: 'USDC',
   assetId: '1337',
   decimals: 6,
+  existentialDeposit: '1000',
   location: {
     parents: 1,
     interior: {

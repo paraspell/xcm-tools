@@ -63,6 +63,7 @@ describe('AssetsService', () => {
           {
             symbol,
             decimals,
+            existentialDeposit: '1000',
             isNative: true,
             location: { parents: 0, interior: 'Here' },
           },
@@ -70,6 +71,7 @@ describe('AssetsService', () => {
             assetId,
             symbol: 'BSK',
             decimals,
+            existentialDeposit: '1000',
             location: { parents: 1, interior: 'Here' },
           },
         ],

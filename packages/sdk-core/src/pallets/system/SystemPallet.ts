@@ -32,7 +32,7 @@ export class SystemPallet extends BaseAssetsPallet {
     const free = BigInt(account.data.free)
     const reserved = BigInt(account.data.reserved)
     const frozen = BigInt(account.data.frozen)
-    const ed = BigInt(asset.existentialDeposit ?? 0)
+    const ed = BigInt(asset.existentialDeposit)
 
     const frozenUntouchable = frozen - reserved
     const untouchable = frozenUntouchable > ed ? frozenUntouchable : ed

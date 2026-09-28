@@ -32,16 +32,19 @@ describe('findStablecoinAssets', () => {
     const stable1984Consensus: TAssetInfo = {
       symbol: 'USD1',
       decimals: 12,
+      existentialDeposit: '1000',
       location: stableLocation(STABLECOIN_IDS[0], true)
     }
     const stable1984Local: TAssetInfo = {
       symbol: 'USD1-LOCAL',
       decimals: 12,
+      existentialDeposit: '1000',
       location: stableLocation(STABLECOIN_IDS[0])
     }
     const stable1337: TAssetInfo = {
       symbol: 'USD2',
       decimals: 12,
+      existentialDeposit: '1000',
       location: stableLocation(STABLECOIN_IDS[1])
     }
 

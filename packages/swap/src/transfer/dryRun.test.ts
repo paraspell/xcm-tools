@@ -27,6 +27,7 @@ vi.mock('./buildTransactions');
 const acaAsset: TAssetInfo = {
   symbol: 'ACA',
   decimals: 12,
+  existentialDeposit: '1000',
   assetId: '1',
   location: { parents: 0, interior: 'Here' },
 };
@@ -34,6 +35,7 @@ const acaAsset: TAssetInfo = {
 const ausdAsset: TAssetInfo = {
   symbol: 'AUSD',
   decimals: 12,
+  existentialDeposit: '1000',
   assetId: '2',
   location: {
     parents: 1,
@@ -179,6 +181,7 @@ describe('dryRunRouter', () => {
         assetFrom: {
           symbol: 'BNC',
           decimals: 12,
+          existentialDeposit: '1000',
           location: { parents: 0, interior: 'Here' },
         },
       },
@@ -283,6 +286,7 @@ describe('dryRunRouterPreview', () => {
         assetFrom: {
           symbol: 'BNC',
           decimals: 12,
+          existentialDeposit: '1000',
           location: { parents: 0, interior: 'Here' },
         },
       },
@@ -353,7 +357,12 @@ describe('dryRunTransactions', () => {
       origin: {
         api: {},
         chain: 'BifrostPolkadot',
-        assetFrom: { symbol: 'BNC', decimals: 12, location: { parents: 0, interior: 'Here' } },
+        assetFrom: {
+          symbol: 'BNC',
+          decimals: 12,
+          existentialDeposit: '1000',
+          location: { parents: 0, interior: 'Here' },
+        },
       },
       destination: { chain: 'Darwinia', address: 'dest-address' },
       exchange: {

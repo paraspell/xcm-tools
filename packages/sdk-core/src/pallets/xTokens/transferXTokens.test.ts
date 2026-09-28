@@ -34,6 +34,7 @@ describe('transferXTokens', () => {
   const acaAsset: TAssetInfo = {
     symbol: 'ACA',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '123',
     location: { parents: 0, interior: 'Here' }
   }

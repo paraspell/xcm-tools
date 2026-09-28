@@ -599,6 +599,7 @@ describe('PapiApi', () => {
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { Here: null } }
     }
 
@@ -615,6 +616,7 @@ describe('PapiApi', () => {
       vi.spyOn(papiApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'GLMR',
         decimals: 18,
+        existentialDeposit: '1000',
         location: { parents: 0, interior: { Here: null } }
       })
 
@@ -651,6 +653,7 @@ describe('PapiApi', () => {
       const asset: TAssetInfo = {
         symbol: 'USDC',
         decimals: 6,
+        existentialDeposit: '1000',
         location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
       }
 
@@ -735,6 +738,7 @@ describe('PapiApi', () => {
       const asset: TAssetInfo = {
         symbol: 'USDT',
         decimals: 6,
+        existentialDeposit: '1000',
         location: { parents: 1, interior: { X1: { Parachain: 1001 } } }
       }
 
@@ -761,6 +765,7 @@ describe('PapiApi', () => {
       const asset: TAssetInfo = {
         symbol: 'USDT',
         decimals: 6,
+        existentialDeposit: '1000',
         location: { parents: 1, interior: { X1: { Parachain: 1001 } } }
       }
 
@@ -841,6 +846,7 @@ describe('PapiApi', () => {
     const baseAsset: TAssetInfo = {
       symbol: 'GLMR',
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { Here: null } }
     }
 
@@ -946,6 +952,7 @@ describe('PapiApi', () => {
     const asset: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: {
         parents: 1,
         interior: { X1: [{ Parachain: 1000 }] }
@@ -2224,6 +2231,7 @@ describe('PapiApi', () => {
       const mockAssetDetails: TAssetInfo = {
         symbol: 'USDT',
         decimals: 6,
+        existentialDeposit: '1000',
         assetId: 'test-asset-id',
         location: { parents: 0, interior: { Here: null } }
       }

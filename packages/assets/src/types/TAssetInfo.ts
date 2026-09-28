@@ -12,7 +12,7 @@ export type TAssetInfo = {
   isNative?: boolean
   assetId?: string
   location: TLocation
-  existentialDeposit?: string
+  existentialDeposit: string
   isFeeAsset?: boolean
   // Hydration only - ERC20 assets
   erc20?: TErc20Info

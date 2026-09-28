@@ -57,7 +57,8 @@ describe('createCustomXcm', () => {
     getRelayChainOf: vi.fn(),
     getParaId: vi.fn(),
     isChainEvm: vi.fn(),
-    localizeLocation: vi.fn()
+    localizeLocation: vi.fn(),
+    findAssetInfoOnDest: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
   const mockAddress = '0x123'
   const mockVersion = Version.V5
@@ -311,7 +312,12 @@ describe('createCustomXcm', () => {
         {
           ...mockContext,
           isRelayAsset: false,
-          feeAssetInfo: { symbol: 'USDT', decimals: 6, location: feeLocation }
+          feeAssetInfo: {
+            symbol: 'USDT',
+            decimals: 6,
+            existentialDeposit: '1000',
+            location: feeLocation
+          }
         },
         2,
         false,
@@ -493,6 +499,90 @@ describe('createCustomXcm', () => {
 
       expect(result.find(isDepositAssetInstruction)).toBeDefined()
       expect(result.find(isDepositReserveInstruction)).toBeUndefined()
+    })
+  })
+
+  describe('DepositAsset with overridden assets', () => {
+    const usdtLocation: TLocation = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+    const usdcLocation: TLocation = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337 }] }
+    }
+
+    const arrayContext = {
+      ...mockContext,
+      origin: { chain: 'AssetHubPolkadot', api: mockApi },
+      dest: { chain: 'Hydration', api: mockApi },
+      reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+      assetInfo: { symbol: 'USDC', decimals: 6, amount: 1000n, location: usdcLocation },
+      isRelayAsset: false,
+      options: {
+        ...mockContext.options,
+        destination: 'Hydration',
+        overriddenAsset: [
+          { id: usdtLocation, fun: { Fungible: 5000n } },
+          { id: usdcLocation, fun: { Fungible: 1000n }, isFeeAsset: true }
+        ]
+      }
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+    const fees = { hopFees: 100n, destFee: 200n }
+
+    const getDepositAssets = (result: Awaited<ReturnType<typeof createCustomXcm>>) =>
+      result.find(isDepositAssetInstruction)!.DepositAsset.assets
+
+    const mockDestFeeAsset = (existentialDeposit: string) =>
+      vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue({
+        symbol: 'USDC',
+        decimals: 6,
+        location: usdcLocation,
+        existentialDeposit
+      })
+
+    it('deposits all assets when the fee leftover reaches the destination ED', async () => {
+      const findAssetInfoOnDestSpy = mockDestFeeAsset('700')
+
+      const result = await createCustomXcm(arrayContext, 2, false, 0n, fees)
+
+      expect(getDepositAssets(result)).toEqual({ Wild: { AllCounted: 2 } })
+      expect(findAssetInfoOnDestSpy).toHaveBeenCalledWith(
+        'AssetHubPolkadot',
+        'Hydration',
+        { location: usdcLocation },
+        arrayContext.assetInfo
+      )
+    })
+
+    it('deposits only the transferred assets when the fee leftover is below the destination ED', async () => {
+      mockDestFeeAsset('701')
+
+      const result = await createCustomXcm(arrayContext, 2, false, 0n, fees)
+
+      expect(getDepositAssets(result)).toEqual({
+        Wild: { AllOf: { id: usdtLocation, fun: 'Fungible' } }
+      })
+    })
+
+    it('deposits only the transferred assets when the fee asset is not found on destination', async () => {
+      vi.spyOn(mockApi, 'findAssetInfoOnDest').mockReturnValue(null)
+
+      const result = await createCustomXcm(arrayContext, 2, false, 0n, fees)
+
+      expect(getDepositAssets(result)).toEqual({
+        Wild: { AllOf: { id: usdtLocation, fun: 'Fungible' } }
+      })
+    })
+
+    it('deposits all assets when building the call for fee calculation', async () => {
+      const findAssetInfoOnDestSpy = vi.spyOn(mockApi, 'findAssetInfoOnDest')
+
+      const result = await createCustomXcm(arrayContext, 2, true, 0n)
+
+      expect(getDepositAssets(result)).toEqual({ Wild: { AllCounted: 2 } })
+      expect(findAssetInfoOnDestSpy).not.toHaveBeenCalled()
     })
   })
 

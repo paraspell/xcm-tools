@@ -23,6 +23,7 @@ describe('getDestXcmFee', () => {
   const unitAsset: WithAmount<TAssetInfo> = {
     symbol: 'UNIT',
     decimals: 12,
+    existentialDeposit: '1000',
     location: {
       parents: 0,
       interior: 'Here'
@@ -33,6 +34,7 @@ describe('getDestXcmFee', () => {
   const dotAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     location: {
       parents: 1,
       interior: 'Here'
@@ -287,6 +289,7 @@ describe('getDestXcmFee', () => {
     const usdcAsset: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
+      existentialDeposit: '1000',
       location: {
         parents: 1,
         interior: {

@@ -28,10 +28,17 @@ describe('getOriginXcmFeeInternal', () => {
   const mockAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
+    existentialDeposit: '1000',
     isNative: true,
     location: location
   }
-  const nativeAsset = { symbol: 'DOT', decimals: 10, isNative: true, location }
+  const nativeAsset = {
+    symbol: 'DOT',
+    decimals: 10,
+    existentialDeposit: '1000',
+    isNative: true,
+    location
+  }
   const mockTx = {}
 
   const api = {
@@ -208,11 +215,13 @@ describe('getOriginXcmFeeInternal', () => {
     const usdt: TAssetInfo = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { GeneralIndex: 1984 } } }
     }
     const usdc: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { GeneralIndex: 1337 } } }
     }
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
@@ -260,11 +269,13 @@ describe('getOriginXcmFeeInternal', () => {
     const usdt: TAssetInfo = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { GeneralIndex: 1984 } } }
     }
     const usdc: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 0, interior: { X1: { GeneralIndex: 1337 } } }
     }
 

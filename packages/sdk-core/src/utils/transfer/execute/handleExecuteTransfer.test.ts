@@ -208,7 +208,12 @@ describe('handleExecuteTransfer', () => {
       success: false,
       origin: {
         success: false,
-        asset: { symbol: 'DOT', decimals: 10, location: { parents: 0, interior: 'Here' } },
+        asset: {
+          symbol: 'DOT',
+          decimals: 10,
+          existentialDeposit: '1000',
+          location: { parents: 0, interior: 'Here' }
+        },
         dryRunError: { reason: 'Origin execution failed' }
       },
       hops: []

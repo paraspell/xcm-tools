@@ -1,15 +1,12 @@
-import { getEdFromAssetOrThrow } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AmountTooLowError } from '../../errors'
 import type { TTransferLocalOptions } from '../../types'
 import { getLocalTransferAmount } from './getLocalTransferAmount'
 
-vi.mock('@paraspell/assets')
-
 describe('getLocalTransferAmount', () => {
   const baseOptions = {
-    assetInfo: { symbol: 'ACA', amount: 20n },
+    assetInfo: { symbol: 'ACA', amount: 20n, existentialDeposit: '10' },
     balance: 100n,
     isAmountAll: false,
     keepAlive: false
@@ -17,7 +14,6 @@ describe('getLocalTransferAmount', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(10n)
   })
 
   it('returns provided amount when not sending all', () => {

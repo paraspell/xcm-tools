@@ -6,7 +6,7 @@ import type {
   WithComplexAmount,
   WithOptionalAmount
 } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
@@ -65,7 +65,7 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
     asset
   })
 
-  const transferable = balance - getEdFromAssetOrThrow(asset) - fee
+  const transferable = balance - BigInt(asset.existentialDeposit) - fee
 
   return transferable > 0n ? transferable : 0n
 }

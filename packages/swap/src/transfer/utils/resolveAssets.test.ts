@@ -34,11 +34,13 @@ describe('resolveAssets', () => {
   const mockAssetFromExchange: TAssetInfo = {
     symbol: 'BTC_EXCHANGE',
     decimals: 8,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: 'Here' },
   };
   const mockAssetTo: TAssetInfo = {
     symbol: 'ETH_EXCHANGE',
     decimals: 8,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: 'Here' },
   };
 
@@ -123,6 +125,7 @@ describe('resolveAssets', () => {
         return {
           symbol: 'ETH_EXCHANGE',
           decimals: 8,
+          existentialDeposit: '1000',
           location: { parents: 1, interior: 'Here' },
         };
       return null;
@@ -146,6 +149,7 @@ describe('resolveAssets', () => {
     const asset: TAssetInfo = {
       symbol: 'BTC',
       decimals: 8,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' },
     };
 
@@ -237,13 +241,14 @@ describe('resolveAssets', () => {
       if ('symbol' in currency && currency.symbol === 'BTC') return mockAssetFromExchange;
       if ('symbol' in currency && currency.symbol === 'ETH') return mockAssetTo;
       if ('symbol' in currency && currency.symbol === 'USDT')
-        return { symbol: 'USDT', decimals: 6, location: feeLocation };
+        return { symbol: 'USDT', decimals: 6, existentialDeposit: '1000', location: feeLocation };
       return null;
     });
 
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: feeLocation,
       isFeeAsset: false,
     });
@@ -274,6 +279,7 @@ describe('resolveAssets', () => {
     const mockFeeAssetFromOrigin: TAssetInfo = {
       symbol: 'USDT_ORIGIN',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { PalletInstance: 50 } } },
       isFeeAsset: true,
     };

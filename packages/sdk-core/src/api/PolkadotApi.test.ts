@@ -7,7 +7,7 @@ import {
   findNativeAssetInfoOrThrowImpl,
   getAssetsImpl,
   getAssetsObjectImpl,
-  getExistentialDepositOrThrowImpl,
+  getExistentialDepositImpl,
   getNativeAssetsImpl,
   getNativeAssetSymbolImpl,
   getOtherAssetsImpl,
@@ -51,7 +51,7 @@ vi.mock('@paraspell/assets', async importOriginal => ({
   getRelayChainSymbolImpl: vi.fn(),
   hasDryRunSupportImpl: vi.fn(),
   hasXcmPaymentApiSupportImpl: vi.fn(),
-  getExistentialDepositOrThrowImpl: vi.fn()
+  getExistentialDepositImpl: vi.fn()
 }))
 
 vi.mock('@paraspell/pallets', async importOriginal => ({
@@ -106,14 +106,24 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
     Promise.resolve({
       success: false as const,
       dryRunError: { reason: 'stub' },
-      asset: { decimals: 0, symbol: '', location: { parents: 0, interior: 'Here' as const } }
+      asset: {
+        decimals: 0,
+        existentialDeposit: '1000',
+        symbol: '',
+        location: { parents: 0, interior: 'Here' as const }
+      }
     })
 
   getDryRunXcm = (): Promise<TDryRunChainResult> =>
     Promise.resolve({
       success: false as const,
       dryRunError: { reason: 'stub' },
-      asset: { decimals: 0, symbol: '', location: { parents: 0, interior: 'Here' as const } }
+      asset: {
+        decimals: 0,
+        existentialDeposit: '1000',
+        symbol: '',
+        location: { parents: 0, interior: 'Here' as const }
+      }
     })
 
   getBridgeStatus = (): Promise<TBridgeStatus> => Promise.resolve('Normal')
@@ -301,8 +311,8 @@ describe('PolkadotApi', () => {
         returnValue: true
       },
       {
-        method: 'getExistentialDepositOrThrow',
-        impl: vi.mocked(getExistentialDepositOrThrowImpl),
+        method: 'getExistentialDeposit',
+        impl: vi.mocked(getExistentialDepositImpl),
         args: [chain, 'DOT'],
         expectedArgs: [chain, 'DOT', ctx],
         returnValue: 10000000000n
@@ -466,6 +476,7 @@ describe('PolkadotApi', () => {
       instance.fetchPalletList = vi.fn(() =>
         Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
       )
+      vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
       return instance
     }
 
@@ -512,6 +523,7 @@ describe('PolkadotApi', () => {
       instance.getSystemProperties = vi.fn(() =>
         Promise.resolve({ ss58Format: 7, tokenSymbol: 'CUS', tokenDecimals: 18 })
       )
+      vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
 
       await instance.init('MyCustom')
 
@@ -549,6 +561,7 @@ describe('PolkadotApi', () => {
       )
       const sysProps = vi.fn(() => Promise.resolve({}))
       instance.getSystemProperties = sysProps
+      vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
 
       await instance.init('MyCustom')
 
@@ -590,6 +603,7 @@ describe('PolkadotApi', () => {
               {
                 symbol: nativeSymbol,
                 decimals: 10,
+                existentialDeposit: '1000',
                 location: { parents: 1, interior: { Here: null } },
                 isNative: true
               }
@@ -622,7 +636,7 @@ describe('PolkadotApi', () => {
       expect(instance._customCtx.customChainAssets?.MyCustom?.nativeAssetSymbol).toBe('HDX')
     })
 
-    it('backfills the native asset existential deposit fetched from the chain', async () => {
+    it('keeps the declared native asset existential deposit', async () => {
       const instance = buildInstanceWithNativeAsset('HDX', 'HDX')
       instance.getConstant = vi.fn(() =>
         Promise.resolve(1_000_000_000n)
@@ -633,7 +647,7 @@ describe('PolkadotApi', () => {
       const nativeAsset = instance._customCtx.customChainAssets?.MyCustom?.assets.find(
         a => a.isNative
       )
-      expect(nativeAsset?.existentialDeposit).toBe('1000000000')
+      expect(nativeAsset?.existentialDeposit).toBe('1000')
     })
 
     it('auto-builds a native asset carrying the fetched existential deposit', async () => {
@@ -701,6 +715,7 @@ describe('PolkadotApi', () => {
       child.fetchPalletList = vi.fn(() =>
         Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
       )
+      vi.spyOn(child, 'getConstant').mockResolvedValue(500n)
       return child
     }
 

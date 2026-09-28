@@ -1,9 +1,5 @@
 import type { TCurrencyCore, WithApi } from '@paraspell/sdk-core';
-import {
-  getBalance,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol,
-} from '@paraspell/sdk-core';
+import { getBalance, getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
@@ -43,7 +39,7 @@ const computeLocalTransferableAmount = async <
     currency,
   });
 
-  const existentialDeposit = getExistentialDepositOrThrow(exchange.chain, currency);
+  const existentialDeposit = getExistentialDeposit(exchange.chain, currency);
 
   let swapFee = 0n;
   const nativeSymbol = getNativeAssetSymbol(exchange.chain);

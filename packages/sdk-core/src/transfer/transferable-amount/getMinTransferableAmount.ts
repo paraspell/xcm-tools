@@ -1,5 +1,5 @@
 import type { TCurrencyInputWithAmount, TSingleCurrencyInputWithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { AmountTooLowError } from '../../errors'
@@ -76,7 +76,7 @@ export const getMinTransferableAmountInternal = async <
         asset: destAsset
       })
 
-      const destEd = getEdFromAssetOrThrow(destAsset)
+      const destEd = BigInt(destAsset.existentialDeposit)
 
       const paysOriginInSendingAsset =
         (!resolvedFeeAsset && isAssetEqual(nativeAssetInfo, asset)) ||

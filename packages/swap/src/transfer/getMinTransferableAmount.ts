@@ -1,4 +1,4 @@
-import { getExistentialDepositOrThrow, getNativeAssetSymbol } from '@paraspell/sdk-core';
+import { getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
@@ -22,7 +22,7 @@ const computeExchangeMinAmount = async <TApi, TRes, TSigner, TCustomChain extend
 ): Promise<bigint> => {
   const { exchange } = options;
 
-  const existentialDeposit = getExistentialDepositOrThrow(exchange.chain, {
+  const existentialDeposit = getExistentialDeposit(exchange.chain, {
     location: exchange.assetFrom.location,
   });
 

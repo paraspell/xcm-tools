@@ -1,10 +1,6 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
-import {
-  getBalance,
-  getExistentialDepositOrThrow,
-  getNativeAssetSymbol,
-} from '@paraspell/sdk-core';
+import { getBalance, getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { TSubstrateChain } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -28,7 +24,7 @@ import {
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
   getBalance: vi.fn(),
-  getExistentialDepositOrThrow: vi.fn(),
+  getExistentialDeposit: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
 }));
 
@@ -41,6 +37,7 @@ const sdkAsset: TAssetInfo = {
   symbol: 'DOT',
   assetId: '1',
   decimals: 10,
+  existentialDeposit: '1000',
   location: {
     parents: 1,
     interior: 'Here',
@@ -51,6 +48,7 @@ const routerAsset: TAssetInfo = {
   symbol: 'ASTR',
   assetId: 'ASTR-ID',
   decimals: 18,
+  existentialDeposit: '1000',
   location: {
     parents: 1,
     interior: {
@@ -182,7 +180,7 @@ describe('getTransferableAmount', () => {
     });
 
     vi.mocked(getBalance).mockResolvedValue(2000n);
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n);
+    vi.mocked(getExistentialDeposit).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
     const swapDetail: TXcmFeeDetail = {
       fee: 300n,
@@ -206,7 +204,7 @@ describe('getTransferableAmount', () => {
       address: 'sender',
       currency: expect.objectContaining({ location: routerAsset.location }),
     });
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith('Hydration', expect.anything());
+    expect(getExistentialDeposit).toHaveBeenCalledWith('Hydration', expect.anything());
     expect(getSwapFee).toHaveBeenCalledTimes(1);
   });
 
@@ -220,7 +218,7 @@ describe('getTransferableAmount', () => {
     });
 
     vi.mocked(getBalance).mockResolvedValue(1000n);
-    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n);
+    vi.mocked(getExistentialDeposit).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
     const result = await getTransferableAmount({ ...createOptions(), api: mockApi });

@@ -14,6 +14,7 @@ const makeAsset = (symbol: string, id: string, ml: object): TAssetInfo => ({
   symbol,
   assetId: id,
   decimals: 12,
+  existentialDeposit: '1000',
   location: ml as TLocation,
 });
 

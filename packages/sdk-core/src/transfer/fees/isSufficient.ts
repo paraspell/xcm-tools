@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isSymbolMatch } from '@paraspell/assets'
+import { isSymbolMatch } from '@paraspell/assets'
 import type { TChain, TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
@@ -16,7 +16,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
 ): Promise<boolean | undefined> => {
   if (feeAsset) return undefined
 
-  const edNative = api.getExistentialDepositOrThrow(origin)
+  const edNative = api.getExistentialDeposit(origin)
 
   const balanceNative = await getBalanceInternal({
     api,
@@ -41,7 +41,7 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
       asset
     })
 
-    const edAsset = getEdFromAssetOrThrow(asset)
+    const edAsset = BigInt(asset.existentialDeposit)
 
     const isSufficientAsset = balanceAsset - edAsset > 0n
 
@@ -67,7 +67,7 @@ export const isSufficientDestination = async <
 
   if (!isNativeAsset) return undefined
 
-  const existentialDeposit = api.getExistentialDepositOrThrow(destination)
+  const existentialDeposit = api.getExistentialDeposit(destination)
 
   const nativeBalance = await getBalanceInternal({
     api,

@@ -17,8 +17,20 @@ const usdcLoc: TLocation = {
   interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1337 }] }
 }
 
-const USDT: TAssetInfo = { symbol: 'USDT', decimals: 6, location: usdtLoc, assetId: '1984' }
-const USDC: TAssetInfo = { symbol: 'USDC', decimals: 6, location: usdcLoc, assetId: '1337' }
+const USDT: TAssetInfo = {
+  symbol: 'USDT',
+  decimals: 6,
+  existentialDeposit: '1000',
+  location: usdtLoc,
+  assetId: '1984'
+}
+const USDC: TAssetInfo = {
+  symbol: 'USDC',
+  decimals: 6,
+  existentialDeposit: '1000',
+  location: usdcLoc,
+  assetId: '1337'
+}
 
 const ASSETS_BY_SYMBOL: Record<string, TAssetInfo> = { USDT, USDC }
 
@@ -124,6 +136,7 @@ describe('resolveCurrency', () => {
       const otherFee: TAssetInfo = {
         symbol: 'DOT',
         decimals: 10,
+        existentialDeposit: '1000',
         location: { parents: 1, interior: { Here: null } }
       }
       expect(() => resolveCurrency(api, currencies, otherFee, origin, destination)).toThrow(

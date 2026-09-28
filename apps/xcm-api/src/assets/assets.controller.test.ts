@@ -48,6 +48,7 @@ describe('AssetsController', () => {
         {
           symbol,
           decimals,
+          existentialDeposit: '1000',
           isNative: true,
           location: { parents: 0, interior: 'Here' },
         },
@@ -55,6 +56,7 @@ describe('AssetsController', () => {
           assetId: '234123123',
           symbol: 'FKK',
           decimals,
+          existentialDeposit: '1000',
           location: { parents: 1, interior: 'Here' },
         },
       ],
@@ -148,6 +150,7 @@ describe('AssetsController', () => {
           assetId: '234123123',
           symbol: 'FKK',
           decimals,
+          existentialDeposit: '1000',
           location: { parents: 0, interior: 'Here' },
         },
       ];

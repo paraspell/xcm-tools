@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
@@ -129,7 +129,7 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
 
     if (asset.erc20) {
       const amount = isAmountAll
-        ? balance - (keepAlive ? getEdFromAssetOrThrow(asset) : 0n)
+        ? balance - (keepAlive ? BigInt(asset.existentialDeposit) : 0n)
         : asset.amount
 
       return api.deserializeExtrinsics({

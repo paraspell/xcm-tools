@@ -47,6 +47,7 @@ describe('createTypeAndThenCall', () => {
   const mockSystemAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 12,
+    existentialDeposit: '1000',
     location: RELAY_LOCATION
   }
 
@@ -102,7 +103,12 @@ describe('createTypeAndThenCall', () => {
       parents: 1,
       interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
     }
-    const feeAssetInfo: TAssetInfo = { symbol: 'USDT', decimals: 6, location: usdtLocation }
+    const feeAssetInfo: TAssetInfo = {
+      symbol: 'USDT',
+      decimals: 6,
+      existentialDeposit: '1000',
+      location: usdtLocation
+    }
     vi.mocked(getFeeAssetLocation).mockReturnValue(usdtLocation)
 
     await constructTypeAndThenCall({ ...mockContext, feeAssetInfo })

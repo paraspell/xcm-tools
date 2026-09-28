@@ -17,18 +17,21 @@ describe('getExchangeAssetByOriginAsset', () => {
   const originAsset: TAssetInfo = {
     symbol: 'ABC',
     decimals: 12,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { Here: null } },
   };
 
   const routerAssetA: TAssetInfo = {
     symbol: 'AAA',
     decimals: 12,
+    existentialDeposit: '1000',
     location: { parents: 0, interior: { Here: null } },
   };
 
   const routerAssetB: TAssetInfo = {
     symbol: 'BBB',
     decimals: 12,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { Here: null } },
   };
 
@@ -105,16 +108,19 @@ describe('getExchangeAssetByOriginAsset', () => {
     const ksmOnAssetHubKusama: TAssetInfo = {
       symbol: 'KSM',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { Here: null } },
     };
     const ksmOnAssetHubPolkadot: TAssetInfo = {
       symbol: 'KSM',
       decimals: 12,
+      existentialDeposit: '1000',
       location: { parents: 2, interior: { X1: [{ GlobalConsensus: { kusama: null } }] } },
     };
     const dotOnAssetHubPolkadot: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { Here: null } },
     };
 

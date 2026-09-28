@@ -29,6 +29,7 @@ describe('buildApproveToken', () => {
     const asset: TAssetInfo = {
       symbol: 'WETH',
       decimals: 18,
+      existentialDeposit: '1000',
       assetId: ASSET_ID,
       location: { parents: 0, interior: 'Here' }
     }
@@ -69,6 +70,7 @@ describe('buildApproveToken', () => {
     vi.mocked(findAssetInfoOrThrow).mockReturnValue({
       symbol: 'WETH',
       decimals: 18,
+      existentialDeposit: '1000',
       assetId: 'not-address',
       location: { parents: 0, interior: 'Here' }
     })

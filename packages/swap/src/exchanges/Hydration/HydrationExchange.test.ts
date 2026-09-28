@@ -304,11 +304,24 @@ describe('HydrationExchange', () => {
       ] as never);
 
       vi.mocked(getAssets).mockReturnValue([
-        { symbol: 'ABC', decimals: 12, assetId: '1', location: { parents: 0, interior: 'Here' } },
-        { symbol: 'XYZ', decimals: 12, assetId: '2', location: { parents: 1, interior: 'Here' } },
+        {
+          symbol: 'ABC',
+          decimals: 12,
+          existentialDeposit: '1000',
+          assetId: '1',
+          location: { parents: 0, interior: 'Here' },
+        },
+        {
+          symbol: 'XYZ',
+          decimals: 12,
+          existentialDeposit: '1000',
+          assetId: '2',
+          location: { parents: 1, interior: 'Here' },
+        },
         {
           symbol: 'UNPOOLED',
           decimals: 12,
+          existentialDeposit: '1000',
           assetId: '3',
           location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
         },

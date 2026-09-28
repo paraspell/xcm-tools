@@ -34,6 +34,7 @@ const OWNER = '0x3333333333333333333333333333333333333333'
 const asset = (assetId: string, symbol = 'WETH'): TAssetInfo => ({
   symbol,
   decimals: 18,
+  existentialDeposit: '1000',
   assetId,
   location: { parents: 0, interior: 'Here' }
 })

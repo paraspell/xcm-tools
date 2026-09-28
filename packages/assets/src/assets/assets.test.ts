@@ -118,6 +118,7 @@ describe('getAssetsObjectImpl with custom ctx', () => {
   const customNative: TAssetInfo = {
     symbol: 'CUS',
     decimals: 12,
+    existentialDeposit: '1000',
     location: { parents: 0, interior: 'Here' },
     isNative: true
   }
@@ -146,6 +147,7 @@ describe('getAssetsObjectImpl with custom ctx', () => {
     const overlay: TAssetInfo = {
       symbol: 'EXTRA',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: { GeneralIndex: '9999' } } }
     }
     const ctx: TCustomCtx = { customAssets: { Acala: [overlay] } }

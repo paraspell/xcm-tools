@@ -30,6 +30,7 @@ const mockOriginAssetWithLocation: TAssetInfo = {
   symbol: mockAssetSymbol,
   assetId: '1',
   decimals: 10,
+  existentialDeposit: '1000',
   location: mockLocation
 }
 
@@ -37,6 +38,7 @@ const mockDestinationAsset: TAssetInfo = {
   symbol: mockAssetSymbol,
   assetId: '2',
   decimals: 12,
+  existentialDeposit: '1000',
   location: mockLocation
 }
 
@@ -44,6 +46,7 @@ const mockStablecoinAsset: TAssetInfo = {
   symbol: 'USDx',
   assetId: '999',
   decimals: 12,
+  existentialDeposit: '1000',
   location: {
     parents: 1,
     interior: {
@@ -218,6 +221,7 @@ describe('findAssetOnDest', () => {
       symbol: mockAssetSymbol,
       assetId: '1',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { Here: null } }
     }
 
@@ -242,12 +246,14 @@ describe('findAssetOnDest', () => {
       symbol: 'MYTH',
       isNative: true,
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
     }
     const ethereumMyth: TAssetInfo = {
       symbol: 'MYTH',
       assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
       decimals: 18,
+      existentialDeposit: '1000',
       location: {
         parents: 2,
         interior: {
@@ -347,6 +353,7 @@ describe('custom asset auto-mirror on destination', () => {
   const customAsset: TAssetInfo = {
     symbol: 'MYNEWUSD',
     decimals: 6,
+    existentialDeposit: '1000',
     assetId: '9999',
     location: customLocation
   }

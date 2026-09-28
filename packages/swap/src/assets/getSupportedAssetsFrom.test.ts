@@ -27,6 +27,7 @@ describe('getSupportedAssetsFrom', () => {
   const hdxAsset: TAssetInfo = {
     symbol: 'HDX',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '123',
     location: { parents: 0, interior: 'Here' },
   };
@@ -34,6 +35,7 @@ describe('getSupportedAssetsFrom', () => {
   const wudAsset: TAssetInfo = {
     symbol: 'WUD',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '1000085',
     location: { parents: 1, interior: 'Here' },
   };
@@ -41,6 +43,7 @@ describe('getSupportedAssetsFrom', () => {
   const acaAsset: TAssetInfo = {
     symbol: 'ACA',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '1000099',
     location: { parents: 2, interior: 'Here' },
   };
@@ -48,6 +51,7 @@ describe('getSupportedAssetsFrom', () => {
   const usdtAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 12,
+    existentialDeposit: '1000',
     assetId: '1000100',
     location: { parents: 3, interior: 'Here' },
   };
@@ -190,11 +194,13 @@ describe('getSupportedAssetsFrom', () => {
     const dotOnAssetHubKusama: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 2, interior: { X1: [{ GlobalConsensus: { polkadot: null } }] } },
     };
     const dotOnAssetHubPolkadot: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { Here: null } },
     };
 

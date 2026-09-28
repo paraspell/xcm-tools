@@ -1083,6 +1083,7 @@ describe("DedotApi", () => {
     const baseAsset: TAssetInfo = {
       symbol: "GLMR",
       decimals: 18,
+      existentialDeposit: "1000",
       location: { parents: 0, interior: { Here: null } },
     };
 
@@ -1113,6 +1114,7 @@ describe("DedotApi", () => {
     const baseAsset: TAssetInfo = {
       symbol: "GLMR",
       decimals: 18,
+      existentialDeposit: "1000",
       location: { parents: 0, interior: { Here: null } },
     };
 
@@ -1159,6 +1161,7 @@ describe("DedotApi", () => {
       const asset: TAssetInfo = {
         symbol: "USDC",
         decimals: 6,
+        existentialDeposit: "1000",
         location: { parents: 1, interior: { Here: null } },
       };
 
@@ -1408,6 +1411,7 @@ describe("DedotApi", () => {
     const asset: TAssetInfo = {
       symbol: "DOT",
       decimals: 10,
+      existentialDeposit: "1000",
       location: { parents: 0, interior: { Here: null } },
     };
 

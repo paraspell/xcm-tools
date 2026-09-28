@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt } from '@paraspell/sdk-common'
 
@@ -169,7 +169,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
     if (options?.sentAssetMintMode === 'bypass') {
       mintAmount = parseUnits(bypassMintAmount, sentAsset.decimals) + sentAsset.amount
     } else {
-      const keepAliveBuffer = dryRunOptions.keepAlive ? getEdFromAssetOrThrow(sentAsset) : 0n
+      const keepAliveBuffer = dryRunOptions.keepAlive ? BigInt(sentAsset.existentialDeposit) : 0n
       const desiredBalance = sentAsset.amount + keepAliveBuffer
       const missing = calcPreviewMintAmount(balance, desiredBalance) ?? 0n
       const total = missing + bonus

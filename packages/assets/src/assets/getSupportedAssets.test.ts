@@ -15,6 +15,7 @@ describe('getSupportedAssets', () => {
     symbol: 'DOT',
     assetId: '100',
     decimals: 10,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { Here: null } }
   }
 
@@ -22,6 +23,7 @@ describe('getSupportedAssets', () => {
     symbol: 'KSM',
     assetId: '200',
     decimals: 18,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: {
@@ -40,6 +42,7 @@ describe('getSupportedAssets', () => {
     symbol: 'AJUN',
     assetId: '300',
     decimals: 18,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
   }
 
@@ -47,12 +50,14 @@ describe('getSupportedAssets', () => {
     symbol: 'USDT',
     assetId: '500',
     decimals: 6,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
   }
 
   const cgtAsset: TAssetInfo = {
     symbol: 'CGT2.0',
     decimals: 18,
+    existentialDeposit: '1000',
     location: {
       parents: 2,
       interior: {
@@ -127,12 +132,14 @@ describe('getSupportedAssets', () => {
       symbol: 'MYTH',
       isNative: true,
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
     }
     const ethereumMyth: TAssetInfo = {
       symbol: 'MYTH',
       assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
       decimals: 18,
+      existentialDeposit: '1000',
       location: {
         parents: 2,
         interior: {
@@ -164,6 +171,7 @@ describe('getSupportedAssets', () => {
       symbol: 'MYTH',
       isNative: true,
       decimals: 18,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
     }
     vi.mocked(getAssetsImpl).mockImplementation(chain => {

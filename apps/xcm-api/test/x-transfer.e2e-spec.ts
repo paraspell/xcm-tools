@@ -623,6 +623,7 @@ describe('X-Transfer controller (e2e)', () => {
     const customAsset = {
       symbol: 'CUSTX',
       decimals: 6,
+      existentialDeposit: '1000',
       assetId: '80003',
       location: {
         parents: 1,
@@ -686,6 +687,7 @@ describe('X-Transfer controller (e2e)', () => {
       {
         symbol: 'CUSTA',
         decimals: 6,
+        existentialDeposit: '1000',
         assetId: '80001',
         location: {
           parents: 1,
@@ -701,6 +703,7 @@ describe('X-Transfer controller (e2e)', () => {
       {
         symbol: 'CUSTB',
         decimals: 6,
+        existentialDeposit: '1000',
         assetId: '80002',
         location: {
           parents: 1,

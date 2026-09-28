@@ -183,6 +183,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           {
             symbol: 'CUSTA',
             decimals: 6,
+            existentialDeposit: '1000',
             assetId: '80001',
             location: {
               parents: 1,
@@ -194,6 +195,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           {
             symbol: 'CUSTB',
             decimals: 6,
+            existentialDeposit: '1000',
             assetId: '80002',
             location: {
               parents: 1,

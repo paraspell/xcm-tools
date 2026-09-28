@@ -67,6 +67,7 @@ describe('Unique', () => {
     const asset: TAssetInfo = {
       symbol: 'QTZ',
       decimals: 12,
+      existentialDeposit: '1000',
       assetId: '42',
       location: { parents: 1, interior: { X1: [{ Parachain: 2037 }] } }
     }

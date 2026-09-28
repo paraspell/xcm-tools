@@ -38,7 +38,7 @@ export const CustomAssetInfoSchema = z.object({
   decimals: z.number().int().nonnegative(),
   location: LocationSchema,
   assetId: z.string().optional(),
-  existentialDeposit: z.string().optional(),
+  existentialDeposit: z.string(),
   isFeeAsset: z.boolean().optional(),
   isNative: z.boolean().optional(),
   alias: z.string().optional(),

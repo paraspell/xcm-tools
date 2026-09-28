@@ -57,13 +57,6 @@ describe('SystemPallet.getBalance', () => {
     await expect(pallet.getBalance(api, 'Alice', asset)).resolves.toBe(900n)
   })
 
-  it('treats a missing existential deposit as zero', async () => {
-    const pallet = new SystemPallet('System')
-    const api = createApi({ data: { free: 1000n, reserved: 0n, frozen: 0n } })
-
-    await expect(pallet.getBalance(api, 'Alice', {} as TAssetInfo)).resolves.toBe(1000n)
-  })
-
   it('returns 0 when the untouchable amount exceeds free', async () => {
     const pallet = new SystemPallet('System')
     const api = createApi({ data: { free: 100n, reserved: 0n, frozen: 500n } })

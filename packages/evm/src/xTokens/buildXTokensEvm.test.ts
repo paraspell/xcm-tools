@@ -45,6 +45,7 @@ describe('buildXTokensEvm', () => {
   const foreignAsset: TAssetInfo = {
     symbol: 'xcPINK2',
     decimals: 18,
+    existentialDeposit: '1000',
     location: { parents: 1, interior: 'Here' },
     assetId: '10000000000000000000000000000000000001'
   }

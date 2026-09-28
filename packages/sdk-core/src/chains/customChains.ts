@@ -137,31 +137,24 @@ const requireNativeAssetFields = (
 
 const buildAutoNativeAsset = (entry: TCustomChainEntryHydrated): TAssetInfo => {
   const { symbol, decimals } = requireNativeAssetFields(entry)
+  if (entry.nativeExistentialDeposit === undefined) {
+    throw new CustomChainInvalidError(
+      `Custom chain '${entry.name}' failed to automatically fetch the native existential deposit. Please declare the native asset with existentialDeposit.`
+    )
+  }
   return {
     symbol,
     decimals,
     location: buildNativeLocation(entry.paraId),
     isNative: true,
-    ...(entry.nativeExistentialDeposit !== undefined && {
-      existentialDeposit: entry.nativeExistentialDeposit
-    })
+    existentialDeposit: entry.nativeExistentialDeposit
   }
 }
 
-const resolveAssets = (entry: TCustomChainEntryHydrated): TAssetInfo[] => {
-  const declaredNativeAsset = entry.assets.find(asset => asset.isNative)
-  if (declaredNativeAsset) {
-    if (declaredNativeAsset.existentialDeposit === undefined && entry.nativeExistentialDeposit) {
-      return entry.assets.map(asset =>
-        asset === declaredNativeAsset
-          ? { ...asset, existentialDeposit: entry.nativeExistentialDeposit }
-          : asset
-      )
-    }
-    return entry.assets
-  }
-  return [buildAutoNativeAsset(entry), ...entry.assets]
-}
+const resolveAssets = (entry: TCustomChainEntryHydrated): TAssetInfo[] =>
+  entry.assets.some(asset => asset.isNative)
+    ? entry.assets
+    : [buildAutoNativeAsset(entry), ...entry.assets]
 
 export const buildCustomChainAssetsInfo = (entry: TCustomChainEntryHydrated): TChainAssetsInfo => ({
   relaychainSymbol: getRelayChainSymbolOf(entry.ecosystem),

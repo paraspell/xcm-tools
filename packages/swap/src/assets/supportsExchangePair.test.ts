@@ -7,10 +7,34 @@ const mlA = { foo: 'bar' } as unknown as TLocation;
 const mlB = { baz: 'qux' } as unknown as TLocation;
 const mlc = { quux: 'corge' } as unknown as TLocation;
 
-const assetA: TAssetInfo = { symbol: 'ABC', assetId: '1', location: mlA, decimals: 12 };
-const assetA_alt: TAssetInfo = { symbol: 'abc', assetId: '1', location: mlA, decimals: 12 };
-const assetB: TAssetInfo = { symbol: 'XYZ', assetId: '2', location: mlB, decimals: 12 };
-const assetC: TAssetInfo = { symbol: 'ZZZ', assetId: '9', decimals: 12, location: mlc };
+const assetA: TAssetInfo = {
+  symbol: 'ABC',
+  assetId: '1',
+  location: mlA,
+  decimals: 12,
+  existentialDeposit: '1000',
+};
+const assetA_alt: TAssetInfo = {
+  symbol: 'abc',
+  assetId: '1',
+  location: mlA,
+  decimals: 12,
+  existentialDeposit: '1000',
+};
+const assetB: TAssetInfo = {
+  symbol: 'XYZ',
+  assetId: '2',
+  location: mlB,
+  decimals: 12,
+  existentialDeposit: '1000',
+};
+const assetC: TAssetInfo = {
+  symbol: 'ZZZ',
+  assetId: '9',
+  decimals: 12,
+  existentialDeposit: '1000',
+  location: mlc,
+};
 
 vi.mock('@paraspell/sdk-core', async (importActual) => ({
   ...(await importActual()),
@@ -43,7 +67,7 @@ describe('supportsExchangePair', () => {
   });
 
   it('matches assets via location deep equality', () => {
-    const alt = { symbol: 'DIFF', location: mlA, decimals: 12 };
+    const alt = { symbol: 'DIFF', location: mlA, decimals: 12, existentialDeposit: '1000' };
     expect(supportsExchangePair('Acala', alt, assetB)).toBe(true);
   });
 

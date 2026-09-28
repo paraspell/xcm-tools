@@ -22,6 +22,7 @@ describe('getOriginXcmFee', () => {
     const mockAsset: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' },
     };
     const mockFeeResult: TXcmFeeDetailWithForwardedXcm<true> = {

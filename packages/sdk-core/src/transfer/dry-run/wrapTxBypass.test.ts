@@ -69,6 +69,7 @@ describe('wrapTxBypass', () => {
     const nativeAsset: TAssetInfo = {
       symbol: 'ACA',
       decimals: 12,
+      existentialDeposit: '1000',
       isNative: true,
       location: { parents: 1, interior: { X1: [{ Parachain: 2000 }] } }
     }
@@ -76,18 +77,21 @@ describe('wrapTxBypass', () => {
     const relayAsset: TAssetInfo = {
       symbol: 'DOT',
       decimals: 10,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: 'Here' }
     }
 
     const feeAsset: TAssetInfo = {
       symbol: 'USDC',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
     }
 
     const mainAsset: WithAmount<TAssetInfo> = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '1000',
       location: { parents: 1, interior: { X2: [{ Parachain: 1000 }, { GeneralIndex: '0x01' }] } },
       amount: 1000n
     }

@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { getEdFromAssetOrThrow, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -21,7 +21,6 @@ import { getTransferInfo } from './getTransferInfo'
 
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
-  getEdFromAssetOrThrow: vi.fn(),
   isAssetEqual: vi.fn()
 }))
 
@@ -51,7 +50,8 @@ describe('getTransferInfo', () => {
   const dotAsset = {
     symbol: 'DOT',
     assetId: '1',
-    decimals: 10
+    decimals: 10,
+    existentialDeposit: '1000000000'
   } as TAssetInfo
 
   const mockResolvedAsset = (asset: TAssetInfo) =>
@@ -98,7 +98,6 @@ describe('getTransferInfo', () => {
     mockResolvedAsset(dotAsset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(200000000000n)
     vi.mocked(getBalanceInternal).mockResolvedValue(200000000000n)
-    vi.mocked(getEdFromAssetOrThrow).mockReturnValue(1000000000n)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { fee: 100000000n, asset: dotAsset },
       hops: [
@@ -165,7 +164,6 @@ describe('getTransferInfo', () => {
     )
     expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
     expect(getBalanceInternal).not.toHaveBeenCalled()
-    expect(getEdFromAssetOrThrow).toHaveBeenCalledWith(dotAsset)
     expect(getXcmFee).toHaveBeenCalledWith({
       api: mockApi,
       buildTx,
@@ -336,6 +334,7 @@ describe('getTransferInfo', () => {
       symbol: 'USDT',
       assetId: '1984',
       decimals: 6,
+      existentialDeposit: '1000',
       location: {
         parents: 1,
         interior: { X1: [{ Parachain: 1000 }] }
@@ -423,8 +422,18 @@ describe('getTransferInfo', () => {
   })
 
   it('should return per-asset selected and received currency arrays for currency arrays', async () => {
-    const usdt = { symbol: 'USDT', assetId: '1984', decimals: 6 } as TAssetInfo
-    const usdc = { symbol: 'USDC', assetId: '1337', decimals: 6 } as TAssetInfo
+    const usdt = {
+      symbol: 'USDT',
+      assetId: '1984',
+      decimals: 6,
+      existentialDeposit: '1000'
+    } as TAssetInfo
+    const usdc = {
+      symbol: 'USDC',
+      assetId: '1337',
+      decimals: 6,
+      existentialDeposit: '1000'
+    } as TAssetInfo
 
     const currency = [
       { symbol: 'USDT', amount: 1000n },

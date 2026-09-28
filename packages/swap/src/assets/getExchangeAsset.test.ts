@@ -33,6 +33,7 @@ describe('getExchangeAsset', () => {
   const mockNativeAsset: TAssetInfo = {
     symbol: 'DOT',
     decimals: 10,
+    existentialDeposit: '1000',
     isNative: true,
     assetId: '0',
     location: { parents: 1, interior: 'Here' },
@@ -40,6 +41,7 @@ describe('getExchangeAsset', () => {
   const mockForeignAsset: TAssetInfo = {
     symbol: 'USDT',
     decimals: 6,
+    existentialDeposit: '1000',
     assetId: '123',
     location: { parents: 1, interior: 'Here' },
   };
