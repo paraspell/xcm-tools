@@ -31,7 +31,7 @@ export const getOtherAssetsFetcher = (chain: TSubstrateChain): TAssetsFetcher | 
   if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq')
     return fetchAjunaAssets
   if (chain === 'Astar' || chain === 'Shiden') return fetchAstarAssets
-  if (chain === 'Darwinia' || chain.startsWith('Crust')) return fetchDarwiniaAssets
+  if (chain === 'Darwinia') return fetchDarwiniaAssets
   if (chain === 'Xode') return fetchXodeAssets
   if (chain.startsWith('Hydration')) return fetchHydrationAssets
   if (chain === 'Basilisk') return fetchBasiliskAssets

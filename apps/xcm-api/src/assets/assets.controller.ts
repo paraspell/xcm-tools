@@ -16,16 +16,16 @@ import { ChainSchema, SubstrateChainSchema } from '../dto/ChainDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { AssetsService } from './assets.service.js';
 import {
-  AssetLocationDto,
+  type AssetLocationDto,
   AssetLocationDtoSchema,
 } from './dto/AssetLocationDto.js';
-import { FindAssetDto, FindAssetDtoSchema } from './dto/FindAssetDto.js';
+import { type FindAssetDto, FindAssetDtoSchema } from './dto/FindAssetDto.js';
 import {
-  SupportedAssetsDto,
+  type SupportedAssetsDto,
   SupportedAssetsDtoSchema,
 } from './dto/SupportedAssetsDto.js';
 import {
-  SupportedDestinationsDto,
+  type SupportedDestinationsDto,
   SupportedDestinationsSchema,
 } from './dto/SupportedDestinationsDto.js';
 

@@ -1,19 +1,20 @@
+import type { TGetBalanceOptionsBase } from '@paraspell/sdk-core'
 import { getBalance as getBalanceImpl } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getBalance } from './assets'
-import type { TPapiApi, TPapiSigner, TPapiTransaction } from './types'
-import { createPapiApiCall } from './utils'
+import PapiApi from './PapiApi'
 
-vi.mock('./utils', () => ({
-  createPapiApiCall: vi.fn(() => vi.fn())
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
+vi.mock('./PapiApi')
 
 describe('API Call Wrappers', () => {
-  it('should call createPapiApiCall with getBalanceImpl for getBalance', async () => {
-    await getBalance({ chain: 'Acala', address: '0x123' })
-    expect(createPapiApiCall).toHaveBeenCalledWith(
-      getBalanceImpl<TPapiApi, TPapiTransaction, TPapiSigner>
-    )
+  it('should call getBalanceImpl with PapiApi for getBalance', async () => {
+    vi.mocked(getBalanceImpl).mockResolvedValue(10n)
+
+    const options: TGetBalanceOptionsBase = { chain: 'Acala', address: '0x123' }
+
+    await expect(getBalance(options)).resolves.toBe(10n)
+    expect(getBalanceImpl).toHaveBeenCalledWith({ ...options, api: expect.any(PapiApi) })
   })
 })

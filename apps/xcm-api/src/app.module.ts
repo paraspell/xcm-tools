@@ -4,9 +4,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
-import path from 'path';
 import { join } from 'path';
-import { fileURLToPath } from 'url';
 
 import { AddressModule } from './address/address.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
@@ -23,9 +21,6 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { UsersService } from './users/users.service.js';
 import { XTransferModule } from './x-transfer/x-transfer.module.js';
 import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 @Module({
   imports: [
@@ -44,7 +39,7 @@ const __dirname = path.dirname(__filename);
       useFactory: throttlerConfig,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+      rootPath: join(import.meta.dirname, '..', 'client'),
       serveRoot: '/app',
     }),
     SentryModule.forRoot(),

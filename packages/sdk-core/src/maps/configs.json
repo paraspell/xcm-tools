@@ -301,29 +301,6 @@
       }
     ]
   },
-  "Crust": {
-    "name": "Crust",
-    "info": "crustParachain",
-    "paraId": 2008,
-    "providers": [
-      {
-        "name": "Crust",
-        "endpoint": "wss://crust-parachain.crustapps.net"
-      },
-      {
-        "name": "Crust APP",
-        "endpoint": "wss://crust-parachain.crustnetwork.app"
-      },
-      {
-        "name": "Crust CC",
-        "endpoint": "wss://crust-parachain.crustnetwork.cc"
-      },
-      {
-        "name": "Crust XYZ",
-        "endpoint": "wss://crust-parachain.crustnetwork.xyz"
-      }
-    ]
-  },
   "NeuroWeb": {
     "name": "NeuroWeb",
     "info": "neuroweb",
@@ -586,29 +563,6 @@
       {
         "name": "Curio",
         "endpoint": "wss://parachain.curioinvest.com/"
-      }
-    ]
-  },
-  "CrustShadow": {
-    "name": "Crust Shadow",
-    "info": "shadow",
-    "paraId": 2012,
-    "providers": [
-      {
-        "name": "Crust",
-        "endpoint": "wss://rpc-shadow.crust.network/"
-      },
-      {
-        "name": "Crust APP",
-        "endpoint": "wss://rpc-shadow.crustnetwork.app"
-      },
-      {
-        "name": "Crust CC",
-        "endpoint": "wss://rpc-shadow.crustnetwork.cc"
-      },
-      {
-        "name": "Crust XYZ",
-        "endpoint": "wss://rpc-shadow.crustnetwork.xyz"
       }
     ]
   },

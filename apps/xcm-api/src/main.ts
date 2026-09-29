@@ -22,7 +22,8 @@ export const bootstrap = async () => {
       dsn: configService.get<string>('SENTRY_DSN'),
       integrations: [nodeProfilingIntegration()],
       tracesSampleRate: 1.0,
-      profilesSampleRate: 1.0,
+      profileSessionSampleRate: 1.0,
+      profileLifecycle: 'trace',
       environment: configService.get<string>('NODE_ENV') || 'development',
     });
   }

@@ -72,8 +72,8 @@ export const convertJunctionToReadable = (junction: Junction): string => {
   }
 };
 
-export function findLocationsInObject(obj: unknown): ParsedLocation[] {
-  function hasSpecificKeys(value: unknown): boolean {
+export const findLocationsInObject = (obj: unknown): ParsedLocation[] => {
+  const hasSpecificKeys = (value: unknown): boolean => {
     return (
       typeof value === 'object' &&
       value !== null &&
@@ -81,11 +81,11 @@ export function findLocationsInObject(obj: unknown): ParsedLocation[] {
       'parents' in value &&
       'interior' in value
     );
-  }
+  };
 
   const locations: ParsedLocation[] = [];
 
-  function searchObject(value: unknown): void {
+  const searchObject = (value: unknown): void => {
     if (hasSpecificKeys(value)) {
       locations.push(LocationSchema.parse(value));
     } else if (typeof value === 'object' && value !== null) {
@@ -93,8 +93,8 @@ export function findLocationsInObject(obj: unknown): ParsedLocation[] {
         searchObject(item);
       }
     }
-  }
+  };
 
   searchObject(obj);
   return locations;
-}
+};

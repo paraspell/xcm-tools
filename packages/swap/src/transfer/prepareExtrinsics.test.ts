@@ -45,7 +45,7 @@ const baseOptions = {
   },
   destination: {
     address: 'dest',
-    chain: 'Crust',
+    chain: 'Astar',
   },
   api: mockApi,
 } as TTransformedOptions<

@@ -24,8 +24,6 @@ const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'PolkadotXcm', 'XToken
 
 const defaultPalletOverrides: Partial<Record<TSubstrateChain, TPallet>> = {
   Centrifuge: 'XTokens',
-  Crust: 'XTokens',
-  CrustShadow: 'XTokens',
   Peaq: 'XTokens',
   Pendulum: 'XTokens'
 }

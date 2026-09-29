@@ -282,33 +282,6 @@
     "nativeAssets": "Balances",
     "otherAssets": ["Tokens", "Currencies"]
   },
-  "CrustShadow": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 2
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 13
-      },
-      {
-        "name": "Assets",
-        "index": 124
-      },
-      {
-        "name": "XTokens",
-        "index": 125
-      },
-      {
-        "name": "AssetManager",
-        "index": 126
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets", "AssetManager"]
-  },
   "Karura": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -346,10 +319,6 @@
       {
         "name": "PolkadotXcm",
         "index": 51
-      },
-      {
-        "name": "XTokens",
-        "index": 55
       }
     ],
     "nativeAssets": "Balances",
@@ -377,33 +346,6 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["ForeignAssets"]
-  },
-  "Crust": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 2
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 14
-      },
-      {
-        "name": "Assets",
-        "index": 124
-      },
-      {
-        "name": "XTokens",
-        "index": 125
-      },
-      {
-        "name": "AssetManager",
-        "index": 126
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Assets", "AssetManager"]
   },
   "NeuroWeb": {
     "defaultPallet": "PolkadotXcm",

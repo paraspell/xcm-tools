@@ -14,29 +14,29 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import {
-  BatchXTransferDto,
+  type BatchXTransferDto,
   BatchXTransferDtoSchema,
 } from './dto/XTransferBatchDto.js';
 import {
-  DryRunPreviewDto,
+  type DryRunPreviewDto,
   DryRunPreviewSchema,
-  EvmApproveDto,
+  type EvmApproveDto,
   EvmApproveDtoSchema,
-  EvmXTransferDto,
+  type EvmXTransferDto,
   EvmXTransferDtoSchema,
-  ExchangePairsDto,
+  type ExchangePairsDto,
   ExchangePairsSchema,
-  GetXcmFeeDto,
+  type GetXcmFeeDto,
   GetXcmFeeSchema,
-  SignAndSubmitDto,
+  type SignAndSubmitDto,
   SignAndSubmitSchema,
-  SupportedAssetsFromDto,
+  type SupportedAssetsFromDto,
   SupportedAssetsFromSchema,
-  SupportedAssetsToDto,
+  type SupportedAssetsToDto,
   SupportedAssetsToSchema,
-  XTransferDto,
+  type XTransferDto,
   XTransferDtoSchema,
-  XTransferDtoWSender,
+  type XTransferDtoWSender,
   XTransferDtoWSenderSchema,
 } from './dto/XTransferDto.js';
 import { XTransferService } from './x-transfer.service.js';

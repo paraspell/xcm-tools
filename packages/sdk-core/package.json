@@ -35,12 +35,12 @@
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
-    "@noble/hashes": "^2.3.0",
+    "@noble/hashes": "^2.4.0",
     "@paraspell/assets": "workspace:*",
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
-    "@scure/base": "^2.3.0",
-    "viem": "^2.55.19"
+    "@scure/base": "^2.4.0",
+    "viem": "^2.57.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
@@ -49,12 +49,12 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.11",
-    "axios": "^1.19.0",
-    "dotenv": "^17.4.2",
-    "rollup": "^4.62.5",
+    "@vitest/coverage-v8": "^5.0.2",
+    "axios": "^1.20.0",
+    "dotenv": "^18.0.4",
+    "rollup": "^4.63.5",
     "rollup-plugin-dts": "^6.5.1",
     "ts-morph": "^28.0.0",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.15"
   }
 }

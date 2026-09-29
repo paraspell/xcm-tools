@@ -167,7 +167,7 @@ describe('X-Transfer controller (e2e)', () => {
   it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl}`, async () => {
     const from: TChain = 'AssetHubKusama';
     const to1: TChain = 'Basilisk';
-    const to2: TChain = 'Shiden';
+    const to2: TChain = 'Karura';
     const currency = {
       location: { parents: 1, interior: { Here: null } },
       amount,
@@ -392,7 +392,7 @@ describe('X-Transfer controller (e2e)', () => {
   it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl}`, async () => {
     const from: TChain = 'AssetHubKusama';
     const to1: TChain = 'Basilisk';
-    const to2: TChain = 'Shiden';
+    const to2: TChain = 'Karura';
     const currency = {
       location: { parents: 1, interior: { Here: null } },
       amount,
