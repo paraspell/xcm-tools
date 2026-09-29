@@ -1,19 +1,20 @@
+import type { TGetBalanceOptionsBase } from '@paraspell/sdk-core'
 import { getBalance as getBalanceImpl } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getBalance } from './assets'
-import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
-import { createPolkadotJsApiCall } from './utils'
+import PolkadotJsApi from './PolkadotJsApi'
 
-vi.mock('./utils', () => ({
-  createPolkadotJsApiCall: vi.fn(() => vi.fn())
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
+vi.mock('./PolkadotJsApi')
 
 describe('API Call Wrappers', () => {
-  it('should call createPolkadotJsApiCall with getBalanceImpl for getBalance', async () => {
-    await getBalance({ chain: 'Acala', address: '0x123' })
-    expect(createPolkadotJsApiCall).toHaveBeenCalledWith(
-      getBalanceImpl<TPjsApi, Extrinsic, TPjsSigner>
-    )
+  it('should call getBalanceImpl with PolkadotJsApi for getBalance', async () => {
+    vi.mocked(getBalanceImpl).mockResolvedValue(10n)
+
+    const options: TGetBalanceOptionsBase = { chain: 'Acala', address: '0x123' }
+
+    await expect(getBalance(options)).resolves.toBe(10n)
+    expect(getBalanceImpl).toHaveBeenCalledWith({ ...options, api: expect.any(PolkadotJsApi) })
   })
 })

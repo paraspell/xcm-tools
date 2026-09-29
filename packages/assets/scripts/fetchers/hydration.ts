@@ -148,7 +148,12 @@ export const fetchHydrationAssets = async (
 
     return assets.filter(
       a =>
-        a.decimals && a.decimals > 0 && a.assetId !== '0' && !EXCLUDED_ASSET_IDS.includes(a.assetId)
+        a.decimals &&
+        a.decimals > 0 &&
+        a.assetId !== '0' &&
+        !EXCLUDED_ASSET_IDS.includes(a.assetId) &&
+        // Skip money market tokens of stableswap pool shares (e.g. a3-Pool)
+        !a.symbol.includes('-Pool')
     )
   } finally {
     ahClient.destroy()

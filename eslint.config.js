@@ -24,13 +24,6 @@ const arrowFunctionRules = [
 
 export default defineConfig(
   {
-    settings: {
-      react: {
-        version: "19.2.8",
-      },
-    },
-  },
-  {
     ignores: [
       "eslint.config.js",
       "**/dist/",
@@ -41,7 +34,6 @@ export default defineConfig(
       "**/*spec.ts",
       "**/client/",
       "**/postcss.config.cjs",
-      "**/codegen.ts",
       "**/playwright.config.ts",
       "**/e2e/",
       "**/coverage/",
@@ -49,7 +41,7 @@ export default defineConfig(
     ],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.recommendedTypeChecked,
   prettierConfig,
   {
     plugins: {
@@ -70,7 +62,6 @@ export default defineConfig(
         {
           args: "all",
           argsIgnorePattern: "^_",
-          caughtErrors: "all",
           caughtErrorsIgnorePattern: "^_",
           destructuredArrayIgnorePattern: "^_",
           varsIgnorePattern: "^_",
@@ -79,11 +70,7 @@ export default defineConfig(
       ],
       "@typescript-eslint/consistent-type-imports": [
         "error",
-        {
-          prefer: "type-imports",
-          disallowTypeAnnotations: false,
-          fixStyle: "separate-type-imports",
-        },
+        { disallowTypeAnnotations: false },
       ],
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
@@ -98,28 +85,22 @@ export default defineConfig(
     },
   },
   {
-    files: [
-      "apps/{playground,site}/**/*.ts",
-      "apps/{playground,site}/**/*.tsx",
+    files: ["apps/{playground,site}/**/*.{ts,tsx}"],
+    extends: [
+      reactPlugin.configs.flat.recommended,
+      reactPlugin.configs.flat["jsx-runtime"],
     ],
-    ...reactPlugin.configs.flat?.recommended,
+    settings: {
+      react: {
+        version: "19.3.0",
+      },
+    },
     rules: {
-      ...reactPlugin.configs.flat?.recommended.rules,
-      ...reactPlugin.configs.flat["jsx-runtime"].rules,
       "react/prop-types": "off",
       "react/no-unknown-property": "off",
     },
     languageOptions: {
-      ...reactPlugin.configs.flat?.recommended.languageOptions,
-      parserOptions: {
-        ...reactPlugin.configs.flat?.recommended.languageOptions.parserOptions,
-        ...reactPlugin.configs.flat["jsx-runtime"].languageOptions
-          .parserOptions,
-      },
-      globals: {
-        ...globals.serviceworker,
-        ...globals.browser,
-      },
+      globals: globals.browser,
     },
   },
   {
@@ -136,17 +117,13 @@ export default defineConfig(
         {
           selector: "CallExpression[callee.name='Error']",
           message:
-            'Calling "Error()" directly is forbidden in this project). Please use a specific error class that extends Error. Do not forget to handle it in the XCM-API afterwards.',
+            'Calling "Error()" directly is forbidden in this project. Please use a specific error class that extends Error. Do not forget to handle it in the XCM-API afterwards.',
         },
       ],
     },
   },
   {
-    files: [
-      "apps/xcm-api/**/*.test.ts",
-      "packages/*/**/*.test.ts",
-      "packages/xcm-analyser/**/*.ts",
-    ],
+    files: ["apps/xcm-api/**/*.test.ts", "packages/*/**/*.test.ts"],
     rules: {
       "no-restricted-syntax": "off",
     },

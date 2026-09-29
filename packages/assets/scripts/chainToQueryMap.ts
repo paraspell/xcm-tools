@@ -28,8 +28,6 @@ export const chainToQuery: Record<TChain, string | (() => Promise<TChainAssetsIn
   CoretimeKusama: '',
   CoretimePolkadot: '',
   CoretimeWestend: '',
-  Crust: 'Assets.Metadata',
-  CrustShadow: 'Assets.Metadata',
   Curio: 'AssetRegistry.Metadata',
   Darwinia: 'Assets.Metadata',
   Encointer: '',

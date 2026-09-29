@@ -1,8 +1,9 @@
-import type {
-  HealthCheckResult,
-  HealthIndicatorResult,
+import type { HealthCheckResult } from '@nestjs/terminus';
+import {
+  HealthCheckService,
+  HealthIndicatorService,
+  PrismaHealthIndicator,
 } from '@nestjs/terminus';
-import { HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -48,9 +49,9 @@ describe('HealthService', () => {
   describe('checkDb', () => {
     it('should call health.check with database ping check', async () => {
       const mockResult = { status: 'ok' } as HealthCheckResult;
-      const mockPingCheckResult = Promise.resolve<HealthIndicatorResult>({
-        database: { status: 'up' },
-      });
+      const mockPingCheckResult = new HealthIndicatorService()
+        .check('database')
+        .attempt(() => {});
 
       const spyPingCheck = vi
         .spyOn(prismaHealthIndicator, 'pingCheck')
@@ -58,8 +59,8 @@ describe('HealthService', () => {
 
       const spyHealthCheck = vi
         .spyOn(healthCheckService, 'check')
-        .mockImplementation(async (checks) => {
-          await checks[0]();
+        .mockImplementation(async ([check]) => {
+          if (typeof check === 'function') await check();
           return mockResult;
         });
 

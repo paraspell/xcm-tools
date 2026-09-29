@@ -37,7 +37,7 @@ describe('getDefaultPallet', () => {
     expect(pallet).toEqual(defaultPallet)
   })
 
-  it.each(['Centrifuge', 'Crust', 'CrustShadow', 'Peaq', 'Pendulum'] as const)(
+  it.each(['Centrifuge', 'Peaq', 'Pendulum'] as const)(
     'should return overridden XTokens pallet for %s',
     chain => {
       expect(getDefaultPallet(chain)).toBe('XTokens')

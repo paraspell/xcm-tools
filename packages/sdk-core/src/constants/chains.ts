@@ -17,8 +17,6 @@ import CollectivesWestend from '../chains/supported/CollectivesWestend'
 import CoretimeKusama from '../chains/supported/CoretimeKusama'
 import CoretimePolkadot from '../chains/supported/CoretimePolkadot'
 import CoretimeWestend from '../chains/supported/CoretimeWestend'
-import Crust from '../chains/supported/Crust'
-import CrustShadow from '../chains/supported/CrustShadow'
 import Curio from '../chains/supported/Curio'
 import Darwinia from '../chains/supported/Darwinia'
 import Encointer from '../chains/supported/Encointer'
@@ -58,7 +56,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Ajuna: new Ajuna<TApi, TRes, TSigner>(),
   Astar: new Astar<TApi, TRes, TSigner>(),
   Unique: new Unique<TApi, TRes, TSigner>(),
-  Crust: new Crust<TApi, TRes, TSigner>(),
   BifrostPolkadot: new BifrostPolkadot<TApi, TRes, TSigner>(),
   BridgeHubPolkadot: new BridgeHubPolkadot<TApi, TRes, TSigner>(),
   Centrifuge: new Centrifuge<TApi, TRes, TSigner>(),
@@ -86,7 +83,6 @@ export const chains = <TApi, TRes, TSigner>() => ({
   Basilisk: new Basilisk<TApi, TRes, TSigner>(),
   BifrostKusama: new BifrostKusama<TApi, TRes, TSigner>(),
   Curio: new Curio<TApi, TRes, TSigner>(),
-  CrustShadow: new CrustShadow<TApi, TRes, TSigner>(),
   Karura: new Karura<TApi, TRes, TSigner>(),
   PeopleKusama: new PeopleKusama<TApi, TRes, TSigner>(),
   Shiden: new Shiden<TApi, TRes, TSigner>(),

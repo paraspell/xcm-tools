@@ -6,9 +6,9 @@ import { EventName } from '../analytics/EventName.js';
 import { ChainSchema } from '../dto/ChainDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { BalanceService } from './balance.service.js';
-import { BalanceDto, BalanceDtoSchema } from './dto/BalanceForeignDto.js';
+import { type BalanceDto, BalanceDtoSchema } from './dto/BalanceForeignDto.js';
 import {
-  ExistentialDepositDto,
+  type ExistentialDepositDto,
   ExistentialDepositDtoSchema,
 } from './dto/ExistentialDepositDto.js';
 

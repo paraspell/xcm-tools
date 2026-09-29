@@ -42,6 +42,6 @@
     "polkadot-api": ">= 3 < 4"
   },
   "devDependencies": {
-    "polkadot-api": "^3.0.0"
+    "polkadot-api": "^3.2.0"
   }
 }

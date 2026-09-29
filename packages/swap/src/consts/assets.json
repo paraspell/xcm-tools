@@ -89,6 +89,22 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 22222012
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X2": [
@@ -1169,22 +1185,6 @@
               "GeneralKey": {
                 "length": 2,
                 "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2034
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0xc09cf2f85367f3c2ab66e094283de3a499cb9108"
               }
             }
           ]

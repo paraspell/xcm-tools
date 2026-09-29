@@ -50,7 +50,7 @@ const baseOptions = {
   },
   destination: {
     address: 'someAddress',
-    chain: 'Crust',
+    chain: 'Astar',
   },
   api: mockApi,
 } as TTransformedOptions<
@@ -137,7 +137,7 @@ describe('buildTransactions', () => {
       {
         api: swapApiPapi,
         chain: 'Acala',
-        destinationChain: 'Crust',
+        destinationChain: 'Astar',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
         amountOut: 1000n,
@@ -155,7 +155,7 @@ describe('buildTransactions', () => {
 
     const res = await buildTransactions({ chain: 'Acala' } as ExchangeChain, {
       ...baseOptions,
-      destination: { address: 'someAddress', chain: 'Crust' },
+      destination: { address: 'someAddress', chain: 'Astar' },
     });
 
     expect(res).toEqual([
@@ -169,7 +169,7 @@ describe('buildTransactions', () => {
       {
         api: swapApiPapi,
         chain: 'Acala',
-        destinationChain: 'Crust',
+        destinationChain: 'Astar',
         tx: 'batchTx',
         type: 'SWAP_AND_TRANSFER',
         amountOut: 1000n,

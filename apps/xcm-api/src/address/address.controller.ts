@@ -4,7 +4,10 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { AddressService } from './address.service.js';
-import { ConvertSs58Dto, ConvertSs58DtoSchema } from './dto/ConvertSs58Dto.js';
+import {
+  type ConvertSs58Dto,
+  ConvertSs58DtoSchema,
+} from './dto/ConvertSs58Dto.js';
 
 @Controller()
 export class AddressController {

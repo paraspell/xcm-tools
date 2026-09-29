@@ -39,8 +39,8 @@
     "@paraspell/sdk-core": "workspace:*"
   },
   "peerDependencies": {
-    "@polkadot/api": ">= 16.0 < 17",
-    "@polkadot/types": ">= 16.0 < 17",
+    "@polkadot/api": ">= 17 < 18",
+    "@polkadot/types": ">= 17 < 18",
     "@polkadot/util": ">= 14",
     "@polkadot/util-crypto": ">= 14"
   },
@@ -51,9 +51,9 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@vitest/coverage-v8": "^4.1.11",
-    "dotenv": "^17.4.2",
-    "rollup": "^4.62.5",
+    "@vitest/coverage-v8": "^5.0.2",
+    "dotenv": "^18.0.4",
+    "rollup": "^4.63.5",
     "rollup-plugin-dts": "^6.5.1"
   }
 }
