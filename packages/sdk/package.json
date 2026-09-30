@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "14.3.6",
+  "version": "14.4.0",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",

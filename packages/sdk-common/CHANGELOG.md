@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.3.6...sdk-common-v14.4.0) (2026-09-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c37ac84](https://github.com/paraspell/xcm-tools/commit/c37ac84d985694f64fc7347b246c9dbdfcc74fe0))
+
 ## [14.3.6](https://github.com/paraspell/xcm-tools/compare/sdk-common-v14.3.5...sdk-common-v14.3.6) (2026-09-17)
 
 
