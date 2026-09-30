@@ -65,13 +65,13 @@ vi.mock('@acala-network/sdk', () => ({
   ),
 }));
 
+const swapMock = vi.hoisted(() => vi.fn(() => ({ subscribe: vi.fn() })));
+
 vi.mock('@acala-network/sdk-swap', () => ({
   AcalaDex: vi.fn(),
   AggregateDex: vi.fn(
     class {
-      swap = vi.fn().mockImplementation(() => ({
-        subscribe: vi.fn(),
-      }));
+      swap = swapMock;
       getTradingTx = vi.fn().mockImplementation(() => ({}));
     },
   ),
@@ -184,6 +184,12 @@ describe('AcalaExchange', () => {
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
       expect(result.amountOut).toBe(46199999999998n);
+    });
+
+    it('should pass slippagePct as acceptiveSlippage to the dex swap', async () => {
+      await chain.swapCurrency({ ...baseSwapOptions, slippagePct: '1' }, 1n);
+
+      expect(swapMock).toHaveBeenCalledWith(expect.objectContaining({ acceptiveSlippage: 0.01 }));
     });
 
     it('should throw AmountTooLowError if the amount is too small to cover fees', async () => {
