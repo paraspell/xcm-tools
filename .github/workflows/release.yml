@@ -1,11 +1,22 @@
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
-name: release-please
+name: CI
+
+concurrency: release
+
 jobs:
+  checks:
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
   release-please:
+    name: release
+    needs: checks
     runs-on: ubuntu-latest
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
@@ -18,6 +29,7 @@ jobs:
           target-branch: ${{ github.ref_name }}
 
   publish_packages_and_deploy_websites:
+    name: publish
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
@@ -51,18 +63,6 @@ jobs:
       - name: Build project
         run: pnpm build
 
-      - name: Compile project
-        run: pnpm compile
-
-      - name: Check lint
-        run: pnpm lint:check
-
-      - name: Check formatting
-        run: pnpm format:check
-
-      - name: Run tests
-        run: pnpm test
-
       - name: Publish packages
         run: pnpm publish -r --no-git-checks --access=public
 
@@ -75,6 +75,7 @@ jobs:
         run: pnpm exec netlify deploy --no-build --prod --site paraspell --filter @paraspell/site
 
   deploy_xcm_api:
+    name: deploy-api
     needs: release-please
     if: needs.release-please.outputs.sdk_core_released == 'true'
     runs-on: self-hosted

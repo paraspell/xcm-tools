@@ -1,12 +1,9 @@
-name: CI
+name: Checks
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [main]
+  workflow_call:
 
 jobs:
   build:
