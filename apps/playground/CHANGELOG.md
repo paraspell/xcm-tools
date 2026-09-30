@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.4.0](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.6...playground-v14.4.0) (2026-09-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c37ac84](https://github.com/paraspell/xcm-tools/commit/c37ac84d985694f64fc7347b246c9dbdfcc74fe0))
+
+
+### Bug Fixes
+
+* **sdk-core:** Handle fee asset leftover deposits 🔧 ([9ff9457](https://github.com/paraspell/xcm-tools/commit/9ff945768f4fd8815ec7c4b7b8db979cb6169058))
+
 ## [14.3.6](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.5...playground-v14.3.6) (2026-09-17)
 
 
