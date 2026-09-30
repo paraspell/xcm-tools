@@ -57,8 +57,7 @@ export const convertBuilderConfig = <TApi>(
     }
   }
 
-  const isWsUrl = typeof config === 'string' && Array.isArray(config)
-  if (!isWsUrl) {
+  if (!isUrl(config)) {
     throw new UnsupportedOperationError('Swap module does not support API client override')
   }
 }
