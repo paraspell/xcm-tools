@@ -31,7 +31,17 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
-    const { api, apiPjs, assetFrom, assetTo, amount, sender, origin, isForFeeEstimation } = options;
+    const {
+      api,
+      apiPjs,
+      assetFrom,
+      assetTo,
+      amount,
+      sender,
+      origin,
+      slippagePct,
+      isForFeeEstimation,
+    } = options;
 
     const wallet = new Wallet(apiPjs);
     await wallet.isReady;
@@ -89,6 +99,7 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
           formatUnits(amountWithoutFee, fromToken.decimals),
           fromToken.decimals,
         ),
+        acceptiveSlippage: Number(slippagePct) / 100,
       }),
     );
 
