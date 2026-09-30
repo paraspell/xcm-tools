@@ -234,6 +234,30 @@ describe('swapUtils', () => {
       )
     })
 
+    it('should return undefined when config is a WS URL', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(false)
+
+      expect(convertBuilderConfig('wss://rpc.polkadot.io')).toBeUndefined()
+    })
+
+    it('should return undefined when config is an array of WS URLs', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(false)
+
+      expect(
+        convertBuilderConfig(['wss://rpc.polkadot.io', 'wss://polkadot-rpc.dwellir.com'])
+      ).toBeUndefined()
+    })
+
+    it('should throw when config is an API client', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(false)
+
+      const config = { foo: 1, bar: 2, baz: 3 }
+
+      expect(() => convertBuilderConfig(config)).toThrow(
+        'Swap module does not support API client override'
+      )
+    })
+
     it('should return rest without apiOverrides when apiOverrides is undefined in config', () => {
       vi.mocked(guards.isConfig).mockReturnValue(true)
 
