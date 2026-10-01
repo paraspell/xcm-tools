@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.4.0...swap-v14.4.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **swap:** Add missing slippage param in Acala exchange 🔧 ([42547c8](https://github.com/paraspell/xcm-tools/commit/42547c877313ee401ee45bb7e625b50259c5df5f))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.6...swap-v14.4.0) (2026-09-30)
 
 

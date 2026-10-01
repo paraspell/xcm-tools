@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.4.0...sdk-core-v14.4.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix url check inconsistency 🛠️ ([9cb1a20](https://github.com/paraspell/xcm-tools/commit/9cb1a205545b36f50905de868f12b647e4eca00b))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.3.6...sdk-core-v14.4.0) (2026-09-30)
 
 
