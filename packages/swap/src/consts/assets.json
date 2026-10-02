@@ -67,6 +67,22 @@
               "PalletInstance": 50
             },
             {
+              "GeneralIndex": 31337
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
               "GeneralIndex": 1337
             }
           ]
