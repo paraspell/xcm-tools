@@ -3152,6 +3152,32 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1001362",
+        "symbol": "GSOL-HOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "160000000000000",
+        "erc20": {
+          "balanceSlot": 0
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x11f2d134814f6ad92423474647638b77c80e902e"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "46",
         "symbol": "apyUSD",
         "decimals": 18,
@@ -3235,6 +3261,32 @@
                 "GeneralKey": {
                   "length": 2,
                   "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1001360",
+        "symbol": "aPAXG-HOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "20000000000000000",
+        "erc20": {
+          "balanceSlot": 0
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2d608c585d19866871aeeb22589b5c4867f2c2ad"
                 }
               }
             ]
@@ -3712,6 +3764,32 @@
         },
         "isFeeAsset": true,
         "alias": "EURC2"
+      },
+      {
+        "assetId": "1001359",
+        "symbol": "atBTC-HOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "200000000000",
+        "erc20": {
+          "balanceSlot": 0
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x18542081631cc92cbeb73c8bf45d2f74bd46bb8e"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
       },
       {
         "assetId": "15",
@@ -5040,6 +5118,32 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1001361",
+        "symbol": "GETH-HOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "7000000000000",
+        "erc20": {
+          "balanceSlot": 0
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x81192f193024696c3294e875a4aaedaccf7d3d89"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000851",
         "symbol": "LBTC",
         "decimals": 8,
@@ -6091,6 +6195,7 @@
           }
         },
         "existentialDeposit": "10000000",
+        "isFeeAsset": true,
         "alias": "WUD2"
       },
       {
