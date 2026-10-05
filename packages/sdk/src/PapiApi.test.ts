@@ -1058,16 +1058,10 @@ describe('PapiApi', () => {
       expect(result).toBe(hexAccount)
     })
 
-    it('should return the account if the output should not start with 0x', () => {
-      const account = 'some_account'
-      const hexAccount = '1234567890abcdef'
+    it('should strip 0x from a hex address when not prefixed', () => {
+      const result = papiApi.accountToHex('0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac', false)
 
-      const spy = vi.spyOn(papiApi, 'accountToHex').mockReturnValue(hexAccount)
-
-      const result = papiApi.accountToHex(account, false)
-
-      expect(spy).toHaveBeenCalledWith(account, false)
-      expect(result).toBe('1234567890abcdef')
+      expect(result).toBe('f24ff3a9cf04c71dbc94d0b566f7a27b94566cac')
     })
   })
 

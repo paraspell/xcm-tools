@@ -95,9 +95,8 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   accountToHex(address: string, isPrefixed = true) {
-    if (isHex(address)) return address
-    const uint8Array = decodeAddress(address)
-    return u8aToHex(uint8Array, -1, isPrefixed)
+    const hex = isHex(address) ? address : u8aToHex(decodeAddress(address))
+    return isPrefixed ? hex : hex.slice(2)
   }
 
   accountToUint8a(address: string): Uint8Array {
