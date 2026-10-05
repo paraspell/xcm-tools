@@ -7,6 +7,7 @@ import {
   convertLocationToUrl,
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
+import { ZodError } from 'zod';
 
 import { XcmAnalyserDto } from './dto/xcm-analyser.dto.js';
 
@@ -30,6 +31,9 @@ export class XcmAnalyserService {
         return convertXCMToUrls(xcm as unknown[]);
       }
     } catch (e) {
+      if (e instanceof ZodError) {
+        throw new BadRequestException({ message: e.issues });
+      }
       if (e instanceof Error) {
         throw new InternalServerErrorException(e.message);
       }
