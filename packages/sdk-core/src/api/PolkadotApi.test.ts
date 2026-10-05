@@ -100,6 +100,7 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   getXcmPaymentApiFee = () => Promise.resolve(0n)
   getFromRpc = () => Promise.resolve('')
   blake2AsHex = () => ''
+  xxhashAsHex = () => ''
   clone = () => new ConcreteApi()
   createApiForChain = () => Promise.resolve(new ConcreteApi())
   getDryRunCall = (): Promise<TDryRunChainResult> =>

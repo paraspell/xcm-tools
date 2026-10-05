@@ -2306,6 +2306,14 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('xxhashAsHex', () => {
+    it('should return the 64-bit xxhash as hex string', () => {
+      const data = new Uint8Array(8)
+      const result = polkadotApi.xxhashAsHex(data)
+      expect(result).toBe('0xbb1bdbcacd6ac934')
+    })
+  })
+
   describe('getBridgeStatus', () => {
     it('should return the bridge status', async () => {
       const status = await polkadotApi.getBridgeStatus()

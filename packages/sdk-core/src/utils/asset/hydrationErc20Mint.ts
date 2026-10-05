@@ -17,7 +17,8 @@ const EVM_ACCOUNT_PREFIX = '45544800'
 
 const word = (hex: string) => hex.padStart(64, '0')
 
-const blake2128Concat = (hex: string) => bytesToHex(blake2b(hexToBytes(hex), { dkLen: 16 })) + hex
+export const blake2128Concat = (hex: string) =>
+  bytesToHex(blake2b(hexToBytes(hex), { dkLen: 16 })) + hex
 
 // Mirrors pallet_evm_accounts::evm_address
 const toEvmAddress = (accountId: string) =>

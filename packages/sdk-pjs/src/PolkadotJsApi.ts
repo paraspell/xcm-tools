@@ -56,7 +56,7 @@ import { buildDryRunError, resolveModuleError } from '@paraspell/sdk-core'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { Codec } from '@polkadot/types/types'
 import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
-import { blake2AsHex, decodeAddress, validateAddress } from '@polkadot/util-crypto'
+import { blake2AsHex, decodeAddress, validateAddress, xxhashAsHex } from '@polkadot/util-crypto'
 
 import type { Extrinsic, TPjsApi, TPjsSigner } from './types'
 import { computeOriginFee, createKeyringPair } from './utils'
@@ -240,6 +240,10 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
   blake2AsHex(data: Uint8Array) {
     return blake2AsHex(data)
+  }
+
+  xxhashAsHex(data: Uint8Array) {
+    return xxhashAsHex(data)
   }
 
   clone() {

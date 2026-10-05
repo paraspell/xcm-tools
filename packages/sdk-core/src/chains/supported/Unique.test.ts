@@ -1,12 +1,18 @@
-import type { TAssetInfo } from '@paraspell/assets'
+import { hexToBytes } from '@noble/hashes/utils.js'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TSerializedExtrinsics,
+  TTransferLocalOptions
+} from '../../types'
 import { getChain } from '../../utils/getChain'
 import { getLocalTransferAmount } from '../../utils/transfer'
+import SubstrateChain from '../SubstrateChain'
 import type Unique from './Unique'
 
 vi.mock('../../pallets/polkadotXcm')
@@ -85,6 +91,79 @@ describe('Unique', () => {
         params: [42, { Substrate: address }, 0]
       })
       expect(balance).toBe(500n)
+    })
+  })
+
+  describe('mint', () => {
+    const address = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
+
+    const asset: WithAmount<TAssetInfo> = {
+      symbol: 'DOT',
+      decimals: 10,
+      existentialDeposit: '0',
+      assetId: '437',
+      location: { parents: 1, interior: { Here: null } },
+      amount: 1000n
+    }
+
+    const xxhashAsHex = vi.fn().mockReturnValue('0xeda8e3819b2f64f8')
+    const accountToUint8a = vi
+      .fn()
+      .mockReturnValue(
+        hexToBytes('d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d')
+      )
+
+    const api = { xxhashAsHex, accountToUint8a } as unknown as PolkadotApi<
+      unknown,
+      unknown,
+      unknown
+    >
+
+    it('mints foreign assets by setting Fungible balance and total supply storage', async () => {
+      const res = await chain.mint(api, address, asset, 500n)
+
+      expect(xxhashAsHex).toHaveBeenCalledWith(new Uint8Array([0xb5, 0x01, 0x00, 0x00]))
+      expect(accountToUint8a).toHaveBeenCalledWith(address)
+      expect(res).toEqual({
+        balanceTx: {
+          module: 'System',
+          method: 'set_storage',
+          params: {
+            items: [
+              [
+                '0xb6f8df5e96e2c932e9bd00274d53a26f4ea8ea0c01faa42b6eb344a85c47b387eda8e3819b2f64f8b5010000ff699fe6ae26ef97168ddeaecbc34ce300d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d',
+                '0xdc050000000000000000000000000000'
+              ],
+              [
+                '0xb6f8df5e96e2c932e9bd00274d53a26f5994cfda14cd67e1586647d40008abaaeda8e3819b2f64f8b5010000',
+                '0xdc050000000000000000000000000000'
+              ]
+            ]
+          }
+        }
+      })
+    })
+
+    it('uses the default mint for the native asset', async () => {
+      const nativeAsset: WithAmount<TAssetInfo> = {
+        symbol: 'UNQ',
+        decimals: 18,
+        existentialDeposit: '0',
+        isNative: true,
+        location: { parents: 1, interior: { X1: [{ Parachain: 2037 }] } },
+        amount: 1000n
+      }
+      const balanceTx: TSerializedExtrinsics = {
+        module: 'Balances',
+        method: 'force_set_balance',
+        params: {}
+      }
+      const superMint = vi.spyOn(SubstrateChain.prototype, 'mint').mockResolvedValue({ balanceTx })
+
+      const res = await chain.mint(api, address, nativeAsset, 0n)
+
+      expect(superMint).toHaveBeenCalledWith(api, address, nativeAsset, 0n)
+      expect(res).toEqual({ balanceTx })
     })
   })
 })
