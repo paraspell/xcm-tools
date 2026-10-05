@@ -23,6 +23,7 @@ import {
   Version,
   wrapTxBypass
 } from '@paraspell/sdk-core'
+import { Twox64Concat } from '@polkadot-api/substrate-bindings'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, getSs58AddressInfo } from 'polkadot-api'
 import { toHex } from 'polkadot-api/utils'
@@ -2746,6 +2747,20 @@ describe('PapiApi', () => {
       expect(result).toBe(hex)
 
       expect(spy).toHaveBeenCalledWith(data)
+    })
+  })
+
+  describe('xxhashAsHex', () => {
+    it('should return the hex of the hash part of Twox64Concat', () => {
+      const data = new Uint8Array([1, 2, 3, 4])
+      vi.mocked(Twox64Concat).mockReturnValue(new Uint8Array([9, 9, 9, 9, 9, 9, 9, 9, 1, 2, 3, 4]))
+      vi.mocked(toHex).mockReturnValue('0x0909090909090909')
+
+      const result = papiApi.xxhashAsHex(data)
+
+      expect(result).toBe('0x0909090909090909')
+      expect(Twox64Concat).toHaveBeenCalledWith(data)
+      expect(toHex).toHaveBeenCalledWith(new Uint8Array([9, 9, 9, 9, 9, 9, 9, 9]))
     })
   })
 

@@ -59,7 +59,7 @@ import {
   SubmitTransactionError,
   wrapTxBypass
 } from '@paraspell/sdk-core'
-import { decAnyMetadata, unifyMetadata } from '@polkadot-api/substrate-bindings'
+import { decAnyMetadata, Twox64Concat, unifyMetadata } from '@polkadot-api/substrate-bindings'
 import type { TypedApi } from 'polkadot-api'
 import { AccountId, Binary, getSs58AddressInfo } from 'polkadot-api'
 import { toHex } from 'polkadot-api/utils'
@@ -255,6 +255,10 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
   blake2AsHex(data: Uint8Array) {
     return `0x${bytesToHex(blake2b(data, { dkLen: 32 }))}`
+  }
+
+  xxhashAsHex(data: Uint8Array) {
+    return toHex(Twox64Concat(data).subarray(0, 8))
   }
 
   async hasMethod(pallet: TPallet, method: string): Promise<boolean> {

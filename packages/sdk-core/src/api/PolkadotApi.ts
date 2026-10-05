@@ -318,6 +318,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   ): Promise<bigint>
   abstract getFromRpc(module: string, method: string, key: string): Promise<string>
   abstract blake2AsHex(data: Uint8Array): string
+  abstract xxhashAsHex(data: Uint8Array): string
   abstract clone(): PolkadotApi<TApi, TRes, TSigner, TCustomChain>
   abstract createApiForChain(
     chain: TSubstrateChain

@@ -62,6 +62,7 @@ import {
   isHex,
   stringToU8a,
   u8aToHex,
+  xxhashAsHex,
 } from "dedot/utils";
 
 import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
@@ -299,6 +300,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
   blake2AsHex(data: Uint8Array) {
     return blake2AsHex(data);
+  }
+
+  xxhashAsHex(data: Uint8Array) {
+    return xxhashAsHex(data);
   }
 
   clone() {

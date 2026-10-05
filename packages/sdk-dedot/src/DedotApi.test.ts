@@ -56,6 +56,7 @@ vi.mock("dedot/utils", () => ({
     .mockImplementation((str: string) => new TextEncoder().encode(str)),
   u8aToHex: vi.fn().mockReturnValue("0x010203"),
   isEvmAddress: vi.fn().mockReturnValue(false),
+  xxhashAsHex: vi.fn().mockReturnValue("0x0123456789abcdef"),
 }));
 
 vi.mock("./XcmTransformer", () => ({
@@ -431,6 +432,13 @@ describe("DedotApi", () => {
     it("returns a blake2 hash hex", () => {
       const result = dedotApi.blake2AsHex(new Uint8Array([1, 2, 3]));
       expect(result).toBe("0xabcdef");
+    });
+  });
+
+  describe("xxhashAsHex", () => {
+    it("returns a 64-bit xxhash hex", () => {
+      const result = dedotApi.xxhashAsHex(new Uint8Array([1, 2, 3]));
+      expect(result).toBe("0x0123456789abcdef");
     });
   });
 
