@@ -196,6 +196,7 @@ describe('buildSnowbridgeTransfer', () => {
   it('does not lease the cache when caller supplies a public client', async () => {
     await buildSnowbridgeTransfer(baseOptions(), publicClient)
     expect(leaseClient).not.toHaveBeenCalled()
+    expect(releaseClient).not.toHaveBeenCalled()
     expect(setEthProvider).toHaveBeenCalledWith(1, publicClient)
   })
 })
