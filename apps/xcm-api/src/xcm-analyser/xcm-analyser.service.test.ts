@@ -9,6 +9,7 @@ import {
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ZodError } from 'zod';
 
 import { XcmAnalyserService } from './xcm-analyser.service.js';
 
@@ -123,5 +124,16 @@ describe('XcmAnalyserService', () => {
     expect(() =>
       service.getLocationPaths({ location: undefined, xcm }),
     ).toThrow(InternalServerErrorException);
+  });
+
+  it('throws BadRequestException when xcm contains an invalid location', () => {
+    const xcm = [{ parents: 1, interior: { X1: { Unknown: 1 } } }];
+    vi.mocked(convertXCMToUrls).mockImplementation(() => {
+      throw new ZodError([]);
+    });
+
+    expect(() =>
+      service.getLocationPaths({ location: undefined, xcm }),
+    ).toThrow(BadRequestException);
   });
 });
