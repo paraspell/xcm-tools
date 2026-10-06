@@ -1,5 +1,14 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.4.0...swap-v14.4.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **assets:** Filter out HOLLAR pool assets 🔧 ([14837e2](https://github.com/paraspell/xcm-tools/commit/14837e21487c0001b34a519c5299d9964f5cc0b0))
+* **swap:** Add missing slippage param in Acala exchange 🔧 ([42547c8](https://github.com/paraspell/xcm-tools/commit/42547c877313ee401ee45bb7e625b50259c5df5f))
+* **swap:** Update Hydration dest fee calculation ⚙️ ([6d82da9](https://github.com/paraspell/xcm-tools/commit/6d82da90e2efca2d0b0d9103f563db0f7344e1de))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/swap-v14.3.6...swap-v14.4.0) (2026-09-30)
 
 
