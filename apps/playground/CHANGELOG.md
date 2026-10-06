@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/playground-v14.4.0...playground-v14.4.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **playground:** Fix vite json import warning ⚙️ ([284d379](https://github.com/paraspell/xcm-tools/commit/284d379e163070d5b59df2f2c5d56c87631c23ce))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/playground-v14.3.6...playground-v14.4.0) (2026-09-30)
 
 

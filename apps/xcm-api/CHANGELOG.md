@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.0...xcm-api-v14.4.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **xcm-api:** Do not throw error 500 when analyser location is invalid 🔧 ([7bfb34f](https://github.com/paraspell/xcm-tools/commit/7bfb34fdbdabfb6c63e4a9f61600ab7b84519e49))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.3.6...xcm-api-v14.4.0) (2026-09-30)
 
 

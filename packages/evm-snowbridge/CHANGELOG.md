@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.4.0...evm-snowbridge-v14.4.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **evm-snowbridge:** Don't release a client if a custom one is provided 🔧 ([12448eb](https://github.com/paraspell/xcm-tools/commit/12448ebc022045e039852689a45194f774a500a0))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.3.6...evm-snowbridge-v14.4.0) (2026-09-30)
 
 

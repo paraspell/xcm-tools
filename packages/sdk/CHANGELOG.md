@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.0...sdk-v14.4.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* Do not ignore isPrefixed option when address is hex 🛠️ ([479e4ac](https://github.com/paraspell/xcm-tools/commit/479e4ac1e78b566474446ab533ed461df8f986ab))
+* **sdk-core:** Fix Unique minting logic for dry-run 🪄 ([23387a5](https://github.com/paraspell/xcm-tools/commit/23387a509606e84f465f3eb9e36a1e063326b5ce))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-v14.3.6...sdk-v14.4.0) (2026-09-30)
 
 
