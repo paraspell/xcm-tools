@@ -25,6 +25,7 @@ const ERC20_PROBE_ACCOUNT = word('11'.repeat(20))
 const ERC20_PROBE_BALANCE = '0x' + word((10n ** 18n).toString(16))
 const ERC20_BALANCE_OF_SELECTOR = '0x70a08231'
 const ERC20_MAX_BALANCE_SLOT = 64
+const PAIR_TOKEN0_SELECTOR = '0x0dfe1681'
 
 const detectErc20BalanceSlot = async (client: PolkadotClient, contract: string) => {
   for (let slot = 0; slot < ERC20_MAX_BALANCE_SLOT; slot++) {
@@ -44,15 +45,31 @@ const detectErc20BalanceSlot = async (client: PolkadotClient, contract: string) 
   throw new Error(`Unable to detect the ERC20 balance slot of ${contract}`)
 }
 
-const resolveErc20Info = async (
-  client: PolkadotClient,
-  location: TLocation | undefined,
-  finalLocation: TLocation | undefined
-) => {
+const getErc20Contract = (location: TLocation | undefined) => {
   const contract =
     location &&
     getJunctionValue<TJunctionAccountKey20['AccountKey20']>(location, 'AccountKey20')?.key
   if (!contract) throw new Error(`Missing ERC20 contract in ${JSON.stringify(location)}`)
+  return contract
+}
+
+const isPairToken = async (client: PolkadotClient, contract: string) => {
+  try {
+    const res = await client._request<string>('eth_call', [
+      { to: contract, data: PAIR_TOKEN0_SELECTOR },
+      'latest'
+    ])
+    return res.length === 66
+  } catch {
+    return false
+  }
+}
+
+const resolveErc20Info = async (
+  client: PolkadotClient,
+  contract: string,
+  finalLocation: TLocation | undefined
+) => {
   const balanceSlot = await detectErc20BalanceSlot(client, contract)
   return finalLocation && hasJunction(finalLocation, 'AccountKey20')
     ? { balanceSlot }
@@ -113,6 +130,10 @@ export const fetchHydrationAssets = async (
         const locRaw = await api.query.AssetRegistry.AssetLocations.getValue(id)
         const location = normalizeLocation(locRaw)
 
+        const erc20Contract =
+          value.asset_type.type === 'Erc20' ? getErc20Contract(location) : undefined
+        if (erc20Contract && (await isPairToken(client, erc20Contract))) return null
+
         let symbol = finalSymbol ?? ''
         let decimals = value.decimals
 
@@ -137,8 +158,8 @@ export const fetchHydrationAssets = async (
           symbol,
           decimals,
           existentialDeposit: edString(value),
-          ...(value.asset_type.type === 'Erc20' && {
-            erc20: await resolveErc20Info(client, location, finalLocation)
+          ...(erc20Contract && {
+            erc20: await resolveErc20Info(client, erc20Contract, finalLocation)
           }),
           location: finalLocation,
           ...(override?.isFeeAsset && { isFeeAsset: true })
@@ -146,15 +167,17 @@ export const fetchHydrationAssets = async (
       })
     )
 
-    return assets.filter(
-      a =>
-        a.decimals &&
-        a.decimals > 0 &&
-        a.assetId !== '0' &&
-        !EXCLUDED_ASSET_IDS.includes(a.assetId) &&
-        // Skip money market tokens of stableswap pool shares (e.g. a3-Pool)
-        !a.symbol.includes('-Pool')
-    )
+    return assets
+      .filter(a => a !== null)
+      .filter(
+        a =>
+          a.decimals &&
+          a.decimals > 0 &&
+          a.assetId !== '0' &&
+          !EXCLUDED_ASSET_IDS.includes(a.assetId) &&
+          // Skip money market tokens of stableswap pool shares (e.g. a3-Pool)
+          !a.symbol.includes('-Pool')
+      )
   } finally {
     ahClient.destroy()
   }

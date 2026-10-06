@@ -3627,32 +3627,6 @@
         "isFeeAsset": true
       },
       {
-        "assetId": "1001354",
-        "symbol": "aDOT-HOLLAR",
-        "decimals": 18,
-        "existentialDeposit": "20000000000000000",
-        "erc20": {
-          "balanceSlot": 0
-        },
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2034
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xa206d0959813f17c17c87147271c49065438648a"
-                }
-              }
-            ]
-          }
-        },
-        "isFeeAsset": true
-      },
-      {
         "assetId": "41",
         "symbol": "CFG",
         "decimals": 18,
@@ -6091,6 +6065,7 @@
           }
         },
         "existentialDeposit": "10000000",
+        "isFeeAsset": true,
         "alias": "WUD2"
       },
       {
