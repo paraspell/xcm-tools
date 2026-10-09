@@ -8527,6 +8527,29 @@
         "isNative": true
       },
       {
+        "assetId": "3",
+        "symbol": "XAUH",
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 3397
+              },
+              {
+                "GeneralKey": {
+                  "length": 32,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000078617568"
+                }
+              }
+            ]
+          }
+        },
+        "isNative": true
+      },
+      {
         "assetId": "0",
         "symbol": "DOT",
         "decimals": 10,
