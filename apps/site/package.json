@@ -17,7 +17,6 @@
     "@mantine/code-highlight": "^9.6.3",
     "@mantine/core": "^9.6.3",
     "@mantine/hooks": "^9.6.3",
-    "@mantinex/dev-icons": "^2.0.0",
     "@tabler/icons-react": "^3.48.0",
     "@tsparticles/engine": "^4.4.0",
     "@tsparticles/preset-links": "^4.4.0",

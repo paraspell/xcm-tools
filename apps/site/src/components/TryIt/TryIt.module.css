@@ -1,50 +1,53 @@
 .wrapper {
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  padding: clamp(28px, 5vw, 56px);
+  border: 1px solid var(--ps-try-line);
+  border-radius: var(--mantine-radius-xl);
+  background-color: var(--ps-try-bg);
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex-direction: column;
+.body {
+  flex: 1 1 rem(360px);
+  min-width: 0;
+}
+
+.title {
+  margin-bottom: var(--mantine-spacing-md);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.highlight {
+  display: inline-block;
+  font-size: 1.3em;
+  line-height: 0.9;
+  letter-spacing: 0;
+  color: var(--mantine-color-mainColor-text);
+  text-shadow: var(--ps-script-shadow);
+  rotate: -4deg;
+}
+
+.description {
+  max-width: var(--ps-measure);
+}
+
+.control {
+  transition: var(--ps-transition-button);
+
+  @mixin hover {
+    translate: 0 -2px;
   }
 }
 
 .image {
-  max-width: 40%;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
-  }
-}
-
-.body {
-  flex: 1;
   width: 100%;
+  max-width: rem(500px);
+  height: auto;
+  rotate: -4deg;
+  filter: drop-shadow(0 28px 26px alpha(var(--mantine-color-black), 0.18));
+  transition: var(--ps-transition-tilt);
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-right: 0;
+  @mixin hover {
+    rotate: 0deg;
+    translate: 0 -8px;
   }
-}
-
-.title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-size: rem(36px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: var(--mantine-spacing-md);
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
-}
-
-.controls {
-  display: flex;
-}
-
-.item {
-  display: flex;
-}
-
-.itemIcon {
-  margin-right: var(--mantine-spacing-md);
 }

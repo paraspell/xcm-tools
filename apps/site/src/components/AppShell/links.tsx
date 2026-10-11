@@ -1,6 +1,14 @@
+import {
+  IconBrandGithub,
+  IconBrandTelegram,
+  IconBrandX,
+} from "@tabler/icons-react";
+
+export const GITHUB_URL = "https://github.com/paraspell/xcm-tools/";
+export const DOCS_URL = "https://paraspell.github.io/docs/";
+
 export const links = [
   {
-    link: "#1",
     label: "XCM Tools",
     links: [
       { link: "/#xcm-sdk", label: "XCM SDK 🪄" },
@@ -13,4 +21,14 @@ export const links = [
   { link: "/#try-it", label: "Try it" },
   { link: "/#research", label: "Research" },
   { link: "/#contact-us", label: "Contact us" },
+];
+
+export const socials = [
+  { label: "GitHub", link: GITHUB_URL, icon: IconBrandGithub },
+  { label: "X", link: "https://x.com/paraspell", icon: IconBrandX },
+  {
+    label: "Telegram",
+    link: "https://t.me/paraspell",
+    icon: IconBrandTelegram,
+  },
 ];

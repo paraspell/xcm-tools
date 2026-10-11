@@ -2,142 +2,141 @@ import {
   Box,
   Button,
   Container,
-  Flex,
   Group,
   Image,
   Text,
   Title,
 } from "@mantine/core";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useInterval, useReducedMotion } from "@mantine/hooks";
+import { IconArrowDown } from "@tabler/icons-react";
+import type { MouseEvent } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 import { HeroCards } from "../HeroCards/HeroCards";
+import { useBurst } from "../Magic/MagicProvider";
+import { Sparkles } from "../Magic/Sparkles";
+import { Wizard } from "../Magic/Wizard";
 import { ParticlesNetwork } from "../ParticlesNetwork";
-import { Sparkle } from "../Sparkle/Sparkle";
 import classes from "./Hero.module.css";
 
+const ECOSYSTEMS = ["Polkadot", "Kusama", "Paseo", "Westend"];
+
 export const Hero = () => {
-  const memoizedParticles = useMemo(() => <ParticlesNetwork />, []);
+  const reducedMotion = useReducedMotion();
+  const burst = useBurst();
+  const [ecosystem, setEcosystem] = useState(0);
 
-  const [sparkleLeft, setSparkleLeft] = useState(0);
-  const [sparkleTop, setSparkleTop] = useState(0);
-  const [isSparkleVisible, setIsSparkleVisible] = useState(false);
-  const [sparkleKey, setSparkleKey] = useState(0);
+  const nextEcosystem = () =>
+    setEcosystem((current) => (current + 1) % ECOSYSTEMS.length);
 
-  const logoRef = useRef<HTMLImageElement | null>(null);
-  const logoWrapperRef = useRef<HTMLDivElement | null>(null);
+  const { start: startRotation, stop: stopRotation } = useInterval(
+    nextEcosystem,
+    2600,
+  );
 
   useEffect(() => {
-    let timeoutId: number;
+    if (reducedMotion) return;
+    startRotation();
+    return stopRotation;
+  }, [reducedMotion, startRotation, stopRotation]);
 
-    const triggerSparkle = () => {
-      if (!logoRef.current || !logoWrapperRef.current) return;
+  const switchEcosystem = () => {
+    nextEcosystem();
+    if (reducedMotion) return;
+    stopRotation();
+    startRotation();
+  };
 
-      const logoRect = logoRef.current.getBoundingClientRect();
-      const wrapperRect = logoWrapperRef.current.getBoundingClientRect();
+  const castWizard = (e: MouseEvent<HTMLSpanElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    burst(rect.left + rect.width * 0.3, rect.top + rect.height * 0.2, 18, 120);
+    switchEcosystem();
+  };
 
-      const sparkleSize = 40; // Adjust to actual sparkle size
-
-      // Convert viewport coordinates to wrapper-relative coordinates
-      const logoLeft = logoRect.left - wrapperRect.left;
-      const logoTop = logoRect.top - wrapperRect.top;
-
-      const left = logoLeft + Math.random() * (logoRect.width - sparkleSize);
-
-      const top = logoTop + Math.random() * (logoRect.height - sparkleSize);
-
-      setSparkleLeft(left);
-      setSparkleTop(top);
-      setIsSparkleVisible(true);
-      setSparkleKey((prev) => prev + 1);
-
-      // Hide sparkle after animation duration
-      setTimeout(() => {
-        setIsSparkleVisible(false);
-      }, 2500);
-
-      // Schedule next sparkle
-      const nextInterval = Math.random() * (5000 - 2000) + 2000;
-
-      timeoutId = window.setTimeout(triggerSparkle, nextInterval);
-    };
-
-    timeoutId = window.setTimeout(triggerSparkle, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, []);
+  const previous = (ecosystem + ECOSYSTEMS.length - 1) % ECOSYSTEMS.length;
 
   return (
-    <div className={classes.wrapper}>
-      {memoizedParticles}
+    <Box component="section" className={classes.hero}>
+      <div className={classes.blobPink} />
+      <div className={classes.blobViolet} />
+      <ParticlesNetwork />
 
-      <Container
-        size="lg"
-        className={classes.inner}
-        style={{ position: "relative" }}
-      >
-        <h1 className={classes.title}>
-          Welcome Polkadot, Kusama, Paseo and Westend magician 👋
-        </h1>
-
-        <Title
-          order={2}
-          fw={600}
-          className={classes.subtitle}
-          ta="center"
-          c="gray.7"
-        >
-          Let us introduce you to
+      <Container size="lg" p={0} className={classes.inner}>
+        <Title order={1} className={classes.title}>
+          Welcome{" "}
+          <span
+            className={classes.ecosystem}
+            title="Click to switch ecosystem"
+            onClick={switchEcosystem}
+          >
+            <span className={classes.ecosystemWords}>
+              {ECOSYSTEMS.map((name, index) => (
+                <span
+                  key={name}
+                  className={classes.ecosystemWord}
+                  data-state={
+                    index === ecosystem
+                      ? "active"
+                      : index === previous
+                        ? "previous"
+                        : undefined
+                  }
+                >
+                  {name}
+                </span>
+              ))}
+            </span>
+          </span>{" "}
+          magician{" "}
+          <Wizard
+            role="button"
+            title="Cast a spell"
+            data-cast
+            className={classes.wizard}
+            onClick={castWizard}
+          />
         </Title>
 
-        <Flex pos="relative" mt={45} mb={95} justify="center">
-          <Box ref={logoWrapperRef} pos="relative">
+        <Text variant="script" className={classes.subtitle}>
+          Let us introduce you to
+        </Text>
+
+        <Group justify="center" mt="lg">
+          <Sparkles className={classes.logoWrapper}>
             <Image
-              ref={logoRef}
               src="/logo.png"
               alt="ParaSpell logo"
-              fit="contain"
-              mx="auto"
-              w={{ base: "70%", sm: "80%", md: "50%" }}
-              pos="relative"
-              left={{ base: undefined, sm: 30 }}
+              title="Psst — click me"
+              className={classes.logo}
             />
-
-            {isSparkleVisible && (
-              <Box
-                pos="absolute"
-                left={sparkleLeft}
-                top={sparkleTop}
-                style={{ pointerEvents: "none" }}
-              >
-                <Sparkle key={sparkleKey} />
-              </Box>
-            )}
-          </Box>
-        </Flex>
+          </Sparkles>
+        </Group>
 
         <HeroCards />
 
-        <Text className={classes.description} ta="center">
-          ParaSpell ✨ is a set of open-source XCM tools for simplifying
-          cross-chain asset transfers and interactions in the Polkadot and
-          Kusama ecosystems.
+        <Text className={classes.description}>
+          Open-source XCM tools for effortless cross-chain transfers across
+          Polkadot, Kusama, Westend and Paseo ✨
         </Text>
 
-        <Group className={classes.controls} justify="center">
+        <Group justify="center" mt="xl">
           <Button
-            component="a"
-            href="https://paraspell.github.io/docs/"
-            target="_blank"
-            size="xl"
-            className={classes.control}
+            component={Link}
+            to="/#xcm-sdk"
             variant="gradient"
-            gradient={{ from: "#f01879", to: "#f66eab" }}
-            radius="lg"
+            gradient={{ from: "mainColor.6", to: "mainColor.3", deg: 45 }}
+            h={56}
+            px={34}
+            fz="lg"
+            fw={700}
+            rightSection={<IconArrowDown size={18} />}
+            className={classes.cta}
           >
-            Get started
+            Explore the tools
           </Button>
         </Group>
       </Container>
-    </div>
+    </Box>
   );
 };

@@ -1,45 +1,56 @@
-.wrapper {
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
+.tabs {
+  gap: var(--mantine-spacing-xxs);
 }
 
-.image {
-  max-width: 40%;
+.tab {
+  height: rem(40px);
+  padding: 0 var(--mantine-spacing-sm);
+  border: 1px solid transparent;
+  border-radius: var(--mantine-radius-md-lg);
+  background-color: transparent;
+  color: var(--ps-sdk-ink);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
+  @mixin hover {
+    background-color: transparent;
+    color: var(--mantine-color-mainColor-text);
+  }
+
+  &[data-active] {
+    border-color: var(--ps-pink-line);
+    background-color: var(--ps-tab-on);
+    color: var(--mantine-color-mainColor-text);
+    box-shadow: 0 8px 18px -10px alpha(var(--mantine-color-mainColor-6), 0.55);
   }
 }
 
-.body {
-  flex: 0.8;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex: 1;
-    padding-right: 0;
-  }
+.tabDescription {
+  min-height: 1.5em;
+  margin: var(--mantine-spacing-sm) var(--mantine-spacing-xxs);
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.5;
+  color: var(--ps-sdk-ink);
 }
 
-.title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-size: rem(36px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: var(--mantine-spacing-md);
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+.copy {
+  --control-line: var(--ps-line-2);
+  --control-bg: var(--ps-copy-bg);
+  position: absolute;
+  top: var(--mantine-spacing-xs);
+  right: var(--mantine-spacing-xs);
+  z-index: 1;
 }
 
-.controls {
-  display: flex;
+.code {
+  border: 1px solid var(--ps-sdk-line);
 }
 
-.item {
-  display: flex;
-}
-
-.itemIcon {
-  margin-right: var(--mantine-spacing-md);
+.codeBody {
+  min-height: rem(318px);
+  padding: rem(46px) var(--mantine-spacing-lg) var(--mantine-spacing-md);
+  font-size: var(--mantine-font-size-sm);
 }

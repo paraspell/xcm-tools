@@ -1,42 +1,30 @@
-import { Anchor, Button, Divider, Group, Menu, Stack } from "@mantine/core";
-import { GithubIcon } from "@mantinex/dev-icons";
-import { IconChevronDown } from "@tabler/icons-react";
+import { Anchor, Button, Divider, Group, Stack, Text } from "@mantine/core";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { Link } from "react-router";
 
-import { links } from "./links";
+import { DOCS_URL, GITHUB_URL, links } from "./links";
 import classes from "./Navbar.module.css";
 
 export const Navbar = () => {
   const items = links.map((link) => {
-    const menuItems = link.links?.map((item) => (
-      <Menu.Item component={Link} to={item.link} key={item.link}>
-        {item.label}
-      </Menu.Item>
-    ));
-
-    if (menuItems) {
+    if (link.links) {
       return (
-        <Menu
-          key={link.label}
-          trigger="hover"
-          transitionProps={{ exitDuration: 0 }}
-          withinPortal
-          position="bottom-start"
-        >
-          <Menu.Target>
+        <Stack key={link.label} gap={2}>
+          <Text variant="eyebrow" className={classes.label}>
+            {link.label}
+          </Text>
+          {link.links.map((item) => (
             <Anchor
-              href={link.link}
+              component={Link}
+              key={item.link}
+              to={item.link}
               className={classes.link}
-              onClick={(event) => event.preventDefault()}
             >
-              <Group gap={4}>
-                <span className={classes.linkLabel}>{link.label}</span>
-                <IconChevronDown size="0.9rem" stroke={1.5} />
-              </Group>
+              {item.label}
             </Anchor>
-          </Menu.Target>
-          <Menu.Dropdown>{menuItems}</Menu.Dropdown>
-        </Menu>
+          ))}
+          <Divider my="xs" mx="sm" color="var(--ps-line)" />
+        </Stack>
       );
     }
 
@@ -53,32 +41,35 @@ export const Navbar = () => {
   });
 
   return (
-    <>
-      <Stack gap={5}>{items}</Stack>
+    <Stack gap={2}>
+      {items}
 
-      <Divider my="sm" />
-
-      <Group justify="left" pb="xl" px="xs">
-        <Button
-          radius="lg"
-          component="a"
-          href="https://paraspell.github.io/docs/xcm-api/getting-started.html"
-          target="_blank"
-        >
-          Get started
-        </Button>
+      <Group gap="xs" pt="md" px="sm" grow>
         <Button
           component="a"
-          href="https://github.com/paraspell/xcm-tools/"
+          href={GITHUB_URL}
           target="_blank"
-          size="sm"
+          rel="noopener"
           variant="default"
-          leftSection={<GithubIcon size={16} />}
-          radius="lg"
+          h={46}
+          radius="md-lg"
+          fz="sm"
+          leftSection={<IconBrandGithub size={18} />}
         >
           GitHub
         </Button>
+        <Button
+          component="a"
+          href={DOCS_URL}
+          target="_blank"
+          rel="noopener"
+          h={46}
+          radius="md-lg"
+          fz="sm"
+        >
+          Get started
+        </Button>
       </Group>
-    </>
+    </Stack>
   );
 };

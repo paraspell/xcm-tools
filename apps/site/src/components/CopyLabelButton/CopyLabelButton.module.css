@@ -1,0 +1,4 @@
+.root:where([data-variant="default"]) {
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-xs);
+}

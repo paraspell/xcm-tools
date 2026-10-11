@@ -25,20 +25,12 @@
 }
 
 .title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
   text-align: center;
-  font-weight: 900;
-  font-size: rem(38px);
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    font-size: rem(32px);
-  }
+  font-size: clamp(32px, 5vw, 38px);
 }
 
 .description {
-  max-width: rem(540px);
+  max-width: var(--ps-measure);
   margin: auto;
   margin-top: var(--mantine-spacing-xl);
   margin-bottom: calc(var(--mantine-spacing-xl) * 1.5);

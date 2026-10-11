@@ -1,68 +1,69 @@
-.wrapper {
-  min-height: rem(400px);
-  border-radius: var(--mantine-radius-md);
-  padding: 24px;
-}
-
-.title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  color: var(--mantine-color-black);
-  line-height: 1;
+.grid {
+  align-items: start;
 }
 
 .description {
-  color: var(--mantine-color-gray-9);
-  max-width: rem(300px);
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
-  }
-}
-
-.form {
-  background-color: var(--mantine-color-white);
-  padding: var(--mantine-spacing-xl);
-  border-radius: var(--mantine-radius-lg);
-  box-shadow: var(--mantine-shadow-xl);
-  display: flex;
-  flex-direction: column;
+  max-width: rem(340px);
+  margin-top: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-md);
+  line-height: var(--mantine-line-height-lg);
+  color: var(--ps-ink-2);
 }
 
 .social {
-  color: var(--mantine-color-black);
+  --control-line: var(--ps-line-2);
+  color: var(--mantine-color-text);
+}
 
-  @mixin hover {
-    color: var(--mantine-color-gray-6);
+.wizard {
+  position: absolute;
+  top: rem(-6px);
+  right: rem(36px);
+  z-index: 0;
+  display: block;
+  font-size: rem(58px);
+  line-height: 1;
+  rotate: 12deg;
+  transform-origin: 50% 90%;
+}
+
+.form {
+  position: relative;
+  z-index: 1;
+  padding: clamp(22px, 3vw, 32px);
+  border: 1px solid var(--ps-line);
+  background-color: var(--ps-surface);
+  box-shadow:
+    var(--mantine-shadow-hairline),
+    0 36px 60px -30px alpha(var(--mantine-color-black), 0.25);
+}
+
+.label {
+  margin-bottom: var(--mantine-spacing-xxs);
+  font-weight: 600;
+}
+
+.input,
+.textarea {
+  --input-bd: var(--mantine-color-default-border);
+  --input-bg: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md-lg);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:focus {
+    box-shadow: 0 0 0 3px alpha(var(--mantine-color-mainColor-6), 0.15);
   }
 }
 
 .input {
-  background-color: var(--mantine-color-white);
-  border-color: var(--mantine-color-gray-4);
-  color: var(--mantine-color-black);
-
-  &::placeholder {
-    color: var(--mantine-color-gray-5);
-  }
+  height: rem(46px);
+  padding: 0 var(--mantine-spacing-sm);
 }
 
-.inputTextarea {
-  background-color: var(--mantine-color-white);
-  border-color: var(--mantine-color-gray-4);
-  color: var(--mantine-color-black);
-  height: 106px;
-
-  &::placeholder {
-    color: var(--mantine-color-gray-5);
-  }
-}
-
-.inputLabel {
-  color: var(--mantine-color-black);
-}
-
-.control {
-  background-color: var(--mantine-color-mainColor-6);
+.textarea {
+  min-height: rem(118px);
+  padding: var(--mantine-spacing-sm);
+  line-height: 1.5;
 }

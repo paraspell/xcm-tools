@@ -1,0 +1,11 @@
+.toggle {
+  color: var(--mantine-color-text);
+  transition:
+    rotate 0.4s var(--ps-ease),
+    color 0.2s ease,
+    border-color 0.2s ease;
+
+  @mixin hover {
+    rotate: -14deg;
+  }
+}

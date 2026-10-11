@@ -1,0 +1,7 @@
+.title {
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.description {
+  max-width: var(--ps-measure-wide);
+}

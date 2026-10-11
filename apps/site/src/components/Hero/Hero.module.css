@@ -1,82 +1,142 @@
-.wrapper {
+.hero {
   position: relative;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 120px;
-  padding-bottom: 0px;
-  margin-bottom: 50px;
+  padding: rem(150px) var(--mantine-spacing-lg) rem(40px);
+  overflow: hidden;
+}
+
+.blobPink,
+.blobViolet {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.blobPink {
+  width: rem(720px);
+  height: rem(720px);
+  left: rem(-260px);
+  top: rem(-220px);
+  background: radial-gradient(closest-side, var(--ps-blob-1), transparent);
+}
+
+.blobViolet {
+  width: rem(780px);
+  height: rem(780px);
+  right: rem(-280px);
+  top: rem(420px);
+  background: radial-gradient(closest-side, var(--ps-blob-2), transparent);
 }
 
 .inner {
   position: relative;
-  padding-bottom: rem(100px);
-  padding: 24px;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-bottom: rem(80px);
-    padding-top: rem(80px);
-  }
+  text-align: center;
 }
 
 .title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-size: rem(52px);
-  font-weight: 900;
-  line-height: 1.45;
-  margin: 0;
-  padding: 0;
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
-  text-align: center;
-  margin-bottom: 28px;
+  max-width: rem(1000px);
+  margin: 0 auto;
+  font-size: clamp(34px, 5.4vw, 64px);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    font-size: rem(42px);
-    line-height: 1.2;
+.ecosystem {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+  background-color: var(--ps-pill);
+  color: var(--mantine-color-mainColor-text);
+  box-shadow: 0 0.07em 0 var(--ps-pink-line);
+  rotate: -3deg;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  @mixin hover {
+    background-color: var(--ps-pill-hover);
+  }
+}
+
+.ecosystemWords {
+  display: inline-grid;
+}
+
+.ecosystemWord {
+  grid-area: 1 / 1;
+  justify-self: center;
+  opacity: 0;
+  transform: translateY(70%) rotate(-12deg);
+
+  &[data-state] {
+    transition:
+      opacity 0.45s ease,
+      transform 0.6s var(--ps-ease);
+  }
+
+  &[data-state="active"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  &[data-state="previous"] {
+    transform: translateY(-70%) rotate(12deg);
+  }
+}
+
+.wizard {
+  display: inline-block;
+  cursor: pointer;
+  transform-origin: 60% 90%;
+}
+
+.subtitle {
+  display: inline-block;
+  margin-top: var(--mantine-spacing-sm);
+  font-size: clamp(30px, 3.8vw, 44px);
+  line-height: 1.2;
+  color: var(--ps-ink-sub);
+  rotate: -2deg;
+}
+
+.logoWrapper {
+  margin-left: clamp(0px, 3vw, 30px);
+}
+
+.logo {
+  display: block;
+  width: min(580px, 76vw);
+  height: auto;
+  cursor: pointer;
+  transition:
+    rotate 0.45s var(--ps-ease),
+    scale 0.45s var(--ps-ease);
+
+  @mixin hover {
+    rotate: -2deg;
+    scale: 1.02;
   }
 }
 
 .description {
-  margin-top: 64px;
-  font-size: rem(32px);
+  max-width: rem(760px);
+  margin: rem(76px) auto 0;
+  font-size: clamp(19px, 2.3vw, 27px);
   font-weight: 600;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    font-size: rem(18px);
-  }
+  line-height: var(--mantine-line-height-sm);
+  color: var(--ps-ink-2);
+  text-wrap: balance;
 }
 
-.controls {
-  margin-top: calc(var(--mantine-spacing-xl) * 1);
+.cta {
+  box-shadow: 0 16px 30px -14px alpha(var(--mantine-color-mainColor-6), 0.6);
+  transition:
+    translate 0.2s ease,
+    filter 0.2s ease;
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    margin-top: var(--mantine-spacing-xl);
+  @mixin hover {
+    translate: 0 -2px;
+    filter: brightness(0.93);
   }
-}
-
-.control {
-  height: rem(54px);
-  padding-left: rem(38px);
-  padding-right: rem(38px);
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    height: rem(54px);
-    padding-left: rem(18px);
-    padding-right: rem(18px);
-    flex: 1;
-  }
-
-  &:hover {
-    filter: brightness(90%);
-  }
-}
-
-.highlight {
-  position: relative;
-  background-color: #ffe9f6a6;
-  border-radius: var(--mantine-radius-sm);
-  padding: rem(4px) rem(12px);
 }
