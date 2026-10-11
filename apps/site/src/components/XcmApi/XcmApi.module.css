@@ -1,52 +1,84 @@
-.wrapper {
-  padding: 24px;
+.label {
+  color: var(--ps-api-label);
+}
+
+.request {
+  padding: var(--mantine-spacing-xxs) var(--mantine-spacing-xxs)
+    var(--mantine-spacing-xxs) var(--mantine-spacing-xs);
+  border: 1px solid var(--ps-api-line);
+  border-radius: var(--mantine-radius-md-lg);
+  background-color: var(--mantine-color-body);
+}
+
+.method {
+  flex: none;
+  height: auto;
+  padding: var(--mantine-spacing-xxs) var(--mantine-spacing-xs);
+  background-color: var(--ps-get-bg);
+  color: var(--ps-get-ink);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 700;
+}
+
+.url {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+  overflow-wrap: anywhere;
+}
+
+.urlChain {
+  font-weight: 700;
+  color: var(--mantine-color-mainColor-text);
+}
+
+.send {
+  flex: none;
+}
+
+.response {
+  min-height: rem(120px);
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border: 1px solid var(--ps-api-line);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--mantine-color-body);
+}
+
+.idle,
+.loading {
+  min-height: rem(90px);
   display: flex;
-  flex-direction: row-reverse;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex-direction: row;
-  }
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
 }
 
-.image {
-  max-width: 40%;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
-  }
+.idle {
+  color: var(--ps-muted-2);
 }
 
-.body {
-  flex: 0.8;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-right: 0;
-  }
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex: 1;
-  }
+.loading {
+  font-weight: 600;
+  color: var(--mantine-color-mainColor-text);
 }
 
-.title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-size: rem(36px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: var(--mantine-spacing-md);
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+.ok {
+  background-color: var(--ps-ok-bg);
+  color: var(--ps-ok-ink);
 }
 
-.controls {
-  display: flex;
+.contentType {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--ps-muted-2);
 }
 
-.item {
-  display: flex;
-}
-
-.itemIcon {
-  margin-right: var(--mantine-spacing-md);
+.responseBody {
+  padding: 0;
+  font-size: var(--mantine-font-size-sm);
 }

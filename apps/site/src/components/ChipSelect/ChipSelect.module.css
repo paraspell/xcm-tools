@@ -1,0 +1,24 @@
+.label:not([data-disabled]) {
+  height: rem(32px);
+  padding-inline: var(--mantine-spacing-sm);
+  border: 1px solid var(--ps-chip-line);
+  background-color: var(--ps-chip-bg);
+  color: var(--ps-ink-3);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  line-height: rem(30px);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background-color: var(--ps-chip-bg);
+  }
+
+  &[data-checked],
+  &[data-checked]:hover {
+    border-color: var(--mantine-primary-color-filled);
+    background-color: var(--mantine-primary-color-filled);
+    color: var(--mantine-color-white);
+  }
+}

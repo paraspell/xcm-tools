@@ -1,0 +1,38 @@
+:where(.title) {
+  letter-spacing: -0.02em;
+}
+
+.text[data-variant="eyebrow"] {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.text[data-variant="script"] {
+  font-family: var(--ps-font-script);
+  font-weight: 700;
+}
+
+.text[data-variant="lead"] {
+  font-size: var(--mantine-font-size-md);
+  line-height: var(--mantine-line-height-xl);
+  color: var(--mantine-color-dimmed);
+  text-wrap: pretty;
+}
+
+:where(.control) {
+  --control-line: var(--mantine-color-default-border);
+  --control-bg: var(--mantine-color-default);
+}
+
+.control[data-variant="default"] {
+  border-color: var(--control-line);
+  background-color: var(--control-bg);
+
+  @mixin hover {
+    border-color: var(--ps-pink-line);
+    background-color: var(--control-bg);
+    color: var(--mantine-color-mainColor-text);
+  }
+}

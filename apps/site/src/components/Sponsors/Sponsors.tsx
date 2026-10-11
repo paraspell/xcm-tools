@@ -1,32 +1,39 @@
-import { Flex, Image, Stack, Title } from "@mantine/core";
+import { Box, Group, Image, Title } from "@mantine/core";
 
-import polkadotLogoImg from "../../assets/polkadot.svg";
-import web3FoundationLogoImg from "../../assets/web3foundation.svg";
+import kusamaLogoImg from "../../assets/supporters/kusama.png";
+import polkadotLogoImg from "../../assets/supporters/polkadot.png";
+import w3fLogoImg from "../../assets/supporters/w3f-grants.png";
+import { magnetHandlers } from "../Magic/magic";
+import { Section } from "../Section/Section";
+import classes from "./Sponsors.module.css";
+
+const supporters = [
+  { name: "Polkadot", logo: polkadotLogoImg },
+  { name: "Kusama", logo: kusamaLogoImg },
+  { name: "Web3 Foundation Grants Program", logo: w3fLogoImg },
+];
 
 export const Sponsors = () => (
-  <Stack px={24} gap="xl">
-    <Title order={2} fw={700} ta="center">
+  <Section>
+    <Title order={2} className={classes.title}>
       Project is supported by
     </Title>
-    <Flex
-      justify="center"
-      align="center"
-      gap="xl"
-      direction={{ base: "column", sm: "row" }}
-    >
-      <Image
-        src={web3FoundationLogoImg}
-        alt="Web3 Foundation"
-        fit="contain"
-        h={80}
-      />
-      <Image src={polkadotLogoImg} alt="Polkadot" fit="contain" h={70} />
-      <Image
-        src="https://aperturemining.com/wp/wp-content/uploads/2022/05/kusama-logo-vector-768x210.png"
-        alt="Kusama"
-        fit="contain"
-        h={60}
-      />
-    </Flex>
-  </Stack>
+    <Group justify="center" mt="lg" className={classes.supporters}>
+      {supporters.map((supporter) => (
+        <Box
+          key={supporter.name}
+          className={classes.supporter}
+          {...magnetHandlers}
+        >
+          <div className={classes.logo}>
+            <Image
+              src={supporter.logo}
+              alt={supporter.name}
+              className={classes.image}
+            />
+          </div>
+        </Box>
+      ))}
+    </Group>
+  </Section>
 );

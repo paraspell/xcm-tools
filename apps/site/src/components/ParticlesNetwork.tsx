@@ -1,7 +1,9 @@
-import type { Engine } from "@tsparticles/engine";
+import { useComputedColorScheme, useMantineTheme } from "@mantine/core";
+import type { Engine, ISourceOptions } from "@tsparticles/engine";
 import { loadLinksPreset } from "@tsparticles/preset-links";
 import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
+import { useMemo } from "react";
 
 const initParticles = async (engine: Engine) => {
   await loadLinksPreset(engine);
@@ -9,58 +11,68 @@ const initParticles = async (engine: Engine) => {
 };
 
 export const ParticlesNetwork = () => {
+  const theme = useMantineTheme();
+  const dark =
+    useComputedColorScheme("light", { getInitialValueInEffect: false }) ===
+    "dark";
+
+  const options = useMemo<ISourceOptions>(
+    () => ({
+      fullScreen: {
+        enable: false,
+      },
+      preset: "links",
+      background: {
+        opacity: 0,
+      },
+      particles: {
+        links: {
+          width: 1.2,
+          distance: 140,
+          opacity: dark ? 0.4 : 0.28,
+          color: theme.colors.mainColor[6],
+        },
+        color: {
+          value: dark ? theme.other.darkAccent : theme.colors.mainColor[6],
+        },
+        opacity: {
+          value: dark ? 0.6 : 0.38,
+        },
+        size: {
+          value: {
+            min: 0.5,
+            max: 2.2,
+          },
+        },
+      },
+      interactivity: {
+        detectsOn: "window",
+        events: {
+          onHover: {
+            enable: true,
+            mode: "repulse",
+          },
+        },
+        modes: {
+          repulse: {
+            distance: 130,
+          },
+        },
+      },
+    }),
+    [dark, theme],
+  );
+
   return (
     <ParticlesProvider init={initParticles}>
       <Particles
         id="tsparticles"
         style={{
           position: "absolute",
-          width: "100%",
-          height: "100%",
-          zIndex: -1,
+          inset: 0,
+          pointerEvents: "none",
         }}
-        options={{
-          fullScreen: {
-            enable: false,
-          },
-          preset: "links",
-          background: {
-            opacity: 0,
-          },
-          particles: {
-            links: {
-              width: 1.5,
-              opacity: 0.3,
-              color: "#f0197a",
-            },
-            color: {
-              value: "#f0197a",
-            },
-            opacity: {
-              value: 0.3,
-            },
-            size: {
-              value: {
-                min: 0.2,
-                max: 2,
-              },
-            },
-          },
-          interactivity: {
-            detectsOn: "window",
-            events: {
-              onHover: {
-                enable: true,
-                mode: "repulse",
-              },
-            },
-            modes: {
-              repulse: {
-                distance: 150,
-              },
-            },
-          },
-        }}
+        options={options}
       />
     </ParticlesProvider>
   );

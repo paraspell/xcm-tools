@@ -1,91 +1,111 @@
 import {
   ActionIcon,
+  Box,
   Button,
   Group,
+  Paper,
   SimpleGrid,
   Text,
   Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
-import { IconBrandGithub } from "@tabler/icons-react";
 
+import { socials } from "../AppShell/links";
+import { Wizard } from "../Magic/Wizard";
+import { Section } from "../Section/Section";
 import { ContactIconsList } from "./ContactIcons";
 import classes from "./ContactUs.module.css";
 
-export const ContactUs = () => (
-  <div className={classes.wrapper} id="contact-us">
-    <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={50}>
-      <div>
-        <Title className={classes.title}>Contact us</Title>
-        <Text className={classes.description} mt="sm" mb={30}>
-          Leave your email and we will get back to you within 24 hours
-        </Text>
-
-        <ContactIconsList />
-
-        <Group mt="xl">
-          <ActionIcon
-            component="a"
-            href="https://github.com/paraspell/xcm-tools/"
-            target="_blank"
-            size={28}
-            className={classes.social}
-            variant="transparent"
-          >
-            <IconBrandGithub size="1.4rem" stroke={1.5} />
-          </ActionIcon>
-        </Group>
-      </div>
-      <form
-        name="contact"
-        method="POST"
-        data-netlify="true"
-        className={classes.form}
+export const ContactUs = () => {
+  return (
+    <Section id="contact-us">
+      <SimpleGrid
+        minColWidth="min(100%, 340px)"
+        autoFlow="auto-fit"
+        spacing={56}
+        verticalSpacing={64}
+        className={classes.grid}
       >
-        <TextInput
-          name="email"
-          label="Email"
-          type="email"
-          placeholder="your@email.com"
-          radius="lg"
-          required
-          classNames={{ input: classes.input, label: classes.inputLabel }}
-        />
-        <TextInput
-          name="name"
-          label="Name"
-          placeholder="John Doe"
-          mt="md"
-          radius="lg"
-          classNames={{ input: classes.input, label: classes.inputLabel }}
-        />
-        <Textarea
-          required
-          name="message"
-          label="Your message"
-          placeholder="I have a question about ParaSpell"
-          minRows={4}
-          mt="md"
-          radius="lg"
-          classNames={{
-            input: classes.inputTextarea,
-            label: classes.inputLabel,
-          }}
-        />
+        <div>
+          <Title order={2}>Contact us</Title>
+          <Text className={classes.description}>
+            Leave your email and we will get back to you within 24 hours
+          </Text>
 
-        <input type="hidden" name="form-name" value="contact" />
+          <Box mt="xl">
+            <ContactIconsList />
+          </Box>
 
-        <Button
-          type="submit"
-          w="100%"
-          mt="md"
-          radius="lg"
-          className={classes.control}
-        >
-          Submit
-        </Button>
-      </form>
-    </SimpleGrid>
-  </div>
-);
+          <Group gap="xs" mt="xl">
+            {socials.map((social) => (
+              <ActionIcon
+                key={social.label}
+                component="a"
+                href={social.link}
+                target="_blank"
+                rel="noopener"
+                aria-label={social.label}
+                size={42}
+                className={classes.social}
+              >
+                <social.icon size={20} />
+              </ActionIcon>
+            ))}
+          </Group>
+        </div>
+
+        <Box pos="relative" pt="xl">
+          <Wizard aria-hidden className={classes.wizard} />
+          <Paper className={classes.form}>
+            <form name="contact" method="POST" data-netlify="true">
+              <TextInput
+                name="email"
+                label="Email"
+                type="email"
+                placeholder="your@email.com"
+                required
+                withAsterisk={false}
+                classNames={{ input: classes.input, label: classes.label }}
+              />
+              <TextInput
+                name="name"
+                label="Name"
+                placeholder="John Doe"
+                mt="md"
+                classNames={{ input: classes.input, label: classes.label }}
+              />
+              <Textarea
+                required
+                withAsterisk={false}
+                name="message"
+                label="Your message"
+                placeholder="I have a question about ParaSpell"
+                minRows={4}
+                mt="md"
+                classNames={{
+                  input: classes.textarea,
+                  label: classes.label,
+                }}
+              />
+
+              <input type="hidden" name="form-name" value="contact" />
+
+              <Button
+                type="submit"
+                fullWidth
+                size="lg"
+                mt="md"
+                radius="md-lg"
+                fz="md"
+                fw={700}
+              >
+                Submit
+              </Button>
+            </form>
+          </Paper>
+        </Box>
+      </SimpleGrid>
+    </Section>
+  );
+};

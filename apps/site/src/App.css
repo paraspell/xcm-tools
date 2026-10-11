@@ -1,20 +1,70 @@
-a {
-  text-decoration: none;
+body {
+  overflow-x: clip;
 }
 
-#tsparticles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+::selection {
+  background: var(--mantine-color-mainColor-1);
+  color: var(--mantine-color-black);
 }
 
-@keyframes slideUp {
-  0% {
-    transform: translateY(50px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+.hljs {
+  color: var(--ps-code-text);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--ps-code-comment);
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-formula,
+.hljs-keyword {
+  color: var(--ps-code-keyword);
+}
+
+.hljs-deletion,
+.hljs-name,
+.hljs-section,
+.hljs-selector-tag,
+.hljs-subst {
+  color: var(--ps-code-tag);
+}
+
+.hljs-literal {
+  color: var(--ps-code-literal);
+}
+
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string,
+.hljs-regexp,
+.hljs-string {
+  color: var(--ps-code-string);
+}
+
+.hljs-attr,
+.hljs-number,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-pseudo,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable {
+  color: var(--ps-code-number);
+}
+
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-symbol,
+.hljs-title {
+  color: var(--ps-code-title);
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-title.class_ {
+  color: var(--ps-code-class);
 }

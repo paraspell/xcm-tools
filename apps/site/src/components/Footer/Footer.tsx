@@ -1,143 +1,152 @@
 import {
   ActionIcon,
   Anchor,
+  Box,
   Button,
   Container,
+  Flex,
   Group,
   Image,
-  Menu,
-  rem,
+  Stack,
   Text,
 } from "@mantine/core";
-import { IconBrandGithub, IconChevronDown } from "@tabler/icons-react";
 import { Link } from "react-router";
 
-import { links } from "../AppShell/links";
+import { DOCS_URL, links, socials } from "../AppShell/links";
 import classes from "./Footer.module.css";
 
-const data = [
-  {
-    links: [
-      ...links,
-      {
-        label: "Code of Conduct",
-        link: "https://www.netlify.com/code-of-conduct/",
-      },
-    ],
-  },
+const explore = [
+  { label: "Research", link: "/#research" },
+  { label: "Contact us", link: "/#contact-us" },
 ];
 
 export const Footer = () => {
-  const groups = data.map((group, indexGroup) => {
-    const links = group.links.map((link, index) => {
-      const menuItems = link.links?.map((item) => (
-        <Menu.Item component={Link} to={item.link} key={item.link}>
-          {item.label}
-        </Menu.Item>
-      ));
-
-      if (menuItems) {
-        return (
-          <Menu
-            key={link.label}
-            trigger="hover"
-            transitionProps={{ exitDuration: 0 }}
-            withinPortal
-            position="bottom-start"
-          >
-            <Menu.Target>
-              <Anchor
-                href={link.link}
-                className={classes.link}
-                onClick={(event) => event.preventDefault()}
-              >
-                <Group align="center" gap={4}>
-                  <span className={classes.linkLabel}>{link.label}</span>
-                  <IconChevronDown size="0.9rem" stroke={1.5} />
-                </Group>
-              </Anchor>
-            </Menu.Target>
-            <Menu.Dropdown>{menuItems}</Menu.Dropdown>
-          </Menu>
-        );
-      }
-
-      return (
-        <Link key={index + indexGroup} className={classes.link} to={link.link}>
-          {link.label}
-        </Link>
-      );
-    });
-
-    return (
-      <div key={indexGroup} className={classes.wrapper}>
-        {links}
-      </div>
-    );
-  });
+  const toolLinks = links.flatMap((link) => link.links ?? []);
 
   return (
     <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <div className={classes.logo}>
-          <Image src="logo.png" p={8} />
-          <Text size="xs" c="dimmed" className={classes.description}>
-            A XCM Tool set designed to unify the cross-chain experience on
-            Polkadot.
-          </Text>
-        </div>
-        <div className={classes.groups}>
-          {groups}
-          <div className={classes.wrapper}>
-            <Text className={classes.title}>
-              Are you interested in ParaSpell✨ ?
+      <Container size="content" p={0}>
+        <Flex wrap="wrap" justify="space-between" gap={40}>
+          <div className={classes.brand}>
+            <Image src="/logo.png" alt="ParaSpell" w={190} />
+            <Text className={classes.description}>
+              A XCM Tool set designed to unify the cross-chain experience on
+              Polkadot.
             </Text>
-            <Button
-              component="a"
-              target="_blank"
-              href="https://paraspell.github.io/docs/"
-              size="md"
-              radius="lg"
-              w="100%"
-            >
-              Get started
-            </Button>
           </div>
-        </div>
-      </Container>
-      <Container className={classes.afterFooter}>
-        <Text c="dimmed" size="sm">
-          © 2026 paraspell.xyz · Powered by{" "}
-          <Anchor
-            href="https://www.netlify.com"
-            target="_blank"
-            size="sm"
-            c="dimmed"
-          >
-            Netlify
-          </Anchor>
-        </Text>
 
-        <Group
-          gap={0}
-          className={classes.social}
-          justify="flex-end"
-          wrap="nowrap"
+          <Flex wrap="wrap" rowGap={40} columnGap={64}>
+            <Stack gap="xs" miw={150}>
+              <Text variant="eyebrow" className={classes.groupTitle}>
+                XCM Tools
+              </Text>
+              {toolLinks.map((link) => (
+                <Anchor
+                  key={link.link}
+                  component={Link}
+                  to={link.link}
+                  className={classes.link}
+                >
+                  {link.label}
+                </Anchor>
+              ))}
+            </Stack>
+
+            <Stack gap="xs" miw={150}>
+              <Text variant="eyebrow" className={classes.groupTitle}>
+                Explore
+              </Text>
+              <Anchor
+                href="https://status.paraspell.xyz/"
+                target="_blank"
+                rel="noopener"
+                className={classes.link}
+              >
+                <Group gap="xs" wrap="nowrap">
+                  <span className={classes.status} />
+                  Status page
+                </Group>
+              </Anchor>
+              {explore.map((link) => (
+                <Anchor
+                  key={link.link}
+                  component={Link}
+                  to={link.link}
+                  className={classes.link}
+                >
+                  {link.label}
+                </Anchor>
+              ))}
+              <Anchor
+                href="https://www.netlify.com/code-of-conduct/"
+                target="_blank"
+                rel="noopener"
+                className={classes.link}
+              >
+                Code of Conduct
+              </Anchor>
+            </Stack>
+
+            <Box w={260} maw="100%">
+              <Text className={classes.ctaTitle}>
+                Are you interested in{" "}
+                <span className={classes.nowrap}>ParaSpell✨?</span>
+              </Text>
+              <Button
+                component="a"
+                target="_blank"
+                rel="noopener"
+                href={DOCS_URL}
+                fullWidth
+                h={46}
+                radius="md-lg"
+                fz="sm"
+                fw={700}
+              >
+                Get started
+              </Button>
+            </Box>
+          </Flex>
+        </Flex>
+
+        <Flex
+          wrap="wrap"
+          align="center"
+          justify="space-between"
+          gap="md"
+          className={classes.afterFooter}
         >
-          <ActionIcon
-            component="a"
-            href="https://github.com/paraspell/xcm-tools/"
-            target="_blank"
-            size="lg"
-            color="gray"
-            variant="subtle"
-          >
-            <IconBrandGithub
-              style={{ width: rem(18), height: rem(18) }}
-              stroke={1.5}
-            />
-          </ActionIcon>
-        </Group>
+          <Text className={classes.copyright}>
+            © 2026 paraspell.xyz · Powered by{" "}
+            <Anchor
+              href="https://www.netlify.com"
+              target="_blank"
+              rel="noopener"
+              className={classes.netlify}
+            >
+              Netlify
+            </Anchor>
+          </Text>
+
+          <Group gap="xxs">
+            {socials.map((social) => (
+              <ActionIcon
+                key={social.label}
+                component="a"
+                href={social.link}
+                target="_blank"
+                rel="noopener"
+                aria-label={social.label}
+                variant="subtle"
+                size={38}
+                radius="md"
+                className={classes.social}
+              >
+                <social.icon size={19} />
+              </ActionIcon>
+            ))}
+          </Group>
+        </Flex>
       </Container>
     </footer>
   );

@@ -1,19 +1,69 @@
 .card {
-  background-color: var(--mantine-color-body);
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--ps-line-2);
+  background-color: var(--ps-surface);
+  color: var(--mantine-color-text);
+  transition: var(--ps-transition-lift);
+
+  @mixin hover {
+    translate: 0 -4px;
+    rotate: -0.6deg;
+    border-color: var(--ps-pink-line);
+    box-shadow: var(--mantine-shadow-lift);
+  }
+
+  &:nth-child(even) {
+    @mixin hover {
+      rotate: 0.6deg;
+    }
+  }
 }
 
-.title {
-  font-weight: bold;
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  line-height: 1.2;
+.image {
+  flex: 0 0 rem(200px);
+  width: rem(200px);
+  height: rem(150px);
+  background-color: var(--mantine-color-gray-0);
+
+  &[data-contain] {
+    padding: var(--mantine-spacing-md);
+    background-color: var(--mantine-color-white);
+  }
 }
 
 .body {
-  padding: var(--mantine-spacing-md);
+  flex: 1 1 rem(260px);
+  min-width: 0;
+  padding: var(--mantine-spacing-lg);
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    width: 100%;
-  }
+.category {
+  color: var(--ps-muted-2);
+}
+
+.title {
+  margin: var(--mantine-spacing-xs) 0 var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 800;
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+
+.meta {
+  font-size: var(--mantine-font-size-xs);
+  color: var(--ps-muted-2);
+}
+
+.author {
+  font-weight: 600;
+  color: var(--ps-ink-2);
+}
+
+.arrow {
+  flex: none;
+  margin: 0 var(--mantine-spacing-lg);
+  color: var(--mantine-color-mainColor-text);
 }

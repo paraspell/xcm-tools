@@ -1,0 +1,30 @@
+.title {
+  font-size: clamp(22px, 2.6vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.supporters {
+  row-gap: var(--mantine-spacing-xxs);
+  column-gap: clamp(4px, 2.4vw, 32px);
+}
+
+.supporter {
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+}
+
+.logo {
+  transition:
+    transform 0.45s var(--ps-ease),
+    filter 0.35s ease;
+}
+
+.image {
+  width: auto;
+  height: clamp(36px, 5vw, 54px);
+
+  @mixin dark {
+    filter: invert(1);
+  }
+}

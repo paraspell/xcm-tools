@@ -1,4 +1,5 @@
-import { Avatar, Card, Flex, Group, Image, Text } from "@mantine/core";
+import { Avatar, Card, Group, Image, Text } from "@mantine/core";
+import { IconArrowUpRight } from "@tabler/icons-react";
 import type { FC } from "react";
 
 import classes from "./ArticleCard.module.css";
@@ -24,47 +25,33 @@ export const ArticleCard: FC<Props> = ({
     component="a"
     href={link}
     target="_blank"
-    withBorder
-    radius="lg"
+    rel="noopener"
     p={0}
     className={classes.card}
   >
-    <Flex
-      wrap="nowrap"
-      align="center"
-      gap={0}
-      direction={{ base: "column", xs: "row" }}
-    >
-      <Image
-        src={image}
-        maw={{ base: undefined, xs: 200 }}
-        h={160}
-        fit={containImage ? "contain" : "cover"}
-        p="lg"
-      />
-      <div className={classes.body}>
-        <Text tt="uppercase" c="dimmed" fw={700} size="xs">
-          {category}
-        </Text>
-        <Text className={classes.title} mt="xs" mb="md">
-          {title}
-        </Text>
-        <Group wrap="nowrap" gap="xs">
-          <Group gap="xs" wrap="nowrap">
-            <Avatar
-              size={20}
-              src="https://avatars.githubusercontent.com/u/55763425?v=4"
-            />
-            <Text size="xs">Dudo50</Text>
-          </Group>
-          <Text size="xs" c="dimmed">
-            •
-          </Text>
-          <Text size="xs" c="dimmed">
-            {date}
-          </Text>
-        </Group>
-      </div>
-    </Flex>
+    <Image
+      src={image}
+      alt=""
+      fit={containImage ? "contain" : "cover"}
+      mod={{ contain: containImage }}
+      className={classes.image}
+    />
+    <div className={classes.body}>
+      <Text variant="eyebrow" className={classes.category}>
+        {category}
+      </Text>
+      <Text className={classes.title}>{title}</Text>
+      <Group gap="xs" wrap="nowrap" className={classes.meta}>
+        <Avatar
+          size={20}
+          src="https://avatars.githubusercontent.com/u/55763425?v=4"
+          alt=""
+        />
+        <span className={classes.author}>Dudo50</span>
+        <span>•</span>
+        <span>{date}</span>
+      </Group>
+    </div>
+    <IconArrowUpRight size={22} className={classes.arrow} />
   </Card>
 );

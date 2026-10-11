@@ -1,0 +1,11 @@
+.section {
+  padding: clamp(96px, 12vw, 150px) var(--mantine-spacing-lg) 0;
+
+  &[data-spacing="lg"] {
+    padding-top: clamp(116px, 14vw, 176px);
+  }
+}
+
+.content {
+  scroll-margin-top: rem(100px);
+}

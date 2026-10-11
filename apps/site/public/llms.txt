@@ -1,0 +1,33 @@
+# ParaSpell
+
+> ParaSpell is an open-source toolset for cross-chain (XCM) interoperability in the Polkadot, Kusama, Paseo and Westend ecosystems. It includes a TypeScript XCM SDK, a hosted XCM API, an XCM analyser, a CLI and a web playground.
+
+The XCM SDK exposes a fluent builder (`Builder().from().to().currency().recipient().build()`) for building XCM transfers, swaps and transact calls, plus fee queries, dry runs and asset/chain utilities. It ships as `@paraspell/sdk` (Polkadot-API, recommended), `@paraspell/sdk-pjs` (polkadot.js) and `@paraspell/sdk-dedot` (dedot). `@paraspell/swap` adds cross-chain DEX swaps.
+
+## XCM SDK
+
+- [Getting started](https://paraspell.github.io/docs/xcm-sdk/getting-started.html): Install the SDK and pick an API binding
+- [Send XCM](https://paraspell.github.io/docs/xcm-sdk/send-xcm.html): Build transfers, swaps, transact calls, fee queries and dry runs
+- [XCM utilities](https://paraspell.github.io/docs/xcm-sdk/xcm-utils.html): Balance, fee and transferable amount queries
+- [Asset package](https://paraspell.github.io/docs/xcm-sdk/asset-package.html): Asset and chain lookups from `@paraspell/assets`
+- [Pallet package](https://paraspell.github.io/docs/xcm-sdk/pallet-package.html): XCM pallet queries from `@paraspell/pallets`
+- [Supported chains](https://paraspell.github.io/docs/supported-chains.html): Chains and ecosystems covered by the toolset
+
+## XCM API
+
+- [Getting started](https://paraspell.github.io/docs/xcm-api/getting-started.html): Use the hosted REST API instead of the SDK
+- [XCM SDK functionality](https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html): Endpoints for transfers, fees and asset queries
+- [Supported chains endpoint](https://api.paraspell.xyz/v2/chains): Live JSON list of supported chains
+
+## Other tools
+
+- [XCM Analyser](https://paraspell.github.io/docs/xcm-analyser/getting-started.html): Convert XCM locations into human-readable paths
+- [ParaSpell CLI](https://paraspell.github.io/docs/paraspell-cli/getting-started.html): Scaffold a starter project or run SDK commands from the terminal
+- [XCM Playground](https://playground.paraspell.xyz/): Try the SDK, swap and API in the browser without setup
+
+## Optional
+
+- [Documentation home](https://paraspell.github.io/docs/): Full documentation
+- [GitHub monorepo](https://github.com/paraspell/xcm-tools): Source code for the SDK, API, analyser and playground
+- [CLI repository](https://github.com/paraspell/cli): Source code for the ParaSpell CLI
+- [Status page](https://status.paraspell.xyz/): Uptime of hosted ParaSpell services

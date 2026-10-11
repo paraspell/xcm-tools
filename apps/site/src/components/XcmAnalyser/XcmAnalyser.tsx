@@ -1,19 +1,69 @@
+import { CodeHighlight } from "@mantine/code-highlight";
+import { Box, Group, Text, ThemeIcon } from "@mantine/core";
 import {
-  Box,
-  Button,
-  List,
-  rem,
-  SimpleGrid,
-  Text,
-  ThemeIcon,
-  Title,
-} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
-import { IconArrowsExchange, IconCheck, IconPuzzle } from "@tabler/icons-react";
+  IconArrowRight,
+  IconArrowsExchange,
+  IconPuzzle,
+} from "@tabler/icons-react";
+import { useState } from "react";
 
+import { ChipSelect } from "../ChipSelect/ChipSelect";
+import { CopyLabelButton } from "../CopyLabelButton/CopyLabelButton";
+import { ToolSection } from "../ToolSection/ToolSection";
 import classes from "./XcmAnalyser.module.css";
 
-const data = [
+const examples = [
+  {
+    label: "Parachain",
+    output: "../Parachain(2000)",
+    code: `convertLocationToUrl({
+  parents: 1,
+  interior: {
+    X1: { Parachain: 2000 }
+  }
+})`,
+  },
+  {
+    label: "PalletInstance",
+    output: "./PalletInstance(50)/GeneralIndex(41)",
+    code: `convertLocationToUrl({
+  parents: 0,
+  interior: {
+    X2: [
+      { PalletInstance: 50 },
+      { GeneralIndex: '41' }
+    ]
+  }
+})`,
+  },
+  {
+    label: "AccountId32",
+    output: "./AccountId32(null, accountID)",
+    code: `convertLocationToUrl({
+  parents: 0,
+  interior: {
+    X1: {
+      AccountId32: { network: null, id: 'accountID' }
+    }
+  }
+})`,
+  },
+  {
+    label: "parents: 3",
+    output: "../../../PalletInstance(50)/GeneralIndex(41)",
+    code: `convertLocationToUrl({
+  parents: 3,
+  interior: {
+    X2: [
+      { PalletInstance: 50 },
+      { GeneralIndex: '41' }
+    ]
+  }
+})`,
+  },
+];
+
+const features = [
   {
     icon: IconArrowsExchange,
     title: "Easy Location Conversion",
@@ -21,101 +71,80 @@ const data = [
   },
   {
     icon: IconPuzzle,
-    title: "Supports Various Junction Types",
+    title: "Supports Every Junction Type",
     description:
-      "Compatible with a wide range of junction types for comprehensive coverage.",
+      "Compatible with every junction type for comprehensive coverage.",
   },
 ];
 
-export const XcmAnalyser = () => {
-  const isSmallScreen = useMediaQuery("(max-width: 768px)");
-
-  const items = data.map((item) => (
-    <div className={classes.item} key={item.title}>
-      <ThemeIcon
-        variant="light"
-        className={classes.itemIcon}
-        size={60}
-        radius="lg"
-      >
-        <item.icon style={{ width: rem(26), height: rem(26) }} stroke={1.5} />
-      </ThemeIcon>
-
-      <div>
-        <Text fw={700} fz="lg" className={classes.itemTitle}>
-          {item.title}
-        </Text>
-        <Text c="dimmed">{item.description}</Text>
-      </div>
-    </div>
-  ));
+const AnalyserDemo = () => {
+  const [selected, setSelected] = useState(examples[0].label);
+  const example =
+    examples.find((item) => item.label === selected) ?? examples[0];
 
   return (
-    <div className={classes.wrapper} id="xcm-analyser">
-      <div className={classes.body}>
-        <Title className={classes.title}>XCM Analyser 🔎</Title>
-        <Text c="dimmed" maw={550}>
-          Simplify your development process with an advanced tool that
-          translates XCM Locations into human-readable URLs, making cross-chain
-          interactions easier to access and understand.
-        </Text>
+    <>
+      <Text variant="eyebrow" className={classes.label}>
+        Try a location
+      </Text>
+      <ChipSelect
+        data={examples.map((item) => item.label)}
+        value={selected}
+        onChange={setSelected}
+      />
 
-        <SimpleGrid
-          my="xl"
-          hiddenFrom="sm"
-          cols={{ base: 1, xs: 1 }}
-          spacing={isSmallScreen ? 36 : 50}
-        >
-          {items}
-        </SimpleGrid>
+      <CodeHighlight
+        mt="sm"
+        code={example.code}
+        language="ts"
+        withCopyButton={false}
+        background="var(--mantine-color-body)"
+        radius="lg"
+        classNames={{ codeHighlight: classes.code, code: classes.codeBody }}
+      />
 
-        <List
-          mt={30}
-          spacing="sm"
-          size="sm"
-          icon={
-            <ThemeIcon size={20} radius="xl">
-              <IconCheck
-                style={{ width: rem(12), height: rem(12) }}
-                stroke={1.5}
-              />
-            </ThemeIcon>
-          }
-        >
-          <List.Item>
-            <b>Comprehensive Junction Type Support</b> – Supports multiple
-            junction types like Parachain, AccountId32, PalletInstance, and more
-            for complete coverage.
-          </List.Item>
-        </List>
-
-        <div className={classes.controls}>
-          <Button
-            component="a"
-            href="https://paraspell.github.io/docs/xcm-analyser/getting-started.html"
-            target="_blank"
-            size="lg"
-            radius="lg"
-            mt="xl"
-          >
-            Start analysing
-          </Button>
-        </div>
-      </div>
-      <Box
-        visibleFrom="sm"
-        style={{
-          flex: 0.8,
-        }}
-      >
-        <SimpleGrid
-          ml={100}
-          cols={{ base: 1, xs: 1 }}
-          spacing={isSmallScreen ? 36 : 50}
-        >
-          {items}
-        </SimpleGrid>
-      </Box>
-    </div>
+      <Group gap="xs" wrap="nowrap" mt="sm">
+        <ThemeIcon size={36} className={classes.arrow}>
+          <IconArrowRight size={18} />
+        </ThemeIcon>
+        <Box className={classes.output}>
+          <span key={example.label} className={classes.outputText}>
+            {example.output}
+          </span>
+        </Box>
+        <CopyLabelButton
+          value={example.output}
+          variant="default"
+          px="sm"
+          radius="md-lg"
+          className={classes.copy}
+        />
+      </Group>
+    </>
   );
 };
+
+export const XcmAnalyser = () => (
+  <ToolSection
+    id="xcm-analyser"
+    tool="analyser"
+    tagline="locations, made readable"
+    title="XCM Analyser 🔎"
+    description="Simplify your development process with an advanced tool that translates XCM Locations into human-readable URLs, making cross-chain interactions easier to access and understand."
+    bullets={[
+      {
+        title: "Comprehensive Junction Type Support",
+        description:
+          "Supports multiple junction types like Parachain, AccountId32, PalletInstance, and more for complete coverage.",
+      },
+    ]}
+    actions={[
+      {
+        label: "Start analysing",
+        href: "https://paraspell.github.io/docs/xcm-analyser/getting-started.html",
+      },
+    ]}
+    features={features}
+    demo={<AnalyserDemo />}
+  />
+);

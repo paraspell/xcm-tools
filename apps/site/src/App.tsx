@@ -6,16 +6,20 @@ import {
   CodeHighlightAdapterProvider,
   createHighlightJsAdapter,
 } from "@mantine/code-highlight";
-import { MantineProvider, v8CssVariablesResolver } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import hljs from "highlight.js/lib/core";
+import jsonLang from "highlight.js/lib/languages/json";
 import tsLang from "highlight.js/lib/languages/typescript";
 import { BrowserRouter } from "react-router";
 
 import { AppShell } from "./components/AppShell/AppShell";
-import { ScrollToAnchor } from "./components/ScrollToAnchor";
-import { theme } from "./theme";
+import { MagicClicks } from "./components/Magic/MagicClicks";
+import { MagicProvider } from "./components/Magic/MagicProvider";
+import { ScrollToLocation } from "./components/ScrollToLocation";
+import { cssVariablesResolver, theme } from "./theme";
 
 hljs.registerLanguage("typescript", tsLang);
+hljs.registerLanguage("json", jsonLang);
 
 const highlightJsAdapter = createHighlightJsAdapter(hljs);
 
@@ -23,12 +27,15 @@ export const App = () => (
   <BrowserRouter>
     <MantineProvider
       theme={theme}
-      forceColorScheme="light"
-      cssVariablesResolver={v8CssVariablesResolver}
+      defaultColorScheme="auto"
+      cssVariablesResolver={cssVariablesResolver}
     >
       <CodeHighlightAdapterProvider adapter={highlightJsAdapter}>
-        <AppShell />
-        <ScrollToAnchor />
+        <MagicProvider>
+          <AppShell />
+          <ScrollToLocation />
+          <MagicClicks />
+        </MagicProvider>
       </CodeHighlightAdapterProvider>
     </MantineProvider>
   </BrowserRouter>

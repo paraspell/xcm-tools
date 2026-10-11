@@ -16,7 +16,7 @@ export const NotFound = () => (
           is an error contact support.
         </Text>
         <Group justify="center">
-          <Button component={Link} radius="lg" to="/" size="md">
+          <Button component={Link} to="/" size="md">
             Take me back to home page
           </Button>
         </Group>

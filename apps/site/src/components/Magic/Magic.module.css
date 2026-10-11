@@ -1,0 +1,130 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.burst {
+  position: absolute;
+  left: calc(var(--x) - var(--size) / 2);
+  top: calc(var(--y) - var(--size) / 2);
+  width: var(--size);
+  height: var(--size);
+  animation: burst var(--duration) cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes burst {
+  from {
+    transform: translate(0, 0) scale(0.2) rotate(0deg);
+    animation-timing-function: linear;
+  }
+
+  18% {
+    transform: translate(calc(var(--dx) * 0.75), calc(var(--dy) * 0.75))
+      scale(1) rotate(calc(var(--rotation) * 0.6));
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(var(--dx), calc(var(--dy) + 24px)) scale(0.3)
+      rotate(var(--rotation));
+    opacity: 0;
+  }
+}
+
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  left: calc(var(--x) * (80% - var(--size)));
+  top: calc(8% + var(--y) * (62% - var(--size)));
+  width: var(--size);
+  height: var(--size);
+  animation: sparkle 1.5s cubic-bezier(0.3, 0.7, 0.3, 1) forwards;
+}
+
+.glow {
+  position: absolute;
+  inset: 24%;
+  transform: rotate(45deg);
+}
+
+@keyframes sparkle {
+  from {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+    animation-timing-function: linear;
+  }
+
+  18% {
+    transform: scale(1) rotate(45deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.2) rotate(110deg);
+    opacity: 0;
+  }
+}
+
+.star {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke-width: 4;
+  stroke-linejoin: round;
+
+  &[data-tone="gold"] {
+    fill: var(--ps-star-gold);
+    stroke: var(--ps-star-gold-line);
+  }
+
+  &[data-tone="pink"] {
+    fill: var(--ps-star-pink);
+    stroke: var(--ps-star-pink-line);
+  }
+
+  &[data-tone="glow"] {
+    fill: var(--ps-star-glow);
+    stroke: var(--ps-star-gold);
+  }
+}
+
+.wizard[data-waving] {
+  animation: wave 1.1s linear;
+}
+
+@keyframes wave {
+  from {
+    transform: rotate(0deg);
+    animation-timing-function: ease-in;
+  }
+
+  31% {
+    transform: rotate(-16deg);
+  }
+
+  44% {
+    transform: rotate(12deg);
+  }
+
+  56% {
+    transform: rotate(-9deg);
+  }
+
+  69% {
+    transform: rotate(6deg);
+    animation-timing-function: ease-out;
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}

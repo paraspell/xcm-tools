@@ -1,10 +1,11 @@
-import { Container, SimpleGrid, Text, ThemeIcon, Title } from "@mantine/core";
+import { Paper, SimpleGrid, Text, ThemeIcon, Title } from "@mantine/core";
 import {
   IconCloudUpload,
   IconFileCode,
   IconReceiptOff,
 } from "@tabler/icons-react";
 
+import { Section } from "../Section/Section";
 import classes from "./FeaturesIcons.module.css";
 
 const data = [
@@ -24,50 +25,44 @@ const data = [
     icon: IconCloudUpload,
     title: "Self-Deployment flexibility",
     description:
-      "Offers flexibility for self-deployment, adapting  to infrastructure needs.",
+      "Offers flexibility for self-deployment, adapting to infrastructure needs.",
   },
 ];
 
 export const FeaturesIcons = () => {
   const items = data.map((item) => (
-    <div className={classes.item} key={item.title}>
-      <ThemeIcon
-        variant="light"
-        className={classes.itemIcon}
-        size={60}
-        radius="lg"
-      >
-        <item.icon />
+    <Paper className={classes.item} key={item.title}>
+      <ThemeIcon variant="light" size={56} radius="lg">
+        <item.icon size={26} stroke={1.5} />
       </ThemeIcon>
-
-      <div>
-        <Text fw={700} fz="lg" className={classes.itemTitle}>
-          {item.title}
-        </Text>
-        <Text c="dimmed">{item.description}</Text>
-      </div>
-    </div>
+      <Text className={classes.itemTitle}>{item.title}</Text>
+      <Text className={classes.itemDescription}>{item.description}</Text>
+    </Paper>
   ));
 
   return (
-    <Container size="xl" className={classes.wrapper} id="features">
-      <Text className={classes.supTitle}>Features</Text>
-
-      <Title className={classes.title} order={2} fw={700}>
-        ParaSpell is <span className={classes.highlight}>not</span> just another
-        SDK
+    <Section id="features">
+      <Title className={classes.title} order={2}>
+        ParaSpell is{" "}
+        <Text span variant="script" className={classes.highlight}>
+          not
+        </Text>{" "}
+        just another set of Tools
       </Title>
 
-      <Container size={660} p={0}>
-        <Text c="dimmed" className={classes.description}>
-          Designed to enhance cross-chain interactions, ParaSpell equips
-          developers with powerful tools to effortlessly integrate XCM.
-        </Text>
-      </Container>
+      <Text c="dimmed" className={classes.description}>
+        Designed to enhance cross-chain interactions, ParaSpell equips
+        developers with powerful tools to effortlessly integrate XCM.
+      </Text>
 
-      <SimpleGrid cols={{ base: 1, sm: 3 }} spacing={50} mt={30}>
+      <SimpleGrid
+        minColWidth="min(100%, 260px)"
+        autoFlow="auto-fit"
+        spacing="lg"
+        mt={52}
+      >
         {items}
       </SimpleGrid>
-    </Container>
+    </Section>
   );
 };

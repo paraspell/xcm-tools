@@ -1,49 +1,54 @@
-.wrapper {
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
+.label {
+  color: var(--ps-ana-label);
 }
 
-.image {
-  max-width: 40%;
+.code {
+  border: 1px solid var(--ps-ana-line);
+}
 
-  @media (max-width: $mantine-breakpoint-sm) {
-    max-width: 100%;
+.codeBody {
+  min-height: rem(248px);
+  padding: var(--mantine-spacing-md);
+  font-size: var(--mantine-font-size-xs);
+}
+
+.arrow {
+  flex: none;
+  border: 1px solid var(--ps-ana-line);
+  background-color: var(--mantine-color-body);
+  color: var(--mantine-color-mainColor-text);
+}
+
+.output {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md-lg);
+  background-color: var(--ps-term-bg);
+  color: var(--ps-term-accent);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+}
+
+.outputText {
+  display: inline-block;
+  white-space: nowrap;
+  animation: reveal 0.8s steps(30, end) both;
+}
+
+.copy {
+  --control-line: var(--ps-ana-line);
+  --control-bg: var(--mantine-color-body);
+  flex: none;
+}
+
+@keyframes reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
   }
-}
-
-.body {
-  flex: 0.8;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-right: 0;
+  to {
+    clip-path: inset(0 0 0 0);
   }
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    flex: 1;
-  }
-}
-
-.title {
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-size: rem(36px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: var(--mantine-spacing-md);
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
-}
-
-.controls {
-  display: flex;
-}
-
-.item {
-  display: flex;
-}
-
-.itemIcon {
-  margin-right: var(--mantine-spacing-md);
 }

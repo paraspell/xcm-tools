@@ -1,0 +1,8 @@
+.closing {
+  font-size: clamp(30px, 4.4vw, 48px);
+  line-height: 1.2;
+  text-align: center;
+  color: var(--mantine-color-mainColor-text);
+  text-shadow: var(--ps-script-shadow);
+  rotate: -2deg;
+}

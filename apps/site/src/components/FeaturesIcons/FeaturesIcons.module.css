@@ -1,47 +1,61 @@
-.wrapper {
-  padding-top: rem(80px);
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.item {
-  display: flex;
-}
-
-.itemIcon {
-  padding: var(--mantine-spacing-xs);
-  margin-right: var(--mantine-spacing-md);
-}
-
-.itemTitle {
-  margin-bottom: calc(var(--mantine-spacing-xs) / 2);
-}
-
-.supTitle {
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: 800;
-  font-size: var(--mantine-font-size-sm);
-  color: #f01879;
-  letter-spacing: rem(0.5px);
-}
-
 .title {
-  line-height: 1;
+  font-size: clamp(32px, 4.6vw, 52px);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   text-align: center;
-  margin-top: var(--mantine-spacing-xl);
-}
-
-.description {
-  text-align: center;
-  margin-top: var(--mantine-spacing-xs);
+  text-wrap: balance;
 }
 
 .highlight {
-  background-color: #ffe9f6;
-  padding: rem(5px);
-  padding-top: 0;
-  border-radius: var(--mantine-radius-sm);
   display: inline-block;
-  color: light-dark(inherit, var(--mantine-color-white));
+  padding: 0 0.08em;
+  font-size: 1.4em;
+  line-height: 0.8;
+  letter-spacing: 0;
+  color: var(--mantine-color-mainColor-text);
+  text-shadow: var(--ps-script-shadow);
+  rotate: -8deg;
+}
+
+.description {
+  max-width: var(--ps-measure-wide);
+  margin: var(--mantine-spacing-md) auto 0;
+  font-size: var(--mantine-font-size-lg);
+  line-height: var(--mantine-line-height-lg);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.item {
+  padding: var(--mantine-spacing-xl);
+  border: 1px solid var(--ps-line);
+  background-color: var(--ps-surface);
+  box-shadow: var(--mantine-shadow-hairline);
+  transition: var(--ps-transition-lift);
+
+  @mixin hover {
+    translate: 0 -6px;
+    rotate: -1.2deg;
+    border-color: var(--ps-pink-line);
+    box-shadow: var(--mantine-shadow-lift);
+  }
+
+  &:nth-child(even) {
+    @mixin hover {
+      rotate: 1.2deg;
+    }
+  }
+}
+
+.itemTitle {
+  margin-top: var(--mantine-spacing-md);
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 800;
+}
+
+.itemDescription {
+  margin-top: var(--mantine-spacing-xxs);
+  font-size: var(--mantine-font-size-md);
+  line-height: var(--mantine-line-height-lg);
+  color: var(--mantine-color-dimmed);
 }

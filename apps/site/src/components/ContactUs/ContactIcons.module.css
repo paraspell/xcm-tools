@@ -1,18 +1,20 @@
-.wrapper {
-  display: flex;
-  align-items: center;
-  color: var(--mantine-color-black);
-}
-
-.icon {
-  margin-right: var(--mantine-spacing-md);
-  background-color: transparent;
-}
-
 .title {
-  color: var(--mantine-color-gray-9);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 600;
+  color: var(--ps-muted-2);
 }
 
 .description {
-  color: var(--mantine-color-black);
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+}
+
+.email {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 600;
+  color: var(--mantine-color-text);
+
+  @mixin hover {
+    color: var(--mantine-color-mainColor-text);
+  }
 }

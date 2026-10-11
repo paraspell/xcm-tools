@@ -1,0 +1,26 @@
+.header {
+  background-color: transparent;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &[data-solid] {
+    background-color: var(--ps-header-bg);
+    backdrop-filter: blur(18px) saturate(1.5);
+  }
+
+  &[data-scrolled] {
+    box-shadow:
+      0 1px 0 var(--ps-header-line),
+      0 10px 30px -18px alpha(var(--mantine-color-black), 0.25);
+  }
+}
+
+.navbar {
+  top: var(--app-shell-header-height);
+  height: calc(100dvh - var(--app-shell-header-height));
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-lg)
+    var(--mantine-spacing-xl);
+  overflow-y: auto;
+  background-color: var(--ps-menu-bg);
+}
