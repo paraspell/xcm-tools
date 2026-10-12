@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getDynamicBuilder, getLookupFn } from '@polkadot-api/metadata-builders'
 import { decAnyMetadata, unifyMetadata } from '@polkadot-api/substrate-bindings'
-import type { TSubstrateChain } from '@paraspell/sdk-common'
+import { deepEqual, type TLocation, type TSubstrateChain } from '@paraspell/sdk-common'
 import type { PolkadotClient } from 'polkadot-api'
 import { getWsProvider } from 'polkadot-api/ws'
 
@@ -10,6 +10,26 @@ import { getAllAssetsSymbols } from '../../src'
 import type { TAssetInfoNoLoc } from '../types'
 import { decodeSymbol, normalizeLocation } from '../utils/codecUtils'
 import { edString, isLive } from '../utils'
+
+const SYMBOL_FILTER_EXCEPTIONS: Partial<Record<TSubstrateChain, TLocation[]>> = {
+  AssetHubPolkadot: [
+    {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 7873 }] }
+    }
+  ]
+}
+
+const getRegularAssetLocation = (id: number) => ({
+  parents: 1,
+  interior: {
+    X3: [
+      { Parachain: getParaId('AssetHubPolkadot') },
+      { PalletInstance: 50 },
+      { GeneralIndex: Number(id) }
+    ]
+  }
+})
 
 // Westend Asset Hub has orphaned ForeignAssets keys left by the XCMv5 migration that
 // can no longer be decoded (paritytech/polkadot-sdk#7989), so getEntries() throws. List
@@ -81,7 +101,13 @@ export const fetchAssetHubAssets = async (
   const parsedRegular = (
     await Promise.all(
       regular
-        .filter(({ value }: any) => allSymbols.has(decodeSymbol(value.symbol).toLowerCase()))
+        .filter(
+          ({ keyArgs: [id], value }: any) =>
+            allSymbols.has(decodeSymbol(value.symbol).toLowerCase()) ||
+            SYMBOL_FILTER_EXCEPTIONS[chain]?.some(loc =>
+              deepEqual(loc, getRegularAssetLocation(id))
+            )
+        )
         .map(async ({ keyArgs: [id], value }: any) => {
           const details = await api.query.Assets.Asset.getValue(id)
           if (!isLive(details)) return null
@@ -90,16 +116,7 @@ export const fetchAssetHubAssets = async (
             assetId: String(id),
             symbol: decodeSymbol(value.symbol),
             decimals: value.decimals,
-            location: {
-              parents: 1,
-              interior: {
-                X3: [
-                  { Parachain: getParaId('AssetHubPolkadot') },
-                  { PalletInstance: 50 },
-                  { GeneralIndex: Number(id) }
-                ]
-              }
-            },
+            location: getRegularAssetLocation(id),
             existentialDeposit: edString(details)
           }
         })

@@ -5863,6 +5863,29 @@
         "alias": "DOT7"
       },
       {
+        "assetId": "7873",
+        "symbol": "dotUSD",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 7873
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
+      },
+      {
         "assetId": "201",
         "symbol": "WUD",
         "decimals": 6,
@@ -8520,6 +8543,29 @@
             "X1": [
               {
                 "Parachain": 3397
+              }
+            ]
+          }
+        },
+        "isNative": true
+      },
+      {
+        "assetId": "3",
+        "symbol": "XAUH",
+        "decimals": 18,
+        "existentialDeposit": "0",
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 3397
+              },
+              {
+                "GeneralKey": {
+                  "length": 32,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000078617568"
+                }
               }
             ]
           }
