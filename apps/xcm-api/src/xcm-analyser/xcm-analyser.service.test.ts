@@ -31,16 +31,7 @@ describe('XcmAnalyserService', () => {
 
   it('throws BadRequestException when neither location nor xcm is provided', () => {
     expect(() =>
-      service.getLocationPaths({
-        location: undefined,
-        xcm: undefined,
-      }),
-    ).toThrow(BadRequestException);
-    expect(() =>
-      service.getLocationPaths({
-        location: undefined,
-        xcm: undefined,
-      }),
+      service.getLocationPaths({ location: undefined, xcm: undefined }),
     ).toThrow(BadRequestException);
   });
 
