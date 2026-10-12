@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.1...sdk-v14.4.2) (2026-10-12)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
 ## [14.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.0...sdk-v14.4.1) (2026-10-12)
 
 

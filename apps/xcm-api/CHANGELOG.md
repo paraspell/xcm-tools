@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.1...xcm-api-v14.4.2) (2026-10-12)
+
+
+### Bug Fixes
+
+* **xcm-api:** Simplify analyser test file 🛠️ ([41cbe6e](https://github.com/paraspell/xcm-tools/commit/41cbe6e23edf8c8a125e9f2f957ccb7c45c2c7ec))
+
 ## [14.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.0...xcm-api-v14.4.1) (2026-10-12)
 
 
