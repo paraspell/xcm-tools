@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.4.1](https://github.com/paraspell/xcm-tools/compare/assets-v14.4.0...assets-v14.4.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* **assets:** Filter out HOLLAR pool assets 🔧 ([14837e2](https://github.com/paraspell/xcm-tools/commit/14837e21487c0001b34a519c5299d9964f5cc0b0))
+* **assets:** Fix dotUSD not fetching 🔧 ([8e70d5a](https://github.com/paraspell/xcm-tools/commit/8e70d5a6fcece53511c9320320ca913e708aa43c))
+
 ## [14.4.0](https://github.com/paraspell/xcm-tools/compare/assets-v14.3.6...assets-v14.4.0) (2026-09-30)
 
 
