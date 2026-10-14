@@ -32,7 +32,7 @@ ParaSpell XCM SDK is the 🥇 in the ecosystem to support **PolkadotJS**, **Dedo
 
 ```bash
 #PolkadotJS peer dependencies
-npm install | pnpm add | yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/util @polkadot/util-crypto
+npm install | pnpm add | yarn add @polkadot/api @polkadot/types @polkadot/util @polkadot/util-crypto
 ```
 
 ### Install SDK 
