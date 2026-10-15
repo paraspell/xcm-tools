@@ -183,7 +183,11 @@ describe('AcalaExchange', () => {
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe(46199999999998n);
+      // Destination fee buffer must be applied to the fee only, then subtracted
+      // from the output (matching Bifrost/AssetHub), not padded onto the whole output.
+      // amountOut = 42e12; toDestTransactionFee = 1; padValueBy(1, 10) = 1
+      // => 42e12 - 1 = 41999999999999n (previously 46199999999998n, ~11% inflated)
+      expect(result.amountOut).toBe(41999999999999n);
     });
 
     it('should pass slippagePct as acceptiveSlippage to the dex swap', async () => {

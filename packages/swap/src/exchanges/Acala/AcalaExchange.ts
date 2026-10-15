@@ -111,7 +111,10 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
 
     if (toToken.symbol === nativeAssetSymbol) {
-      const amountOutWithFee = padValueBy(amountOut - toDestTransactionFee, FEE_BUFFER_PCT);
+      const amountOutWithFee = amountOut - padValueBy(toDestTransactionFee, FEE_BUFFER_PCT);
+
+      if (amountOutWithFee <= 0n) throw new AmountTooLowError();
+
       Logger.log('Amount out with fee:', amountOutWithFee);
       Logger.log('Amount out decimals', toToken.decimals);
       return { tx, amountOut: amountOutWithFee };
