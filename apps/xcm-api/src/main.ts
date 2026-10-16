@@ -28,10 +28,9 @@ export const bootstrap = async () => {
     });
   }
 
-  (app.getHttpAdapter().getInstance() as ExpressAdapter).set(
-    'json replacer',
-    replaceBigInt,
-  );
+  const expressApp = app.getHttpAdapter().getInstance() as ExpressAdapter;
+  expressApp.set('json replacer', replaceBigInt);
+  expressApp.set('trust proxy', 1);
 
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());

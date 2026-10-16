@@ -1,5 +1,5 @@
 import type { ConfigService } from '@nestjs/config';
-import type { ThrottlerModuleOptions } from '@nestjs/throttler';
+import { seconds, type ThrottlerModuleOptions } from '@nestjs/throttler';
 
 import type { RequestWithUser } from '../types/types.js';
 
@@ -14,7 +14,7 @@ export const throttlerConfig = (
   return {
     throttlers: [
       {
-        ttl: process.env.NODE_ENV === 'test' ? 0 : rateLimitTtlSec,
+        ttl: process.env.NODE_ENV === 'test' ? 0 : seconds(rateLimitTtlSec),
         limit: (context) => {
           const rateLimitReqCountAuth = config.get<number>(
             'RATE_LIMIT_REQ_COUNT_AUTH',
