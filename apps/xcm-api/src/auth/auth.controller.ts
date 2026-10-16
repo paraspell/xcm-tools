@@ -1,15 +1,12 @@
 import {
   Body,
   Controller,
-  Headers,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Request,
-  Res,
 } from '@nestjs/common';
-import type { Response } from 'express';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -35,15 +32,9 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('higher-request-limit-form')
-  async submitHigherRequestLimitForm(
+  submitHigherRequestLimitForm(
     @Body() higherRequestLimitDto: HigherRequestLimitDto,
-    @Headers('x-forwarded-prefix') forwardedPrefix: string | undefined,
-    @Res() res: Response,
   ) {
-    await this.authService.submitHigherRequestLimitForm(higherRequestLimitDto);
-    const apiPrefix = forwardedPrefix ?? '';
-    return res.redirect(
-      `${apiPrefix}/app/higher-request-limit/submit-success.html`,
-    );
+    return this.authService.submitHigherRequestLimitForm(higherRequestLimitDto);
   }
 }

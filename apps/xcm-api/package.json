@@ -37,6 +37,7 @@
     "@paraspell/evm-snowbridge": "workspace:*",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
+    "@paraspell/xcm-api-forms": "workspace:*",
     "@paraspell/swap": "workspace:*",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",

@@ -1,0 +1,32 @@
+.header {
+  position: relative;
+  z-index: 2;
+}
+
+.host {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(8px);
+  height: rem(32px);
+  padding: 0 var(--mantine-spacing-sm) 0 rem(4px);
+  border: rem(1px) solid var(--ps-api-line);
+  border-radius: rem(10px);
+  background-color: var(--mantine-color-body);
+  white-space: nowrap;
+
+  @mixin smaller-than 36em {
+    padding-right: rem(4px);
+  }
+}
+
+.hostLabel {
+  padding: rem(3px) rem(8px);
+  border-radius: rem(7px);
+  background-color: var(--ps-api-bg);
+  color: var(--ps-api-label);
+  font-size: rem(11px);
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}

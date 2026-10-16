@@ -39,7 +39,7 @@ import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
       useFactory: throttlerConfig,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(import.meta.dirname, '..', 'client'),
+      rootPath: join(import.meta.dirname, '..', '..', 'xcm-api-forms', 'dist'),
       serveRoot: '/app',
     }),
     SentryModule.forRoot(),

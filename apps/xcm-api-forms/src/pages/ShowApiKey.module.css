@@ -1,0 +1,34 @@
+.key {
+  padding: rem(14px) var(--mantine-spacing-md);
+  border: rem(1px) solid var(--ps-api-line);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--ps-api-tile);
+  color: var(--ps-ink-2);
+  font-family: var(--mantine-font-family-monospace);
+  font-size: rem(13px);
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: break-all;
+  user-select: all;
+}
+
+.header {
+  padding: rem(6px) var(--mantine-spacing-sm) rem(6px) rem(6px);
+  border: rem(1px) solid var(--ps-api-line);
+  border-radius: var(--mantine-radius-md-lg);
+  background-color: var(--mantine-color-body);
+}
+
+.headerValue {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+}
+
+.headerName {
+  font-weight: 700;
+  color: var(--mantine-color-mainColor-text);
+}
