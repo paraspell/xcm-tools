@@ -1,0 +1,33 @@
+{
+  "name": "@paraspell/xcm-api-forms",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "compile": "tsc",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix src",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src"
+  },
+  "dependencies": {
+    "@mantine/core": "^9.6.3",
+    "@mantine/form": "^9.6.3",
+    "@mantine/hooks": "^9.6.3",
+    "@tabler/icons-react": "^3.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router": "^8.4.0"
+  },
+  "devDependencies": {
+    "@types/grecaptcha": "^3.0.9",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "postcss": "^8.5.28",
+    "postcss-preset-mantine": "^1.18.0",
+    "vite": "^8.3.1"
+  }
+}

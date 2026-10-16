@@ -1,0 +1,45 @@
+.tile {
+  padding: rem(14px) var(--mantine-spacing-md);
+  border: rem(1px) solid var(--ps-line-2);
+  border-radius: var(--mantine-radius-lg);
+  background-color: var(--ps-sunk);
+
+  &[data-with-key] {
+    border-color: var(--ps-api-line);
+    background-color: var(--ps-api-bg);
+  }
+}
+
+.label {
+  font-size: rem(13px);
+  font-weight: 600;
+  color: var(--mantine-color-dimmed);
+
+  [data-with-key] & {
+    color: var(--ps-api-label);
+  }
+}
+
+.value {
+  font-size: rem(30px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ps-ink-3);
+
+  [data-with-key] & {
+    color: var(--mantine-color-text);
+  }
+}
+
+.unit {
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  color: var(--ps-muted-2);
+}
+
+.bolt {
+  margin-left: auto;
+  font-size: rem(20px);
+  line-height: 1;
+}

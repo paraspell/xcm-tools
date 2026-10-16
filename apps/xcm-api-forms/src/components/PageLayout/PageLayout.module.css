@@ -1,0 +1,39 @@
+.tagline {
+  display: inline-block;
+  margin-bottom: rem(8px);
+  font-size: rem(30px);
+  line-height: 1.1;
+  color: var(--ps-script);
+  rotate: -4deg;
+}
+
+.description {
+  max-width: rem(440px);
+  margin-top: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-md);
+  line-height: 1.65;
+  color: var(--mantine-color-dimmed);
+  text-wrap: pretty;
+}
+
+.cardWrap {
+  position: relative;
+  margin-top: rem(24px);
+  padding-top: var(--mantine-spacing-xl);
+}
+
+.wizard {
+  position: absolute;
+  top: rem(-6px);
+  right: rem(36px);
+  font-size: rem(58px);
+  line-height: 1;
+  rotate: 12deg;
+  transform-origin: 50% 90%;
+  user-select: none;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+}

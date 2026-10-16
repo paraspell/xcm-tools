@@ -1,4 +1,3 @@
-import type { Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { AnalyticsService } from '../analytics/analytics.service.js';
@@ -50,47 +49,16 @@ describe('AuthController', () => {
   });
 
   describe('submitHigherRequestLimitForm', () => {
-    it('should call authService.submitHigherRequestLimitForm and redirect with correct URL', async () => {
+    it('should call authService.submitHigherRequestLimitForm with the dto', async () => {
       const higherRequestLimitDto = new HigherRequestLimitDto();
-      const res = {
-        redirect: vi.fn(),
-      } as unknown as Response;
 
-      const spy = vi.spyOn(authService, 'submitHigherRequestLimitForm');
+      const spy = vi
+        .spyOn(authService, 'submitHigherRequestLimitForm')
+        .mockResolvedValue(undefined);
 
-      const redirectSpy = vi.spyOn(res, 'redirect');
-
-      await authController.submitHigherRequestLimitForm(
-        higherRequestLimitDto,
-        undefined,
-        res,
-      );
+      await authController.submitHigherRequestLimitForm(higherRequestLimitDto);
 
       expect(spy).toHaveBeenCalledWith(higherRequestLimitDto);
-      expect(redirectSpy).toHaveBeenCalledWith(
-        '/app/higher-request-limit/submit-success.html',
-      );
-    });
-
-    it('should prefix redirect when forwarded prefix is provided', async () => {
-      const higherRequestLimitDto = new HigherRequestLimitDto();
-      const res = {
-        redirect: vi.fn(),
-      } as unknown as Response;
-
-      vi.spyOn(authService, 'submitHigherRequestLimitForm');
-
-      const redirectSpy = vi.spyOn(res, 'redirect');
-
-      await authController.submitHigherRequestLimitForm(
-        higherRequestLimitDto,
-        '/v1',
-        res,
-      );
-
-      expect(redirectSpy).toHaveBeenCalledWith(
-        '/v1/app/higher-request-limit/submit-success.html',
-      );
     });
   });
 });

@@ -73,6 +73,11 @@ describe('AuthService', () => {
 
       const result = await authService.generateApiKey('test-recaptcha');
 
+      expect(validateRecaptcha).toHaveBeenCalledWith(
+        'test-recaptcha',
+        'secret-key',
+        'generate_api_key',
+      );
       expect(usersServiceSpy).toHaveBeenCalled();
       expect(jwtServiceSpy).toHaveBeenCalledWith({
         userId: mockUser.id,
@@ -135,9 +140,21 @@ describe('AuthService', () => {
       expect(validateRecaptcha).toHaveBeenCalledWith(
         dto['g-recaptcha-response'],
         'secret-key',
+        'higher_request_limit',
       );
       expect(jwtServiceSpy).toHaveBeenCalledWith(dto.api_key);
-      expect(sendEmail).toHaveBeenCalled();
+      expect(sendEmail).toHaveBeenCalledWith(
+        'We received your higher limit request',
+        expect.any(String),
+        dto.email,
+        configService,
+      );
+      expect(sendEmail).toHaveBeenCalledWith(
+        'New limit request: 1000 req/min from test@example.com',
+        expect.any(String),
+        'secret-key',
+        configService,
+      );
     });
   });
 });

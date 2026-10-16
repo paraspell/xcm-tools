@@ -1,0 +1,14 @@
+.notice {
+  margin-top: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-xs);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ps-muted-2);
+  text-wrap: pretty;
+}
+
+.link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: rem(2px);
+}

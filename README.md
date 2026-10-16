@@ -25,6 +25,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 ```
 apps | - XCM Playground
      | - XCM API
+     | - XCM API Form pages
      | - XCM Tools Landing page
 
 packages | - XCM SDK

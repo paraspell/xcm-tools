@@ -1,0 +1,36 @@
+.page {
+  position: relative;
+  min-height: 100dvh;
+  overflow: clip;
+}
+
+.glowPink,
+.glowViolet {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.glowPink {
+  top: rem(-220px);
+  left: rem(-260px);
+  width: rem(720px);
+  height: rem(720px);
+  background: radial-gradient(closest-side, var(--ps-glow-1), transparent);
+}
+
+.glowViolet {
+  top: rem(420px);
+  right: rem(-280px);
+  width: rem(780px);
+  height: rem(780px);
+  background: radial-gradient(closest-side, var(--ps-glow-2), transparent);
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: rem(568px);
+  margin: 0 auto;
+  padding: rem(40px) rem(24px) rem(96px);
+}

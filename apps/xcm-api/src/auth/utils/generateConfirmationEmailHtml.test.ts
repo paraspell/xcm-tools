@@ -13,26 +13,26 @@ describe('generateConfirmationEmailHtml', () => {
     expect(result).toContain(title);
     expect(result).toContain(reason);
     expect(result).toContain(requestedLimit);
-    expect(result).toContain('<html>');
+    expect(result).toContain('<html');
     expect(result).toContain('</html>');
     expect(result).toContain('<head>');
     expect(result).toContain('</head>');
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
-    expect(result).toContain('Your request has been submitted successfully.');
-    expect(result).toContain('Team ParaSpell✨');
+    expect(result).toContain("We've got your request");
+    expect(result).toContain('Team ParaSpell&#10024;');
   });
 
   it('should handle empty strings gracefully', () => {
     const result = generateConfirmationEmailHtml('', '', '');
 
-    expect(result).toContain('<html>');
+    expect(result).toContain('<html');
     expect(result).toContain('</html>');
     expect(result).toContain('<head>');
     expect(result).toContain('</head>');
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
-    expect(result).toContain('Your request has been submitted successfully.');
+    expect(result).toContain("We've got your request");
   });
 
   it('should escape HTML metacharacters in user-supplied values', () => {

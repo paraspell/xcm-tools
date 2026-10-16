@@ -1,0 +1,24 @@
+.keyLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+}
+
+.keyInput {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: rem(13px);
+}
+
+.reason {
+  min-height: rem(118px);
+}
+
+.unit {
+  justify-content: flex-end;
+  padding-right: rem(14px);
+  font-size: rem(13px);
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ps-muted-2);
+}

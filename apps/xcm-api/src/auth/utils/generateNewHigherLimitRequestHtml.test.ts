@@ -20,26 +20,40 @@ describe('generateNewHigherLimitRequestHtml', () => {
     expect(result).toContain(userId);
     expect(result).toContain(reason);
     expect(result).toContain(requestedLimit);
-    expect(result).toContain('<html>');
+    expect(result).toContain('<html');
     expect(result).toContain('</html>');
     expect(result).toContain('<head>');
     expect(result).toContain('</head>');
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
-    expect(result).toContain('New higher limit request for submitted:');
-    expect(result).toContain('Team ParaSpell✨');
+    expect(result).toContain('New higher limit request');
+    expect(result).toContain('mailto:testuser@example.com');
   });
 
   it('should handle empty strings gracefully', () => {
     const result = generateNewHigherLimitRequestHtml('', '', '', '');
 
-    expect(result).toContain('<html>');
+    expect(result).toContain('<html');
     expect(result).toContain('</html>');
     expect(result).toContain('<head>');
     expect(result).toContain('</head>');
     expect(result).toContain('<body');
     expect(result).toContain('</body>');
-    expect(result).toContain('New higher limit request for submitted:');
+    expect(result).toContain('New higher limit request');
+  });
+
+  it('should encode mailto query characters in the user email', () => {
+    const result = generateNewHigherLimitRequestHtml(
+      'user@example.com?bcc=attacker@example.com',
+      '',
+      '',
+      '',
+    );
+
+    expect(result).toContain(
+      'mailto:user@example.com%3Fbcc%3Dattacker@example.com"',
+    );
+    expect(result).not.toContain('mailto:user@example.com?bcc=');
   });
 
   it('should escape HTML metacharacters in user-supplied values', () => {

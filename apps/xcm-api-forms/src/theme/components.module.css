@@ -1,0 +1,92 @@
+:where(.title) {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.text[data-variant='eyebrow'] {
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ps-api-label);
+}
+
+.text[data-variant='script'] {
+  font-family: var(--ps-font-script);
+  font-weight: 700;
+}
+
+.text[data-variant='error'] {
+  margin-top: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-sm);
+  font-weight: 600;
+  text-align: center;
+  color: var(--mantine-color-error);
+}
+
+.control {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    translate 0.2s ease;
+}
+
+.control[data-variant='default'] {
+  @mixin hover {
+    border-color: var(--ps-pink-line);
+    background-color: var(--mantine-color-default);
+    color: var(--mantine-color-mainColor-text);
+  }
+}
+
+.control[data-variant='filled'] {
+  @mixin hover {
+    translate: 0 rem(-2px);
+  }
+}
+
+.inputWrapper {
+  --input-padding: rem(12px);
+}
+
+.input {
+  --input-bg: var(--mantine-color-body);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:focus {
+    box-shadow: 0 0 0 rem(3px) var(--ps-focus-ring);
+  }
+}
+
+.label {
+  margin-bottom: rem(4px);
+  font-weight: 600;
+}
+
+.paper {
+  border: rem(1px) solid var(--ps-line);
+  background-color: var(--ps-surface);
+}
+
+.badge {
+  --badge-height: rem(24px);
+  --badge-fz: var(--mantine-font-size-xs);
+  --badge-padding-x: rem(10px);
+  letter-spacing: 0;
+}
+
+.badge[data-variant='ok'] {
+  --badge-bg: var(--ps-ok-bg);
+  --badge-color: var(--ps-ok-ink);
+  text-transform: none;
+}
+
+.badge[data-variant='get'] {
+  --badge-bg: var(--ps-get-bg);
+  --badge-color: var(--ps-get-ink);
+  --badge-radius: var(--mantine-radius-md);
+  font-family: var(--mantine-font-family-monospace);
+}

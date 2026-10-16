@@ -14,7 +14,7 @@ const sendEmails = async (
   userId: string,
   configService: ConfigService,
 ) => {
-  const title = 'Request Submission Confirmation';
+  const title = 'We received your higher limit request';
   await sendEmail(
     title,
     generateConfirmationEmailHtml(title, reason, requestedLimit),
@@ -24,7 +24,7 @@ const sendEmails = async (
   const emailsVal = configService.get<string>('EMAIL_ADDRESS_RECIPIENT_ARR');
   if (emailsVal) {
     const emails = emailsVal.split(',');
-    const title = 'New higher limit request';
+    const title = `New limit request: ${requestedLimit} req/min from ${email}`;
     await Promise.all(
       emails.map((adminEmail) =>
         sendEmail(
@@ -61,6 +61,7 @@ export class AuthService {
     const verificationResult = await validateRecaptcha(
       recaptcha,
       recaptchaSecretKey,
+      'generate_api_key',
     );
     if (verificationResult) {
       const { id } = await this.usersService.create();
@@ -83,6 +84,7 @@ export class AuthService {
     const verificationResult = await validateRecaptcha(
       dto['g-recaptcha-response'],
       recaptchaSecretKey,
+      'higher_request_limit',
     );
     if (verificationResult) {
       const { userId } = this.jwtService.verify<{ userId: string }>(

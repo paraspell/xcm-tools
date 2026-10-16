@@ -1,0 +1,15 @@
+.note {
+  margin-top: rem(24px);
+  font-size: var(--mantine-font-size-sm);
+  line-height: 1.55;
+  text-align: center;
+  color: var(--ps-ink-3);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: rem(4px);
+  font-weight: 700;
+  white-space: nowrap;
+}
