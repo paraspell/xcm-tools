@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.4.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.3...xcm-api-v14.4.4) (2026-10-16)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix throttler config 🛠️ ([4b7e950](https://github.com/paraspell/xcm-tools/commit/4b7e95087a7bcf82fbbc3e4bc393292e34c29fdb))
+
+
+### Code Refactoring
+
+* **xcm-api:** Refactor xcm api forms into standalone app 🧙‍♂️ ([aff250e](https://github.com/paraspell/xcm-tools/commit/aff250e12dcc36360c3cdc2bc436f77319795f01))
+
 ## [14.4.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.2...xcm-api-v14.4.3) (2026-10-12)
 
 
