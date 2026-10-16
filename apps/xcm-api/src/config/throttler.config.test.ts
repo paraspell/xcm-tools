@@ -59,7 +59,7 @@ describe('throttlerConfig', () => {
 
     const throttlers = getThrottlers(result);
 
-    expect(throttlers[0].ttl).toBe(60);
+    expect(throttlers[0].ttl).toBe(60_000);
     expect(spy).toHaveBeenCalledWith('RATE_LIMIT_TTL_SEC');
   });
 
