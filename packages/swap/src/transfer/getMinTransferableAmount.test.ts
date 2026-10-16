@@ -12,7 +12,7 @@ import type {
   TOriginInfo,
   TTransformedOptions,
 } from '../types';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import { getMinTransferableAmount } from './getMinTransferableAmount';
 import {
   createToExchangeBuilder,
@@ -150,7 +150,7 @@ describe('getMinTransferableAmount', () => {
       api: mockApi,
     });
     expect(getExistentialDeposit).not.toHaveBeenCalled();
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getExchangeOriginFee).not.toHaveBeenCalled();
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
 
@@ -169,7 +169,7 @@ describe('getMinTransferableAmount', () => {
     const result = await getMinTransferableAmount({ ...createOptions(), api: mockApi });
 
     expect(result).toBe(43n);
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getExchangeOriginFee).not.toHaveBeenCalled();
   });
 
   it('adds swap fee when asset is native', async () => {
@@ -188,11 +188,11 @@ describe('getMinTransferableAmount', () => {
       feeType: 'dryRun',
       asset: createAssetInfo('HDX'),
     };
-    vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
+    vi.mocked(getExchangeOriginFee).mockResolvedValue(swapDetail);
 
     const result = await getMinTransferableAmount({ ...createOptions(), api: mockApi });
 
-    expect(getSwapFee).toHaveBeenCalledTimes(1);
+    expect(getExchangeOriginFee).toHaveBeenCalledTimes(1);
     expect(result).toBe(31n);
   });
 });

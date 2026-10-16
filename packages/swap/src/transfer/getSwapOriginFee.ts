@@ -2,7 +2,7 @@ import type { TXcmFeeDetailWithForwardedXcm } from '@paraspell/sdk-core';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import {
   canUseExecuteTransfer,
   getSwapExecuteOriginXcmFee,
@@ -46,7 +46,7 @@ export const getSwapOriginFee = async <
     return getToExchangeOriginFee({ ...options, origin }, disableFallback);
   }
 
-  // Origin chain is the exchange itself — fee is the swap fee
-  const { result } = await getSwapFee(dex, options, disableFallback);
+  // Origin chain is the exchange itself — fee is the swap fee (+ outgoing transfer to destination)
+  const result = await getExchangeOriginFee(dex, options, disableFallback);
   return result as TXcmFeeDetailWithForwardedXcm<TDisableFallback>;
 };

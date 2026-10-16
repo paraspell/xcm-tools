@@ -4,7 +4,7 @@ import { getBalance, getExistentialDeposit, getNativeAssetSymbol } from '@parasp
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
 import type { TTransformedOptions } from '../types/TRouter';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import {
   createToExchangeBuilder,
   prepareTransformedOptions,
@@ -41,15 +41,15 @@ const computeLocalTransferableAmount = async <
 
   const existentialDeposit = getExistentialDeposit(exchange.chain, currency);
 
-  let swapFee = 0n;
+  let exchangeFee = 0n;
   const nativeSymbol = getNativeAssetSymbol(exchange.chain);
 
   if (exchange.assetFrom.symbol === nativeSymbol) {
-    const { result } = await getSwapFee(dex, options);
-    swapFee = result.fee ?? 0n;
+    const { fee } = await getExchangeOriginFee(dex, options);
+    exchangeFee = fee ?? 0n;
   }
 
-  const transferable = balance - existentialDeposit - swapFee;
+  const transferable = balance - existentialDeposit - exchangeFee;
   return transferable > 0n ? transferable : 0n;
 };
 

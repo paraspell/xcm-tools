@@ -13,7 +13,7 @@ import type {
   TOriginInfo,
   TTransformedOptions,
 } from '../types/TRouter';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import { getTransferableAmount } from './getTransferableAmount';
 import {
   createToExchangeBuilder,
@@ -166,7 +166,7 @@ describe('getTransferableAmount', () => {
       api: mockApi,
     });
     expect(getBalance).not.toHaveBeenCalled();
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getExchangeOriginFee).not.toHaveBeenCalled();
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
 
@@ -190,7 +190,7 @@ describe('getTransferableAmount', () => {
         symbol: 'HDX',
       },
     };
-    vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
+    vi.mocked(getExchangeOriginFee).mockResolvedValue(swapDetail);
 
     const result = await getTransferableAmount({
       ...createOptions({ from: undefined }),
@@ -205,7 +205,7 @@ describe('getTransferableAmount', () => {
       currency: expect.objectContaining({ location: routerAsset.location }),
     });
     expect(getExistentialDeposit).toHaveBeenCalledWith('Hydration', expect.anything());
-    expect(getSwapFee).toHaveBeenCalledTimes(1);
+    expect(getExchangeOriginFee).toHaveBeenCalledTimes(1);
   });
 
   it('does not subtract swap fee when the sent asset is not the native token', async () => {
@@ -224,6 +224,6 @@ describe('getTransferableAmount', () => {
     const result = await getTransferableAmount({ ...createOptions(), api: mockApi });
 
     expect(result).toBe(900n);
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getExchangeOriginFee).not.toHaveBeenCalled();
   });
 });

@@ -15,7 +15,7 @@ import type {
   TOriginInfo,
   TTransformedOptions,
 } from '../types';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import { getSwapOriginFee } from './getSwapOriginFee';
 import { getToExchangeOriginFee } from './utils';
 
@@ -48,7 +48,6 @@ describe('getSwapOriginFee', () => {
     feeType: 'dryRun',
     asset: { symbol: 'FOO' },
   } as TXcmFeeDetailWithForwardedXcm<false>;
-  const swapAmountOut = 5000n;
   const toExchangeOriginValue = {
     fee: 10n,
     feeType: 'dryRun',
@@ -86,10 +85,7 @@ describe('getSwapOriginFee', () => {
     >;
 
     vi.clearAllMocks();
-    vi.mocked(getSwapFee).mockResolvedValue({
-      result: swapFee,
-      amountOut: swapAmountOut,
-    });
+    vi.mocked(getExchangeOriginFee).mockResolvedValue(swapFee);
     vi.mocked(getToExchangeOriginFee).mockResolvedValue(toExchangeOriginValue);
     vi.mocked(getOriginXcmFee).mockResolvedValue(executeOriginValue);
   });
@@ -110,7 +106,7 @@ describe('getSwapOriginFee', () => {
 
       expect(getOriginXcmFee).toHaveBeenCalledTimes(1);
       expect(getToExchangeOriginFee).not.toHaveBeenCalled();
-      expect(getSwapFee).not.toHaveBeenCalled();
+      expect(getExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(executeOriginValue);
     });
 
@@ -184,14 +180,14 @@ describe('getSwapOriginFee', () => {
         expect.objectContaining({ origin: options.origin }),
         false,
       );
-      expect(getSwapFee).not.toHaveBeenCalled();
+      expect(getExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(toExchangeOriginValue);
     });
 
     it('returns swap fee when origin is undefined (origin chain == exchange)', async () => {
       const result = await getSwapOriginFee(dex, options, false);
 
-      expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
+      expect(getExchangeOriginFee).toHaveBeenCalledWith(dex, options, false);
       expect(getToExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(swapFee);
     });
@@ -204,7 +200,7 @@ describe('getSwapOriginFee', () => {
 
       const result = await getSwapOriginFee(dex, options, false);
 
-      expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
+      expect(getExchangeOriginFee).toHaveBeenCalledWith(dex, options, false);
       expect(getToExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(swapFee);
     });
