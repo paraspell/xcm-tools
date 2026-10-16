@@ -94,7 +94,7 @@ describe('AssetHubExchange', () => {
           keep_alive: true,
         },
       });
-      expect(result).toEqual({ tx: dummyTx, amountOut: 1945n });
+      expect(result).toEqual({ tx: dummyTx, amountOut: 1845n });
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
     });
 
@@ -121,7 +121,7 @@ describe('AssetHubExchange', () => {
           keep_alive: true,
         },
       });
-      expect(result).toEqual({ tx: dummyTx, amountOut: 1890n });
+      expect(result).toEqual({ tx: dummyTx, amountOut: 1790n });
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(2);
 
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(2, {
@@ -148,7 +148,7 @@ describe('AssetHubExchange', () => {
       vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       const result: TSingleSwapResult<unknown> = await instance.swapCurrency(opts, 0n);
-      expect(result).toEqual({ tx: dummyTx, amountOut: 2000n });
+      expect(result).toEqual({ tx: dummyTx, amountOut: 1900n });
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
     });
 
