@@ -1689,6 +1689,11 @@ describe("DedotApi", () => {
     });
 
     it.each([
+      [{ error: { type: "Module", value: { type: "BadModule" } } }, "BadModule"],
+      [{ error: { type: "Token", value: "FundsUnavailable" } }, "FundsUnavailable"],
+      [{ error: { type: "Arithmetic", value: "Underflow" } }, "Underflow"],
+      [{ error: { type: "Transactional", value: "LimitReached" } }, "LimitReached"],
+      [{ error: { type: "BadOrigin" } }, "BadOrigin"],
       [{ error: { Other: "OtherFailure" } }, "OtherFailure"],
       [{ error: "StringFailure" }, "StringFailure"],
       [{ error: { custom: true } }, '{"custom":true}'],
@@ -1721,6 +1726,10 @@ describe("DedotApi", () => {
 
     it.each([
       [{ type: "Module", value: { type: "BadModule" } }, "BadModule"],
+      [{ type: "Token", value: "FundsUnavailable" }, "FundsUnavailable"],
+      [{ type: "Arithmetic", value: "Underflow" }, "Underflow"],
+      [{ type: "Transactional", value: "LimitReached" }, "LimitReached"],
+      [{ type: "BadOrigin" }, "BadOrigin"],
       [{ type: "EventFailure" }, "EventFailure"],
     ])("extracts a dispatched-as error %#", async (eventError, reason) => {
       vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
