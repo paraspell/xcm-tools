@@ -97,7 +97,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
             true,
           );
 
-    const finalAmountOut = amountOut - padValueBy(toDestFeeCurrencyTo, FEE_BUFFER_PCT);
+    const finalAmountOut = minAmountOut - padValueBy(toDestFeeCurrencyTo, FEE_BUFFER_PCT);
 
     if (finalAmountOut <= 0n) throw new AmountTooLowError();
 
