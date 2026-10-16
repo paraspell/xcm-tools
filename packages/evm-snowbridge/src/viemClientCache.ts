@@ -21,7 +21,16 @@ const cache = createClientCache<PublicClient>(
   async client => {
     await client.getBlockNumber()
   },
-  undefined,
+  async client => {
+    const transport = client.transport
+    if (transport.type === 'fallback') {
+      for (const t of transport.transports) {
+        await t.value.getRpcClient().close()
+      }
+    } else {
+      await transport.value.getRpcClient().close()
+    }
+  },
   EXTENSION_MS
 )
 
