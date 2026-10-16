@@ -104,4 +104,58 @@ describe('publicClientCache', () => {
 
     releaseClient(urls)
   })
+
+  it('closes the underlying webSocket RPC client when the cache evicts a client', async () => {
+    const rpcClose = vi.fn()
+    const urls = uniqueUrls(1)
+    vi.mocked(createPublicClient).mockImplementation(
+      () =>
+        ({
+          id: 1,
+          getBlockNumber: vi.fn().mockResolvedValue(1n),
+          transport: {
+            value: {
+              getRpcClient: vi.fn().mockResolvedValue({ close: rpcClose })
+            }
+          }
+        }) as unknown as PublicClient
+    )
+
+    await leaseClient(urls, DEFAULT_TTL_MS)
+    releaseClient(urls)
+
+    // First TTL fires while refs > 0 → grace period; second fires after EXTENSION_MS → real eviction.
+    await vi.advanceTimersByTimeAsync(DEFAULT_TTL_MS + EXTENSION_MS + 1)
+
+    expect(rpcClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('closes every webSocket transport of a fallback transport when the cache evicts a client', async () => {
+    const rpcCloseA = vi.fn()
+    const rpcCloseB = vi.fn()
+    const urls = uniqueUrls(2)
+    vi.mocked(createPublicClient).mockImplementation(
+      () =>
+        ({
+          id: 2,
+          getBlockNumber: vi.fn().mockResolvedValue(1n),
+          transport: {
+            value: {
+              transports: [
+                { value: { getRpcClient: vi.fn().mockResolvedValue({ close: rpcCloseA }) } },
+                { value: { getRpcClient: vi.fn().mockResolvedValue({ close: rpcCloseB }) } }
+              ]
+            }
+          }
+        }) as unknown as PublicClient
+    )
+
+    await leaseClient(urls, DEFAULT_TTL_MS)
+    releaseClient(urls)
+
+    await vi.advanceTimersByTimeAsync(DEFAULT_TTL_MS + EXTENSION_MS + 1)
+
+    expect(rpcCloseA).toHaveBeenCalledTimes(1)
+    expect(rpcCloseB).toHaveBeenCalledTimes(1)
+  })
 })
