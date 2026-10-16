@@ -23,6 +23,7 @@ import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,
   getFromExchangeFee,
+  getFromExchangeOriginFee,
   getToExchangeFee,
   getToExchangeOriginFee,
 } from './utils';
@@ -299,6 +300,31 @@ describe('transfer utils', () => {
 
       expect(builderMock.getXcmFee).toHaveBeenCalledWith({ disableFallback: false });
       expect(result).toEqual({ origin: 100n, destination: 200n });
+    });
+  });
+
+  describe('getFromExchangeOriginFee', () => {
+    it('delegates to builder.getOriginXcmFee with disableFallback', async () => {
+      const result = await getFromExchangeOriginFee(
+        {
+          ...transferParams,
+          amount: BigInt(transferParams.amount),
+          destination: { chain: 'Polkadot', address: 'MOCK_ADDRESS' },
+          exchange: {
+            apiType: 'PJS',
+            apiPjs: parachainApi,
+            api: mockExchangeApi,
+            chain: 'Acala',
+            assetFrom: astrAsset,
+            assetTo: glmrAsset,
+          },
+          api: mockApi,
+        },
+        true,
+      );
+
+      expect(builderMock.getOriginXcmFee).toHaveBeenCalledWith({ disableFallback: true });
+      expect(result).toEqual({ fee: 42n, asset: { symbol: 'DOT' } });
     });
   });
 });
