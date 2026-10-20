@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.4.3...sdk-pjs-v14.4.4) (2026-10-20)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Remove not needed peer dep from README.md 📋 ([427057d](https://github.com/paraspell/xcm-tools/commit/427057dd2c5ae624d2dab0ffe256b8768115f976))
+
 ## [14.4.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.4.2...sdk-pjs-v14.4.3) (2026-10-12)
 
 

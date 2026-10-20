@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.4.3...sdk-core-v14.4.4) (2026-10-20)
+
+
+### Bug Fixes
+
+* **sdk-dedot:** Fix dedot not awaited rpc call 🔧 ([c7a4c35](https://github.com/paraspell/xcm-tools/commit/c7a4c354b250b5c67dc2e85c0601080cd9b68b43))
+
 ## [14.4.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.4.2...sdk-core-v14.4.3) (2026-10-12)
 
 
