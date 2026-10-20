@@ -7,6 +7,7 @@ import {
   isTrustedChain,
   replaceBigInt
 } from '@paraspell/sdk-common'
+import { stringToHex } from 'viem'
 
 import { AmountTooLowError, MissingParameterError } from '../../errors'
 import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
@@ -49,7 +50,7 @@ const resolveSnowbridgeMessageId = <TApi, TRes, TSigner, TCustomChain extends st
     origin.api,
     sender,
     origin.api.getParaId(origin.chain),
-    JSON.stringify(assetInfo.location, replaceBigInt),
+    stringToHex(JSON.stringify(assetInfo.location, replaceBigInt)),
     JSON.stringify(recipient),
     assetInfo.amount
   )
