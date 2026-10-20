@@ -290,7 +290,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
   async getFromRpc(module: string, method: string, key: string) {
     const rpcModule = (this.api.rpc as any)[`${module}_${method}`];
-    if (!rpcModule || !rpcModule(key)) {
+    if (!rpcModule) {
       throw new UnsupportedOperationError(
         `RPC method ${module}.${method} not available`,
       );

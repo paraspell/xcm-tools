@@ -1,6 +1,7 @@
 import { isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTrustedChain, replaceBigInt, Version } from '@paraspell/sdk-common'
+import { stringToHex } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -741,7 +742,7 @@ describe('createCustomXcm', () => {
         mockApi,
         'ss58-sender',
         2034,
-        JSON.stringify(snowbridgeContext.assetInfo.location),
+        stringToHex(JSON.stringify(snowbridgeContext.assetInfo.location)),
         JSON.stringify('0xrecipient'),
         snowbridgeContext.assetInfo.amount
       )

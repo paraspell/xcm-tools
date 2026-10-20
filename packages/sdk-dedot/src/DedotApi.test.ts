@@ -1329,20 +1329,14 @@ describe("DedotApi", () => {
       await expect(
         dedotApi.getFromRpc("state", "getStorage", "0xkey"),
       ).resolves.toBe("0xvalue");
-      expect(rpcMethod).toHaveBeenCalledTimes(2);
+      expect(rpcMethod).toHaveBeenCalledTimes(1);
+      expect(rpcMethod).toHaveBeenCalledWith("0xkey");
     });
 
-    it("rejects missing and unsupported RPC methods", async () => {
+    it("rejects missing RPC methods", async () => {
       await expect(
         dedotApi.getFromRpc("state", "missing", "0xkey"),
       ).rejects.toThrow("RPC method state.missing not available");
-
-      Object.assign(mockApiRaw.rpc, {
-        state_empty: vi.fn().mockReturnValue(undefined),
-      });
-      await expect(
-        dedotApi.getFromRpc("state", "empty", "0xkey"),
-      ).rejects.toThrow("RPC method state.empty not available");
     });
 
     it("creates and initializes a separate API for another chain", async () => {
