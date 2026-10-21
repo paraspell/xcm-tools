@@ -47,15 +47,15 @@ describe('getTransferableAmount', () => {
     buildTx.mockClear()
   })
 
-  test('subtracts XCM fee for native asset', async () => {
+  test('subtracts XCM fee for native asset (ED already reserved by SystemPallet)', async () => {
     const balance = 1000n
-    const ed = 100n
     const fee = 200n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'DOT',
       decimals: 10,
-      existentialDeposit: '100'
+      existentialDeposit: '100',
+      isNative: true
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(true)
@@ -64,7 +64,7 @@ describe('getTransferableAmount', () => {
 
     const result = await getTransferableAmount(baseOptions)
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(balance - fee)
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: mockApi,
       buildTx,
@@ -85,7 +85,8 @@ describe('getTransferableAmount', () => {
     findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'USDT',
       decimals: 6,
-      existentialDeposit: '100'
+      existentialDeposit: '100',
+      isNative: false
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
@@ -101,12 +102,13 @@ describe('getTransferableAmount', () => {
 
   test('returns 0 when transferable amount is negative', async () => {
     const balance = 250n
-    const fee = 200n
+    const fee = 300n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
       symbol: 'DOT',
       decimals: 10,
-      existentialDeposit: '100'
+      existentialDeposit: '100',
+      isNative: true
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(true)
@@ -119,8 +121,7 @@ describe('getTransferableAmount', () => {
 
   test('does not subtract the fee when the selected fee asset does not pay the origin fee', async () => {
     const balance = 1000n
-    const ed = 100n
-    const dot = { symbol: 'DOT', decimals: 10, existentialDeposit: '100' } as TAssetInfo
+    const dot = { symbol: 'DOT', decimals: 10, existentialDeposit: '100', isNative: true } as TAssetInfo
 
     findAssetInfoOrThrowSpy.mockReturnValue(dot)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOTON' } as TAssetInfo)
@@ -134,7 +135,7 @@ describe('getTransferableAmount', () => {
 
     const result = await getTransferableAmount({ ...baseOptions, feeAsset: { symbol: 'DOT' } })
 
-    expect(result).toBe(balance - ed)
+    expect(result).toBe(balance)
     expect(getOriginXcmFee).toHaveBeenCalledWith(
       expect.objectContaining({ feeAsset: { symbol: 'DOT' } })
     )
@@ -142,9 +143,8 @@ describe('getTransferableAmount', () => {
 
   test('subtracts the fee for native asset paid in native when a fee asset is selected', async () => {
     const balance = 1000n
-    const ed = 100n
     const fee = 200n
-    const doton = { symbol: 'DOTON', decimals: 18, existentialDeposit: '100' } as TAssetInfo
+    const doton = { symbol: 'DOTON', decimals: 18, existentialDeposit: '100', isNative: true } as TAssetInfo
 
     findAssetInfoOrThrowSpy.mockReturnValue(doton)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(doton)
@@ -159,7 +159,7 @@ describe('getTransferableAmount', () => {
       feeAsset: { symbol: 'DOT' }
     })
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(balance - fee)
   })
 
   test('throws error when XCM fee is undefined for native asset', async () => {
@@ -183,7 +183,8 @@ describe('getTransferableAmount', () => {
     decimals: 6,
     existentialDeposit: '100',
     amount: 1000n,
-    isFeeAsset: true
+    isFeeAsset: true,
+    isNative: false
   } as WithAmount<TAssetInfo>
 
   const usdc = {
@@ -191,7 +192,8 @@ describe('getTransferableAmount', () => {
     decimals: 6,
     existentialDeposit: '100',
     amount: 2000n,
-    isFeeAsset: false
+    isFeeAsset: false,
+    isNative: false
   } as WithAmount<TAssetInfo>
 
   const currenciesOptions = {
