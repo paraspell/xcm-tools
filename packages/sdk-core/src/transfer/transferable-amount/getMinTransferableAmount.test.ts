@@ -346,6 +346,60 @@ describe('getMinTransferableAmountInternal', () => {
     expect(result).toBe(0n)
     expect(dryRunInternal).not.toHaveBeenCalled()
   })
+
+  it('rethrows non-AmountTooLowError from createTx and does not dry-run an undefined tx', async () => {
+    mockResolvedAsset({
+      symbol: 'ASSET',
+      decimals: 12
+    } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'ASSET',
+      location: {},
+      existentialDeposit: '0'
+    } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({
+      symbol: 'ASSET'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: undefined,
+      hops: [],
+      destination: undefined
+    } as unknown as TGetXcmFeeResult)
+
+    buildInternal.mockRejectedValue(new Error('boom'))
+
+    await expect(mod.getMinTransferableAmountInternal(baseOptions)).rejects.toThrow('boom')
+    expect(dryRunInternal).not.toHaveBeenCalled()
+  })
+
+  it('rethrows non-AmountTooLowError thrown by the padded createTx retry', async () => {
+    mockResolvedAsset({
+      symbol: 'ASSET',
+      decimals: 12
+    } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'ASSET',
+      location: {},
+      existentialDeposit: '0'
+    } as TAssetInfo)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({
+      symbol: 'ASSET'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: undefined,
+      hops: [],
+      destination: undefined
+    } as unknown as TGetXcmFeeResult)
+
+    buildInternal
+      .mockRejectedValueOnce(new AmountTooLowError())
+      .mockRejectedValueOnce(new Error('boom'))
+
+    await expect(mod.getMinTransferableAmountInternal(baseOptions)).rejects.toThrow('boom')
+    expect(dryRunInternal).not.toHaveBeenCalled()
+  })
 })
 
 describe('getMinTransferableAmount', () => {

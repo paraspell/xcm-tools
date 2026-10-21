@@ -119,13 +119,20 @@ export const getMinTransferableAmountInternal = async <
   try {
     tx = await createTx(amounts)
   } catch (e) {
-    if (e instanceof AmountTooLowError) {
-      amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
-      try {
-        tx = await createTx(amounts)
-      } catch {
-        return toResult(amounts.map(() => 0n))
+    // Only AmountTooLowError is recoverable here - it is retried with padded amounts.
+    // Any other error has to be propagated, otherwise tx stays undefined and the
+    // dry run would be executed with an undefined transaction.
+    if (!(e instanceof AmountTooLowError)) {
+      throw e
+    }
+    amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
+    try {
+      tx = await createTx(amounts)
+    } catch (err) {
+      if (!(err instanceof AmountTooLowError)) {
+        throw err
       }
+      return toResult(amounts.map(() => 0n))
     }
   }
 
