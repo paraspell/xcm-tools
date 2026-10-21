@@ -4,6 +4,7 @@ import type { TxBuilderFactory } from '@galacticcouncil/sdk-next/tx';
 import { getPaymentInfo } from '@paraspell/sdk';
 import {
   findNativeAssetInfoOrThrow,
+  formatUnits,
   padValueBy,
   type TChain,
   UnableToComputeError,
@@ -24,10 +25,11 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
   chain: TChain,
   toDestTransactionFee: bigint,
 ): Promise<bigint> => {
+  const amountNormalized = formatUnits(amount, currencyFromDecimals);
   const trade = await tradeRouter.getBestSell(
     currencyFromInfo.id,
     currencyToInfo.id,
-    amount.toString(),
+    amountNormalized,
   );
 
   const nativeAsset = findNativeAssetInfoOrThrow(chain);
