@@ -109,7 +109,7 @@ describe('Astar', () => {
         method: 'transfer',
         params: {
           target: { Id: mockOptions.recipient },
-          id: 1,
+          id: 1n,
           amount: BigInt(mockOptions.assetInfo.amount)
         }
       })
@@ -133,7 +133,7 @@ describe('Astar', () => {
         method: 'transfer_all',
         params: {
           dest: { Id: mockOptions.recipient },
-          id: 1,
+          id: 1n,
           keep_alive: false
         }
       })

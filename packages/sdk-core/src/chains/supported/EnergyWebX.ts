@@ -10,7 +10,8 @@ import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TMintConfig,
-  type TPolkadotXCMTransferOptions
+  type TPolkadotXCMTransferOptions,
+  type TTransferLocalOptions
 } from '../../types'
 import SubstrateChain from '../SubstrateChain'
 
@@ -53,6 +54,37 @@ class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
     return { useLocationId: true }
   }
 
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
+
+    const id = api.localizeLocation(this.chain, asset.location)
+    const dest = { Id: recipient }
+
+    if (isAmountAll) {
+      return api.deserializeExtrinsics({
+        module: 'Assets',
+        method: 'transfer_all',
+        params: {
+          id,
+          dest,
+          keep_alive: keepAlive
+        }
+      })
+    }
+
+    return api.deserializeExtrinsics({
+      module: 'Assets',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
+      params: {
+        id,
+        target: dest,
+        amount: asset.amount
+      }
+    })
+  }
+
   async getBalanceForeign(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
@@ -61,7 +93,7 @@ class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
     const balance = await api.queryState<{ balance: bigint }>({
       module: 'Assets',
       method: 'Account',
-      params: [asset.location, address]
+      params: [api.localizeLocation(this.chain, asset.location), address]
     })
 
     return balance?.balance ?? 0n

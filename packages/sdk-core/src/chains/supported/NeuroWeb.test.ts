@@ -152,5 +152,30 @@ describe('NeuroWeb', () => {
       })
       expect(result).toBe(expectedResult)
     })
+
+    it('should call ForeignAssets.transfer with asset location when assetId is undefined', () => {
+      const location = { parents: 1, interior: { Here: null } }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'DOT', location, amount: 321n },
+        recipient: '5CLocalDest',
+        balance: 999n,
+        isAmountAll: false,
+        keepAlive: true
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer_keep_alive',
+        params: {
+          id: location,
+          target: mockOptions.recipient,
+          amount: mockOptions.assetInfo.amount
+        }
+      })
+    })
   })
 })

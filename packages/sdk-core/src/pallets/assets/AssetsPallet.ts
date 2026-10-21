@@ -6,8 +6,13 @@ import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
 import { BaseAssetsPallet } from '../../types/TAssets'
 import { assertHasId } from '../../utils'
 
-const resolveAssetId = (asset: WithAmount<TAssetInfo>, config: TMintConfig): unknown => {
-  if (config.useLocationId) return asset.location
+const resolveAssetId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  chain: SubstrateChain<TApi, TRes, TSigner, TCustomChain>,
+  asset: WithAmount<TAssetInfo>,
+  config: TMintConfig
+): unknown => {
+  if (config.useLocationId) return api.localizeLocation(chain.chain, asset.location)
   assertHasId(asset)
   return config.useBigIntId ? BigInt(asset.assetId) : Number(asset.assetId)
 }
@@ -24,7 +29,7 @@ export class AssetsPallet extends BaseAssetsPallet {
 
     const config = chain.resolveMintConfig(api)
 
-    const id = resolveAssetId(asset, config)
+    const id = resolveAssetId(api, chain, asset, config)
 
     const addr = config.useIdPrefix ? { Id: address } : address
 

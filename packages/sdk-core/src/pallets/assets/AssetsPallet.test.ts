@@ -12,11 +12,10 @@ vi.mock('../../utils')
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const chainMock = (config: TMintConfig) =>
-  ({ resolveMintConfig: vi.fn().mockReturnValue(config) }) as unknown as SubstrateChain<
-    unknown,
-    unknown,
-    unknown
-  >
+  ({
+    chain: 'EnergyWebX',
+    resolveMintConfig: vi.fn().mockReturnValue(config)
+  }) as unknown as SubstrateChain<unknown, unknown, unknown>
 
 describe('AssetsPallet.mint', () => {
   beforeEach(() => {
@@ -73,14 +72,17 @@ describe('AssetsPallet.mint', () => {
     expect(res.balanceTx.params.amount).toBe(999n)
   })
 
-  it('uses the asset location as id and skips assertHasId', async () => {
+  it('uses the localized asset location as id and skips assertHasId', async () => {
     const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'
-    const location = { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
+    const location = { parents: 1, interior: { X2: [{ Parachain: 3345 }, { GeneralIndex: 1 }] } }
+    const localizedLocation = { parents: 0, interior: { X1: [{ GeneralIndex: 1 }] } }
     const asset = { location, amount: 500n } as WithAmount<TAssetInfo>
+    const localizeLocation = vi.fn().mockReturnValue(localizedLocation)
+    const api = { localizeLocation } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const res = await pallet.mint(
-      apiMock,
+      api,
       address,
       asset,
       0n,
@@ -88,9 +90,10 @@ describe('AssetsPallet.mint', () => {
     )
 
     expect(assertHasId).not.toHaveBeenCalled()
-    expect(res.assetStatusTx?.params.id).toEqual(location)
+    expect(localizeLocation).toHaveBeenCalledWith('EnergyWebX', location)
+    expect(res.assetStatusTx?.params.id).toEqual(localizedLocation)
     expect(res.assetStatusTx?.params.owner).toEqual({ Id: address })
-    expect(res.balanceTx.params.id).toEqual(location)
+    expect(res.balanceTx.params.id).toEqual(localizedLocation)
     expect(res.balanceTx.params.beneficiary).toEqual({ Id: address })
     expect(res.balanceTx.params.amount).toBe(500n)
   })

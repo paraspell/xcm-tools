@@ -53,7 +53,7 @@ class Astar<TApi, TRes, TSigner, TCustomChain extends string = never>
 
     assertHasId(asset)
 
-    const assetId = Number(asset.assetId)
+    const assetId = BigInt(asset.assetId)
     const dest = { Id: recipient }
 
     if (isAmountAll) {
