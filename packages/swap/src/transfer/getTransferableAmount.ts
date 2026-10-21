@@ -39,7 +39,13 @@ const computeLocalTransferableAmount = async <
     currency,
   });
 
-  const existentialDeposit = getExistentialDeposit(exchange.chain, currency);
+  // Native balances come from SystemPallet.getBalance, which already returns
+  // the spendable balance (free - max(frozen - reserved, ED)), so the ED is
+  // already excluded - subtracting it again would reserve it twice (#2181).
+  // Foreign-asset pallets return raw balances, so the ED still applies there.
+  const existentialDeposit = exchange.assetFrom.isNative
+    ? 0n
+    : getExistentialDeposit(exchange.chain, currency);
 
   let swapFee = 0n;
   const nativeSymbol = getNativeAssetSymbol(exchange.chain);

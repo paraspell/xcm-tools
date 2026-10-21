@@ -68,6 +68,7 @@ const createExchangeInfo = (
   assetFrom: {
     ...routerAsset,
     symbol: assetFromSymbol,
+    isNative: assetFromSymbol === 'HDX',
   },
   assetTo: assetToSymbol
     ? {
@@ -179,6 +180,8 @@ describe('getTransferableAmount', () => {
       }),
     });
 
+    // Spendable balance: native balances come from SystemPallet.getBalance,
+    // which already excludes the ED, so only the swap fee is subtracted.
     vi.mocked(getBalance).mockResolvedValue(2000n);
     vi.mocked(getExistentialDeposit).mockReturnValue(100n);
     vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
@@ -197,14 +200,15 @@ describe('getTransferableAmount', () => {
       api: mockApi,
     });
 
-    expect(result).toBe(1600n);
+    expect(result).toBe(1700n);
     expect(getBalance).toHaveBeenCalledWith({
       api: expect.anything(),
       chain: 'Hydration',
       address: 'sender',
       currency: expect.objectContaining({ location: routerAsset.location }),
     });
-    expect(getExistentialDeposit).toHaveBeenCalledWith('Hydration', expect.anything());
+    // native: the balance is already spendable, so the ED is not touched at all
+    expect(getExistentialDeposit).not.toHaveBeenCalled();
     expect(getSwapFee).toHaveBeenCalledTimes(1);
   });
 
