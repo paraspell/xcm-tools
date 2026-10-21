@@ -36,6 +36,36 @@ describe('calculateFee', () => {
     } as TAssetInfo);
   });
 
+  it('should quote the trade using a human-readable token amount', async () => {
+    const options = {
+      amount: 1_000_000_000_000n,
+      slippagePct: '1',
+      feeCalcAddress: 'someAddress',
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
+
+    const currencyFromInfo = { id: 0, symbol: 'KSM', decimals: 12 } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'DOT' } as Asset;
+    const getBestSell = vi.fn().mockResolvedValue({ amountOut: 1000n });
+
+    const mockTradeRouter = {
+      getBestSell,
+      getSpotPrice: vi.fn().mockResolvedValue({ amount: 2n, decimals: 12 }),
+    } as unknown as TradeRouter;
+
+    await calculateFee(
+      options,
+      mockTradeRouter,
+      mockTxBuilderFactory,
+      currencyFromInfo,
+      currencyToInfo,
+      12,
+      'Hydration',
+      2n,
+    );
+
+    expect(getBestSell).toHaveBeenCalledWith(0, 2, '1');
+  });
+
   it('should throw if native asset info is not found', async () => {
     const options = {
       amount: 1000n,
