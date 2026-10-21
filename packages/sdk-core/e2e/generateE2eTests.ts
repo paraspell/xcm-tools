@@ -2,33 +2,18 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   getChainProviders,
   TApiOrUrl,
-  getRelayChainOf,
+  TChain,
   TSubstrateChain,
-  PARACHAINS,
   TBuilderOptions,
   TTransferBaseOptionsWithSender,
-  getChain,
-  isRelayChain,
-  RELAYCHAINS,
-  RELAY_LOCATION,
-  isSystemChain,
-  RuntimeApiUnavailableError,
   TBuilderConfig,
   TUrl,
   parseUnits
 } from '../src'
 import { GeneralBuilder } from '../dist'
-import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
+import { generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
-import {
-  findAssetInfo,
-  ForeignAbstract,
-  getAssets,
-  getRelayChainSymbol,
-  isChainEvm,
-  Native,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { ForeignAbstract, getAssets, isChainEvm } from '@paraspell/assets'
 
 beforeEach(ctx => {
   console.log(`▶ Running test: ${ctx.task.name}`)
@@ -42,6 +27,21 @@ const MOCK_AMOUNT = 5
 const MOCK_ADDRESS = '1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
+const ALLOWED_ERROR_NAMES = [
+  'ScenarioNotSupportedError',
+  'NoXCMSupportImplementedError',
+  'RoutingResolutionError',
+  'RuntimeApiUnavailableError',
+  'TypeAndThenUnavailableError',
+  'FeatureTemporarilyDisabledError'
+]
+
+const isAllowedError = (error: unknown) =>
+  error instanceof Error &&
+  (ALLOWED_ERROR_NAMES.includes(error.name) || error.message.includes('LocalExecutionIncomplete'))
+
+const getAddress = (chain: TChain) => (isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS)
+
 export const generateE2eTests = <TApi, TRes, TSigner>(
   Builder: <TOpts extends TBuilderOptions<TApiOrUrl<TApi>>>(
     options?: TOpts
@@ -51,6 +51,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   filteredChains: TSubstrateChain[],
   config?: TBuilderConfig<TUrl>
 ) => {
+  const getSigner = (chain: TChain) => (isChainEvm(chain) ? evmSigner : signer)
+
   const validateTransfer = async (
     builder: GeneralBuilder<
       TApi,
@@ -65,6 +67,23 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     const feeRes = await builder.getXcmFee()
     expect(feeRes.dryRunError?.reason).toBeUndefined()
   }
+
+  const validateTransferOrAllowedError = async (
+    builder: GeneralBuilder<
+      TApi,
+      TRes,
+      TSigner,
+      TTransferBaseOptionsWithSender<TApi, TRes, TSigner>
+    >,
+    signer: TSigner
+  ) => {
+    try {
+      await validateTransfer(builder, signer)
+    } catch (error) {
+      if (!isAllowedError(error)) throw error
+    }
+  }
+
   // If builderConfig override is provided, it means we're using chopsticks
   const usingChopsticks = !!config
 
@@ -72,80 +91,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     describe(name, { concurrent: usingChopsticks }, fn)
 
   describeGroup('XCM - e2e', () => {
-    describeGroup('Polkadot Kusama bridge', () => {
-      it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (KSM)', async () => {
-        const builder = Builder(config)
-          .from('AssetHubPolkadot')
-          .to('AssetHubKusama')
-          .currency({
-            location: {
-              parents: 2,
-              interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
-            },
-            amount: MOCK_AMOUNT
-          })
-          .sender(MOCK_ADDRESS)
-          .recipient(MOCK_ADDRESS)
-        await validateTransfer(builder, signer)
-      })
-
-      it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT)', async () => {
-        const builder = Builder(config)
-          .from('AssetHubKusama')
-          .to('AssetHubPolkadot')
-          .currency({
-            location: {
-              parents: 2,
-              interior: { X1: [{ GlobalConsensus: { polkadot: null } }] }
-            },
-            amount: MOCK_AMOUNT
-          })
-          .sender(MOCK_ADDRESS)
-          .recipient(MOCK_ADDRESS)
-        await validateTransfer(builder, signer)
-      })
-
-      it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (KSM)', async () => {
-        const builder = Builder(config)
-          .from('AssetHubKusama')
-          .to('AssetHubPolkadot')
-          .currency({
-            location: {
-              parents: 1,
-              interior: { Here: null }
-            },
-            amount: MOCK_AMOUNT
-          })
-          .sender(MOCK_ADDRESS)
-          .recipient(MOCK_ADDRESS)
-        await validateTransfer(builder, signer)
-      })
-    })
-
-    describeGroup('RelayToPara', () => {
-      RELAYCHAINS.forEach(relayChain => {
-        PARACHAINS.forEach(chain => {
-          const symbol = getRelayChainSymbol(chain)
-          if (!findAssetInfo(chain, { location: RELAY_LOCATION })) return
-          it(`should create transfer tx - ${symbol} from ${relayChain} to ${chain}`, async () => {
-            try {
-              const builder = Builder(config)
-                .from(relayChain)
-                .to(chain)
-                .currency({ symbol, amount: MOCK_AMOUNT })
-                .sender(MOCK_ADDRESS)
-                .recipient(MOCK_ADDRESS)
-              await validateTransfer(builder, signer)
-            } catch (error) {
-              if (error instanceof RuntimeApiUnavailableError) {
-                expect(error.name).toBe(RuntimeApiUnavailableError)
-              }
-            }
-          })
-        })
-      })
-    })
-
     describeGroup('Hydration to AssetHub transfer - miscellaneous scenarios', () => {
       it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
         const builder = Builder(config)
@@ -154,7 +99,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .currency({ symbol: ForeignAbstract('USDT1'), amount: MOCK_AMOUNT })
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
-        expect(builder).toBeDefined()
+        await validateTransfer(builder, signer)
       })
 
       it('should create transfer tx with multiple assets from Hydration to AssetHubPolkadot - assets selected by symbol with fee asset', async () => {
@@ -175,7 +120,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .build()
-        validateTx(tx, signer)
+        await validateTx(tx, signer)
       })
 
       it('should create transfer tx with multiple assets from Hydration to AssetHubPolkadot - assets registered via customAssets with fee asset', async () => {
@@ -216,37 +161,19 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .sender(MOCK_ADDRESS)
           .recipient(MOCK_ADDRESS)
           .build()
-        validateTx(tx, signer)
+        await validateTx(tx, signer)
       })
     })
 
     // Auto API creation testing makes sense only in non-chopsticks environment
     if (!usingChopsticks) {
       describeGroup('Auto API create', () => {
-        it('should create transfer tx from Acala to Astar - auto API', async () => {
-          const builder = Builder()
-            .from('Acala')
-            .to('Astar')
-            .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
-            .sender(MOCK_ADDRESS)
-            .recipient(MOCK_ADDRESS)
-          await validateTransfer(builder, signer)
-        })
-
-        it('should create transfer tx from Acala to Astar - WS url', async () => {
-          const acalaProvider = getChainProviders('Acala')[0]
-          const builder = Builder(acalaProvider)
-            .from('Acala')
-            .to('Astar')
-            .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
-            .sender(MOCK_ADDRESS)
-            .recipient(MOCK_ADDRESS)
-          await validateTransfer(builder, signer)
-        })
-
-        it('should create transfer tx from Acala to Astar - WS url array', async () => {
-          const acalaProviders = getChainProviders('Acala').slice(0, 2)
-          const builder = Builder(acalaProviders)
+        it.each([
+          { name: 'auto API', api: undefined },
+          { name: 'WS url', api: getChainProviders('Acala')[1] },
+          { name: 'WS url array', api: getChainProviders('Acala').slice(0, 2) }
+        ])('should create transfer tx from Acala to Astar - $name', async ({ api }) => {
+          const builder = Builder(api)
             .from('Acala')
             .to('Astar')
             .currency({ symbol: 'DOT', amount: parseUnits('1', 10) })
@@ -258,131 +185,38 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     }
 
     filteredChains.forEach(chain => {
-      const chainInstance = !isRelayChain(chain) ? getChain(chain) : null
-      const isSendingDisabled = (asset: TAssetInfo) =>
-        chainInstance?.isSendingTempDisabled(asset) ?? false
+      const scenarios = generateTransferScenarios(chain, usingChopsticks)
 
-      const scenarios = generateTransferScenarios(chain, usingChopsticks).filter(
-        ({ asset }) => !isSendingDisabled(asset)
-      )
-
-      const relayChainSymbol = getRelayChainSymbol(chain)
-
-      const relayChainAsset = findAssetInfo(
-        chain,
-        // Use native selector for system chains
-        { symbol: isSystemChain(chain) ? Native(relayChainSymbol) : relayChainSymbol },
-        getRelayChainOf(chain)
-      )
-      const paraToRelaySupported =
-        relayChainAsset &&
-        !doesNotSupportParaToRelay.includes(chain) &&
-        !isSendingDisabled(relayChainAsset)
-      if (scenarios.length === 0 && !paraToRelaySupported) {
-        return
-      }
-
-      describeGroup(`Transfer scenarios for origin ${chain}`, () => {
-        describeGroup('ParaToPara', () => {
-          scenarios.forEach(({ destChain, asset }) => {
-            it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
-              const sender = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-              const recipient = isChainEvm(destChain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-              try {
+      if (scenarios.length > 0) {
+        describeGroup(`Transfer scenarios for origin ${chain}`, () => {
+          describeGroup('ParaToPara', () => {
+            scenarios.forEach(({ destChain, asset }) => {
+              it(`should create transfer tx from ${chain} to ${destChain} - (${asset.symbol})`, async () => {
                 const builder = Builder(config)
                   .from(chain)
                   .to(destChain)
-                  .currency({
-                    location: asset.location,
-                    amount: MOCK_AMOUNT
-                  })
-                  .recipient(recipient)
-                  .sender(sender)
+                  .currency({ location: asset.location, amount: MOCK_AMOUNT })
+                  .recipient(getAddress(destChain))
+                  .sender(getAddress(chain))
                   .ahAddress(MOCK_ADDRESS)
-
-                await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
-              } catch (error) {
-                if (error instanceof Error) {
-                  const allowedErrorNames = [
-                    'ScenarioNotSupportedError',
-                    'NoXCMSupportImplementedError',
-                    'RoutingResolutionError',
-                    'RuntimeApiUnavailableError',
-                    'TypeAndThenUnavailableError'
-                  ]
-
-                  if (allowedErrorNames.includes(error.name)) {
-                    expect(error.name).toBeDefined()
-                  } else if (error.message.includes('LocalExecutionIncomplete')) {
-                    expect(error.message).toContain('LocalExecutionIncomplete')
-                  } else if (
-                    error.name === 'FeatureTemporarilyDisabledError' ||
-                    error.message.includes('temporarily disabled')
-                  ) {
-                    expect(error.name).toBe('FeatureTemporarilyDisabledError')
-                  } else {
-                    throw error
-                  }
-                }
-              }
+                await validateTransferOrAllowedError(builder, getSigner(chain))
+              })
             })
           })
         })
-
-        if (paraToRelaySupported) {
-          it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
-            chain
-          )} from ${chain} to Relay`, async () => {
-            const relaySymbol = getRelayChainSymbol(chain)
-            const symbol = isSystemChain(chain) ? Native(relaySymbol) : relaySymbol
-            const relayChain = getRelayChainOf(chain)
-            const sender = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-            try {
-              const builder = Builder(config)
-                .from(chain)
-                .to(relayChain)
-                .currency({ symbol, amount: MOCK_AMOUNT })
-                .sender(sender)
-                .recipient(MOCK_ADDRESS)
-                .ahAddress(MOCK_ADDRESS)
-              await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
-            } catch (error) {
-              if (error instanceof Error) {
-                const allowedErrorNames = ['TypeAndThenUnavailableError']
-                if (allowedErrorNames.includes(error.name)) {
-                  expect(error.name).toBeDefined()
-                } else if (
-                  error.name === 'FeatureTemporarilyDisabledError' ||
-                  error.message.includes('temporarily disabled')
-                ) {
-                  expect(error.name).toBe('FeatureTemporarilyDisabledError')
-                } else {
-                  throw error
-                }
-              }
-            }
-          })
-        }
-      })
+      }
 
       describeGroup('Local transfer', () => {
         getAssets(chain).forEach(asset => {
           it(`should create local transfer tx on ${chain} - (${asset.symbol})`, async () => {
-            const address = isChainEvm(chain) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
-
-            try {
-              const builder = Builder(config)
-                .from(chain)
-                .to(chain)
-                .currency({ location: asset.location, amount: MOCK_AMOUNT })
-                .sender(address)
-                .recipient(address)
-              await validateTransfer(builder, isChainEvm(chain) ? evmSigner : signer)
-            } catch (error) {
-              if (error instanceof RuntimeApiUnavailableError) {
-                expect(error).toBeInstanceOf(RuntimeApiUnavailableError)
-              }
-            }
+            const builder = Builder(config)
+              .from(chain)
+              .to(chain)
+              .currency({ location: asset.location, amount: MOCK_AMOUNT })
+              .sender(getAddress(chain))
+              .recipient(getAddress(chain))
+              .keepAlive(false)
+            await validateTransferOrAllowedError(builder, getSigner(chain))
           })
         })
       })

@@ -5,7 +5,12 @@ import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
-import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import type {
+  IPolkadotXCMTransfer,
+  TPolkadotXCMTransferOptions,
+  TTransferLocalOptions
+} from '../../types'
+import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
 class Xode<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -32,6 +37,39 @@ class Xode<TApi, TRes, TSigner, TCustomChain extends string = never>
 
   canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
     return origin === 'AssetHubPolkadot'
+  }
+
+  transferLocalNonNativeAsset(
+    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
+  ): TRes {
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
+
+    assertHasId(asset)
+
+    const assetId = Number(asset.assetId)
+    const dest = { Id: recipient }
+
+    if (isAmountAll) {
+      return api.deserializeExtrinsics({
+        module: 'Assets',
+        method: 'transfer_all',
+        params: {
+          id: assetId,
+          dest,
+          keep_alive: keepAlive
+        }
+      })
+    }
+
+    return api.deserializeExtrinsics({
+      module: 'Assets',
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
+      params: {
+        id: assetId,
+        target: dest,
+        amount: asset.amount
+      }
+    })
   }
 }
 

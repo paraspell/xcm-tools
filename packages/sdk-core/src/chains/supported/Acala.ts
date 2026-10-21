@@ -7,6 +7,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { MIN_AMOUNT } from '../../constants'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
@@ -75,7 +76,7 @@ class Acala<TApi, TRes, TSigner, TCustomChain extends string = never>
     const { api, assetInfo: asset, recipient } = options
 
     if (asset.symbol.toLowerCase() === 'lcdot') {
-      throw new InvalidCurrencyError('LcDOT local transfers are not supported')
+      throw new ScenarioNotSupportedError('LcDOT local transfers are not supported')
     }
 
     const amount = getLocalTransferAmount(options)

@@ -6,7 +6,6 @@ import { Version } from '@paraspell/sdk-common'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TMintConfig, TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
 class NeuroWeb<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -67,17 +66,26 @@ class NeuroWeb<TApi, TRes, TSigner, TCustomChain extends string = never>
   ): TRes {
     const { api, assetInfo: asset, recipient, balance, isAmountAll, keepAlive } = options
 
-    assertHasId(asset)
-
-    const assetId = BigInt(asset.assetId)
-
     const amount = isAmountAll ? balance : asset.amount
+    const method = keepAlive ? 'transfer_keep_alive' : 'transfer'
+
+    if (asset.assetId === undefined) {
+      return api.deserializeExtrinsics({
+        module: 'ForeignAssets',
+        method,
+        params: {
+          id: asset.location,
+          target: recipient,
+          amount
+        }
+      })
+    }
 
     return api.deserializeExtrinsics({
       module: 'Assets',
-      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
+      method,
       params: {
-        id: assetId,
+        id: BigInt(asset.assetId),
         target: recipient,
         amount
       }

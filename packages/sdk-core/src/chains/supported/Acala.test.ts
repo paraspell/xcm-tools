@@ -2,6 +2,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
+import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getChain } from '../../utils/getChain'
@@ -148,6 +149,17 @@ describe('Acala', () => {
         amount: 500n
       }
     })
+  })
+
+  it('should throw ScenarioNotSupportedError for LcDOT local transfer', () => {
+    const mockOptions = {
+      api: mockApi,
+      assetInfo: { symbol: 'LcDOT', amount: 100n, assetId: '1' },
+      recipient: 'address',
+      balance: 1000n
+    } as TTransferLocalOptions<unknown, unknown, unknown>
+
+    expect(() => chain.transferLocalNonNativeAsset(mockOptions)).toThrow(ScenarioNotSupportedError)
   })
 
   it('should return false for isRelayToParaEnabled', () => {
