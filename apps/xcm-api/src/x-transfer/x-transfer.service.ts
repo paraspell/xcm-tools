@@ -143,7 +143,7 @@ export class XTransferService {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
     }
 
-    if (keepAlive) {
+    if (keepAlive !== undefined) {
       finalBuilder = finalBuilder.keepAlive(keepAlive);
     }
 
