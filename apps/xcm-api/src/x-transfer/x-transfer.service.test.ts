@@ -372,6 +372,18 @@ describe('XTransferService', () => {
       expect(builderMock.keepAlive).toHaveBeenCalledWith(true);
     });
 
+    it('should succeed when keepAlive is set to false', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        keepAlive: false,
+      };
+
+      const result = await service.generateXcmCall(options);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.keepAlive).toHaveBeenCalledWith(false);
+    });
+
     it('should succeed when swapOptions are provided', async () => {
       const swapOptions = {
         currencyTo: { symbol: 'GLMR' },
