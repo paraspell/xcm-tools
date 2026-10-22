@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.5](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.4...sdk-v14.4.5) (2026-10-22)
+
+
+### Tests
+
+* Refactor sdk e2e test case generation 🧪 ([f30a398](https://github.com/paraspell/xcm-tools/commit/f30a398ce42e273e203a37ed24f9a8dba81227f1))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.3...sdk-v14.4.4) (2026-10-20)
 
 

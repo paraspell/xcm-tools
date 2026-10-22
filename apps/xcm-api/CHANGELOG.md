@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.4.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.4...xcm-api-v14.4.5) (2026-10-22)
+
+
+### Bug Fixes
+
+* **xcm-api:** Forward keepAlive flag correctly to SDK ⚙️ ([b7e9a6b](https://github.com/paraspell/xcm-tools/commit/b7e9a6b05fe89686412c85be70f41792acbdd223))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.3...xcm-api-v14.4.4) (2026-10-20)
 
 
