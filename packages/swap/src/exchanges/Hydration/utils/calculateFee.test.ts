@@ -167,4 +167,32 @@ describe('calculateFee', () => {
     );
     expect(finalFeeBN.toString()).toBe('7700000000000');
   });
+
+  it('should quote the fee trade with the amount in decimal units', async () => {
+    const options = {
+      amount: 1_500_000_000_000n,
+      slippagePct: '1',
+      feeCalcAddress: 'someAddress',
+    } as TPapiSwapOptions<unknown, unknown, unknown>;
+    const currencyFromInfo = { id: 0, symbol: 'HDX' } as Asset;
+    const currencyToInfo = { id: 2, symbol: 'DOT' } as Asset;
+
+    const getBestSell = vi.fn().mockResolvedValue({
+      amountOut: 1000n,
+    });
+    const mockTradeRouter = { getBestSell } as unknown as TradeRouter;
+
+    await calculateFee(
+      options,
+      mockTradeRouter,
+      mockTxBuilderFactory,
+      currencyFromInfo,
+      currencyToInfo,
+      12,
+      'Hydration',
+      2n,
+    );
+
+    expect(getBestSell).toHaveBeenCalledWith(0, 2, '1.5');
+  });
 });
