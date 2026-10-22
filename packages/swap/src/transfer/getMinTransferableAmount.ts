@@ -3,7 +3,7 @@ import { getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
 import type { TTransformedOptions } from '../types/TRouter';
-import { getSwapFee } from './fees';
+import { getExchangeOriginFee } from './fees';
 import {
   createToExchangeBuilder,
   prepareTransformedOptions,
@@ -33,10 +33,9 @@ const computeExchangeMinAmount = async <TApi, TRes, TSigner, TCustomChain extend
     return existentialDeposit + 1n;
   }
 
-  const { result } = await getSwapFee(dex, options);
-  const swapFee = result.fee ?? 0n;
+  const { fee } = await getExchangeOriginFee(dex, options);
 
-  return existentialDeposit + swapFee + 1n;
+  return existentialDeposit + (fee ?? 0n) + 1n;
 };
 
 export const getMinTransferableAmount = async <
