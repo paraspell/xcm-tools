@@ -431,30 +431,44 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       const execErr = execResult?.value ?? execResult?.err;
 
       if (execErr?.error) {
-        const modErr = execErr.error?.value;
-        if (modErr) {
-          return resolveModuleError(chain, modErr as TModuleError);
+        const errObj = execErr.error;
+        if (
+          (errObj?.type === "Module" || errObj?.type === undefined) &&
+          typeof errObj?.value === "object" &&
+          errObj.value !== null
+        ) {
+          return resolveModuleError(chain, errObj.value as TModuleError);
         }
-        const otherErr = execErr.error?.Other ?? execErr.error?.other;
+        if (typeof errObj?.type === "string") {
+          const subReason =
+            typeof errObj.value === "string" ? errObj.value : undefined;
+          return { reason: subReason ?? errObj.type };
+        }
+        const otherErr = errObj?.Other ?? errObj?.other;
         if (otherErr) {
           return { reason: String(otherErr) };
         }
-        if (typeof execErr.error === "string") {
-          return { reason: execErr.error };
+        if (typeof errObj === "string") {
+          return { reason: errObj };
         }
-        return { reason: JSON.stringify(execErr.error) };
+        return { reason: JSON.stringify(errObj) };
       }
 
       const erroredEvent = findFailingEventInResult(result);
       if (erroredEvent) {
         const eventResult = erroredEvent.palletEvent.data.result;
         const err = eventResult?.err ?? eventResult?.value;
+        if (
+          err?.type === "Module" &&
+          typeof err.value === "object" &&
+          err.value !== null
+        ) {
+          return resolveModuleError(chain, err.value as TModuleError);
+        }
         if (err?.type) {
-          const subErr = err.value;
-          if (subErr) {
-            return resolveModuleError(chain, subErr as TModuleError);
-          }
-          return { reason: err.type };
+          const subReason =
+            typeof err.value === "string" ? err.value : undefined;
+          return { reason: subReason ?? err.type };
         }
       }
 
