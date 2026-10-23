@@ -506,7 +506,8 @@ abstract class SubstrateChain<
     address: string,
     asset: TAssetInfo
   ) {
-    const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api))
+    const isNativeAsset =
+      isSymbolMatch(asset.symbol, this.getNativeAssetSymbol(api)) && Boolean(asset.isNative)
     if (isNativeAsset) return this.getBalanceNative(api, address, asset)
     return this.getBalanceForeign(api, address, asset)
   }

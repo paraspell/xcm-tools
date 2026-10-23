@@ -21,7 +21,7 @@ describe('isSufficientOrigin', () => {
   const sender = 'Alice'
   const feeNative = 100n
   const amount = 50n
-  const asset = { symbol: 'ACA' } as TAssetInfo
+  const asset = { symbol: 'ACA', isNative: true } as TAssetInfo
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -177,6 +177,29 @@ describe('isSufficientOrigin', () => {
       undefined
     )
 
+    expect(result).toBe(true)
+  })
+  it('routes non-native asset with matching native symbol to non-native asset check', async () => {
+    vi.mocked(isSymbolMatch).mockReturnValue(true)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(200n)
+
+    const foreignMatchingAsset = { symbol: 'ACA', isNative: false } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...foreignMatchingAsset, amount },
+      undefined
+    )
+
+    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
+      api: mockApi,
+      chain: origin,
+      address: sender,
+      asset: { ...foreignMatchingAsset, amount }
+    })
     expect(result).toBe(true)
   })
 })

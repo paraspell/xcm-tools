@@ -806,7 +806,7 @@ describe('Parachain', () => {
 
   describe('getBalance', () => {
     it('routes native assets to getBalanceNative', async () => {
-      const nativeAsset = { symbol: 'DOT' } as TAssetInfo
+      const nativeAsset = { symbol: 'DOT', isNative: true } as TAssetInfo
 
       const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(11n)
       const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(0n)
@@ -819,7 +819,7 @@ describe('Parachain', () => {
     })
 
     it('routes non-native assets to getBalanceForeign', async () => {
-      const foreignAsset = { symbol: 'USDT' } as TAssetInfo
+      const foreignAsset = { symbol: 'USDT', isNative: false } as TAssetInfo
 
       const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(0n)
       const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(22n)
@@ -829,6 +829,19 @@ describe('Parachain', () => {
       expect(nativeSpy).not.toHaveBeenCalled()
       expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignAsset)
       expect(result).toBe(22n)
+    })
+
+    it('routes non-native assets with matching native symbol to getBalanceForeign', async () => {
+      const foreignMatchingAsset = { symbol: 'DOT', isNative: false } as TAssetInfo
+
+      const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(0n)
+      const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(33n)
+
+      const result = await chain.getBalance(api, '5FMock', foreignMatchingAsset)
+
+      expect(nativeSpy).not.toHaveBeenCalled()
+      expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignMatchingAsset)
+      expect(result).toBe(33n)
     })
   })
 

@@ -24,8 +24,10 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
     address: sender
   })
 
-  const isNativeAssetToOrigin = isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(origin))
-  const isNativeAssetToDest = isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(destination))
+  const isNativeAssetToOrigin =
+    isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(origin)) && Boolean(asset.isNative)
+  const isNativeAssetToDest =
+    isSymbolMatch(asset.symbol, api.getNativeAssetSymbol(destination)) && Boolean(asset.isNative)
 
   if (isNativeAssetToOrigin && isNativeAssetToDest) {
     return balanceNative - edNative - feeNative - asset.amount > 0n
