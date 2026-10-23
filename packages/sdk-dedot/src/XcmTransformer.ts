@@ -32,6 +32,15 @@ export const checkAndConvertToNumberOrBigInt = (input: string) => {
   return bigIntValue;
 };
 
+// Currency id variants (Acala, Karura, Bifrost, ...) wrapping a TokenSymbol
+const TOKEN_SYMBOL_CURRENCY_KEYS = [
+  "Token",
+  "Native",
+  "VToken",
+  "Stable",
+  "VSToken",
+];
+
 export const transform = (obj: any): any => {
   if (Array.isArray(obj)) {
     return obj.map(transform);
@@ -130,6 +139,15 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: value,
+        };
+      } else if (
+        typeof value === "string" &&
+        TOKEN_SYMBOL_CURRENCY_KEYS.includes(key)
+      ) {
+        // TokenSymbol is an enum without fields, which dedot represents as a plain string
+        return {
+          type: key,
+          value,
         };
       } else if (typeof value === "string" && !value.startsWith("0x")) {
         return {

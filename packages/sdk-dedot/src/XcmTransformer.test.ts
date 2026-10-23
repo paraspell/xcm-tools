@@ -74,6 +74,9 @@ describe("XcmTransformer", () => {
         { type: "GlobalConsensus", value: { type: "Kusama" } },
       ],
       [{ PalletInstance: 50 }, { type: "PalletInstance", value: 50 }],
+      [{ Token: "DOT" }, { type: "Token", value: "DOT" }],
+      [{ VToken: "KSM" }, { type: "VToken", value: "KSM" }],
+      [{ Native: "BNC" }, { type: "Native", value: "BNC" }],
       [{ GeneralIndex: "123" }, { type: "GeneralIndex", value: 123n }],
       [
         { Ethereum: { chainId: 1 } },
