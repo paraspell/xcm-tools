@@ -18,7 +18,7 @@ const StringOrNumber = z
       .string()
       .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
       .transform((s) => s.replace(/,/g, '')),
-    z.number(),
+    z.number().int(),
     z.bigint(),
   ])
   .transform((value) => BigInt(value));

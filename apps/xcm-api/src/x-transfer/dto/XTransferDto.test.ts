@@ -7,6 +7,7 @@ import {
   CustomAssetInfoSchema,
   CustomChainInputSchema,
   EvmApproveDtoSchema,
+  TransactOptionsSchema,
 } from './XTransferDto.js';
 
 describe('location schemas', () => {
@@ -100,6 +101,53 @@ describe('endpoint schemas', () => {
     ).toBe(false);
     expect(
       CustomChainInputSchema.safeParse(customChain(endpoint)).success,
+    ).toBe(false);
+  });
+});
+describe('transact schemas', () => {
+  it('accepts integer refTime and proofSize', () => {
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: 1000, proofSize: 2000 },
+      }).success,
+    ).toBe(true);
+
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: '1,000', proofSize: '2000' },
+      }).success,
+    ).toBe(true);
+
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: 1000n, proofSize: 2000n },
+      }).success,
+    ).toBe(true);
+  });
+
+  it('rejects decimal refTime or proofSize', () => {
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: 1000.5, proofSize: 2000 },
+      }).success,
+    ).toBe(false);
+
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: 1000, proofSize: 2000.5 },
+      }).success,
+    ).toBe(false);
+
+    expect(
+      TransactOptionsSchema.safeParse({
+        call: '0x1234',
+        maxWeight: { refTime: '1000.5', proofSize: 2000 },
+      }).success,
     ).toBe(false);
   });
 });
