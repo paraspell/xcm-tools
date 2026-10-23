@@ -8,7 +8,11 @@ import {
   Req,
   Request,
 } from '@nestjs/common';
-import type { TChain, TSubstrateChain } from '@paraspell/sdk';
+import {
+  replaceBigInt,
+  type TChain,
+  type TSubstrateChain,
+} from '@paraspell/sdk';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -161,7 +165,7 @@ export class AssetsController {
     const { currency } = params;
     this.analyticsService.track(EventName.GET_SUPPORTED_DESTINATIONS, req, {
       chain,
-      currency: JSON.stringify(currency),
+      currency: JSON.stringify(currency, replaceBigInt),
     });
     return this.assetsService.getSupportedDestinations(chain, params);
   }

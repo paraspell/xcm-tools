@@ -4,6 +4,7 @@ import type { TAssetInfo, TChain, TChainAssetsInfo } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import { EventName } from '../analytics/EventName.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AssetsController } from './assets.controller.js';
 import { AssetsService } from './assets.service.js';
@@ -12,6 +13,7 @@ import { AssetsService } from './assets.service.js';
 describe('AssetsController', () => {
   let controller: AssetsController;
   let assetsService: AssetsService;
+  let analyticsService: AnalyticsService;
   const chain: TChain = 'Acala';
   const symbol = 'KSM';
   const decimals = 18;
@@ -30,6 +32,7 @@ describe('AssetsController', () => {
 
     controller = module.get<AssetsController>(AssetsController);
     assetsService = module.get<AssetsService>(AssetsService);
+    analyticsService = module.get<AnalyticsService>(AnalyticsService);
   });
 
   it('should be defined', () => {
@@ -219,6 +222,32 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(chain, params);
+    });
+
+    it('should track analytics with replaceBigInt when currency contains BigInt', () => {
+      const chain: TChain = 'Acala';
+      const params = { currency: { id: 12345678901234567890n } };
+      const mockResult: TChain[] = ['Darwinia', 'Hydration'];
+      vi.spyOn(assetsService, 'getSupportedDestinations').mockReturnValue(
+        mockResult,
+      );
+      const trackSpy = vi.spyOn(analyticsService, 'track');
+
+      const result = controller.getSupportedDestinations(
+        chain,
+        params,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(trackSpy).toHaveBeenCalledWith(
+        EventName.GET_SUPPORTED_DESTINATIONS,
+        mockRequestObject,
+        {
+          chain,
+          currency: '{"id":"12345678901234567890"}',
+        },
+      );
     });
   });
 

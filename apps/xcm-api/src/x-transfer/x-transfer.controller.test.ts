@@ -13,6 +13,7 @@ import { BatchMode, EXCHANGE_CHAINS } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import { EventName } from '../analytics/EventName.js';
 import { mockRequestObject } from '../testUtils.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import type {
@@ -27,6 +28,7 @@ import { XTransferService } from './x-transfer.service.js';
 describe('XTransferController', () => {
   let controller: XTransferController;
   let service: XTransferService;
+  let analyticsService: AnalyticsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,6 +44,7 @@ describe('XTransferController', () => {
 
     controller = module.get<XTransferController>(XTransferController);
     service = module.get<XTransferService>(XTransferService);
+    analyticsService = module.get<AnalyticsService>(AnalyticsService);
   });
 
   const bodyParams: XTransferDtoWSender = {
@@ -169,6 +172,42 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+
+    it('should serialize BigInts in transfers and options for analytics tracking', async () => {
+      const bodyParams: BatchXTransferDto = {
+        transfers: [
+          {
+            from: 'Acala',
+            to: 'Astar',
+            recipient: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+            currency: {
+              symbol: 'ACA',
+              amount: 1000000000000000000n as unknown as number,
+            },
+          },
+        ],
+        options: { mode: BatchMode.BATCH },
+      };
+      const mockResult = '0x1234567890abcdef';
+      vi.spyOn(service, 'generateBatchXcmCall').mockResolvedValue(mockResult);
+      const trackSpy = vi.spyOn(analyticsService, 'track');
+
+      const result = await controller.generateXcmCallBatch(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(trackSpy).toHaveBeenCalledWith(
+        EventName.GENERATE_XCM_CALL_BATCH,
+        mockRequestObject,
+        expect.objectContaining({
+          resolvedTransfers: expect.stringContaining(
+            '"amount":"1000000000000000000"',
+          ),
+        }),
+      );
     });
   });
 
