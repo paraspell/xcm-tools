@@ -64,30 +64,51 @@ class NeuroWeb<TApi, TRes, TSigner, TCustomChain extends string = never>
   transferLocalNonNativeAsset(
     options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
   ): TRes {
-    const { api, assetInfo: asset, recipient, balance, isAmountAll, keepAlive } = options
-
-    const amount = isAmountAll ? balance : asset.amount
-    const method = keepAlive ? 'transfer_keep_alive' : 'transfer'
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     if (asset.assetId === undefined) {
+      if (isAmountAll) {
+        return api.deserializeExtrinsics({
+          module: 'ForeignAssets',
+          method: 'transfer_all',
+          params: {
+            id: asset.location,
+            dest: recipient,
+            keep_alive: keepAlive
+          }
+        })
+      }
+
       return api.deserializeExtrinsics({
         module: 'ForeignAssets',
-        method,
+        method: keepAlive ? 'transfer_keep_alive' : 'transfer',
         params: {
           id: asset.location,
           target: recipient,
-          amount
+          amount: asset.amount
+        }
+      })
+    }
+
+    if (isAmountAll) {
+      return api.deserializeExtrinsics({
+        module: 'Assets',
+        method: 'transfer_all',
+        params: {
+          id: BigInt(asset.assetId),
+          dest: recipient,
+          keep_alive: keepAlive
         }
       })
     }
 
     return api.deserializeExtrinsics({
       module: 'Assets',
-      method,
+      method: keepAlive ? 'transfer_keep_alive' : 'transfer',
       params: {
         id: BigInt(asset.assetId),
         target: recipient,
-        amount
+        amount: asset.amount
       }
     })
   }

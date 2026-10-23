@@ -126,7 +126,30 @@ describe('NeuroWeb', () => {
       })
     })
 
-    it('should call Assets.transfer with full balance when isAmountAll is true', () => {
+    it('should call Assets.transfer_keep_alive when keepAlive is true and not sending entire balance', () => {
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'USDT', assetId: '42', amount: 321n },
+        recipient: '5CLocalDest',
+        balance: 999n,
+        isAmountAll: false,
+        keepAlive: true
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'Assets',
+        method: 'transfer_keep_alive',
+        params: {
+          id: 42n,
+          target: mockOptions.recipient,
+          amount: mockOptions.assetInfo.amount
+        }
+      })
+    })
+
+    it('should call Assets.transfer_all when isAmountAll is true', () => {
       const expectedResult = Symbol('transfer-result')
 
       deserializeExtrinsics.mockReturnValue(expectedResult)
@@ -136,24 +159,25 @@ describe('NeuroWeb', () => {
         assetInfo: { symbol: 'USDT', assetId: '7', amount: 321n },
         recipient: '5CLocalDest',
         balance: 777n,
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: true
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const result = chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
-        method: 'transfer',
+        method: 'transfer_all',
         params: {
           id: 7n,
-          target: mockOptions.recipient,
-          amount: mockOptions.balance
+          dest: mockOptions.recipient,
+          keep_alive: true
         }
       })
       expect(result).toBe(expectedResult)
     })
 
-    it('should call ForeignAssets.transfer with asset location when assetId is undefined', () => {
+    it('should call ForeignAssets.transfer_keep_alive when keepAlive is true and assetId is undefined', () => {
       const location = { parents: 1, interior: { Here: null } }
 
       const mockOptions = {
@@ -174,6 +198,56 @@ describe('NeuroWeb', () => {
           id: location,
           target: mockOptions.recipient,
           amount: mockOptions.assetInfo.amount
+        }
+      })
+    })
+
+    it('should call ForeignAssets.transfer when keepAlive is false and assetId is undefined', () => {
+      const location = { parents: 1, interior: { Here: null } }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'DOT', location, amount: 321n },
+        recipient: '5CLocalDest',
+        balance: 999n,
+        isAmountAll: false,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer',
+        params: {
+          id: location,
+          target: mockOptions.recipient,
+          amount: mockOptions.assetInfo.amount
+        }
+      })
+    })
+
+    it('sends all of a foreign asset with transfer_all when keepAlive is on (default for local transfers)', () => {
+      const location = { parents: 1, interior: { Here: null } }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'DOT', location, amount: 321n },
+        recipient: '5CLocalDest',
+        balance: 1000n,
+        isAmountAll: true,
+        keepAlive: true
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        params: {
+          id: location,
+          dest: mockOptions.recipient,
+          keep_alive: true
         }
       })
     })
