@@ -77,7 +77,11 @@ describe("XcmTransformer", () => {
       [{ GeneralIndex: "123" }, { type: "GeneralIndex", value: 123n }],
       [
         { Ethereum: { chainId: 1 } },
-        { type: "Ethereum", value: { chainId: 1 } },
+        { type: "Ethereum", value: { chainId: 1n } },
+      ],
+      [
+        { Ethereum: { chain_id: 1 } },
+        { type: "Ethereum", value: { chainId: 1n } },
       ],
       [
         { AccountKey20: { network: null, key: "0x01" } },
@@ -200,6 +204,21 @@ describe("XcmTransformer", () => {
       expect(transform({ currency_id: "42", other: true })).toEqual({
         currencyId: "42",
         other: true,
+      });
+    });
+
+    it("handles Ethereum location converting chainId to bigint", () => {
+      expect(transform({ Ethereum: { chainId: 1 } })).toEqual({
+        type: "Ethereum",
+        value: { chainId: 1n },
+      });
+      expect(transform({ Ethereum: { chain_id: 1 } })).toEqual({
+        type: "Ethereum",
+        value: { chainId: 1n },
+      });
+      expect(transform({ Ethereum: { chainId: 11155111n } })).toEqual({
+        type: "Ethereum",
+        value: { chainId: 11155111n },
       });
     });
   });
