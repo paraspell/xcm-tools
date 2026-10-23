@@ -96,7 +96,7 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: {
-            chainId: value.chainId,
+            chainId: BigInt(value.chainId),
           },
         };
       } else if (key === "AccountKey20") {

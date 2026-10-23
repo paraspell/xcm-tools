@@ -77,7 +77,7 @@ describe("XcmTransformer", () => {
       [{ GeneralIndex: "123" }, { type: "GeneralIndex", value: 123n }],
       [
         { Ethereum: { chainId: 1 } },
-        { type: "Ethereum", value: { chainId: 1 } },
+        { type: "Ethereum", value: { chainId: 1n } },
       ],
       [
         { AccountKey20: { network: null, key: "0x01" } },
