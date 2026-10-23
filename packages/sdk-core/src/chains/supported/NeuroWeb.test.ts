@@ -177,5 +177,47 @@ describe('NeuroWeb', () => {
         }
       })
     })
+
+    it('sends all of a foreign asset with transfer_all when keepAlive is on (default for local transfers)', () => {
+      const location = { parents: 1, interior: { Here: null } }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'DOT', location, amount: 321n },
+        recipient: '5CLocalDest',
+        balance: 1000n,
+        isAmountAll: true,
+        keepAlive: true
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        params: { id: location, dest: mockOptions.recipient, keep_alive: true }
+      })
+    })
+
+    it('sends all of a foreign asset with transfer_all when keepAlive is false', () => {
+      const location = { parents: 1, interior: { Here: null } }
+
+      const mockOptions = {
+        api: mockApi,
+        assetInfo: { symbol: 'snowTRAC', location, amount: 500n },
+        recipient: '5CLocalDest',
+        balance: 2000n,
+        isAmountAll: true,
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      chain.transferLocalNonNativeAsset(mockOptions)
+
+      expect(deserializeExtrinsics).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        method: 'transfer_all',
+        params: { id: location, dest: mockOptions.recipient, keep_alive: false }
+      })
+    })
   })
 })

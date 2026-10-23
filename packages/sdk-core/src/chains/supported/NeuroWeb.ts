@@ -70,6 +70,18 @@ class NeuroWeb<TApi, TRes, TSigner, TCustomChain extends string = never>
     const method = keepAlive ? 'transfer_keep_alive' : 'transfer'
 
     if (asset.assetId === undefined) {
+      if (isAmountAll) {
+        return api.deserializeExtrinsics({
+          module: 'ForeignAssets',
+          method: 'transfer_all',
+          params: {
+            id: asset.location,
+            dest: recipient,
+            keep_alive: keepAlive
+          }
+        })
+      }
+
       return api.deserializeExtrinsics({
         module: 'ForeignAssets',
         method,
