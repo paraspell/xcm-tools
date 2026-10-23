@@ -2659,8 +2659,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1113",
@@ -2735,8 +2734,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1816",
@@ -2761,8 +2759,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1001356",
@@ -2945,7 +2942,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "WETH3"
       },
       {
@@ -2995,8 +2991,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "67",
@@ -3021,8 +3016,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "20",
@@ -3077,8 +3071,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "30",
@@ -3094,8 +3087,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "39",
@@ -3216,8 +3208,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "11",
@@ -3239,8 +3230,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1001357",
@@ -3294,8 +3284,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1112",
@@ -3371,8 +3360,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1006",
@@ -3420,8 +3408,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000796",
@@ -3580,8 +3567,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "31",
@@ -3600,8 +3586,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "33",
@@ -3623,8 +3608,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "41",
@@ -3651,7 +3635,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "CFG2"
       },
       {
@@ -3816,7 +3799,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "DAI2"
       },
       {
@@ -3839,8 +3821,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1001355",
@@ -3891,8 +3872,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "13",
@@ -3915,7 +3895,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "CFG1"
       },
       {
@@ -3964,8 +3943,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000745",
@@ -4014,8 +3992,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000625",
@@ -4067,8 +4044,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "29",
@@ -4084,8 +4060,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "42",
@@ -4143,8 +4118,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "43",
@@ -4221,7 +4195,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "DAI1"
       },
       {
@@ -4245,7 +4218,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "USDC4"
       },
       {
@@ -4292,8 +4264,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "3370",
@@ -4309,8 +4280,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1003",
@@ -4331,6 +4301,32 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "1010",
+        "symbol": "aHYPE",
+        "decimals": 18,
+        "existentialDeposit": "114285714285714",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa8f540fb7852024da35d30947be0899299ba42f1"
                 }
               }
             ]
@@ -4389,7 +4385,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "WBTC1"
       },
       {
@@ -4482,8 +4477,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000626",
@@ -4510,7 +4504,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "sUSDS1"
       },
       {
@@ -4527,8 +4520,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "45",
@@ -4554,8 +4546,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1001358",
@@ -4662,8 +4653,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1004",
@@ -4760,8 +4750,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "12",
@@ -4783,8 +4772,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000081",
@@ -4803,8 +4791,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "3",
@@ -4827,7 +4814,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "WBTC3"
       },
       {
@@ -4876,8 +4862,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "25",
@@ -4893,8 +4878,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000746",
@@ -4928,8 +4912,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "69",
@@ -5010,8 +4993,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000851",
@@ -5037,8 +5019,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "9001",
@@ -5106,8 +5087,7 @@
               }
             ]
           }
-        },
-        "isFeeAsset": true
+        }
       },
       {
         "assetId": "1000752",
@@ -5166,7 +5146,6 @@
             ]
           }
         },
-        "isFeeAsset": true,
         "alias": "WETH1"
       }
     ]
