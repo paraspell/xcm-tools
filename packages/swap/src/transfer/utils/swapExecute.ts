@@ -98,7 +98,10 @@ export const canUseExecuteTransfer = <TApi, TRes, TSigner, TCustomChain extends 
   dex: ExchangeChain,
   options: TSwapTransformedOptions<TApi, TRes, TSigner, TCustomChain>,
 ): boolean =>
-  Boolean(options.origin || options.destination) &&
+  Boolean(
+    (options.origin && options.origin.chain !== dex.chain) ||
+    (options.destination && options.destination.chain !== dex.chain),
+  ) &&
   (dex.chain.includes('AssetHub') || dex.chain === 'Hydration');
 
 export const isFilteredError = (error: unknown): boolean =>

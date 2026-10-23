@@ -98,6 +98,41 @@ describe('AssetHubExchange', () => {
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(1);
     });
 
+    it('pays the requested recipient for a same-chain swap', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        recipient: 'Bob',
+        assetTo: { ...baseSwapOptions.assetTo, symbol: 'DOT' },
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT');
+
+      await instance.swapCurrency(opts, 0n);
+      expect(mockPolkadotApi.deserializeExtrinsics).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ send_to: 'Bob' }),
+        }),
+      );
+    });
+
+    it('pays sender when destination differs from exchange chain', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        recipient: 'Bob',
+        destination: { chain: 'Hydration', address: 'Bob' },
+        assetTo: { ...baseSwapOptions.assetTo, symbol: 'DOT' },
+      } as TGenericSwapOptions<unknown, unknown, unknown>;
+      vi.mocked(mockPolkadotApi.queryRuntimeApi).mockResolvedValueOnce(2000n);
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT');
+
+      await instance.swapCurrency(opts, 0n);
+      expect(mockPolkadotApi.deserializeExtrinsics).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.objectContaining({ send_to: 'sender' }),
+        }),
+      );
+    });
+
     it('should swap using fee conversion via queryRuntimeApi when assetTo.symbol is not native', async () => {
       const opts = {
         ...baseSwapOptions,

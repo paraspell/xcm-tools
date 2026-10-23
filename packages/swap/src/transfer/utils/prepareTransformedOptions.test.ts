@@ -224,6 +224,79 @@ describe('prepareTransformedOptions', () => {
     expect(result.options.feeCalcAddress).toBe('feeCalcAddr');
   });
 
+  test('sets destination when origin, destination, and exchange are the same chain but recipient differs from sender', async () => {
+    const mockOptions = {
+      from: 'AssetHubPolkadot',
+      to: 'AssetHubPolkadot',
+      exchange: 'AssetHubPolkadot',
+      currencyFrom: { symbol: 'DOT' },
+      currencyTo: { symbol: 'USDT' },
+      sender: 'Alice',
+      recipient: 'Bob',
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    const mockDexChain = {
+      chain: 'AssetHubPolkadot',
+      apiType: 'GENERIC',
+      createApiInstance: vi.fn().mockResolvedValue({}),
+      createApiInstancePapi: vi.fn().mockResolvedValue({}),
+    } as unknown as ExchangeChain;
+
+    const mockDotAsset = { symbol: 'DOT', decimals: 10 } as TAssetInfo;
+    const mockUsdtAsset = { symbol: 'USDT', decimals: 6 } as TAssetInfo;
+
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
+    vi.mocked(findAssetInfo).mockReturnValue(mockDotAsset);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(mockDotAsset);
+    vi.mocked(getExchangeAsset).mockReturnValue(mockUsdtAsset);
+    vi.mocked(createChainClient).mockResolvedValue({});
+    vi.mocked(supportsExchangePair).mockReturnValue(true);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([mockUsdtAsset]);
+    vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
+
+    const result = await prepareTransformedOptions({ ...mockOptions, api: mockApi });
+
+    expect(result.options.destination).toEqual({
+      chain: 'AssetHubPolkadot',
+      address: 'Bob',
+    });
+  });
+
+  test('keeps destination undefined when same-chain swap recipient equals sender', async () => {
+    const mockOptions = {
+      from: 'AssetHubPolkadot',
+      to: 'AssetHubPolkadot',
+      exchange: 'AssetHubPolkadot',
+      currencyFrom: { symbol: 'DOT' },
+      currencyTo: { symbol: 'USDT' },
+      sender: 'Alice',
+      recipient: 'Alice',
+    } as TTransferBaseOptions<unknown, unknown, unknown>;
+
+    const mockDexChain = {
+      chain: 'AssetHubPolkadot',
+      apiType: 'GENERIC',
+      createApiInstance: vi.fn().mockResolvedValue({}),
+      createApiInstancePapi: vi.fn().mockResolvedValue({}),
+    } as unknown as ExchangeChain;
+
+    const mockDotAsset = { symbol: 'DOT', decimals: 10 } as TAssetInfo;
+    const mockUsdtAsset = { symbol: 'USDT', decimals: 6 } as TAssetInfo;
+
+    vi.mocked(createExchangeInstance).mockReturnValue(mockDexChain);
+    vi.mocked(findAssetInfo).mockReturnValue(mockDotAsset);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValue(mockDotAsset);
+    vi.mocked(getExchangeAsset).mockReturnValue(mockUsdtAsset);
+    vi.mocked(createChainClient).mockResolvedValue({});
+    vi.mocked(supportsExchangePair).mockReturnValue(true);
+    vi.mocked(getSupportedAssetsImpl).mockReturnValue([mockUsdtAsset]);
+    vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
+
+    const result = await prepareTransformedOptions({ ...mockOptions, api: mockApi });
+
+    expect(result.options.destination).toBeUndefined();
+  });
+
   test('throws error when exchange does not support the asset pair', async () => {
     const mockOptions = {
       from: 'Acala',

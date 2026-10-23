@@ -82,8 +82,17 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
 
   validateRoutedFeeAsset(options);
 
-  const { api, origin, exchange, currencyTo, destination, amount, sender, evmSenderAddress } =
-    options;
+  const {
+    api,
+    origin,
+    exchange,
+    currencyTo,
+    destination,
+    amount,
+    sender,
+    recipient,
+    evmSenderAddress,
+  } = options;
 
   assertCurrencyCore(currencyTo);
 
@@ -144,7 +153,7 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
 
   const finalDestination =
     receivingInfo?.destination ??
-    (await buildExchangeDestInfo(exchange, sender, amountOut, currencyTo));
+    (await buildExchangeDestInfo(exchange, recipient ?? sender, amountOut, currencyTo));
 
   return {
     chain: {

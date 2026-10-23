@@ -56,7 +56,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
   ): Promise<TSingleSwapResult<TRes>> {
-    const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
+    const { api, assetFrom, assetTo, amount, sender, recipient, destination, slippagePct, origin } =
+      options;
 
     const localizedFrom = localizeLocation(this.chain, assetFrom.location);
     const localizedTo = localizeLocation(this.chain, assetTo.location);
@@ -69,6 +70,11 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     const slippageMultiplier = Number(slippagePct);
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
+    const sendTo =
+      !destination || destination.chain === this.chain
+        ? (recipient ?? destination?.address ?? sender)
+        : sender;
+
     const tx = api.deserializeExtrinsics({
       module: 'AssetConversion',
       method: 'swap_exact_tokens_for_tokens',
@@ -76,7 +82,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
         path: [localizedFrom, localizedTo],
         amount_in: amountWithoutFee,
         amount_out_min: minAmountOut,
-        send_to: sender,
+        send_to: sendTo,
         keep_alive: !!assetFrom.isNative,
       },
     });

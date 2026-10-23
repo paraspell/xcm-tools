@@ -233,13 +233,47 @@ describe('getSwapInfo', () => {
       expect(buildDestInfo).toHaveBeenCalledWith(
         expect.objectContaining({
           destination: 'Hydration',
-          recipient: 'Alice',
+          recipient: 'Bob',
           currency: expect.objectContaining({ amount: 500n, symbol: 'USDT' }),
         }),
       );
       expect(result.origin.isExchange).toBe(true);
       expect(result.destination.isExchange).toBe(true);
       expect(result.hops).toEqual([]);
+    });
+
+    it('falls back to sender for buildExchangeDestInfo when recipient is not specified', async () => {
+      vi.mocked(prepareTransformedOptions).mockResolvedValue({
+        options: { ...baseOptions, recipient: undefined },
+        dex,
+      });
+
+      await getSwapInfo(initialOptions);
+
+      expect(buildDestInfo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          destination: 'Hydration',
+          recipient: 'Alice',
+          currency: expect.objectContaining({ amount: 500n, symbol: 'USDT' }),
+        }),
+      );
+    });
+
+    it('uses recipient when specified for buildExchangeDestInfo on same-chain swap', async () => {
+      vi.mocked(prepareTransformedOptions).mockResolvedValue({
+        options: { ...baseOptions, recipient: 'Bob' },
+        dex,
+      });
+
+      await getSwapInfo(initialOptions);
+
+      expect(buildDestInfo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          destination: 'Hydration',
+          recipient: 'Bob',
+          currency: expect.objectContaining({ amount: 500n, symbol: 'USDT' }),
+        }),
+      );
     });
 
     it('uses evmSenderAddress when present for buildExchangeOriginInfo', async () => {

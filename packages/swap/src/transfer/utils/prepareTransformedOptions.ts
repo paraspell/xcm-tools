@@ -50,7 +50,9 @@ export const prepareTransformedOptions = async <
   }
 
   const originSpecified = from && originApi && from !== dex.chain;
-  const destinationSpecified = to && to !== dex.chain;
+  const targetChain = to ?? dex.chain;
+  const destinationSpecified =
+    targetChain !== dex.chain || (recipient !== undefined && recipient !== sender);
 
   const exchangeApi = await api.createApiForChain(dex.chain);
 
@@ -84,7 +86,7 @@ export const prepareTransformedOptions = async <
     destination:
       destinationSpecified && recipient
         ? {
-            chain: to,
+            chain: targetChain,
             address: recipient,
           }
         : undefined,
