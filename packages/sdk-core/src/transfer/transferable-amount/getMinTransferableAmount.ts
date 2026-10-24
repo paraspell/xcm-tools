@@ -119,13 +119,14 @@ export const getMinTransferableAmountInternal = async <
   try {
     tx = await createTx(amounts)
   } catch (e) {
-    if (e instanceof AmountTooLowError) {
-      amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
-      try {
-        tx = await createTx(amounts)
-      } catch {
-        return toResult(amounts.map(() => 0n))
-      }
+    if (!(e instanceof AmountTooLowError)) {
+      throw e
+    }
+    amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
+    try {
+      tx = await createTx(amounts)
+    } catch {
+      return toResult(amounts.map(() => 0n))
     }
   }
 
