@@ -1683,6 +1683,11 @@ describe("DedotApi", () => {
     });
 
     it.each([
+      [
+        { error: { type: "Token", value: { type: "CannotCreate" } } },
+        "CannotCreate",
+      ],
+      [{ error: { type: "BadOrigin" } }, "BadOrigin"],
       [{ error: { Other: "OtherFailure" } }, "OtherFailure"],
       [{ error: "StringFailure" }, "StringFailure"],
       [{ error: { custom: true } }, '{"custom":true}'],
@@ -1715,6 +1720,7 @@ describe("DedotApi", () => {
 
     it.each([
       [{ type: "Module", value: { type: "BadModule" } }, "BadModule"],
+      [{ type: "Token", value: { type: "CannotCreate" } }, "CannotCreate"],
       [{ type: "EventFailure" }, "EventFailure"],
     ])("extracts a dispatched-as error %#", async (eventError, reason) => {
       vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
