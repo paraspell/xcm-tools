@@ -178,12 +178,19 @@ describe('AcalaExchange', () => {
     });
 
     it('should swap successfully and return the tx and modified amountOut', async () => {
-      const result = await chain.swapCurrency(baseSwapOptions, 1n);
+      const result = await chain.swapCurrency(baseSwapOptions, 10n);
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe(46199999999998n);
+      expect(result.amountOut).toBe(41999999999989n);
+    });
+
+    it('should throw AmountTooLowError when padded destination fee exceeds amountOut', async () => {
+      vi.mocked(getBalance).mockResolvedValueOnce(100_000_000_000_000n);
+      await expect(chain.swapCurrency(baseSwapOptions, 42_000_000_000_000n)).rejects.toThrow(
+        AmountTooLowError,
+      );
     });
 
     it('should pass slippagePct as acceptiveSlippage to the dex swap', async () => {
