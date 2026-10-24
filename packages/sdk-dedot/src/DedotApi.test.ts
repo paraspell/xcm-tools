@@ -15,6 +15,7 @@ import {
   localizeLocation,
   RELAY_LOCATION,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   type TLocation,
@@ -1246,6 +1247,20 @@ describe("DedotApi", () => {
         proofSize: 0n,
       });
       expect(transform).not.toHaveBeenCalledWith(xcm);
+    });
+
+    it("throws RuntimeApiError when queryXcmWeight returns an error result", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
+        isOk: false,
+        isErr: true,
+        err: "WeightNotComputable",
+      });
+
+      await expect(dedotApi.getXcmWeight({ some: "xcm" })).rejects.toThrow(
+        new RuntimeApiError(
+          'Failed to get XCM weight for payment fee calculation. Reason: "WeightNotComputable"',
+        ),
+      );
     });
   });
 
