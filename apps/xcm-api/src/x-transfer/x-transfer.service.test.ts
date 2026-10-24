@@ -118,6 +118,9 @@ const builderMock = {
     maxFeePerGas: 1_000_000_000n,
     maxPriorityFeePerGas: 1_000_000n,
   }),
+  api: {
+    getChainProviders: vi.fn().mockReturnValue(['wss://acala.com']),
+  },
   disconnect: vi.fn(),
 };
 
@@ -427,6 +430,59 @@ describe('XTransferService', () => {
       expect(result[0]).toHaveProperty('tx', txHash);
       expect(result[0]).toHaveProperty('wsProviders');
       expect(builderMock.buildAll).toHaveBeenCalled();
+    });
+
+    it('should resolve wsProviders from finalBuilder.api for custom chains', async () => {
+      const customWsProviders = ['wss://rpc.mychain.example/ws'];
+      const customBuilderMock = {
+        ...builderMock,
+        buildAll: vi.fn().mockResolvedValue([
+          {
+            type: 'EXTRINSIC',
+            chain: 'MyChain',
+            tx: {
+              getEncodedData: vi.fn().mockResolvedValue(new Uint8Array([1])),
+            },
+          },
+        ]),
+        api: {
+          getChainProviders: vi.fn().mockReturnValue(customWsProviders),
+        },
+      };
+
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValueOnce(
+        customBuilderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
+      );
+
+      const options: XTransferDto = {
+        ...xTransferDto,
+        from: 'MyChain',
+        sender: undefined,
+        options: {
+          customChains: {
+            MyChain: {
+              paraId: 9999,
+              ecosystem: 'Polkadot',
+              providers: [{ name: 'MyRPC', endpoint: customWsProviders[0] }],
+              xcmVersion: paraspellSdk.Version.V5,
+            },
+          },
+        },
+      };
+
+      const result = await service.generateXcmCalls(options);
+
+      expect(customBuilderMock.api.getChainProviders).toHaveBeenCalledWith(
+        'MyChain',
+      );
+      expect(result).toEqual([
+        {
+          type: 'EXTRINSIC',
+          chain: 'MyChain',
+          tx: txHash,
+          wsProviders: customWsProviders,
+        },
+      ]);
     });
   });
 

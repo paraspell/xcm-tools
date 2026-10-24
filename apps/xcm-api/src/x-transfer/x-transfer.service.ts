@@ -5,7 +5,6 @@ import {
   EXCHANGE_CHAINS,
   GeneralBuilder,
   getBridgeStatus,
-  getChainProviders,
   getParaEthTransferFees,
   TPapiApi,
   TPapiSigner,
@@ -232,7 +231,7 @@ export class XTransferService {
               type: txContext.type,
               chain: txContext.chain,
               tx: txHash,
-              wsProviders: getChainProviders(txContext.chain),
+              wsProviders: finalBuilder.api.getChainProviders(txContext.chain),
             };
           }),
         );
