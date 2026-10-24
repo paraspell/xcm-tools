@@ -320,7 +320,7 @@ export class GeneralBuilder<
     return new GeneralBuilder<TApi, TRes, TSigner, T & { from: TSubstrateChain }, TCustomChain>(
       this.api,
       this.batchManager,
-      { ...this._options, from } as T & { from: TSubstrateChain }
+      { from } as T & { from: TSubstrateChain }
     )
   }
 
