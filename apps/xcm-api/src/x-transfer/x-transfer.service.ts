@@ -127,11 +127,17 @@ export class XTransferService {
     assertChain(from, options?.customChains);
     assertDestination(to, options?.customChains);
 
+    const resolvedFeeAsset =
+      feeAsset ??
+      (Array.isArray(currency)
+        ? currency.find((c) => 'isFeeAsset' in c && c.isFeeAsset)
+        : undefined);
+
     let finalBuilder = builder
       .from(from)
       .to(to)
       .currency(currency)
-      .feeAsset(feeAsset)
+      .feeAsset(resolvedFeeAsset)
       .recipient(recipient)
       .ahAddress(ahAddress);
 

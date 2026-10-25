@@ -410,6 +410,23 @@ describe('XTransferService', () => {
 
       expect(builderMock.swap).not.toHaveBeenCalled();
     });
+
+    it('derives feeAsset from multi-currency item with isFeeAsset', async () => {
+      const options: any = {
+        ...xTransferDto,
+        currency: [
+          { symbol: 'DOT', amount: '10' },
+          { symbol: 'USDC', amount: '20', isFeeAsset: true },
+        ],
+        feeAsset: undefined,
+      };
+
+      await service.generateXcmCall(options);
+
+      expect(builderMock.feeAsset).toHaveBeenCalledWith(
+        expect.objectContaining({ symbol: 'USDC', isFeeAsset: true }),
+      );
+    });
   });
 
   describe('generateXcmCalls', () => {

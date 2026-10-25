@@ -148,6 +148,7 @@ export const SwapOptionsSchema = z.object({
 export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
   z.object({
     amount: AmountSchema,
+    isFeeAsset: z.boolean().optional(),
   }),
 );
 

@@ -33,6 +33,18 @@ describe('amount schemas', () => {
     ).toBe(true);
   });
 
+  it('preserves isFeeAsset property on currency items', () => {
+    const result = CurrencyCoreWithAmountSchema.safeParse({
+      symbol: 'USDC',
+      amount: '20',
+      isFeeAsset: true,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.isFeeAsset).toBe(true);
+    }
+  });
+
   it.each(['1abc', '1.2.3', 'Infinity', '1e309'])(
     'rejects malformed or non-finite transfer amount %s',
     (amount) => {
