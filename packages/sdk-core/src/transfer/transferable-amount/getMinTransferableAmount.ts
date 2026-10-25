@@ -126,6 +126,8 @@ export const getMinTransferableAmountInternal = async <
       } catch {
         return toResult(amounts.map(() => 0n))
       }
+    } else {
+      throw e
     }
   }
 
