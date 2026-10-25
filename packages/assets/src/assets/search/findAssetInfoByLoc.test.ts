@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { DuplicateAssetError } from '../../errors'
 import type { TAssetInfo } from '../../types'
 import { findAssetInfoByLoc } from './findAssetInfoByLoc'
 
@@ -84,5 +85,48 @@ describe('findAssetInfoByLoc', () => {
       }
     })
     expect(result).toBe(usdc)
+  })
+
+  it('throws DuplicateAssetError when multiple assets match the same location object', () => {
+    const duplicateAssets: TAssetInfo[] = [
+      relayNative,
+      {
+        symbol: 'DOT_DUP',
+        decimals: 12,
+        existentialDeposit: '2000',
+        location: { parents: 1, interior: { Here: null } }
+      }
+    ]
+
+    expect(() =>
+      findAssetInfoByLoc(duplicateAssets, {
+        parents: 1,
+        interior: { Here: null }
+      })
+    ).toThrow(DuplicateAssetError)
+  })
+
+  it('throws DuplicateAssetError when multiple assets match the same string location', () => {
+    const duplicateAssets: TAssetInfo[] = [
+      usdt,
+      {
+        symbol: 'USDT_DUP',
+        decimals: 18,
+        existentialDeposit: '500',
+        location: usdt.location
+      }
+    ]
+
+    expect(() =>
+      findAssetInfoByLoc(
+        duplicateAssets,
+        JSON.stringify({
+          parents: 1,
+          interior: {
+            X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: '1984' }]
+          }
+        })
+      )
+    ).toThrow(DuplicateAssetError)
   })
 })
