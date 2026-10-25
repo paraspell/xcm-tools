@@ -69,7 +69,7 @@ describe('getTransferableAmount', () => {
       api: mockApi,
       buildTx,
       origin: 'Astar',
-      destination: 'Astar',
+      destination: 'BifrostPolkadot',
       sender: 'validAddress',
       feeAsset: undefined,
       version: baseOptions.version,

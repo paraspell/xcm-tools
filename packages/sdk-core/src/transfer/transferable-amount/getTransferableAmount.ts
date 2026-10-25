@@ -34,7 +34,7 @@ const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends str
     api,
     buildTx,
     origin: chain,
-    destination: chain,
+    destination: options.destination,
     sender,
     feeAsset,
     version,
