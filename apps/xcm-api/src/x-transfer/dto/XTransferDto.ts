@@ -1,5 +1,6 @@
 import { EVM_ORIGIN_CHAINS } from '@paraspell/evm';
 import {
+  AMOUNT_ALL,
   ASSETS_PALLETS,
   CHAINS,
   EXCHANGE_CHAINS,
@@ -97,6 +98,7 @@ export const TransactOptionsSchema = z.object({
 });
 
 const AmountSchema = z.union([
+  z.literal(AMOUNT_ALL),
   z.templateLiteral([z.number()]).refine(validateAmount, {
     message: 'Amount must be a positive number',
   }),

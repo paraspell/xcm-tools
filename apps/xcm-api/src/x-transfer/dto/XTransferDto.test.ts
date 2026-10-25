@@ -33,6 +33,13 @@ describe('amount schemas', () => {
     ).toBe(true);
   });
 
+  it('accepts ALL as a transfer amount', () => {
+    expect(
+      CurrencyCoreWithAmountSchema.safeParse({ symbol: 'DOT', amount: 'ALL' })
+        .success,
+    ).toBe(true);
+  });
+
   it.each(['1abc', '1.2.3', 'Infinity', '1e309'])(
     'rejects malformed or non-finite transfer amount %s',
     (amount) => {
