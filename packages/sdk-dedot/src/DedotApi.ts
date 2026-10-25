@@ -887,7 +887,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   async getBridgeStatus() {
     const outboundOperatingMode =
       await this.api.query.ethereumOutboundQueue.operatingMode();
-    return outboundOperatingMode as TBridgeStatus;
+    // dedot returns the codec enum ({ type: 'Normal' }), while the shared Snowbridge
+    // guard compares against the plain string, so an un-normalised value made every
+    // Dedot bridge transfer throw BridgeHaltedError (#2274).
+    return typeof outboundOperatingMode === 'string'
+      ? (outboundOperatingMode as TBridgeStatus)
+      : (outboundOperatingMode as { type: TBridgeStatus }).type;
   }
 
   getConstant<T = unknown>(

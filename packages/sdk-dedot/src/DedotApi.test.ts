@@ -490,6 +490,13 @@ describe("DedotApi", () => {
       ).toHaveBeenCalled();
       expect(result).toBe("Normal");
     });
+
+    it("normalises the codec enum returned by the real API (#2274)", async () => {
+      mockApiRaw.query.ethereumOutboundQueue.operatingMode.mockResolvedValueOnce({
+        type: "Normal",
+      } as never);
+      await expect(dedotApi.getBridgeStatus()).resolves.toBe("Normal");
+    });
   });
 
   describe("createBridgedForwardedXcms", () => {
