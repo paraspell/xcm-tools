@@ -1645,6 +1645,19 @@ describe('Builder', () => {
       )
       expect(result).toBe('0xsnowserialized')
     })
+
+    it('throws UnsupportedOperationError when buildEvm() is called with swapOptions', async () => {
+      await expect(
+        Builder(mockApi)
+          .from('Ethereum')
+          .to('AssetHubPolkadot')
+          .currency({ symbol: 'USDC', amount: AMOUNT })
+          .sender('0xsender')
+          .recipient(ADDRESS)
+          .swap({ currencyTo: { symbol: 'DOT' }, exchange: 'AssetHubPolkadot' })
+          .buildEvm()
+      ).rejects.toThrowError(UnsupportedOperationError)
+    })
   })
 
   describe('Transact', () => {

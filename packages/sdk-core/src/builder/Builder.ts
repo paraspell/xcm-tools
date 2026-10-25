@@ -1122,9 +1122,13 @@ export class GeneralBuilder<
       TCustomChain
     >
   ) {
-    const { from, to, currency, recipient, ahAddress } = this._options
+    const { from, to, currency, recipient, ahAddress, swapOptions } = this._options
     assertToIsString(to)
     assertAddressIsString(recipient)
+
+    if (swapOptions) {
+      throw new UnsupportedOperationError('Swap options are not supported for EVM transfers.')
+    }
 
     const ext = isExternalChain(from)
       ? getEvmSnowbridgeExtensionOrThrow()
