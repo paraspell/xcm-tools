@@ -268,6 +268,20 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should convert string numeric currency_id to a number in multi-key objects', () => {
+    const input = {
+      fee_item: '5',
+      currency_id: '100',
+      amount: '5000000000'
+    }
+    const expected = {
+      fee_item: 5,
+      currency_id: 100,
+      amount: 5000000000n
+    }
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should transform nested objects with multiple keys', () => {
     const input = {
       fee_item: '5',
