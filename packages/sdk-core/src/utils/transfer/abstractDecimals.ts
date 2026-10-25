@@ -37,8 +37,11 @@ export const applyDecimalAbstraction = (
   if (decimals === undefined) {
     const strAmount = amount.toString()
     if (strAmount.includes('.')) {
-      // Return integer part only as fallback
-      return BigInt(strAmount.split('.')[0])
+      // Silently dropping the fraction changed the transferred amount. Fail loudly:
+      // the caller either has the wrong asset or forgot to pass planck.
+      throw new NumberFormatError(
+        `Cannot convert amount ${strAmount}: the resolved asset has no decimals. Pass the amount in planck units.`,
+      )
     }
     return BigInt(strAmount)
   }
