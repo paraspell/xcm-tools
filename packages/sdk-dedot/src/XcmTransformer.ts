@@ -168,21 +168,25 @@ export const transform = (obj: any): any => {
         if (key === "currency_id" && typeof v === "string") {
           try {
             newObj[k] = checkAndConvertToNumberOrBigInt(v);
+            return newObj;
           } catch (_e) {
             newObj[k] = {
               type: v,
             };
+          }
           }
         }
 
         if (k === "amount" && typeof v === "string") {
           try {
             newObj[k] = BigInt(v);
+            return newObj;
           } catch (_e) {
             newObj[k] = {
               type: v,
             };
           }
+          continue;
           continue;
         }
 
