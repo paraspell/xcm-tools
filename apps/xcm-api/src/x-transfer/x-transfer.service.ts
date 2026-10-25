@@ -182,7 +182,9 @@ export class XTransferService {
   }
 
   getXcmFee(transfer: GetXcmFeeDto) {
-    return this.executeWithBuilder(transfer, (builder) => builder.getXcmFee());
+    return this.executeWithBuilder(transfer, (builder) =>
+      builder.getXcmFee({ disableFallback: transfer.disableFallback ?? false }),
+    );
   }
 
   getOriginXcmFee(transfer: GetXcmFeeDto) {
