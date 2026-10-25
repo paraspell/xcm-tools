@@ -153,7 +153,9 @@ export const verifyEdOnDestinationInternal = async <
         ? destFee
         : 0n
 
-    return amount - feeToSubtract > (balance < ed ? ed : 0)
+    const netAmount = amount - feeToSubtract
+
+    return balance < ed ? netAmount >= ed : netAmount > 0n
   }
 
   const results = await Promise.all(destAssets.map(verifyAsset))
