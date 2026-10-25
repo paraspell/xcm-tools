@@ -1,3 +1,4 @@
+import { ValidationError } from '@paraspell/sdk-core';
 import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TLocation } from '@paraspell/sdk-core';
 import {
@@ -67,6 +68,9 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
 
     const slippageMultiplier = Number(slippagePct);
+    if (slippagePct === undefined || isNaN(slippageMultiplier) || slippageMultiplier < 0 || slippageMultiplier > 100) {
+      throw new ValidationError('Slippage percentage must be a valid number between 0 and 100.');
+    }
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
     const tx = api.deserializeExtrinsics({
