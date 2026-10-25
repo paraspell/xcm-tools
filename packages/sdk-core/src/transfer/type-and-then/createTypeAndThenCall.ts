@@ -129,11 +129,11 @@ export const createTypeAndThenCall = async <
   const { origin, assetInfo, isSnowbridge } = context
 
   if (isSnowbridge) {
-    const bridgeStatus = await getBridgeStatus(origin.api.clone())
+  const bridgeStatus = await getBridgeStatus(origin.api.clone())
 
-    if (bridgeStatus !== 'Normal') {
-      throw new BridgeHaltedError()
-    }
+  if (bridgeStatus.type !== 'Normal') {
+    throw new BridgeHaltedError()
+  }
   }
 
   const fees = await computeAllFees(context, async (amount, relative) => {
