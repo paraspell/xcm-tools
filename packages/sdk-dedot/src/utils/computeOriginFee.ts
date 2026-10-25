@@ -37,13 +37,13 @@ export const computeOriginFee = (
     }
     if (
       isFeeAsset &&
-      e.type === "AssetConversion" &&
-      e.value?.type === "SwapCreditExecuted" &&
-      e.value?.value &&
-      e.value.value.amount_in !== undefined &&
-      e.value.value.amount_in !== null
+      e.pallet === "AssetConversion" &&
+      e.palletEvent.name === "SwapCreditExecuted" &&
+      e.palletEvent.data &&
+      e.palletEvent.data.amount_in !== undefined &&
+      e.palletEvent.data.amount_in !== null
     ) {
-      assetConversionFee += e.value.value.amount_in;
+      assetConversionFee += e.palletEvent.data.amount_in;
     }
   }
 
