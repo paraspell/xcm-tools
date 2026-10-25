@@ -3,9 +3,9 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE } from '@polkadot-labs/hdkd-helpers'
 import { TPallet, TPapiTransaction } from '../src'
-import { expect } from 'vitest'
 import { TSerializedExtrinsics } from '@paraspell/sdk-core'
 import { createEcdsaSigner, createSr25519Signer } from '../src/utils'
+import { createTxValidator } from '../../sdk-core/e2e'
 
 export const getEcdsaSigner = () => {
   const seed = mnemonicToSeedSync(DEV_PHRASE)
@@ -25,13 +25,9 @@ const serializeTx = (tx: TPapiTransaction): TSerializedExtrinsics => {
   }
 }
 
-export const validateTx = async (tx: TPapiTransaction, signer: TxCreator) => {
-  expect(tx).toBeDefined()
-  const hex = await tx.create(signer)
-  expect(hex).toBeDefined()
-  const serialized = serializeTx(tx)
-  expect(serialized).toMatchSnapshot()
-}
+export const validateTx = createTxValidator(serializeTx, (tx, signer: TxCreator) =>
+  tx.create(signer)
+)
 
 export const createSigners = (): [TxCreator, TxCreator] => [
   createSr25519Signer('//Alice'),

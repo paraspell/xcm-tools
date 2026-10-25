@@ -1,6 +1,10 @@
-import { expect } from 'vitest'
 import { Extrinsic } from '../src'
+import { createTxValidator } from '../../sdk-core/e2e'
 
-export const validateTx = async (tx: Extrinsic) => {
-  expect(tx).toBeDefined()
-}
+const serializeTx = ({ method }: Extrinsic) => ({
+  module: method.section,
+  method: method.method,
+  params: method.toPrimitive()
+})
+
+export const validateTx = createTxValidator(serializeTx)

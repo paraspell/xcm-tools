@@ -39716,7 +39716,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
         {
           "fun": {
             "type": "Fungible",
-            "value": 1296478075021655410212n,
+            "value": 1357751551889558789030n,
           },
           "id": {
             "interior": {

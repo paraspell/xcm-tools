@@ -139,12 +139,12 @@
     "paraId": 2031,
     "providers": [
       {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-centrifuge.luckyfriday.io"
-      },
-      {
         "name": "OnFinality",
         "endpoint": "wss://centrifuge-parachain.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Centrifuge",
+        "endpoint": "wss://fullnode.centrifuge.io"
       }
     ]
   },
