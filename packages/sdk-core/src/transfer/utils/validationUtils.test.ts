@@ -460,16 +460,16 @@ describe('validateTransact', () => {
     ).toThrowError(UnsupportedOperationError)
   })
 
-  it('returns ValidationError if sender does not match destination', () => {
+  it('throws ValidationError if sender does not match destination', () => {
     vi.mocked(isHex).mockReturnValue(true)
     vi.mocked(isChainEvm).mockReturnValue(false)
     vi.mocked(compareAddresses).mockReturnValue(false)
 
-    const result = validateTransact({
-      ...baseOptions
-    })
-
-    expect(result).toBeInstanceOf(ValidationError)
+    expect(() =>
+      validateTransact({
+        ...baseOptions
+      })
+    ).toThrowError(ValidationError)
   })
 
   it('returns undefined for valid substrate to substrate call', () => {
