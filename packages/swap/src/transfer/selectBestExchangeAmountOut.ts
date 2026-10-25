@@ -1,37 +1,10 @@
-import { convertBuilderConfig, type WithApi } from '@paraspell/sdk-core';
+import { SwapAmountOutOptions, SwapFeeDetails } from '../types'
+import { selectBestExchangeAmountOutCommon } from './selectBestExchangeCommon'
+import { prepareTransformedOptions } from './utils/prepareTransformedOptions'
 
-import type { TGetBestAmountOutOptions } from '../types';
-import { selectBestExchangeCommon } from './selectBestExchangeCommon';
-import { buildExchangeApiVariant } from './utils/buildExchangeApiVariant';
-
-export const selectBestExchangeAmountOut = async <
-  TApi,
-  TRes,
-  TSigner,
-  TCustomChain extends string = never,
->(
-  options: WithApi<
-    TGetBestAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
-    TApi,
-    TRes,
-    TSigner,
-    TCustomChain
-  >,
-  originApi: TApi | undefined,
-) => {
-  const exchangeConfig = convertBuilderConfig<TApi>(options.api.config);
-  return selectBestExchangeCommon(
-    options,
-    originApi,
-    async (dex, assetFromExchange, assetTo, _options, parsedAmount) => {
-      const exchangeApi = await options.api.createApiForChain(dex.chain);
-      return dex.getAmountOut({
-        ...(await buildExchangeApiVariant(dex, exchangeConfig)),
-        api: exchangeApi,
-        assetFrom: assetFromExchange,
-        assetTo,
-        amount: BigInt(parsedAmount),
-      });
-    },
-  );
-};
+export const selectBestExchangeAmountOut = async (
+  options: SwapAmountOutOptions,
+): Promise<SwapFeeDetails> => {
+  const transformedOptions = prepareTransformedOptions(options)
+  return selectBestExchangeAmountOutCommon(transformedOptions)
+}
