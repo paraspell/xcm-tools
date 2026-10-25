@@ -150,7 +150,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
       }
 
       const hop1Received = resultHop1.amountOut;
-      const assumedInputForHop2 = padValueBy(hop1Received, -2);
+      const slippageMultiplier = Number(options.slippagePct ?? 1);
+      const assumedInputForHop2 = padValueBy(hop1Received, -slippageMultiplier);
 
       const optionsHop2: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain> = {
         apiType: 'GENERIC',
