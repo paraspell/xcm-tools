@@ -1083,6 +1083,137 @@ describe("DedotApi", () => {
         asset: { symbol: "USDT" },
       });
     });
+
+    it("falls back to emitted Issued event when XcmPaymentApi is not supported", async () => {
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(false);
+
+      const mockResponse = {
+        isOk: true,
+        value: {
+          executionResult: {
+            type: "Complete",
+            value: { used: { refTime: 10n, proofSize: 20n } },
+          },
+          forwardedXcms: [],
+          emittedEvents: [
+            {
+              pallet: "Balances",
+              palletEvent: {
+                name: "Issued",
+                data: { amount: 5000000000n },
+              },
+            },
+          ],
+        },
+      };
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue(mockResponse);
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        chain: "AssetHubPolkadot",
+        asset: { symbol: "DOT" } as TAssetInfo,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual({
+        success: true,
+        fee: 5000000000n,
+        asset: { symbol: "DOT" },
+        weight: { refTime: 10n, proofSize: 20n },
+        forwardedXcms: [],
+        destParaId: undefined,
+      });
+    });
+
+    it("safely handles undefined asset without calling getXcmPaymentApiFee and falls back to emitted events", async () => {
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(true);
+      const getXcmPaymentApiFeeSpy = vi.spyOn(dedotApi, "getXcmPaymentApiFee");
+
+      const mockResponse = {
+        isOk: true,
+        value: {
+          executionResult: {
+            type: "Complete",
+            value: { used: { refTime: 15n, proofSize: 25n } },
+          },
+          forwardedXcms: [],
+          emittedEvents: [
+            {
+              pallet: "ForeignAssets",
+              palletEvent: {
+                name: "Issued",
+                data: { amount: 123456n },
+              },
+            },
+          ],
+        },
+      };
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue(mockResponse);
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        chain: "AssetHubPolkadot",
+        asset: undefined as any,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(getXcmPaymentApiFeeSpy).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        success: true,
+        fee: 123456n,
+        asset: undefined,
+        weight: { refTime: 15n, proofSize: 25n },
+        forwardedXcms: [],
+        destParaId: undefined,
+      });
+
+      getXcmPaymentApiFeeSpy.mockRestore();
+    });
+
+    it("falls back to emitted SwapCreditExecuted event for Mythos origin", async () => {
+      vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(false);
+
+      const mockResponse = {
+        isOk: true,
+        value: {
+          executionResult: {
+            type: "Complete",
+            value: { used: { refTime: 12n, proofSize: 24n } },
+          },
+          forwardedXcms: [],
+          emittedEvents: [
+            {
+              pallet: "AssetConversion",
+              palletEvent: {
+                name: "SwapCreditExecuted",
+                data: { amount_in: 777000n },
+              },
+            },
+          ],
+        },
+      };
+      mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue(mockResponse);
+
+      const result = await dedotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        chain: "AssetHubPolkadot",
+        origin: "Mythos",
+        asset: { symbol: "MYTH" } as TAssetInfo,
+        version: Version.V5,
+      } as TDryRunXcmBaseOptions<TDedotExtrinsic>);
+
+      expect(result).toEqual({
+        success: true,
+        fee: 777000n,
+        asset: { symbol: "MYTH" },
+        weight: { refTime: 12n, proofSize: 24n },
+        forwardedXcms: [],
+        destParaId: undefined,
+      });
+    });
   });
 
   describe("getXcmPaymentApiFee", () => {

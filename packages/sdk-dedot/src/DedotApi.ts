@@ -781,6 +781,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     asset,
     chain,
     version,
+    origin,
   }: TDryRunXcmBaseOptions<TDedotExtrinsic>): Promise<TDryRunChainResult> {
     const supportsDryRunApi = this.hasDryRunSupport(chain);
 
@@ -818,7 +819,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const destParaId = this.extractDestParaId(forwardedXcms);
 
-    if (this.hasXcmPaymentApiSupport(chain)) {
+    if (this.hasXcmPaymentApiSupport(chain) && asset) {
       const fee = await this.getXcmPaymentApiFee(
         chain,
         xcm,
@@ -827,21 +828,75 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
         version,
       );
 
-      if (typeof fee !== "bigint") {
+      if (typeof fee === "bigint") {
         return {
-          success: false,
-          dryRunError: { reason: "Failed to retrieve fee from XcmPaymentApi" },
+          success: true,
+          fee,
           asset,
+          weight,
+          forwardedXcms,
+          destParaId,
         };
       }
+    }
 
+    const emitted = result?.value?.emittedEvents ?? [];
+    const reversedEvents = [...emitted].reverse();
+    const palletsWithIssued = ["balances", "foreignassets", "assets"];
+
+    const feeEvent =
+      (origin === "Mythos"
+        ? reversedEvents.find(
+            (event: any) =>
+              event.pallet?.toLowerCase() === "assetconversion" &&
+              event.palletEvent?.name === "SwapCreditExecuted",
+          )
+        : undefined) ??
+      reversedEvents.find(
+        (event: any) =>
+          palletsWithIssued.includes(event.pallet?.toLowerCase()) &&
+          event.palletEvent?.name === "Issued",
+      ) ??
+      reversedEvents.find(
+        (event: any) =>
+          ["balances", "foreignassets"].includes(event.pallet?.toLowerCase()) &&
+          event.palletEvent?.name === "Minted",
+      ) ??
+      reversedEvents.find(
+        (event: any) =>
+          ["currencies", "tokens"].includes(event.pallet?.toLowerCase()) &&
+          event.palletEvent?.name === "Deposited",
+      );
+
+    if (feeEvent) {
+      const feeData = feeEvent.palletEvent?.data;
+      const feeAmount =
+        feeEvent.pallet?.toLowerCase() === "assetconversion"
+          ? (feeData?.amount_in ?? feeData?.amountIn)
+          : feeData?.amount;
+
+      if (feeAmount !== undefined && feeAmount !== null) {
+        const fee =
+          typeof feeAmount === "bigint"
+            ? feeAmount
+            : BigInt(String(feeAmount).replace(/,/g, ""));
+
+        return {
+          success: true,
+          fee,
+          asset,
+          weight,
+          forwardedXcms,
+          destParaId,
+        };
+      }
+    }
+
+    if (this.hasXcmPaymentApiSupport(chain) && asset) {
       return {
-        success: true,
-        fee,
+        success: false,
+        dryRunError: { reason: "Failed to retrieve fee from XcmPaymentApi" },
         asset,
-        weight,
-        forwardedXcms,
-        destParaId,
       };
     }
 
