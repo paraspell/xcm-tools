@@ -66,7 +66,15 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
 
     const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
 
+    if (slippagePct == null || typeof slippagePct !== 'number' || isNaN(slippagePct)) {
+      throw new RoutingResolutionError('Slippage percentage must be a valid number.');
+    }
+
     const slippageMultiplier = Number(slippagePct);
+    if (slippageMultiplier < 0 || slippageMultiplier > 100) {
+      throw new RoutingResolutionError('Slippage percentage must be between 0 and 100.');
+    }
+
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
     const tx = api.deserializeExtrinsics({
