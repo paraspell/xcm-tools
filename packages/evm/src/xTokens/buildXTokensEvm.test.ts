@@ -127,8 +127,8 @@ describe('buildXTokensEvm', () => {
     )
   })
 
-  it('delegates to buildEvmLocal when from === to', () => {
-    const localAsset = { symbol: 'xcDOT', assetId: '0xABCDEF', decimals: 10 } as TAssetInfo
+  it('delegates to buildEvmLocal with formatted assetId when from === to', () => {
+    const localAsset = { symbol: 'xcDOT', assetId: '1029', decimals: 10 } as TAssetInfo
     vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce(localAsset)
 
     const result = buildXTokensEvm({
@@ -138,9 +138,10 @@ describe('buildXTokensEvm', () => {
       currency: { symbol: 'xcDOT', amount: '5000000' }
     })
 
+    expect(formatAssetIdToERC20).toHaveBeenCalledWith('1029')
     expect(buildEvmLocal).toHaveBeenCalledWith(
       'Darwinia',
-      expect.objectContaining({ symbol: 'xcDOT', assetId: '0xABCDEF', amount: 5000000n }),
+      expect.objectContaining({ symbol: 'xcDOT', assetId: '0xformattedAsset', amount: 5000000n }),
       'some-address'
     )
     expect(result).toEqual({
@@ -151,5 +152,27 @@ describe('buildXTokensEvm', () => {
       value: 0n
     })
     expect(getDestinationLocation).not.toHaveBeenCalled()
+  })
+
+  it('delegates to buildEvmLocal with native asset id when from === to and asset is native', () => {
+    vi.mocked(findAssetInfoOrThrow).mockReturnValueOnce({ symbol: 'RING', decimals: 18 } as TAssetInfo)
+
+    buildXTokensEvm({
+      ...baseOptions,
+      from: 'Darwinia',
+      to: 'Darwinia',
+      currency: { symbol: 'RING', amount: '5000000' }
+    })
+
+    expect(formatAssetIdToERC20).not.toHaveBeenCalled()
+    expect(buildEvmLocal).toHaveBeenCalledWith(
+      'Darwinia',
+      expect.objectContaining({
+        symbol: 'RING',
+        assetId: '0x0000000000000000000000000000000000000802',
+        amount: 5000000n
+      }),
+      'some-address'
+    )
   })
 })

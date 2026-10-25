@@ -30,10 +30,6 @@ export const buildXTokensEvm = <TApi, TRes, TSigner, TCustomChain extends string
   const foundAsset = findAssetInfoOrThrow(from, currency, to)
   const amount = abstractDecimals(currency.amount, foundAsset.decimals, api)
 
-  if (from === to) {
-    return buildEvmLocal(from, { ...foundAsset, amount }, recipient)
-  }
-
   let asset: string
   if (foundAsset.symbol === getNativeAssetSymbol(from)) {
     asset = NATIVE_ASSET_ID
@@ -42,6 +38,10 @@ export const buildXTokensEvm = <TApi, TRes, TSigner, TCustomChain extends string
       throw new InvalidCurrencyError('Currency must be a foreign asset with valid assetId')
     }
     asset = formatAssetIdToERC20(foundAsset.assetId)
+  }
+
+  if (from === to) {
+    return buildEvmLocal(from, { ...foundAsset, amount, assetId: asset }, recipient)
   }
 
   const destLocation = getDestinationLocation(api, recipient, to)
