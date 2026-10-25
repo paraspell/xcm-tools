@@ -884,10 +884,10 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     ];
   }
 
-  async getBridgeStatus() {
+  async getBridgeStatus(): Promise<TBridgeStatus> {
     const outboundOperatingMode =
       await this.api.query.ethereumOutboundQueue.operatingMode();
-    return outboundOperatingMode as TBridgeStatus;
+    return (outboundOperatingMode?.type ?? outboundOperatingMode) as TBridgeStatus;
   }
 
   getConstant<T = unknown>(
