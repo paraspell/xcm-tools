@@ -37,8 +37,9 @@ export const applyDecimalAbstraction = (
   if (decimals === undefined) {
     const strAmount = amount.toString()
     if (strAmount.includes('.')) {
-      // Return integer part only as fallback
-      return BigInt(strAmount.split('.')[0])
+      throw new NumberFormatError(
+        `Asset has no decimals defined; fractional amounts cannot be represented: ${strAmount}`
+      )
     }
     return BigInt(strAmount)
   }
