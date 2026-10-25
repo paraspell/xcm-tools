@@ -286,6 +286,32 @@ describe('AssetHubExchange', () => {
       });
     });
 
+    it('derives hop 2 input amount from user slippage in multi-hop swap', async () => {
+      const mockSwapCurrency = vi
+        .fn()
+        .mockResolvedValueOnce({ tx: 'tx1', amountOut: 10000n })
+        .mockResolvedValueOnce({ tx: 'tx2', amountOut: 9000n });
+      instance.swapCurrency = mockSwapCurrency;
+
+      await instance.handleMultiSwap(
+        {
+          ...baseOpts,
+          assetFrom: assetA,
+          assetTo: assetB,
+          slippagePct: '5',
+        } as TGenericSwapOptions<unknown, unknown, unknown>,
+        0n,
+      );
+
+      expect(mockSwapCurrency).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          amount: 9500n,
+        }),
+        0n,
+      );
+    });
+
     it('throws if hop 1 returns 0', async () => {
       instance.swapCurrency = vi.fn().mockResolvedValueOnce({ tx: 'tx1', amountOut: 0n });
       await expect(
