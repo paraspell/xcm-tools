@@ -65,7 +65,14 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
     asset
   })
 
-  const transferable = balance - BigInt(asset.existentialDeposit) - fee
+  // Native balances from SystemPallet.getBalance are already spendable
+  // (free - max(frozen - reserved, ED)), so the existential deposit must
+  // only be subtracted for non-native asset pallets that return raw balances.
+  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
+  const isNativeAsset = isAssetEqual(nativeAssetInfo, asset)
+
+  const ed = isNativeAsset ? 0n : BigInt(asset.existentialDeposit)
+  const transferable = balance - ed - fee
 
   return transferable > 0n ? transferable : 0n
 }
