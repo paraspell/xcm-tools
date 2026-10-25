@@ -23,6 +23,7 @@ const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends str
     api,
     buildTx,
     origin: chain,
+    destination,
     sender,
     feeAsset,
     version,
@@ -34,7 +35,7 @@ const getOriginFeeOrThrow = async <TApi, TRes, TSigner, TCustomChain extends str
     api,
     buildTx,
     origin: chain,
-    destination: chain,
+    destination,
     sender,
     feeAsset,
     version,
@@ -85,9 +86,9 @@ const getTransferableAmountForAsset = async <
   >,
   resolvedFeeAsset: WithOptionalAmount<TAssetInfo> | undefined
 ): Promise<bigint> => {
-  const { api, sender, origin: chain, currency } = options
+  const { api, sender, origin: chain, destination, currency } = options
 
-  const asset = api.findAssetInfoOrThrow(chain, currency)
+  const asset = api.findAssetInfoOrThrow(chain, currency, destination)
 
   const amount = abstractDecimals(currency.amount, asset.decimals, api)
 
