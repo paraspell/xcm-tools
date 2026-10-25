@@ -12,6 +12,10 @@ import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../src'
 const PAPI_CONSOLE_POLKADOT_URL =
   'https://raw.githubusercontent.com/polkadot-api/papi-console/refs/heads/main/src/state/chains/networks/polkadot.json'
 
+const PAPI_CONSOLE_CHAINS: TSubstrateChain[] = ['Hydration', 'Centrifuge']
+
+const EXCLUDED_ENDPOINTS = ['wss://rpc-centrifuge.luckyfriday.io']
+
 const overrides: Partial<Record<TSubstrateChain, TProviderEntry[]>> = {
   Peaq: [
     {
@@ -36,14 +40,22 @@ type TPapiConsoleChainConfig = {
   rpcs: Record<string, string>
 }
 
-const fetchHydrationProviders = async (): Promise<TProviderEntry[]> => {
+const fetchPapiConsoleProviders = async (): Promise<
+  Partial<Record<TSubstrateChain, TProviderEntry[]>>
+> => {
   const { data } = await axios.get<TPapiConsoleChainConfig[]>(PAPI_CONSOLE_POLKADOT_URL)
-  const hydrationInfo = getChain('Hydration').info
-  const rpcs = data.find(({ id }) => id === hydrationInfo)?.rpcs ?? {}
 
-  return Object.entries(rpcs)
-    .filter(([, endpoint]) => endpoint.startsWith('wss://'))
-    .map(([name, endpoint]) => ({ name, endpoint }))
+  return Object.fromEntries(
+    PAPI_CONSOLE_CHAINS.map(chain => {
+      const { info } = getChain(chain)
+      const rpcs = data.find(({ id }) => id === info)?.rpcs ?? {}
+      const providers = Object.entries(rpcs)
+        .filter(([, endpoint]) => endpoint.startsWith('wss://'))
+        .map(([name, endpoint]) => ({ name, endpoint }))
+
+      return [chain, providers]
+    })
+  )
 }
 
 const mergeUniqueProviders = (
@@ -179,7 +191,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
     return getChain(chain)
   })
 
-  const hydrationProviders = await fetchHydrationProviders()
+  const papiConsoleProviders = await fetchPapiConsoleProviders()
 
   const obj = {} as Record<TSubstrateChain, TModifiedChainConfig>
 
@@ -188,14 +200,15 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
     if (config) {
       const chainOverride = overrides[chain.chain]
       const providers = chainOverride ?? config.providers
+      const additionalProviders = papiConsoleProviders[chain.chain]
+      const mergedProviders = additionalProviders
+        ? mergeUniqueProviders(providers, additionalProviders)
+        : providers
 
       obj[chain.chain] = {
         ...config,
         relayChain: undefined,
-        providers:
-          chain.chain === 'Hydration'
-            ? mergeUniqueProviders(providers, hydrationProviders)
-            : providers
+        providers: mergedProviders.filter(({ endpoint }) => !EXCLUDED_ENDPOINTS.includes(endpoint))
       }
     }
   })
