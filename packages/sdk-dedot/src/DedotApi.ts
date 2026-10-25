@@ -765,14 +765,24 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   extractDestParaId(forwardedXcms: any[]): number | undefined {
+    if (!forwardedXcms || forwardedXcms.length === 0) return undefined;
+
     const first = forwardedXcms[0];
     const interior = first?.value?.interior;
 
-    return forwardedXcms.length === 0
-      ? undefined
-      : interior?.type === "Here"
-        ? 0
-        : (interior?.value?.[0]?.value ?? interior?.value?.value);
+    if (interior?.type === "Here") return 0;
+
+    const junction = interior?.value?.[0] ?? interior?.value;
+
+    if (junction?.type !== undefined && junction?.type !== "Parachain") {
+      return undefined;
+    }
+
+    if (typeof junction?.value === "number") {
+      return junction.value;
+    }
+
+    return undefined;
   }
 
   async getDryRunXcm({

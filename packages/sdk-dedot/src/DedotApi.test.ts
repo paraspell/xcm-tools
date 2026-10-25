@@ -1795,6 +1795,94 @@ describe("DedotApi", () => {
         ]),
       ).toBe(3000);
     });
+
+    it("returns undefined for empty forwardedXcms", () => {
+      expect(dedotApi.extractDestParaId([])).toBeUndefined();
+    });
+
+    it("returns 0 when interior type is Here", () => {
+      expect(
+        dedotApi.extractDestParaId([
+          { value: { interior: { type: "Here" } } },
+        ]),
+      ).toBe(0);
+    });
+
+    it("extracts parachain id when junction is Parachain", () => {
+      expect(
+        dedotApi.extractDestParaId([
+          {
+            value: {
+              interior: {
+                type: "X1",
+                value: { type: "Parachain", value: 2000 },
+              },
+            },
+          },
+        ]),
+      ).toBe(2000);
+    });
+
+    it("extracts parachain id when junction array contains Parachain", () => {
+      expect(
+        dedotApi.extractDestParaId([
+          {
+            value: {
+              interior: {
+                type: "X1",
+                value: [{ type: "Parachain", value: 2000 }],
+              },
+            },
+          },
+        ]),
+      ).toBe(2000);
+    });
+
+    it("returns undefined for Ethereum / non-Parachain destinations", () => {
+      expect(
+        dedotApi.extractDestParaId([
+          {
+            value: {
+              interior: {
+                type: "X1",
+                value: { type: "Ethereum", value: { chainId: 1 } },
+              },
+            },
+          },
+        ]),
+      ).toBeUndefined();
+
+      expect(
+        dedotApi.extractDestParaId([
+          {
+            value: {
+              interior: {
+                type: "X1",
+                value: [
+                  {
+                    type: "GlobalConsensus",
+                    value: { type: "Ethereum", value: { chainId: 1 } },
+                  },
+                ],
+              },
+            },
+          },
+        ]),
+      ).toBeUndefined();
+
+      expect(
+        dedotApi.extractDestParaId([
+          {
+            value: {
+              interior: {
+                type: "X1",
+                value: { type: "AccountId32", value: "0x123" },
+              },
+            },
+          },
+        ]),
+      ).toBeUndefined();
+    });
   });
 
   describe("additional XCM dry-run failures", () => {
