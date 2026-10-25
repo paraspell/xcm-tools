@@ -18,6 +18,7 @@ import type {
   TMultiSwapResult,
   TSingleSwapResult,
 } from '../../types';
+import { parseSlippagePct } from '../../utils/parseSlippagePct';
 import ExchangeChain from '../ExchangeChain';
 import { getDexConfig } from './utils';
 
@@ -58,6 +59,8 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
+    const slippageMultiplier = parseSlippagePct(slippagePct);
+
     const localizedFrom = localizeLocation(this.chain, assetFrom.location);
     const localizedTo = localizeLocation(this.chain, assetTo.location);
 
@@ -65,8 +68,6 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
     const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
-
-    const slippageMultiplier = Number(slippagePct);
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
     const tx = api.deserializeExtrinsics({
