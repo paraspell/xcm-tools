@@ -66,6 +66,9 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
 
     const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
 
+    if (slippagePct == null || isNaN(Number(slippagePct)) || Number(slippagePct) < 0 || Number(slippagePct) > 100) {
+      throw new Error('slippagePct must be a valid number between 0 and 100');
+    }
     const slippageMultiplier = Number(slippagePct);
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
