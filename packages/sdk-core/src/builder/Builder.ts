@@ -634,21 +634,17 @@ export class GeneralBuilder<
       )
     }
 
-    try {
-      return await getOriginXcmFee({
-        api,
-        buildTx,
-        origin: from,
-        destination: to,
-        sender,
-        version,
-        currency,
-        feeAsset,
-        disableFallback
-      })
-    } finally {
-      await this.api.disconnect()
-    }
+    return getOriginXcmFee({
+      api,
+      buildTx,
+      origin: from,
+      destination: to,
+      sender,
+      version,
+      currency,
+      feeAsset,
+      disableFallback
+    })
   }
 
   /**
@@ -823,16 +819,17 @@ export class GeneralBuilder<
       TCustomChain
     >
   ) {
-    const { senderSource } = this._options
+    const { senderSource, swapOptions } = this._options
+    assertSwapSupport(swapOptions)
+    assertNotEvmTransfer(this._options.from, senderSource)
+
     const { normalizedOptions, buildTx } = await this.prepareNormalizedOptions(this._options)
 
-    const { api, from, to, sender, recipient, currency, feeAsset, version, swapOptions } =
+    const { api, from, to, sender, recipient, currency, feeAsset, version } =
       normalizedOptions
 
     assertToIsString(to)
     assertAddressIsString(recipient)
-    assertSwapSupport(swapOptions)
-    assertNotEvmTransfer(from, senderSource)
 
     return verifyEdOnDestination({
       api,
