@@ -49,6 +49,12 @@ export const getBestAmountOut = async <TApi, TRes, TSigner, TCustomChain extends
         assetFromOrigin?.decimals ?? assetFrom.decimals,
         exchangeConfig?.abstractDecimals !== false,
       ),
+      // Every exchange reserves DEST_FEE_BUFFER_PCT of the input for the destination
+      // XCM fee when the funds start on another chain. Without origin the quote prices
+      // the full amount while the built swap spends 99% of it (#2238).
+      ...(from && originApi
+        ? { origin: { api: originApi, chain: from, assetFrom: assetFromOrigin ?? assetFrom } }
+        : {}),
     }),
   };
 };
