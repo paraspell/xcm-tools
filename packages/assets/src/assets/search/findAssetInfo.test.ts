@@ -246,7 +246,7 @@ describe('findAssetInfo', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should find asset ending with .e on AssetHubPolkadot ', () => {
+  it('Should throw error when duplicate foreign asset ending with .e on AssetHubPolkadot', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
         ...ztgAsset,
@@ -259,9 +259,24 @@ describe('findAssetInfo', () => {
         symbol: 'WTH.e'
       }
     ])
-    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' })
-    expect(asset).toHaveProperty('symbol')
-    expect(asset).toHaveProperty('assetId')
+    expect(() => findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' })).toThrow()
+  })
+
+  it('Should throw error when duplicate native and foreign asset ending with .e on AssetHubPolkadot', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
+      {
+        ...ztgAsset,
+        assetId: '1',
+        symbol: 'WTH.e'
+      }
+    ])
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([
+      {
+        ...ztgAsset,
+        symbol: 'WTH.e'
+      }
+    ])
+    expect(() => findAssetInfo('AssetHubPolkadot', { symbol: 'WTH.e' })).toThrow()
   })
 
   it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
