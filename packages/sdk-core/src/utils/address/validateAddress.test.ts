@@ -1,5 +1,5 @@
 import type { TChain } from '@paraspell/sdk-common'
-import { isAddress } from 'viem'
+import { isAddress, isHex } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
@@ -104,8 +104,23 @@ describe('validateAddress', () => {
 
     vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(isAddress).mockReturnValue(false)
+    vi.mocked(isHex).mockReturnValue(true)
 
     expect(() => validateAddress(mockApi, address, chain)).not.toThrow()
+  })
+
+  it('should throw InvalidAddressError when 0x address is not a valid 32-byte hex public key', () => {
+    const address: TAddress = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234'
+    const chain: TChain = 'Polkadot'
+
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
+    vi.mocked(isHex).mockReturnValue(false)
+
+    expect(() => validateAddress(mockApi, address, chain)).toThrow(InvalidAddressError)
+    expect(() => validateAddress(mockApi, address, chain)).toThrow(
+      'Invalid address: 0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234'
+    )
   })
 
   it('should validate Substrate address when API is provided and address is valid', () => {

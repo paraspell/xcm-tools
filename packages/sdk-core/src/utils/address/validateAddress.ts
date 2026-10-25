@@ -1,5 +1,5 @@
 import { isTLocation, type TChain } from '@paraspell/sdk-common'
-import { isAddress } from 'viem'
+import { isAddress, isHex } from 'viem'
 
 import type { PolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
@@ -33,7 +33,10 @@ export const validateAddress = <TApi, TRes, TSigner, TCustomChain extends string
     }
 
     if (isPublicKeyFormat) {
-      return
+      if (isHex(address, { size: 32 })) {
+        return
+      }
+      throw new InvalidAddressError(`Invalid address: ${address}`)
     }
 
     if (typeof address === 'string') {
