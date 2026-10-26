@@ -1235,16 +1235,26 @@ describe("DedotApi", () => {
       expect(result).toEqual({ refTime: 100n, proofSize: 200n });
     });
 
-    it("preserves transformed XCM and defaults missing weight fields to zero", async () => {
+    it("throws when the runtime API returns an error", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
+        isErr: true,
+        err: { type: "Unavailable" },
+      });
+
+      await expect(dedotApi.getXcmWeight({ some: "xcm" })).rejects.toThrow(
+        'Failed to get XCM weight. Reason: {"type":"Unavailable"}',
+      );
+    });
+
+    it("throws instead of defaulting missing weight fields to zero", async () => {
       mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
         value: {},
       });
 
       const xcm = { type: "V5", value: [] };
-      await expect(dedotApi.getXcmWeight(xcm)).resolves.toEqual({
-        refTime: 0n,
-        proofSize: 0n,
-      });
+      await expect(dedotApi.getXcmWeight(xcm)).rejects.toThrow(
+        "Failed to get XCM weight. Reason: response is missing refTime or proofSize",
+      );
       expect(transform).not.toHaveBeenCalledWith(xcm);
     });
   });
