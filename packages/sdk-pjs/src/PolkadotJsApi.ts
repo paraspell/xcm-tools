@@ -450,10 +450,14 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
+    const USE_XCM_PAYMENT_API_CHAINS: TSubstrateChain[] = ['Astar']
+
     if (
       (this.hasXcmPaymentApiSupport(chain) &&
         resultJson.ok.local_xcm &&
-        (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
+        (feeAsset ||
+          USE_XCM_PAYMENT_API_CHAINS.includes(chain) ||
+          (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
       const overriddenWeight = !resultJson.ok.local_xcm
