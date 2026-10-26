@@ -195,10 +195,8 @@ describe("XcmTransformer", () => {
     });
 
     it("accepts numeric currency IDs", () => {
-      vi.mocked(decodeAddress).mockReturnValue(new Uint8Array([1]));
-
       expect(transform({ currency_id: "42", other: true })).toEqual({
-        currencyId: "42",
+        currencyId: 42,
         other: true,
       });
     });
