@@ -5,6 +5,23 @@ import { NumberFormatError } from '../../errors'
 import { isConfig } from '..'
 import { parseUnits } from '../unit'
 
+const assertFractionFitsDecimals = (strAmount: string, decimals: number): void => {
+  const dotIndex = strAmount.indexOf('.')
+  if (dotIndex === -1) return
+
+  const fraction = strAmount.slice(dotIndex + 1)
+  // Exponent notation is not a decimal digit string. parseUnits rejects it instead of rounding.
+  if (!/^\d*$/.test(fraction)) return
+
+  // Trailing zeros do not add precision ("1.50" fits 1 decimal, "1.0" fits 0).
+  const significantFraction = fraction.replace(/0+$/, '')
+  if (significantFraction.length > decimals) {
+    throw new NumberFormatError(
+      `Amount ${strAmount} has more fractional digits than the asset decimals (${decimals})`
+    )
+  }
+}
+
 export const abstractDecimals = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   amount: TAmount,
   decimals: number | undefined,
@@ -43,5 +60,7 @@ export const applyDecimalAbstraction = (
     return BigInt(strAmount)
   }
 
-  return parseUnits(amount.toString(), decimals)
+  const strAmount = amount.toString()
+  assertFractionFitsDecimals(strAmount, decimals)
+  return parseUnits(strAmount, decimals)
 }
