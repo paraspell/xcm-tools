@@ -30,6 +30,11 @@ describe('Centrifuge', () => {
     expect(centrifuge.version).toBe(Version.V4)
   })
 
+  it('should mark sending and receiving as temporarily disabled while halted as a parathread', () => {
+    expect(centrifuge.isSendingTempDisabled()).toBe(true)
+    expect(centrifuge.isReceivingTempDisabled()).toBe(true)
+  })
+
   it('should call transferXTokens with Native when currency matches native asset', () => {
     vi.spyOn(centrifuge, 'getNativeAssetSymbol').mockReturnValue('CFG')
 
