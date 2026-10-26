@@ -1359,6 +1359,41 @@ describe('PolkadotJsApi', () => {
       vi.restoreAllMocks()
     })
 
+    it('takes XcmPaymentApi path for Astar chain when local_xcm is present', async () => {
+      const resp = makeSuccessResponse({
+        weight: { refTime: '1000', proofSize: '2000' },
+        forwarded: hereForwarded
+      })
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValue(true)
+      vi.spyOn(polkadotApi, 'resolveFeeAsset').mockResolvedValue({
+        asset: dotAsset,
+        isCustomAsset: false
+      })
+      const getXcmPaymentApiFeeSpy = vi
+        .spyOn(polkadotApi, 'getXcmPaymentApiFee')
+        .mockResolvedValue(555n)
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain: 'Astar',
+        destination: 'Hydration',
+        asset: { ...dotAsset, amount: 100n },
+        version: Version.V5
+      })
+
+      expect(getXcmPaymentApiFeeSpy).toHaveBeenCalled()
+      expect(result).toEqual({
+        success: true,
+        fee: 555n,
+        asset: dotAsset,
+        weight: { refTime: 1000n, proofSize: 2000n },
+        forwardedXcms: expect.any(Object),
+        destParaId: 0
+      })
+    })
+
     it('simple success (no version), returns weight and forwardedXcms', async () => {
       const resp = makeSuccessResponse({
         weight: { refTime: '1000', proofSize: '2000' },
