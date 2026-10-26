@@ -18,6 +18,17 @@ class Centrifuge<TApi, TRes, TSigner, TCustomChain extends string = never>
     super('Centrifuge', 'centrifuge', 'Polkadot', Version.V4)
   }
 
+  // Centrifuge (para 2031) has produced no blocks since 2026-08-23 and is now a parathread without a core,
+  // so XCM sent to it is never executed and extrinsics built for it are never included.
+  // Remove both overrides once the chain produces blocks again.
+  isSendingTempDisabled(): boolean {
+    return true
+  }
+
+  isReceivingTempDisabled(): boolean {
+    return true
+  }
+
   getCustomCurrencyId(api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>, asset: TAssetInfo) {
     if (asset.symbol === this.getNativeAssetSymbol(api)) return 'Native'
     assertHasId(asset)
