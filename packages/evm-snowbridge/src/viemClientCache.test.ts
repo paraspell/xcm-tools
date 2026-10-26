@@ -1,10 +1,15 @@
 import { DEFAULT_TTL_MS, EXTENSION_MS } from '@paraspell/sdk-core'
 import type { PublicClient } from 'viem'
 import { createPublicClient, fallback, webSocket } from 'viem'
-import { mainnet } from 'viem/chains'
+import { mainnet, sepolia } from 'viem/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ETHEREUM_WS_URLS, leaseClient, releaseClient } from './viemClientCache'
+import {
+  ETHEREUM_TESTNET_WS_URLS,
+  ETHEREUM_WS_URLS,
+  leaseClient,
+  releaseClient
+} from './viemClientCache'
 
 vi.mock('viem', async importOriginal => ({
   ...(await importOriginal<typeof import('viem')>()),
@@ -36,9 +41,20 @@ describe('publicClientCache', () => {
 
   it('exposes a non-empty list of fallback WSS endpoints', () => {
     expect(ETHEREUM_WS_URLS.length).toBeGreaterThan(1)
-    for (const url of ETHEREUM_WS_URLS) {
+    for (const url of [...ETHEREUM_WS_URLS, ...ETHEREUM_TESTNET_WS_URLS]) {
       expect(url.startsWith('wss://')).toBe(true)
     }
+  })
+
+  it('builds a Sepolia public client when leasing the testnet endpoint list', async () => {
+    await leaseClient(ETHEREUM_TESTNET_WS_URLS, DEFAULT_TTL_MS)
+
+    expect(createPublicClient).toHaveBeenCalledWith({
+      chain: sepolia,
+      transport: { kind: 'fallback', inner: expect.any(Array) }
+    })
+
+    releaseClient(ETHEREUM_TESTNET_WS_URLS)
   })
 
   it('builds a public client with viem fallback over each URL on first lease', async () => {

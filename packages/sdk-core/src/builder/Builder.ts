@@ -74,6 +74,7 @@ import {
   isViemSigner,
   normalizeExchange
 } from '../utils'
+import { assertEthereumBridgePair } from '../utils/ethereum/assertEthereumBridgePair'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
 import { normalizeAmountAll } from './normalizeAmountAll'
@@ -1126,9 +1127,12 @@ export class GeneralBuilder<
     assertToIsString(to)
     assertAddressIsString(recipient)
 
-    const ext = isExternalChain(from)
-      ? getEvmSnowbridgeExtensionOrThrow()
-      : getEvmExtensionOrThrow()
+    const snowbridge = isExternalChain(from)
+    if (snowbridge) {
+      assertEthereumBridgePair(from, to)
+    }
+
+    const ext = snowbridge ? getEvmSnowbridgeExtensionOrThrow() : getEvmExtensionOrThrow()
 
     return {
       ext,

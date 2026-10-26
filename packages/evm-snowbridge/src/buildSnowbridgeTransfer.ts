@@ -1,6 +1,7 @@
 import type { TBuildEvmTransferOptions } from '@paraspell/sdk-core'
 import {
   abstractDecimals,
+  assertEthereumBridgePair,
   assertHasId,
   DEFAULT_TTL_MS,
   findAssetInfoOrThrow,
@@ -14,7 +15,8 @@ import { bridgeInfoFor } from '@snowbridge/registry'
 import type { PublicClient, TransactionSerializableEIP1559 } from 'viem'
 
 import { createEnvironment } from './createEnvironment'
-import { ETHEREUM_WS_URLS, leaseClient, releaseClient } from './viemClientCache'
+import { ethereumWsUrlsFor, snowbridgeEnvironmentFor } from './snowbridgeEnvironment'
+import { leaseClient, releaseClient } from './viemClientCache'
 
 export const buildSnowbridgeTransfer = async <
   TApi,
@@ -27,7 +29,8 @@ export const buildSnowbridgeTransfer = async <
     to,
     currency,
     recipient,
-    sender: senderAddress
+    sender: senderAddress,
+    from = 'Ethereum'
   }: TBuildEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   client?: PublicClient
 ) => {
@@ -37,17 +40,21 @@ export const buildSnowbridgeTransfer = async <
     )
   }
 
-  const ethAsset = findAssetInfoOrThrow('Ethereum', currency, to)
+  assertEthereumBridgePair(from, to)
+  const environmentName = snowbridgeEnvironmentFor(from, to)
+
+  const ethAsset = findAssetInfoOrThrow(from, currency, to)
   const amount = abstractDecimals(currency.amount, ethAsset.decimals, api)
 
-  const info = bridgeInfoFor('polkadot_mainnet')
+  const info = bridgeInfoFor(environmentName)
   const environment = createEnvironment(info.environment)
   const snowbridgeApi = new SnowbridgeApi({
     info: { ...info, environment },
     ethereumProvider: new ViemEthereumProvider()
   })
 
-  const publicClient = client ?? (await leaseClient(ETHEREUM_WS_URLS, DEFAULT_TTL_MS))
+  const wsUrls = ethereumWsUrlsFor(environmentName)
+  const publicClient = client ?? (await leaseClient(wsUrls, DEFAULT_TTL_MS))
 
   snowbridgeApi.context.setEthProvider(environment.ethChainId, publicClient)
 
@@ -82,7 +89,7 @@ export const buildSnowbridgeTransfer = async <
     chainId: environment.ethChainId
   }
 
-  if (!client) releaseClient(ETHEREUM_WS_URLS)
+  if (!client) releaseClient(wsUrls)
 
   return {
     tx,

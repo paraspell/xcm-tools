@@ -5,7 +5,7 @@ const COMPATIBLE_BRIDGES: [TSubstrateChain, TSubstrateChain][] = [
   ['AssetHubPolkadot', 'AssetHubKusama']
 ]
 
-const ETHEREUM_BRIDGE_ORIGINS_MAP: Record<TExternalChain, TSubstrateChain[]> = {
+const ETHEREUM_BRIDGE_ORIGINS_MAP: Record<TExternalChain, readonly TSubstrateChain[]> = {
   Ethereum: ['AssetHubPolkadot', 'Hydration', 'BifrostPolkadot', 'Mythos'],
   EthereumTestnet: ['AssetHubPaseo', 'AssetHubWestend']
 }
@@ -14,10 +14,17 @@ export const ETHEREUM_BRIDGE_ORIGINS: TSubstrateChain[] = Object.values(
   ETHEREUM_BRIDGE_ORIGINS_MAP
 ).flat()
 
+/**
+ * Substrate chains that can bridge with the given Ethereum network.
+ */
+export const ethereumBridgeDestinations = (
+  externalChain: TExternalChain
+): readonly TSubstrateChain[] => ETHEREUM_BRIDGE_ORIGINS_MAP[externalChain]
+
 export const isEthereumBridgeOrigin = <TCustomChain extends string = never>(
   chain: TChain | TCustomChain,
   externalChain: TExternalChain
-): boolean => ETHEREUM_BRIDGE_ORIGINS_MAP[externalChain].some(c => c === chain)
+): boolean => ethereumBridgeDestinations(externalChain).some(c => c === chain)
 
 export const isSubstrateBridge = <TCustomChain extends string = never>(
   origin: TChain | TCustomChain,

@@ -105,6 +105,35 @@ describe('executeEvmSnowbridgeTransfer', () => {
     )
   })
 
+  it('forwards the requested origin instead of forcing Ethereum mainnet', async () => {
+    const signer = buildSigner()
+
+    await executeEvmSnowbridgeTransfer(
+      baseOptions({ signer, from: 'EthereumTestnet', to: 'AssetHubWestend' })
+    )
+
+    expect(buildSnowbridgeTransfer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: 'EthereumTestnet',
+        to: 'AssetHubWestend',
+        sender: ACCOUNT
+      }),
+      expect.any(Object)
+    )
+  })
+
+  it('defaults a missing origin to Ethereum', async () => {
+    const options = baseOptions()
+    delete (options as { from?: string }).from
+
+    await executeEvmSnowbridgeTransfer(options)
+
+    expect(buildSnowbridgeTransfer).toHaveBeenCalledWith(
+      expect.objectContaining({ from: 'Ethereum' }),
+      expect.any(Object)
+    )
+  })
+
   it('throws MissingParameterError when no account is available', async () => {
     const signer = buildSigner({
       account: undefined,

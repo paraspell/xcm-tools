@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import type { TChain } from '../types'
-import { isBridge, isEthereumBridgeOrigin, isSnowbridge, isSubstrateBridge } from './bridge'
+import {
+  ethereumBridgeDestinations,
+  isBridge,
+  isEthereumBridgeOrigin,
+  isSnowbridge,
+  isSubstrateBridge
+} from './bridge'
 
 describe('isSubstrateBridge', () => {
   it('returns true when both chains map to a supported bridge pair', () => {
@@ -74,6 +80,21 @@ describe('isBridge', () => {
     const destination: TChain = 'Darwinia'
 
     expect(isBridge(origin, destination)).toBe(false)
+  })
+})
+
+describe('ethereumBridgeDestinations', () => {
+  it('lists the substrate chains paired with each Ethereum network', () => {
+    expect(ethereumBridgeDestinations('Ethereum')).toEqual([
+      'AssetHubPolkadot',
+      'Hydration',
+      'BifrostPolkadot',
+      'Mythos'
+    ])
+    expect(ethereumBridgeDestinations('EthereumTestnet')).toEqual([
+      'AssetHubPaseo',
+      'AssetHubWestend'
+    ])
   })
 })
 

@@ -14,7 +14,8 @@ export const executeEvmSnowbridgeTransfer = async <
   signer,
   recipient,
   to,
-  currency
+  currency,
+  from = 'Ethereum'
 }: TEvmTransferOptions<TApi, TRes, TSigner, TCustomChain>): Promise<string> => {
   const publicClient = createPublicClient({
     transport: custom(signer.transport),
@@ -33,7 +34,7 @@ export const executeEvmSnowbridgeTransfer = async <
   const { tx, sender } = await buildSnowbridgeTransfer(
     {
       api,
-      from: 'Ethereum',
+      from,
       to,
       currency,
       recipient,

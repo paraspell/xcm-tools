@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
-import { DryRunFailedError, UnableToComputeError } from '../errors'
+import { DryRunFailedError, ScenarioNotSupportedError, UnableToComputeError } from '../errors'
 import { getEvmExtensionOrThrow, getEvmSnowbridgeExtensionOrThrow } from '../extensions'
 import {
   getMinTransferableAmount,
@@ -1621,29 +1621,104 @@ describe('Builder', () => {
       expect(result).toBe('0xserialized')
     })
 
-    it('buildEvm() routes external origins through the Snowbridge extension', async () => {
-      vi.mocked(isViemSigner).mockReturnValue(false)
-      vi.mocked(isSenderSigner).mockReturnValue(false)
-      buildSnowbridgeTransfer.mockResolvedValue('0xsnowserialized')
-
-      const result = await Builder(mockApi)
-        .from('Ethereum')
-        .to('Darwinia')
+    const buildEvmFrom = (from: TChain, to: TChain) =>
+      Builder(mockApi)
+        .from(from)
+        .to(to)
         .currency({ symbol: 'WETH', amount: AMOUNT })
         .sender('0xsender')
         .recipient(ADDRESS)
         .buildEvm()
 
+    it('buildEvm() routes a valid Ethereum origin through the Snowbridge extension', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(false)
+      vi.mocked(isSenderSigner).mockReturnValue(false)
+      buildSnowbridgeTransfer.mockResolvedValue('0xsnowserialized')
+
+      const result = await buildEvmFrom('Ethereum', 'AssetHubPolkadot')
+
       expect(buildSnowbridgeTransfer).toHaveBeenCalledWith(
         expect.objectContaining({
           api: mockApi,
           from: 'Ethereum',
-          to: 'Darwinia',
+          to: 'AssetHubPolkadot',
           recipient: ADDRESS,
           sender: '0xsender'
         })
       )
+      expect(buildTransfer).not.toHaveBeenCalled()
       expect(result).toBe('0xsnowserialized')
+    })
+
+    it.each(['AssetHubWestend', 'AssetHubPaseo', 'AssetHubKusama'] as const)(
+      'buildEvm() rejects Ethereum to %s before the Snowbridge extension runs',
+      async destination => {
+        vi.mocked(isViemSigner).mockReturnValue(false)
+        vi.mocked(isSenderSigner).mockReturnValue(false)
+
+        await expect(buildEvmFrom('Ethereum', destination)).rejects.toThrow(
+          ScenarioNotSupportedError
+        )
+        await expect(buildEvmFrom('Ethereum', destination)).rejects.toThrow(
+          new RegExp(`Transfers from Ethereum to ${destination} are not supported`)
+        )
+        expect(buildSnowbridgeTransfer).not.toHaveBeenCalled()
+        expect(buildTransfer).not.toHaveBeenCalled()
+      }
+    )
+
+    it('buildEvm() routes a supported EthereumTestnet pair through the Snowbridge extension', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(false)
+      vi.mocked(isSenderSigner).mockReturnValue(false)
+      buildSnowbridgeTransfer.mockResolvedValue('0xsepolia')
+
+      const westend = await buildEvmFrom('EthereumTestnet', 'AssetHubWestend')
+      const paseo = await Builder(mockApi)
+        .from('EthereumTestnet')
+        .to('AssetHubPaseo')
+        .currency({ symbol: 'WETH', amount: AMOUNT })
+        .sender('0xsender')
+        .recipient(ADDRESS)
+        .buildEvm()
+
+      expect(westend).toBe('0xsepolia')
+      expect(paseo).toBe('0xsepolia')
+      expect(buildSnowbridgeTransfer).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ from: 'EthereumTestnet', to: 'AssetHubWestend' })
+      )
+      expect(buildSnowbridgeTransfer).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ from: 'EthereumTestnet', to: 'AssetHubPaseo' })
+      )
+    })
+
+    it('buildEvm() rejects mismatched EthereumTestnet pairs', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(false)
+      vi.mocked(isSenderSigner).mockReturnValue(false)
+
+      await expect(buildEvmFrom('EthereumTestnet', 'AssetHubPolkadot')).rejects.toThrow(
+        /Transfers from EthereumTestnet to AssetHubPolkadot are not supported/
+      )
+      await expect(buildEvmFrom('EthereumTestnet', 'AssetHubKusama')).rejects.toThrow(
+        ScenarioNotSupportedError
+      )
+      expect(buildSnowbridgeTransfer).not.toHaveBeenCalled()
+    })
+
+    it('signAndSubmit() rejects an Ethereum testnet destination before the extension runs', async () => {
+      vi.mocked(isViemSigner).mockReturnValue(true)
+
+      await expect(
+        Builder(mockApi)
+          .from('Ethereum')
+          .to('AssetHubWestend')
+          .currency({ symbol: 'WETH', amount: AMOUNT })
+          .sender(walletClient)
+          .recipient(ADDRESS)
+          .signAndSubmit()
+      ).rejects.toThrow(ScenarioNotSupportedError)
+      expect(executeSnowbridgeTransfer).not.toHaveBeenCalled()
     })
   })
 
