@@ -581,7 +581,7 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const { partialFee: executionFee } = await this.getPaymentInfo(tx, address);
 
-    const fee = computeOriginFee(result, chain, executionFee);
+    const fee = computeOriginFee(result, chain, executionFee, !!feeAsset);
 
     return {
       success: true,

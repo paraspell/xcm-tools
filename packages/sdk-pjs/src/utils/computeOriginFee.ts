@@ -14,6 +14,7 @@ export const computeOriginFee = (
 ): bigint => {
   // Extract delivery fees from emitted events
   const deliveryFees: Array<{ plancks: bigint; tokenSymbol: string }> = []
+  let assetConversionFee = 0n
 
   for (const e of dryRun.Ok.emittedEvents) {
     const isXcmEvent =
@@ -28,7 +29,24 @@ export const computeOriginFee = (
         deliveryFees.push({ plancks, tokenSymbol })
       }
     }
+    // Humanized AssetConversion event: { section: 'assetConversion',
+    // method: 'SwapCreditExecuted', data: { amountIn: '1,000' } }. A
+    // SwapCreditExecuted event only fires when a fee-asset swap pays the
+    // origin fees, so its presence is itself the fee-asset signal (this
+    // function takes no isFeeAsset flag, matching the PAPI behaviour of
+    // returning the swap cost for a fee-asset transfer).
+    if (e.section === 'assetConversion' && e.method === 'SwapCreditExecuted') {
+      const amountIn = e.data?.amountIn ?? e.data?.amount_in
+      if (amountIn !== undefined && amountIn !== null) {
+        assetConversionFee += BigInt(String(amountIn).replace(/,/g, ''))
+      }
+    }
   }
+
+  if (assetConversionFee > 0n) {
+    return assetConversionFee
+  }
+
   const nativeAssetSymbol = getNativeAssetSymbol(chain)
 
   // Sum the fees that match the feeToken

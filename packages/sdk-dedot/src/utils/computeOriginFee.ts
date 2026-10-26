@@ -35,7 +35,20 @@ export const computeOriginFee = (
         deliveryFees.push({ plancks, tokenSymbol });
       }
     }
-    if (
+    // Dedot-shaped swap event: { pallet, palletEvent: { name, data } }.
+    // Dedot decodes the struct field as either snake_case (amount_in) or
+    // camelCase (amountIn); accept both. A SwapCreditExecuted event only
+    // fires when a fee-asset swap pays the origin fees, so its presence is
+    // itself the fee-asset signal (production never passes isFeeAsset).
+    const dedotSwapAmount =
+      e.pallet === "AssetConversion" &&
+      e.palletEvent?.name === "SwapCreditExecuted"
+        ? (e.palletEvent.data?.amount_in ?? e.palletEvent.data?.amountIn)
+        : undefined;
+
+    if (dedotSwapAmount !== undefined && dedotSwapAmount !== null) {
+      assetConversionFee += dedotSwapAmount;
+    } else if (
       isFeeAsset &&
       e.type === "AssetConversion" &&
       e.value?.type === "SwapCreditExecuted" &&
@@ -47,7 +60,7 @@ export const computeOriginFee = (
     }
   }
 
-  if (isFeeAsset && assetConversionFee > 0n) {
+  if (assetConversionFee > 0n) {
     return assetConversionFee;
   } else {
     const nativeAssetSymbol = getNativeAssetSymbol(chain);
