@@ -242,6 +242,13 @@ const XcmTransferFormContent: FC<Props> = ({
     void setQueryState(form.values);
   }, [form.values, setQueryState]);
 
+  const [swapOpened, { open: openSwap, close: closeSwap }] = useDisclosure(
+    isSwapActive(form.values.swapOptions),
+  );
+
+  const [transactOpened, { open: openTransact, close: closeTransact }] =
+    useDisclosure(form.values.transactOptions.call !== '');
+
   const { from, to, currencies, feeAsset } = form.getValues();
 
   const {
@@ -759,8 +766,20 @@ const XcmTransferFormContent: FC<Props> = ({
           )}
 
           <Stack gap="xs">
-            <Swap form={form} />
-            <Transact form={form} />
+            <Swap
+              form={form}
+              opened={swapOpened}
+              disabled={transactOpened}
+              onOpen={openSwap}
+              onClose={closeSwap}
+            />
+            <Transact
+              form={form}
+              opened={transactOpened}
+              disabled={swapOpened}
+              onOpen={openTransact}
+              onClose={closeTransact}
+            />
           </Stack>
 
           <Group gap="lg">
