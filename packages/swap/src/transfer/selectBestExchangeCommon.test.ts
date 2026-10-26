@@ -79,6 +79,19 @@ describe('selectBestExchangeCommon', () => {
     );
   });
 
+  it('throws error with bigint values serialized if assetFromOrigin is not found', async () => {
+    const options = {
+      ...baseOptions,
+      currencyFrom: { location: { parents: 1, interior: { X1: { GeneralIndex: 1984n } } } },
+    };
+    vi.mocked(findAssetInfo).mockReturnValue(null);
+    await expect(
+      selectBestExchangeCommon(options, undefined, () => Promise.resolve(0n)),
+    ).rejects.toThrow(
+      'Currency from {"location":{"parents":1,"interior":{"X1":{"GeneralIndex":"1984"}}}} not found in originDex.',
+    );
+  });
+
   it('throws error if currencyTo is specified by id', async () => {
     const options = { ...baseOptions, currencyTo: { id: 'some-id' } };
     vi.mocked(findAssetInfo).mockReturnValue(asset1);

@@ -359,4 +359,28 @@ describe('Builder', () => {
       slippagePct,
     });
   });
+
+  it.each([0.0000005, 2_000_000_000_000_000_000n])(
+    'should pass amount %s through unchanged',
+    async (rawAmount) => {
+      await SwapBuilder(mockApi)
+        .from(from)
+        .exchange(exchange)
+        .to(to)
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(rawAmount)
+        .sender(sender)
+        .recipient(recipient)
+        .signer(signer)
+        .slippagePct(slippagePct)
+        .build();
+
+      expect(buildApiTransactionsSpy).toHaveBeenCalledWith({
+        ...transferParams,
+        amount: rawAmount,
+        api: mockApi,
+      });
+    },
+  );
 });
