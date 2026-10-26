@@ -1677,6 +1677,65 @@ describe('PolkadotJsApi', () => {
       xcmFeeSpy.mockRestore()
     })
 
+    it('prices Astar origin fees with the XCM payment API when feeAsset is omitted', async () => {
+      const forwarded = hereForwarded
+      const expectedForwarded = forwarded[0] as object[]
+      const resp = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: { executionResult: { Ok: true } }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              ok: {
+                actualWeight: { refTime: '555', proofSize: '666' }
+              }
+            },
+            local_xcm: { instructions: [] },
+            forwardedXcms: forwarded
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(resp)
+      vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(dotAsset)
+
+      const xcmFee = 7777n
+      const xcmFeeSpy = vi.spyOn(polkadotApi, 'getXcmPaymentApiFee').mockResolvedValueOnce(xcmFee)
+      const paymentInfoSpy = vi.spyOn(mockExtrinsic, 'paymentInfo')
+
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        chain,
+        destination: 'Hydration',
+        asset: { ...dotAsset, amount: 100n },
+        version: Version.V5
+      })
+
+      expect(xcmFeeSpy).toHaveBeenCalledWith(
+        chain,
+        { instructions: [] },
+        expectedForwarded,
+        dotAsset,
+        Version.V5,
+        false,
+        undefined
+      )
+      expect(paymentInfoSpy).not.toHaveBeenCalled()
+      expect(result).toEqual({
+        success: true,
+        fee: xcmFee,
+        asset: dotAsset,
+        weight: { refTime: 555n, proofSize: 666n },
+        forwardedXcms: expectedForwarded,
+        destParaId: 0
+      })
+
+      paymentInfoSpy.mockRestore()
+      xcmFeeSpy.mockRestore()
+    })
+
     it('wraps the transaction when useRootOrigin is enabled', async () => {
       const wrappedExtrinsic = {
         paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 2000n } })
@@ -1895,7 +1954,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        chain,
+        chain: 'Acala',
         destination: 'Hydration',
         asset: { ...dotAsset, amount: 100n },
         feeAsset: usdtAsset,
