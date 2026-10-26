@@ -119,7 +119,7 @@ const createMockApi = (mockTx: TDedotExtrinsic) => ({
       accountCurrencyMap: vi.fn(),
     },
     ethereumOutboundQueue: {
-      operatingMode: vi.fn().mockResolvedValue("Normal"),
+      operatingMode: vi.fn().mockResolvedValue({ type: "Normal", value: undefined }),
     },
     system: {
       account: vi.fn(),
