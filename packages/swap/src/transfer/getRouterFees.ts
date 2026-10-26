@@ -97,6 +97,7 @@ export const getRouterFees = async <
 
   const finalOrigin = sendingChain?.origin ?? {
     ...swapChain,
+    fee: (swapChain.fee ?? 0n) + (receivingChain?.origin.fee ?? 0n),
     ...(!origin && { isExchange: true }),
   };
 

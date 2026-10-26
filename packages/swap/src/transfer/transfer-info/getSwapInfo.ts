@@ -140,7 +140,10 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
 
   const finalOrigin =
     sendingInfo?.origin ??
-    (await buildExchangeOriginInfo(exchange, senderAddress, amount, swapChain));
+    (await buildExchangeOriginInfo(exchange, senderAddress, amount, {
+      ...swapChain,
+      fee: swapChain.fee + (receivingInfo?.origin.xcmFee.fee ?? 0n),
+    }));
 
   const finalDestination =
     receivingInfo?.destination ??

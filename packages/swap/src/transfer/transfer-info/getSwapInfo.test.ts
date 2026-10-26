@@ -328,5 +328,31 @@ describe('getSwapInfo', () => {
       expect(result.origin.isExchange).toBe(true);
       expect(result.chain.origin).toBe('Hydration');
     });
+
+    it('includes receivingInfo origin fee in buildOriginInfo when origin is exchange and destination differs', async () => {
+      const receivingHop: THopTransferInfo = {
+        chain: 'AssetHubPolkadot',
+        result: { xcmFee: { fee: 3n, asset: usdtAsset }, asset: usdtAsset },
+      };
+      const receivingInfo = buildTransferInfo([receivingHop]);
+      vi.mocked(createFromExchangeBuilder).mockReturnValue(createBuilderMock(receivingInfo));
+
+      vi.mocked(prepareTransformedOptions).mockResolvedValue({
+        options: {
+          ...baseOptions,
+          origin: undefined,
+          destination: { chain: 'Darwinia', address: 'Carol' },
+        },
+        dex,
+      });
+
+      await getSwapInfo(initialOptions);
+
+      expect(buildOriginInfo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          originFee: swapFee.fee + receivingInfo.origin.xcmFee.fee,
+        }),
+      );
+    });
   });
 });
