@@ -1,4 +1,5 @@
 import type { TBuildEvmTransferOptions } from '@paraspell/sdk-core'
+import { isEthereumBridgeOrigin, ScenarioNotSupportedError } from '@paraspell/sdk-common'
 import {
   abstractDecimals,
   assertHasId,
@@ -24,6 +25,7 @@ export const buildSnowbridgeTransfer = async <
 >(
   {
     api,
+    from = 'Ethereum',
     to,
     currency,
     recipient,
@@ -35,6 +37,15 @@ export const buildSnowbridgeTransfer = async <
     throw new UnsupportedOperationError(
       'Multi-assets are not yet supported for Snowbridge transfers'
     )
+  }
+
+  if (typeof from === 'string' && typeof to === 'string') {
+    const isSupported = isEthereumBridgeOrigin(to, from as any)
+    if (!isSupported) {
+      throw new ScenarioNotSupportedError(
+        `Transfer from ${from} to ${to} is not supported by Snowbridge.`
+      )
+    }
   }
 
   const ethAsset = findAssetInfoOrThrow('Ethereum', currency, to)
