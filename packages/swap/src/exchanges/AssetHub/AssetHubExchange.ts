@@ -7,6 +7,7 @@ import {
   padValueBy,
   Parents,
   RoutingResolutionError,
+  ValidationError,
 } from '@paraspell/sdk-core';
 
 import { getExchangeAsset } from '../../assets';
@@ -58,6 +59,13 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
   ): Promise<TSingleSwapResult<TRes>> {
     const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
+    const slippageMultiplier = Number(slippagePct)
+    if (!Number.isFinite(slippageMultiplier) || slippageMultiplier < 0 || slippageMultiplier > 100) {
+      throw new ValidationError(
+        'Invalid slippagePct: must be a number between 0 and 100.'
+      )
+    }
+
     const localizedFrom = localizeLocation(this.chain, assetFrom.location);
     const localizedTo = localizeLocation(this.chain, assetTo.location);
 
@@ -66,7 +74,6 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
 
     const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
 
-    const slippageMultiplier = Number(slippagePct);
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
 
     const tx = api.deserializeExtrinsics({
