@@ -1,4 +1,5 @@
 import type { TAssetInfo, TBuildEvmTransferOptions } from '@paraspell/sdk-core'
+import { ScenarioNotSupportedError } from '@paraspell/sdk-common'
 import {
   abstractDecimals,
   assertHasId,
@@ -168,6 +169,24 @@ describe('buildSnowbridgeTransfer', () => {
     await expect(buildSnowbridgeTransfer(baseOptions(), publicClient)).rejects.toThrow(
       RoutingResolutionError
     )
+  })
+
+  it('throws ScenarioNotSupportedError when destination is testnet and origin is mainnet', async () => {
+    await expect(
+      buildSnowbridgeTransfer(baseOptions({ from: 'Ethereum', to: 'AssetHubWestend' as any }))
+    ).rejects.toThrow(ScenarioNotSupportedError)
+  })
+
+  it('throws ScenarioNotSupportedError when destination is Paseo and origin is mainnet', async () => {
+    await expect(
+      buildSnowbridgeTransfer(baseOptions({ from: 'Ethereum', to: 'AssetHubPaseo' as any }))
+    ).rejects.toThrow(ScenarioNotSupportedError)
+  })
+
+  it('throws ScenarioNotSupportedError when destination is Polkadot and origin is EthereumTestnet', async () => {
+    await expect(
+      buildSnowbridgeTransfer(baseOptions({ from: 'EthereumTestnet' as any, to: 'AssetHubPolkadot' }))
+    ).rejects.toThrow(ScenarioNotSupportedError)
   })
 
   it('uses the cached WS public client when caller does not supply one', async () => {
