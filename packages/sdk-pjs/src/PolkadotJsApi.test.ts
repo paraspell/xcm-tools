@@ -1930,7 +1930,7 @@ describe('PolkadotJsApi', () => {
       const result = await polkadotApi.getDryRunCall({
         tx: mockExtrinsic,
         address,
-        chain,
+        chain: 'Acala',
         destination: 'Hydration',
         asset: { ...dotAsset, amount: 100n },
         feeAsset: usdtAsset,
