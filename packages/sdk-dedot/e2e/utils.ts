@@ -1,11 +1,11 @@
 import { DEV_PHRASE, Keyring } from "@polkadot/keyring";
-import { expect } from "vitest";
 import type {
   TDedotExtrinsic,
   TDedotSigner,
   TPallet,
   TSerializedExtrinsics,
 } from "../src";
+import { createTxValidator } from "../../sdk-core/e2e";
 
 export const createSr25519Signer = (path: string): TDedotSigner => {
   const keyring = new Keyring({ type: "sr25519" });
@@ -26,13 +26,10 @@ const serializeTx = (tx: TDedotExtrinsic): TSerializedExtrinsics => {
   };
 };
 
-export const validateTx = async (tx: TDedotExtrinsic, signer: TDedotSigner) => {
-  expect(tx).toBeDefined();
-  const hex = await tx.sign(signer);
-  expect(hex).toBeDefined();
-  const serialized = serializeTx(tx);
-  expect(serialized).toMatchSnapshot();
-};
+export const validateTx = createTxValidator(
+  serializeTx,
+  (tx, signer: TDedotSigner) => tx.sign(signer),
+);
 
 export const createSigners = (): [TDedotSigner, TDedotSigner] => [
   createSr25519Signer("//Alice"),
