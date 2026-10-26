@@ -10,7 +10,6 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { type UseFormReturnType } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
 import { EXCHANGE_CHAINS, type TAssetInfo } from '@paraspell/sdk';
 import { IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect, useRef } from 'react';
@@ -18,21 +17,20 @@ import { useEffect, useRef } from 'react';
 import { DEFAULT_SLIPPAGE, DEFAULT_SWAP_OPTIONS } from '../../constants';
 import { useEvmWallet, useSwapCurrencyOptions } from '../../hooks';
 import type { TFormValues } from '../../types';
-import { isSwapActive } from '../../utils';
 import { AccountSelectModal } from '../AccountSelectModal/AccountSelectModal';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { PolkadotWalletSelectModal } from '../WalletSelectModal/WalletSelectModal';
 
 type Props = {
   form: UseFormReturnType<TFormValues>;
+  opened: boolean;
+  disabled: boolean;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
-export const Swap = ({ form }: Props) => {
+export const Swap = ({ form, opened, disabled, onOpen, onClose }: Props) => {
   const { colorScheme } = useMantineColorScheme();
-
-  const [opened, { open, close }] = useDisclosure(
-    isSwapActive(form.values.swapOptions),
-  );
 
   const {
     extensions,
@@ -64,7 +62,7 @@ export const Swap = ({ form }: Props) => {
   const onRemove = () => {
     form.setFieldValue('swapOptions', DEFAULT_SWAP_OPTIONS);
     onEvmDisconnect();
-    close();
+    onClose();
   };
 
   const onAccountDisconnect = () => {
@@ -124,7 +122,8 @@ export const Swap = ({ form }: Props) => {
           variant="transparent"
           size="compact-xs"
           leftSection={<IconPlus size={16} />}
-          onClick={open}
+          disabled={disabled}
+          onClick={onOpen}
         >
           Add Swap
         </Button>

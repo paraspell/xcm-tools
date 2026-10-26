@@ -10,7 +10,6 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { createFormActions, type UseFormReturnType } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
 import { TRANSACT_ORIGINS } from '@paraspell/sdk';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 
@@ -21,18 +20,24 @@ const formActions = createFormActions<TTransactFields>(MAIN_FORM_NAME);
 
 type Props<T extends TTransactFields> = {
   form: UseFormReturnType<T>;
+  opened: boolean;
+  disabled: boolean;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
-export const Transact = <T extends TTransactFields>({ form }: Props<T>) => {
+export const Transact = <T extends TTransactFields>({
+  form,
+  opened,
+  disabled,
+  onOpen,
+  onClose,
+}: Props<T>) => {
   const { colorScheme } = useMantineColorScheme();
-
-  const [opened, { open, close }] = useDisclosure(
-    form.values.transactOptions.call !== '',
-  );
 
   const onRemove = () => {
     formActions.setFieldValue('transactOptions', DEFAULT_TRANSACT_OPTIONS);
-    close();
+    onClose();
   };
 
   const ensureMaxWeight = () => {
@@ -56,7 +61,8 @@ export const Transact = <T extends TTransactFields>({ form }: Props<T>) => {
           variant="transparent"
           size="compact-xs"
           leftSection={<IconPlus size={16} />}
-          onClick={open}
+          disabled={disabled}
+          onClick={onOpen}
         >
           Add Transact
         </Button>
