@@ -384,6 +384,57 @@ describe('validateAssetSupport', () => {
       InvalidCurrencyError
     )
   })
+
+  it('allows Mythos to Ethereum when the asset location is not Ethereum-compatible', () => {
+    const asset = {
+      symbol: 'MYTH',
+      location: {
+        parents: Parents.ONE,
+        interior: { X1: [{ PalletInstance: 50 }] }
+      }
+    } as TAssetInfo
+    const options = {
+      api: mockApi,
+      from: 'Mythos',
+      to: 'Ethereum',
+      currency: { symbol: 'MYTH' }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    findAssetInfoOnDestSpy.mockReturnValue(asset)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    expect(() => validateAssetSupport(options, true, false, asset)).not.toThrow()
+  })
+
+  it('rejects Mythos to EthereumTestnet with the ecosystem error', () => {
+    const asset = {
+      symbol: 'MYTH',
+      location: {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            { AccountKey20: { key: '0x1234567890abcdef1234567890abcdef12345678' } }
+          ]
+        }
+      }
+    } as TAssetInfo
+    const options = {
+      api: mockApi,
+      from: 'Mythos',
+      to: 'EthereumTestnet',
+      currency: { symbol: 'MYTH' }
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    findAssetInfoOnDestSpy.mockReturnValue(asset)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateAssetSupport(options, true, false, asset)).toThrow(InvalidCurrencyError)
+    expect(() => validateAssetSupport(options, true, false, asset)).toThrow(
+      'Destination EthereumTestnet is only supported from following ecosystems: Westend, Paseo.'
+    )
+  })
 })
 
 describe('validateEthereumAsset', () => {
@@ -403,7 +454,7 @@ describe('validateEthereumAsset', () => {
     expect(() => validateEthereumAsset(mockApi, 'AssetHubPolkadot', 'Acala', asset)).not.toThrow()
   })
 
-  it('should return early when origin is Mythos', () => {
+  it('skips the Ethereum location check for Mythos to Ethereum after the ecosystem guard', () => {
     const asset = {
       symbol: 'TEST',
       location: {
@@ -412,7 +463,55 @@ describe('validateEthereumAsset', () => {
       }
     } as TAssetInfo
 
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
     expect(() => validateEthereumAsset(mockApi, 'Mythos', 'Ethereum', asset)).not.toThrow()
+  })
+
+  it('rejects Mythos to EthereumTestnet with the ecosystem error before the location exemption', () => {
+    const asset = {
+      symbol: 'TEST',
+      location: {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            { AccountKey20: { key: '0x1234567890abcdef1234567890abcdef12345678' } }
+          ]
+        }
+      }
+    } as TAssetInfo
+
+    vi.mocked(isTLocation).mockReturnValue(false)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', 'EthereumTestnet', asset)).toThrow(
+      InvalidCurrencyError
+    )
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', 'EthereumTestnet', asset)).toThrow(
+      'Destination EthereumTestnet is only supported from following ecosystems: Westend, Paseo.'
+    )
+  })
+
+  it('still skips the location check for a Mythos transfer to a location destination', () => {
+    const asset = {
+      symbol: 'TEST',
+      location: {
+        parents: Parents.ONE,
+        interior: { X1: [{ PalletInstance: 50 }] }
+      }
+    } as TAssetInfo
+    const destination = {
+      parents: Parents.TWO,
+      interior: { X1: [{ GlobalConsensus: { Ethereum: { chainId: 11155111 } } }] }
+    }
+
+    vi.mocked(isTLocation).mockReturnValue(true)
+    vi.mocked(getRelayChainOf).mockClear()
+
+    expect(() => validateEthereumAsset(mockApi, 'Mythos', destination, asset)).not.toThrow()
+    expect(getRelayChainOf).not.toHaveBeenCalled()
   })
 
   it('should not throw for asset with Ethereum GlobalConsensus location', () => {

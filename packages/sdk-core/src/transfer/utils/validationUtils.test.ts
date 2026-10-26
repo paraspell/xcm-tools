@@ -134,18 +134,23 @@ describe('validateDestination', () => {
     vi.mocked(isExternalChain).mockReturnValue(false)
   })
 
-  it('should throw ScenarioNotSupportedError when destination is Ethereum and origin is not AssetHubPolkadot or Hydration', () => {
+  it('should throw ScenarioNotSupportedError when destination is Ethereum and origin is not an Ethereum bridge origin', () => {
     origin = 'Acala'
     destination = 'Ethereum'
 
     vi.mocked(isExternalChain).mockReturnValue(true)
 
     expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(
+      'Transfers to Ethereum are only supported from: AssetHubPolkadot, Hydration, BifrostPolkadot, Mythos'
+    )
   })
 
   it('should not throw when destination is Ethereum and origin is AssetHubPolkadot', () => {
     origin = 'AssetHubPolkadot'
     destination = 'Ethereum'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
 
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
   })
@@ -154,7 +159,61 @@ describe('validateDestination', () => {
     origin = 'Hydration'
     destination = 'Ethereum'
 
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
     expect(() => validateDestination(origin, destination, api)).not.toThrow()
+  })
+
+  it('should not throw when destination is Ethereum and origin is Mythos', () => {
+    origin = 'Mythos'
+    destination = 'Ethereum'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination(origin, destination, api)).not.toThrow()
+  })
+
+  it('should throw ScenarioNotSupportedError when destination is EthereumTestnet and origin is Mythos', () => {
+    origin = 'Mythos'
+    destination = 'EthereumTestnet'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(
+      'Transfers to EthereumTestnet are only supported from: AssetHubPaseo, AssetHubWestend'
+    )
+  })
+
+  it('should throw ScenarioNotSupportedError when a mainnet bridge origin targets EthereumTestnet', () => {
+    origin = 'AssetHubPolkadot'
+    destination = 'EthereumTestnet'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(
+      'Transfers to EthereumTestnet are only supported from: AssetHubPaseo, AssetHubWestend'
+    )
+  })
+
+  it('should throw ScenarioNotSupportedError when a testnet bridge origin targets Ethereum', () => {
+    origin = 'AssetHubPaseo'
+    destination = 'Ethereum'
+
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination(origin, destination, api)).toThrow(ScenarioNotSupportedError)
+    expect(() => validateDestination(origin, destination, api)).toThrow(
+      'Transfers to Ethereum are only supported from: AssetHubPolkadot, Hydration, BifrostPolkadot, Mythos'
+    )
+  })
+
+  it('should not throw when destination is EthereumTestnet and origin is a testnet bridge origin', () => {
+    vi.mocked(isExternalChain).mockReturnValue(true)
+
+    expect(() => validateDestination('AssetHubWestend', 'EthereumTestnet', api)).not.toThrow()
+    expect(() => validateDestination('AssetHubPaseo', 'EthereumTestnet', api)).not.toThrow()
   })
 
   it('should not throw when destination is undefined (relay destination)', () => {

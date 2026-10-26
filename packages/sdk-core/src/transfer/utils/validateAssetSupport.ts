@@ -102,15 +102,16 @@ export const validateEthereumAsset = <TApi, TRes, TSigner, TCustomChain extends 
   destination: TDestination,
   asset: TAssetInfo | null
 ) => {
-  if (
-    !asset ||
-    (!isTLocation(destination) && !isSnowbridge(origin, destination)) ||
-    origin === 'Mythos'
-  ) {
+  if (!asset || (!isTLocation(destination) && !isSnowbridge(origin, destination))) {
     return
   }
 
   validateEcosystems(origin, destination)
+
+  // Mythos assets are not located under the Ethereum consensus junction.
+  // Skip that compatibility check only after the ecosystem guard has run,
+  // so Mythos -> EthereumTestnet is still rejected.
+  if (origin === 'Mythos') return
 
   const ADDITIONAL_ALLOWED_LOCATIONS = [
     RELAY_LOCATION,
