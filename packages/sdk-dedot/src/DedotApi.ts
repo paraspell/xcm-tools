@@ -328,9 +328,9 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   }
 
   async resolveFeeAsset(options: TDryRunCallBaseOptions<TDedotExtrinsic>) {
-    const { chain, address } = options;
+    const { chain, address, feeAsset } = options;
 
-    if (!chain.startsWith("Hydration")) {
+    if (!chain.startsWith("Hydration") || feeAsset) {
       return {
         isCustomAsset: false,
         asset: this.resolveDefaultFeeAsset(options),
