@@ -77,6 +77,28 @@ describe('Builder', () => {
     expect(buildApiTransactionsSpy).toHaveBeenCalledWith({ ...transferParams, api: mockApi });
   });
 
+  it('should preserve bigint amount without converting to string', async () => {
+    const bigintAmount = 10_000_000_000n;
+    await SwapBuilder(mockApi)
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(bigintAmount)
+      .sender(sender)
+      .recipient(recipient)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .build();
+
+    expect(buildApiTransactionsSpy).toHaveBeenCalledWith({
+      ...transferParams,
+      amount: bigintAmount,
+      api: mockApi,
+    });
+  });
+
   it('should construct a transfer using SwapBuilder', async () => {
     await SwapBuilder(mockApi)
       .from(from)

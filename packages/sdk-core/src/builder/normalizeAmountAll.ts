@@ -45,8 +45,9 @@ export const normalizeAmountAll = async <
   assertCurrencyCore(currency)
 
   const transferable = swapOptions
-    ? await executeWithSwap({ ...options, api, from, swapOptions }, builder =>
-        builder.getTransferableAmount()
+    ? await executeWithSwap(
+        { ...options, api, from, swapOptions, currency: { ...currency, amount: MIN_AMOUNT } },
+        builder => builder.getTransferableAmount()
       )
     : await getTransferableAmountInternal({
         api,

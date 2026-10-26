@@ -509,7 +509,8 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithSwap({ ...this._options, from, api: this.api, swapOptions }, builder =>
+      const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
+      return executeWithSwap({ ...normalizedOptions, from, api: this.api, swapOptions }, builder =>
         builder.dryRun()
       )
     }
@@ -532,7 +533,8 @@ export class GeneralBuilder<
     assertNotEvmTransfer(from, senderSource)
 
     if (swapOptions) {
-      return executeWithSwap({ ...this._options, from, api: this.api, swapOptions }, builder =>
+      const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
+      return executeWithSwap({ ...normalizedOptions, from, api: this.api, swapOptions }, builder =>
         builder.dryRunPreview(dryRunOptions)
       )
     }
@@ -1051,8 +1053,9 @@ export class GeneralBuilder<
         )
       }
 
+      const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
       const txHashes = await executeWithSwap(
-        { ...this._options, from, swapOptions, api: this.api },
+        { ...normalizedOptions, from, swapOptions, api: this.api },
         builder => builder.signer(senderSource).signAndSubmit()
       )
 
@@ -1089,7 +1092,8 @@ export class GeneralBuilder<
         )
       }
 
-      return executeWithSwap({ ...this._options, from, swapOptions, api: this.api }, builder =>
+      const { normalizedOptions } = await this.prepareNormalizedOptions(this._options)
+      return executeWithSwap({ ...normalizedOptions, from, swapOptions, api: this.api }, builder =>
         builder.signer(senderSource).signAndSubmit()
       )
     }

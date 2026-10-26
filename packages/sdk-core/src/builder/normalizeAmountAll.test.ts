@@ -163,7 +163,11 @@ describe('normalizeAmountAll', () => {
     const result = await normalizeAmountAll(mockApi, builder, options)
 
     expect(executeWithSwap).toHaveBeenCalledWith(
-      expect.objectContaining({ api: mockApi, swapOptions }),
+      expect.objectContaining({
+        api: mockApi,
+        swapOptions,
+        currency: expect.objectContaining({ amount: MIN_AMOUNT })
+      }),
       expect.any(Function)
     )
     expect(getTransferableAmountInternal).not.toHaveBeenCalled()
