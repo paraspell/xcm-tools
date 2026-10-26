@@ -23,7 +23,13 @@ import type {
 } from '../../types';
 import { pow10n } from '../../utils';
 import ExchangeChain from '../ExchangeChain';
-import { calculateFee, getAssetInfo } from './utils';
+import { getAssetInfo } from './utils';
+
+// Quote and execution must trade the same input. getAmountOut does not receive
+// sender, feeCalcAddress, or the destination fee, so it cannot call calculateFee.
+// Both sides use the flat origin reserve, matching Acala, Bifrost, and AssetHub.
+const resolveAmountWithoutFee = (amount: bigint, origin: unknown): bigint =>
+  padValueBy(amount, origin ? DEST_FEE_BUFFER_PCT : 0);
 
 class HydrationExchange extends ExchangeChain<'PAPI'> {
   readonly apiType = 'PAPI';
@@ -52,17 +58,7 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
         throw new InvalidCurrencyError("Currency to doesn't exist");
       }
 
-      const tradeFee = await calculateFee(
-        options,
-        tradeRouter,
-        txBuilderFactory,
-        currencyFromInfo,
-        currencyToInfo,
-        currencyFromInfo.decimals,
-        this.chain,
-        toDestTransactionFee,
-      );
-      const amountWithoutFee = origin ? amount - tradeFee : amount;
+      const amountWithoutFee = resolveAmountWithoutFee(amount, origin);
 
       if (amountWithoutFee <= 0n) throw new AmountTooLowError();
 
@@ -156,8 +152,7 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
         throw new InvalidCurrencyError("Currency to doesn't exist");
       }
 
-      const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-      const amountWithoutFee = padValueBy(amount, pctDestFee);
+      const amountWithoutFee = resolveAmountWithoutFee(amount, origin);
 
       const amountNormalized = formatUnits(amountWithoutFee, currencyFromInfo.decimals);
 

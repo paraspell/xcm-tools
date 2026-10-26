@@ -7,13 +7,16 @@ import type { TAssetInfo } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
   findNativeAssetInfoOrThrow,
+  formatUnits,
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
+  padValueBy,
   UnableToComputeError,
 } from '@paraspell/sdk-core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { DEST_FEE_BUFFER_PCT } from '../../consts';
 import type { TPapiGetAmountOutOptions, TPapiSwapOptions } from '../../types';
 import HydrationExchange from './HydrationExchange';
 import * as utils from './utils';
@@ -86,8 +89,6 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: 1, symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 2, symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 999, symbol: 'HDX' } as Asset);
-
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
         amountOut: 10000000000000000n,
@@ -164,8 +165,6 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: 999, symbol: 'HDX' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 999, symbol: 'HDX' } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
-
       vi.spyOn(mockTradeRouter, 'getBestSell').mockResolvedValue({
         amountOut: 10000000000000000n,
       } as unknown as Trade);
@@ -192,11 +191,12 @@ describe('HydrationExchange', () => {
       expect(result.amountOut).toBe(9999999999999989n);
     });
 
-    it('throws if the amountWithoutFee becomes negative', async () => {
+    it('throws AmountTooLowError when the origin reserve consumes the whole input', async () => {
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: 1 } as Asset);
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: 2 } as Asset);
 
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(150n);
+      const amount = 1n;
+      expect(padValueBy(amount, DEST_FEE_BUFFER_PCT)).toBe(0n);
 
       const options = {
         origin: {
@@ -205,7 +205,7 @@ describe('HydrationExchange', () => {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',
-        amount: 100n,
+        amount,
         apiPapi,
       } as TPapiSwapOptions<unknown, unknown, unknown>;
 
@@ -221,8 +221,6 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: 1, symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 2, symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 999, symbol: 'HDX' } as Asset);
-
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
         amountOut: 10000000000000000n,
@@ -261,8 +259,6 @@ describe('HydrationExchange', () => {
         .mockResolvedValueOnce({ decimals: 12, id: 1, symbol: 'ABC' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 2, symbol: 'XYZ' } as Asset)
         .mockResolvedValueOnce({ decimals: 12, id: 999, symbol: 'HDX' } as Asset);
-
-      vi.mocked(utils.calculateFee).mockResolvedValueOnce(10n);
 
       const mockTrade = {
         amountOut: 5n,
@@ -382,6 +378,81 @@ describe('HydrationExchange', () => {
 
       await expect(chain.getAmountOut(options)).rejects.toThrow(InvalidCurrencyError);
       expect(mockDestroy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('amountWithoutFee input model', () => {
+    const amount = 1000n;
+    const currencyFrom = { decimals: 0, id: 1, symbol: 'ABC' } as Asset;
+    const currencyTo = { decimals: 0, id: 2, symbol: 'XYZ' } as Asset;
+    const nativeCurrency = { decimals: 12, id: 999, symbol: 'HDX' } as Asset;
+
+    const quoteAndExecute = async (origin?: { chain: 'Acala' }) => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce(currencyFrom)
+        .mockResolvedValueOnce(currencyTo)
+        .mockResolvedValueOnce(nativeCurrency)
+        .mockResolvedValueOnce(currencyFrom)
+        .mockResolvedValueOnce(currencyTo);
+
+      // A computed fee other than 1% must not change the amount either side trades.
+      vi.mocked(utils.calculateFee).mockResolvedValue(50n);
+
+      vi.spyOn(mockTradeRouter, 'getSpotPrice').mockResolvedValue({
+        amount: 1000000000000n,
+        decimals: 12,
+      });
+
+      const getBestSell = vi
+        .spyOn(mockTradeRouter, 'getBestSell')
+        .mockImplementation((_from: number, _to: number, amountIn: string | bigint) =>
+          Promise.resolve({ amountOut: BigInt(amountIn) * 2n } as unknown as Trade),
+        );
+
+      const options = {
+        ...(origin ? { origin } : {}),
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        slippagePct: '0',
+        amount,
+        sender: 'sender',
+        feeCalcAddress: 'fee-address',
+        apiPapi,
+      };
+
+      const execution = await chain.swapCurrency(
+        options as TPapiSwapOptions<unknown, unknown, unknown>,
+        0n,
+      );
+      const quote = await chain.getAmountOut(
+        options as unknown as TPapiGetAmountOutOptions<unknown, unknown, unknown>,
+      );
+
+      return { execution, quote, getBestSell };
+    };
+
+    it('prices the trade on the same reserved input when origin is provided', async () => {
+      const { execution, quote, getBestSell } = await quoteAndExecute({ chain: 'Acala' });
+      const expectedInput = formatUnits(padValueBy(amount, DEST_FEE_BUFFER_PCT), 0);
+
+      expect(expectedInput).toBe('990');
+      expect(getBestSell).toHaveBeenNthCalledWith(1, 1, 2, expectedInput);
+      expect(getBestSell).toHaveBeenNthCalledWith(2, 1, 2, expectedInput);
+      expect(quote).toBe(execution.amountOut);
+      expect(quote).toBe(1980n);
+      expect(utils.calculateFee).not.toHaveBeenCalled();
+    });
+
+    it('prices the trade on the full amount when origin is omitted', async () => {
+      const { execution, quote, getBestSell } = await quoteAndExecute();
+      const expectedInput = formatUnits(amount, 0);
+
+      expect(expectedInput).toBe('1000');
+      expect(getBestSell).toHaveBeenNthCalledWith(1, 1, 2, expectedInput);
+      expect(getBestSell).toHaveBeenNthCalledWith(2, 1, 2, expectedInput);
+      expect(quote).toBe(execution.amountOut);
+      expect(quote).toBe(2000n);
+      expect(utils.calculateFee).not.toHaveBeenCalled();
     });
   });
 });
