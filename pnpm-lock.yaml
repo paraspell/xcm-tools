@@ -646,9 +646,6 @@ importers:
       '@codecov/rollup-plugin':
         specifier: ^2.0.1
         version: 2.0.1(rollup@4.63.5)
-      '@polkadot-api/metadata-builders':
-        specifier: ^0.15.2
-        version: 0.15.2
       '@polkadot-api/substrate-bindings':
         specifier: ^0.21.2
         version: 0.21.2
