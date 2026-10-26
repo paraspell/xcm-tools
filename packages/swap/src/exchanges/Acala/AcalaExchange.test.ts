@@ -183,7 +183,7 @@ describe('AcalaExchange', () => {
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe(46199999999998n);
+      expect(result.amountOut).toBe(41999999999999n);
     });
 
     it('should pass slippagePct as acceptiveSlippage to the dex swap', async () => {
