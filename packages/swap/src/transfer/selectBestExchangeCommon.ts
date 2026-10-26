@@ -6,6 +6,7 @@ import {
   getSupportedAssetsImpl,
   isAssetEqual,
   isConfig,
+  replaceBigInt,
   RoutingResolutionError,
   type TAssetInfo,
   type TChain,
@@ -44,7 +45,7 @@ export const selectBestExchangeCommon = async <
 
   if (from && !assetFromOrigin) {
     throw new RoutingResolutionError(
-      `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
+      `Currency from ${JSON.stringify(options.currencyFrom, replaceBigInt)} not found in ${options.from}.`,
     );
   }
 

@@ -96,7 +96,7 @@ export class SwapBuilderCore<
   amount(
     amount: TAmount,
   ): SwapBuilderCore<TApi, TRes, TSigner, T & { amount: TAmount }, TCustomChain> {
-    return new SwapBuilderCore(this._api, { ...this._options, amount: amount.toString() });
+    return new SwapBuilderCore(this._api, { ...this._options, amount });
   }
 
   recipient(

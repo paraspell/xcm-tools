@@ -3,6 +3,7 @@ import {
   findAssetInfoOrThrow,
   getSupportedAssetsImpl,
   isAssetEqual,
+  replaceBigInt,
   RoutingResolutionError,
 } from '@paraspell/sdk-core';
 
@@ -32,7 +33,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   if (originSpecified && !assetFromOrigin) {
     throw new RoutingResolutionError(
-      `Currency from ${JSON.stringify(currencyFrom)} not found in ${from}.`,
+      `Currency from ${JSON.stringify(currencyFrom, replaceBigInt)} not found in ${from}.`,
     );
   }
 
@@ -44,11 +45,11 @@ export const resolveAssets = <TApi, TRes, TSigner>(
   if (!assetFromExchange) {
     if (!originSpecified && findAssetInfo(dex.chain, currencyFrom)) {
       throw new RoutingResolutionError(
-        `Currency from ${JSON.stringify(currencyFrom)} exists in ${dex.chain} but is not swappable on ${dex.chain}.`,
+        `Currency from ${JSON.stringify(currencyFrom, replaceBigInt)} exists in ${dex.chain} but is not swappable on ${dex.chain}.`,
       );
     }
     throw new RoutingResolutionError(
-      `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.chain}.`,
+      `Currency from ${JSON.stringify(currencyFrom, replaceBigInt)} not found in ${dex.chain}.`,
     );
   }
 
@@ -56,7 +57,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   if (!assetTo) {
     throw new RoutingResolutionError(
-      `Currency to ${JSON.stringify(currencyTo)} not found in ${dex.chain}.`,
+      `Currency to ${JSON.stringify(currencyTo, replaceBigInt)} not found in ${dex.chain}.`,
     );
   }
 
@@ -65,7 +66,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
     !getSupportedAssetsImpl(dex.chain, to).some((asset) => isAssetEqual(asset, assetTo))
   ) {
     throw new RoutingResolutionError(
-      `Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`,
+      `Currency to ${JSON.stringify(currencyTo, replaceBigInt)} not supported by ${to}.`,
     );
   }
 
@@ -75,7 +76,9 @@ export const resolveAssets = <TApi, TRes, TSigner>(
       : undefined;
 
   if (feeAsset && originSpecified && !feeAssetFromOrigin) {
-    throw new RoutingResolutionError(`Fee asset ${JSON.stringify(feeAsset)} not found in ${from}.`);
+    throw new RoutingResolutionError(
+      `Fee asset ${JSON.stringify(feeAsset, replaceBigInt)} not found in ${from}.`,
+    );
   }
 
   const feeAssetFromExchange = feeAsset
@@ -86,7 +89,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
 
   if (feeAsset && !feeAssetFromOrigin && !feeAssetFromExchange) {
     throw new RoutingResolutionError(
-      `Fee asset ${JSON.stringify(feeAsset)} not found in ${dex.chain}.`,
+      `Fee asset ${JSON.stringify(feeAsset, replaceBigInt)} not found in ${dex.chain}.`,
     );
   }
 
@@ -100,7 +103,7 @@ export const resolveAssets = <TApi, TRes, TSigner>(
     );
     if (!sdkAsset.isFeeAsset) {
       throw new RoutingResolutionError(
-        `Asset ${JSON.stringify(feeAsset)} is not a valid fee asset in ${from ?? dex.chain}.`,
+        `Asset ${JSON.stringify(feeAsset, replaceBigInt)} is not a valid fee asset in ${from ?? dex.chain}.`,
       );
     }
   }

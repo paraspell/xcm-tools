@@ -16,6 +16,16 @@ export const abstractDecimals = <TApi, TRes, TSigner, TCustomChain extends strin
   return applyDecimalAbstraction(amount, decimals, abstractDecimals)
 }
 
+const toDecimalString = (amount: TAmount): string => {
+  if (typeof amount !== 'number') return amount.toString()
+  const [mantissa, exponent] = amount.toString().split('e')
+  if (exponent === undefined) return mantissa
+  const sign = amount < 0 ? '-' : ''
+  const digits = mantissa.replace(/[-.]/g, '')
+  const point = Number(exponent) + 1
+  return sign + (point > 0 ? digits.padEnd(point, '0') : `0.${'0'.repeat(-point)}${digits}`)
+}
+
 export const applyDecimalAbstraction = (
   amount: TAmount,
   decimals: number | undefined,
@@ -26,8 +36,9 @@ export const applyDecimalAbstraction = (
     return amount
   }
 
+  const strAmount = toDecimalString(amount)
+
   if (!shouldAbstract) {
-    const strAmount = amount.toString()
     if (strAmount.includes('.')) {
       throw new NumberFormatError(`Non-abstracted amount cannot have decimals: ${strAmount}`)
     }
@@ -35,7 +46,6 @@ export const applyDecimalAbstraction = (
   }
 
   if (decimals === undefined) {
-    const strAmount = amount.toString()
     if (strAmount.includes('.')) {
       // Return integer part only as fallback
       return BigInt(strAmount.split('.')[0])
@@ -43,5 +53,5 @@ export const applyDecimalAbstraction = (
     return BigInt(strAmount)
   }
 
-  return parseUnits(amount.toString(), decimals)
+  return parseUnits(strAmount, decimals)
 }

@@ -134,6 +134,40 @@ describe('resolveAssets', () => {
     expect(() => resolveAssets(dex, options)).toThrow();
   });
 
+  it('throws error with bigint values serialized when currency to is not found', () => {
+    const options: Parameters<typeof resolveAssets>[1] = {
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { location: { parents: 1, interior: { X1: { GeneralIndex: 1984n } } } },
+    };
+
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) =>
+      'symbol' in currency && currency.symbol === 'BTC' ? mockAssetFromExchange : null,
+    );
+
+    expect(() => resolveAssets(dex, options)).toThrow(
+      'Currency to {"location":{"parents":1,"interior":{"X1":{"GeneralIndex":"1984"}}}} not found in CHAIN_A.',
+    );
+  });
+
+  it('throws error with bigint values serialized when fee asset is not found in origin', () => {
+    const options: Parameters<typeof resolveAssets>[1] = {
+      from: 'Astar',
+      currencyFrom: { symbol: 'BTC' },
+      currencyTo: { symbol: 'ETH' },
+      feeAsset: { location: { parents: 1, interior: { X1: { GeneralIndex: 1984n } } } },
+    };
+
+    vi.mocked(findAssetInfo).mockReturnValueOnce(mockAssetFromExchange).mockReturnValueOnce(null);
+    vi.mocked(getExchangeAssetByOriginAsset).mockReturnValueOnce(mockAssetFromExchange);
+    vi.mocked(getExchangeAsset).mockImplementation((_exchangeChain, currency) =>
+      'symbol' in currency && currency.symbol === 'ETH' ? mockAssetTo : null,
+    );
+
+    expect(() => resolveAssets(dex, options)).toThrow(
+      'Fee asset {"location":{"parents":1,"interior":{"X1":{"GeneralIndex":"1984"}}}} not found in Astar.',
+    );
+  });
+
   it('throws not swappable error when origin not specified and asset exists in SDK but not on exchange', () => {
     const options = {
       currencyFrom: { symbol: 'BTC' },
