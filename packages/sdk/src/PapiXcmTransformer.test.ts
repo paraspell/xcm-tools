@@ -684,4 +684,19 @@ describe('transform', () => {
 
     expect(transform(input)).toEqual(expected)
   })
+it('converts string numeric currency_id in multi-key objects without falling through', () => {
+    const input = {
+      fee_item: '5',
+      currency_id: '100',
+      amount: '5000000000'
+    }
+
+    const expected = {
+      fee_item: 5,
+      currency_id: 100,
+      amount: 5000000000n
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
 })
