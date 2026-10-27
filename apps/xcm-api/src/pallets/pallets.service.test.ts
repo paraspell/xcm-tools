@@ -8,7 +8,7 @@ import {
   getPalletIndex,
   getSupportedPallets,
 } from '@paraspell/sdk';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PalletsService } from './pallets.service.js';
 import { validatePallet } from './utils/index.js';
@@ -47,10 +47,6 @@ describe('PalletsService', () => {
     }).compile();
 
     service = module.get<PalletsService>(PalletsService);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('should be defined', () => {

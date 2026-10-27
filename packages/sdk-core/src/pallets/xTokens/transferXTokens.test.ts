@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { TXTokensTransferOptions } from '../../types'
@@ -38,10 +38,6 @@ describe('transferXTokens', () => {
     assetId: '123',
     location: { parents: 0, interior: 'Here' }
   }
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('executes transfer transaction with default fee', () => {
     const input: TXTokensTransferOptions<unknown, unknown, unknown> = {

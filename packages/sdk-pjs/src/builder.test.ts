@@ -6,10 +6,7 @@ import { Builder } from './builder'
 import PolkadotJsApi from './PolkadotJsApi'
 
 vi.mock('./PolkadotJsApi')
-vi.mock('@paraspell/sdk-core', async importActual => ({
-  ...(await importActual()),
-  Builder: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 describe('Builder Function', () => {
   const mockApi = {} as ApiPromise

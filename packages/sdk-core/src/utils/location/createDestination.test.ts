@@ -9,11 +9,7 @@ const mockApi = {
   getRelayChainOf: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isSubstrateBridge: vi.fn(),
-  isExternalChain: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('createDestination', () => {
   it('creates sub bridge destination location with global consensus', () => {

@@ -25,10 +25,7 @@ vi.mock('./utils/utils', async (importActual) => ({
 }));
 vi.mock('./createSwapTx');
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  handleSwapExecuteTransfer: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -57,8 +54,6 @@ const baseOptions = {
 
 describe('prepareExtrinsics', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
       txs: ['swapTx'],
       amountOut: 1000n,

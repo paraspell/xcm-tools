@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { compareAddresses } from './compareAddresses'
@@ -7,10 +7,6 @@ describe('compareAddresses', () => {
   const mockApi = {
     accountToHex: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns true when addresses convert to the same hex', () => {
     const spy = vi.spyOn(mockApi, 'accountToHex')

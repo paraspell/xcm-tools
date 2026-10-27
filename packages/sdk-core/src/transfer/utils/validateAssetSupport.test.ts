@@ -53,11 +53,7 @@ const AHK_POLKADOT_USDT: TAssetInfo = {
   }
 }
 
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal()),
-  isExternalChain: vi.fn(),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {},
@@ -72,7 +68,6 @@ vi.mock('../../utils')
 
 describe('validateAssetSupport', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(isExternalChain).mockReturnValue(false)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
@@ -524,7 +519,6 @@ describe('validateEthereumAsset', () => {
 
 describe('validateEcosystems', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isTLocation).mockReturnValue(false)
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
   })

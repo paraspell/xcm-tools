@@ -60,7 +60,6 @@ describe('getSupportedDestinations', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isDestinationReachable).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockImplementation(chain => (chain === 'Karura' ? 'KSM' : 'DOT'))
     vi.mocked(findNativeAssetInfoOrThrow).mockImplementation(

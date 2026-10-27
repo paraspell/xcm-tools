@@ -33,7 +33,6 @@ vi.mock('../utils', async () => {
   const actual = await vi.importActual('../utils')
   return {
     ...actual,
-    isTLocation: vi.fn(),
     createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryLocation'),
     getRelayChainOf: vi.fn().mockReturnValue('Polkadot'),
     resolveDestChain: vi.fn(),
@@ -48,13 +47,7 @@ vi.mock('../utils/asset', async importActual => ({
   createAsset: vi.fn().mockReturnValue('asset')
 }))
 
-vi.mock('@paraspell/pallets', async () => {
-  const actual = await vi.importActual('@paraspell/pallets')
-  return {
-    ...actual,
-    getOtherAssetsPallets: vi.fn()
-  }
-})
+vi.mock('@paraspell/pallets', { spy: true })
 
 vi.mock('../pallets')
 

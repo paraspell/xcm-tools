@@ -14,7 +14,6 @@ describe('clientPool', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('keyFromWs returns a stable key', () => {
@@ -41,8 +40,7 @@ describe('clientPool', () => {
     const c2 = await leaseClient(ws, 1_000)
 
     expect(c2).toBe(c1)
-    expect(createClient).toHaveBeenCalledTimes(1)
-    expect(createClient).toHaveBeenCalledWith(ws)
+    expect(createClient).toHaveBeenCalledExactlyOnceWith(ws)
 
     const entry = cache.peek(keyFromWs(ws))
     expect(entry?.refs).toBe(2)

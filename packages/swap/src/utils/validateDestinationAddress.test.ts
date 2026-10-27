@@ -1,6 +1,6 @@
 import { InvalidAddressError, isChainEvm, type TChain } from '@paraspell/sdk-core';
 import { ethers } from 'ethers-v6';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { validateDestinationAddress } from './validateDestinationAddress';
 
@@ -12,10 +12,6 @@ vi.mock('@paraspell/sdk-core', () => ({
 vi.mock('ethers-v6');
 
 describe('validateDestinationAddress', () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should not throw an error when destination is EVM and address is a valid Ethereum address', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678';
     const destination: TChain = 'Darwinia';

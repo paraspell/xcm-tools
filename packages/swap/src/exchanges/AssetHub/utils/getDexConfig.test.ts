@@ -4,11 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getDexConfig } from './getDexConfig';
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  getAssets: vi.fn(),
-  localizeLocation: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const makeAsset = (symbol: string, id: string, ml: object): TAssetInfo => ({
   symbol,
@@ -69,7 +65,6 @@ const makeApi = (entries: unknown[]) =>
 
 describe('getDexConfig', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(localizeLocation).mockImplementation((_chain, ml) => ml);
   });
 

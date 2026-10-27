@@ -25,7 +25,6 @@ describe('resolveFeeAsset', () => {
   let api: PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isExternalChain).mockReturnValue(false)
     api = createApi()
   })

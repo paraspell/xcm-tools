@@ -1,5 +1,5 @@
 import { isAssetEqual, type TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getFeeAssetInfo, hasMatchingFeeAssetReserve } from './getFeeAssetInfo'
@@ -15,10 +15,6 @@ describe('getFeeAssetInfo', () => {
     symbol: 'DOT',
     location: { parents: 1, interior: { X1: { Parachain: 1000 } } }
   } as TAssetInfo
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns undefined when no fee asset is provided', () => {
     expect(getFeeAssetInfo(assetInfo)).toBeUndefined()

@@ -24,10 +24,7 @@ vi.mock('../exchanges/ExchangeChainFactory', () => ({
   },
 }));
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  findAssetInfoOrThrow: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const assetA: TAssetInfo = {
   symbol: 'ABC',

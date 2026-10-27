@@ -12,13 +12,7 @@ import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
 import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  findAssetInfoOnDestImpl: vi.fn(),
-  getAssetsImpl: vi.fn(),
-  getSupportedAssetsImpl: vi.fn(),
-  isAssetEqual: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('../exchanges/ExchangeChainFactory');
 vi.mock('./getExchangeConfig');
@@ -57,7 +51,6 @@ describe('getSupportedAssetsFrom', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(isAssetEqual).mockImplementation(
       (a, b) => JSON.stringify(a.location) === JSON.stringify(b.location),
     );

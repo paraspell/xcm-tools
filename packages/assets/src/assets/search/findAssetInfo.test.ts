@@ -96,7 +96,6 @@ describe('findAssetInfo', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getNativeAssetsImpl).mockReturnValue([])
     vi.mocked(getOtherAssetsImpl).mockReturnValue([])
   })

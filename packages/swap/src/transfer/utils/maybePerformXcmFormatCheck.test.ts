@@ -1,6 +1,6 @@
 import type { PolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core';
 import { DryRunFailedError } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { TBuildTransactionsOptions, TRouterPlan, TTransformedOptions } from '../../types';
 import { dryRunTransactions } from '../dryRun';
@@ -33,10 +33,6 @@ const dryRunRes = (overrides: Partial<TDryRunResult> = {}): TDryRunResult => ({
 });
 
 describe('maybePerformXcmFormatCheck', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('does nothing when config is undefined', async () => {
     await maybePerformXcmFormatCheck(createApi(undefined), options, routerPlan);
     expect(dryRunTransactions).not.toHaveBeenCalled();
@@ -62,8 +58,7 @@ describe('maybePerformXcmFormatCheck', () => {
 
     await maybePerformXcmFormatCheck(createApi({ xcmFormatCheck: true }), options, routerPlan);
 
-    expect(dryRunTransactions).toHaveBeenCalledTimes(1);
-    expect(dryRunTransactions).toHaveBeenCalledWith(
+    expect(dryRunTransactions).toHaveBeenCalledExactlyOnceWith(
       routerPlan,
       options,
       { sentAssetMintMode: 'bypass' },

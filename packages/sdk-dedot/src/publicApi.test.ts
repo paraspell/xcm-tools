@@ -8,7 +8,7 @@ import {
   getBridgeStatus as getBridgeStatusImpl,
   getParaEthTransferFees as getEthFeesImpl,
 } from "@paraspell/sdk-core";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { convertSs58 } from "./address";
 import { getBalance } from "./assets";
@@ -27,10 +27,6 @@ vi.mock("@paraspell/sdk-core", { spy: true });
 vi.mock("./DedotApi");
 
 describe("sdk-dedot public API adapters", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it("converts an SS58 address with a Dedot API adapter", () => {
     vi.mocked(convertSs58Impl).mockReturnValue("converted");
 

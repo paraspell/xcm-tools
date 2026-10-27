@@ -175,8 +175,6 @@ describe("DedotApi", () => {
   const mockChain = "Acala";
 
   beforeEach(async () => {
-    vi.clearAllMocks();
-
     mockTx = {
       call: {
         palletCall: {
@@ -201,10 +199,6 @@ describe("DedotApi", () => {
     await dedotApi.init(mockChain);
 
     vi.spyOn(dedotApi, "hasXcmPaymentApiSupport").mockReturnValue(false);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it("should return DEDOT api type", () => {
@@ -974,9 +968,7 @@ describe("DedotApi", () => {
       };
       mockApiRaw.call.dryRunApi.dryRunXcm.mockResolvedValue(mockResponse);
 
-      const getXcmPaymentApiFeeSpy = vi
-        .spyOn(dedotApi, "getXcmPaymentApiFee")
-        .mockResolvedValue(999n);
+      vi.spyOn(dedotApi, "getXcmPaymentApiFee").mockResolvedValue(999n);
 
       const result = await dedotApi.getDryRunXcm({
         originLocation,
@@ -991,8 +983,6 @@ describe("DedotApi", () => {
         expect(result.fee).toBe(999n);
         expect(result.destParaId).toBe(1000);
       }
-
-      getXcmPaymentApiFeeSpy.mockRestore();
     });
 
     it("returns failure with reason on incomplete execution", async () => {
@@ -1329,8 +1319,7 @@ describe("DedotApi", () => {
       await expect(
         dedotApi.getFromRpc("state", "getStorage", "0xkey"),
       ).resolves.toBe("0xvalue");
-      expect(rpcMethod).toHaveBeenCalledTimes(1);
-      expect(rpcMethod).toHaveBeenCalledWith("0xkey");
+      expect(rpcMethod).toHaveBeenCalledExactlyOnceWith("0xkey");
     });
 
     it("rejects missing RPC methods", async () => {

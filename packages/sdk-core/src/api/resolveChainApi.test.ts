@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { MissingChainApiError } from '../errors'
 import type { TBuilderConfig } from '../types'
@@ -15,10 +15,6 @@ vi.mock('../chains/config', () => ({
 }))
 
 describe('resolveChainApi', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('uses default provider when config is undefined', async () => {
     const result = await resolveChainApi(undefined, CHAIN, createApiInstance)
 

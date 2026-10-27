@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
@@ -11,10 +11,6 @@ vi.mock('../../utils')
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('TokensPallet.mint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('uses the raw assetId as currency id when useCustomCurrencyId is not set', async () => {
     const pallet = new TokensPallet('Tokens')
     const address = 'Alice'

@@ -19,17 +19,13 @@ import type AssetHubPolkadot from './AssetHubPolkadot'
 vi.mock('@paraspell/assets', async importActual => ({
   ...(await importActual()),
   getOtherAssets: vi.fn(),
-  getParaId: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   findAssetInfoByLoc: vi.fn(),
   normalizeSymbol: vi.fn(),
   isAssetEqual: vi.fn()
 }))
 
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal()),
-  hasJunction: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('../../utils/location')
 vi.mock('../../pallets/polkadotXcm')

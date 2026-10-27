@@ -31,7 +31,6 @@ describe('publicClientCache', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('exposes a non-empty list of fallback WSS endpoints', () => {

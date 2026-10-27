@@ -112,7 +112,5 @@ describe('sendEmail', () => {
       'Error sending email:',
       new Error('SendMail Error'),
     );
-
-    consoleErrorSpy.mockRestore();
   });
 });

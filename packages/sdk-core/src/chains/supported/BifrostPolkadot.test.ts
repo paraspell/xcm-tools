@@ -1,5 +1,5 @@
 import { Version } from '@paraspell/sdk-common'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -24,10 +24,6 @@ describe('BifrostPolkadot', () => {
 
   beforeEach(() => {
     chain = getChain<unknown, unknown, unknown, 'BifrostPolkadot'>('BifrostPolkadot')
-  })
-
-  afterEach(() => {
-    vi.clearAllMocks()
   })
 
   it('should initialize with correct values', () => {

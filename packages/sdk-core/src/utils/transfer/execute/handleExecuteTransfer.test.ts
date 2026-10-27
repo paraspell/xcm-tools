@@ -55,7 +55,6 @@ describe('handleExecuteTransfer', () => {
   const mockDestChain = 'Hydration'
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTChain).mockReturnValue(mockDestChain)

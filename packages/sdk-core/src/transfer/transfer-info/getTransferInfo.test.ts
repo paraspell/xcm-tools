@@ -19,14 +19,10 @@ import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { getTransferInfo } from './getTransferInfo'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  isAssetEqual: vi.fn()
-}))
+vi.mock('@paraspell/assets', { spy: true })
 
 vi.mock('../../errors')
 vi.mock('../../utils')
-vi.mock('../../pallets/assets/balance')
 vi.mock('../../balance')
 vi.mock('../utils')
 vi.mock('../fees')
@@ -64,8 +60,6 @@ describe('getTransferInfo', () => {
     })
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     mockApi = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnectAllowed: vi.fn(),

@@ -33,13 +33,7 @@ const { senderMethods, setEthProvider, senderFactory } = vi.hoisted(() => {
   }
 })
 
-vi.mock('@paraspell/sdk-core', async importOriginal => ({
-  ...(await importOriginal()),
-  abstractDecimals: vi.fn(),
-  assertHasId: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
-  getParaId: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 vi.mock('@snowbridge/api', () => ({
   SnowbridgeApi: vi.fn(),
@@ -82,8 +76,6 @@ const baseOptions = (overrides: Partial<Parameters<typeof buildSnowbridgeTransfe
 
 describe('buildSnowbridgeTransfer', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-
     vi.mocked(SnowbridgeApi).mockImplementation(function (this: {
       context: { setEthProvider: typeof setEthProvider }
       sender: typeof senderFactory
@@ -176,8 +168,7 @@ describe('buildSnowbridgeTransfer', () => {
 
     const result = await buildSnowbridgeTransfer(baseOptions())
 
-    expect(leaseClient).toHaveBeenCalledTimes(1)
-    expect(leaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS, DEFAULT_TTL_MS)
+    expect(leaseClient).toHaveBeenCalledExactlyOnceWith(ETHEREUM_WS_URLS, DEFAULT_TTL_MS)
     expect(setEthProvider).toHaveBeenCalledWith(1, cachedClient)
     expect(releaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS)
     expect(result.tx.chainId).toBe(1)

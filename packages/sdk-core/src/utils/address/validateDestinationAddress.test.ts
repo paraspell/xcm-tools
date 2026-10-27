@@ -1,5 +1,5 @@
 import { isTLocation } from '@paraspell/sdk-common'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
@@ -9,17 +9,10 @@ import { validateDestinationAddress } from './validateDestinationAddress'
 
 vi.mock('./validateAddress')
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('validateDestinationAddress', () => {
   const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>
-
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('should call validateAddress when destination is defined, not a TLocation, and address is a string', () => {
     const address = '0x1234567890abcdef1234567890abcdef12345678'

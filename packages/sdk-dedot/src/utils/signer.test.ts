@@ -17,7 +17,6 @@ vi.mock("@polkadot/keyring");
 
 describe("createKeyringPair", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(Keyring).mockImplementation(MockKeyring);
   });
 

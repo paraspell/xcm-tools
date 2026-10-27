@@ -51,7 +51,6 @@ describe('Builder', () => {
   let getMinTransferableAmountSpy: MockInstance;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     transferSpy = vi.mocked(transfer).mockResolvedValue(['0x']);
     buildApiTransactionsSpy = vi.mocked(buildApiTransactions).mockResolvedValue([]);
     getBestAmountOutSpy = vi

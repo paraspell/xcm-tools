@@ -69,7 +69,6 @@ const createBaseOptions = (
 
 describe('swapUtils', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     registerSwapExtension({ SwapBuilder: MockSwapBuilder })
   })
 

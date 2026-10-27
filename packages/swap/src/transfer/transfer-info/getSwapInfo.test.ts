@@ -37,12 +37,7 @@ vi.mock('../utils', async (importActual) => ({
   createFromExchangeBuilder: vi.fn(),
 }));
 vi.mock('./getExecuteSwapInfo');
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  buildOriginInfo: vi.fn(),
-  buildDestInfo: vi.fn(),
-  getRelayChainSymbol: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -146,7 +141,6 @@ const createBuilderMock = (info: TTransferInfo) =>
 
 describe('getSwapInfo', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prepareTransformedOptions).mockResolvedValue({ options: baseOptions, dex });
     vi.mocked(canUseExecuteTransfer).mockReturnValue(false);
     vi.mocked(isFilteredError).mockReturnValue(false);

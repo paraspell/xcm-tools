@@ -27,7 +27,6 @@ describe('buildEvmTransfer', () => {
     value: 0n
   }
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(buildXTokensEvm).mockReturnValue(evmTx)
   })
 

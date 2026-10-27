@@ -35,8 +35,6 @@ vi.mock('../../builder', () => ({
   }))
 }))
 
-vi.mock('./padFee')
-
 const mockApi = {
   getPaymentInfo: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
@@ -63,7 +61,6 @@ describe('getReverseTxFee', () => {
   } as TGetReverseTxFeeOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isChainEvm).mockReturnValue(false)
 
     vi.mocked(isAddress).mockImplementation((addr: string) => addr.startsWith('0x'))

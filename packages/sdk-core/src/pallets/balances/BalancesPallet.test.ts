@@ -1,5 +1,5 @@
 import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
@@ -16,10 +16,6 @@ const chainMock = (config: TMintConfig) =>
   >
 
 describe('BalancesPallet.mint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('wraps the address as { Id } when useIdPrefix is set and adds the amount to the balance', async () => {
     const pallet = new BalancesPallet('Balances')
     const address = '5FbrsAddr'

@@ -13,13 +13,7 @@ vi.mock('viem')
 vi.mock('./createX1Payload')
 vi.mock('../transfer/resolveScenario')
 
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-common')
-  return {
-    ...actual,
-    isTLocation: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('createBeneficiaryLocation', () => {
   let apiMock: PolkadotApi<unknown, unknown, unknown>
@@ -31,7 +25,6 @@ describe('createBeneficiaryLocation', () => {
     apiMock = {
       accountToHex: vi.fn()
     } as unknown as PolkadotApi<unknown, unknown, unknown>
-    vi.clearAllMocks()
   })
 
   describe('createBeneficiaryLocXTokens', () => {

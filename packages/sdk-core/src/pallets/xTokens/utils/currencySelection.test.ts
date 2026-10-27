@@ -1,6 +1,6 @@
 import { getOtherAssets, InvalidCurrencyError } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { DOT_LOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
@@ -10,10 +10,6 @@ import { getModifiedCurrencySelection } from './currencySelection'
 vi.mock('@paraspell/assets')
 
 describe('getModifiedCurrencySelection', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns default DOT location when asset is non-foreign and destination is relay chain', () => {
     const version = Version.V4
     const options = {

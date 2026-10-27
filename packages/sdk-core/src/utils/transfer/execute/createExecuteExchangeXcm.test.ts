@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type TLocation, Version } from '@paraspell/sdk-common'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../../api'
 import type { TPolkadotXCMTransferOptions } from '../../../types'
 import { createBeneficiaryLocation, createDestination, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
-vi.mock('../../createBeneficiary')
 vi.mock('../../location')
 
 describe('createExecuteExchangeXcm', () => {
@@ -19,10 +18,6 @@ describe('createExecuteExchangeXcm', () => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
     vi.mocked(createBeneficiaryLocation).mockReturnValue(dummyBeneficiary)
     vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TLocation)
-  })
-
-  afterEach(() => {
-    vi.clearAllMocks()
   })
 
   it('should construct the correct call and return the api.deserializeExtrinsics result when version is provided', () => {

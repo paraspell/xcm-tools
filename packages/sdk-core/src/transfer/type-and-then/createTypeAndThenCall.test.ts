@@ -79,7 +79,6 @@ describe('createTypeAndThenCall', () => {
   } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     mockApi.deserializeExtrinsics = vi.fn()
     mockApi.clone = vi.fn().mockReturnValue(mockApi)
     mockApi.localizeLocation = vi.fn()
@@ -140,19 +139,17 @@ describe('createTypeAndThenCall', () => {
 
     expect(computeAllFees).toHaveBeenCalledWith(dotContext, expect.any(Function))
 
-    expect(createAsset).toHaveBeenCalledTimes(1)
-    expect(createAsset).toHaveBeenCalledWith(mockVersion, 1000n, RELAY_LOCATION)
+    expect(createAsset).toHaveBeenCalledExactlyOnceWith(mockVersion, 1000n, RELAY_LOCATION)
 
     expect(buildTypeAndThenCall).toHaveBeenCalledWith(dotContext, true, mockCustomXcm, [mockAsset])
 
-    expect(createCustomXcm).toHaveBeenCalledWith(
+    expect(createCustomXcm).toHaveBeenCalledExactlyOnceWith(
       dotContext,
       1,
       false,
       mockFees.destFee + mockFees.hopFees,
       mockFees
     )
-    expect(createCustomXcm).toHaveBeenCalledTimes(1)
   })
 
   it('should handle DOT asset with Kusama GlobalConsensus location', async () => {
@@ -204,8 +201,7 @@ describe('createTypeAndThenCall', () => {
   it('should build custom XCM with computed fees', async () => {
     await createTypeAndThenCall(mockContext.options)
 
-    expect(createCustomXcm).toHaveBeenCalledTimes(1)
-    expect(createCustomXcm).toHaveBeenCalledWith(
+    expect(createCustomXcm).toHaveBeenCalledExactlyOnceWith(
       mockContext,
       2,
       false,

@@ -44,7 +44,6 @@ describe('getTransferableAmount', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
-    buildTx.mockClear()
   })
 
   test('subtracts XCM fee for native asset', async () => {

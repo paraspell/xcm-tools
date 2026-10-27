@@ -7,11 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { buildApproveToken } from './buildApproveToken'
 
-vi.mock('@paraspell/sdk-core', async importOriginal => ({
-  ...(await importOriginal()),
-  assertHasId: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 vi.mock('@snowbridge/registry')
 
@@ -25,7 +21,6 @@ const ASSET_ID = '0x2222222222222222222222222222222222222222'
 
 describe('buildApproveToken', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     const asset: TAssetInfo = {
       symbol: 'WETH',
       decimals: 18,

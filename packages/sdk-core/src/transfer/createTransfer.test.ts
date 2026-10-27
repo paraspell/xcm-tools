@@ -5,7 +5,7 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import { isSubstrateBridge, Version } from '@paraspell/sdk-common'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { getSubstrateChainImpl } from '../chains/getChainInstance'
@@ -29,10 +29,7 @@ import {
   validateDestination
 } from './utils'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isSubstrateBridge: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('../utils')
 vi.mock('../utils/chain')
@@ -68,10 +65,6 @@ describe('send', () => {
     vi.mocked(pickCompatibleXcmVersion).mockReturnValue(Version.V4)
     vi.mocked(normalizeLocation).mockImplementation(location => location)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
-  })
-
-  afterEach(() => {
-    vi.restoreAllMocks()
   })
 
   it('should perform the send operation successfully', async () => {

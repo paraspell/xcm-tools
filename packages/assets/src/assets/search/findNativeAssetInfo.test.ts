@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../../types'
 import { getNativeAssetSymbolImpl } from '../assets'
@@ -19,10 +19,6 @@ vi.mock('./findAssetInfo')
 vi.mock('./findAssetInfoOrThrow')
 
 describe('findNativeAssetInfo helpers', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   describe('findNativeAssetInfo', () => {
     it('passes plain symbol for Ethereum (does not call Native)', () => {
       const chain = 'Ethereum'

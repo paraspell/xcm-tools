@@ -47,8 +47,7 @@ describe('canBuildToExchangeTx', () => {
     );
 
     expect(result).toEqual({ success: true });
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
+    expect(buildToExchangeExtrinsic).toHaveBeenCalledExactlyOnceWith({
       amount: BigInt(defaultOptions.amount),
       sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',
@@ -168,8 +167,7 @@ describe('canBuildToExchangeTx', () => {
     );
 
     expect(result).toEqual({ success: true });
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledWith({
+    expect(buildToExchangeExtrinsic).toHaveBeenCalledExactlyOnceWith({
       amount: BigInt(getBestAmountOutOptions.amount),
       sender: 'fallback_address',
       evmSenderAddress: 'fallback_evm_address',

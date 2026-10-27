@@ -14,10 +14,7 @@ import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import type { TExecuteContext } from './prepareExecuteContext'
 import { prepareExecuteContext } from './prepareExecuteContext'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTrustedChain: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('../../location')
 vi.mock('../isNativeAssetTeleport')
@@ -74,7 +71,6 @@ describe('createBaseExecuteXcm', () => {
   } as WithAmount<TAssetInfo>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(prepareExecuteContext).mockReturnValue(mockPrepareExecuteContext)
     vi.mocked(createDestination).mockReturnValue(mockDestLocation)
     vi.mocked(createAssetsFilter).mockReturnValue(mockAssetsFilter)

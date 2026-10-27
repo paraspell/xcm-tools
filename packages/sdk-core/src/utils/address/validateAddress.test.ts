@@ -1,6 +1,6 @@
 import type { TChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { InvalidAddressError } from '../../errors'
@@ -14,10 +14,6 @@ describe('validateAddress', () => {
     isChainEvm: vi.fn(),
     validateSubstrateAddress: vi.fn().mockReturnValue(true)
   } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('should not throw when address is a TLocation', () => {
     const address: TAddress = { parents: 0, interior: { X1: { Parachain: 100 } } }

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { Parents, type TJunctionAccountId32, type TLocation } from '../../types'
 import { flattenJunctions } from './flattenJunctions'
@@ -9,10 +9,6 @@ vi.mock('./flattenJunctions', () => ({
 }))
 
 describe('hasJunction', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it("returns false when location.interior is 'Here'", () => {
     const location: TLocation = { parents: Parents.ZERO, interior: 'Here' }
     expect(hasJunction(location, 'Parachain')).toBe(false)
@@ -78,10 +74,6 @@ describe('hasJunction', () => {
 })
 
 describe('getJunctionValue', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it("returns undefined when location.interior is 'Here'", () => {
     const location: TLocation = { parents: Parents.ZERO, interior: 'Here' }
     expect(getJunctionValue(location, 'Parachain')).toBeUndefined()

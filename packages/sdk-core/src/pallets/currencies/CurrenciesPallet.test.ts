@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
@@ -11,10 +11,6 @@ vi.mock('../../utils')
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('CurrenciesPallet.getBalance', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('queries the CurrenciesApi runtime api with a numeric asset id', async () => {
     const pallet = new CurrenciesPallet('Currencies')
     const queryRuntimeApi = vi.fn().mockResolvedValue({ free: '2294586420888330679986894' })
@@ -51,10 +47,6 @@ describe('CurrenciesPallet.getBalance', () => {
 })
 
 describe('CurrenciesPallet.mint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('builds update_balance with a numeric currency id and raw who by default', async () => {
     const pallet = new CurrenciesPallet('Currencies')
     const address = '5FbrsAddr'

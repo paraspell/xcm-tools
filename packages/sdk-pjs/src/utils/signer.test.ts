@@ -1,18 +1,11 @@
 import { getEvmPrivateKeyHex } from '@paraspell/sdk-core'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { createKeyringPair } from './signer'
 
-vi.mock('@paraspell/sdk-core', async importActual => ({
-  ...(await importActual()),
-  getEvmPrivateKeyHex: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 describe('createKeyringPair', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should create an Sr25519 keypair for non-EVM paths', () => {
     vi.mocked(getEvmPrivateKeyHex).mockReturnValue(undefined)
 

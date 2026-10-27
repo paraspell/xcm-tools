@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/sdk';
 import type { PolkadotApi } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
@@ -19,10 +19,6 @@ const mockApi = {
 } as unknown as PolkadotApi<unknown, unknown, unknown>;
 
 describe('getBestAmountOut', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should use createExchangeInstance when exchange is provided', async () => {
     const options = {
       exchange: 'EXCHANGE_A',

@@ -7,11 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { buildSnowbridgeTransfer } from './buildSnowbridgeTransfer'
 import { executeEvmSnowbridgeTransfer } from './executeEvmSnowbridgeTransfer'
 
-vi.mock('viem', async importOriginal => ({
-  ...(await importOriginal()),
-  createPublicClient: vi.fn(),
-  custom: vi.fn()
-}))
+vi.mock('viem', { spy: true })
 
 vi.mock('./buildSnowbridgeTransfer')
 
@@ -45,8 +41,6 @@ describe('executeEvmSnowbridgeTransfer', () => {
   let messageId: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     waitForTransactionReceipt = vi.fn().mockResolvedValue({ status: 'success' })
     vi.mocked(createPublicClient).mockReturnValue({
       waitForTransactionReceipt

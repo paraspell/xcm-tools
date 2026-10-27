@@ -28,7 +28,6 @@ describe('createTransactInstructions', () => {
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
     vi.spyOn(mockApi, 'txFromHex').mockResolvedValue('tx')
     vi.spyOn(mockApi, 'getPaymentInfo').mockResolvedValue({ weight: mockWeight, partialFee: 0n })
-    vi.clearAllMocks()
   })
 
   it('uses provided maxWeight without estimating', async () => {

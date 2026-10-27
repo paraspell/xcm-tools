@@ -1,5 +1,5 @@
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { transferPolkadotXcm } from '../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../types'
@@ -12,10 +12,6 @@ vi.mock('../pallets/polkadotXcm', () => ({
 }))
 
 describe('CustomChain', () => {
-  beforeEach(() => {
-    vi.mocked(transferPolkadotXcm).mockClear()
-  })
-
   it('uses the chain name as both the chain key and info, and stores the supplied version', () => {
     const chain = new CustomChain<unknown, unknown, unknown>('MyCustom', 'Polkadot', Version.V5)
 

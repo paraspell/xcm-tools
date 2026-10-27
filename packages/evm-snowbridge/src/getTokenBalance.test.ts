@@ -13,18 +13,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getTokenBalance } from './getTokenBalance'
 
-vi.mock('@paraspell/sdk-core', async importOriginal => ({
-  ...(await importOriginal()),
-  assertHasId: vi.fn(),
-  findAssetInfoOrThrow: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 vi.mock('@snowbridge/registry')
 vi.mock('@snowbridge/provider-viem')
-vi.mock('viem', async importOriginal => ({
-  ...(await importOriginal()),
-  createPublicClient: vi.fn(),
-  custom: vi.fn()
-}))
+vi.mock('viem', { spy: true })
 
 const GATEWAY = '0x1111111111111111111111111111111111111111'
 const ETH_SENTINEL = '0x0000000000000000000000000000000000000000'
@@ -53,8 +45,6 @@ describe('getTokenBalance', () => {
   let getBalance: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     erc20Balance = vi.fn().mockResolvedValue({
       balance: 500n,
       gatewayAllowance: 100n

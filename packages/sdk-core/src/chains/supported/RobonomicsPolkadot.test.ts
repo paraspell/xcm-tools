@@ -12,7 +12,6 @@ describe('RobonomicsPolkadot', () => {
   let chain: RobonomicsPolkadot<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     chain = getChain<unknown, unknown, unknown, 'RobonomicsPolkadot'>('RobonomicsPolkadot')
   })
 

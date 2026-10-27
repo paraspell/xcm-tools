@@ -56,7 +56,6 @@ const version = Version.V5
 
 describe('wrapTxBypass', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 
@@ -226,7 +225,6 @@ describe('wrapTxBypass', () => {
 
 describe('wrapTxBypass (new branches)', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
   })
 

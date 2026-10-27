@@ -11,12 +11,7 @@ import type ExchangeChain from '../../exchanges/ExchangeChain';
 import type { TTransferBaseOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  findAssetInfo: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
-  getSupportedAssetsImpl: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('../../assets');
 
@@ -27,7 +22,6 @@ const dex = {
 
 describe('resolveAssets', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
   });
 

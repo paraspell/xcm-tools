@@ -1,5 +1,5 @@
 import type { PolkadotApi, TAssetInfo } from '@paraspell/sdk-core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
@@ -47,10 +47,6 @@ describe('selectBestExchange', () => {
 
     // fee helper always returns the same deterministic value
     vi.mocked(calculateFromExchangeFee).mockResolvedValue(fee);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('resolves with the “best” exchange and forwards the fee to handleMultiSwap', async () => {

@@ -11,21 +11,13 @@ vi.mock('../../chains/config')
 vi.mock('../chain', () => ({
   getRelayChainOf: vi.fn()
 }))
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-common')
-  return {
-    ...actual,
-    isRelayChain: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('localizeLocation', () => {
   const relaychain: TRelaychain = 'Polkadot'
   const parachain: TChain = 'Acala'
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     vi.mocked(isRelayChain).mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
 
     vi.mocked(getParaId).mockImplementation(chain => {

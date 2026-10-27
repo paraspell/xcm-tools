@@ -1,19 +1,13 @@
 import type { TAmount, TAsset } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isTLocation, Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { OverrideConflictError } from '../../errors'
 import { createAsset } from './createAsset'
 import { maybeOverrideAsset, maybeOverrideAssets } from './overrideAsset'
 
-vi.mock('@paraspell/sdk-common', async importOriginal => {
-  const actual = await importOriginal<typeof import('@paraspell/sdk-common')>()
-  return {
-    ...actual,
-    isTLocation: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('./createAsset', () => ({
   createAsset: vi.fn()
@@ -27,10 +21,6 @@ describe('Asset Override Logic', () => {
     id: { Concrete: mockLocation },
     fun: { Fungible: mockAmount }
   }
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   describe('maybeOverrideMultiAssets', () => {
     it('should return original assets if no override is provided', () => {

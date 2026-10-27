@@ -1,13 +1,14 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    restoreMocks: true,
     include: ['src/**/*.test.ts'],
     coverage: {
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts'],
+      exclude: ['src/**/*.test.ts']
     },
     hookTimeout: 60000,
-    testTimeout: 60000,
-  },
-});
+    testTimeout: 60000
+  }
+})

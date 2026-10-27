@@ -4,7 +4,7 @@
 import type { Pair, Trade } from '@crypto-dex-sdk/amm';
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import { getAssets } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getBestTrade, getFilteredPairs } from './bifrostUtils';
 import { getDexConfig } from './getDexConfig';
@@ -82,10 +82,6 @@ const makeSdkAssets = (): TAssetInfo[] => [
 ];
 
 describe('getDexConfig', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('builds asset list from tokenMap & SDK assets (no pairs)', async () => {
     vi.mocked(getAssets).mockReturnValue(makeSdkAssets());
 

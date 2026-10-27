@@ -25,7 +25,7 @@ import type { VoidFn } from '@polkadot/api/types'
 import type { Codec } from '@polkadot/types/types'
 import { validateAddress } from '@polkadot/util-crypto'
 import type { Mock } from 'vitest'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi } from './types'
@@ -42,10 +42,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
 
 vi.mock('@polkadot/api')
 
-vi.mock('@polkadot/util-crypto', async importOriginal => ({
-  ...(await importOriginal()),
-  validateAddress: vi.fn()
-}))
+vi.mock('@polkadot/util-crypto', { spy: true })
 
 vi.mock('./utils', async importOriginal => ({
   ...(await importOriginal()),
@@ -225,8 +222,6 @@ describe('PolkadotJsApi', () => {
 
       expect(leaseClientSpy).toHaveBeenCalled()
       expect(polkadotApi.api).toBe(mockApiPromise)
-
-      leaseClientSpy.mockRestore()
     })
 
     it('should return early if already initialized', async () => {
@@ -236,8 +231,6 @@ describe('PolkadotJsApi', () => {
 
       expect(leaseClientSpy).not.toHaveBeenCalled()
       expect(polkadotApi.api).toBe(mockApiPromise)
-
-      leaseClientSpy.mockRestore()
     })
 
     it('should use apiOverrides when provided in config', async () => {
@@ -273,8 +266,6 @@ describe('PolkadotJsApi', () => {
 
       expect(leaseClientSpy).toHaveBeenCalled()
       expect(polkadotApi.api).toBe(mockApiPromise)
-
-      leaseClientSpy.mockRestore()
     })
   })
 
@@ -736,8 +727,6 @@ describe('PolkadotJsApi', () => {
       )
       expect(queryRuntimeSpy).not.toHaveBeenCalled()
       expect(fee).toBe(123n)
-
-      queryRuntimeSpy.mockRestore()
     })
 
     it('resolves the delivery fee from a V5 versioned result', async () => {
@@ -1116,29 +1105,25 @@ describe('PolkadotJsApi', () => {
   describe('createApiForChain', () => {
     it('should create a new PolkadotJsApi instance and call init with the provided chain', async () => {
       const chain = 'Acala'
-      const leaseClientSpy = vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
+      vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
 
       const newApi = await polkadotApi.createApiForChain(chain)
 
       expect(newApi).toBeInstanceOf(PolkadotJsApi)
       expect(newApi.api).toBe(mockApiPromise)
-
-      leaseClientSpy.mockRestore()
     })
   })
 
   describe('disconnect', () => {
     it('should release client from pool when _api is a string (non-force disconnect)', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
-      const leaseClientSpy = vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
+      vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
 
       polkadotApi = new PolkadotJsApi('api')
       await polkadotApi.init(mockChain)
       await polkadotApi.disconnect()
 
       expect(mockDisconnect).not.toHaveBeenCalled()
-      mockDisconnect.mockRestore()
-      leaseClientSpy.mockRestore()
     })
 
     it('should release client from pool when _api is not provided (non-force disconnect)', async () => {
@@ -1157,9 +1142,6 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.init(mockChain)
 
       expect(leaseClientSpy).toHaveBeenCalledTimes(2)
-
-      mockDisconnect.mockRestore()
-      leaseClientSpy.mockRestore()
     })
 
     it('should not disconnect the api when _api is provided', async () => {
@@ -1171,22 +1153,17 @@ describe('PolkadotJsApi', () => {
 
       expect(mockDisconnect).not.toHaveBeenCalled()
       expect(polkadotApi._chain).toBe(mockChain)
-
-      mockDisconnect.mockRestore()
     })
 
     it('should disconnect the api when force is true', async () => {
       const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
 
       polkadotApi = new PolkadotJsApi()
-      const leaseClientSpy = vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
+      vi.spyOn(polkadotApi, 'leaseClient').mockResolvedValue(mockApiPromise)
       await polkadotApi.init(mockChain)
       await polkadotApi.disconnect(true)
 
       expect(mockDisconnect).toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
-      leaseClientSpy.mockRestore()
     })
 
     it('should not disconnect the api when force is false and disconnectAllowed is false', async () => {
@@ -1197,8 +1174,6 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.disconnect(false)
 
       expect(mockDisconnect).not.toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
     })
 
     it('resolves the client from apiOverrides for a non-custom chain when _config is a builder config', async () => {
@@ -1211,8 +1186,6 @@ describe('PolkadotJsApi', () => {
       await polkadotApi.disconnect(true)
 
       expect(mockDisconnect).toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
     })
 
     it('skips apiOverrides for a custom chain when _config is a builder config', async () => {
@@ -1225,8 +1198,6 @@ describe('PolkadotJsApi', () => {
       await customApi.disconnect(true)
 
       expect(mockDisconnect).toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
     })
   })
 
@@ -1355,10 +1326,6 @@ describe('PolkadotJsApi', () => {
       vi.mocked(computeOriginFee).mockReturnValue(1000n)
     })
 
-    afterEach(() => {
-      vi.restoreAllMocks()
-    })
-
     it('simple success (no version), returns weight and forwardedXcms', async () => {
       const resp = makeSuccessResponse({
         weight: { refTime: '1000', proofSize: '2000' },
@@ -1376,8 +1343,7 @@ describe('PolkadotJsApi', () => {
         version: Version.V5
       })
 
-      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledTimes(1)
-      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledExactlyOnceWith(
         { system: { Signed: address } },
         mockExtrinsic
       )
@@ -1672,9 +1638,6 @@ describe('PolkadotJsApi', () => {
         forwardedXcms: expectedForwarded,
         destParaId: 0
       })
-
-      paymentInfoSpy.mockRestore()
-      xcmFeeSpy.mockRestore()
     })
 
     it('wraps the transaction when useRootOrigin is enabled', async () => {
@@ -1934,9 +1897,10 @@ describe('PolkadotJsApi', () => {
 
       vi.spyOn(polkadotApi, 'findNativeAssetInfoOrThrow').mockReturnValue(nativeAsset)
 
-      const resolveUsedAssetSpy = vi
-        .spyOn(polkadotApi, 'resolveFeeAsset')
-        .mockResolvedValue({ isCustomAsset: true, asset: multiAsset })
+      vi.spyOn(polkadotApi, 'resolveFeeAsset').mockResolvedValue({
+        isCustomAsset: true,
+        asset: multiAsset
+      })
 
       const getXcmPaymentApiFeeSpy = vi
         .spyOn(polkadotApi, 'getXcmPaymentApiFee')
@@ -1960,9 +1924,6 @@ describe('PolkadotJsApi', () => {
         forwardedXcms: [],
         destParaId: undefined
       })
-
-      resolveUsedAssetSpy.mockRestore()
-      getXcmPaymentApiFeeSpy.mockRestore()
     })
 
     it('returns failure when Utility.DispatchedAs event has Err despite executionResult Ok', async () => {

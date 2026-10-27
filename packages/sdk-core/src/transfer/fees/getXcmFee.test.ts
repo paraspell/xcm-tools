@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { AmountTooLowError } from '../../errors'
@@ -25,10 +25,6 @@ describe('getXcmFee', () => {
       buildTx: vi.fn(async () => realTx)
     }) as unknown as TGetXcmFeeOptions<unknown, unknown, unknown, boolean>
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('builds real tx, calls real internal, then forced via helper, and merges `sufficient` from real', async () => {
     const options = makeOptions()
 
@@ -51,16 +47,17 @@ describe('getXcmFee', () => {
 
     const res = await getXcmFee(options)
 
-    expect(options.buildTx).toHaveBeenCalledTimes(1)
-    expect(options.buildTx).toHaveBeenCalledWith()
+    expect(options.buildTx).toHaveBeenCalledExactlyOnceWith()
 
-    expect(getXcmFeeOnce).toHaveBeenCalledTimes(1)
-    expect(getXcmFeeOnce).toHaveBeenCalledWith(
+    expect(getXcmFeeOnce).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
 
-    expect(getBypassResultWithRetries).toHaveBeenCalledTimes(1)
-    expect(getBypassResultWithRetries).toHaveBeenCalledWith(options, getXcmFeeOnce, realTx)
+    expect(getBypassResultWithRetries).toHaveBeenCalledExactlyOnceWith(
+      options,
+      getXcmFeeOnce,
+      realTx
+    )
 
     expect(res.origin.sufficient).toBe(false)
     expect(res.destination.sufficient).toBe(false)

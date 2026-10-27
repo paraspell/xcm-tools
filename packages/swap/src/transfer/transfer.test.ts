@@ -18,10 +18,7 @@ import { transfer } from './transfer';
 import { maybePerformXcmFormatCheck, prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  isChainEvm: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./utils/validateTransferOptions');
 vi.mock('./utils');
@@ -34,7 +31,6 @@ describe('transfer', () => {
   const mockExchangeApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(isChainEvm).mockReturnValue(false);
 
     vi.mocked(validateTransferOptions).mockImplementation(() => {});
@@ -69,8 +65,10 @@ describe('transfer', () => {
 
     await transfer({ ...initialOptions, api: mockApi });
 
-    expect(validateTransferOptions).toHaveBeenCalledTimes(1);
-    expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
+    expect(validateTransferOptions).toHaveBeenCalledExactlyOnceWith({
+      ...initialOptions,
+      api: mockApi,
+    });
   });
 
   it('should throw an error if evmSigner is provided without evmSenderAddress', async () => {
@@ -104,8 +102,7 @@ describe('transfer', () => {
 
     await transfer({ ...options, api: mockApi });
 
-    expect(onStatusChange).toHaveBeenCalledTimes(1);
-    expect(onStatusChange).toHaveBeenCalledWith({
+    expect(onStatusChange).toHaveBeenCalledExactlyOnceWith({
       type: 'SELECTING_EXCHANGE',
     });
   });

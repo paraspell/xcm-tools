@@ -20,7 +20,6 @@ describe('Ajuna', () => {
 
   beforeEach(() => {
     chain = getChain<unknown, unknown, unknown, 'Ajuna'>('Ajuna')
-    vi.clearAllMocks()
   })
 
   it('exposes the correct static metadata', () => {

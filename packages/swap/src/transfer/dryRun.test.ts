@@ -2,7 +2,7 @@ import type { PolkadotApi, TAssetInfo, TDryRunResult } from '@paraspell/sdk-core
 import { dryRun, getDryRunError, UnsupportedOperationError } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions, TTransaction, TTransformedOptions } from '../types';
@@ -12,14 +12,7 @@ import { buildTransactions } from './buildTransactions';
 import { dryRunRouter, dryRunRouterPreview, dryRunTransactions } from './dryRun';
 import { prepareTransformedOptions, validateTransferOptions } from './utils';
 
-vi.mock('@paraspell/sdk-core', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-core');
-  return {
-    ...actual,
-    dryRun: vi.fn(),
-    getDryRunError: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./utils');
 vi.mock('./buildTransactions');
@@ -124,10 +117,6 @@ const resolvePrepareOptions = (
   });
 
 describe('dryRunRouter', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('flags exchange legs when origin or destination are handled by the exchange chain', async () => {
     const transformedOptions = createOptions({
       origin: undefined,
@@ -158,8 +147,7 @@ describe('dryRunRouter', () => {
     const result = await dryRunRouter({ ...initialOptions, api: mockApi });
 
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
-    expect(dryRun).toHaveBeenCalledTimes(1);
-    expect(dryRun).toHaveBeenCalledWith(
+    expect(dryRun).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         destination: 'Acala',
         sender: '0xSender',
@@ -257,10 +245,6 @@ describe('dryRunRouter', () => {
 });
 
 describe('dryRunRouterPreview', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('passes preview bypass options to the single transaction', async () => {
     const transformedOptions = createOptions();
 
@@ -270,8 +254,7 @@ describe('dryRunRouterPreview', () => {
 
     await dryRunRouterPreview({ ...createInitialOptions(), api: mockApi }, { mintFeeAssets: true });
 
-    expect(dryRun).toHaveBeenCalledTimes(1);
-    expect(dryRun).toHaveBeenCalledWith(
+    expect(dryRun).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         bypassOptions: { sentAssetMintMode: 'preview', mintFeeAssets: true },
       }),
@@ -348,10 +331,6 @@ describe('dryRunRouterPreview', () => {
 });
 
 describe('dryRunTransactions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('uses the override for the exchange leg instead of recomputing it', async () => {
     const transformedOptions = createOptions({
       origin: {
