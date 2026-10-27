@@ -13,18 +13,9 @@ import { buildEvmLocal } from './buildEvmLocal'
 import { buildXTokensEvm } from './buildXTokensEvm'
 import { getDestinationLocation } from './getDestinationLocation'
 
-vi.mock('@paraspell/sdk-core', async importOriginal => ({
-  ...(await importOriginal()),
-  abstractDecimals: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
-  formatAssetIdToERC20: vi.fn(),
-  getNativeAssetSymbol: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
-vi.mock('viem', async importOriginal => ({
-  ...(await importOriginal()),
-  encodeFunctionData: vi.fn()
-}))
+vi.mock('viem', { spy: true })
 
 vi.mock('./getDestinationLocation')
 vi.mock('./buildEvmLocal')
@@ -51,7 +42,6 @@ describe('buildXTokensEvm', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(foreignAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('RING')
     vi.mocked(formatAssetIdToERC20).mockReturnValue('0xformattedAsset')

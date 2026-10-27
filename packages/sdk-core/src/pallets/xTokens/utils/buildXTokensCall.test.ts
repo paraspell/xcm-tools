@@ -33,7 +33,6 @@ describe('buildXTokensCall', () => {
   let currencySelection: TXTokensCurrencySelection
 
   beforeEach(() => {
-    vi.clearAllMocks()
     currencySelection = { ForeignAsset: '1' }
     vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TAsset })
     vi.mocked(getXTokensParams).mockReturnValue({ param1: 'value1', param2: 'value2' })

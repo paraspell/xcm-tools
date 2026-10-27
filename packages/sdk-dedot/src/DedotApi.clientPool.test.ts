@@ -28,9 +28,6 @@ vi.mock("dedot", () => ({
 describe("DedotApi client pool hooks", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    apiMocks.systemChainMock.mockClear();
-    apiMocks.disconnectMock.mockClear();
-    apiMocks.createMock.mockClear();
   });
 
   afterEach(() => {

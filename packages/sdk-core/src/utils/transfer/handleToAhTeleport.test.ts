@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { InvalidAddressError } from '../../errors'
 import { dryRunInternal, getXcmFeeOnce } from '../../transfer'
@@ -10,10 +10,6 @@ import { handleToAhTeleport } from './handleToAhTeleport'
 vi.mock('../../transfer')
 vi.mock('./execute')
 vi.mock('../fees/padFee')
-
-vi.mock('../../transfer/fees/padFee', () => ({
-  padFeeBy: vi.fn((fee: bigint, percent: number) => fee + (fee * BigInt(percent)) / 100n)
-}))
 
 describe('handleToAhTeleport', () => {
   const mockInput = {
@@ -28,10 +24,6 @@ describe('handleToAhTeleport', () => {
   const mockOrigin = 'Acala'
 
   const defaultTx = { method: 'transfer' }
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns defaultTx if dry run is successful', async () => {
     vi.mocked(dryRunInternal).mockResolvedValue({ destination: { success: true } } as TDryRunResult)

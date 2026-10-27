@@ -50,7 +50,6 @@ describe('prepareCommonExecuteXcm', () => {
   } as TExecuteContext
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(prepareExecuteContext).mockReturnValue(mockContext)
     vi.mocked(sortAssets).mockReturnValue([mockAsset])
     vi.mocked(createBeneficiaryLocation).mockReturnValue(mockBeneficiary)

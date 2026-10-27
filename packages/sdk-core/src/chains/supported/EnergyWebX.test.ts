@@ -17,7 +17,6 @@ describe('EnergyWebX', () => {
 
   beforeEach(() => {
     chain = getChain<unknown, unknown, unknown, 'EnergyWebX'>('EnergyWebX')
-    vi.clearAllMocks()
   })
 
   it('should initialize with correct values', () => {

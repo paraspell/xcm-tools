@@ -6,11 +6,7 @@ import type { TPjsSwapOptions } from '../../types';
 import AcalaExchange from './AcalaExchange';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  getNativeAssetSymbol: vi.fn(),
-  getBalance: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('@acala-network/sdk-core', () => ({
   FixedPointNumber: vi.fn(

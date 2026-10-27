@@ -45,7 +45,6 @@ describe('prepareExecuteContext', () => {
   const mockLocalizedLocation = { parents: 0, interior: { Here: null } }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(createAsset).mockReturnValue(mockAsset)
     vi.mocked(localizeLocation).mockReturnValue(mockLocalizedLocation)
     vi.spyOn(api, 'localizeLocation').mockReturnValue(mockLocalizedLocation)

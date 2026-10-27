@@ -3,7 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TSubstrateChain } from '@paraspell/sdk';
 import { convertSs58, InvalidAddressError } from '@paraspell/sdk';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AddressService } from './address.service.js';
 
@@ -23,10 +23,6 @@ describe('AddressService', () => {
     }).compile();
 
     service = module.get<AddressService>(AddressService);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
   });
 
   it('should be defined', () => {

@@ -1,5 +1,5 @@
 import { Parents, type TLocation } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { STABLECOIN_IDS } from '../../consts/consts'
 import type { TAssetInfo } from '../../types'
@@ -22,10 +22,6 @@ describe('findStablecoinAssets', () => {
       : {
           X2: [{ PalletInstance: 50 }, { GeneralIndex: id }]
         }
-  })
-
-  beforeEach(() => {
-    vi.clearAllMocks()
   })
 
   it('returns one stablecoin per id and prefers GlobalConsensus variant', () => {

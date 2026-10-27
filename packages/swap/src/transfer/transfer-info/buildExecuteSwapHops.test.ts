@@ -9,10 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildExecuteSwapHops } from './buildExecuteSwapHops';
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  buildHopInfo: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -44,7 +41,6 @@ const currencyTo = { symbol: 'USDT' };
 
 describe('buildExecuteSwapHops', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(buildHopInfo).mockImplementation(({ fee, asset }) =>
       Promise.resolve({
         asset,

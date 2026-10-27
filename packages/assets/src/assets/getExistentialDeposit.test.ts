@@ -1,5 +1,5 @@
 import type { TChain } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo, TCurrencyCore } from '../types'
 import { getNativeAssetSymbolImpl } from './assets'
@@ -10,10 +10,6 @@ vi.mock('./assets')
 vi.mock('./search')
 
 describe('getExistentialDeposit', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns ED of native asset when currency is not provided and findAssetInfoImpl succeeds', () => {
     const chain: TChain = 'Acala'
     const nativeSymbol = 'ACA'

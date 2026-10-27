@@ -1,6 +1,6 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getEthErc20Balance } from '../../balance/getEthErc20Balance'
@@ -9,10 +9,6 @@ import { getChain } from '../../utils'
 vi.mock('../../balance/getEthErc20Balance')
 
 describe('Ethereum', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   const ethereum = () => getChain<unknown, unknown, unknown, 'Ethereum'>('Ethereum')
 
   it('should initialize with correct values', () => {

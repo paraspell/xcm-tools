@@ -1,21 +1,14 @@
 import { isTLocation, type TLocation } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { resolveParaId } from './resolveParaId'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('resolveParaId', () => {
   const parachain = 'Acala'
   const api = { getParaId: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns undefined if destination is a TLocation', () => {
     vi.mocked(isTLocation).mockReturnValue(true)

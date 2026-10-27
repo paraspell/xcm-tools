@@ -7,10 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TPapiSwapOptions } from '../../../types';
 import { calculateFee } from './calculateFee';
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  findNativeAssetInfoOrThrow: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 describe('calculateFee', () => {
   let mockTxBuilderFactory: TxBuilderFactory;

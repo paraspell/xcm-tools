@@ -25,8 +25,6 @@ describe('buildApiTransactions', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     vi.mocked(validateTransferOptions).mockImplementation(() => {});
 
     vi.mocked(prepareTransformedOptions).mockResolvedValue({
@@ -60,8 +58,7 @@ describe('buildApiTransactions', () => {
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(prepareTransformedOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
     expect(buildTransactions).toHaveBeenCalledOnce();
-    expect(maybePerformXcmFormatCheck).toHaveBeenCalledOnce();
-    expect(maybePerformXcmFormatCheck).toHaveBeenCalledWith(
+    expect(maybePerformXcmFormatCheck).toHaveBeenCalledExactlyOnceWith(
       mockApi,
       expect.any(Object),
       mockTransactions,

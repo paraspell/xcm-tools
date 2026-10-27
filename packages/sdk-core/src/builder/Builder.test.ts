@@ -85,7 +85,6 @@ describe('Builder', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isConfig).mockReturnValue(true)
     vi.mocked(isViemSigner).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
@@ -1375,8 +1374,7 @@ describe('Builder', () => {
         .sender(SENDER)
         .build()
 
-      expect(buildDryRun).toHaveBeenCalledTimes(1)
-      expect(buildDryRun).toHaveBeenCalledWith(
+      expect(buildDryRun).toHaveBeenCalledExactlyOnceWith(
         mockApi,
         { method: 'transfer', args: [] },
         expect.objectContaining({

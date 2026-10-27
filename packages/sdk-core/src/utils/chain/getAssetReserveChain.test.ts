@@ -1,7 +1,7 @@
 import type { TJunctionType, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
@@ -30,10 +30,6 @@ describe('getAssetReserveChain', () => {
     parents: 1,
     interior: { X1: { Parachain: 1000 } }
   }
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns parachain when paraId is found', () => {
     mockJunctions({ Parachain: 1000 })

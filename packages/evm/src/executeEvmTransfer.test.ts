@@ -38,7 +38,6 @@ describe('@paraspell/evm', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(buildEvmTransfer).mockResolvedValue({
       type: 'eip1559',
       chainId: 1284,

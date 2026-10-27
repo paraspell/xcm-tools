@@ -62,8 +62,6 @@ const baseOptions = {
 
 describe('buildTransactions', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
       swapTxs: ['swapTx'],

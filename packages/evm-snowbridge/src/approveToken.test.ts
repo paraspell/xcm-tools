@@ -23,7 +23,6 @@ const buildSigner = (overrides: Partial<WalletClient> = {}) =>
 
 describe('approveToken', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(buildApproveToken).mockReturnValue({
       type: 'eip1559',
       chainId: mainnet.id,

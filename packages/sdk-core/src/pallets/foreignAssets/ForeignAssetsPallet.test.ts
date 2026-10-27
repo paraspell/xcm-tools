@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
@@ -16,10 +16,6 @@ const chainMock = (config: TMintConfig) =>
   >
 
 describe('ForeignAssetsPallet.mint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns force_asset_status and mint with { Id } owner/beneficiary when useIdPrefix is set', async () => {
     const pallet = new ForeignAssetsPallet('ForeignAssets')
     const address = 'Alice'

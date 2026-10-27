@@ -21,7 +21,6 @@ describe('transferPolkadotXCM', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     chain = getChain<unknown, unknown, unknown, 'AssetHubKusama'>('AssetHubKusama')
   })
 

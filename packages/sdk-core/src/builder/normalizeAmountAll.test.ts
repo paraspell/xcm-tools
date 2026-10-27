@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { AMOUNT_ALL, MIN_AMOUNT } from '../constants'
@@ -9,10 +9,7 @@ import type { GeneralBuilder } from './Builder'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 vi.mock('../transfer')
-vi.mock('../utils/swap', async importOriginal => ({
-  ...(await importOriginal()),
-  executeWithSwap: vi.fn()
-}))
+vi.mock('../utils/swap', { spy: true })
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
@@ -28,9 +25,6 @@ const createOptions = (
 })
 
 describe('normalizeAmountAll', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
   it('returns original options when currency amount is not AMOUNT_ALL', async () => {
     const buildTx = vi.fn()
     const createTxFactory = vi.fn(() => buildTx)

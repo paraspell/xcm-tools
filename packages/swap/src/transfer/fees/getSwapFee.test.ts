@@ -10,11 +10,7 @@ import { getSwapFee } from './getSwapFee';
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
 vi.mock('../createSwapTx');
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  applyDecimalAbstraction: vi.fn(),
-  getOriginXcmFee: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 describe('getSwapFee', () => {
   const dotAsset: TAssetInfo = {
@@ -40,7 +36,6 @@ describe('getSwapFee', () => {
   >;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(applyDecimalAbstraction).mockImplementation((amount) => BigInt(amount));
   });
 

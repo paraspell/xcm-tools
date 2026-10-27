@@ -74,7 +74,6 @@ describe('verifyEdOnDestinationInternal', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    buildTx.mockClear()
     vi.mocked(validateAddress).mockImplementation(() => {})
     findAssetOnDestOrThrowSpy.mockReturnValue(asset)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)

@@ -1,6 +1,6 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
 import { InvalidTxError, type TxCreator, type TxFinalizedPayload } from 'polkadot-api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { submitTransaction } from './submitTransaction';
 
@@ -29,8 +29,6 @@ const buildTxMock = () => {
 const signerStub = {} as TxCreator;
 
 describe('submitTransaction', () => {
-  beforeEach(() => vi.clearAllMocks());
-
   it('invokes onSign when a "created" event is received', async () => {
     const { txMock, emit } = buildTxMock();
     const onSign = vi.fn();

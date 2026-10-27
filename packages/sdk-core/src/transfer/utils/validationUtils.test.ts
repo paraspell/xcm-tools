@@ -17,8 +17,7 @@ import {
   type TSubstrateChain
 } from '@paraspell/sdk-common'
 import { isHex } from 'viem'
-import type { MockInstance } from 'vitest'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { ScenarioNotSupportedError, UnsupportedOperationError, ValidationError } from '../../errors'
@@ -53,15 +52,9 @@ vi.mock('@paraspell/assets', () => ({
 vi.mock('../../utils')
 
 describe('validateCurrency', () => {
-  let consoleWarnSpy: MockInstance
-
   beforeEach(() => {
     vi.resetAllMocks()
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-  })
-
-  afterEach(() => {
-    consoleWarnSpy.mockRestore()
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
   })
 
   it('should throw InvalidCurrencyError when currencies is empty', () => {
@@ -130,7 +123,6 @@ describe('validateDestination', () => {
   const api = { getRelayChainSymbol: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isExternalChain).mockReturnValue(false)
   })
 
@@ -328,10 +320,6 @@ describe('validateDestination', () => {
 })
 
 describe('validateAssetSpecifiers', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should throw InvalidCurrencyError when assetCheckEnabled is false, currency has symbol, and isSymbolSpecifier returns true', () => {
     const assetCheckEnabled = false
     const currency: TCurrencyInput = { symbol: 'symbol-value' }
@@ -392,10 +380,6 @@ describe('validateTransact', () => {
     recipient: 'addr2',
     transactOptions: { call: '0x123' }
   } as TSubstrateTransferOptions<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns undefined when no transact call provided', () => {
     const result = validateTransact({

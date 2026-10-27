@@ -1,5 +1,5 @@
 import type { TChain, TLocation } from '@paraspell/sdk-common'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { InvalidCurrencyError } from '../errors'
 import type { TAssetInfo, TChainAssetsInfo } from '../types'
@@ -21,10 +21,6 @@ const createAsset = (symbol: string, opts: Partial<TAssetInfo> = {}): TAssetInfo
 const mockChain = 'TestChain' as TChain
 
 describe('getFeeAssets', () => {
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns fee‑flagged assets (flag stripped) and appends native asset if missing', () => {
     const feeAsset = createAsset('FEE', { isFeeAsset: true })
     const mainNative = createAsset('NATIVE', { isNative: true })

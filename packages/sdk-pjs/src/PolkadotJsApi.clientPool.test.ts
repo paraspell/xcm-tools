@@ -32,9 +32,6 @@ vi.mock('@polkadot/api', () => {
 describe('PolkadotJsApi client pool hooks', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    apiMocks.propertiesMock.mockClear()
-    apiMocks.disconnectMock.mockClear()
-    apiMocks.createMock.mockClear()
   })
 
   afterEach(() => {

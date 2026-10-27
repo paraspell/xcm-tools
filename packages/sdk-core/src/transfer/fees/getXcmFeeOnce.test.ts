@@ -25,11 +25,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 vi.mock('../../chains/getTChain')
 vi.mock('../../utils')
 vi.mock('../utils/resolveHopAsset')
-vi.mock('../dry-run', async importActual => ({
-  ...(await importActual()),
-  traverseXcmHops: vi.fn(),
-  addEthereumBridgeFees: vi.fn()
-}))
+vi.mock('../dry-run', { spy: true })
 vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
 

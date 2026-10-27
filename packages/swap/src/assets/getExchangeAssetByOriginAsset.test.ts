@@ -1,15 +1,11 @@
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import { findAssetInfoOnDestImpl, getSupportedAssetsImpl } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAssetByOriginAsset } from './getExchangeAssetByOriginAsset';
 import { getExchangeAssets } from './getExchangeConfig';
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  findAssetInfoOnDestImpl: vi.fn(),
-  getSupportedAssetsImpl: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./getExchangeConfig');
 
@@ -34,10 +30,6 @@ describe('getExchangeAssetByOriginAsset', () => {
     existentialDeposit: '1000',
     location: { parents: 1, interior: { Here: null } },
   };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   it('returns undefined when the asset is not transferable to the exchange', () => {
     vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);

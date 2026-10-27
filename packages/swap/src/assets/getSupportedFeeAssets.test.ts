@@ -1,5 +1,5 @@
 import type { TAssetInfo, TCustomCtx, TExchangeChain, TSubstrateChain } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getSupportedAssetsFromImpl } from './getSupportedAssetsFrom';
 import { getSupportedFeeAssets, getSupportedFeeAssetsImpl } from './getSupportedFeeAssets';
@@ -32,10 +32,6 @@ describe('getSupportedFeeAssets', () => {
     location: { parents: 2, interior: 'Here' },
     isFeeAsset: true,
   };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   it('should return only supported assets that are fee assets', () => {
     const from: TSubstrateChain = 'AssetHubPolkadot';

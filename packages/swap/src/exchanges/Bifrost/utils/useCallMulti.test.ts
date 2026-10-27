@@ -102,8 +102,7 @@ describe('fetchCallMulti', () => {
       },
     });
 
-    expect(transformMock).toHaveBeenCalledTimes(1);
-    expect(transformMock).toHaveBeenCalledWith(['val1', 'val2'], api);
+    expect(transformMock).toHaveBeenCalledExactlyOnceWith(['val1', 'val2'], api);
     expect(result).toBe('val1, val2');
   });
 

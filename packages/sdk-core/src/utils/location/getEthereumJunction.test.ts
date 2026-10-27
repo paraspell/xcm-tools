@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { ETH_MAINNET_PARA_ID, ETH_TESTNET_PARA_ID } from '../../constants'
@@ -9,10 +9,6 @@ const mockApi = {
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getEthereumJunction', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns mainnet chainId as bigint by default', () => {
     vi.spyOn(mockApi, 'getRelayChainOf').mockReturnValue('Polkadot')
 

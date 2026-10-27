@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { assertHasId } from '../../utils'
@@ -10,10 +10,6 @@ vi.mock('../../utils')
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('AssetManagerPallet.setBalance', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('builds updateBalance tx with ForeignAsset currency and calls assertHasId', async () => {
     const pallet = new AssetManagerPallet('AssetManager')
     const address = 'Alice'
@@ -23,8 +19,7 @@ describe('AssetManagerPallet.setBalance', () => {
 
     const res = await pallet.mint(apiMock, address, asset, 0n)
 
-    expect(assertHasId).toHaveBeenCalledTimes(1)
-    expect(assertHasId).toHaveBeenCalledWith(asset)
+    expect(assertHasId).toHaveBeenCalledExactlyOnceWith(asset)
     expect(res.balanceTx.module).toBe('AssetManager')
     expect(res.balanceTx.method).toBe('update_balance')
     expect(res.balanceTx.params.who).toEqual({ Id: address })

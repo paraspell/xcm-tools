@@ -9,7 +9,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import { createExchangeInstance } from '../exchanges/ExchangeChainFactory';
-import Logger from '../Logger/Logger';
 import type { TCommonRouterOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
@@ -31,7 +30,7 @@ vi.mock('./canBuildToExchangeTx', () => ({
   canBuildToExchangeTx: vi.fn().mockResolvedValue({ success: true }),
 }));
 
-vi.spyOn(Logger, 'log').mockImplementation(() => {});
+vi.mock('../Logger/Logger');
 
 const baseOptions = {
   from: 'originDex',
@@ -66,7 +65,6 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(applyDecimalAbstraction).mockImplementation((amount) =>
       amount ? (amount as bigint) : 0n,
     );
-    vi.clearAllMocks();
     vi.mocked(getSupportedAssetsImpl).mockReturnValue([asset2]);
   });
 

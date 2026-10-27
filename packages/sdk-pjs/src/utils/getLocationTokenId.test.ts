@@ -10,11 +10,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { getLocationTokenId } from './getLocationTokenId'
 
-vi.mock('@paraspell/sdk-core', async importActual => ({
-  ...(await importActual()),
-  getNativeAssetSymbol: vi.fn(),
-  getOtherAssets: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 describe('getLocationTokenId', () => {
   const mockChain: TSubstrateChain = 'Acala'

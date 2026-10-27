@@ -75,8 +75,6 @@ describe('PapiApi', () => {
   const mockChain = 'Acala'
 
   beforeEach(async () => {
-    vi.clearAllMocks()
-
     mockTransaction = {
       getPaymentInfo: vi.fn().mockResolvedValue({
         partial_fee: 1000n,
@@ -483,8 +481,6 @@ describe('PapiApi', () => {
 
       expect(providersSpy).toHaveBeenCalledWith('Acala')
       expect(destroySpy).not.toHaveBeenCalled()
-
-      providersSpy.mockRestore()
     })
 
     it('destroys when _api is a string and force = true', async () => {
@@ -492,14 +488,12 @@ describe('PapiApi', () => {
 
       papiApi = new PapiApi('ws://example:9944')
 
-      const leaseClientSpy = vi.spyOn(papiApi, 'leaseClient').mockResolvedValue(mockPolkadotClient)
+      vi.spyOn(papiApi, 'leaseClient').mockResolvedValue(mockPolkadotClient)
 
       await papiApi.init(mockChain)
       await papiApi.disconnect(true)
 
       expect(destroySpy).toHaveBeenCalledTimes(1)
-
-      leaseClientSpy.mockRestore()
     })
 
     it('does NOT destroy when _api is an injected client and force = false', async () => {
@@ -1244,10 +1238,6 @@ describe('PapiApi', () => {
       vi.mocked(computeOriginFee).mockReturnValue(500n)
     })
 
-    afterEach(() => {
-      vi.restoreAllMocks()
-    })
-
     it('should succeed on the first attempt if version is not needed', async () => {
       const successResponse = {
         success: true,
@@ -1275,8 +1265,7 @@ describe('PapiApi', () => {
         } as WithAmount<TAssetInfo>
       })
 
-      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
-      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+      expect(dryRunApiCallMock).toHaveBeenCalledExactlyOnceWith(
         basePayloadMatcher,
         mockTransaction.decodedCall
       )
@@ -1469,8 +1458,7 @@ describe('PapiApi', () => {
         } as WithAmount<TAssetInfo>
       })
 
-      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
-      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+      expect(dryRunApiCallMock).toHaveBeenCalledExactlyOnceWith(
         basePayloadMatcher,
         mockTransaction.decodedCall
       )
@@ -1727,8 +1715,7 @@ describe('PapiApi', () => {
         } as WithAmount<TAssetInfo>
       })
 
-      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
-      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+      expect(dryRunApiCallMock).toHaveBeenCalledExactlyOnceWith(
         {
           type: 'system',
           value: { type: 'Root' }

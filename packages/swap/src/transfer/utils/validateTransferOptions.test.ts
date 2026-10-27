@@ -1,5 +1,5 @@
 import { MissingParameterError, ScenarioNotSupportedError } from '@paraspell/sdk-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
@@ -8,10 +8,6 @@ import { validateRoutedFeeAsset, validateTransferOptions } from './validateTrans
 vi.mock('../../utils/validateDestinationAddress');
 
 describe('validateTransferOptions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should throw error if both from and exchange are undefined', () => {
     const mockOptions = {
       evmSenderAddress: undefined,
@@ -47,8 +43,10 @@ describe('validateTransferOptions', () => {
 
     validateTransferOptions(mockOptions);
 
-    expect(validateDestinationAddress).toHaveBeenCalledTimes(1);
-    expect(validateDestinationAddress).toHaveBeenCalledWith(mockOptions.recipient, mockOptions.to);
+    expect(validateDestinationAddress).toHaveBeenCalledExactlyOnceWith(
+      mockOptions.recipient,
+      mockOptions.to,
+    );
   });
 
   it('should throw error if evmInjectorAddress is not a valid Ethereum address', () => {

@@ -9,14 +9,9 @@ import { UnableToComputeError } from '../../errors'
 import type { TBuildDestInfoOptions, TXcmFeeDetail } from '../../types'
 import { buildDestInfo } from './buildDestInfo'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  getNativeAssetSymbol: vi.fn()
-}))
+vi.mock('@paraspell/assets', { spy: true })
 
-vi.mock('../../../errors')
 vi.mock('../../balance')
-vi.mock('../../pallets/assets/balance')
 
 describe('buildDestInfo', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
@@ -38,8 +33,6 @@ describe('buildDestInfo', () => {
   } as TAssetInfo
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     mockClonedApi = {
       init: vi.fn().mockResolvedValue(undefined),
       clone: vi.fn()

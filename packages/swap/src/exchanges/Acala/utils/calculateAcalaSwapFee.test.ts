@@ -8,7 +8,6 @@ import type { TSwapOptions } from '../../../types';
 import { calculateTxFeePjs } from '../../../utils';
 import { calculateAcalaSwapFee } from './calculateAcalaSwapFee';
 
-vi.mock('./utils');
 vi.mock('../../../utils');
 vi.mock('rxjs');
 vi.mock('../../../Logger/Logger');
@@ -23,8 +22,6 @@ describe('calculateAcalaTransactionFee', () => {
   const extrinsicMock = { method: 'mockExtrinsicMethod' };
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     dexMock = {
       swap: vi.fn().mockReturnValue({
         subscribe: () => {},

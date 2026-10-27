@@ -34,43 +34,16 @@ import { resolveChainApi } from './resolveChainApi'
 
 vi.mock('./resolveChainApi')
 
-vi.mock('@paraspell/assets', async importOriginal => ({
-  ...(await importOriginal()),
-  getAssetsObjectImpl: vi.fn(),
-  getAssetsImpl: vi.fn(),
-  getNativeAssetsImpl: vi.fn(),
-  getOtherAssetsImpl: vi.fn(),
-  findAssetInfoImpl: vi.fn(),
-  findAssetInfoOrThrowImpl: vi.fn(),
-  findAssetInfoOnDestImpl: vi.fn(),
-  findAssetOnDestOrThrowImpl: vi.fn(),
-  findNativeAssetInfoImpl: vi.fn(),
-  findNativeAssetInfoOrThrowImpl: vi.fn(),
-  isChainEvmImpl: vi.fn(),
-  getNativeAssetSymbolImpl: vi.fn(),
-  getRelayChainSymbolImpl: vi.fn(),
-  hasDryRunSupportImpl: vi.fn(),
-  hasXcmPaymentApiSupportImpl: vi.fn(),
-  getExistentialDepositImpl: vi.fn()
-}))
+vi.mock('@paraspell/assets', { spy: true })
 
-vi.mock('@paraspell/pallets', async importOriginal => ({
-  ...(await importOriginal()),
-  hasPalletImpl: vi.fn(),
-  getXcmPalletImpl: vi.fn()
-}))
+vi.mock('@paraspell/pallets', { spy: true })
 
 vi.mock('../chains/config', () => ({
   getParaIdImpl: vi.fn(),
   getChainProvidersImpl: vi.fn()
 }))
 
-vi.mock('../utils', async importOriginal => ({
-  ...(await importOriginal()),
-  getRelayChainOfImpl: vi.fn(),
-  localizeLocationImpl: vi.fn(),
-  getAssetReserveChainImpl: vi.fn()
-}))
+vi.mock('../utils', { spy: true })
 
 class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   readonly type = 'PAPI' as const

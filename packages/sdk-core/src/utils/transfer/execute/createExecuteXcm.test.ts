@@ -1,5 +1,5 @@
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { createTransactInstructions } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions } from '../../../types'
@@ -24,10 +24,6 @@ describe('createDirectExecuteXcm', () => {
     destChain: 'Polkadot',
     recipient: '5FRecipient'
   } as TCreateTransferXcmOptions<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('creates XCM without transact instructions when call is missing', async () => {
     const baseXcm = ['base-xcm']

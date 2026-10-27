@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { AmountTooLowError } from '../../errors'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
@@ -17,10 +17,6 @@ describe('getOriginXcmFee', () => {
       // eslint-disable-next-line @typescript-eslint/require-await
       buildTx: vi.fn(async () => realTx)
     }) as unknown as TGetOriginXcmFeeOptions<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('builds real tx, calls real internal, then forced via getBypassResultWithRetries, and merges sufficient from real', async () => {
     const options = makeOptions()
@@ -45,16 +41,13 @@ describe('getOriginXcmFee', () => {
 
     const res = await getOriginXcmFee(options)
 
-    expect(options.buildTx).toHaveBeenCalledTimes(1)
-    expect(options.buildTx).toHaveBeenCalledWith()
+    expect(options.buildTx).toHaveBeenCalledExactlyOnceWith()
 
-    expect(getOriginXcmFeeInternal).toHaveBeenCalledTimes(1)
-    expect(getOriginXcmFeeInternal).toHaveBeenCalledWith(
+    expect(getOriginXcmFeeInternal).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ tx: realTx, useRootOrigin: false })
     )
 
-    expect(getBypassResultWithRetries).toHaveBeenCalledTimes(1)
-    expect(getBypassResultWithRetries).toHaveBeenCalledWith(
+    expect(getBypassResultWithRetries).toHaveBeenCalledExactlyOnceWith(
       options,
       getOriginXcmFeeInternal,
       realTx

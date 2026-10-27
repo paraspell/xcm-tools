@@ -30,8 +30,7 @@ describe('findAssetInfoOrThrow', () => {
     const result = findAssetInfoOrThrow(chain, mockCurrencyObject, destination)
 
     expect(result).toEqual(mockAsset)
-    expect(findAssetInfoImpl).toHaveBeenCalledTimes(1)
-    expect(findAssetInfoImpl).toHaveBeenCalledWith(
+    expect(findAssetInfoImpl).toHaveBeenCalledExactlyOnceWith(
       chain,
       mockCurrencyObject,
       destination,
@@ -60,9 +59,7 @@ describe('findAssetInfoOrThrow', () => {
     const result = findAssetInfoOrThrow(chain, mockCurrencyObject, destination)
 
     expect(result).toEqual(ethereumAsset)
-    expect(findAssetInfoImpl).toHaveBeenCalledTimes(1)
-    expect(findAssetInfoImpl).toHaveBeenNthCalledWith(
-      1,
+    expect(findAssetInfoImpl).toHaveBeenCalledExactlyOnceWith(
       chain,
       mockCurrencyObject,
       destination,
@@ -80,9 +77,7 @@ describe('findAssetInfoOrThrow', () => {
     expect(() => findAssetInfoOrThrow(chain, currencyInput, destination)).toThrow(
       `Asset ${JSON.stringify(currencyInput)} not found on ${chain}`
     )
-    expect(findAssetInfoImpl).toHaveBeenCalledTimes(1)
-    expect(findAssetInfoImpl).toHaveBeenNthCalledWith(
-      1,
+    expect(findAssetInfoImpl).toHaveBeenCalledExactlyOnceWith(
       chain,
       currencyInput,
       destination,
@@ -100,8 +95,12 @@ describe('findAssetInfoOrThrow', () => {
     expect(() => findAssetInfoOrThrow(chain, currencyInput, destination)).toThrow(
       InvalidCurrencyError
     )
-    expect(findAssetInfoImpl).toHaveBeenCalledTimes(1)
-    expect(findAssetInfoImpl).toHaveBeenCalledWith(chain, currencyInput, destination, undefined)
+    expect(findAssetInfoImpl).toHaveBeenCalledExactlyOnceWith(
+      chain,
+      currencyInput,
+      destination,
+      undefined
+    )
   })
 
   it('should throw InvalidCurrencyError with correct message for symbol currency input', () => {

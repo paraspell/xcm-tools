@@ -1,23 +1,16 @@
 import type { TAssetInfo, TCurrencyInput } from '@paraspell/assets'
 import { isTLocation, type TSubstrateChain } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { TDestination } from '../../types'
 import { resolveAsset } from './resolveAsset'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('resolveAsset', () => {
   const findAssetInfo = vi.fn()
   const apiMock = { findAssetInfo } as unknown as PolkadotApi<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('should return null when assetCheckEnabled is false', () => {
     const currency = {} as TCurrencyInput

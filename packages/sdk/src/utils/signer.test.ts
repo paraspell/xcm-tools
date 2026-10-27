@@ -1,6 +1,6 @@
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { getEvmPrivateKeyHex } from '@paraspell/sdk-core'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import {
   createDevSigner,
@@ -11,16 +11,9 @@ import {
   signEcdsa
 } from './signer'
 
-vi.mock('@paraspell/sdk-core', async importActual => ({
-  ...(await importActual()),
-  getEvmPrivateKeyHex: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 describe('signer utilities', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   describe('signEcdsa', () => {
     it('should sign input with ECDSA and return signature with recovery byte at end', () => {
       const privateKey = hexToBytes(

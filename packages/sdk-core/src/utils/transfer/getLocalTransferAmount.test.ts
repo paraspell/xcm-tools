@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { AmountTooLowError } from '../../errors'
 import type { TTransferLocalOptions } from '../../types'
@@ -11,10 +11,6 @@ describe('getLocalTransferAmount', () => {
     isAmountAll: false,
     keepAlive: false
   } as TTransferLocalOptions<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('returns provided amount when not sending all', () => {
     const result = getLocalTransferAmount(baseOptions)

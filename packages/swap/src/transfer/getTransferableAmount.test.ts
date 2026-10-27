@@ -2,7 +2,7 @@ import type { TPapiApi } from '@paraspell/sdk';
 import type { PolkadotApi, TAssetInfo, TXcmFeeDetail } from '@paraspell/sdk-core';
 import { getBalance, getExistentialDeposit, getNativeAssetSymbol } from '@paraspell/sdk-core';
 import type { TSubstrateChain } from '@paraspell/sdk-pjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import type ExchangeChain from '../exchanges/ExchangeChain';
 import type { TBuildTransactionsOptions } from '../types';
@@ -21,12 +21,7 @@ import {
   validateTransferOptions,
 } from './utils';
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  getBalance: vi.fn(),
-  getExistentialDeposit: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./utils');
 vi.mock('./fees');
@@ -134,10 +129,6 @@ const createExchangeChainStub = (): ExchangeChain =>
   }) as ExchangeChain;
 
 describe('getTransferableAmount', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('delegates to the SDK builder when origin differs from exchange chain', async () => {
     const builderMock = { getTransferableAmount: vi.fn().mockResolvedValue(123n) };
 

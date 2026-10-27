@@ -47,10 +47,6 @@ describe('AssetsService', () => {
       getAssetsObjectSpy = vi.spyOn(paraspellSdk, 'getAssetsObject');
     });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return assets object for a valid chain', () => {
       const assetsObject: TChainAssetsInfo = {
         relaychainSymbol: symbol,
@@ -92,10 +88,6 @@ describe('AssetsService', () => {
       getAssetLocationSpy = vi.spyOn(paraspellSdk, 'getAssetLocation');
     });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return asset location for a valid chain and symbol', () => {
       const assetLocation = { currency: { symbol } };
       getAssetLocationSpy.mockReturnValue(assetLocation);
@@ -114,10 +106,6 @@ describe('AssetsService', () => {
 
     beforeEach(() => {
       getAssetInfoSpy = vi.spyOn(paraspellSdk, 'findAssetInfo');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
     });
 
     it('should return asset info for a valid chain and symbol', () => {
@@ -193,10 +181,6 @@ describe('AssetsService', () => {
       getNativeAssetsSpy = vi.spyOn(paraspellSdk, 'getNativeAssets');
     });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return native assets for a valid chain', () => {
       const nativeAssets = [{ symbol: 'KSM', decimals }];
       getNativeAssetsSpy.mockReturnValue(nativeAssets);
@@ -213,10 +197,6 @@ describe('AssetsService', () => {
 
     beforeEach(() => {
       getOtherAssetsSpy = vi.spyOn(paraspellSdk, 'getOtherAssets');
-    });
-
-    afterEach(() => {
-      getOtherAssetsSpy.mockRestore();
     });
 
     it('should return other assets for a valid chain', () => {
@@ -237,10 +217,6 @@ describe('AssetsService', () => {
       getAllAssetsSymbolsSpy = vi.spyOn(paraspellSdk, 'getAllAssetsSymbols');
     });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return all assets symbols for a valid chain', () => {
       const allAssetSymbols = ['KSM', 'DOT'];
       getAllAssetsSymbolsSpy.mockReturnValue(allAssetSymbols);
@@ -257,10 +233,6 @@ describe('AssetsService', () => {
 
     beforeEach(() => {
       getSupportedAssetsSpy = vi.spyOn(paraspellSdk, 'getSupportedAssets');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
     });
 
     it('should return supported assets for a valid origin and destination chain', () => {
@@ -290,10 +262,6 @@ describe('AssetsService', () => {
       );
     });
 
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
     it('should return supported destinations for a valid chain', () => {
       const chain = 'Acala';
       const supportedDestinations = ['Karura', 'Darwinia'];
@@ -315,10 +283,6 @@ describe('AssetsService', () => {
     beforeEach(() => {
       findAssetInfoOrThrowSpy = vi.spyOn(paraspellSdk, 'findAssetInfoOrThrow');
       getAssetReserveChainSpy = vi.spyOn(paraspellSdk, 'getAssetReserveChain');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
     });
 
     it('should return reserve chain for a valid chain and currency', () => {

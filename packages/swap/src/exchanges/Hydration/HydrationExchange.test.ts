@@ -22,12 +22,7 @@ vi.mock('@galacticcouncil/sdk-next', () => ({
   createSdkContext: vi.fn(),
 }));
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal()),
-  findNativeAssetInfoOrThrow: vi.fn(),
-  getAssets: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./utils');
 
@@ -40,8 +35,6 @@ describe('HydrationExchange', () => {
   let mockDestroy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     chain = new HydrationExchange('Hydration');
 
     const mockGet = vi.fn().mockReturnValue('mockExtrinsic');

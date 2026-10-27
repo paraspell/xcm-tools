@@ -10,13 +10,7 @@ import { resolveHopAsset } from './resolveHopAsset'
 
 vi.mock('@paraspell/assets')
 
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-common')
-  return {
-    ...actual,
-    isTLocation: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('../../utils')
 

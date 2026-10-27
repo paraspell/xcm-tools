@@ -17,11 +17,7 @@ const mockExchangeApi = {
 
 const mockApi = {} as unknown as PolkadotApi<unknown, unknown, unknown>;
 
-vi.mock('./utils', async (importActual) => ({
-  ...(await importActual()),
-  buildFromExchangeExtrinsic: vi.fn(),
-  convertTxToTarget: vi.fn(),
-}));
+vi.mock('./utils', { spy: true });
 vi.mock('../utils');
 
 describe('createSwapTx', () => {
@@ -92,19 +88,16 @@ describe('createSwapTx', () => {
 
     const result = await createSwapTx(exchangeChain, options);
 
-    expect(buildFromExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith(
+    expect(buildFromExchangeExtrinsic).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         exchange: options.exchange,
         destination: options.destination,
       }),
     );
 
-    expect(getPaymentInfoSpy).toHaveBeenCalledTimes(1);
-    expect(getPaymentInfoSpy).toHaveBeenNthCalledWith(1, dummyTxPapi, 'someFeeCalcAddress');
+    expect(getPaymentInfoSpy).toHaveBeenCalledExactlyOnceWith(dummyTxPapi, 'someFeeCalcAddress');
 
-    expect(spy).toHaveBeenCalledOnce();
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         ...options,
         apiPjs: swapApi,

@@ -47,7 +47,6 @@ describe('getExchangeAsset', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(getExchangeAssets).mockReturnValue([mockNativeAsset, mockForeignAsset]);
     vi.mocked(getOtherAssets).mockReturnValue([mockForeignAsset]);
     vi.mocked(getNativeAssets).mockReturnValue([mockNativeAsset]);

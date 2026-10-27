@@ -1,5 +1,5 @@
 import { isTLocation } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { dryRun } from '../transfer'
@@ -10,10 +10,7 @@ import type {
 } from '../types'
 import { buildDryRun } from './buildDryRun'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 vi.mock('../transfer')
 
 describe('buildDryRun', () => {
@@ -27,10 +24,6 @@ describe('buildDryRun', () => {
     currency: { symbol: 'DOT' },
     feeAsset: { symbol: 'USDT' }
   } as TSubstrateTransferBaseOptionsWithSender<unknown, unknown, unknown>
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   it('throws when destination "to" is a TLocation', () => {
     vi.mocked(isTLocation).mockReturnValueOnce(true)
@@ -51,11 +44,9 @@ describe('buildDryRun', () => {
     const res = await buildDryRun(api, tx, baseOptions, bypassOptions)
     expect(res).toEqual({})
 
-    expect(isTLocation).toHaveBeenCalledTimes(1)
-    expect(isTLocation).toHaveBeenNthCalledWith(1, baseOptions.to)
+    expect(isTLocation).toHaveBeenCalledExactlyOnceWith(baseOptions.to)
 
-    expect(dryRun).toHaveBeenCalledTimes(1)
-    expect(dryRun).toHaveBeenCalledWith({
+    expect(dryRun).toHaveBeenCalledExactlyOnceWith({
       api,
       tx,
       origin: baseOptions.from,

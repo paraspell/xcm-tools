@@ -11,18 +11,9 @@ import type { TPjsSwapOptions } from '../../types';
 import BifrostExchange from './BifrostExchange';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actualModule = await vi.importActual('@paraspell/sdk');
-  return {
-    ...actualModule,
-    getBalance: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk', { spy: true });
 
-vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-  getParaId: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 vi.mock('./utils');
 
@@ -73,7 +64,6 @@ describe('BifrostExchange', () => {
   } as unknown as ApiPromise;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     chain = new BifrostExchange('BifrostPolkadot');
     vi.mocked(getBalance).mockResolvedValue(10000000000n);
   });

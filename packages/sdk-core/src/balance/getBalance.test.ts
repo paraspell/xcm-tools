@@ -1,5 +1,5 @@
 import { type TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api'
 import { getChainImpl } from '../chains/getChainInstance'
@@ -30,10 +30,6 @@ const mockChainInstance = (getBalance: ReturnType<typeof vi.fn>) => {
 }
 
 describe('getAssetBalanceInternal', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it.each(['Ethereum', 'Polkadot', 'Astar'] as const)(
     'delegates to the chain instance for %s',
     async chain => {
@@ -60,10 +56,6 @@ describe('getAssetBalanceInternal', () => {
 })
 
 describe('getBalanceInternal', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('looks up asset info before delegating', async () => {
     const api = createMockApi()
     const findAssetInfoOrThrowSpy = vi
@@ -86,10 +78,6 @@ describe('getBalanceInternal', () => {
 })
 
 describe('getBalance', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('disconnects the api after a successful call', async () => {
     const api = createMockApi()
     vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValueOnce(baseAsset)

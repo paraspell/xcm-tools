@@ -15,10 +15,6 @@ import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 import { createTypeAndThenTransfer } from './Mythos'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual())
-}))
-
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
 vi.mock('../../transfer')
@@ -43,7 +39,6 @@ describe('Mythos', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     mythos = getChain<unknown, unknown, unknown, 'Mythos'>('Mythos')
   })
 
@@ -215,7 +210,6 @@ describe('createTypeAndThenTransfer', () => {
   const ORIGIN_FEE = 200n
 
   beforeEach(() => {
-    vi.clearAllMocks()
     findAssetInfoOrThrowSpy.mockReturnValue(ethAsset)
     vi.mocked(getMythosOriginFee).mockResolvedValue(ORIGIN_FEE)
   })

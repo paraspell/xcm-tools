@@ -1,7 +1,7 @@
 import { getOtherAssets, InvalidCurrencyError } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { DOT_LOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
@@ -17,10 +17,6 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
 }))
 
 describe('buildLocation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   const baseInput = {
     paraIdTo: 2000,
     asset: { symbol: 'TEST', assetId: '123' },

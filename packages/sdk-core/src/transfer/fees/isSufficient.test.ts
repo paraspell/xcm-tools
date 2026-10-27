@@ -8,7 +8,6 @@ import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 
 vi.mock('@paraspell/assets')
 
-vi.mock('../../pallets/assets/balance')
 vi.mock('../../balance')
 
 describe('isSufficientOrigin', () => {
@@ -24,7 +23,6 @@ describe('isSufficientOrigin', () => {
   const asset = { symbol: 'ACA' } as TAssetInfo
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.spyOn(mockApi, 'getNativeAssetSymbol').mockImplementation(chain => {
       if (chain === 'Acala') return 'ACA'
       if (chain === 'Astar') return 'ASTR'
@@ -193,7 +191,6 @@ describe('isSufficientDestination', () => {
   const asset = { symbol: 'ASTR' } as TAssetInfo
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.spyOn(mockApi, 'getNativeAssetSymbol').mockReturnValue('ASTR')
     vi.spyOn(mockApi, 'getExistentialDeposit').mockReturnValue(30n)
     vi.mocked(getBalanceInternal).mockResolvedValue(200n)

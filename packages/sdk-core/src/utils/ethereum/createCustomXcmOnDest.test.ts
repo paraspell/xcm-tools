@@ -83,7 +83,6 @@ describe('createCustomXcmOnDest', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isChainEvm).mockReturnValue(false)
   })
 

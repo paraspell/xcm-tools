@@ -1,21 +1,13 @@
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 import { isRelayChain, isTLocation } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { TDestination } from '../../types'
 import { resolveScenario } from './resolveScenario'
 
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isRelayChain: vi.fn(),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 describe('resolveScenario', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   describe('RelayToPara scenario', () => {
     it('should return "RelayToPara" when origin is a relay chain', () => {
       const origin: TSubstrateChain = 'Polkadot'
@@ -26,8 +18,7 @@ describe('resolveScenario', () => {
       const result = resolveScenario(origin, destination)
 
       expect(result).toBe('RelayToPara')
-      expect(isRelayChain).toHaveBeenCalledWith(origin)
-      expect(isRelayChain).toHaveBeenCalledTimes(1)
+      expect(isRelayChain).toHaveBeenCalledExactlyOnceWith(origin)
       expect(isTLocation).not.toHaveBeenCalled()
     })
 

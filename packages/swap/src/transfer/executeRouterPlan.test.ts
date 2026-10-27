@@ -14,10 +14,7 @@ const mockApi = { signAndSubmitFinalized: mockSignAndSubmitFinalized } as unknow
   unknown
 >;
 
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  isChainEvm: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 describe('executeRouterPlan', () => {
   const mockSigner = {} as TxCreator;
@@ -52,7 +49,6 @@ describe('executeRouterPlan', () => {
   ] as TRouterPlan<unknown, unknown>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(isChainEvm).mockImplementation((chain) => chain === 'Unique');
   });
 

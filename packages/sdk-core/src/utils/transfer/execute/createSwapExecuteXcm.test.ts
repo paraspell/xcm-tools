@@ -1,7 +1,7 @@
 import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
 import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
 import { isExternalChain, type TLocation, Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest'
 
 import { PolkadotApi } from '../../../api'
 import { getParaId } from '../../../chains/config'
@@ -19,10 +19,7 @@ import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
 vi.mock('@paraspell/assets')
-vi.mock('@paraspell/sdk-common', async importActual => ({
-  ...(await importActual()),
-  isExternalChain: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 vi.mock('../../../chains/config')
 vi.mock('../../../transfer', () => ({
   getParaEthTransferFees: vi.fn()
@@ -217,8 +214,7 @@ describe('createSwapExecuteXcm', () => {
   describe('Ethereum destination', () => {
     const mockApi = createTestApi()
     const createApiForChain = vi.spyOn(mockApi, 'createApiForChain')
-    const findAssetInfoOrThrow = vi.spyOn(mockApi, 'findAssetInfoOrThrow')
-    const findNativeAssetInfoOrThrow = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow')
+    let findNativeAssetInfoOrThrow: MockInstance<typeof mockApi.findNativeAssetInfoOrThrow>
 
     const wethFrom: WithAmount<TAssetInfo> = {
       amount: 5000n,
@@ -262,7 +258,7 @@ describe('createSwapExecuteXcm', () => {
       vi.mocked(isExternalChain).mockReturnValue(true)
       vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
       createApiForChain.mockResolvedValue(createTestApi())
-      findNativeAssetInfoOrThrow.mockReturnValue({
+      findNativeAssetInfoOrThrow = vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
         symbol: 'DOT',
         decimals: 10,
         existentialDeposit: '1000',
@@ -270,7 +266,7 @@ describe('createSwapExecuteXcm', () => {
       })
       vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 200n])
       vi.mocked(isAssetEqual).mockReturnValue(false)
-      findAssetInfoOrThrow.mockReturnValue({
+      vi.spyOn(mockApi, 'findAssetInfoOrThrow').mockReturnValue({
         symbol: 'WETH',
         decimals: 18,
         existentialDeposit: '1000',
@@ -372,11 +368,11 @@ describe('createSwapExecuteXcm', () => {
     }
 
     const api = createTestApi()
-    const findAssetInfo = vi.spyOn(api, 'findAssetInfo')
+    let findAssetInfo: MockInstance<typeof api.findAssetInfo>
 
     beforeEach(() => {
       vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
-      findAssetInfo.mockReturnValue(FEE_ASSET)
+      findAssetInfo = vi.spyOn(api, 'findAssetInfo').mockReturnValue(FEE_ASSET)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
       vi.mocked(createAsset).mockReturnValue(ASSET)
@@ -537,7 +533,6 @@ describe('createSwapExecuteXcm', () => {
 
   describe('createExchangeInstructions', () => {
     const api = createTestApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
 
     const baseOptions = createOptions({
       api,
@@ -561,6 +556,7 @@ describe('createSwapExecuteXcm', () => {
     }
 
     beforeEach(() => {
+      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
       vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
     })

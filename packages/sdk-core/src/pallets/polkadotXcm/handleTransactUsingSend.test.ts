@@ -27,7 +27,6 @@ describe('handleTransactUsingSend', () => {
 
   beforeEach(() => {
     api = {} as unknown as PolkadotApi<unknown, unknown, unknown>
-    vi.clearAllMocks()
     vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
     vi.mocked(addXcmVersionHeader).mockImplementation(obj => obj)
     vi.mocked(createBeneficiaryLocation).mockReturnValue({

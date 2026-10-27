@@ -24,7 +24,6 @@ describe('createClientCache', () => {
   })
   afterEach(() => {
     vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   it('set / get / has / peek refresh a normal TTL', () => {

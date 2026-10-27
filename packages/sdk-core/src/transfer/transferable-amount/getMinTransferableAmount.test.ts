@@ -1,6 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Version } from '../..'
 import type { PolkadotApi } from '../../api'
@@ -75,15 +75,10 @@ describe('getMinTransferableAmountInternal', () => {
   } as TGetMinTransferableAmountOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
     vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
-  })
-
-  afterEach(() => {
-    vi.restoreAllMocks()
   })
 
   it('returns per-asset min amounts in input order for currency arrays', async () => {

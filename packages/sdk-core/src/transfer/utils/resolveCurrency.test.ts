@@ -1,7 +1,7 @@
 import type { TAssetInfo } from '@paraspell/assets'
 import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { AMOUNT_ALL } from '../../constants'
@@ -58,10 +58,6 @@ describe('resolveCurrency', () => {
     { symbol: 'USDT', amount: 100n },
     { symbol: 'USDC', amount: 200n }
   ]
-
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
 
   describe('array currency', () => {
     it('resolves each asset, marking the matching fee asset', () => {

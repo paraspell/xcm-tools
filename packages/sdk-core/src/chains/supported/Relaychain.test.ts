@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getPalletInstance } from '../../pallets'
@@ -11,10 +11,6 @@ vi.mock('../../pallets')
 vi.mock('../../pallets/polkadotXcm')
 
 describe('Relaychain', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   // Polkadot is the concrete relaychain used to exercise the shared Relaychain behaviour
   const relaychain = () => getChain<unknown, unknown, unknown, 'Polkadot'>('Polkadot')
 

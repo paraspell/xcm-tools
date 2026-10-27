@@ -1,5 +1,5 @@
 import { Version } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
@@ -54,10 +54,6 @@ vi.mock('../chain')
 describe('pickCompatibleXcmVersion', () => {
   const api = {} as PolkadotApi<unknown, unknown, unknown>
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should return override version when provided', () => {
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     const result = pickCompatibleXcmVersion(api, 'Polkadot', 'Kusama', Version.V3)
@@ -95,16 +91,11 @@ describe('pickCompatibleXcmVersion', () => {
 describe('pickRouterCompatibleXcmVersion', () => {
   const api = {} as PolkadotApi<unknown, unknown, unknown>
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('should return exchange version when origin and destination are undefined', () => {
     vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     const result = pickRouterCompatibleXcmVersion(api, undefined, 'AssetHubPolkadot', undefined)
     expect(result).toBe(Version.V4)
-    expect(getChainVersion).toHaveBeenCalledTimes(1)
-    expect(getChainVersion).toHaveBeenCalledWith(api, 'AssetHubPolkadot')
+    expect(getChainVersion).toHaveBeenCalledExactlyOnceWith(api, 'AssetHubPolkadot')
   })
 
   it('should return minimum version when origin has lower version', () => {

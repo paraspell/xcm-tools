@@ -17,10 +17,7 @@ import { buildErc20StorageMint } from '../../utils/asset/hydrationErc20Mint'
 import SubstrateChain from '../SubstrateChain'
 import type Hydration from './Hydration'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  findAssetInfoByLoc: vi.fn()
-}))
+vi.mock('@paraspell/assets', { spy: true })
 
 vi.mock('../../pallets/polkadotXcm')
 vi.mock('../../utils/transfer')
@@ -34,7 +31,6 @@ describe('Hydration', () => {
   const mockExtrinsic = {} as unknown
 
   beforeEach(() => {
-    vi.clearAllMocks()
     hydration = getChain<unknown, unknown, unknown, 'Hydration'>('Hydration')
     vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })

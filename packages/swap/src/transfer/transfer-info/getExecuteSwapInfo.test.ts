@@ -20,20 +20,9 @@ import { getSwapExecuteXcmFee } from '../utils';
 import { buildExecuteSwapHops } from './buildExecuteSwapHops';
 import { getExecuteSwapInfo } from './getExecuteSwapInfo';
 
-vi.mock('../utils', async (importActual) => ({
-  ...(await importActual()),
-  getSwapExecuteXcmFee: vi.fn(),
-}));
+vi.mock('../utils', { spy: true });
 vi.mock('./buildExecuteSwapHops');
-vi.mock('@paraspell/sdk-core', async (importActual) => ({
-  ...(await importActual()),
-  aggregateHopFees: vi.fn(),
-  assertCurrencyCore: vi.fn(),
-  buildDestInfo: vi.fn(),
-  buildOriginInfo: vi.fn(),
-  findAssetInfoOrThrow: vi.fn(),
-  getRelayChainSymbol: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -144,7 +133,6 @@ const builtHops: THopTransferInfo[] = [
 
 describe('getExecuteSwapInfo', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(getRelayChainSymbol).mockReturnValue('Polkadot');
     vi.mocked(findAssetInfoOrThrow).mockReturnValue(acaAsset);
     vi.mocked(buildOriginInfo).mockResolvedValue(originInfo);

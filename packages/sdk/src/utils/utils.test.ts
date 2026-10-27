@@ -11,8 +11,6 @@ vi.mock('@paraspell/sdk-core', async importActual => ({
   createChainClient: vi.fn()
 }))
 
-vi.mock('./PapiApi')
-
 describe('API Instance and Call Utility Functions with PapiApi', () => {
   const mockChain: TSubstrateChain = 'Acala'
   const mockApi = {} as TPapiApi

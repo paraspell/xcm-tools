@@ -1,13 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  type MockInstance,
-  vi,
-} from 'vitest';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import Logger from './Logger';
 
@@ -15,16 +6,8 @@ import Logger from './Logger';
 describe('Logger class', () => {
   let consoleLogSpy: MockInstance;
 
-  beforeAll(() => {
+  beforeEach(() => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleLogSpy.mockClear();
-  });
-
-  afterAll(() => {
-    consoleLogSpy.mockRestore();
   });
 
   it('logs messages', () => {

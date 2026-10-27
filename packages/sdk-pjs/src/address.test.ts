@@ -5,14 +5,13 @@ import { convertSs58 } from './address'
 import PolkadotJsApi from './PolkadotJsApi'
 
 vi.mock('./PolkadotJsApi')
-vi.mock('@paraspell/sdk-core', async importActual => ({
-  ...(await importActual()),
-  convertSs58: vi.fn()
-}))
+vi.mock('@paraspell/sdk-core', { spy: true })
 
 describe('Address functions', () => {
   it('should initialize PolkadotJsApi and call setApi with the provided api', () => {
-    convertSs58('address', 'Acala')
+    vi.mocked(sdkCore.convertSs58).mockReturnValue('converted')
+
+    expect(convertSs58('address', 'Acala')).toBe('converted')
     expect(sdkCore.convertSs58).toHaveBeenCalledWith(expect.any(PolkadotJsApi), 'address', 'Acala')
   })
 })

@@ -41,7 +41,6 @@ describe('hydrateCustomChain', () => {
   let disconnectSpy: MockInstance
 
   beforeEach(() => {
-    vi.clearAllMocks()
     currentAssets = ASSETS_INFO
     Object.defineProperty(PapiApi.prototype, '_customCtx', {
       configurable: true,
@@ -81,8 +80,7 @@ describe('hydrateCustomChain', () => {
   it('releases the client via disconnect() without force on success', async () => {
     await hydrateCustomChain(CHAIN_NAME, INPUT)
 
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    expect(disconnectSpy).toHaveBeenCalledWith()
+    expect(disconnectSpy).toHaveBeenCalledExactlyOnceWith()
   })
 
   it('releases the client even when hydration fails', async () => {
@@ -90,8 +88,7 @@ describe('hydrateCustomChain', () => {
 
     await expect(hydrateCustomChain(CHAIN_NAME, INPUT)).rejects.toThrow()
 
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    expect(disconnectSpy).toHaveBeenCalledWith()
+    expect(disconnectSpy).toHaveBeenCalledExactlyOnceWith()
   })
 
   it('releases the client even when init itself rejects', async () => {
@@ -100,7 +97,6 @@ describe('hydrateCustomChain', () => {
 
     await expect(hydrateCustomChain(CHAIN_NAME, INPUT)).rejects.toBe(initError)
 
-    expect(disconnectSpy).toHaveBeenCalledTimes(1)
-    expect(disconnectSpy).toHaveBeenCalledWith()
+    expect(disconnectSpy).toHaveBeenCalledExactlyOnceWith()
   })
 })

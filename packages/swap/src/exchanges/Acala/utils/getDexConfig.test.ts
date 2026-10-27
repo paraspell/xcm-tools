@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getDexConfig } from './getDexConfig';
 
@@ -86,8 +86,6 @@ vi.mock('rxjs', () => {
 });
 
 describe('getDexConfig', () => {
-  beforeEach(() => vi.clearAllMocks());
-
   it('returns assets, direct pairs, and synthetic pairs', async () => {
     const cfg = await getDexConfig({} as ApiPromise, 'Acala');
 

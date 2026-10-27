@@ -28,13 +28,7 @@ import {
   getFeeAssetLocation
 } from './createContext'
 
-vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal()),
-  isExternalChain: vi.fn(),
-  isRelayChain: vi.fn(),
-  isSubstrateBridge: vi.fn(),
-  isTLocation: vi.fn()
-}))
+vi.mock('@paraspell/sdk-common', { spy: true })
 
 vi.mock('@paraspell/assets')
 
@@ -53,7 +47,6 @@ describe('getBridgeReserve', () => {
   const bridgeMockApi = {} as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getRelayChainOf).mockImplementation(chain =>
       chain.toLowerCase().includes('kusama') ? 'Kusama' : 'Polkadot'
     )
@@ -195,7 +188,6 @@ describe('createTypeAndThenCallContext', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     getRelayChainOfSpy.mockReturnValue('Polkadot')
     vi.mocked(isRelayChain).mockReturnValue(false)

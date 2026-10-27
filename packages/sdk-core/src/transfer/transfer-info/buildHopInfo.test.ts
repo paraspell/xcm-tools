@@ -20,8 +20,6 @@ describe('buildHopInfo', () => {
   const DEFAULT_HOP_FEE = 100000000n
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     mockHopApi = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnectAllowed: vi.fn(),

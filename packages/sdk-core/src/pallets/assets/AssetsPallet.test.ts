@@ -1,5 +1,5 @@
 import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
@@ -18,10 +18,6 @@ const chainMock = (config: TMintConfig) =>
   }) as unknown as SubstrateChain<unknown, unknown, unknown>
 
 describe('AssetsPallet.mint', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('uses a Number id and { Id } beneficiary by default', async () => {
     const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'
@@ -100,10 +96,6 @@ describe('AssetsPallet.mint', () => {
 })
 
 describe('AssetsPallet.getBalance', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   const expectBigIntRetry = async (message: string) => {
     const pallet = new AssetsPallet('Assets')
     const address = '5FbrsAddr'

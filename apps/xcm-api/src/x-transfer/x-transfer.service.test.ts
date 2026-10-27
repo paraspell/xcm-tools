@@ -182,7 +182,6 @@ describe('XTransferService', () => {
   };
 
   beforeEach(async () => {
-    vi.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [XTransferService],
     }).compile();

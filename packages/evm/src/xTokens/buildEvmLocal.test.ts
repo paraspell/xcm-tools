@@ -15,7 +15,6 @@ describe('buildEvmLocal', () => {
   const assetAddress = '0xffffffff1fcacbd218edc0eba20fc2308c778080'
 
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(encodeFunctionData).mockReturnValue('0xencoded')
   })
 

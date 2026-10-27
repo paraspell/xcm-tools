@@ -4,10 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../api'
 import { isNativeAssetTeleport } from './isNativeAssetTeleport'
 
-vi.mock('@paraspell/assets', async importActual => ({
-  ...(await importActual()),
-  isAssetEqual: vi.fn()
-}))
+vi.mock('@paraspell/assets', { spy: true })
 
 describe('isNativeAssetTeleport', () => {
   const nativeAsset = { symbol: 'GLMR', location: { parents: 1, interior: 'Here' } } as TAssetInfo
@@ -21,7 +18,6 @@ describe('isNativeAssetTeleport', () => {
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
     findNativeAssetInfoOrThrow.mockReturnValue(nativeAsset)
     getRelayChainOf.mockReturnValue('Polkadot')
   })

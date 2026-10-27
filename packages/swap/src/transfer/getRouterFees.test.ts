@@ -25,20 +25,9 @@ import { getRouterFees } from './getRouterFees';
 import { getFromExchangeFee, getToExchangeFee } from './utils';
 
 vi.mock('./fees');
-vi.mock('./utils', async (importActual) => ({
-  ...(await importActual()),
-  getToExchangeFee: vi.fn(),
-  getFromExchangeFee: vi.fn(),
-}));
+vi.mock('./utils', { spy: true });
 
-vi.mock('@paraspell/sdk-core', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-core');
-  return {
-    ...actual,
-    getXcmFee: vi.fn(),
-    handleSwapExecuteTransfer: vi.fn(),
-  };
-});
+vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
 
@@ -99,7 +88,6 @@ describe('getRouterFees', () => {
       unknown
     >;
 
-    vi.clearAllMocks();
     vi.mocked(getSwapFee).mockResolvedValue({
       result: swapFee,
       amountOut: swapAmountOut,

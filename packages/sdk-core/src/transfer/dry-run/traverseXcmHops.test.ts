@@ -9,10 +9,7 @@ import type { HopTraversalConfig } from '../../types'
 import { getParaEthTransferFees } from '../eth-transfer'
 import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 
-vi.mock('@paraspell/pallets', async importActual => ({
-  ...(await importActual()),
-  getPalletIndex: vi.fn()
-}))
+vi.mock('@paraspell/pallets', { spy: true })
 vi.mock('../../chains/getTChain')
 vi.mock('../eth-transfer')
 vi.mock('../../constants', async importOriginal => ({
@@ -37,8 +34,6 @@ describe('traverseXcmHops', () => {
   } as unknown as HopTraversalConfig<unknown, unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     mockApi = {
       api: { disconnect: vi.fn() },
       clone: vi.fn(),
@@ -343,8 +338,6 @@ describe('addEthereumBridgeFees', () => {
   let mockApi: PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     mockApi = {
       clone: vi.fn(),
       init: vi.fn()

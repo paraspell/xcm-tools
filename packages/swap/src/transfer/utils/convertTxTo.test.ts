@@ -1,6 +1,6 @@
 import type { PolkadotApi } from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { isPjsExtrinsic } from '../../utils';
 import { convertTxToTarget } from './convertTx';
@@ -20,8 +20,6 @@ describe('convertTxToTarget', () => {
   const TWO_BYTE = '0xCCDDEEFF'; // header stripped by 2 bytes
   const THREE_BYTE = '0xDDEEFF'; // header stripped by 3 bytes
 
-  afterEach(() => vi.clearAllMocks());
-
   beforeEach(() => {
     vi.mocked(isPjsExtrinsic).mockReturnValue(true);
   });
@@ -32,8 +30,7 @@ describe('convertTxToTarget', () => {
 
     const out = await convertTxToTarget(makeTx(RAW), makeApi(txFromHexFn));
 
-    expect(txFromHexFn).toHaveBeenCalledTimes(1);
-    expect(txFromHexFn).toHaveBeenCalledWith(TWO_BYTE);
+    expect(txFromHexFn).toHaveBeenCalledExactlyOnceWith(TWO_BYTE);
     expect(out).toBe(resultValue);
   });
 

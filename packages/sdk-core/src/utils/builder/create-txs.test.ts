@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import type { GeneralBuilder } from '../../builder'
@@ -46,10 +46,6 @@ const baseOptions = {
 } as TCreateTxsOptions<unknown, unknown, unknown>
 
 describe('computeOverridenAmount', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('adds increase (as BigInt) when config.abstractDecimals is true', () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: true }) }
     const findAssetInfoOrThrowSpy = vi.spyOn(options.api, 'findAssetInfoOrThrow')
@@ -116,10 +112,6 @@ describe('computeOverridenAmount', () => {
 })
 
 describe('overrideTxAmount', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('calls builder.currency with overridden SUM(amount + increase) and builds tx', async () => {
     const options = { ...baseOptions, api: makeApi({ abstractDecimals: true }) }
     vi.mocked(isConfig).mockReturnValue(true)
@@ -149,10 +141,6 @@ describe('overrideTxAmount', () => {
 })
 
 describe('createTx', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('when amount is undefined, builds real tx only (no override)', async () => {
     const realTx = { kind: 'realTx' }
     const currency = vi.fn().mockReturnThis()
@@ -213,10 +201,6 @@ const makeTransferOptions = (
   }) as TSubstrateTransferOptions<unknown, unknown, unknown>
 
 describe('createTransferOrSwapAll', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns a single TRANSFER context when swapOptions is undefined', async () => {
     const mockTx = { kind: 'transfer' }
     vi.mocked(createTransfer).mockResolvedValue(mockTx)
@@ -260,10 +244,6 @@ describe('createTransferOrSwapAll', () => {
 })
 
 describe('createTransferOrSwap', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns the single transaction when createTransferOrSwapAll yields one result', async () => {
     const mockTx = { kind: 'singleTx' }
     vi.mocked(createTransfer).mockResolvedValue(mockTx)

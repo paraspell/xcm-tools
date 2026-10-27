@@ -10,7 +10,6 @@ vi.mock('./assets', () => ({
 
 describe('isDestinationReachable', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(getRelayChainSymbolImpl).mockReturnValue('DOT')
   })
 

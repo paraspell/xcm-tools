@@ -11,16 +11,7 @@ import { BalanceService } from './balance.service.js';
 import type { BalanceDto } from './dto/BalanceForeignDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
-  return {
-    ...actual,
-    getBalance: vi.fn(),
-    getExistentialDeposit: vi.fn(),
-  };
-});
-
-vi.mock('../utils');
+vi.mock('@paraspell/sdk', { spy: true });
 
 describe('BalanceService', () => {
   let service: BalanceService;

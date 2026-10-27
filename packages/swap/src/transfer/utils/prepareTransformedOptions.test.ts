@@ -56,7 +56,6 @@ describe('prepareTransformedOptions', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(getSupportedAssetsImpl).mockReturnValue([]);
   });
 

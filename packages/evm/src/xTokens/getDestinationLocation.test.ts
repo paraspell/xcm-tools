@@ -14,7 +14,6 @@ describe('getDestinationLocation', () => {
   let mockDestination: TParachain
 
   beforeEach(() => {
-    vi.clearAllMocks()
     mockDestination = 'AssetHubPolkadot'
 
     vi.mocked(getAssetsObject).mockReturnValue({ isEVM: false } as TChainAssetsInfo)
@@ -61,13 +60,11 @@ describe('getDestinationLocation', () => {
 
   it('calls getParaId with the correct destination', () => {
     getDestinationLocation(mockApi, 'some-address', mockDestination)
-    expect(getParaId).toHaveBeenCalledTimes(1)
-    expect(getParaId).toHaveBeenCalledWith(mockDestination)
+    expect(getParaId).toHaveBeenCalledExactlyOnceWith(mockDestination)
   })
 
   it('calls getAssetsObject with the correct destination', () => {
     getDestinationLocation(mockApi, 'some-address', mockDestination)
-    expect(getAssetsObject).toHaveBeenCalledTimes(1)
-    expect(getAssetsObject).toHaveBeenCalledWith(mockDestination)
+    expect(getAssetsObject).toHaveBeenCalledExactlyOnceWith(mockDestination)
   })
 })

@@ -11,7 +11,6 @@ import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
 vi.mock('../../utils')
-vi.mock('../abstractDecimals')
 vi.mock('./validateAssetSupport')
 
 vi.mock('@paraspell/sdk-common')

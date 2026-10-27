@@ -9,7 +9,6 @@ vi.mock('./normalizeSymbol', () => ({
 
 describe('isSymbolMatch', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     vi.mocked(normalizeSymbol).mockImplementation(symbol => (symbol ? symbol.toUpperCase() : ''))
   })
 
