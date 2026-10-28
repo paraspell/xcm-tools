@@ -35,7 +35,9 @@ describe('buildDestInfo', () => {
   beforeEach(() => {
     mockClonedApi = {
       init: vi.fn().mockResolvedValue(undefined),
-      clone: vi.fn()
+      clone: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined),
+      disconnectAllowed: true
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
@@ -346,4 +348,18 @@ describe('buildDestInfo', () => {
     const expectedFeeBalanceAfter = nativeBalanceForFee - (options.destFeeDetail.fee ?? 0n)
     expect(result.xcmFee.balanceAfter).toBe(expectedFeeBalanceAfter)
   })
+
+    it('releases the cloned destination client on success', async () => {
+      const result = await buildDestInfo(baseOptions)
+      expect(result).toBeDefined()
+      expect(mockClonedApi.disconnect).toHaveBeenCalledTimes(1)
+    })
+
+    it('releases the cloned destination client when a balance lookup throws', async () => {
+      vi.mocked(getAssetBalanceInternal).mockRejectedValueOnce(new Error('balance lookup failed'))
+
+      await expect(buildDestInfo(baseOptions)).rejects.toThrow('balance lookup failed')
+
+      expect(mockClonedApi.disconnect).toHaveBeenCalledTimes(1)
+    })
 })

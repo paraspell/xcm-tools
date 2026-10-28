@@ -11,7 +11,9 @@ describe('createTransactInstructions', () => {
     init: vi.fn(),
     txFromHex: vi.fn(),
     getPaymentInfo: vi.fn(),
-    encodeTx: vi.fn((hex: string) => ({ encoded: hex }))
+    encodeTx: vi.fn((hex: string) => ({ encoded: hex })),
+    disconnect: vi.fn().mockResolvedValue(undefined),
+    disconnectAllowed: true
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockWeight: TWeight = {
@@ -86,6 +88,14 @@ describe('createTransactInstructions', () => {
     expect(initSpy).toHaveBeenCalledWith('Polkadot')
     expect(txFromHexSpy).toHaveBeenCalledWith('0xdeadbeef')
     expect(paymentInfoSpy).toHaveBeenCalledWith('tx', 'address')
+    })
+
+    it('releases the cloned client after estimating weight', async () => {
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+      await createTransactInstructions(mockApi, baseOptions, Version.V4, 'Polkadot', 'address')
+
+      expect(disconnectSpy).toHaveBeenCalledTimes(1)
   })
 
   it('does not estimate weight for V5 and above', async () => {

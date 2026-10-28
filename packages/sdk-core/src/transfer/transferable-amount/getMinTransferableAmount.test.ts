@@ -32,7 +32,11 @@ describe('getMinTransferableAmountInternal', () => {
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}))
 
-  const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
+  const destApi = {
+    init: vi.fn().mockResolvedValue(undefined),
+    disconnect: vi.fn().mockResolvedValue(undefined),
+    disconnectAllowed: true
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
@@ -124,6 +128,34 @@ describe('getMinTransferableAmountInternal', () => {
       { symbol: 'USDT', amount: 20n },
       { symbol: 'USDC', amount: 11n }
     ])
+    })
+
+    it('releases the cloned destination client', async () => {
+      const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '10' } as TAssetInfo
+
+      vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
+      vi.mocked(resolveCurrency).mockReturnValue({
+        assets: [{ ...usdt, amount: 100n, isFeeAsset: true }],
+        asset: { ...usdt, amount: 100n, isFeeAsset: true }
+      })
+      findAssetOnDestOrThrowSpy.mockReturnValue(usdt)
+      findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
+      vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+      vi.mocked(getXcmFee).mockResolvedValue({
+        success: true,
+        origin: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
+        hops: [],
+        destination: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 7n, feeType: 'dryRun' }
+      })
+      buildInternal.mockResolvedValue({})
+
+      await mod.getMinTransferableAmountInternal({
+        ...baseOptions,
+        feeAsset: { symbol: 'USDT' },
+        currency: [{ symbol: 'USDT', amount: 100n }]
+      })
+
+      expect(destApi.disconnect).toHaveBeenCalledTimes(1)
   })
 
   it('returns zeros for all assets when dryRun reports failureReason for currency arrays', async () => {
@@ -359,7 +391,11 @@ describe('getMinTransferableAmount', () => {
     })
 
     const disconnectAllowedValues: boolean[] = []
-    const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
+      const destApi = {
+        init: vi.fn().mockResolvedValue(undefined),
+        disconnect: vi.fn().mockResolvedValue(undefined),
+        disconnectAllowed: true
+      } as unknown as PolkadotApi<unknown, unknown, unknown>
     const mockApi = {
       get disconnectAllowed() {
         return disconnectAllowedValues[disconnectAllowedValues.length - 1] ?? true

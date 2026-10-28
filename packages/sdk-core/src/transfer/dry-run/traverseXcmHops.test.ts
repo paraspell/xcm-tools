@@ -340,7 +340,9 @@ describe('addEthereumBridgeFees', () => {
   beforeEach(() => {
     mockApi = {
       clone: vi.fn(),
-      init: vi.fn()
+      init: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined),
+      disconnectAllowed: true
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
@@ -369,6 +371,7 @@ describe('addEthereumBridgeFees', () => {
     })
     expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot', 300000)
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
+      expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
   })
 
   it('should return original result when destination is not Ethereum', async () => {

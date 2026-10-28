@@ -741,16 +741,21 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const assetHubChain: TSubstrateChain = `AssetHub${this.getRelayChainOf(chain)}`;
 
     await ahApi.init(assetHubChain);
+    ahApi.disconnectAllowed = false;
+    try {
+      const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location);
 
-    const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location);
+      const convertedExecFee = await ahApi.queryRuntimeApi<bigint | undefined>({
+        module: "AssetConversionApi",
+        method: "quote_price_exact_tokens_for_tokens",
+        params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false],
+      });
 
-    const convertedExecFee = await ahApi.queryRuntimeApi<bigint | undefined>({
-      module: "AssetConversionApi",
-      method: "quote_price_exact_tokens_for_tokens",
-      params: [RELAY_LOCATION, ahLocalizedLoc, fallbackExecFee, false],
-    });
-
-    return typeof convertedExecFee === "bigint" ? convertedExecFee : 0n;
+      return typeof convertedExecFee === "bigint" ? convertedExecFee : 0n;
+    } finally {
+      ahApi.disconnectAllowed = true;
+      await ahApi.disconnect();
+    }
   }
 
   async getXcmWeight(xcm: any): Promise<TWeight> {

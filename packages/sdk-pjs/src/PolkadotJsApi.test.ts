@@ -1086,7 +1086,9 @@ describe('PolkadotJsApi', () => {
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
-        queryRuntimeApi: vi.fn().mockResolvedValue(undefined)
+          queryRuntimeApi: vi.fn().mockResolvedValue(undefined),
+          disconnect: vi.fn().mockResolvedValue(undefined),
+          disconnectAllowed: true
       } as unknown as PolkadotJsApi
 
       vi.spyOn(polkadotApi, 'clone').mockReturnValue(ahApiMock)

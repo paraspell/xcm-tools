@@ -26,9 +26,15 @@ const resolveMaxWeight = async <TApi, TRes, TSigner, TCustomChain extends string
   if (version < Version.V5) {
     const destApi = api.clone()
     await destApi.init(destChain)
-    const tx = await resolveTx(destApi, options)
-    const { weight } = await destApi.getPaymentInfo(tx, address)
-    return weight
+    destApi.disconnectAllowed = false
+    try {
+      const tx = await resolveTx(destApi, options)
+      const { weight } = await destApi.getPaymentInfo(tx, address)
+      return weight
+    } finally {
+      destApi.disconnectAllowed = true
+      await destApi.disconnect()
+    }
   }
 
   // For V5 and later, maxWeight can be undefined

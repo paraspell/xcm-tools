@@ -24,7 +24,9 @@ describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {
     getMethod: vi.fn(),
     clone: () => ({
-      init: vi.fn()
+        init: vi.fn(),
+        disconnect: vi.fn().mockResolvedValue(undefined),
+        disconnectAllowed: true
     }),
     findAssetOnDestOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
@@ -123,6 +125,40 @@ describe('verifyEdOnDestinationInternal', () => {
       })
     )
   })
+
+    it('releases the cloned destination client', async () => {
+      const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '100' } as TAssetInfo
+
+      vi.mocked(resolveCurrency).mockReturnValue({
+        assets: [{ ...usdt, amount: 1000000n, isFeeAsset: true }],
+        asset: { ...usdt, amount: 1000000n, isFeeAsset: true }
+      })
+      findAssetOnDestOrThrowSpy.mockReturnValue(usdt)
+      vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n)
+      vi.mocked(getXcmFeeInternal).mockResolvedValue({
+        ...xcmFeeRes,
+        hops: [],
+        destination: { fee: 1000n, feeType: 'dryRun', asset: usdt }
+      })
+
+      let cloned: { init: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> } | undefined
+      vi.spyOn(mockApi, 'clone').mockImplementation(() => {
+        cloned = {
+          init: vi.fn().mockResolvedValue(undefined),
+          disconnect: vi.fn().mockResolvedValue(undefined)
+        }
+        return cloned as unknown as PolkadotApi<unknown, unknown, unknown>
+      })
+
+      const result = await verifyEdOnDestinationInternal({
+        ...defaultOptions,
+        feeAsset: { symbol: 'USDT' },
+        currency: [{ symbol: 'USDT', amount: 1000000n }]
+      })
+
+      expect(result).toBe(true)
+      expect(cloned?.disconnect).toHaveBeenCalledTimes(1)
+    })
 
   it('returns false when any asset fails the ED check for currency arrays', async () => {
     const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '3000000' } as TAssetInfo

@@ -195,10 +195,16 @@ export const addEthereumBridgeFees = async <
 
   const ahApi = api.clone()
   await ahApi.init(assetHubChain, DRY_RUN_CLIENT_TIMEOUT_MS)
-  const [bridgeFee] = await getParaEthTransferFees(ahApi)
+  ahApi.disconnectAllowed = false
+  try {
+    const [bridgeFee] = await getParaEthTransferFees(ahApi)
 
-  return {
-    ...bridgeHubResult,
-    fee: (bridgeHubResult.fee as bigint) + bridgeFee
+    return {
+      ...bridgeHubResult,
+      fee: (bridgeHubResult.fee as bigint) + bridgeFee
+    }
+  } finally {
+    ahApi.disconnectAllowed = true
+    await ahApi.disconnect()
   }
 }
