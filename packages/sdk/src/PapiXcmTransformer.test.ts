@@ -293,6 +293,23 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should convert a string currency_id inside a multi-key object to a number', () => {
+    // Regression: a missing `continue` let the generic string branch overwrite the
+    // converted value with `{ type: '100' }`. The test above uses a numeric
+    // currency_id, which takes the numeric path and never exercised this branch.
+    const input = {
+      fee_item: '5',
+      currency_id: '100',
+      amount: '5000000000'
+    }
+    const expected = {
+      fee_item: 5,
+      currency_id: 100,
+      amount: 5000000000n
+    }
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should pass `call` through verbatim without recursing into it', () => {
     type Call = {
       Fungible: string
