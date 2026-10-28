@@ -3,7 +3,6 @@
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
-import { numberToBytes } from 'viem'
 
 import type { PolkadotApi } from '../../api'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
@@ -13,7 +12,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId, blake2128Concat } from '../../utils'
+import { assertHasId, blake2128Concat, toLeHex } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
 import SubstrateChain from '../SubstrateChain'
 
@@ -23,9 +22,6 @@ const FUNGIBLE_BALANCE_PREFIX = 'b6f8df5e96e2c932e9bd00274d53a26f4ea8ea0c01faa42
 const FUNGIBLE_TOTAL_SUPPLY_PREFIX =
   'b6f8df5e96e2c932e9bd00274d53a26f5994cfda14cd67e1586647d40008abaa'
 const SUBSTRATE_CROSS_ACCOUNT_PREFIX = '00'
-
-const toLeHex = (value: number | bigint, size: number) =>
-  bytesToHex(numberToBytes(value, { size }).reverse())
 
 class Unique<TApi, TRes, TSigner, TCustomChain extends string = never>
   extends SubstrateChain<TApi, TRes, TSigner, TCustomChain>
