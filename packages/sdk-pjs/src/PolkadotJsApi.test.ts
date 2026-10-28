@@ -2024,6 +2024,18 @@ describe('PolkadotJsApi', () => {
       expect(findAssetInfoSpy).toHaveBeenCalledWith('Hydration', { id: assetId })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
+
+    it('prefers an explicit feeAsset over accountCurrencyMap on Hydration', async () => {
+      const explicitAsset = { symbol: 'USDT' } as TAssetInfo
+
+      const result = await polkadotApi.resolveFeeAsset({
+        ...baseOptions,
+        feeAsset: explicitAsset
+      })
+
+      expect(accountCurrencyMapMock).not.toHaveBeenCalled()
+      expect(result).toEqual({ isCustomAsset: false, asset: explicitAsset })
+    })
   })
 
   describe('getXcmWeight', () => {

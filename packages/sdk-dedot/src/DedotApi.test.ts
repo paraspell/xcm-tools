@@ -607,6 +607,20 @@ describe("DedotApi", () => {
       });
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset });
     });
+
+    it("prefers an explicit feeAsset over accountCurrencyMap on Hydration", async () => {
+      const explicitAsset = { symbol: "USDT" } as TAssetInfo;
+
+      const result = await dedotApi.resolveFeeAsset({
+        ...createOptions(),
+        feeAsset: explicitAsset,
+      });
+
+      expect(
+        mockApiRaw.query.multiTransactionPayment.accountCurrencyMap,
+      ).not.toHaveBeenCalled();
+      expect(result).toEqual({ isCustomAsset: false, asset: explicitAsset });
+    });
   });
 
   describe("getDryRunCall", () => {
