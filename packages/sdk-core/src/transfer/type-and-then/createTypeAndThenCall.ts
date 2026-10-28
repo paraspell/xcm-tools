@@ -156,5 +156,5 @@ export const createTypeAndThenCall = async <
     )
   })
 
-  return constructTypeAndThenCall(context, fees)
+  return constructTypeAndThenCall(context, fees ?? { hopFees: 0n, destFee: 0n })
 }

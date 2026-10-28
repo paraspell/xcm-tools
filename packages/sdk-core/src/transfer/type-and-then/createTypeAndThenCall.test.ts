@@ -210,6 +210,21 @@ describe('createTypeAndThenCall', () => {
     )
   })
 
+  it('builds final call in non-fee-calculation mode when computeAllFees returns null (no DryRunApi)', async () => {
+    vi.mocked(computeAllFees).mockResolvedValue(null)
+
+    const result = await createTypeAndThenCall(mockContext.options)
+
+    expect(result).toBe(mockSerializedCall)
+    expect(createCustomXcm).toHaveBeenCalledExactlyOnceWith(
+      mockContext,
+      2,
+      false,
+      0n,
+      { hopFees: 0n, destFee: 0n }
+    )
+  })
+
   it('includes DOT alongside a Snowbridge asset sent to a parachain', async () => {
     const cgtLocation: TAssetInfo['location'] = {
       parents: 2,
