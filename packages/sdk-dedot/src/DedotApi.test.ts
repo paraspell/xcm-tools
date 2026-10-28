@@ -477,11 +477,30 @@ describe("DedotApi", () => {
   });
 
   describe("getBridgeStatus", () => {
-    it("returns the operating mode", async () => {
+    it("returns the operating mode from enum object", async () => {
+      mockApiRaw.query.ethereumOutboundQueue.operatingMode.mockResolvedValueOnce({
+        type: "Normal",
+      });
       const result = await dedotApi.getBridgeStatus();
       expect(
         mockApiRaw.query.ethereumOutboundQueue.operatingMode,
       ).toHaveBeenCalled();
+      expect(result).toBe("Normal");
+    });
+
+    it("returns Halted operating mode from enum object", async () => {
+      mockApiRaw.query.ethereumOutboundQueue.operatingMode.mockResolvedValueOnce({
+        type: "Halted",
+      });
+      const result = await dedotApi.getBridgeStatus();
+      expect(result).toBe("Halted");
+    });
+
+    it("returns operating mode when returned as a primitive string", async () => {
+      mockApiRaw.query.ethereumOutboundQueue.operatingMode.mockResolvedValueOnce(
+        "Normal",
+      );
+      const result = await dedotApi.getBridgeStatus();
       expect(result).toBe("Normal");
     });
   });
