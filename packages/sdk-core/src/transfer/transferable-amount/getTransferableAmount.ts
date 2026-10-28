@@ -56,7 +56,8 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
   sender: string,
   chain: TSubstrateChain,
   asset: TAssetInfo,
-  fee: bigint
+  fee: bigint,
+  isNativeAsset: boolean
 ): Promise<bigint> => {
   const balance = await getAssetBalanceInternal({
     api,
@@ -65,7 +66,11 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
     asset
   })
 
-  const transferable = balance - BigInt(asset.existentialDeposit) - fee
+  // SystemPallet.getBalance already returns the spendable balance (ED excluded) for the
+  // native asset, so subtracting the ED again would reserve it twice.
+  const transferable = isNativeAsset
+    ? balance - fee
+    : balance - BigInt(asset.existentialDeposit) - fee
 
   return transferable > 0n ? transferable : 0n
 }
@@ -103,7 +108,7 @@ const getTransferableAmountForAsset = async <
 
   const fee = originFee && isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
 
-  return computeTransferableAmount(api, sender, chain, asset, fee)
+  return computeTransferableAmount(api, sender, chain, asset, fee, isNativeAsset)
 }
 
 const getTransferableAmountForAssets = async <
@@ -126,6 +131,7 @@ const getTransferableAmountForAssets = async <
   const { assets } = resolveCurrency(api, currency, resolvedFeeAsset, chain, destination)
 
   const originFee = await getOriginFeeOrThrow(options, currency)
+  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(chain)
 
   return Promise.all(
     assets.map(asset =>
@@ -134,7 +140,8 @@ const getTransferableAmountForAssets = async <
         sender,
         chain,
         asset,
-        isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
+        isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n,
+        isAssetEqual(nativeAssetInfo, asset)
       )
     )
   )

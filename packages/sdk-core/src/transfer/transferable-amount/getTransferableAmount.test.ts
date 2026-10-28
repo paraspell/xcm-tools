@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
+import { SystemPallet } from '../../pallets/system/SystemPallet'
 import type { TGetTransferableAmountOptions, TXcmFeeDetail } from '../../types'
 import { abstractDecimals } from '../../utils'
 import { getOriginXcmFee } from '../fees'
@@ -46,9 +47,9 @@ describe('getTransferableAmount', () => {
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
   })
 
-  test('subtracts XCM fee for native asset', async () => {
-    const balance = 1000n
-    const ed = 100n
+  test('subtracts XCM fee for native asset without subtracting the ED twice', async () => {
+    // Native balances come from SystemPallet.getBalance, which already excludes the ED.
+    const spendableBalance = 900n
     const fee = 200n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
@@ -58,12 +59,12 @@ describe('getTransferableAmount', () => {
     } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(spendableBalance)
     vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
     const result = await getTransferableAmount(baseOptions)
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(spendableBalance - fee)
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: mockApi,
       buildTx,
@@ -75,6 +76,33 @@ describe('getTransferableAmount', () => {
       currency: { symbol: 'DOT', amount: 1000n },
       disableFallback: false
     })
+  })
+
+  test('reserves the native ED once through the real SystemPallet spendable balance', async () => {
+    const asset = {
+      symbol: 'DOT',
+      decimals: 10,
+      existentialDeposit: '100',
+      location: { parents: 1, interior: { Here: null } }
+    } as TAssetInfo
+    const api = {
+      queryState: vi.fn().mockResolvedValue({ data: { free: 1000n, reserved: 0n, frozen: 0n } }),
+      findAssetInfoOrThrow: vi.fn().mockReturnValue(asset),
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue(asset),
+      disconnect: vi.fn().mockResolvedValue(undefined)
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    vi.mocked(getAssetBalanceInternal).mockImplementation(async () =>
+      new SystemPallet('System').getBalance(api, 'validAddress', asset)
+    )
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 200n, asset } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount({ ...baseOptions, api })
+
+    // free 1000, ED 100 -> spendable 900, fee 200 -> 700. Subtracting the ED twice gives 600.
+    expect(result).toBe(700n)
   })
 
   test('does not subtract XCM fee for non-native asset', async () => {
@@ -99,7 +127,7 @@ describe('getTransferableAmount', () => {
   })
 
   test('returns 0 when transferable amount is negative', async () => {
-    const balance = 250n
+    const balance = 150n
     const fee = 200n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
@@ -140,8 +168,7 @@ describe('getTransferableAmount', () => {
   })
 
   test('subtracts the fee for native asset paid in native when a fee asset is selected', async () => {
-    const balance = 1000n
-    const ed = 100n
+    const balance = 900n
     const fee = 200n
     const doton = { symbol: 'DOTON', decimals: 18, existentialDeposit: '100' } as TAssetInfo
 
@@ -158,7 +185,7 @@ describe('getTransferableAmount', () => {
       feeAsset: { symbol: 'DOT' }
     })
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(balance - fee)
   })
 
   test('throws error when XCM fee is undefined for native asset', async () => {
@@ -205,6 +232,7 @@ describe('getTransferableAmount', () => {
   const mockResolvedAssets = (assets: WithAmount<TAssetInfo>[]) => {
     vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
     vi.mocked(resolveCurrency).mockReturnValue({ assets, asset: usdt })
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'DOT' } as TAssetInfo)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
   }
 
