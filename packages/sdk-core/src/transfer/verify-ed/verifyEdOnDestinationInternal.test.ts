@@ -24,7 +24,8 @@ describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {
     getMethod: vi.fn(),
     clone: () => ({
-      init: vi.fn()
+      init: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined)
     }),
     findAssetOnDestOrThrow: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>

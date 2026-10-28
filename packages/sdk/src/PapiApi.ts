@@ -711,19 +711,25 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const assetHubChain: TSubstrateChain = `AssetHub${this.getRelayChainOf(chain)}`
 
-    await ahApi.init(assetHubChain)
+    try {
+      await ahApi.init(assetHubChain)
+      ahApi.disconnectAllowed = false
 
-    const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
+      const ahLocalizedLoc = localizeLocation(assetHubChain, asset.location)
 
-    const convertedExecFee =
-      await ahApi.ahpApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
-        transform(RELAY_LOCATION),
-        transform(ahLocalizedLoc),
-        fallbackExecFeeRes.value,
-        false
-      )
+      const convertedExecFee =
+        await ahApi.ahpApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
+          transform(RELAY_LOCATION),
+          transform(ahLocalizedLoc),
+          fallbackExecFeeRes.value,
+          false
+        )
 
-    return convertedExecFee ?? 0n
+      return convertedExecFee ?? 0n
+    } finally {
+      ahApi.disconnectAllowed = true
+      await ahApi.disconnect()
+    }
   }
 
   async getDryRunXcm({

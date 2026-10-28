@@ -11,6 +11,7 @@ describe('createTransactInstructions', () => {
     init: vi.fn(),
     txFromHex: vi.fn(),
     getPaymentInfo: vi.fn(),
+    disconnect: vi.fn().mockResolvedValue(undefined),
     encodeTx: vi.fn((hex: string) => ({ encoded: hex }))
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -87,6 +88,7 @@ describe('createTransactInstructions', () => {
     expect(initSpy).toHaveBeenCalledWith('Polkadot')
     expect(txFromHexSpy).toHaveBeenCalledWith('0xdeadbeef')
     expect(paymentInfoSpy).toHaveBeenCalledWith('tx', 'address')
+    expect(mockApi.disconnect).toHaveBeenCalledTimes(1)
   })
 
   it('does not estimate weight for V5 and above', async () => {

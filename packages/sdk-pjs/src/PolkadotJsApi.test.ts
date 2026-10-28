@@ -1050,6 +1050,7 @@ describe('PolkadotJsApi', () => {
 
       const ahApiMock = new PolkadotJsApi(mockApiPromise)
       const initSpy = vi.spyOn(ahApiMock, 'init').mockResolvedValue(undefined)
+      const disconnectSpy = vi.spyOn(ahApiMock, 'disconnect').mockResolvedValue(undefined)
       const quoteSpy = vi.spyOn(ahApiMock, 'queryRuntimeApi').mockResolvedValue(convertedFee)
 
       const cloneSpy = vi.spyOn(polkadotApi, 'clone').mockReturnValue(ahApiMock)
@@ -1069,6 +1070,7 @@ describe('PolkadotJsApi', () => {
       expect(cloneSpy).toHaveBeenCalledTimes(1)
       expect(initSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', dotAsset.location)
+      expect(disconnectSpy).toHaveBeenCalled()
       expect(quoteSpy).toHaveBeenCalledWith({
         module: 'AssetConversionApi',
         method: 'quote_price_exact_tokens_for_tokens',
@@ -1097,6 +1099,7 @@ describe('PolkadotJsApi', () => {
 
       const ahApiMock = {
         init: vi.fn().mockResolvedValue(undefined),
+        disconnect: vi.fn().mockResolvedValue(undefined),
         queryRuntimeApi: vi.fn().mockResolvedValue(undefined)
       } as unknown as PolkadotJsApi
 

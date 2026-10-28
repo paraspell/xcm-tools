@@ -48,103 +48,109 @@ export const getMinTransferableAmountInternal = async <
     (isMulti ? values : values[0]) as TPerAssetResult<TCurrency, bigint>
 
   const destApi = api.clone()
-  await destApi.init(destination)
-
-  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(origin)
-
-  const result = await getXcmFeeInternal({
-    api,
-    origin,
-    destination,
-    buildTx,
-    sender,
-    recipient,
-    currency: isMulti ? selectors : { ...selectors[0], amount: assets[0].amount },
-    feeAsset,
-    version,
-    disableFallback: false
-  })
-
-  const minAmounts = await Promise.all(
-    assets.map(async (asset, index) => {
-      const destAsset = api.findAssetOnDestOrThrow(origin, destination, selectors[index])
-
-      const destBalance = await getAssetBalanceInternal({
-        api: destApi,
-        address: recipient,
-        chain: destination,
-        asset: destAsset
-      })
-
-      const destEd = BigInt(destAsset.existentialDeposit)
-
-      const paysOriginInSendingAsset =
-        (!resolvedFeeAsset && isAssetEqual(nativeAssetInfo, asset)) ||
-        (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
-
-      const originFee =
-        result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)
-          ? result.origin.fee
-          : 0n
-
-      const hopFeeTotal = result.hops.reduce((acc, hop) => {
-        // only add if asset is equal
-        return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
-      }, 0n)
-
-      const destinationFee =
-        result.destination && isAssetEqual(result.destination.asset, asset)
-          ? result.destination.fee
-          : 0n
-
-      const edComponent = destBalance === 0n ? destEd : 0n
-
-      return hopFeeTotal + destinationFee + originFee + edComponent + 1n
-    })
-  )
-
-  const buildMinCurrency = (amounts: bigint[]): TCurrencyInputWithAmount =>
-    isMulti
-      ? selectors.map((item, index) => ({ ...item, amount: amounts[index] }))
-      : { ...selectors[0], amount: amounts[0] }
-
-  const createTx = async (amounts: bigint[]) => {
-    const { tx } = await builder.currency(buildMinCurrency(amounts))['buildInternal']()
-    return tx
-  }
-
-  let amounts = minAmounts
-
-  let tx
   try {
-    tx = await createTx(amounts)
-  } catch (e) {
-    if (e instanceof AmountTooLowError) {
-      amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
-      try {
-        tx = await createTx(amounts)
-      } catch {
-        return toResult(amounts.map(() => 0n))
+    await destApi.init(destination)
+    destApi.disconnectAllowed = false
+
+    const nativeAssetInfo = api.findNativeAssetInfoOrThrow(origin)
+
+    const result = await getXcmFeeInternal({
+      api,
+      origin,
+      destination,
+      buildTx,
+      sender,
+      recipient,
+      currency: isMulti ? selectors : { ...selectors[0], amount: assets[0].amount },
+      feeAsset,
+      version,
+      disableFallback: false
+    })
+
+    const minAmounts = await Promise.all(
+      assets.map(async (asset, index) => {
+        const destAsset = api.findAssetOnDestOrThrow(origin, destination, selectors[index])
+
+        const destBalance = await getAssetBalanceInternal({
+          api: destApi,
+          address: recipient,
+          chain: destination,
+          asset: destAsset
+        })
+
+        const destEd = BigInt(destAsset.existentialDeposit)
+
+        const paysOriginInSendingAsset =
+          (!resolvedFeeAsset && isAssetEqual(nativeAssetInfo, asset)) ||
+          (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+
+        const originFee =
+          result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)
+            ? result.origin.fee
+            : 0n
+
+        const hopFeeTotal = result.hops.reduce((acc, hop) => {
+          // only add if asset is equal
+          return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
+        }, 0n)
+
+        const destinationFee =
+          result.destination && isAssetEqual(result.destination.asset, asset)
+            ? result.destination.fee
+            : 0n
+
+        const edComponent = destBalance === 0n ? destEd : 0n
+
+        return hopFeeTotal + destinationFee + originFee + edComponent + 1n
+      })
+    )
+
+    const buildMinCurrency = (amounts: bigint[]): TCurrencyInputWithAmount =>
+      isMulti
+        ? selectors.map((item, index) => ({ ...item, amount: amounts[index] }))
+        : { ...selectors[0], amount: amounts[0] }
+
+    const createTx = async (amounts: bigint[]) => {
+      const { tx } = await builder.currency(buildMinCurrency(amounts))['buildInternal']()
+      return tx
+    }
+
+    let amounts = minAmounts
+
+    let tx
+    try {
+      tx = await createTx(amounts)
+    } catch (e) {
+      if (e instanceof AmountTooLowError) {
+        amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
+        try {
+          tx = await createTx(amounts)
+        } catch {
+          return toResult(amounts.map(() => 0n))
+        }
       }
     }
+
+    const dryRunResult = await dryRunInternal({
+      api,
+      tx,
+      origin,
+      destination,
+      sender,
+      version,
+      currency: buildMinCurrency(amounts),
+      feeAsset
+    })
+
+    if (!dryRunResult.success) {
+      return toResult(amounts.map(() => 0n))
+    }
+
+    return toResult(amounts)
+  } finally {
+    destApi.disconnectAllowed = true
+    await destApi.disconnect()
   }
-
-  const dryRunResult = await dryRunInternal({
-    api,
-    tx,
-    origin,
-    destination,
-    sender,
-    version,
-    currency: buildMinCurrency(amounts),
-    feeAsset
-  })
-
-  if (!dryRunResult.success) {
-    return toResult(amounts.map(() => 0n))
-  }
-
-  return toResult(amounts)
 }
 
 export const getMinTransferableAmount = async <

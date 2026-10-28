@@ -42,7 +42,8 @@ describe('buildDestInfo', () => {
 
     mockClonedApi = {
       init: vi.fn().mockResolvedValue(undefined),
-      clone: vi.fn()
+      clone: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     mockApi = {
@@ -76,6 +77,18 @@ describe('buildDestInfo', () => {
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
     vi.mocked(getBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
+  })
+
+  it('disconnects the cloned destination API', async () => {
+    ;(mockClonedApi as unknown as Record<string, unknown>).disconnect = vi
+      .fn()
+      .mockResolvedValue(undefined)
+
+    await buildDestInfo({ ...baseOptions })
+
+    expect(
+      (mockClonedApi as unknown as { disconnect: ReturnType<typeof vi.fn> }).disconnect
+    ).toHaveBeenCalledTimes(1)
   })
 
   it('should successfully build dest info', async () => {

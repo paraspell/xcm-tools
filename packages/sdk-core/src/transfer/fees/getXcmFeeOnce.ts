@@ -232,32 +232,36 @@ export const getXcmFeeOnce = async <
   ) {
     // We failed before reaching destination, use fallback
     const destApi = api.clone()
+    try {
+      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-    await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
+      const destFallback = await getDestXcmFee({
+        api: destApi,
+        forwardedXcms: undefined,
+        origin,
+        prevChain: traversalResult.lastProcessedChain || origin,
+        destination,
+        currency,
+        asset,
+        currentAsset: { ...asset, amount: asset.amount },
+        sender,
+        recipient,
+        version: resolvedVersion,
+        tx,
+        originFee: originFee ?? 0n,
+        disableFallback,
+        swapConfig,
+        skipReverseFeeCalculation
+      })
 
-    const destFallback = await getDestXcmFee({
-      api: destApi,
-      forwardedXcms: undefined,
-      origin,
-      prevChain: traversalResult.lastProcessedChain || origin,
-      destination,
-      currency,
-      asset,
-      currentAsset: { ...asset, amount: asset.amount },
-      sender,
-      recipient,
-      version: resolvedVersion,
-      tx,
-      originFee: originFee ?? 0n,
-      disableFallback,
-      swapConfig,
-      skipReverseFeeCalculation
-    })
-
-    destFee = destFallback.fee
-    destFeeType = destFallback.feeType
-    destSufficient = destFallback.sufficient
-    destAsset = api.findNativeAssetInfoOrThrow(destination)
+      destFee = destFallback.fee
+      destFeeType = destFallback.feeType
+      destSufficient = destFallback.sufficient
+      destAsset = api.findNativeAssetInfoOrThrow(destination)
+    } finally {
+      destApi.disconnectAllowed = true
+      await destApi.disconnect()
+    }
   } else {
     destFee = 0n
     destFeeType = 'noFeeRequired'

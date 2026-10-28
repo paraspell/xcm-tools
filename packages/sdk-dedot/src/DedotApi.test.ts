@@ -1503,6 +1503,7 @@ describe("DedotApi", () => {
         );
         const assetHubApi = {
           init: vi.fn().mockResolvedValue(undefined),
+          disconnect: vi.fn().mockResolvedValue(undefined),
           queryRuntimeApi: vi.fn().mockResolvedValue(convertedFee),
         };
         vi.spyOn(dedotApi, "clone").mockReturnValue(

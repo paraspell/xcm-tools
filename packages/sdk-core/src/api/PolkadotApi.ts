@@ -275,9 +275,15 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     }
 
     const childApi = this.clone()
-    childApi.setCustomCtx(this._customCtx)
-    await childApi.init(chain, this._ttlMs)
-    this.setCustomCtx(childApi._customCtx)
+    try {
+      childApi.setCustomCtx(this._customCtx)
+      await childApi.init(chain, this._ttlMs)
+      childApi.disconnectAllowed = false
+      this.setCustomCtx(childApi._customCtx)
+    } finally {
+      childApi.disconnectAllowed = true
+      await childApi.disconnect()
+    }
   }
 
   abstract leaseClient(wsUrl: TUrl, ttlMs: number): Promise<TApi>

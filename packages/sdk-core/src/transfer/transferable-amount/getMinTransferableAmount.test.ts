@@ -32,7 +32,10 @@ describe('getMinTransferableAmountInternal', () => {
   // eslint-disable-next-line @typescript-eslint/require-await
   const buildTx = vi.fn(async () => ({}))
 
-  const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
+  const destApi = {
+    init: vi.fn(),
+    disconnect: vi.fn().mockResolvedValue(undefined)
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
   const api = {
     clone: vi.fn(() => destApi),
     setDisconnectAllowed: vi.fn(),
@@ -364,7 +367,10 @@ describe('getMinTransferableAmount', () => {
     })
 
     const disconnectAllowedValues: boolean[] = []
-    const destApi = { init: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
+    const destApi = {
+      init: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined)
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
     const mockApi = {
       get disconnectAllowed() {
         return disconnectAllowedValues[disconnectAllowedValues.length - 1] ?? true
