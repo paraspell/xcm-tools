@@ -23,7 +23,17 @@ describe('getBypassResultWithRetries', () => {
       .mockResolvedValueOnce({ dryRunError: { reason: 'retry-needed' } })
       .mockResolvedValueOnce({})
     await getBypassResultWithRetries({ buildTx }, internalFn)
-    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined)
+    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined, true)
+  })
+
+  it('succeeds when only the bypass-built tx passes the balance check', async () => {
+    const buildTx = vi.fn((a?: string, _r?: boolean, isDryRunBypass?: boolean) =>
+      isDryRunBypass ? Promise.resolve({ a }) : Promise.reject(new AmountTooLowError('low'))
+    )
+    const internalFn = vi.fn(() => Promise.resolve({}))
+    const res = await getBypassResultWithRetries({ buildTx }, internalFn)
+    expect(res).toEqual({})
+    expect(internalFn).toHaveBeenCalledWith({ buildTx, tx: { a: '1' }, useRootOrigin: true })
   })
 
   it('retries with increasing amounts until success', async () => {
@@ -66,9 +76,9 @@ describe('getBypassResultWithRetries', () => {
     const res = await getBypassResultWithRetries({ buildTx }, internalFn)
     expect(res).toEqual({})
     expect(buildTx).toHaveBeenCalledTimes(3)
-    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined)
-    expect(buildTx).toHaveBeenNthCalledWith(2, '0.2', false)
-    expect(buildTx).toHaveBeenNthCalledWith(3, '0.04', false)
+    expect(buildTx).toHaveBeenNthCalledWith(1, '1', undefined, true)
+    expect(buildTx).toHaveBeenNthCalledWith(2, '0.2', false, true)
+    expect(buildTx).toHaveBeenNthCalledWith(3, '0.04', false, true)
   })
 
   it('after exhausting reduced retries performs final attempt', async () => {
@@ -113,6 +123,6 @@ describe('getBypassResultWithRetries', () => {
       .mockResolvedValueOnce({})
     const res = await getBypassResultWithRetries({ buildTx }, internalFn, { a: undefined })
     expect(res).toEqual({})
-    expect(buildTx).toHaveBeenCalledWith('1', undefined)
+    expect(buildTx).toHaveBeenCalledWith('1', undefined, true)
   })
 })

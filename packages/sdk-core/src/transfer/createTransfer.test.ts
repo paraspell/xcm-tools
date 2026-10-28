@@ -292,6 +292,23 @@ describe('send', () => {
     )
   })
 
+  it('should forward isDryRunBypass to the chain transfer', async () => {
+    const options = {
+      api: apiMock,
+      from: 'Acala',
+      to: 'Acala',
+      currency: { symbol: 'DOT', amount: '100' },
+      recipient: 'some-address',
+      isDryRunBypass: true
+    } as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    const transferSpy = vi.spyOn(originChainMock, 'transfer')
+
+    await createTransfer(options)
+
+    expect(transferSpy).toHaveBeenCalledWith(expect.objectContaining({ isDryRunBypass: true }))
+  })
+
   it('should normalize location when present', async () => {
     const location = { parents: 1, interior: { X1: { Parachain: 1000 } } }
     vi.mocked(resolveAsset).mockReturnValue({

@@ -537,7 +537,10 @@ export class GeneralBuilder<
       )
     }
 
-    const { tx, options } = await this.buildInternal()
+    const { tx, options } = await new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      isDryRunBypass: true
+    }).buildInternal()
     return buildDryRun(
       this.api,
       tx,
@@ -552,8 +555,12 @@ export class GeneralBuilder<
   protected createTxFactory<TOptions extends TTransferBaseOptions<TApi, TRes, TSigner>>(
     this: GeneralBuilder<TApi, TRes, TSigner, TOptions, TCustomChain>
   ): TTxFactory<TRes> {
-    return (amount, relative) =>
-      createTxOverrideAmount({ ...this._options, api: this.api }, this, amount, relative)
+    return (amount, relative, isDryRunBypass) => {
+      const builder = isDryRunBypass
+        ? new GeneralBuilder(this.api, this.batchManager, { ...this._options, isDryRunBypass })
+        : this
+      return createTxOverrideAmount({ ...this._options, api: this.api }, builder, amount, relative)
+    }
   }
 
   /**

@@ -117,6 +117,7 @@ export const createTransfer = async <TApi, TRes, TSigner, TCustomChain extends s
     method,
     transactOptions,
     isAmountAll,
+    isDryRunBypass,
     keepAlive
   } = options
 
@@ -146,6 +147,7 @@ export const createTransfer = async <TApi, TRes, TSigner, TCustomChain extends s
     method,
     transactOptions,
     isAmountAll,
+    isDryRunBypass,
     keepAlive
   })
 }

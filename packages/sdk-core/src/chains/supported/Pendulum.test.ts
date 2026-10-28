@@ -4,11 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { getChain, getLocalTransferAmount } from '../../utils'
+import { getChain } from '../../utils'
 import type Pendulum from './Pendulum'
 
 vi.mock('../../pallets/xTokens')
-vi.mock('../../utils/transfer')
 
 describe('Pendulum', () => {
   let chain: Pendulum<unknown, unknown, unknown>
@@ -76,18 +75,17 @@ describe('Pendulum', () => {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n, assetId: '1' },
       recipient: 'address',
-      balance: 1000n
+      balance: 1000n,
+      keepAlive: true
     } as TTransferLocalOptions<unknown, unknown, unknown>
-
-    vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     chain.transferLocalNonNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
-      module: 'Currencies',
-      method: 'transfer',
+      module: 'Tokens',
+      method: 'transfer_keep_alive',
       params: {
         dest: { Id: 'address' },
         currency_id: { XCM: 1 },

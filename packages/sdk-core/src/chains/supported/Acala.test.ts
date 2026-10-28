@@ -41,61 +41,28 @@ describe('Acala', () => {
   })
 
   const mockApi = {
-    deserializeExtrinsics: vi.fn(),
-    getPaymentInfo: vi.fn()
+    deserializeExtrinsics: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
-  it('should call transferLocalNativeAsset', async () => {
+  it('should use Balances keep alive transfer for native asset', async () => {
     const mockOptions = {
       api: mockApi,
       assetInfo: { symbol: 'ACA', amount: 100n },
-      recipient: 'address',
-      balance: 1000n
-    } as TTransferLocalOptions<unknown, unknown, unknown>
-
-    vi.mocked(getLocalTransferAmount).mockReturnValue(100n)
-
-    const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
-
-    await chain.transferLocalNativeAsset(mockOptions)
-
-    expect(spy).toHaveBeenCalledWith({
-      module: 'Currencies',
-      method: 'transfer_native_currency',
-      params: {
-        dest: { Id: 'address' },
-        amount: 100n
-      }
-    })
-  })
-
-  it('should transfer balance minus fee when amount is ALL', async () => {
-    vi.spyOn(mockApi, 'getPaymentInfo').mockResolvedValue({
-      partialFee: 10n,
-      weight: { refTime: 0n, proofSize: 0n }
-    })
-
-    const mockOptions = {
-      api: mockApi,
-      assetInfo: { symbol: 'ACA', amount: 100n },
-      sender: 'sender',
       recipient: 'address',
       balance: 1000n,
-      isAmountAll: true
+      keepAlive: true
     } as TTransferLocalOptions<unknown, unknown, unknown>
-
-    vi.mocked(getLocalTransferAmount).mockReturnValue(990n)
 
     const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
     await chain.transferLocalNativeAsset(mockOptions)
 
     expect(spy).toHaveBeenCalledWith({
-      module: 'Currencies',
-      method: 'transfer_native_currency',
+      module: 'Balances',
+      method: 'transfer_keep_alive',
       params: {
         dest: { Id: 'address' },
-        amount: 990n
+        value: 100n
       }
     })
   })

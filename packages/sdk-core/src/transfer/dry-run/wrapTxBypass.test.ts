@@ -149,6 +149,7 @@ describe('wrapTxBypass', () => {
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '100',
       assetId: undefined,
       amount: 1000n
     } as WithAmount<TAssetInfo>
@@ -178,7 +179,7 @@ describe('wrapTxBypass', () => {
     ])
   })
 
-  it('sentAssetMintMode="bypass" still reads balance once and mints +1000 preview amount', async () => {
+  it('sentAssetMintMode="bypass" still reads balance once and mints amount + 1000 + existential deposit', async () => {
     const { api, spies } = mkApi()
     const chain = 'Acala'
     const address = 'Alice'
@@ -193,6 +194,7 @@ describe('wrapTxBypass', () => {
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '100',
       assetId: undefined,
       amount: 5n
     } as WithAmount<TAssetInfo>
@@ -210,6 +212,12 @@ describe('wrapTxBypass', () => {
     expect(parseUnits).toHaveBeenCalledTimes(2)
     expect(parseUnits).toHaveBeenNthCalledWith(1, '1000', nativeAsset.decimals)
     expect(parseUnits).toHaveBeenNthCalledWith(2, '1000', mainAsset.decimals)
+    expect(mint).toHaveBeenLastCalledWith(
+      api,
+      address,
+      expect.objectContaining({ symbol: 'USDT', amount: 1105n }),
+      2000n
+    )
 
     expect(getAssetBalanceInternal).toHaveBeenCalledOnce()
 
@@ -243,6 +251,7 @@ describe('wrapTxBypass (new branches)', () => {
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '100',
       assetId: undefined,
       amount: 5n
     } as WithAmount<TAssetInfo>
@@ -308,6 +317,7 @@ describe('wrapTxBypass (new branches)', () => {
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '100',
       assetId: undefined,
       amount: 7n
     } as WithAmount<TAssetInfo>
@@ -355,6 +365,7 @@ describe('wrapTxBypass (new branches)', () => {
     const mainAsset = {
       symbol: 'USDT',
       decimals: 6,
+      existentialDeposit: '100',
       assetId: undefined,
       amount: 1000n
     } as WithAmount<TAssetInfo>
