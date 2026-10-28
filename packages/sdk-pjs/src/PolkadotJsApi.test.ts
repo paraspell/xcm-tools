@@ -2024,6 +2024,24 @@ describe('PolkadotJsApi', () => {
       expect(findAssetInfoSpy).toHaveBeenCalledWith('Hydration', { id: assetId })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
+
+    it('prefers an explicit fee asset over the account currency map on Hydration', async () => {
+      const assetId = '1001'
+      accountCurrencyMapMock.mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue(assetId)
+      } as unknown as Codec)
+
+      const mappedAsset = { ...usdtAsset, symbol: 'MAPPED' }
+      vi.spyOn(polkadotApi, 'findAssetInfoOrThrow').mockReturnValue(mappedAsset)
+
+      const result = await polkadotApi.resolveFeeAsset({
+        ...baseOptions,
+        feeAsset: usdtAsset
+      })
+
+      expect(accountCurrencyMapMock).not.toHaveBeenCalled()
+      expect(result).toEqual({ isCustomAsset: false, asset: usdtAsset })
+    })
   })
 
   describe('getXcmWeight', () => {

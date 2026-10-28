@@ -263,7 +263,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
   async resolveFeeAsset(options: TDryRunCallBaseOptions<Extrinsic>) {
     const { chain, address } = options
 
-    if (!chain.startsWith('Hydration')) {
+    if (!chain.startsWith('Hydration') || options.feeAsset) {
       return { isCustomAsset: false, asset: this.resolveDefaultFeeAsset(options) }
     }
 

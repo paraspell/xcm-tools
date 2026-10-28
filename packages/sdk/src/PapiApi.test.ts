@@ -209,6 +209,21 @@ describe('PapiApi', () => {
       expect(findAssetSpy).toHaveBeenCalledWith('Hydration', { id: '1001' })
       expect(result).toEqual({ isCustomAsset: true, asset: mappedAsset })
     })
+
+    it('prefers an explicit fee asset over the account currency map on Hydration', async () => {
+      const explicit = { symbol: 'USDT' } as TAssetInfo
+      accountCurrencyMapGetValue.mockResolvedValueOnce('1001')
+      const findAssetSpy = vi.spyOn(papiApi, 'findAssetInfoOrThrow')
+
+      const result = await papiApi.resolveFeeAsset({
+        ...createOptions(),
+        feeAsset: explicit
+      })
+
+      expect(accountCurrencyMapGetValue).not.toHaveBeenCalled()
+      expect(findAssetSpy).not.toHaveBeenCalled()
+      expect(result).toEqual({ isCustomAsset: false, asset: explicit })
+    })
   })
 
   it('should return PAPI api type', () => {
