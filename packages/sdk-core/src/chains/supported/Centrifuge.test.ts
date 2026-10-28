@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
+import type { TTransferInternalOptions, TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getChain } from '../../utils'
 import type Centrifuge from './Centrifuge'
 
@@ -28,6 +28,30 @@ describe('Centrifuge', () => {
     expect(centrifuge.info).toBe('centrifuge')
     expect(centrifuge.ecosystem).toBe('Polkadot')
     expect(centrifuge.version).toBe(Version.V4)
+  })
+
+  it('temporarily disables sending and receiving while chain is halted', () => {
+    expect(centrifuge.isSendingTempDisabled()).toBe(true)
+    expect(centrifuge.isReceivingTempDisabled()).toBe(true)
+
+    const options = {
+      assetInfo: { symbol: 'CFG', amount: 100n },
+      to: 'Hydration'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    expect(() => centrifuge.throwIfTempDisabled(options)).toThrow(
+      'Sending CFG from Centrifuge is temporarily disabled'
+    )
+
+    const receivingOptions = {
+      assetInfo: { symbol: 'DOT', amount: 100n },
+      to: 'Centrifuge'
+    } as TTransferInternalOptions<unknown, unknown, unknown>
+
+    const hydration = getChain<unknown, unknown, unknown, 'Hydration'>('Hydration')
+    expect(() => hydration.throwIfTempDisabled(receivingOptions, 'Centrifuge')).toThrow(
+      'Receiving on Centrifuge is temporarily disabled'
+    )
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {
