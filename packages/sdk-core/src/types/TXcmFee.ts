@@ -13,7 +13,11 @@ import type { TWeight } from './TTransfer'
 
 export type TXcmFeeSwapConfig = TSwapConfig & { amountOut: bigint }
 
-export type TTxFactory<TRes> = (amount?: string, relative?: boolean) => Promise<TRes>
+export type TTxFactory<TRes> = (
+  amount?: string,
+  relative?: boolean,
+  isDryRunBypass?: boolean
+) => Promise<TRes>
 
 export type TGetXcmFeeBaseOptions<
   TRes,

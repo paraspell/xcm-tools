@@ -821,16 +821,16 @@ exports[`XCM - e2e > Hydration to AssetHub transfer - miscellaneous scenarios > 
 
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Acala - (ACA) 1`] = `
 {
-  "method": "transferNativeCurrency",
-  "module": "currencies",
+  "method": "transferAllowDeath",
+  "module": "balances",
   "params": {
     "args": {
-      "amount": 5000000000000,
       "dest": {
         "id": "21hHuaqNdUWQH6WU95WGjB3uYmNuH29SXVivCJN3EWLDm6fL",
       },
+      "value": 5000000000000,
     },
-    "callIndex": "0x0c01",
+    "callIndex": "0x0a00",
   },
 }
 `;
@@ -8871,216 +8871,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
 }
 `;
 
-exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (HDX) 2`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v5": [
-          {
-            "fun": {
-              "fungible": 21780606801,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-          {
-            "fun": {
-              "fungible": 5000000000000,
-            },
-            "id": {
-              "interior": {
-                "x1": [
-                  {
-                    "globalConsensus": {
-                      "kusama": null,
-                    },
-                  },
-                ],
-              },
-              "parents": 2,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v5": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 2,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "depositReserveAsset": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 5000000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "globalConsensus": {
-                              "kusama": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 2,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "x1": [
-                    {
-                      "globalConsensus": {
-                        "ethereum": {
-                          "chainId": 1,
-                        },
-                      },
-                    },
-                  ],
-                },
-                "parents": 2,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 1,
-                      },
-                      "id": {
-                        "interior": {
-                          "x1": [
-                            {
-                              "globalConsensus": {
-                                "kusama": null,
-                              },
-                            },
-                          ],
-                        },
-                        "parents": 1,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allOf": {
-                          "fun": "Fungible",
-                          "id": {
-                            "interior": {
-                              "x1": [
-                                {
-                                  "globalConsensus": {
-                                    "kusama": null,
-                                  },
-                                },
-                              ],
-                            },
-                            "parents": 1,
-                          },
-                        },
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountKey20": {
-                              "key": "0x1501c1413e4178c38567ada8945a80351f7b8496",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-                {
-                  "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
-                },
-              ],
-            },
-          },
-          {
-            "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
-          },
-        ],
-      },
-      "dest": {
-        "v5": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v5": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x6b0d",
-  },
-}
-`;
-
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (HEURC) 1`] = `
 {
   "method": "transfer",
@@ -9884,6 +9674,21 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
     "args": {
       "amount": 5000000,
       "currency_id": 1044,
+      "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "callIndex": "0x4f00",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aHYPE) 1`] = `
+{
+  "method": "transfer",
+  "module": "currencies",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "currency_id": 1010,
       "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "callIndex": "0x4f00",
@@ -11519,7 +11324,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Jamton 
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Jamton - (XAUH) 1`] = `
 {
   "method": "transfer",
-  "module": "tokens",
+  "module": "currencies",
   "params": {
     "args": {
       "amount": "5000000000000000000",
@@ -11530,7 +11335,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Jamton 
         "id": "tg6zyRBUboa8x2evkXirU6ceTubGLH54JYUKNnpPmHyoiLv6S",
       },
     },
-    "callIndex": "0x0c00",
+    "callIndex": "0x1000",
   },
 }
 `;
@@ -11708,16 +11513,16 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Karura 
 
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Karura - (KAR) 1`] = `
 {
-  "method": "transferNativeCurrency",
-  "module": "currencies",
+  "method": "transferAllowDeath",
+  "module": "balances",
   "params": {
     "args": {
-      "amount": 5000000000000,
       "dest": {
         "id": "p7yPbkZrtkwxyhYL1kDyNX4Fo6KAetQ9ccexw5SJo9FCesv",
       },
+      "value": 5000000000000,
     },
-    "callIndex": "0x0c01",
+    "callIndex": "0x0a00",
   },
 }
 `;
@@ -12072,7 +11877,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Karura 
     "args": {
       "amount": 5000000000000,
       "currency_id": {
-        "token": "AUSD",
+        "token": "KUSD",
       },
       "dest": {
         "id": "p7yPbkZrtkwxyhYL1kDyNX4Fo6KAetQ9ccexw5SJo9FCesv",
@@ -12318,7 +12123,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Peaq - 
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (ASTR) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": "5000000000000000000",
@@ -12329,7 +12134,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12337,7 +12142,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (BNC) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000000000,
@@ -12348,7 +12153,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12356,7 +12161,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (BRLA) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": "5000000000000000000",
@@ -12367,7 +12172,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12375,7 +12180,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (BRZ) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": "5000000000000000000",
@@ -12386,7 +12191,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12394,7 +12199,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (DOT) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 50000000000,
@@ -12405,7 +12210,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12413,7 +12218,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (GLMR) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": "5000000000000000000",
@@ -12424,7 +12229,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12432,7 +12237,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (HDX) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000000000,
@@ -12443,7 +12248,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12451,7 +12256,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (PDEX) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000000000,
@@ -12462,7 +12267,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12486,7 +12291,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (PINK) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 50000000000,
@@ -12497,7 +12302,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12505,7 +12310,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (USDC) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000,
@@ -12516,7 +12321,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12524,7 +12329,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (USDC.axl) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000,
@@ -12535,7 +12340,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12543,7 +12348,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (USDT) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 5000000,
@@ -12554,7 +12359,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -12562,7 +12367,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulum - (vDOT) 1`] = `
 {
   "method": "transfer",
-  "module": "currencies",
+  "module": "tokens",
   "params": {
     "args": {
       "amount": 50000000000,
@@ -12573,23 +12378,7 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Pendulu
         "id": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
       },
     },
-    "callIndex": "0x3400",
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfer > should create local transfer tx on Penpal - (UNIT) 1`] = `
-{
-  "method": "transferAllowDeath",
-  "module": "balances",
-  "params": {
-    "args": {
-      "dest": {
-        "id": "5CtQBLAGvnVfGyTK87f2p1ZWEHxK2tJ6ZbT7tAwg3sMpmXyC",
-      },
-      "value": 5000000000000,
-    },
-    "callIndex": "0x0a00",
+    "callIndex": "0x3500",
   },
 }
 `;
@@ -13146,159 +12935,6 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Xode - 
       "value": 5000000000000,
     },
     "callIndex": "0x0a00",
-  },
-}
-`;
-
-exports[`XCM - e2e > Local transfer > should create local transfer tx on Xode - (XON) 2`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v5": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v5": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "here": null,
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 50000000000,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 0,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v5": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v5": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
   },
 }
 `;
@@ -21092,88 +20728,6 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara 
       },
     },
     "callIndex": "0x1f09",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin AssetHubWestend > ParaToPara > should create transfer tx from AssetHubWestend to Penpal - (WND) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 5000000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "localReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "depositAsset": {
-              "assets": {
-                "wild": {
-                  "allCounted": 1,
-                },
-              },
-              "beneficiary": {
-                "interior": {
-                  "x1": [
-                    {
-                      "accountId32": {
-                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                        "network": null,
-                      },
-                    },
-                  ],
-                },
-                "parents": 0,
-              },
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 2042,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "localReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
   },
 }
 `;
@@ -34325,6 +33879,216 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Ethereum - (KSM) 1`] = `
+{
+  "method": "transferAssetsUsingTypeAndThen",
+  "module": "polkadotXcm",
+  "params": {
+    "args": {
+      "assets": {
+        "v5": [
+          {
+            "fun": {
+              "fungible": 21780606801,
+            },
+            "id": {
+              "interior": {
+                "here": null,
+              },
+              "parents": 1,
+            },
+          },
+          {
+            "fun": {
+              "fungible": 5000000000000,
+            },
+            "id": {
+              "interior": {
+                "x1": [
+                  {
+                    "globalConsensus": {
+                      "kusama": null,
+                    },
+                  },
+                ],
+              },
+              "parents": 2,
+            },
+          },
+        ],
+      },
+      "assets_transfer_type": {
+        "destinationReserve": null,
+      },
+      "custom_xcm_on_dest": {
+        "v5": [
+          {
+            "setAppendix": [
+              {
+                "depositAsset": {
+                  "assets": {
+                    "wild": {
+                      "allCounted": 2,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "x1": [
+                        {
+                          "accountId32": {
+                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                            "network": null,
+                          },
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            "depositReserveAsset": {
+              "assets": {
+                "definite": [
+                  {
+                    "fun": {
+                      "fungible": 5000000000000,
+                    },
+                    "id": {
+                      "interior": {
+                        "x1": [
+                          {
+                            "globalConsensus": {
+                              "kusama": null,
+                            },
+                          },
+                        ],
+                      },
+                      "parents": 2,
+                    },
+                  },
+                ],
+              },
+              "dest": {
+                "interior": {
+                  "x1": [
+                    {
+                      "globalConsensus": {
+                        "ethereum": {
+                          "chainId": 1,
+                        },
+                      },
+                    },
+                  ],
+                },
+                "parents": 2,
+              },
+              "xcm": [
+                {
+                  "buyExecution": {
+                    "fees": {
+                      "fun": {
+                        "fungible": 1,
+                      },
+                      "id": {
+                        "interior": {
+                          "x1": [
+                            {
+                              "globalConsensus": {
+                                "kusama": null,
+                              },
+                            },
+                          ],
+                        },
+                        "parents": 1,
+                      },
+                    },
+                    "weightLimit": {
+                      "unlimited": null,
+                    },
+                  },
+                },
+                {
+                  "depositAsset": {
+                    "assets": {
+                      "wild": {
+                        "allOf": {
+                          "fun": "Fungible",
+                          "id": {
+                            "interior": {
+                              "x1": [
+                                {
+                                  "globalConsensus": {
+                                    "kusama": null,
+                                  },
+                                },
+                              ],
+                            },
+                            "parents": 1,
+                          },
+                        },
+                      },
+                    },
+                    "beneficiary": {
+                      "interior": {
+                        "x1": [
+                          {
+                            "accountKey20": {
+                              "key": "0x1501c1413e4178c38567ada8945a80351f7b8496",
+                              "network": null,
+                            },
+                          },
+                        ],
+                      },
+                      "parents": 0,
+                    },
+                  },
+                },
+                {
+                  "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
+                },
+              ],
+            },
+          },
+          {
+            "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
+          },
+        ],
+      },
+      "dest": {
+        "v5": {
+          "interior": {
+            "x1": [
+              {
+                "parachain": 1000,
+              },
+            ],
+          },
+          "parents": 1,
+        },
+      },
+      "fees_transfer_type": {
+        "destinationReserve": null,
+      },
+      "remote_fees_id": {
+        "v5": {
+          "interior": {
+            "here": null,
+          },
+          "parents": 1,
+        },
+      },
+      "weight_limit": {
+        "unlimited": null,
+      },
+    },
+    "callIndex": "0x6b0d",
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > should create transfer tx from Hydration to Jamton - (KSM) 1`] = `
 {
   "method": "transferAssetsUsingTypeAndThen",
@@ -38425,7 +38189,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
         "v5": [
           {
             "fun": {
-              "fungible": "1357751551889558789030",
+              "fungible": "1319511798463211982778",
             },
             "id": {
               "interior": {
@@ -41973,869 +41737,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Pendulum > ParaToPara > shoul
       },
     },
     "callIndex": "0x3600",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to AssetHubWestend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "depositAsset": {
-              "assets": {
-                "wild": {
-                  "allCounted": 1,
-                },
-              },
-              "beneficiary": {
-                "interior": {
-                  "x1": [
-                    {
-                      "accountId32": {
-                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                        "network": null,
-                      },
-                    },
-                  ],
-                },
-                "parents": 0,
-              },
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to BridgeHubWestend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "x1": [
-                    {
-                      "parachain": 1002,
-                    },
-                  ],
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 6703722169,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 1,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to CollectivesWestend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "x1": [
-                    {
-                      "parachain": 1001,
-                    },
-                  ],
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 6703722169,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 1,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to CoretimeWestend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "x1": [
-                    {
-                      "parachain": 1005,
-                    },
-                  ],
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 6703722169,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 1,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to PeopleWestend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "x1": [
-                    {
-                      "parachain": 1004,
-                    },
-                  ],
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 6703722169,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 1,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Penpal > ParaToPara > should create transfer tx from Penpal to Westend - (DOT) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "polkadotXcm",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 50000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 1,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "destinationReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "setAppendix": [
-              {
-                "depositAsset": {
-                  "assets": {
-                    "wild": {
-                      "allCounted": 1,
-                    },
-                  },
-                  "beneficiary": {
-                    "interior": {
-                      "x1": [
-                        {
-                          "accountId32": {
-                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                            "network": null,
-                          },
-                        },
-                      ],
-                    },
-                    "parents": 0,
-                  },
-                },
-              },
-            ],
-          },
-          {
-            "initiateTeleport": {
-              "assets": {
-                "definite": [
-                  {
-                    "fun": {
-                      "fungible": 50000000000,
-                    },
-                    "id": {
-                      "interior": {
-                        "here": null,
-                      },
-                      "parents": 1,
-                    },
-                  },
-                ],
-              },
-              "dest": {
-                "interior": {
-                  "here": null,
-                },
-                "parents": 1,
-              },
-              "xcm": [
-                {
-                  "buyExecution": {
-                    "fees": {
-                      "fun": {
-                        "fungible": 6703722169,
-                      },
-                      "id": {
-                        "interior": {
-                          "here": null,
-                        },
-                        "parents": 0,
-                      },
-                    },
-                    "weightLimit": {
-                      "unlimited": null,
-                    },
-                  },
-                },
-                {
-                  "depositAsset": {
-                    "assets": {
-                      "wild": {
-                        "allCounted": 1,
-                      },
-                    },
-                    "beneficiary": {
-                      "interior": {
-                        "x1": [
-                          {
-                            "accountId32": {
-                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                              "network": null,
-                            },
-                          },
-                        ],
-                      },
-                      "parents": 0,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 1000,
-              },
-            ],
-          },
-          "parents": 1,
-        },
-      },
-      "fees_transfer_type": {
-        "destinationReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 1,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x1f0d",
   },
 }
 `;
@@ -47359,88 +46260,6 @@ exports[`XCM - e2e > Transfer scenarios for origin Westend > ParaToPara > should
       },
       "remote_fees_id": {
         "v5": {
-          "interior": {
-            "here": null,
-          },
-          "parents": 0,
-        },
-      },
-      "weight_limit": {
-        "unlimited": null,
-      },
-    },
-    "callIndex": "0x630d",
-  },
-}
-`;
-
-exports[`XCM - e2e > Transfer scenarios for origin Westend > ParaToPara > should create transfer tx from Westend to Penpal - (WND) 1`] = `
-{
-  "method": "transferAssetsUsingTypeAndThen",
-  "module": "xcmPallet",
-  "params": {
-    "args": {
-      "assets": {
-        "v4": [
-          {
-            "fun": {
-              "fungible": 5000000000000,
-            },
-            "id": {
-              "interior": {
-                "here": null,
-              },
-              "parents": 0,
-            },
-          },
-        ],
-      },
-      "assets_transfer_type": {
-        "localReserve": null,
-      },
-      "custom_xcm_on_dest": {
-        "v4": [
-          {
-            "depositAsset": {
-              "assets": {
-                "wild": {
-                  "allCounted": 1,
-                },
-              },
-              "beneficiary": {
-                "interior": {
-                  "x1": [
-                    {
-                      "accountId32": {
-                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                        "network": null,
-                      },
-                    },
-                  ],
-                },
-                "parents": 0,
-              },
-            },
-          },
-        ],
-      },
-      "dest": {
-        "v4": {
-          "interior": {
-            "x1": [
-              {
-                "parachain": 2042,
-              },
-            ],
-          },
-          "parents": 0,
-        },
-      },
-      "fees_transfer_type": {
-        "localReserve": null,
-      },
-      "remote_fees_id": {
-        "v4": {
           "interior": {
             "here": null,
           },

@@ -15,7 +15,12 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
-import { assertHasId, buildErc20StorageMint, handleExecuteTransfer } from '../../utils'
+import {
+  assertHasId,
+  buildErc20StorageMint,
+  getLocalTransferAmount,
+  handleExecuteTransfer
+} from '../../utils'
 import { hasMatchingFeeAssetReserve } from '../../utils/transfer/getFeeAssetInfo'
 import SubstrateChain from '../SubstrateChain'
 
@@ -121,24 +126,20 @@ class Hydration<TApi, TRes, TSigner, TCustomChain extends string = never>
   transferLocalNonNativeAsset(
     options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
   ): TRes {
-    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive, balance } = options
+    const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
     assertHasId(asset)
 
     const currencyId = Number(asset.assetId)
 
     if (asset.erc20) {
-      const amount = isAmountAll
-        ? balance - (keepAlive ? BigInt(asset.existentialDeposit) : 0n)
-        : asset.amount
-
       return api.deserializeExtrinsics({
         module: 'Currencies',
         method: 'transfer',
         params: {
           dest: recipient,
           currency_id: currencyId,
-          amount
+          amount: getLocalTransferAmount(options)
         }
       })
     }

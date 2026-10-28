@@ -640,6 +640,48 @@ describe('Parachain', () => {
 
       expect(getBalanceSpy).toHaveBeenCalledWith(api, '5Sender', options.assetInfo)
     })
+
+    it('should use the minted balance for dry run bypass keepAlive transfers', async () => {
+      const options = {
+        api,
+        assetInfo: { symbol: 'WETH', assetId: '123', amount: 100n, existentialDeposit: '10' },
+        sender: '5Sender',
+        recipient: '0x123',
+        isAmountAll: false,
+        isDryRunBypass: true,
+        keepAlive: true
+      } as TTransferInternalOptions<unknown, unknown, unknown>
+
+      vi.spyOn(chain, 'getBalance').mockResolvedValue(30n)
+      const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
+
+      await chain.transferLocal(options)
+
+      expect(transferLocalNonNativeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ balance: 110n })
+      )
+    })
+
+    it('should not top up the balance for dry run bypass when sending ALL', async () => {
+      const options = {
+        api,
+        assetInfo: { symbol: 'WETH', assetId: '123', amount: 2n, existentialDeposit: '10' },
+        sender: '5Sender',
+        recipient: '0x123',
+        isAmountAll: true,
+        isDryRunBypass: true,
+        keepAlive: true
+      } as TTransferInternalOptions<unknown, unknown, unknown>
+
+      vi.spyOn(chain, 'getBalance').mockResolvedValue(0n)
+      const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
+
+      await chain.transferLocal(options)
+
+      expect(transferLocalNonNativeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ balance: 0n })
+      )
+    })
   })
 
   describe('transferLocalNativeAsset', () => {

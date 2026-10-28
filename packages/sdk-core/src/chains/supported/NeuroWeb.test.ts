@@ -126,7 +126,7 @@ describe('NeuroWeb', () => {
       })
     })
 
-    it('should call Assets.transfer with full balance when isAmountAll is true', () => {
+    it('should call Assets.transfer_all when isAmountAll is true', () => {
       const expectedResult = Symbol('transfer-result')
 
       deserializeExtrinsics.mockReturnValue(expectedResult)
@@ -136,18 +136,19 @@ describe('NeuroWeb', () => {
         assetInfo: { symbol: 'USDT', assetId: '7', amount: 321n },
         recipient: '5CLocalDest',
         balance: 777n,
-        isAmountAll: true
+        isAmountAll: true,
+        keepAlive: true
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       const result = chain.transferLocalNonNativeAsset(mockOptions)
 
       expect(deserializeExtrinsics).toHaveBeenCalledWith({
         module: 'Assets',
-        method: 'transfer',
+        method: 'transfer_all',
         params: {
           id: 7n,
-          target: mockOptions.recipient,
-          amount: mockOptions.balance
+          dest: mockOptions.recipient,
+          keep_alive: true
         }
       })
       expect(result).toBe(expectedResult)

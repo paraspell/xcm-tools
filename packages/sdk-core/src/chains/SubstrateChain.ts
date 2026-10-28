@@ -39,6 +39,7 @@ import type { TMintConfig, TSetBalanceRes } from '../types/TAssets'
 import {
   assertHasId,
   assertSender,
+  calcSentAssetPreviewMint,
   createBeneficiaryLocation,
   getChain,
   handleExecuteTransfer,
@@ -354,7 +355,16 @@ abstract class SubstrateChain<
   async transferLocal(
     options: TTransferInternalOptions<TApi, TRes, TSigner, TCustomChain>
   ): Promise<TRes> {
-    const { api, assetInfo: asset, feeAsset, recipient, sender, isAmountAll, keepAlive } = options
+    const {
+      api,
+      assetInfo: asset,
+      feeAsset,
+      recipient,
+      sender,
+      isAmountAll,
+      isDryRunBypass,
+      keepAlive
+    } = options
 
     if (isTLocation(recipient)) {
       throw new InvalidAddressError('Location address is not supported for local transfers')
@@ -372,6 +382,9 @@ abstract class SubstrateChain<
     if (isAmountAll || keepAlive) {
       assertSender(sender)
       balance = await this.getBalance(api, sender, asset)
+      if (isDryRunBypass && !isAmountAll) {
+        balance += calcSentAssetPreviewMint(asset, balance, keepAlive)
+      }
     } else {
       balance = MIN_AMOUNT
     }

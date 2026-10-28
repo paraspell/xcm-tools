@@ -143,4 +143,5 @@ export type TSender<TSigner> = string | TSigner
 
 export type TBuilderInternalOptions<TSigner> = {
   senderSource?: TSender<TSigner> | WalletClient
+  isDryRunBypass?: boolean
 }

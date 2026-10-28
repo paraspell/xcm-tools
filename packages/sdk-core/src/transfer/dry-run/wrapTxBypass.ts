@@ -14,6 +14,7 @@ import {
 import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
 import { BatchMode } from '../../types'
 import type { TSetBalanceRes } from '../../types/TAssets'
+import { calcSentAssetPreviewMint } from '../../utils/dryRun'
 import { parseUnits } from '../../utils/unit'
 
 const resolveBypassMintAmount = <TCustomChain extends string = never>(
@@ -72,13 +73,6 @@ const resultToExtrinsics = <TApi, TRes, TSigner, TCustomChain extends string = n
       ? [api.callDispatchAsMethod(api.deserializeExtrinsics(balanceTx), address)]
       : [api.deserializeExtrinsics(balanceTx)])
   ]
-}
-
-export const calcPreviewMintAmount = (balance: bigint, desired: bigint): bigint | null => {
-  // Ensure mint amount is at least 2 to avoid Rust panic
-  if (desired <= 0n) return null
-  const missing = desired - balance
-  return missing > 0n ? missing : null
 }
 
 const mintBonusForSent = <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -167,11 +161,12 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
 
     let mintAmount: bigint | null
     if (options?.sentAssetMintMode === 'bypass') {
-      mintAmount = parseUnits(bypassMintAmount, sentAsset.decimals) + sentAsset.amount
+      mintAmount =
+        parseUnits(bypassMintAmount, sentAsset.decimals) +
+        sentAsset.amount +
+        BigInt(sentAsset.existentialDeposit)
     } else {
-      const keepAliveBuffer = dryRunOptions.keepAlive ? BigInt(sentAsset.existentialDeposit) : 0n
-      const desiredBalance = sentAsset.amount + keepAliveBuffer
-      const missing = calcPreviewMintAmount(balance, desiredBalance) ?? 0n
+      const missing = calcSentAssetPreviewMint(sentAsset, balance, dryRunOptions.keepAlive)
       const total = missing + bonus
       mintAmount = total > 0n ? total : null
     }

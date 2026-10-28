@@ -5,14 +5,8 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type {
-  IXTokensTransfer,
-  TTransferLocalOptions,
-  TXcmAsset,
-  TXTokensTransferOptions
-} from '../../types'
+import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
-import { getLocalTransferAmount } from '../../utils/transfer'
 import SubstrateChain from '../SubstrateChain'
 
 class Pendulum<TApi, TRes, TSigner, TCustomChain extends string = never>
@@ -46,22 +40,11 @@ class Pendulum<TApi, TRes, TSigner, TCustomChain extends string = never>
     )
   }
 
-  transferLocalNonNativeAsset(
-    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
-  ): TRes {
-    const { api, assetInfo: asset, recipient } = options
-
-    const amount = getLocalTransferAmount(options)
-
-    return api.deserializeExtrinsics({
-      module: 'Currencies',
-      method: 'transfer',
-      params: {
-        dest: { Id: recipient },
-        currency_id: this.getCustomCurrencyId(api, asset),
-        amount
-      }
-    })
+  protected getLocalCurrencyId(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ): TXcmAsset {
+    return this.getCustomCurrencyId(api, asset)
   }
 }
 

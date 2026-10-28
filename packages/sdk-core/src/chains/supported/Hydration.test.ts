@@ -12,7 +12,7 @@ import type {
   TSerializedExtrinsics,
   TTransferLocalOptions
 } from '../../types'
-import { getChain, handleExecuteTransfer } from '../../utils'
+import { getChain, getLocalTransferAmount, handleExecuteTransfer } from '../../utils'
 import { buildErc20StorageMint } from '../../utils/asset/hydrationErc20Mint'
 import SubstrateChain from '../SubstrateChain'
 import type Hydration from './Hydration'
@@ -396,17 +396,22 @@ describe('Hydration', () => {
       })
     })
 
-    it('should use Currencies.transfer for ERC20 assets', () => {
+    it('should use Currencies.transfer with the keep alive checked amount for ERC20 assets', () => {
       const mockInput = {
         api: mockApi,
         assetInfo: { symbol: 'HOLLAR', assetId: '222', erc20: HOLLAR_ERC20, amount: 1000n },
-        recipient: '0x1234567890abcdef'
+        recipient: '0x1234567890abcdef',
+        keepAlive: true,
+        balance: 5000n
       } as TTransferLocalOptions<unknown, unknown, unknown>
+
+      vi.mocked(getLocalTransferAmount).mockReturnValue(1000n)
 
       const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
 
       hydration.transferLocalNonNativeAsset(mockInput)
 
+      expect(getLocalTransferAmount).toHaveBeenCalledWith(mockInput)
       expect(spy).toHaveBeenCalledWith({
         module: 'Currencies',
         method: 'transfer',
@@ -414,61 +419,6 @@ describe('Hydration', () => {
           dest: mockInput.recipient,
           currency_id: 222,
           amount: 1000n
-        }
-      })
-    })
-
-    it('should transfer the full balance for ERC20 assets when amount is ALL', () => {
-      const mockInput = {
-        api: mockApi,
-        assetInfo: { symbol: 'HOLLAR', assetId: '222', erc20: HOLLAR_ERC20, amount: 1n },
-        recipient: '0x1234567890abcdef',
-        isAmountAll: true,
-        balance: 5000n
-      } as TTransferLocalOptions<unknown, unknown, unknown>
-
-      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
-
-      hydration.transferLocalNonNativeAsset(mockInput)
-
-      expect(spy).toHaveBeenCalledWith({
-        module: 'Currencies',
-        method: 'transfer',
-        params: {
-          dest: mockInput.recipient,
-          currency_id: 222,
-          amount: 5000n
-        }
-      })
-    })
-
-    it('should leave the ED behind for ERC20 assets when amount is ALL and keepAlive is set', () => {
-      const mockInput = {
-        api: mockApi,
-        assetInfo: {
-          symbol: 'HOLLAR',
-          assetId: '222',
-          erc20: HOLLAR_ERC20,
-          existentialDeposit: '20000000000000000',
-          amount: 1n
-        },
-        recipient: '0x1234567890abcdef',
-        isAmountAll: true,
-        keepAlive: true,
-        balance: 20000000000005000n
-      } as TTransferLocalOptions<unknown, unknown, unknown>
-
-      const spy = vi.spyOn(mockApi, 'deserializeExtrinsics')
-
-      hydration.transferLocalNonNativeAsset(mockInput)
-
-      expect(spy).toHaveBeenCalledWith({
-        module: 'Currencies',
-        method: 'transfer',
-        params: {
-          dest: mockInput.recipient,
-          currency_id: 222,
-          amount: 5000n
         }
       })
     })

@@ -147,6 +147,7 @@ export type TTransferOptions<TApi, TRes, TSigner, TCustomChain extends string = 
   TCustomChain
 > & {
   isAmountAll: boolean
+  isDryRunBypass?: boolean
 }
 
 export type TSubstrateTransferBaseOptions<TApi, TRes, TSigner> = Omit<
@@ -216,6 +217,7 @@ export type TTransferInternalOptions<
   overriddenAsset?: TAssetWithFee[]
   version: Version
   isAmountAll: boolean
+  isDryRunBypass?: boolean
 }
 
 export type TTransactOrigin = (typeof TRANSACT_ORIGINS)[number]

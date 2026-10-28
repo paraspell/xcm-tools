@@ -30,7 +30,7 @@ export const getBypassResultWithRetries = async <
   const isAmountTooLow = (e: unknown): e is AmountTooLowError => e instanceof AmountTooLowError
 
   const attempt = async (amount?: string, relative?: boolean): Promise<TResult> => {
-    const tx = await options.buildTx(amount, relative)
+    const tx = await options.buildTx(amount, relative, true)
     return internalFn({ ...options, tx, useRootOrigin: true })
   }
 

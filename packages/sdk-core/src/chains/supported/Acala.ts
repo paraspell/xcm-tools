@@ -6,7 +6,6 @@ import type { TParachain, TRelaychain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { MIN_AMOUNT } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
@@ -16,7 +15,6 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type TForeignOrTokenAsset } from '../../types'
-import { assertSender } from '../../utils'
 import { getLocalTransferAmount } from '../../utils/transfer'
 import SubstrateChain from '../SubstrateChain'
 
@@ -41,33 +39,6 @@ class Acala<TApi, TRes, TSigner, TCustomChain extends string = never>
 
   isRelayToParaEnabled(): boolean {
     return false
-  }
-
-  async transferLocalNativeAsset(
-    options: TTransferLocalOptions<TApi, TRes, TSigner, TCustomChain>
-  ): Promise<TRes> {
-    const { api, recipient, sender, isAmountAll, keepAlive } = options
-
-    const createTx = (amount: bigint) =>
-      api.deserializeExtrinsics({
-        module: 'Currencies',
-        method: 'transfer_native_currency',
-        params: {
-          dest: { Id: recipient },
-          amount
-        }
-      })
-
-    let fee = 0n
-    if (isAmountAll || keepAlive) {
-      assertSender(sender)
-      const { partialFee } = await api.getPaymentInfo(createTx(MIN_AMOUNT), sender)
-      fee = BigInt(partialFee)
-    }
-
-    const amount = getLocalTransferAmount(options, fee)
-
-    return createTx(amount)
   }
 
   transferLocalNonNativeAsset(
@@ -96,6 +67,7 @@ class Acala<TApi, TRes, TSigner, TCustomChain extends string = never>
     _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     asset: TAssetInfo
   ): TForeignOrTokenAsset {
+    // aSEED is registered as Token(AUSD) on Acala
     const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
     return asset.isNative ? { Token: symbol } : { ForeignAsset: Number(asset.assetId) }
   }

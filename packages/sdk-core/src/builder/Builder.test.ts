@@ -34,6 +34,7 @@ import {
   assertToIsString,
   createTransferOrSwap,
   createTransferOrSwapAll,
+  createTxOverrideAmount,
   executeWithSwap,
   isConfig,
   isSenderSigner,
@@ -794,6 +795,27 @@ describe('Builder', () => {
 
       expect(result).toEqual(mockDryRunResult)
       expect(buildDryRun).toHaveBeenCalledTimes(1)
+      expect(createTransferOrSwap).toHaveBeenCalledWith(
+        expect.objectContaining({ isDryRunBypass: true })
+      )
+    })
+
+    it('should build tx factory txs with isDryRunBypass only when requested', async () => {
+      const builder = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER_ADDRESS)
+
+      const buildTx = builder['createTxFactory']()
+
+      await buildTx('1', true)
+      await buildTx('1', true, true)
+
+      const [realCall, bypassCall] = vi.mocked(createTxOverrideAmount).mock.calls
+      expect(realCall[1]).toBe(builder)
+      expect(bypassCall[1]._options).toEqual({ ...builder._options, isDryRunBypass: true })
     })
 
     it('should dry run preview with swapOptions via executeWithSwap', async () => {
