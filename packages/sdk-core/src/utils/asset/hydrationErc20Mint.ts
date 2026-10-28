@@ -1,4 +1,3 @@
-import { blake2b } from '@noble/hashes/blake2.js'
 import { keccak_256 } from '@noble/hashes/sha3.js'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import type { TAssetInfo, TErc20Info } from '@paraspell/assets'
@@ -8,6 +7,7 @@ import { getJunctionValue } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import type { TSetBalanceRes } from '../../types/TAssets'
+import { blake2128Concat } from '../storage'
 
 // twox128("EVM") ++ twox128("AccountStorages") — the pallet_evm::AccountStorages storage prefix.
 const ACCOUNT_STORAGES_PREFIX = '1da53b775b270400e7e61ed5cbc5a146ab1160471b1418779239ba8e2b847e42'
@@ -16,9 +16,6 @@ const ACCOUNT_STORAGES_PREFIX = '1da53b775b270400e7e61ed5cbc5a146ab1160471b14187
 const EVM_ACCOUNT_PREFIX = '45544800'
 
 const word = (hex: string) => hex.padStart(64, '0')
-
-export const blake2128Concat = (hex: string) =>
-  bytesToHex(blake2b(hexToBytes(hex), { dkLen: 16 })) + hex
 
 // Mirrors pallet_evm_accounts::evm_address
 const toEvmAddress = (accountId: string) =>
