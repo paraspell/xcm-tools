@@ -40,14 +40,14 @@
     "@polkadot-api/substrate-bindings": "^0.21.2",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-typescript": "^12.3.0",
+    "@rollup/plugin-typescript": "^12.3.1",
     "@types/cli-progress": "^3.11.6",
-    "@vitest/coverage-v8": "^5.0.2",
+    "@vitest/coverage-v8": "^5.0.5",
     "cli-progress": "^3.12.0",
-    "dotenv": "^18.0.4",
+    "dotenv": "^18.0.9",
     "picocolors": "^1.1.1",
-    "polkadot-api": "^3.2.0",
-    "rollup": "^4.63.5",
+    "polkadot-api": "^3.3.0",
+    "rollup": "^4.66.0",
     "rollup-plugin-dts": "^6.5.1"
   }
 }

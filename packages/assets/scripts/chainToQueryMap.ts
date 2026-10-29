@@ -49,6 +49,7 @@ export const chainToQuery: Record<TChain, string | (() => Promise<TChainAssetsIn
   PeoplePolkadot: '',
   PeopleWestend: '',
   RobonomicsPolkadot: '',
+  Shibuya: 'Assets.Metadata',
   Shiden: 'Assets.Metadata',
   Unique: 'ForeignAssets.CollectionToForeignAsset',
   Xode: 'Assets.Metadata',

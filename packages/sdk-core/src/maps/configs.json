@@ -776,6 +776,17 @@
       }
     ]
   },
+  "Shibuya": {
+    "name": "Shibuya Testnet (Astar)",
+    "info": "PaseoShibuyaChain",
+    "paraId": 2000,
+    "providers": [
+      {
+        "name": "Astar",
+        "endpoint": "wss://rpc.shibuya.astar.network"
+      }
+    ]
+  },
   "Polkadot": {
     "name": "Polkadot Relay",
     "info": "polkadot",

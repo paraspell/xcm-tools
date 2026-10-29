@@ -17,7 +17,7 @@ class Penpal<TApi, TRes, TSigner, TCustomChain extends string = never>
   implements IPolkadotXCMTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
-    super('Penpal', 'westendPenpal', 'Westend', Version.V4)
+    super('Penpal', 'westendPenpal', 'Westend', Version.V5)
   }
 
   transferPolkadotXCM(

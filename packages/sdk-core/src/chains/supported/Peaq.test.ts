@@ -27,7 +27,7 @@ describe('Peaq', () => {
     expect(chain.chain).toBe('Peaq')
     expect(chain.info).toBe('peaq')
     expect(chain.ecosystem).toBe('Polkadot')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 
   it('should call transferXTokens with valid scenario', () => {
