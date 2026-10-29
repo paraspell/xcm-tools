@@ -69,7 +69,7 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
 
     const trade = getBestTrade(chainId, pairs, amountInFinal, tokenTo);
 
-    const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
+    const allowedSlippage = new Percent(Math.round(Number(slippagePct) * 100), 10_000);
 
     const blockNumber = await apiPjs.derive.chain.bestNumber();
 

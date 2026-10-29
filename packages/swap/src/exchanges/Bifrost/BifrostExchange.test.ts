@@ -1,5 +1,6 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
+import { Percent } from '@crypto-dex-sdk/math';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { getBalance } from '@paraspell/sdk';
 import { AmountTooLowError, getParaId } from '@paraspell/sdk-core';
@@ -46,7 +47,13 @@ vi.mock('@crypto-dex-sdk/math', () => ({
       constructor(
         public numerator: number,
         public denominator: number,
-      ) {}
+      ) {
+        if (!Number.isInteger(numerator)) {
+          throw new RangeError(
+            `The number ${numerator} cannot be converted to a BigInt because it is not an integer`,
+          );
+        }
+      }
     },
   ),
 }));
@@ -196,6 +203,30 @@ describe('BifrostExchange', () => {
 
       expect(result.tx).toEqual({});
       expect(result.amountOut).toEqual(1000000000000n);
+    });
+
+    it('should correctly round float slippagePct to integer basis points to prevent RangeError', async () => {
+      vi.mocked(getBestTrade).mockReturnValueOnce({
+        descriptions: [{ fee: 0.5 }],
+        outputAmount: { toFixed: () => '1' },
+      } as Trade);
+
+      vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
+        extrinsic: [{} as Extrinsic],
+      });
+
+      // '1.1' * 100 === 110.00000000000001 which causes RangeError if not rounded
+      const result = await chain.swapCurrency(
+        {
+          ...swapOptions,
+          amount: 100000000000000n,
+          slippagePct: '1.1',
+        },
+        mockToDestTransactionFee,
+      );
+
+      expect(result.tx).toEqual({});
+      expect(Percent).toHaveBeenCalledWith(110, 10_000);
     });
   });
 
