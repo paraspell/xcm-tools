@@ -8,6 +8,7 @@ import {
   isRelayChain,
   Parents,
   RELAYCHAINS,
+  type TJunctions,
   type TLocation
 } from '@paraspell/sdk-common'
 
@@ -78,7 +79,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     return RELAY_LOCATION
   }
 
-  let newInterior: TLocation['interior'] = location.interior
+  let newInterior: TJunctions = location.interior === 'Here' ? { Here: null } : location.interior
   let parachainRemoved = false
 
   if (location.interior !== 'Here') {
@@ -103,7 +104,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     })
 
     if (filteredJunctions.length === 0) {
-      newInterior = 'Here'
+      newInterior = { Here: null }
     } else {
       newInterior = { [`X${filteredJunctions.length}`]: filteredJunctions }
     }
@@ -159,7 +160,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
   if (
     origin &&
     ecosystemDiffers &&
-    newInterior !== 'Here' &&
+    newInterior.Here === undefined &&
     !hasGlobalConsensus &&
     originRelay !== undefined
   ) {
@@ -177,7 +178,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
 
   const shouldSetParentsToZero =
     parachainRemoved ||
-    (newInterior === 'Here' && isRelayChain(chain)) ||
+    (newInterior.Here !== undefined && isRelayChain(chain)) ||
     isLocationOnTargetExternal
 
   return {

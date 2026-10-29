@@ -39,7 +39,8 @@ describe('getMinTransferableAmountInternal', () => {
     disconnect: vi.fn(),
     findAssetInfoOrThrow: vi.fn(),
     findAssetOnDestOrThrow: vi.fn(),
-    findNativeAssetInfoOrThrow: vi.fn()
+    findNativeAssetInfoOrThrow: vi.fn(),
+    isAssetXcEqual: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockResolvedAsset = (asset: TAssetInfo, amount = 100n) =>
@@ -50,6 +51,7 @@ describe('getMinTransferableAmountInternal', () => {
 
   const findAssetOnDestOrThrowSpy = vi.spyOn(api, 'findAssetOnDestOrThrow')
   const findNativeAssetInfoOrThrowSpy = vi.spyOn(api, 'findNativeAssetInfoOrThrow')
+  const isAssetXcEqualSpy = vi.spyOn(api, 'isAssetXcEqual')
 
   const buildInternal = vi.fn().mockReturnValue({})
   const mockBuilder = {
@@ -79,6 +81,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
     vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
+    isAssetXcEqualSpy.mockImplementation((a, b) => a.asset?.symbol === b.asset?.symbol)
   })
 
   it('returns per-asset min amounts in input order for currency arrays', async () => {
@@ -179,8 +182,8 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { asset: { symbol: 'ASSET' }, fee: 2n },
       hops: [
-        { result: { asset: { symbol: 'ASSET' }, fee: 3n } },
-        { result: { asset: { symbol: 'B' }, fee: 5n } }
+        { chain: 'Hydration', result: { asset: { symbol: 'ASSET' }, fee: 3n } },
+        { chain: 'Hydration', result: { asset: { symbol: 'B' }, fee: 5n } }
       ],
       destination: { asset: { symbol: 'ASSET' }, fee: 7n }
     } as TGetXcmFeeResult)
@@ -222,7 +225,14 @@ describe('getMinTransferableAmountInternal', () => {
         currency: expect.objectContaining({ amount: 23n })
       })
     )
-    expect(isAssetEqual).toBeDefined()
+    expect(isAssetXcEqualSpy).toHaveBeenCalledWith(
+      { chain: 'Acala', asset: expect.objectContaining({ symbol: 'ASSET' }) },
+      { chain: 'Hydration', asset: { symbol: 'ASSET' } }
+    )
+    expect(isAssetXcEqualSpy).toHaveBeenCalledWith(
+      { chain: 'Acala', asset: expect.objectContaining({ symbol: 'ASSET' }) },
+      { chain: 'Astar', asset: { symbol: 'ASSET' } }
+    )
   })
 
   it('no ED when dest balance > 0; origin fee counts when feeAsset resolves to sending asset', async () => {
