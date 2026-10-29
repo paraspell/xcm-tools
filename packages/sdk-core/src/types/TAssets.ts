@@ -1,5 +1,6 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
+import type { TChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
 import type Chain from '../chains/Chain'
@@ -8,6 +9,11 @@ import type { TSerializedExtrinsics } from './TTransfer'
 export type TSetBalanceRes = {
   assetStatusTx?: TSerializedExtrinsics
   balanceTx: TSerializedExtrinsics
+}
+
+export type TChainAssetInfo<TCustomChain extends string = never> = {
+  chain: TChain | TCustomChain
+  asset: TAssetInfo
 }
 
 export type TMintConfig = {

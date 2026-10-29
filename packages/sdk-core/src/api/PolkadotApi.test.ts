@@ -28,7 +28,12 @@ import {
   UnsupportedOperationError
 } from '../errors'
 import type { TBridgeStatus, TBuilderOptions, TDestination, TDryRunChainResult } from '../types'
-import { getAssetReserveChainImpl, getRelayChainOfImpl, localizeLocationImpl } from '../utils'
+import {
+  getAssetReserveChainImpl,
+  getRelayChainOfImpl,
+  isAssetXcEqualImpl,
+  localizeLocationImpl
+} from '../utils'
 import { PolkadotApi } from './PolkadotApi'
 import { resolveChainApi } from './resolveChainApi'
 
@@ -344,6 +349,20 @@ describe('PolkadotApi', () => {
         args: [chain, { parents: 1, interior: 'Here' }, true],
         expectedArgs: [expect.any(ConcreteApi), chain, { parents: 1, interior: 'Here' }, true],
         returnValue: 'AssetHubPolkadot'
+      },
+      {
+        method: 'isAssetXcEqual',
+        impl: vi.mocked(isAssetXcEqualImpl),
+        args: [
+          { chain, asset: { symbol: 'A' } },
+          { chain: 'Polkadot', asset: { symbol: 'A' } }
+        ],
+        expectedArgs: [
+          expect.any(ConcreteApi),
+          { chain, asset: { symbol: 'A' } },
+          { chain: 'Polkadot', asset: { symbol: 'A' } }
+        ],
+        returnValue: true
       }
     ]
 

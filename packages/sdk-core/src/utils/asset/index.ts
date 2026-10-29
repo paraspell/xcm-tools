@@ -1,6 +1,7 @@
 export * from './createAsset'
 export * from './formatAssetIdToERC20'
 export * from './hydrationErc20Mint'
+export * from './isAssetXcEqual'
 export * from './overrideAsset'
 export * from './pickOtherMintPallet'
 export * from './sortAssets'

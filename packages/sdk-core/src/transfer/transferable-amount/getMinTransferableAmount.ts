@@ -87,13 +87,20 @@ export const getMinTransferableAmountInternal = async <
           ? result.origin.fee
           : 0n
 
-      const hopFeeTotal = result.hops.reduce((acc, hop) => {
-        // only add if asset is equal
-        return isAssetEqual(hop.result.asset, asset) ? acc + hop.result.fee : acc
-      }, 0n)
+      const originChainAsset = { chain: origin, asset }
+
+      const hopFeeTotal = result.hops.reduce(
+        (acc, { chain, result: { asset: hopAsset, fee } }) =>
+          api.isAssetXcEqual(originChainAsset, { chain, asset: hopAsset }) ? acc + fee : acc,
+        0n
+      )
 
       const destinationFee =
-        result.destination && isAssetEqual(result.destination.asset, asset)
+        result.destination &&
+        api.isAssetXcEqual(originChainAsset, {
+          chain: destination,
+          asset: result.destination.asset
+        })
           ? result.destination.fee
           : 0n
 

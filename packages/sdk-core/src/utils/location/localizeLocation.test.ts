@@ -52,14 +52,14 @@ describe('localizeLocation', () => {
     it('should return interior as "Here" and set parents to 0 if input interior is "Here" and chain is relay chain', () => {
       const input = { parents: 5, interior: 'Here' } as const
       const result = localizeLocation(relaychain, input)
-      expect(result.interior).toBe('Here')
+      expect(result.interior).toEqual({ Here: null })
       expect(result.parents).toBe(Parents.ZERO)
     })
 
     it('should keep parents unchanged if input interior is "Here" and chain is not relay chain', () => {
       const input = { parents: 5, interior: 'Here' } as const
       const result = localizeLocation(parachain, input)
-      expect(result.interior).toBe('Here')
+      expect(result.interior).toEqual({ Here: null })
       expect(result.parents).toBe(5)
     })
   })
@@ -100,7 +100,7 @@ describe('localizeLocation', () => {
       }
       const result = localizeLocation(parachain, input)
       expect(result.parents).toBe(Parents.ZERO)
-      expect(result.interior).toBe('Here')
+      expect(result.interior).toEqual({ Here: null })
     })
   })
 
@@ -167,7 +167,7 @@ describe('localizeLocation', () => {
       }
       const result = localizeLocation(relaychain, input)
       expect(result.parents).toBe(Parents.ZERO)
-      expect(result.interior).toBe('Here')
+      expect(result.interior).toEqual({ Here: null })
     })
   })
 
@@ -255,7 +255,7 @@ describe('localizeLocation', () => {
 
       const result = localizeLocation('Acala', input, 'BifrostKusama')
 
-      expect(result).toEqual({ parents: Parents.ZERO, interior: 'Here' })
+      expect(result).toEqual({ parents: Parents.ZERO, interior: { Here: null } })
     })
 
     it('should expand relay location with global consensus when origin ecosystem differs', () => {

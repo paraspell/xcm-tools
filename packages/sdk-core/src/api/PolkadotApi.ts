@@ -49,6 +49,7 @@ import type {
   TBridgedXcmParams,
   TBridgeStatus,
   TBuilderOptions,
+  TChainAssetInfo,
   TCustomChainEntryHydrated,
   TDestination,
   TDryRunCallBaseOptions,
@@ -67,6 +68,7 @@ import type {
 import {
   getAssetReserveChainImpl,
   getRelayChainOfImpl,
+  isAssetXcEqualImpl,
   isConfig,
   localizeLocationImpl
 } from '../utils'
@@ -229,6 +231,10 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     resolveExternalReserve = false
   ): TChain | TCustomChain {
     return getAssetReserveChainImpl(this, chain, assetLocation, resolveExternalReserve)
+  }
+
+  isAssetXcEqual(a: TChainAssetInfo<TCustomChain>, b: TChainAssetInfo<TCustomChain>): boolean {
+    return isAssetXcEqualImpl(this, a, b)
   }
 
   async init(
