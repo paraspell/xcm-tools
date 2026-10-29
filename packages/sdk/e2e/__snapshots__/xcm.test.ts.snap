@@ -9274,6 +9274,18 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
 }
 `;
 
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aZEC) 1`] = `
+{
+  "method": "transfer",
+  "module": "Currencies",
+  "params": {
+    "amount": 500000000n,
+    "currency_id": 1011,
+    "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aapyUSD) 1`] = `
 {
   "method": "transfer",
@@ -11576,6 +11588,170 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Robonom
       "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "value": 5000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (BNC) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000n,
+    "id": 18446744073709551623n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (EXTCC) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 213n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (INJ) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 100001n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000n,
+    "id": 340282366920938463463374607431768211455n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (MMC) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 500n,
+    "id": 222n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SBY) 1`] = `
+{
+  "method": "transfer_allow_death",
+  "module": "Balances",
+  "params": {
+    "dest": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "value": 5000000000000000000n,
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SJK) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 3n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SKE) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 1664n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (TMR) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 18n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (USDT) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000n,
+    "id": 214n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (vASTR) 1`] = `
+{
+  "method": "transfer",
+  "module": "Assets",
+  "params": {
+    "amount": 5000000000000000000n,
+    "id": 18446744073709551632n,
+    "target": {
+      "type": "Id",
+      "value": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
   },
 }
 `;
@@ -18627,6 +18803,93 @@ exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > 
 }
 `;
 
+exports[`XCM - e2e > Transfer scenarios for origin AssetHubPaseo > ParaToPara > should create transfer tx from AssetHubPaseo to Shibuya - (PAS) 1`] = `
+{
+  "method": "transfer_assets_using_type_and_then",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 50000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "Here",
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "assets_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "custom_xcm_on_dest": {
+      "type": "V5",
+      "value": [
+        {
+          "type": "DepositAsset",
+          "value": {
+            "assets": {
+              "type": "Wild",
+              "value": {
+                "type": "AllCounted",
+                "value": 1,
+              },
+            },
+            "beneficiary": {
+              "interior": {
+                "type": "X1",
+                "value": {
+                  "type": "AccountId32",
+                  "value": {
+                    "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                    "network": undefined,
+                  },
+                },
+              },
+              "parents": 0,
+            },
+          },
+        },
+      ],
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2000,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fees_transfer_type": {
+      "type": "LocalReserve",
+    },
+    "remote_fees_id": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "Here",
+        },
+        "parents": 1,
+      },
+    },
+    "weight_limit": {
+      "type": "Unlimited",
+    },
+  },
+}
+`;
+
 exports[`XCM - e2e > Transfer scenarios for origin AssetHubPolkadot > ParaToPara > should create transfer tx from AssetHubPolkadot to Acala - (DOT) 1`] = `
 {
   "method": "transfer_assets_using_type_and_then",
@@ -21298,7 +21561,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
   "module": "PolkadotXcm",
   "params": {
     "assets": {
-      "type": "V4",
+      "type": "V5",
       "value": [
         {
           "fun": {
@@ -21325,7 +21588,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       ],
     },
     "beneficiary": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -21341,7 +21604,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
       },
     },
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X1",
@@ -39627,7 +39890,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
         {
           "fun": {
             "type": "Fungible",
-            "value": 1319511798463211982778n,
+            "value": 1263445487694587527638n,
           },
           "id": {
             "interior": {
@@ -42717,7 +42980,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -42753,7 +43016,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -42789,7 +43052,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -42825,7 +43088,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -42897,7 +43160,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -42969,7 +43232,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
     "amount": 5000000000000000000n,
     "currency_id": 1000n,
     "dest": {
-      "type": "V4",
+      "type": "V5",
       "value": {
         "interior": {
           "type": "X2",
@@ -45307,6 +45570,75 @@ exports[`XCM - e2e > Transfer scenarios for origin RobonomicsPolkadot > ParaToPa
     "weight_limit": {
       "type": "Unlimited",
     },
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Shibuya > ParaToPara > should create transfer tx from Shibuya to HydrationPaseo - (BNC) 1`] = `
+{
+  "method": "reserve_transfer_assets",
+  "module": "PolkadotXcm",
+  "params": {
+    "assets": {
+      "type": "V5",
+      "value": [
+        {
+          "fun": {
+            "type": "Fungible",
+            "value": 5000000000000n,
+          },
+          "id": {
+            "interior": {
+              "type": "X2",
+              "value": [
+                {
+                  "type": "Parachain",
+                  "value": 2030,
+                },
+                {
+                  "type": "GeneralKey",
+                  "value": {
+                    "data": "0x0001000000000000000000000000000000000000000000000000000000000000",
+                    "length": 2,
+                  },
+                },
+              ],
+            },
+            "parents": 1,
+          },
+        },
+      ],
+    },
+    "beneficiary": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "AccountId32",
+            "value": {
+              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+              "network": undefined,
+            },
+          },
+        },
+        "parents": 0,
+      },
+    },
+    "dest": {
+      "type": "V5",
+      "value": {
+        "interior": {
+          "type": "X1",
+          "value": {
+            "type": "Parachain",
+            "value": 2034,
+          },
+        },
+        "parents": 1,
+      },
+    },
+    "fee_asset_item": 0,
   },
 }
 `;

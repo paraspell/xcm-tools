@@ -59,10 +59,6 @@
       {
         "name": "PolkadotXcm",
         "index": 51
-      },
-      {
-        "name": "XTokens",
-        "index": 55
       }
     ],
     "nativeAssets": "Balances",
@@ -947,5 +943,24 @@
     ],
     "nativeAssets": "Balances",
     "otherAssets": ["Currencies", "Tokens"]
+  },
+  "Shibuya": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "Balances",
+        "index": 31
+      },
+      {
+        "name": "Assets",
+        "index": 36
+      },
+      {
+        "name": "PolkadotXcm",
+        "index": 51
+      }
+    ],
+    "nativeAssets": "Balances",
+    "otherAssets": ["Assets"]
   }
 }

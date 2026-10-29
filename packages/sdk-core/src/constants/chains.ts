@@ -43,6 +43,7 @@ import PeoplePolkadot from '../chains/supported/PeoplePolkadot'
 import PeopleWestend from '../chains/supported/PeopleWestend'
 import Polkadot from '../chains/supported/Polkadot'
 import RobonomicsPolkadot from '../chains/supported/RobonomicsPolkadot'
+import Shibuya from '../chains/supported/Shibuya'
 import Shiden from '../chains/supported/Shiden'
 import Unique from '../chains/supported/Unique'
 import Westend from '../chains/supported/Westend'
@@ -103,6 +104,7 @@ export const chains = <TApi, TRes, TSigner>() => ({
   PeoplePaseo: new PeoplePaseo<TApi, TRes, TSigner>(),
   HeimaPaseo: new HeimaPaseo<TApi, TRes, TSigner>(),
   HydrationPaseo: new HydrationPaseo<TApi, TRes, TSigner>(),
+  Shibuya: new Shibuya<TApi, TRes, TSigner>(),
 
   // External chains
   Ethereum: new Ethereum<TApi, TRes, TSigner>(),

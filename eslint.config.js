@@ -92,7 +92,7 @@ export default defineConfig(
     ],
     settings: {
       react: {
-        version: "19.3.0",
+        version: "19.3.1",
       },
     },
     rules: {

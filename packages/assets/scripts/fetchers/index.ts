@@ -30,7 +30,7 @@ export const getOtherAssetsFetcher = (chain: TSubstrateChain): TAssetsFetcher | 
   if (chain === 'Penpal' || chain.startsWith('NeuroWeb')) return fetchPenpalAssets
   if (chain.startsWith('Ajuna') || chain.startsWith('Integritee') || chain === 'Peaq')
     return fetchAjunaAssets
-  if (chain === 'Astar' || chain === 'Shiden') return fetchAstarAssets
+  if (chain === 'Astar' || chain === 'Shiden' || chain === 'Shibuya') return fetchAstarAssets
   if (chain === 'Darwinia') return fetchDarwiniaAssets
   if (chain === 'Xode') return fetchXodeAssets
   if (chain.startsWith('Hydration')) return fetchHydrationAssets

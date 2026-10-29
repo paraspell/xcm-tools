@@ -14,7 +14,7 @@ class Peaq<TApi, TRes, TSigner, TCustomChain extends string = never>
   implements IXTokensTransfer<TApi, TRes, TSigner, TCustomChain>
 {
   constructor() {
-    super('Peaq', 'peaq', 'Polkadot', Version.V4)
+    super('Peaq', 'peaq', 'Polkadot', Version.V5)
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {

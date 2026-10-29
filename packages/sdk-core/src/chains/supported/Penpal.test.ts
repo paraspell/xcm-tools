@@ -29,7 +29,7 @@ describe('Penpal', () => {
     expect(chain.chain).toBe('Penpal')
     expect(chain.info).toBe('westendPenpal')
     expect(chain.ecosystem).toBe('Westend')
-    expect(chain.version).toBe(Version.V4)
+    expect(chain.version).toBe(Version.V5)
   })
 
   it('delegates XCM transfers to transferPolkadotXcm', async () => {

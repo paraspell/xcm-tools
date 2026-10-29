@@ -42,7 +42,7 @@
     "@polkadot-api/substrate-bindings": "^0.21.2",
     "@polkadot-labs/hdkd": "^0.0.32",
     "@polkadot-labs/hdkd-helpers": "^0.0.34",
-    "viem": "^2.57.0"
+    "viem": "^2.57.13"
   },
   "peerDependencies": {
     "@paraspell/descriptors": "workspace:*",
@@ -56,13 +56,13 @@
     "@noble/curves": "^2.4.0",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-typescript": "^12.3.0",
+    "@rollup/plugin-typescript": "^12.3.1",
     "@scure/bip32": "^2.4.0",
     "@scure/bip39": "^2.4.0",
-    "@vitest/coverage-v8": "^5.0.2",
-    "dotenv": "^18.0.4",
-    "polkadot-api": "^3.2.0",
-    "rollup": "^4.63.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "dotenv": "^18.0.9",
+    "polkadot-api": "^3.3.0",
+    "rollup": "^4.66.0",
     "rollup-plugin-dts": "^6.5.1"
   }
 }

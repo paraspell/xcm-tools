@@ -48,7 +48,8 @@ export const PARACHAINS = [
   'EnergyWebXPaseo',
   'HeimaPaseo',
   'HydrationPaseo',
-  'PeoplePaseo'
+  'PeoplePaseo',
+  'Shibuya'
 ] as const
 
 /**
