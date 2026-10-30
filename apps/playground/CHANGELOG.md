@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.5.0](https://github.com/paraspell/xcm-tools/compare/playground-v14.4.4...playground-v14.5.0) (2026-10-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c68e1fd](https://github.com/paraspell/xcm-tools/commit/c68e1fdde766f4e94d5153b59d0b90e1936d8a7b))
+
+
+### Bug Fixes
+
+* **playground:** Do not allow transact & swap at the same time 🛠️ ([6793b69](https://github.com/paraspell/xcm-tools/commit/6793b6957efca2dcb0e171e3525072a44d07fdfb))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/playground-v14.4.3...playground-v14.4.4) (2026-10-20)
 
 

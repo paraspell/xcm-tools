@@ -1,5 +1,32 @@
 # Changelog
 
+## [14.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.4.4...sdk-core-v14.5.0) (2026-10-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c68e1fd](https://github.com/paraspell/xcm-tools/commit/c68e1fdde766f4e94d5153b59d0b90e1936d8a7b))
+
+
+### Bug Fixes
+
+* Fix number amount scientific notation error 🛠️ ([24e8999](https://github.com/paraspell/xcm-tools/commit/24e8999921d4eb2c238ddb35b6c8647b06a2441c))
+* **sdk-core:** Fix Herculis gold minting 🔧 ([476615f](https://github.com/paraspell/xcm-tools/commit/476615ff32bc557bf074de9ee4325ff235a19739))
+* **sdk-core:** Fix min transferable amount fee calcs 🛠️ ([e3ec0b2](https://github.com/paraspell/xcm-tools/commit/e3ec0b2b80f8c7dafadf03e86e10276d2dd947e5))
+* **sdk-core:** Improve local transfers keepAlive logic ❤️ ([dc30213](https://github.com/paraspell/xcm-tools/commit/dc30213d31e3e6a8a96be2f6cd6de613063a4816))
+* **sdk-core:** Support transfers to accounts without providers ✨ ([c5e415f](https://github.com/paraspell/xcm-tools/commit/c5e415f26a9ed7448fbc96c75ffd5726eb770229))
+
+
+### Code Refactoring
+
+* Make unit tests use vitest v5 best practices 🪄 ([8f6ac8f](https://github.com/paraspell/xcm-tools/commit/8f6ac8f2bd20239a2fc337e944396d268af0383b))
+
+
+### Tests
+
+* Fix snapshot comparison logic to ignore small changes in fees 🧪 ([d022997](https://github.com/paraspell/xcm-tools/commit/d022997db25928c31b575e016ba3ab4f4aba82c4))
+* Refactor sdk e2e test case generation 🧪 ([f30a398](https://github.com/paraspell/xcm-tools/commit/f30a398ce42e273e203a37ed24f9a8dba81227f1))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.4.3...sdk-core-v14.4.4) (2026-10-20)
 
 
