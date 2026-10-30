@@ -16,6 +16,7 @@ import { assertAddressIsString, assertSender } from '../..'
 import { padValueBy } from '../../fees/padFee'
 import { parseUnits } from '../../unit'
 import { getFeeAssetInfo } from '../getFeeAssetInfo'
+import { resolveEdDeposit } from '../resolveEdDeposit'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 
@@ -64,6 +65,21 @@ export const handleExecuteTransfer = async <
     throw new RoutingResolutionError('Could not determine destination chain for execute transfer')
   }
 
+  const resolvedFeeAssetInfo = getFeeAssetInfo(assetInfo, feeAssetInfo)
+
+  const destApi = api.clone()
+  await destApi.init(destChain)
+
+  const edDeposit = await resolveEdDeposit({
+    origin: { api, chain },
+    dest: { api: destApi, chain: destChain },
+    assetInfo,
+    feeAssetLocation: (resolvedFeeAssetInfo ?? assetInfo).location,
+    recipient
+  })
+
+  await destApi.disconnect()
+
   const internalOptions = {
     api,
     chain,
@@ -76,7 +92,8 @@ export const handleExecuteTransfer = async <
     recipient,
     version,
     paraIdTo,
-    transactOptions
+    transactOptions,
+    edDeposit
   }
 
   // We mint 1000 units of feeAsset and use 100
@@ -86,7 +103,6 @@ export const handleExecuteTransfer = async <
     ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
     : MIN_FEE
 
-  const resolvedFeeAssetInfo = getFeeAssetInfo(assetInfo, feeAssetInfo)
   const hopFeeAmount = resolvedFeeAssetInfo ? feeAssetAmount : MIN_FEE
 
   const call = createExecuteCall(
@@ -127,7 +143,9 @@ export const handleExecuteTransfer = async <
     getFeeFromResult(dryRunResult.hops.at(0)?.result),
     FEE_PADDING_PERCENTAGE
   )
-  const destFee = padValueBy(getFeeFromResult(dryRunResult.destination), FEE_PADDING_PERCENTAGE)
+  const destFee =
+    padValueBy(getFeeFromResult(dryRunResult.destination), FEE_PADDING_PERCENTAGE) +
+    (edDeposit ?? 0n)
 
   if (!resolvedFeeAssetInfo) checkAmount(reserveFee)
 

@@ -158,7 +158,7 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   }
 
   findAssetOnDestOrThrow(
-    origin: TChain,
+    origin: TChain | TCustomChain,
     destination: TChain,
     currency: TCurrencyInput
   ): TAssetInfo {

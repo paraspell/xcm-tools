@@ -23,6 +23,7 @@ import type {
 import { assertToIsString, getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
 import { getFeeAssetInfo } from '../../utils/transfer/getFeeAssetInfo'
+import { resolveEdDeposit } from '../../utils/transfer/resolveEdDeposit'
 
 const PINK_LOCATION: TLocation = {
   parents: 1,
@@ -42,9 +43,10 @@ const requiresSystemAssetByLocation = <TApi, TRes, TSigner, TCustomChain extends
 export const getFeeAssetLocation = <TApi, TRes, TSigner, TCustomChain extends string = never>({
   feeAssetInfo,
   isRelayAsset,
-  assetInfo
+  assetInfo,
+  options: { overriddenAsset }
 }: TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain>): TLocation =>
-  feeAssetInfo?.location ?? (isRelayAsset ? assetInfo.location : RELAY_LOCATION)
+  feeAssetInfo?.location ?? (isRelayAsset || overriddenAsset ? assetInfo.location : RELAY_LOCATION)
 
 export const getBridgeReserve = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
@@ -202,7 +204,7 @@ export const createTypeAndThenCallContext = async <
 
   await reserveApi.init(reserveChain)
 
-  return {
+  const context = {
     origin: {
       api,
       chain
@@ -225,4 +227,15 @@ export const createTypeAndThenCallContext = async <
     systemAsset,
     bridgeHopChain
   }
+
+  const edDeposit = await resolveEdDeposit({
+    origin: context.origin,
+    dest: context.dest,
+    assetInfo,
+    overriddenAsset,
+    feeAssetLocation: getFeeAssetLocation(context),
+    recipient: options.recipient
+  })
+
+  return { ...context, edDeposit }
 }

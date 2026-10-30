@@ -27,6 +27,7 @@ export type TTypeAndThenCallContext<TApi, TRes, TSigner, TCustomChain extends st
   feeReserveChain?: TChain | TCustomChain
   systemAsset: TAssetInfo
   bridgeHopChain?: TSubstrateChain
+  edDeposit?: bigint
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
 }
 

@@ -11,12 +11,10 @@ import { getChain } from '../../utils'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 import { createTypeAndThenTransfer } from './Mythos'
 
 vi.mock('../../pallets/polkadotXcm')
-vi.mock('../../utils/transfer')
 vi.mock('../../transfer')
 vi.mock('../../utils/ethereum/generateMessageId')
 vi.mock('../../utils/ethereum/createCustomXcmOnDest')
@@ -78,23 +76,8 @@ describe('Mythos', () => {
     )
   })
 
-  it('should handle to Ah teleport', async () => {
-    vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
-    const mockTx = { module: 'test', method: 'test' }
-    vi.mocked(transferPolkadotXcm).mockResolvedValue(mockTx)
-    vi.mocked(handleToAhTeleport).mockResolvedValue('handled')
-
-    const result = await mythos.transferPolkadotXCM({
-      ...mockInput,
-      destination: 'AssetHubPolkadot'
-    })
-
-    expect(handleToAhTeleport).toHaveBeenCalledWith(
-      'Mythos',
-      { ...mockInput, destination: 'AssetHubPolkadot' },
-      mockTx
-    )
-    expect(result).toBe('handled')
+  it('should not use the native asset teleport shortcut', () => {
+    expect(mythos.shouldUseNativeAssetTeleport()).toBe(false)
   })
 
   it('should return false for isRelayToParaEnabled', () => {

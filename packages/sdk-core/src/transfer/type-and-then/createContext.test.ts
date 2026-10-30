@@ -22,6 +22,7 @@ import { ScenarioNotSupportedError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, TTypeAndThenCallContext } from '../../types'
 import { getRelayChainOf } from '../../utils'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { resolveEdDeposit } from '../../utils/transfer/resolveEdDeposit'
 import {
   createTypeAndThenCallContext,
   getBridgeReserve,
@@ -34,6 +35,7 @@ vi.mock('@paraspell/assets')
 
 vi.mock('../../utils')
 vi.mock('../../utils/location/getEthereumJunction')
+vi.mock('../../utils/transfer/resolveEdDeposit')
 vi.mock('../../constants', () => ({
   RELAY_LOCATION: {
     parents: 1,
@@ -201,6 +203,20 @@ describe('createTypeAndThenCallContext', () => {
       location: wudLocation
     })
     findNativeAssetInfoOrThrowSpy.mockReturnValue(mockSystemAsset)
+  })
+
+  it('adds the resolved ED deposit to the context', async () => {
+    vi.mocked(resolveEdDeposit).mockResolvedValueOnce(1000n)
+
+    const result = await createTypeAndThenCallContext(mockOptions, {})
+
+    expect(resolveEdDeposit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dest: { api: mockClonedApi, chain: mockDestChain },
+        recipient: mockOptions.recipient
+      })
+    )
+    expect(result.edDeposit).toBe(1000n)
   })
 
   it('should create context with relay chain as destination', async () => {
@@ -631,7 +647,8 @@ describe('createTypeAndThenCallContext', () => {
     const assetLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
     const feeLocation: TLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
     const context = {
-      assetInfo: { location: assetLocation }
+      assetInfo: { location: assetLocation },
+      options: {}
     } as TTypeAndThenCallContext<unknown, unknown, unknown>
 
     it('prefers the user-defined fee asset', () => {
@@ -646,6 +663,19 @@ describe('createTypeAndThenCallContext', () => {
 
     it('uses the transferred asset when it pays its own fees', () => {
       expect(getFeeAssetLocation({ ...context, isRelayAsset: true })).toBe(assetLocation)
+    })
+
+    it('uses the fee element of a currency array', () => {
+      expect(
+        getFeeAssetLocation({
+          ...context,
+          isRelayAsset: false,
+          options: {
+            ...context.options,
+            overriddenAsset: [{ id: assetLocation, fun: { Fungible: 1n }, isFeeAsset: true }]
+          }
+        })
+      ).toBe(assetLocation)
     })
 
     it('falls back to the relay asset', () => {

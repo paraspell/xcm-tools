@@ -2,22 +2,44 @@ import { type TAssetInfo, type WithAmount } from '@paraspell/assets'
 
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
-import type { TMintConfig, TSetBalanceRes } from '../../types/TAssets'
+import type { TAssetState, TMintConfig, TPalletAssetId, TSetBalanceRes } from '../../types/TAssets'
 import { BaseAssetsPallet } from '../../types/TAssets'
-import { assertHasId } from '../../utils'
-
-const resolveAssetId = <TApi, TRes, TSigner, TCustomChain extends string = never>(
-  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
-  chain: SubstrateChain<TApi, TRes, TSigner, TCustomChain>,
-  asset: WithAmount<TAssetInfo>,
-  config: TMintConfig
-): unknown => {
-  if (config.useLocationId) return api.localizeLocation(chain.chain, asset.location)
-  assertHasId(asset)
-  return config.useBigIntId ? BigInt(asset.assetId) : Number(asset.assetId)
-}
+import { assertHasId } from '../../utils/assertions'
 
 export class AssetsPallet extends BaseAssetsPallet {
+  protected resolveMintId<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    asset: TAssetInfo,
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    chain: SubstrateChain<TApi, TRes, TSigner, TCustomChain>,
+    config: TMintConfig
+  ): TPalletAssetId {
+    if (config.useLocationId) return api.localizeLocation(chain.chain, asset.location)
+    assertHasId(asset)
+    return config.useBigIntId ? BigInt(asset.assetId) : Number(asset.assetId)
+  }
+
+  protected async queryWithAssetId<T>(
+    asset: TAssetInfo,
+    query: (id: TPalletAssetId) => Promise<T>
+  ): Promise<T> {
+    assertHasId(asset)
+
+    // Try with number ID first, if it fails, try with bigint ID
+    try {
+      return await query(Number(asset.assetId))
+    } catch (e) {
+      if (
+        e instanceof Error &&
+        (e.message.includes('Incompatible runtime entry') ||
+          e.message.includes('API Compatibility Error') ||
+          e.message.includes('Number needs to be an integer'))
+      ) {
+        return query(BigInt(asset.assetId))
+      }
+      throw e
+    }
+  }
+
   mint<TApi, TRes, TSigner, TCustomChain extends string = never>(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     address: string,
@@ -29,7 +51,7 @@ export class AssetsPallet extends BaseAssetsPallet {
 
     const config = chain.resolveMintConfig(api)
 
-    const id = resolveAssetId(api, chain, asset, config)
+    const id = this.resolveMintId(asset, api, chain, config)
 
     const addr = config.useIdPrefix ? { Id: address } : address
 
@@ -65,34 +87,33 @@ export class AssetsPallet extends BaseAssetsPallet {
     address: string,
     asset: TAssetInfo
   ): Promise<bigint> {
-    assertHasId(asset)
-
-    const fetchBalance = (useBigInt = false) =>
+    const balance = await this.queryWithAssetId(asset, id =>
       api.queryState<{ balance: bigint }>({
         module: this.palletName,
         method: 'Account',
-        params: [useBigInt ? BigInt(asset.assetId) : Number(asset.assetId), address]
+        params: [id, address]
       })
-
-    // Try with number ID first, if it fails, try with bigint ID
-    let balance
-    try {
-      balance = await fetchBalance()
-    } catch (e) {
-      if (
-        e instanceof Error &&
-        (e.message.includes('Incompatible runtime entry') ||
-          e.message.includes('API Compatibility Error') ||
-          e.message.includes('Number needs to be an integer'))
-      ) {
-        balance = await fetchBalance(true)
-      } else {
-        throw e
-      }
-    }
+    )
 
     const value = balance?.balance
 
     return value !== undefined ? BigInt(value) : 0n
+  }
+
+  async getAssetState<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    asset: TAssetInfo
+  ): Promise<TAssetState | undefined> {
+    const details = await this.queryWithAssetId(asset, id =>
+      api.queryState<{ is_sufficient?: boolean; isSufficient?: boolean }>({
+        module: this.palletName,
+        method: 'Asset',
+        params: [id]
+      })
+    )
+
+    return details
+      ? { isSufficient: details.is_sufficient ?? details.isSufficient ?? false }
+      : undefined
   }
 }

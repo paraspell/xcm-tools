@@ -14,6 +14,7 @@ import type { TTypeAndThenCallContext, TTypeAndThenFees } from '../../types'
 import {
   assertSender,
   createAsset,
+  createAssetId,
   isNativeAssetTeleport,
   normalizeAmount,
   sortAssets
@@ -21,6 +22,7 @@ import {
 import { createBeneficiaryLocation, createDestination } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getEthereumJunction } from '../../utils/location/getEthereumJunction'
+import { createEdExchangeInstructions } from '../../utils/transfer/createEdExchangeInstructions'
 import { getFeeAssetLocation } from './createContext'
 
 const resolveBuyExecutionAmount = <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -66,8 +68,17 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     destFee: 0n
   }
 ) => {
-  const { origin, dest, reserve, isSubBridge, isRelayAsset, assetInfo, bridgeHopChain, options } =
-    context
+  const {
+    origin,
+    dest,
+    reserve,
+    isSubBridge,
+    isRelayAsset,
+    assetInfo,
+    bridgeHopChain,
+    edDeposit,
+    options
+  } = context
   const { destination, version, recipient, paraIdTo, sender, ahAddress, overriddenAsset } = options
 
   const buildRefundInstruction = () => {
@@ -116,14 +127,9 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     ? origin.api.localizeLocation(dest.chain, extractAssetLocation(transferredAsset), origin.chain)
     : assetLocLocalized
 
-  const asset = createAsset(version, assetInfo.amount, depositLocLocalized)
-
-  const allOfSelector = {
-    AllOf: {
-      id: asset.id,
-      fun: 'Fungible'
-    }
-  }
+  const createAllOf = (location: TLocation) => ({
+    Wild: { AllOf: { id: createAssetId(version, location), fun: 'Fungible' } }
+  })
 
   const isFeeLeftoverAboveEd = () => {
     const destFeeAsset = origin.api.findAssetInfoOnDest(
@@ -138,20 +144,25 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     )
   }
 
-  const depositsFeeAsset =
-    overriddenAsset !== undefined &&
-    (isForFeeCalc || isExternalChain(dest.chain) || isFeeLeftoverAboveEd())
+  const isFeeTransferred = deepEqual(feeLocLocalized, depositLocLocalized)
+
+  const resolveDepositAssets = () => {
+    if (edDeposit !== undefined) {
+      return { Wild: { AllCounted: isFeeTransferred ? assetCount + 1 : assetCount } }
+    }
+
+    const depositsFeeAsset =
+      overriddenAsset !== undefined &&
+      (isForFeeCalc || isExternalChain(dest.chain) || isFeeLeftoverAboveEd())
+
+    return assetCount > 1 && !depositsFeeAsset
+      ? createAllOf(depositLocLocalized)
+      : { Wild: { AllCounted: assetCount } }
+  }
 
   const depositInstruction = {
     DepositAsset: {
-      assets: {
-        Wild:
-          assetCount > 1 && !depositsFeeAsset
-            ? allOfSelector
-            : {
-                AllCounted: assetCount
-              }
-      },
+      assets: resolveDepositAssets(),
       beneficiary: createBeneficiaryLocation({
         api: isSubBridge ? dest.api : origin.api,
         address: recipient,
@@ -159,6 +170,19 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
       })
     }
   }
+
+  const depositInstructions = [
+    ...(edDeposit === undefined
+      ? []
+      : createEdExchangeInstructions(
+          origin.api,
+          dest.chain,
+          version,
+          feeLocLocalized,
+          isFeeTransferred
+        )),
+    depositInstruction
+  ]
 
   const localizeFilterAsset = (amount: bigint, location: TLocation) =>
     createAsset(
@@ -226,7 +250,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     }
 
     if (isSubBridge) {
-      return [buyExecution, depositInstruction]
+      return [buyExecution, ...depositInstructions]
     }
 
     const destLoc = createDestination(origin.api, version, origin.chain, destination, paraIdTo)
@@ -244,7 +268,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
           InitiateTeleport: {
             assets: filter,
             dest: destLoc,
-            xcm: [buyExecution, depositInstruction, ...setTopic]
+            xcm: [buyExecution, ...depositInstructions, ...setTopic]
           }
         },
         ...setTopic
@@ -284,12 +308,12 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
         DepositReserveAsset: {
           assets: filter,
           dest: destLoc,
-          xcm: [buyExecution, depositInstruction, ...setTopic]
+          xcm: [buyExecution, ...depositInstructions, ...setTopic]
         }
       },
       ...setTopic
     ]
   }
 
-  return [depositInstruction, ...setTopic]
+  return [...depositInstructions, ...setTopic]
 }

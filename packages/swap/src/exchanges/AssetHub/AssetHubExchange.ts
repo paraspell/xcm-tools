@@ -1,5 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import type { PolkadotApi, TLocation } from '@paraspell/sdk-core';
+import type { PolkadotApi, TLocation, TQueriedAmount } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
   getNativeAssetSymbol,
@@ -31,11 +31,11 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     amount: bigint,
     includeFee = true,
   ): Promise<bigint> {
-    let quoted: bigint | undefined;
+    let quoted: TQueriedAmount;
     let cause: unknown;
 
     try {
-      quoted = await api.queryRuntimeApi<bigint | undefined>({
+      quoted = await api.queryRuntimeApi<TQueriedAmount>({
         module: 'AssetConversionApi',
         method: 'quote_price_exact_tokens_for_tokens',
         params: [fromLocation, toLocation, amount, includeFee],

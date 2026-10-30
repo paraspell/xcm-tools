@@ -54,3 +54,41 @@ describe('ForeignAssetsPallet.mint', () => {
     expect(res.balanceTx.params.beneficiary).toBe(address)
   })
 })
+
+describe('ForeignAssetsPallet.getAssetState', () => {
+  const location = { parents: 2, interior: { X1: [{ GlobalConsensus: { Kusama: null } }] } }
+  const asset = { location } as TAssetInfo
+
+  const setup = (details: unknown) => {
+    const queryState = vi.fn().mockResolvedValue(details)
+    const api = { queryState } as unknown as PolkadotApi<unknown, unknown, unknown>
+    return { api, queryState }
+  }
+
+  it('queries the Asset storage by location', async () => {
+    const pallet = new ForeignAssetsPallet('ForeignAssets')
+    const { api, queryState } = setup({ is_sufficient: false })
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toEqual({ isSufficient: false })
+
+    expect(queryState).toHaveBeenCalledWith({
+      module: 'ForeignAssets',
+      method: 'Asset',
+      params: [location]
+    })
+  })
+
+  it('normalizes camel case details', async () => {
+    const pallet = new ForeignAssetsPallet('ForeignAssets')
+    const { api } = setup({ isSufficient: true })
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toEqual({ isSufficient: true })
+  })
+
+  it('returns undefined when the asset is missing', async () => {
+    const pallet = new ForeignAssetsPallet('ForeignAssets')
+    const { api } = setup(undefined)
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toBeUndefined()
+  })
+})

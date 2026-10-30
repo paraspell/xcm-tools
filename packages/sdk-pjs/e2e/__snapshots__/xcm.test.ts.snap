@@ -9801,6 +9801,21 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
 }
 `;
 
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aZEC) 1`] = `
+{
+  "method": "transfer",
+  "module": "currencies",
+  "params": {
+    "args": {
+      "amount": 500000000,
+      "currency_id": 1011,
+      "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "callIndex": "0x4f00",
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aapyUSD) 1`] = `
 {
   "method": "transfer",
@@ -12475,6 +12490,192 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Robonom
       "value": 5000000000,
     },
     "callIndex": "0x1f00",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (BNC) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": 5000000000000,
+      "id": "18446744073709551623",
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (EXTCC) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": 213,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (INJ) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": 100001,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (KSM) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": 5000000000000,
+      "id": "340282366920938463463374607431768211455",
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (MMC) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": 500,
+      "id": 222,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SBY) 1`] = `
+{
+  "method": "transferAllowDeath",
+  "module": "balances",
+  "params": {
+    "args": {
+      "dest": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+      "value": "5000000000000000000",
+    },
+    "callIndex": "0x1f00",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SJK) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": 3,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (SKE) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": 1664,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (TMR) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": 18,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (USDT) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": 5000000,
+      "id": 214,
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Shibuya - (vASTR) 1`] = `
+{
+  "method": "transfer",
+  "module": "assets",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "id": "18446744073709551632",
+      "target": {
+        "id": "Wkzcd8Mi28mVoV9cR79qfinKLfS16zqanxG7t9XvEMnMihy",
+      },
+    },
+    "callIndex": "0x2408",
   },
 }
 `;
@@ -21403,7 +21604,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
   "params": {
     "args": {
       "assets": {
-        "v4": [
+        "v5": [
           {
             "fun": {
               "fungible": "5000000000000000000",
@@ -21425,7 +21626,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
         ],
       },
       "beneficiary": {
-        "v4": {
+        "v5": {
           "interior": {
             "x1": [
               {
@@ -21440,7 +21641,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Astar > ParaToPara > should c
         },
       },
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x1": [
               {
@@ -38123,7 +38324,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Kusama > ParaToPara > should 
 
 exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should create transfer tx from Mythos to AssetHubPolkadot - (MYTH) 1`] = `
 {
-  "method": "limitedTeleportAssets",
+  "method": "transferAssetsUsingTypeAndThen",
   "module": "polkadotXcm",
   "params": {
     "args": {
@@ -38142,20 +38343,34 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
           },
         ],
       },
-      "beneficiary": {
-        "v5": {
-          "interior": {
-            "x1": [
-              {
-                "accountId32": {
-                  "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
-                  "network": null,
+      "assets_transfer_type": {
+        "teleport": null,
+      },
+      "custom_xcm_on_dest": {
+        "v5": [
+          {
+            "depositAsset": {
+              "assets": {
+                "wild": {
+                  "allCounted": 1,
                 },
               },
-            ],
+              "beneficiary": {
+                "interior": {
+                  "x1": [
+                    {
+                      "accountId32": {
+                        "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                        "network": null,
+                      },
+                    },
+                  ],
+                },
+                "parents": 0,
+              },
+            },
           },
-          "parents": 0,
-        },
+        ],
       },
       "dest": {
         "v5": {
@@ -38169,12 +38384,22 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
           "parents": 1,
         },
       },
-      "fee_asset_item": 0,
+      "fees_transfer_type": {
+        "teleport": null,
+      },
+      "remote_fees_id": {
+        "v5": {
+          "interior": {
+            "here": null,
+          },
+          "parents": 0,
+        },
+      },
       "weight_limit": {
         "unlimited": null,
       },
     },
-    "callIndex": "0x1f09",
+    "callIndex": "0x1f0d",
   },
 }
 `;
@@ -38189,7 +38414,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
         "v5": [
           {
             "fun": {
-              "fungible": "1319511798463211982778",
+              "fungible": "1272693872640376819468",
             },
             "id": {
               "interior": {
@@ -41026,7 +41251,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -41061,7 +41286,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -41096,7 +41321,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -41131,7 +41356,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -41201,7 +41426,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -41271,7 +41496,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Peaq > ParaToPara > should cr
       "amount": "5000000000000000000",
       "currency_id": 1000,
       "dest": {
-        "v4": {
+        "v5": {
           "interior": {
             "x2": [
               {
@@ -43528,6 +43753,71 @@ exports[`XCM - e2e > Transfer scenarios for origin RobonomicsPolkadot > ParaToPa
       },
     },
     "callIndex": "0x4709",
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin Shibuya > ParaToPara > should create transfer tx from Shibuya to HydrationPaseo - (BNC) 1`] = `
+{
+  "method": "reserveTransferAssets",
+  "module": "polkadotXcm",
+  "params": {
+    "args": {
+      "assets": {
+        "v5": [
+          {
+            "fun": {
+              "fungible": 5000000000000,
+            },
+            "id": {
+              "interior": {
+                "x2": [
+                  {
+                    "parachain": 2030,
+                  },
+                  {
+                    "generalKey": {
+                      "data": "0x0001000000000000000000000000000000000000000000000000000000000000",
+                      "length": 2,
+                    },
+                  },
+                ],
+              },
+              "parents": 1,
+            },
+          },
+        ],
+      },
+      "beneficiary": {
+        "v5": {
+          "interior": {
+            "x1": [
+              {
+                "accountId32": {
+                  "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                  "network": null,
+                },
+              },
+            ],
+          },
+          "parents": 0,
+        },
+      },
+      "dest": {
+        "v5": {
+          "interior": {
+            "x1": [
+              {
+                "parachain": 2034,
+              },
+            ],
+          },
+          "parents": 1,
+        },
+      },
+      "fee_asset_item": 0,
+    },
+    "callIndex": "0x3302",
   },
 }
 `;

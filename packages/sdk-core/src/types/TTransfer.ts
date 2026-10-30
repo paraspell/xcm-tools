@@ -13,6 +13,7 @@ import type { PolkadotApi } from '../api/PolkadotApi'
 import type { TRANSACT_ORIGINS } from '../constants'
 import type { WithApi } from './TApi'
 import type { TExchangeChain, TSwapOptions } from './TSwap'
+import type { TChainWithApi } from './TTypeAndThen'
 
 export type TPolkadotXCMTransferOptions<
   TApi,
@@ -303,12 +304,22 @@ export type TTransferFeeEstimates = {
   destFee: bigint
 }
 
+export type TResolveEdDepositOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
+  origin: TChainWithApi<TApi, TRes, TSigner, TSubstrateChain | TCustomChain, TCustomChain>
+  dest: TChainWithApi<TApi, TRes, TSigner, TChain, TCustomChain>
+  assetInfo: TAssetInfo
+  overriddenAsset?: TAssetWithFee[]
+  feeAssetLocation: TLocation
+  recipient: TAddress
+}
+
 export type TCreateBaseTransferXcmOptions<TRes, TCustomChain extends string = never> = {
   chain: TSubstrateChain | TCustomChain
   destChain: TChain
   assetInfo: WithAmount<TAssetInfo>
   feeAssetInfo?: TAssetInfo
   fees: TTransferFeeEstimates
+  edDeposit?: bigint
   recipient: string
   sender?: string
   version: Version

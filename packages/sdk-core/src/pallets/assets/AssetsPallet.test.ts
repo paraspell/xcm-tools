@@ -4,10 +4,10 @@ import { describe, expect, it, vi } from 'vitest'
 import type { PolkadotApi } from '../../api'
 import type SubstrateChain from '../../chains/SubstrateChain'
 import type { TMintConfig } from '../../types'
-import { assertHasId } from '../../utils'
+import { assertHasId } from '../../utils/assertions'
 import { AssetsPallet } from './AssetsPallet'
 
-vi.mock('../../utils')
+vi.mock('../../utils/assertions')
 
 const apiMock = {} as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -135,5 +135,49 @@ describe('AssetsPallet.getBalance', () => {
 
   it('retries with BigInt asset id when the runtime expects an integer', async () => {
     await expectBigIntRetry('Number needs to be an integer')
+  })
+})
+
+describe('AssetsPallet.getAssetState', () => {
+  const asset = { assetId: '1984' } as TAssetInfo
+
+  const setup = (details: unknown) => {
+    const queryState = vi.fn().mockResolvedValue(details)
+    const api = { queryState } as unknown as PolkadotApi<unknown, unknown, unknown>
+    return { api, queryState }
+  }
+
+  it('queries the Asset storage by asset id', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const { api, queryState } = setup({ is_sufficient: true })
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toEqual({ isSufficient: true })
+
+    expect(assertHasId).toHaveBeenCalledWith(asset)
+    expect(queryState).toHaveBeenCalledWith({ module: 'Assets', method: 'Asset', params: [1984] })
+  })
+
+  it('normalizes camel case details', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const { api } = setup({ isSufficient: false })
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toEqual({ isSufficient: false })
+  })
+
+  it('returns undefined when the asset is missing', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const { api } = setup(null)
+
+    await expect(pallet.getAssetState(api, asset)).resolves.toBeUndefined()
+  })
+
+  it('rethrows errors unrelated to the asset id type', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const error = new Error('Connection lost')
+    const queryState = vi.fn().mockRejectedValue(error)
+    const api = { queryState } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+    await expect(pallet.getAssetState(api, asset)).rejects.toBe(error)
+    expect(queryState).toHaveBeenCalledOnce()
   })
 })
