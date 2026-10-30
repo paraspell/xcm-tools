@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.3.0...xcm-analyser-v3.4.0) (2026-10-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c68e1fd](https://github.com/paraspell/xcm-tools/commit/c68e1fdde766f4e94d5153b59d0b90e1936d8a7b))
+
+
+### Code Refactoring
+
+* Make unit tests use vitest v5 best practices 🪄 ([8f6ac8f](https://github.com/paraspell/xcm-tools/commit/8f6ac8f2bd20239a2fc337e944396d268af0383b))
+
 ## [3.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.2.0...xcm-analyser-v3.3.0) (2026-09-30)
 
 
