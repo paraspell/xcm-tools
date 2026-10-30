@@ -1,5 +1,28 @@
 # Changelog
 
+## [14.5.0](https://github.com/paraspell/xcm-tools/compare/assets-v14.4.4...assets-v14.5.0) (2026-10-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c68e1fd](https://github.com/paraspell/xcm-tools/commit/c68e1fdde766f4e94d5153b59d0b90e1936d8a7b))
+
+
+### Bug Fixes
+
+* **assets:** Simplify AH assets script ⚙️ ([e486919](https://github.com/paraspell/xcm-tools/commit/e486919fcad0e80864374985046e9dcbebf458de))
+
+
+### Code Refactoring
+
+* Make unit tests use vitest v5 best practices 🪄 ([8f6ac8f](https://github.com/paraspell/xcm-tools/commit/8f6ac8f2bd20239a2fc337e944396d268af0383b))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([406d282](https://github.com/paraspell/xcm-tools/commit/406d282aec01486eaa154b5f351f41fc714c0db8))
+* **swap:** Update swap assets 📋 ([406d282](https://github.com/paraspell/xcm-tools/commit/406d282aec01486eaa154b5f351f41fc714c0db8))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/assets-v14.4.3...assets-v14.4.4) (2026-10-20)
 
 

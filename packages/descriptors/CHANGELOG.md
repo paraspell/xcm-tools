@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.0](https://github.com/paraspell/xcm-tools/compare/descriptors-v14.4.4...descriptors-v14.5.0) (2026-10-30)
+
+
+### Features
+
+* Perform a monthly check 🪄 ([c68e1fd](https://github.com/paraspell/xcm-tools/commit/c68e1fdde766f4e94d5153b59d0b90e1936d8a7b))
+
 ## [14.4.4](https://github.com/paraspell/xcm-tools/compare/descriptors-v14.4.3...descriptors-v14.4.4) (2026-10-20)
 
 
