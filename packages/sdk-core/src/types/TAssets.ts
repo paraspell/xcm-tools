@@ -1,9 +1,10 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import type { TAssetsPallet } from '@paraspell/pallets'
-import type { TChain } from '@paraspell/sdk-common'
+import type { TChain, TLocation } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api'
 import type Chain from '../chains/Chain'
+import { UnsupportedOperationError } from '../errors'
 import type { TSerializedExtrinsics } from './TTransfer'
 
 export type TSetBalanceRes = {
@@ -15,6 +16,12 @@ export type TChainAssetInfo<TCustomChain extends string = never> = {
   chain: TChain | TCustomChain
   asset: TAssetInfo
 }
+
+export type TAssetState = {
+  isSufficient: boolean
+}
+
+export type TPalletAssetId = number | bigint | TLocation
 
 export type TMintConfig = {
   useIdPrefix?: boolean
@@ -40,4 +47,13 @@ export abstract class BaseAssetsPallet {
     asset: TAssetInfo,
     customCurrencyId?: unknown
   ): Promise<bigint>
+
+  getAssetState<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    _api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    _asset: TAssetInfo
+  ): Promise<TAssetState | undefined> {
+    throw new UnsupportedOperationError(
+      `getAssetState is not implemented for ${this.palletName} pallet`
+    )
+  }
 }

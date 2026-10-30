@@ -16,7 +16,6 @@ import { createAsset } from '../../utils/asset'
 import { createCustomXcmOnDest } from '../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { handleToAhTeleport } from '../../utils/transfer'
 import { getParaId } from '../config'
 import SubstrateChain from '../SubstrateChain'
 
@@ -104,10 +103,6 @@ class Mythos<TApi, TRes, TSigner, TCustomChain extends string = never>
 
     const defaultTx = await transferPolkadotXcm(input)
 
-    if (destination === 'AssetHubPolkadot') {
-      return handleToAhTeleport('Mythos', input, defaultTx)
-    }
-
     if (destination == 'Ethereum') {
       return api.deserializeExtrinsics(
         await createTypeAndThenTransfer(input, this.chain, this.version)
@@ -115,6 +110,10 @@ class Mythos<TApi, TRes, TSigner, TCustomChain extends string = never>
     }
 
     return defaultTx
+  }
+
+  shouldUseNativeAssetTeleport(): boolean {
+    return false
   }
 
   isRelayToParaEnabled(): boolean {

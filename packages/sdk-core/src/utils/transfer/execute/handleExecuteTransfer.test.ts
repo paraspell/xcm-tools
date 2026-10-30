@@ -15,6 +15,7 @@ import type {
   TSerializedExtrinsics
 } from '../../../types'
 import { assertAddressIsString, getRelayChainOf, padValueBy } from '../..'
+import { resolveEdDeposit } from '../resolveEdDeposit'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 import { handleExecuteTransfer } from './handleExecuteTransfer'
@@ -27,11 +28,15 @@ vi.mock('./createExecuteCall')
 vi.mock('../..')
 vi.mock('../../../transfer')
 vi.mock('../../../balance')
+vi.mock('../resolveEdDeposit')
 
 describe('handleExecuteTransfer', () => {
   const mockApi = {
     deserializeExtrinsics: vi.fn(),
-    getXcmWeight: vi.fn()
+    getXcmWeight: vi.fn(),
+    clone: vi.fn(),
+    init: vi.fn(),
+    disconnect: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const mockXcm = { [Version.V4]: {} } as Awaited<ReturnType<typeof createDirectExecuteXcm>>
@@ -62,6 +67,43 @@ describe('handleExecuteTransfer', () => {
       (fee, percentage) => fee + (fee * BigInt(percentage)) / 100n
     )
     vi.mocked(isAssetEqual).mockReturnValue(true)
+    vi.spyOn(mockApi, 'clone').mockReturnValue(mockApi)
+  })
+
+  it('adds the ED deposit to the destination fee and passes it to the XCM', async () => {
+    const input = {
+      ...mockInput,
+      sender: '0xvalid',
+      assetInfo: { ...mockInput.assetInfo, amount: 10000n }
+    }
+
+    const initSpy = vi.spyOn(mockApi, 'init')
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+    vi.mocked(resolveEdDeposit).mockResolvedValueOnce(500n)
+    vi.mocked(createDirectExecuteXcm).mockResolvedValue(mockXcm)
+    vi.spyOn(mockApi, 'getXcmWeight').mockResolvedValue({ proofSize: 0n, refTime: 12000n })
+    vi.mocked(dryRunInternal).mockResolvedValue({
+      origin: { success: true, fee: 1000n },
+      hops: []
+    } as unknown as TDryRunResult)
+
+    await handleExecuteTransfer(input)
+
+    expect(initSpy).toHaveBeenCalledWith(mockDestChain)
+    expect(resolveEdDeposit).toHaveBeenCalledWith({
+      origin: { api: mockApi, chain: input.chain },
+      dest: { api: mockApi, chain: mockDestChain },
+      assetInfo: input.assetInfo,
+      feeAssetLocation: input.assetInfo.location,
+      recipient: 'address'
+    })
+    expect(disconnectSpy).toHaveBeenCalled()
+    expect(createDirectExecuteXcm).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        edDeposit: 500n,
+        fees: { originFee: 1400n, reserveFee: 1400n, destFee: 1900n }
+      })
+    )
   })
 
   it('should throw error when amount is smaller than MIN_FEE', async () => {

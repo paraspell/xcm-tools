@@ -39,6 +39,8 @@ export type TApiType = (typeof API_TYPES)[number]
 
 export type TRuntimeApi = 'DryRunApi' | 'XcmPaymentApi'
 
+export type TQueriedAmount = bigint | number | string | null | undefined
+
 export type TSystemProperties = {
   ss58Format?: number
   tokenSymbol?: string

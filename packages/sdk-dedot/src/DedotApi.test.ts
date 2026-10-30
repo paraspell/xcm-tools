@@ -275,8 +275,13 @@ describe("DedotApi", () => {
 
       mockApiRaw.query.system.account.mockResolvedValue({ data: "result" });
 
+      vi.mocked(transform).mockReturnValue({ val: "transformed" });
+
       const result = await dedotApi.queryState(serialized);
-      expect(mockApiRaw.query.system.account).toHaveBeenCalledWith("addr");
+      expect(transform).toHaveBeenCalledWith("addr");
+      expect(mockApiRaw.query.system.account).toHaveBeenCalledWith({
+        val: "transformed",
+      });
       expect(result).toEqual({ data: "result" });
     });
 
@@ -288,8 +293,13 @@ describe("DedotApi", () => {
       };
 
       mockApiRaw.query.system.account.mockResolvedValue({ data: "result" });
+      vi.mocked(transform).mockReturnValueOnce([
+        { val: "transformed" },
+        { val: "transformed" },
+      ]);
 
       const result = await dedotApi.queryState(serialized);
+      expect(transform).toHaveBeenCalledWith(["addr", "extra"]);
       expect(mockApiRaw.query.system.account).toHaveBeenCalledWith([
         { val: "transformed" },
         { val: "transformed" },

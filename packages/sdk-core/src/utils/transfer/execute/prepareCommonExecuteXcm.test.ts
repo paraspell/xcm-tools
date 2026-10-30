@@ -207,6 +207,13 @@ describe('prepareCommonExecuteXcm', () => {
     expect(result.depositInstruction.DepositAsset.assets).toBe(mockAllCountedFilter)
   })
 
+  it('deposits all assets when an ED deposit is required', () => {
+    const result = prepareCommonExecuteXcm({ ...baseOptions, edDeposit: 100n })
+
+    expect(createAllCountedFilter).toHaveBeenCalledWith(2)
+    expect(result.depositInstruction.DepositAsset.assets).toBe(mockAllCountedFilter)
+  })
+
   it('uses assetLocalizedToDest when no custom deposit asset', () => {
     prepareCommonExecuteXcm(baseOptions)
     expect(createAssetsFilter).toHaveBeenCalledWith(mockAsset, mockVersion)

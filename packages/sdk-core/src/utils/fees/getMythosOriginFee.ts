@@ -2,6 +2,7 @@ import type { PolkadotApi } from '../../api'
 import { DOT_LOCATION } from '../../constants'
 import { UnableToComputeError } from '../../errors'
 import { getParaEthTransferFees } from '../../transfer'
+import type { TQueriedAmount } from '../../types'
 import { padValueBy } from './padFee'
 
 export const getMythosOriginFee = async <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -14,7 +15,7 @@ export const getMythosOriginFee = async <TApi, TRes, TSigner, TCustomChain exten
 
   const nativeAsset = api.findNativeAssetInfoOrThrow('Mythos')
 
-  const feeConvertedRes = await ahApi.queryRuntimeApi<bigint | null>({
+  const feeConvertedRes = await ahApi.queryRuntimeApi<TQueriedAmount>({
     module: 'AssetConversionApi',
     method: 'quote_price_exact_tokens_for_tokens',
     params: [DOT_LOCATION, nativeAsset.location, bridgeFee + ahExecutionFee, true]

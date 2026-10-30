@@ -13,7 +13,7 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
   assetToDeposit?: TAsset,
   depositFeeAsset = false
 ) => {
-  const { api, useJitWithdraw, recipient, version } = options
+  const { api, useJitWithdraw, recipient, version, edDeposit } = options
 
   const context = prepareExecuteContext(options)
 
@@ -47,9 +47,10 @@ export const prepareCommonExecuteXcm = <TApi, TRes, TSigner, TCustomChain extend
 
   const depositInstruction = {
     DepositAsset: {
-      assets: depositFeeAsset
-        ? createAllCountedFilter(2)
-        : createAssetsFilter(assetToDeposit ?? assetLocalizedToDest, version),
+      assets:
+        depositFeeAsset || edDeposit !== undefined
+          ? createAllCountedFilter(2)
+          : createAssetsFilter(assetToDeposit ?? assetLocalizedToDest, version),
       beneficiary
     }
   }

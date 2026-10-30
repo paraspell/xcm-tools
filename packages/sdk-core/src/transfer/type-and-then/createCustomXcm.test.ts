@@ -1,6 +1,6 @@
 import { isAssetEqual } from '@paraspell/assets'
 import type { TLocation } from '@paraspell/sdk-common'
-import { isTrustedChain, replaceBigInt, Version } from '@paraspell/sdk-common'
+import { deepEqual, isTrustedChain, replaceBigInt, Version } from '@paraspell/sdk-common'
 import { stringToHex } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -584,6 +584,107 @@ describe('createCustomXcm', () => {
 
       expect(getDepositAssets(result)).toEqual({ Wild: { AllCounted: 2 } })
       expect(findAssetInfoOnDestSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('ED deposit', () => {
+    const pinkLocation: TLocation = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 23 }] }
+    }
+    const usdtLocation: TLocation = {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+    const mythLocation: TLocation = { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
+
+    const edContext = {
+      ...mockContext,
+      origin: { chain: 'Hydration', api: mockApi },
+      dest: { chain: 'AssetHubPolkadot', api: mockApi },
+      reserve: { chain: 'AssetHubPolkadot', api: mockApi },
+      assetInfo: {
+        symbol: 'PINK',
+        decimals: 10,
+        amount: 1000n,
+        location: pinkLocation,
+        existentialDeposit: '1'
+      },
+      isRelayAsset: false,
+      edDeposit: 5000n,
+      options: { ...mockContext.options, destination: 'AssetHubPolkadot' }
+    } as TTypeAndThenCallContext<unknown, unknown, unknown>
+
+    const fees = { hopFees: 100n, destFee: 200n }
+
+    const createDeposit = (count: number) => ({
+      DepositAsset: { assets: { Wild: { AllCounted: count } }, beneficiary: mockBeneficiary }
+    })
+
+    const createExchange = (giveLocation: TLocation, maximal: boolean) => ({
+      ExchangeAsset: {
+        give: { Wild: { AllOf: { id: giveLocation, fun: 'Fungible' } } },
+        want: [{ id: RELAY_LOCATION, fun: { Fungible: 100000000n } }],
+        maximal
+      }
+    })
+
+    beforeEach(() => {
+      vi.mocked(deepEqual).mockImplementation((a, b) => JSON.stringify(a) === JSON.stringify(b))
+      vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
+        symbol: 'DOT',
+        decimals: 10,
+        location: RELAY_LOCATION,
+        existentialDeposit: '100000000'
+      })
+    })
+
+    it('deposits the native fee leftover with the transferred asset in one instruction', async () => {
+      const result = await createCustomXcm(edContext, 2, false, 0n, fees)
+
+      expect(result).toEqual([createDeposit(2)])
+    })
+
+    it('exchanges the whole separate fee asset for native before depositing', async () => {
+      const result = await createCustomXcm(
+        {
+          ...edContext,
+          feeAssetInfo: {
+            symbol: 'USDT',
+            decimals: 6,
+            location: usdtLocation,
+            existentialDeposit: '1'
+          }
+        },
+        2,
+        false,
+        0n,
+        fees
+      )
+
+      expect(result).toEqual([createExchange(usdtLocation, true), createDeposit(2)])
+    })
+
+    it('exchanges only the native ED when the fee asset is the transferred asset', async () => {
+      const result = await createCustomXcm(
+        {
+          ...edContext,
+          assetInfo: {
+            symbol: 'MYTH',
+            decimals: 18,
+            amount: 1000n,
+            location: mythLocation,
+            existentialDeposit: '1'
+          },
+          isRelayAsset: true
+        },
+        1,
+        false,
+        0n,
+        fees
+      )
+
+      expect(result).toEqual([createExchange(mythLocation, false), createDeposit(2)])
     })
   })
 
