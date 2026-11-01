@@ -63,7 +63,6 @@ class ConcreteApi extends PolkadotApi<unknown, unknown, unknown, 'MyCustom'> {
   queryState = <T>() => Promise.resolve({} as T)
   queryRuntimeApi = <T>() => Promise.resolve({} as T)
   callBatchMethod = () => ({})
-  callDispatchAsMethod = () => ({})
   objectToHex = () => Promise.resolve('')
   hexToUint8a = () => new Uint8Array()
   stringToUint8a = () => new Uint8Array()
@@ -376,6 +375,24 @@ describe('PolkadotApi', () => {
         expect(result).toBe(returnValue)
       }
     )
+  })
+
+  describe('dispatchAs', () => {
+    it.each([
+      [{ type: 'signed', address: 'Alice' }, { system: { Signed: 'Alice' } }],
+      [{ type: 'treasuryCouncil' }, { TreasuryCouncil: { Members: [1, 1] } }]
+    ] as const)('serializes dispatch_as with %o origin', (origin, asOrigin) => {
+      const api = new ConcreteApi()
+      const spy = vi.spyOn(api, 'deserializeExtrinsics')
+
+      api.dispatchAs('call', origin)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Utility',
+        method: 'dispatch_as',
+        params: { as_origin: asOrigin, call: 'call' }
+      })
+    })
   })
 
   describe('init', () => {

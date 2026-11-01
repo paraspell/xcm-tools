@@ -275,24 +275,6 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('callDispatchAsMethod', () => {
-    it('should create a dispatch call with the provided module, method, and parameters', () => {
-      const mockAddress = 'some_address'
-      const mockDispatchMethod = vi.fn().mockReturnValue(mockTransaction)
-
-      const unsafeApi = papiApi.api.getUnsafeApi()
-
-      unsafeApi.tx.Utility = {
-        dispatch_as: mockDispatchMethod
-      }
-
-      const result = papiApi.callDispatchAsMethod(mockTransaction, mockAddress)
-
-      expect(result).toBe(mockTransaction)
-      expect(mockDispatchMethod).toHaveBeenCalledOnce()
-    })
-  })
-
   describe('hasMethod', () => {
     it('returns true when the pallet.method exists (encodes successfully)', async () => {
       const unsafeApi = papiApi.api.getUnsafeApi()

@@ -609,17 +609,6 @@ describe('createTypeAndThenCallContext', () => {
     expect(result.reserve.chain).toBe(mockChain)
   })
 
-  it('uses the override reserve chain when provided', async () => {
-    const overrideChain: TSubstrateChain = 'Hydration'
-
-    const result = await createTypeAndThenCallContext(mockOptions, {
-      reserveChain: overrideChain
-    })
-
-    expect(getAssetReserveChainSpy).not.toHaveBeenCalled()
-    expect(result.reserve.chain).toBe(overrideChain)
-  })
-
   it('does not mark foreign-relay assets as relay assets when going to an external chain', async () => {
     vi.mocked(isExternalChain).mockImplementation(c => c === 'Ethereum')
 

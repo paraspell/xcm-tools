@@ -160,11 +160,6 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     return this.api.tx.utility[method](calls)
   }
 
-  callDispatchAsMethod(call: Extrinsic, address: string): Extrinsic {
-    const origin = { system: { Signed: address } }
-    return this.api.tx.utility.dispatchAs(origin, call)
-  }
-
   objectToHex(obj: unknown, typeName: string) {
     return Promise.resolve(this.api.createType(typeName, obj).toHex())
   }

@@ -163,6 +163,24 @@ describe("XcmTransformer", () => {
       });
     });
 
+    it("maps system origin to System and keeps Signed address", () => {
+      expect(transform({ system: { Signed: "5Addr" } })).toEqual({
+        type: "System",
+        value: { type: "Signed", value: "5Addr" },
+      });
+    });
+
+    it("unwraps the inner call of an extrinsic passed as call", () => {
+      const call = { pallet: "System", palletCall: { name: "remark" } };
+
+      expect(transform({ as_origin: { Id: "5Addr" }, call: { call } })).toEqual(
+        {
+          asOrigin: { type: "Id", value: "5Addr" },
+          call,
+        },
+      );
+    });
+
     it("keeps valid Substrate and EVM addresses as strings", () => {
       vi.mocked(decodeAddress)
         .mockReturnValueOnce(new Uint8Array([1]))

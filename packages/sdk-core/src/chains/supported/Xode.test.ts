@@ -36,6 +36,15 @@ describe('Xode', () => {
     expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput)
   })
 
+  it('should use TreasuryCouncil as mint force origin', () => {
+    const api = { isChainEvm: vi.fn(() => false) } as unknown as PolkadotApi<
+      unknown,
+      unknown,
+      unknown
+    >
+    expect(chain.resolveMintConfig(api).forceOrigin).toEqual({ type: 'treasuryCouncil' })
+  })
+
   it('transferPolkadotXCM should throw ScenarioNotSupportedError for unsupported destChain', () => {
     expect(() => chain.transferPolkadotXCM({ ...mockInput, destChain: 'Darwinia' })).toThrow(
       ScenarioNotSupportedError

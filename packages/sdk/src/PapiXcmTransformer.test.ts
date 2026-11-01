@@ -97,6 +97,21 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should keep Signed address as value', () => {
+    expect(transform({ system: { Signed: '5Addr' } })).toEqual({
+      type: 'system',
+      value: { type: 'Signed', value: '5Addr' }
+    })
+  })
+
+  it('should unwrap decodedCall of a transaction passed as `call`', () => {
+    const decodedCall = { type: 'System', value: { type: 'remark', value: {} } }
+    expect(transform({ as_origin: { Id: '5Addr' }, call: { decodedCall } })).toEqual({
+      as_origin: { type: 'Id', value: '5Addr' },
+      call: decodedCall
+    })
+  })
+
   it('should not transform dest and target keys', () => {
     vi.mocked(getSs58AddressInfo).mockReturnValue({ isValid: true } as SS58AddressInfo)
 

@@ -70,6 +70,7 @@ export class AssetsPallet extends BaseAssetsPallet {
           is_frozen: false
         }
       },
+      forceOrigin: config.forceOrigin,
       balanceTx: {
         module: this.palletName,
         method: 'mint',

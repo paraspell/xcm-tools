@@ -7,6 +7,7 @@ import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
+  TMintConfig,
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions
 } from '../../types'
@@ -37,6 +38,10 @@ class Xode<TApi, TRes, TSigner, TCustomChain extends string = never>
 
   canReceiveFrom<TCustomChain extends string = never>(origin: TChain | TCustomChain): boolean {
     return origin === 'AssetHubPolkadot'
+  }
+
+  protected getMintConfig(): TMintConfig {
+    return { forceOrigin: { type: 'treasuryCouncil' } }
   }
 
   transferLocalNonNativeAsset(

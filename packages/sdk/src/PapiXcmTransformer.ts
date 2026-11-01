@@ -44,7 +44,7 @@ export const transform = (obj: any): any => {
             id: value.id
           }
         }
-      } else if (key === 'Id') {
+      } else if (key === 'Id' || key === 'Signed') {
         return {
           type: key,
           value
@@ -153,7 +153,7 @@ export const transform = (obj: any): any => {
         }
 
         if (k === 'call') {
-          newObj[k] = v
+          newObj[k] = v?.decodedCall ?? v
           continue
         }
 

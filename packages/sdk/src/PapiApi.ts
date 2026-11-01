@@ -212,19 +212,6 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     })
   }
 
-  callDispatchAsMethod({ decodedCall }: TPapiTransaction, address: string) {
-    return this.ahpApi.tx.Utility.dispatch_as({
-      as_origin: {
-        type: 'system',
-        value: {
-          type: 'Signed',
-          value: address
-        }
-      },
-      call: decodedCall
-    })
-  }
-
   async objectToHex(obj: unknown, _typeName: string, version: Version) {
     const transformedObj = transform(obj)
 

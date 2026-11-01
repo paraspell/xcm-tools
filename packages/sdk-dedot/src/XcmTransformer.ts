@@ -56,7 +56,12 @@ export const transform = (obj: any): any => {
             id: value.id,
           },
         };
-      } else if (key === "Id") {
+      } else if (key === "system") {
+        return {
+          type: "System",
+          value: transform(value),
+        };
+      } else if (key === "Id" || key === "Signed") {
         return {
           type: key,
           value,
@@ -156,7 +161,7 @@ export const transform = (obj: any): any => {
         const k = snakeToCamel(key);
 
         if (key === "call") {
-          newObj[k] = v;
+          newObj[k] = v?.call ?? v;
           continue;
         }
 

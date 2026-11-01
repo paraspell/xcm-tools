@@ -37,7 +37,6 @@ export type TTypeAndThenFees = {
 }
 
 export type TTypeAndThenOverrides = {
-  reserveChain?: TSubstrateChain
   // When true, will not include relay fee asset in the transfer
   noFeeAsset?: boolean
 }

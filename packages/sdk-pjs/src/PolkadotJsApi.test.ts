@@ -455,25 +455,6 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('callDispatchAsMethod', () => {
-    it('should create a dispatchAs extrinsic with the provided inner and address', () => {
-      const tx = '' as unknown as Extrinsic
-      const address = 'recipient_address'
-
-      const result = polkadotApi.callDispatchAsMethod(tx, address)
-
-      expect(mockApiPromise.tx.utility.dispatchAs).toHaveBeenCalledWith(
-        {
-          system: {
-            Signed: address
-          }
-        },
-        tx
-      )
-      expect(result).toBe('mocked_utility_extrinsic')
-    })
-  })
-
   describe('callBatchMethod', () => {
     it('should create a batch extrinsic with the provided calls and BATCH mode', () => {
       const calls = ['call1', 'call2'] as unknown as Extrinsic[]

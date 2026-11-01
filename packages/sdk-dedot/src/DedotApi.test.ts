@@ -343,20 +343,6 @@ describe("DedotApi", () => {
     });
   });
 
-  describe("callDispatchAsMethod", () => {
-    it("creates a dispatchAs call", () => {
-      const result = dedotApi.callDispatchAsMethod(mockTx, "someAddress");
-      expect(mockApiRaw.tx.utility.dispatchAs).toHaveBeenCalledWith(
-        {
-          type: "System",
-          value: { type: "Signed", value: "someAddress" },
-        },
-        mockTx.call,
-      );
-      expect(result).toBe(mockTx);
-    });
-  });
-
   describe("objectToHex", () => {
     it("encodes object to hex using the registry codec", async () => {
       const result = await dedotApi.objectToHex(
