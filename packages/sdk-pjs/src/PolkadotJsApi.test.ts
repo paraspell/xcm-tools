@@ -2187,6 +2187,51 @@ describe('PolkadotJsApi', () => {
       })
     })
 
+    it('should report the Err variant instead of throwing when the runtime rejects the dry run', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({ Err: 'VersionedConversionFailed' }),
+        toJSON: vi.fn().mockReturnValue({ err: 'VersionedConversionFailed' })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValueOnce(false)
+
+      const result = await polkadotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        asset: dotAsset,
+        chain: 'Astar',
+        origin: 'Hydration'
+      } as TDryRunXcmBaseOptions<Extrinsic>)
+
+      expect(result).toEqual({
+        success: false,
+        dryRunError: { reason: 'VersionedConversionFailed' },
+        asset: dotAsset
+      })
+    })
+
+    it('should not throw when the Ok branch carries no instruction error', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({ Ok: { executionResult: { Incomplete: {} } } }),
+        toJSON: vi.fn().mockReturnValue({ ok: { executionResult: { incomplete: {} } } })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+      vi.spyOn(polkadotApi, 'hasXcmPaymentApiSupport').mockReturnValueOnce(false)
+
+      const result = await polkadotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        asset: dotAsset,
+        chain: 'Astar',
+        origin: 'Hydration'
+      } as TDryRunXcmBaseOptions<Extrinsic>)
+
+      expect(result.success).toBe(false)
+      expect(typeof (result as any).dryRunError.reason).toBe('string')
+    })
+
     it('should throw RuntimeApiUnavailableError for unsupported chain', async () => {
       await expect(
         polkadotApi.getDryRunXcm({

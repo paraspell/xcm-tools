@@ -674,13 +674,37 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
     const result = response.toHuman() as any
     const resultJson = response.toJSON() as any
 
+    // A runtime can answer Err(..) instead of a dry-run result with an Ok
+    // branch. VersionedConversionFailed and Unimplemented are the realistic
+    // cases. result.Ok is undefined then, so there is no execution result to
+    // read a reason from, and dereferencing one throws a TypeError that no
+    // caller catches. Surface the Err variant itself instead.
+    if (result.Err != null) {
+      // Unit variants arrive as a plain string; struct variants arrive as an
+      // object, so stringify those instead of letting String() produce
+      // "[object Object]".
+      const errReason =
+        typeof result.Err === 'string' ? result.Err : JSON.stringify(result.Err)
+      return {
+        success: false,
+        dryRunError: buildDryRunError({ reason: errReason }, xcm),
+        asset
+      }
+    }
+
     const isSuccess = result.Ok && result.Ok.executionResult.Complete
 
     if (!isSuccess) {
       const execRes = result.Ok?.executionResult
       const error = execRes?.Incomplete?.error ?? execRes?.Error?.error
-      const isInstructionError = typeof error !== 'string'
-      const reason = isInstructionError ? error.error : error
+      // `error` is also undefined for an Ok branch that did not Complete and
+      // carries no instruction error, so check for a value before reading it.
+      const isInstructionError = error != null && typeof error !== 'string'
+      const reason = isInstructionError
+        ? (error.error ?? String(error))
+        : error != null
+          ? String(error)
+          : 'Dry run failed without a reason'
       const instructionIndex =
         isInstructionError && error?.index != null ? Number(error.index) : undefined
       return {
