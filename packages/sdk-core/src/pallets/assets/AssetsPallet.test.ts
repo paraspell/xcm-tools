@@ -44,6 +44,21 @@ describe('AssetsPallet.mint', () => {
     expect(res.balanceTx.params.amount).toBe(500n)
   })
 
+  it('passes forceOrigin from mint config', async () => {
+    const pallet = new AssetsPallet('Assets')
+    const asset = { assetId: '1984', amount: 1n } as WithAmount<TAssetInfo>
+
+    const res = await pallet.mint(
+      apiMock,
+      'addr',
+      asset,
+      0n,
+      chainMock({ forceOrigin: { type: 'treasuryCouncil' } })
+    )
+
+    expect(res.forceOrigin).toEqual({ type: 'treasuryCouncil' })
+  })
+
   it('uses a BigInt id and raw beneficiary', async () => {
     const pallet = new AssetsPallet('Assets')
     const address = '0xAlice'

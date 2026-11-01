@@ -73,15 +73,10 @@ const resolveReserveChain = <TApi, TRes, TSigner, TCustomChain extends string = 
   chain: TSubstrateChain | TCustomChain,
   destination: TChain,
   assetLocation: TLocation,
-  isSubBridge: boolean,
-  overrideReserve?: TSubstrateChain
+  isSubBridge: boolean
 ): TChain | TCustomChain => {
   if (isSubBridge) {
     return getBridgeReserve(api, chain, destination, assetLocation)
-  }
-
-  if (overrideReserve !== undefined) {
-    return overrideReserve
   }
 
   return api.getAssetReserveChain(chain, assetLocation, isExternalChain(destination))
@@ -111,8 +106,7 @@ export const createTypeAndThenCallContext = async <
     chain,
     destination,
     transferredAsset ? extractAssetLocation(transferredAsset) : assetInfo.location,
-    isSubBridge,
-    overrides.reserveChain
+    isSubBridge
   )
 
   const feeAssetInfo = getFeeAssetInfo(assetInfo, options.feeAssetInfo)

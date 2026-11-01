@@ -4,17 +4,24 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getAssetBalanceInternal } from '../../balance'
+import type { TDispatchOrigin } from '../../types'
 import { parseUnits } from '../../utils/unit'
 import { wrapTxBypass } from './wrapTxBypass'
 
 const { mint } = vi.hoisted(() => ({
-  mint: vi.fn((_api: unknown, _address: string, asset: { symbol?: string; isNative?: boolean }) => {
-    const sym = asset.symbol ?? 'Unknown'
-    const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
-    return asset.isNative
-      ? { balanceTx }
-      : { balanceTx, assetStatusTx: { module: 'Mint', method: `Mint:status:${sym}` } }
-  })
+  mint: vi.fn(
+    (
+      _api: unknown,
+      _address: string,
+      asset: { symbol?: string; isNative?: boolean }
+    ): { balanceTx: object; assetStatusTx?: object; forceOrigin?: TDispatchOrigin } => {
+      const sym = asset.symbol ?? 'Unknown'
+      const balanceTx = { module: 'Mint', method: `Mint:set_balance:${sym}` }
+      return asset.isNative
+        ? { balanceTx }
+        : { balanceTx, assetStatusTx: { module: 'Mint', method: `Mint:status:${sym}` } }
+    }
+  )
 }))
 
 vi.mock('../../chains/getChainInstance', () => ({
@@ -31,13 +38,14 @@ vi.mock('../../utils/unit', () => ({
 
 const mkApi = () => {
   const deserializeExtrinsics = vi.fn((tx: { method: string }) => `call:${tx.method}`)
-  const callDispatchAsMethod = vi.fn(
-    (inner: unknown, addr: string) => `dispatchAs(${addr})->${String(inner)}`
+  const dispatchAs = vi.fn(
+    (inner: unknown, origin: TDispatchOrigin) =>
+      `dispatchAs(${origin.type === 'signed' ? origin.address : origin.type})->${String(inner)}`
   )
   const callBatchMethod = vi.fn((arr: unknown[], mode: unknown) => ({ arr, mode }))
   const api = {
     deserializeExtrinsics,
-    callDispatchAsMethod,
+    dispatchAs,
     callBatchMethod,
     findAssetInfo: vi.fn(),
     findNativeAssetInfo: vi.fn(),
@@ -350,6 +358,40 @@ describe('wrapTxBypass (new branches)', () => {
 
     expect(batched).toEqual([
       'call:Mint:status:USDT',
+      'dispatchAs(Alice)->call:Mint:set_balance:USDT',
+      'dispatchAs(Alice)->ORIG_TX'
+    ])
+  })
+
+  it('dispatches asset status tx with forceOrigin when provided', async () => {
+    const { api, spies } = mkApi()
+
+    mint.mockReturnValueOnce({
+      balanceTx: { module: 'Mint', method: 'Mint:set_balance:USDT' },
+      assetStatusTx: { module: 'Mint', method: 'Mint:status:USDT' },
+      forceOrigin: { type: 'treasuryCouncil' }
+    })
+
+    await wrapTxBypass(
+      {
+        api,
+        chain: 'Xode',
+        address: 'Alice',
+        version,
+        asset: {
+          symbol: 'USDT',
+          decimals: 6,
+          existentialDeposit: '100',
+          amount: 1n
+        } as WithAmount<TAssetInfo>,
+        tx: 'ORIG_TX'
+      },
+      { mintFeeAssets: false, sentAssetMintMode: 'bypass' }
+    )
+
+    const [[batched]] = spies.callBatchMethod.mock.calls
+    expect(batched).toEqual([
+      'dispatchAs(treasuryCouncil)->call:Mint:status:USDT',
       'dispatchAs(Alice)->call:Mint:set_balance:USDT',
       'dispatchAs(Alice)->ORIG_TX'
     ])

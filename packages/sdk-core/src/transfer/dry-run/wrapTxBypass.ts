@@ -11,9 +11,9 @@ import {
   HIGH_BYPASS_MINT_AMOUNT,
   HIGH_BYPASS_MINT_CHAINS
 } from '../../constants'
-import type { TBypassOptions, TDryRunBypassOptions } from '../../types'
+import type { TBypassOptions, TDryRunBypassOptions, TSerializedExtrinsics } from '../../types'
 import { BatchMode } from '../../types'
-import type { TSetBalanceRes } from '../../types/TAssets'
+import type { TDispatchOrigin, TSetBalanceRes } from '../../types/TAssets'
 import { calcSentAssetPreviewMint } from '../../utils/dryRun'
 import { parseUnits } from '../../utils/unit'
 
@@ -62,18 +62,23 @@ const createOptionalMintTxs = <TApi, TRes, TSigner, TCustomChain extends string 
   return createMintTxs(chain, { ...asset, amount }, balance, address, api)
 }
 
+const toTxWithOrigin = <TApi, TRes, TSigner, TCustomChain extends string = never>(
+  api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+  tx: TSerializedExtrinsics,
+  origin?: TDispatchOrigin
+): TRes => {
+  const call = api.deserializeExtrinsics(tx)
+  return origin ? api.dispatchAs(call, origin) : call
+}
+
 const resultToExtrinsics = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
   address: string,
-  { assetStatusTx, balanceTx }: TSetBalanceRes
-): TRes[] => {
-  return [
-    ...(assetStatusTx ? [api.deserializeExtrinsics(assetStatusTx)] : []),
-    ...(assetStatusTx
-      ? [api.callDispatchAsMethod(api.deserializeExtrinsics(balanceTx), address)]
-      : [api.deserializeExtrinsics(balanceTx)])
-  ]
-}
+  { assetStatusTx, balanceTx, forceOrigin }: TSetBalanceRes
+): TRes[] => [
+  ...(assetStatusTx ? [toTxWithOrigin(api, assetStatusTx, forceOrigin)] : []),
+  toTxWithOrigin(api, balanceTx, assetStatusTx ? { type: 'signed', address } : undefined)
+]
 
 const mintBonusForSent = <TApi, TRes, TSigner, TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
@@ -185,7 +190,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
       ...[mintNativeAssetRes, mintRelayAssetRes, mintFeeAssetRes, ...mintAssetResults].flatMap(
         tx => (tx ? resultToExtrinsics(api, address, tx) : [])
       ),
-      api.callDispatchAsMethod(tx, address)
+      api.dispatchAs(tx, { type: 'signed', address })
     ],
     BatchMode.BATCH_ALL
   )

@@ -120,7 +120,6 @@ export const createTypeAndThenCall = async <
 >(
   options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>,
   overrides: TTypeAndThenOverrides = {
-    reserveChain: undefined,
     noFeeAsset: false
   }
 ): Promise<TSerializedExtrinsics> => {

@@ -202,22 +202,6 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     return this.api.tx.utility[method](calls.map(({ call }) => call));
   }
 
-  callDispatchAsMethod(
-    { call }: TDedotExtrinsic,
-    address: string,
-  ): TDedotExtrinsic {
-    return this.api.tx.utility.dispatchAs(
-      {
-        type: "System",
-        value: {
-          type: "Signed",
-          value: address,
-        },
-      },
-      call,
-    );
-  }
-
   objectToHex(obj: unknown, typeName: string) {
     const $XcmVersionedXcm = findCodecByType(this.api.registry, typeName);
     const transformedXcm = transform(obj);

@@ -7,9 +7,12 @@ import type Chain from '../chains/Chain'
 import { UnsupportedOperationError } from '../errors'
 import type { TSerializedExtrinsics } from './TTransfer'
 
+export type TDispatchOrigin = { type: 'signed'; address: string } | { type: 'treasuryCouncil' }
+
 export type TSetBalanceRes = {
   assetStatusTx?: TSerializedExtrinsics
   balanceTx: TSerializedExtrinsics
+  forceOrigin?: TDispatchOrigin
 }
 
 export type TChainAssetInfo<TCustomChain extends string = never> = {
@@ -28,6 +31,7 @@ export type TMintConfig = {
   useLocationId?: boolean
   useBigIntId?: boolean
   useCustomCurrencyId?: boolean
+  forceOrigin?: TDispatchOrigin
 }
 
 export abstract class BaseAssetsPallet {

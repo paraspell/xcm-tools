@@ -52,6 +52,7 @@ import type {
   TChainAssetInfo,
   TCustomChainEntryHydrated,
   TDestination,
+  TDispatchOrigin,
   TDryRunCallBaseOptions,
   TDryRunChainResult,
   TDryRunXcmBaseOptions,
@@ -237,6 +238,20 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
     return isAssetXcEqualImpl(this, a, b)
   }
 
+  dispatchAs(call: TRes, origin: TDispatchOrigin): TRes {
+    return this.deserializeExtrinsics({
+      module: 'Utility',
+      method: 'dispatch_as',
+      params: {
+        as_origin:
+          origin.type === 'treasuryCouncil'
+            ? { TreasuryCouncil: { Members: [1, 1] } }
+            : { system: { Signed: origin.address } },
+        call
+      }
+    })
+  }
+
   async init(
     chain: TChain | TCustomChain,
     clientTtlMs: number = DEFAULT_TTL_MS,
@@ -296,7 +311,6 @@ export abstract class PolkadotApi<TApi, TRes, TSigner, TCustomChain extends stri
   abstract queryState<T>(serialized: TSerializedStateQuery): Promise<T>
   abstract queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T>
   abstract callBatchMethod(calls: TRes[], mode: BatchMode): TRes
-  abstract callDispatchAsMethod(call: TRes, address: string): TRes
   abstract objectToHex(obj: unknown, typeName: string, version: Version): Promise<string>
   abstract hexToUint8a(hex: string): Uint8Array
   abstract stringToUint8a(str: string): Uint8Array
