@@ -203,7 +203,10 @@ describe('XTransferController', () => {
 
   describe('getXcmFee', () => {
     it('should call service.getXcmFee and returns its value', async () => {
-      const mockResult = { origin: {}, destination: {} } as TGetXcmFeeResult;
+      const mockResult = {
+        origin: {},
+        destination: {},
+      } as TGetXcmFeeResult<false>;
       const spy = vi.spyOn(service, 'getXcmFee').mockResolvedValue(mockResult);
 
       const result = await controller.getXcmFee(bodyParams, mockRequestObject);
