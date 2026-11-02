@@ -2377,6 +2377,40 @@ describe('PolkadotJsApi', () => {
       expect(result).toBe('0xfinalized')
     })
 
+    it('should reject instead of hanging when the transaction never finalizes', async () => {
+      const mockTx = {
+        signAsync: vi.fn().mockResolvedValue(undefined),
+        send: vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+          callback({
+            status: { isFinalized: false, isDropped: true },
+            dispatchError: undefined,
+            txHash: { toString: () => '0xdropped' }
+          })
+          return Promise.resolve(vi.fn())
+        })
+      } as unknown as Extrinsic
+
+      await expect(polkadotApi.signAndSubmitFinalized(mockTx, '//Alice')).rejects.toThrow(
+        SubmitTransactionError
+      )
+    })
+
+    it('should still resolve normally on finalized', async () => {
+      const mockTx = {
+        signAsync: vi.fn().mockResolvedValue(undefined),
+        send: vi.fn().mockImplementation((callback: (...args: unknown[]) => void) => {
+          callback({
+            status: { isFinalized: true },
+            dispatchError: undefined,
+            txHash: { toString: () => '0xok' }
+          })
+          return Promise.resolve(vi.fn())
+        })
+      } as unknown as Extrinsic
+
+      await expect(polkadotApi.signAndSubmitFinalized(mockTx, '//Alice')).resolves.toBe('0xok')
+    })
+
     it('should reject with SubmitTransactionError on module dispatch error', async () => {
       ;(mockApiPromise as unknown as { registry: { findMetaError: Mock } }).registry.findMetaError =
         vi.fn().mockReturnValue({

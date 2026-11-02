@@ -894,6 +894,22 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
           } else {
             resolve(txHash.toString())
           }
+          return
+        }
+
+        // A transaction can also end without ever finalizing. Usurped means the
+        // nonce was reused, Invalid means the node rejected it outright, Dropped
+        // means it was evicted from the pool, and FinalityTimeout means finality
+        // never arrived. polkadot.js emits no further callback for any of them,
+        // so without this branch the promise stays pending forever and the
+        // unsubscribe handle returned by send() is never released.
+        if (
+          status.isUsurped ||
+          status.isInvalid ||
+          status.isDropped ||
+          status.isFinalityTimeout
+        ) {
+          reject(new SubmitTransactionError('Transaction did not finalize'))
         }
       }).catch(error => {
         reject(error instanceof Error ? error : new SubmitTransactionError(String(error)))
