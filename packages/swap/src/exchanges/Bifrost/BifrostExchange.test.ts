@@ -197,6 +197,35 @@ describe('BifrostExchange', () => {
       expect(result.tx).toEqual({});
       expect(result.amountOut).toEqual(1000000000000n);
     });
+
+    it('passes an integer slippage numerator when slippagePct is fractional', async () => {
+      vi.mocked(getBestTrade).mockReturnValue({
+        descriptions: [{ fee: 0.5 }],
+        outputAmount: { toFixed: () => '1' },
+      } as Trade);
+
+      const swapSpy = vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
+        extrinsic: [{} as Extrinsic],
+      });
+
+      await chain.swapCurrency(
+        {
+          ...swapOptions,
+          amount: 100000000000000n,
+          slippagePct: '1.5',
+        },
+        mockToDestTransactionFee,
+      );
+
+      const call = swapSpy.mock.calls[swapSpy.mock.calls.length - 1];
+      const slippage = (call[1] as unknown as { allowedSlippage: { numerator: number } })
+        .allowedSlippage;
+
+      // Number('1.5') * 100 is 150.00000000000003, and Percent feeds the
+      // numerator straight into JSBI.BigInt, which throws on non-integers.
+      expect(Number.isInteger(slippage.numerator)).toBe(true);
+      expect(slippage.numerator).toBe(150);
+    });
   });
 
   describe('getAmountOut', () => {

@@ -69,7 +69,11 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
 
     const trade = getBestTrade(chainId, pairs, amountInFinal, tokenTo);
 
-    const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
+    // slippagePct arrives as a string, so a fractional value such as "0.5" or
+    // "1.5" turns into 50.00000000000001 after multiplying by 100. Percent feeds
+    // the numerator straight into JSBI.BigInt, which rejects non-integers with a
+    // RangeError, so round to the nearest 0.01% step (the denominator is 10_000).
+    const allowedSlippage = new Percent(Math.round(Number(slippagePct) * 100), 10_000);
 
     const blockNumber = await apiPjs.derive.chain.bestNumber();
 
