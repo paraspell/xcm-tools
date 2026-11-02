@@ -2762,6 +2762,32 @@
         }
       },
       {
+        "assetId": "1012",
+        "symbol": "aSPY",
+        "decimals": 18,
+        "existentialDeposit": "13061480386097",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2d01a621e4fa1cb9ae59c43b7fce2471ed0104d7"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1001356",
         "symbol": "SPY",
         "decimals": 18,
@@ -3551,6 +3577,33 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "1021",
+        "symbol": "aUSDC",
+        "decimals": 6,
+        "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6250c75785e21190e9fe2bec56540fda4fbd8c6a"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "aUSDC2"
+      },
+      {
         "assetId": "35",
         "symbol": "TRAC",
         "decimals": 18,
@@ -3948,7 +4001,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "aUSDT1"
       },
       {
         "assetId": "32",
@@ -4333,7 +4387,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "aUSDC1"
       },
       {
         "assetId": "1010",
@@ -4908,6 +4963,33 @@
             ]
           }
         }
+      },
+      {
+        "assetId": "1023",
+        "symbol": "aUSDT",
+        "decimals": 6,
+        "existentialDeposit": "22409",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa538acee9d185683e14face48bc9ee2a0759f2a0"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "aUSDT2"
       },
       {
         "assetId": "1000746",
