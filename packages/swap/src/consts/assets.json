@@ -982,6 +982,22 @@
       {
         "parents": 1,
         "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x2d01a621e4fa1cb9ae59c43b7fce2471ed0104d7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X4": [
             {
               "Parachain": 2034
@@ -1432,6 +1448,22 @@
               "AccountKey20": {
                 "network": null,
                 "key": "0x49f925bf72718f4abbc57adef1b705931f928a2a"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x6250c75785e21190e9fe2bec56540fda4fbd8c6a"
               }
             }
           ]
@@ -2058,6 +2090,22 @@
           "X1": [
             {
               "Parachain": 2037
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xa538acee9d185683e14face48bc9ee2a0759f2a0"
+              }
             }
           ]
         }
