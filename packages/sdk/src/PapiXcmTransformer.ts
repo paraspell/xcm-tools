@@ -165,6 +165,7 @@ export const transform = (obj: any): any => {
               type: v
             }
           }
+          continue
         }
 
         if (k === 'amount' && typeof v === 'string') {
