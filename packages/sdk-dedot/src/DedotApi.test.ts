@@ -119,7 +119,9 @@ const createMockApi = (mockTx: TDedotExtrinsic) => ({
       accountCurrencyMap: vi.fn(),
     },
     ethereumOutboundQueue: {
-      operatingMode: vi.fn().mockResolvedValue("Normal"),
+      // Dedot 的 codec 返回枚举对象 { type, value }，不是裸字符串。
+      // 之前 mock 成字符串，所以这个 bug 在测试里是隐形的。
+      operatingMode: vi.fn().mockResolvedValue({ type: "Normal", value: undefined }),
     },
     system: {
       account: vi.fn(),
@@ -487,12 +489,26 @@ describe("DedotApi", () => {
   });
 
   describe("getBridgeStatus", () => {
-    it("returns the operating mode", async () => {
+    it("extracts .type from the enum object instead of returning it raw", async () => {
       const result = await dedotApi.getBridgeStatus();
+
       expect(
         mockApiRaw.query.ethereumOutboundQueue.operatingMode,
       ).toHaveBeenCalled();
+      // The codec resolves { type: 'Normal', value: undefined }. Returning that
+      // object makes the shared bridge guard `bridgeStatus !== 'Normal'` true,
+      // which throws BridgeHaltedError on every Snowbridge transfer.
       expect(result).toBe("Normal");
+    });
+
+    it("returns Halted when the queue is halted", async () => {
+      vi.mocked(
+        mockApiRaw.query.ethereumOutboundQueue.operatingMode,
+      ).mockResolvedValueOnce({ type: "Halted", value: undefined });
+
+      const result = await dedotApi.getBridgeStatus();
+
+      expect(result).toBe("Halted");
     });
   });
 
