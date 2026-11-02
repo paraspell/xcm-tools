@@ -62,7 +62,7 @@ export const getRouterFees = async <
       : undefined;
 
   // 2. Get fees for swap in DEX (always)
-  const { result: swapChain, amountOut } = await getSwapFee(dex, options);
+  const { result: swapChain, amountOut } = await getSwapFee(dex, options, disableFallback);
 
   // 3. Get fees for exchange -> destination (optional)
   const receivingChain =
