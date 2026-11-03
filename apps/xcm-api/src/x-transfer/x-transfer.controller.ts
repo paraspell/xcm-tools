@@ -69,8 +69,8 @@ export class XTransferController {
     params: BatchXTransferDto,
   ) {
     const { transfers, options } = params;
-    const resolvedTransfers = JSON.stringify(transfers);
-    const resolvedOptions = JSON.stringify(options);
+    const resolvedTransfers = JSON.stringify(transfers, replaceBigInt);
+    const resolvedOptions = JSON.stringify(options, replaceBigInt);
     this.analyticsService.track(eventName, req, {
       resolvedTransfers,
       resolvedOptions,
@@ -252,7 +252,7 @@ export class XTransferController {
   ) {
     this.analyticsService.track(EventName.GET_SWAP_ASSETS_FROM, req, {
       from: query.from ?? 'unknown',
-      exchange: JSON.stringify(query.exchange),
+      exchange: JSON.stringify(query.exchange, replaceBigInt),
     });
     return this.service.getSupportedAssetsFrom(query);
   }
@@ -265,7 +265,7 @@ export class XTransferController {
   ) {
     this.analyticsService.track(EventName.GET_SWAP_ASSETS_TO, req, {
       to: query.to ?? 'unknown',
-      exchange: JSON.stringify(query.exchange),
+      exchange: JSON.stringify(query.exchange, replaceBigInt),
     });
     return this.service.getSupportedAssetsTo(query);
   }
