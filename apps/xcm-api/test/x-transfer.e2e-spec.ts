@@ -1405,7 +1405,10 @@ describe('X-Transfer controller (e2e)', () => {
       abstractDecimals: false,
       xcmFormatCheck: true,
       apiOverrides: {
-        Hydration: ['wss://rpc.hydradx.cloud', 'wss://hydration.ibp.network'],
+        Hydration: [
+          'wss://rpc.kril.hydration.cloud',
+          'wss://subway.shellfish.hydration.cloud',
+        ],
         AssetHubPolkadot: [
           'wss://polkadot-asset-hub-rpc.polkadot.io',
           'wss://dot-rpc.stakeworld.io/assethub',
