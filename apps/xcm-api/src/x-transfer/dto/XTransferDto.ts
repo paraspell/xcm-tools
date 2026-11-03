@@ -7,21 +7,10 @@ import {
   TRANSACT_ORIGINS,
   Version,
 } from '@paraspell/sdk';
-import { LocationSchema } from '@paraspell/xcm-analyser';
+import { LocationSchema, Uint64 } from '@paraspell/xcm-analyser';
 import { z } from 'zod';
 
 import { validateAmount } from '../../utils/validateAmount.js';
-
-const StringOrNumber = z
-  .union([
-    z
-      .string()
-      .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
-      .transform((s) => s.replace(/,/g, '')),
-    z.number(),
-    z.bigint(),
-  ])
-  .transform((value) => BigInt(value));
 
 const WsUrlSchema = z.url({
   protocol: /^wss$/,
@@ -86,8 +75,8 @@ export const BuilderOptionsSchema = z
   .strip();
 
 const WeightSchema = z.object({
-  refTime: StringOrNumber,
-  proofSize: StringOrNumber,
+  refTime: Uint64,
+  proofSize: Uint64,
 });
 
 export const TransactOptionsSchema = z.object({

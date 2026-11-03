@@ -23,7 +23,7 @@ const createBigIntUint = (bits: bigint) =>
   );
 const Uint8 = createNumberUint(8);
 const Uint32 = createNumberUint(32);
-const Uint64 = createBigIntUint(64n);
+export const Uint64 = createBigIntUint(64n);
 const Uint128 = createBigIntUint(128n);
 const hexStringError =
   "Invalid hex string format. Must start with '0x' and be followed by one or more hex characters (0-9, a-f, A-F).";
