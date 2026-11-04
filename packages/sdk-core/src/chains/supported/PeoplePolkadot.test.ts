@@ -33,6 +33,15 @@ describe('PeoplePolkadot', () => {
     expect(() => chain.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
 
+  it('should allow ParaToPara transfers to Hydration', async () => {
+    const input = {
+      scenario: 'ParaToPara',
+      destChain: 'Hydration'
+    } as TPolkadotXCMTransferOptions<unknown, unknown, unknown>
+    await chain.transferPolkadotXCM(input)
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(input)
+  })
+
   it('should use typeAndThen when scenario is not ParaToPara', async () => {
     const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
       unknown,
