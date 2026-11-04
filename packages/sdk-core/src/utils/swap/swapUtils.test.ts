@@ -209,11 +209,44 @@ describe('swapUtils', () => {
       )
     })
 
+    it('should pass config with filtered string array apiOverrides', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(true)
+
+      const config = {
+        development: false,
+        apiOverrides: {
+          Acala: ['wss://acala-rpc.dwellir.com', 'wss://acala.polkawallet.io']
+        }
+      }
+      const result = convertBuilderConfig(config)
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          apiOverrides: {
+            Acala: ['wss://acala-rpc.dwellir.com', 'wss://acala.polkawallet.io']
+          }
+        })
+      )
+    })
+
     it('should throw when apiOverrides contain non-string object values', () => {
       vi.mocked(guards.isConfig).mockReturnValue(true)
 
       const config = {
         apiOverrides: { Acala: { someClient: true } }
+      }
+
+      expect(() => convertBuilderConfig(config)).toThrow(UnsupportedOperationError)
+      expect(() => convertBuilderConfig(config)).toThrow(
+        'Swap module does not support API client override with non-string values'
+      )
+    })
+
+    it('should throw when apiOverrides contain array of non-string values', () => {
+      vi.mocked(guards.isConfig).mockReturnValue(true)
+
+      const config = {
+        apiOverrides: { Acala: [{ someClient: true }] }
       }
 
       expect(() => convertBuilderConfig(config)).toThrow(UnsupportedOperationError)

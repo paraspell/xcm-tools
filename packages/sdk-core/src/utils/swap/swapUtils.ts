@@ -15,7 +15,7 @@ import { assertAddressIsString, assertSender, assertToIsString } from '../assert
 import { isConfig } from '../guards'
 
 const isUrl = (value: unknown): value is string | string[] =>
-  typeof value === 'string' || Array.isArray(value)
+  typeof value === 'string' || (Array.isArray(value) && value.every(v => typeof v === 'string'))
 
 /**
  * Checks if a given chain is a supported exchange chain.
@@ -38,10 +38,7 @@ export const convertBuilderConfig = <TApi>(
       return rest
     }
 
-    if (
-      config.apiOverrides &&
-      Object.values(config.apiOverrides).some(url => typeof url === 'object')
-    ) {
+    if (config.apiOverrides && Object.values(config.apiOverrides).some(url => !isUrl(url))) {
       throw new UnsupportedOperationError(
         'Swap module does not support API client override with non-string values'
       )
