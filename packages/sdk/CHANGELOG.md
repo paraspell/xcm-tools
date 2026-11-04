@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-v14.5.0...sdk-v14.5.1) (2026-11-04)
+
+
+### Bug Fixes
+
+* **sdk-core:** Enable People chain to Hydration transfers ([d26e425](https://github.com/paraspell/xcm-tools/commit/d26e4258564e03b0512207a57ef38f4369131753))
+* **sdk-core:** Fix Xode minting error 🔧 ([bb8cfbe](https://github.com/paraspell/xcm-tools/commit/bb8cfbe33b23934a31077872c8c61effa33571a0))
+
 ## [14.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-v14.4.4...sdk-v14.5.0) (2026-10-30)
 
 
