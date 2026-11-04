@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.4.0...xcm-analyser-v3.4.1) (2026-11-04)
+
+
+### Bug Fixes
+
+* **xcm-api:** Update ZOD schema for weight object ✏️ ([b2abefd](https://github.com/paraspell/xcm-tools/commit/b2abefdfc7965fcf2ee9ce60cdca740a9f13cafd))
+
 ## [3.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v3.3.0...xcm-analyser-v3.4.0) (2026-10-30)
 
 
