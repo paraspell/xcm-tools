@@ -9756,7 +9756,37 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
 }
 `;
 
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aSPY) 1`] = `
+{
+  "method": "transfer",
+  "module": "currencies",
+  "params": {
+    "args": {
+      "amount": "5000000000000000000",
+      "currency_id": 1012,
+      "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "callIndex": "0x4f00",
+  },
+}
+`;
+
 exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aUSDC) 1`] = `
+{
+  "method": "transfer",
+  "module": "currencies",
+  "params": {
+    "args": {
+      "amount": 5000000,
+      "currency_id": 1021,
+      "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "callIndex": "0x4f00",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aUSDC) 2`] = `
 {
   "method": "transfer",
   "module": "currencies",
@@ -9779,6 +9809,21 @@ exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydrati
     "args": {
       "amount": 5000000,
       "currency_id": 1002,
+      "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
+    },
+    "callIndex": "0x4f00",
+  },
+}
+`;
+
+exports[`XCM - e2e > Local transfer > should create local transfer tx on Hydration - (aUSDT) 2`] = `
+{
+  "method": "transfer",
+  "module": "currencies",
+  "params": {
+    "args": {
+      "amount": 5000000,
+      "currency_id": 1023,
       "dest": "1phKfRLnZm8iWTq5ki2xAPf5uwxjBrEe6Bc3Tw2bxPLx3t8",
     },
     "callIndex": "0x4f00",
@@ -34248,13 +34293,13 @@ exports[`XCM - e2e > Transfer scenarios for origin Hydration > ParaToPara > shou
                   },
                 },
                 {
-                  "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
+                  "setTopic": "0xe0a64c09a1e3f963765751979984f6e1553a3f2b9cb092d4bb9b9d07dd269e45",
                 },
               ],
             },
           },
           {
-            "setTopic": "0x37b93d1ed3a2547ee7522e6cabe24448f5cbdc60407a44454cb09a77c60dcca7",
+            "setTopic": "0xe0a64c09a1e3f963765751979984f6e1553a3f2b9cb092d4bb9b9d07dd269e45",
           },
         ],
       },
@@ -38414,7 +38459,7 @@ exports[`XCM - e2e > Transfer scenarios for origin Mythos > ParaToPara > should 
         "v5": [
           {
             "fun": {
-              "fungible": "1272693872640376819468",
+              "fungible": "1389988486591471841659",
             },
             "id": {
               "interior": {
@@ -42289,6 +42334,163 @@ exports[`XCM - e2e > Transfer scenarios for origin PeoplePolkadot > ParaToPara >
       },
     },
     "callIndex": "0x1f09",
+  },
+}
+`;
+
+exports[`XCM - e2e > Transfer scenarios for origin PeoplePolkadot > ParaToPara > should create transfer tx from PeoplePolkadot to Hydration - (DOT) 1`] = `
+{
+  "method": "transferAssetsUsingTypeAndThen",
+  "module": "polkadotXcm",
+  "params": {
+    "args": {
+      "assets": {
+        "v5": [
+          {
+            "fun": {
+              "fungible": 50000000000,
+            },
+            "id": {
+              "interior": {
+                "here": null,
+              },
+              "parents": 1,
+            },
+          },
+        ],
+      },
+      "assets_transfer_type": {
+        "teleport": null,
+      },
+      "custom_xcm_on_dest": {
+        "v5": [
+          {
+            "setAppendix": [
+              {
+                "depositAsset": {
+                  "assets": {
+                    "wild": {
+                      "allCounted": 1,
+                    },
+                  },
+                  "beneficiary": {
+                    "interior": {
+                      "x1": [
+                        {
+                          "accountId32": {
+                            "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                            "network": null,
+                          },
+                        },
+                      ],
+                    },
+                    "parents": 0,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            "depositReserveAsset": {
+              "assets": {
+                "definite": [
+                  {
+                    "fun": {
+                      "fungible": 50000000000,
+                    },
+                    "id": {
+                      "interior": {
+                        "here": null,
+                      },
+                      "parents": 1,
+                    },
+                  },
+                ],
+              },
+              "dest": {
+                "interior": {
+                  "x1": [
+                    {
+                      "parachain": 2034,
+                    },
+                  ],
+                },
+                "parents": 1,
+              },
+              "xcm": [
+                {
+                  "buyExecution": {
+                    "fees": {
+                      "fun": {
+                        "fungible": 49586033509,
+                      },
+                      "id": {
+                        "interior": {
+                          "here": null,
+                        },
+                        "parents": 1,
+                      },
+                    },
+                    "weightLimit": {
+                      "unlimited": null,
+                    },
+                  },
+                },
+                {
+                  "depositAsset": {
+                    "assets": {
+                      "wild": {
+                        "allCounted": 1,
+                      },
+                    },
+                    "beneficiary": {
+                      "interior": {
+                        "x1": [
+                          {
+                            "accountId32": {
+                              "id": "0x246044e82dcb430908830f90e8c668b02544004d66eab58af5124b953ef57d37",
+                              "network": null,
+                            },
+                          },
+                        ],
+                      },
+                      "parents": 0,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+      "dest": {
+        "v5": {
+          "interior": {
+            "x1": [
+              {
+                "parachain": 1000,
+              },
+            ],
+          },
+          "parents": 1,
+        },
+      },
+      "fees_transfer_type": {
+        "teleport": null,
+      },
+      "remote_fees_id": {
+        "v5": {
+          "interior": {
+            "here": null,
+          },
+          "parents": 1,
+        },
+      },
+      "weight_limit": {
+        "unlimited": null,
+      },
+    },
+    "callIndex": "0x1f0d",
   },
 }
 `;

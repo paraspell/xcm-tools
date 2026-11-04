@@ -26,7 +26,11 @@ class PeoplePolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
   ): Promise<TRes> {
     const { scenario, destChain } = input
 
-    if (scenario === 'ParaToPara' && !destChain?.startsWith('AssetHub')) {
+    if (
+      scenario === 'ParaToPara' &&
+      !destChain?.startsWith('AssetHub') &&
+      destChain !== 'Hydration'
+    ) {
       throw new ScenarioNotSupportedError(
         `Unable to use ${this.chain} for transfers to other Parachains.`
       )
