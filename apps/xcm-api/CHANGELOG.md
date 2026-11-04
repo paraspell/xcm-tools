@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.5.0...xcm-api-v14.5.1) (2026-11-04)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix analytics bigint serialization 🔧 ([48276d6](https://github.com/paraspell/xcm-tools/commit/48276d6dc830e2741858cf26a9d9a687517a370e))
+* **xcm-api:** Update ZOD schema for weight object ✏️ ([b2abefd](https://github.com/paraspell/xcm-tools/commit/b2abefdfc7965fcf2ee9ce60cdca740a9f13cafd))
+
+
+### Build System
+
+* Update to TS v7 🪄 ([4676609](https://github.com/paraspell/xcm-tools/commit/467660928ba2665335c69f2f56f72bc131a9be02))
+
 ## [14.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.4.4...xcm-api-v14.5.0) (2026-10-30)
 
 
