@@ -539,10 +539,23 @@ describe('XTransferService', () => {
   });
 
   describe('getOriginXcmFee', () => {
-    it('delegates to builder.getOriginXcmFee', async () => {
+    it('delegates to builder.getOriginXcmFee with default disableFallback false', async () => {
       const res = await service.getOriginXcmFee(xTransferDto);
       expect(res).toBe(feeResult);
-      expect(builderMock.getOriginXcmFee).toHaveBeenCalled();
+      expect(builderMock.getOriginXcmFee).toHaveBeenCalledWith({
+        disableFallback: false,
+      });
+    });
+
+    it('delegates to builder.getOriginXcmFee forwarding disableFallback true', async () => {
+      const res = await service.getOriginXcmFee({
+        ...xTransferDto,
+        disableFallback: true,
+      });
+      expect(res).toBe(feeResult);
+      expect(builderMock.getOriginXcmFee).toHaveBeenCalledWith({
+        disableFallback: true,
+      });
     });
   });
 
