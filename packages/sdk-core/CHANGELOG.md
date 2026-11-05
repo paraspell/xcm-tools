@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.1...sdk-core-v14.5.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix origin fee asset calculations 🔧 ([17abb6a](https://github.com/paraspell/xcm-tools/commit/17abb6a691c7787fe438ba175f729dd010348a20))
+* **sdk-core:** Take into acount when an ED swap is done 🪄 ([95212d7](https://github.com/paraspell/xcm-tools/commit/95212d7aa225b83ea7f11c033a51b009cac916b7))
+
 ## [14.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.0...sdk-core-v14.5.1) (2026-11-04)
 
 
