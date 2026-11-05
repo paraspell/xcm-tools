@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   BuilderOptionsSchema,
+  CurrencyCoreSchema,
   CurrencyCoreWithAmountSchema,
   CustomAssetInfoSchema,
   CustomChainInputSchema,
@@ -101,5 +102,29 @@ describe('endpoint schemas', () => {
     expect(
       CustomChainInputSchema.safeParse(customChain(endpoint)).success,
     ).toBe(false);
+  });
+});
+
+describe('currency asset ID validation', () => {
+  it('rejects unsafe numeric asset IDs', () => {
+    expect(
+      CurrencyCoreSchema.safeParse({
+        id: Number.MAX_SAFE_INTEGER + 1,
+      }).success,
+    ).toBe(false);
+  });
+
+  it('accepts large asset IDs as strings', () => {
+    expect(
+      CurrencyCoreSchema.safeParse({
+        id: '9007199254740993',
+      }).success,
+    ).toBe(true);
+  });
+
+  it('accepts safe numeric asset IDs', () => {
+    expect(
+      CurrencyCoreSchema.safeParse({ id: 123 }).success,
+    ).toBe(true);
   });
 });

@@ -116,7 +116,7 @@ const CurrencySymbolSchema = z.object({
 export const CurrencyCoreSchema = z.union([
   CurrencySymbolSchema,
   z.object({
-    id: z.union([z.string(), z.number(), z.bigint()]),
+    id: z.union([z.string(), z.number().int().safe(), z.bigint()]),
   }),
   z.object({
     location: LocationValueSchema,
