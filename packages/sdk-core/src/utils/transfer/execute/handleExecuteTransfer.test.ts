@@ -229,7 +229,7 @@ describe('handleExecuteTransfer', () => {
     expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
-        fees: { originFee: 1000000000000n, reserveFee: 1000n, destFee: 1000n }
+        fees: { originFee: 1000n, reserveFee: 1000n, destFee: 1000n }
       })
     )
   })

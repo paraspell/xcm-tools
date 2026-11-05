@@ -58,7 +58,7 @@ export const getExecuteSwapInfo = async <TApi, TRes, TSigner, TCustomChain exten
     amount: BigInt(amount),
     originFee: xcmFeeResult.origin.fee,
     originFeeAsset: xcmFeeResult.origin.asset,
-    isFeeAssetAh: false,
+    isOriginFeeAsset: false,
   });
 
   const originInfo = { selectedCurrency: selectedCurrency[0], xcmFee: originXcmFee };
@@ -85,7 +85,7 @@ export const getExecuteSwapInfo = async <TApi, TRes, TSigner, TCustomChain exten
     recipient: recipientAddress,
     currency: { ...currencyTo, amount: amountOut },
     originFee: xcmFeeResult.origin.fee,
-    isFeeAssetAh: false,
+    isOriginFeeAsset: false,
     paysDestFee: true,
     destFeeDetail: xcmFeeResult.destination,
     totalHopFee,

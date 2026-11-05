@@ -182,7 +182,7 @@ describe('getExecuteSwapInfo', () => {
         assets: [{ ...dotAsset, amount: 1000n }],
         originFee: originFee.fee,
         originFeeAsset: originFee.asset,
-        isFeeAssetAh: false,
+        isOriginFeeAsset: false,
       }),
     );
   });
@@ -256,7 +256,7 @@ describe('getExecuteSwapInfo', () => {
         currency: { ...baseOptions.currencyTo, amount: 500n },
         destFeeDetail: destFee,
         originFee: originFee.fee,
-        isFeeAssetAh: false,
+        isOriginFeeAsset: false,
       }),
     );
   });

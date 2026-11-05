@@ -124,7 +124,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
   // When fees are paid in a separate asset, originFee is denominated in that asset's
   // currency and must not be subtracted from the transfer amount.
-  const originFeeDeduction = feeAsset ? 0n : originFee
+  const originFeeDeduction = feeAssetInfo && !feeAsset ? originFee : 0n
 
   const destLocation = createDestination(api, version, chain, destChain, paraIdTo)
 
@@ -277,7 +277,8 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
               ...createBuyExecution(
                 // Decrease amount by 2 units because for some reason polkadot withdraws 2 units less
                 // than requested, so we need to account for that
-                hopFeeAssetToReserve ?? updateAsset(assetLocalizedToReserve, amount - 2n)
+                hopFeeAssetToReserve ??
+                  updateAsset(assetLocalizedToReserve, amount - originFeeDeduction - 2n)
               ),
               // If the dest is reserve, use just DepositAsset
               // Otherwise, asset needs to be sent to the reserve chain first and then deposited
