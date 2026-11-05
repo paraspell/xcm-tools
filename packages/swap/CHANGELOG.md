@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.5.2](https://github.com/paraspell/xcm-tools/compare/swap-v14.5.1...swap-v14.5.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix origin fee asset calculations 🔧 ([17abb6a](https://github.com/paraspell/xcm-tools/commit/17abb6a691c7787fe438ba175f729dd010348a20))
+* **swap:** Pass raw bigint to Hydration fee router ([7dad07b](https://github.com/paraspell/xcm-tools/commit/7dad07bf790129349aa47ffc335cbda75002da06)), closes [#2174](https://github.com/paraspell/xcm-tools/issues/2174)
+
 ## [14.5.1](https://github.com/paraspell/xcm-tools/compare/swap-v14.5.0...swap-v14.5.1) (2026-11-04)
 
 
