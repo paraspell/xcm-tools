@@ -24,11 +24,7 @@ export const calculateFee = async <TApi, TRes, TSigner, TCustomChain extends str
   chain: TChain,
   toDestTransactionFee: bigint,
 ): Promise<bigint> => {
-  const trade = await tradeRouter.getBestSell(
-    currencyFromInfo.id,
-    currencyToInfo.id,
-    amount.toString(),
-  );
+  const trade = await tradeRouter.getBestSell(currencyFromInfo.id, currencyToInfo.id, amount);
 
   const nativeAsset = findNativeAssetInfoOrThrow(chain);
 
