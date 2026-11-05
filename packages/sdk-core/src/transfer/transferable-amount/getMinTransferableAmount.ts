@@ -1,5 +1,4 @@
 import type { TCurrencyInputWithAmount, TSingleCurrencyInputWithAmount } from '@paraspell/assets'
-import { isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { AmountTooLowError } from '../../errors'
@@ -8,7 +7,7 @@ import { padValueBy, validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
 import { FEE_PADDING } from '../type-and-then/computeFees'
-import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
 
 const toSelectors = (currency: TCurrencyInputWithAmount): TSingleCurrencyInputWithAmount[] =>
   Array.isArray(currency) ? currency : [currency]
@@ -50,8 +49,6 @@ export const getMinTransferableAmountInternal = async <
   const destApi = api.clone()
   await destApi.init(destination)
 
-  const nativeAssetInfo = api.findNativeAssetInfoOrThrow(origin)
-
   const result = await getXcmFeeInternal({
     api,
     origin,
@@ -78,14 +75,16 @@ export const getMinTransferableAmountInternal = async <
 
       const destEd = BigInt(destAsset.existentialDeposit)
 
-      const paysOriginInSendingAsset =
-        (!resolvedFeeAsset && isAssetEqual(nativeAssetInfo, asset)) ||
-        (resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+      const isOriginFeeAsset = usesOriginFeeAsset(
+        api,
+        origin,
+        currency,
+        asset,
+        resolvedFeeAsset,
+        result.origin.asset
+      )
 
-      const originFee =
-        result.origin && paysOriginInSendingAsset && isAssetEqual(result.origin.asset, asset)
-          ? result.origin.fee
-          : 0n
+      const originFee = isOriginFeeAsset ? result.origin.fee : 0n
 
       const originChainAsset = { chain: origin, asset }
 

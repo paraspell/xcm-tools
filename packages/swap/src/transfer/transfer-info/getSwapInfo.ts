@@ -40,7 +40,7 @@ export const buildExchangeOriginInfo = async <
     amount,
     originFee: swapFee.fee,
     originFeeAsset: swapFee.asset,
-    isFeeAssetAh: false,
+    isOriginFeeAsset: false,
   });
 
   return { selectedCurrency: selectedCurrency[0], xcmFee };
@@ -59,7 +59,7 @@ export const buildExchangeDestInfo = <TApi, TRes, TSigner, TCustomChain extends 
     recipient,
     currency: { ...currencyTo, amount: amountOut },
     originFee: 0n,
-    isFeeAssetAh: false,
+    isOriginFeeAsset: false,
     paysDestFee: true,
     destFeeDetail: { fee: 0n, asset: exchange.assetTo, feeType: 'noFeeRequired' },
     totalHopFee: 0n,

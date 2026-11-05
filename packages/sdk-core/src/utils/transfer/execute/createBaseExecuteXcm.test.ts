@@ -35,6 +35,7 @@ describe('createBaseExecuteXcm', () => {
     api: mockApi,
     chain: 'AssetHubPolkadot',
     destChain: 'AssetHubKusama',
+    feeAssetInfo: { symbol: 'DOT', location: { parents: 1, interior: { Here: null } } },
     fees: {
       originFee: 100n,
       reserveFee: 50n,
@@ -255,7 +256,7 @@ describe('createBaseExecuteXcm', () => {
                 BuyExecution: {
                   fees: {
                     ...mockAsset,
-                    fun: { Fungible: 9998n } // amount - 2n
+                    fun: { Fungible: 9898n } // amount - originFee - 2n
                   },
                   weight_limit: 'Unlimited'
                 }
@@ -283,6 +284,47 @@ describe('createBaseExecuteXcm', () => {
       ])
 
       expect(getChainLocation).toHaveBeenCalledWith('AssetHubPolkadot', 'Acala', undefined)
+    })
+
+    it('should not subtract the origin fee from the amount without a fee asset', () => {
+      vi.mocked(isTrustedChain).mockReturnValue(false)
+      vi.mocked(prepareExecuteContext).mockReturnValue({
+        ...mockPrepareExecuteContext,
+        reserveChain: 'Acala'
+      })
+
+      const result = createBaseExecuteXcm({ ...mockBaseOptions, feeAssetInfo: undefined })
+
+      expect(result).toEqual([
+        {
+          InitiateReserveWithdraw: {
+            assets: mockAssetsFilter,
+            reserve: mockChainLocation,
+            xcm: [
+              {
+                BuyExecution: {
+                  fees: { ...mockAsset, fun: { Fungible: 9998n } },
+                  weight_limit: 'Unlimited'
+                }
+              },
+              {
+                DepositReserveAsset: {
+                  assets: mockAssetsFilter,
+                  dest: mockDestLocation,
+                  xcm: [
+                    {
+                      BuyExecution: {
+                        fees: { ...mockAsset, fun: { Fungible: 9950n } },
+                        weight_limit: 'Unlimited'
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ])
     })
 
     it('should handle reserve transfer when destination is reserve chain', () => {

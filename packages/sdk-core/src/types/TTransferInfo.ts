@@ -67,7 +67,7 @@ export type TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain extends st
   amount: bigint
   originFee: bigint
   originFeeAsset: TAssetInfo
-  isFeeAssetAh: boolean
+  isOriginFeeAsset: boolean
 }
 
 export type BuildHopInfoOptions<TApi, TRes, TSigner, TCustomChain extends string = never> = {
@@ -88,7 +88,7 @@ export type TBuildDestInfoOptions<TApi, TRes, TSigner, TCustomChain extends stri
   recipient: string
   currency: WithAmount<TSingleCurrencyInput>
   originFee: bigint
-  isFeeAssetAh: boolean
+  isOriginFeeAsset: boolean
   paysDestFee: boolean
   destFeeDetail: TXcmFeeDetail
   totalHopFee: bigint

@@ -12,7 +12,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
   recipient,
   currency,
   originFee,
-  isFeeAssetAh,
+  isOriginFeeAsset,
   paysDestFee,
   destFeeDetail,
   totalHopFee,
@@ -33,7 +33,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
     asset: destAsset
   })
 
-  const destAmount = isFeeAssetAh ? currency.amount - originFee : currency.amount
+  const destAmount = isOriginFeeAsset ? currency.amount - originFee : currency.amount
 
   const destFeeAssetEqual = isSymbolMatch(destFeeDetail.asset.symbol, destAsset.symbol)
   const effectiveDestFee = paysDestFee && destFeeAssetEqual ? (destFeeDetail.fee as bigint) : 0n
@@ -106,7 +106,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
     destXcmFeeBalance = destBalance
   }
 
-  const destXcmFeeBalanceAfter = isFeeAssetAh
+  const destXcmFeeBalanceAfter = isOriginFeeAsset
     ? destBalanceAfter
     : destXcmFeeBalance -
       (destFeeDetail.fee as bigint) +
