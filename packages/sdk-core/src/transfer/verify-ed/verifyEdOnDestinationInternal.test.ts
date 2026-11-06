@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { normalizeSymbol } from '@paraspell/assets'
+import { isAssetEqual, normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -10,7 +10,7 @@ import { DryRunFailedError, UnableToComputeError } from '../../errors'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
-import { resolveCurrency } from '../utils'
+import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
 import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal'
 
 vi.mock('@paraspell/assets')
@@ -81,6 +81,7 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.mocked(normalizeSymbol).mockImplementation(symbol =>
       symbol ? String(symbol).toUpperCase() : ''
     )
+    vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     vi.mocked(abstractDecimals).mockImplementation(amount => BigInt(amount))
     vi.spyOn(mockApi, 'getMethod').mockReturnValue('transferAssets')
   })
@@ -297,6 +298,76 @@ describe('verifyEdOnDestinationInternal', () => {
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
       new UnableToComputeError(msg)
+    )
+  })
+
+  it('does not subtract the destination fee when it is paid in a separate fee asset', async () => {
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '1000000' } as TAssetInfo
+    const dot = { symbol: 'DOT', decimals: 10, existentialDeposit: '10000000000' } as TAssetInfo
+
+    findAssetOnDestOrThrowSpy.mockReturnValue(usdc)
+    vi.mocked(resolveFeeAsset).mockReturnValue(dot)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      hops: [],
+      destination: { fee: 100000000n, feeType: 'dryRun', asset: dot }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      feeAsset: { symbol: 'DOT' },
+      currency: { symbol: 'USDC', amount: 2000000n }
+    })
+
+    expect(result).toBe(true)
+  })
+
+  it('subtracts hop and destination fees for execute transfers', async () => {
+    vi.spyOn(mockApi, 'getMethod').mockReturnValue('execute')
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      // amount (11.2 DOT) - destFee (1 DOT) = 10.2 DOT > ED (10 DOT),
+      // but amount - hopFee (0.5 DOT) - destFee (1 DOT) = 9.7 DOT <= ED (10 DOT)
+      currency: { symbol: 'DOT', amount: 11200000000n }
+    })
+
+    expect(result).toBe(false)
+  })
+
+  it('subtracts the origin fee when usesOriginFeeAsset is true', async () => {
+    const usdt = { symbol: 'USDT', decimals: 6, existentialDeposit: '1000000' } as TAssetInfo
+
+    findAssetOnDestOrThrowSpy.mockReturnValue(usdt)
+    vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
+    vi.mocked(usesOriginFeeAsset).mockReturnValueOnce(true)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      origin: { fee: 300000n, feeType: 'dryRun', asset: usdt },
+      hops: [],
+      destination: { fee: 300000n, feeType: 'dryRun', asset: usdt }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      origin: 'AssetHubPolkadot',
+      feeAsset: { symbol: 'USDT' },
+      // amount (1.5 USDT) - destFee (0.3 USDT) = 1.2 USDT > ED (1.0 USDT),
+      // but amount - originFee (0.3 USDT) - destFee (0.3 USDT) = 0.9 USDT <= ED (1.0 USDT)
+      currency: { symbol: 'USDT', amount: 1500000n }
+    })
+
+    expect(result).toBe(false)
+    expect(usesOriginFeeAsset).toHaveBeenCalledWith(
+      mockApi,
+      'AssetHubPolkadot',
+      { symbol: 'USDT', amount: 1500000n },
+      usdt,
+      usdt,
+      usdt
     )
   })
 })
