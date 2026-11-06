@@ -12,8 +12,8 @@ import type {
   TOriginInfo,
   TTransformedOptions,
 } from '../types';
-import { getSwapFee } from './fees';
 import { getMinTransferableAmount } from './getMinTransferableAmount';
+import { getSwapOriginFee } from './getSwapOriginFee';
 import {
   createToExchangeBuilder,
   prepareTransformedOptions,
@@ -21,7 +21,7 @@ import {
 } from './utils';
 
 vi.mock('./utils');
-vi.mock('./fees');
+vi.mock('./getSwapOriginFee');
 vi.mock('@paraspell/sdk-core', { spy: true });
 
 const mockApi = {} as PolkadotApi<unknown, unknown, unknown>;
@@ -142,7 +142,7 @@ describe('getMinTransferableAmount', () => {
       api: mockApi,
     });
     expect(getExistentialDeposit).not.toHaveBeenCalled();
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getSwapOriginFee).not.toHaveBeenCalled();
     expect(validateTransferOptions).toHaveBeenCalledWith({ ...initialOptions, api: mockApi });
   });
 
@@ -161,7 +161,7 @@ describe('getMinTransferableAmount', () => {
     const result = await getMinTransferableAmount({ ...createOptions(), api: mockApi });
 
     expect(result).toBe(43n);
-    expect(getSwapFee).not.toHaveBeenCalled();
+    expect(getSwapOriginFee).not.toHaveBeenCalled();
   });
 
   it('adds swap fee when asset is native', async () => {
@@ -180,11 +180,11 @@ describe('getMinTransferableAmount', () => {
       feeType: 'dryRun',
       asset: createAssetInfo('HDX'),
     };
-    vi.mocked(getSwapFee).mockResolvedValue({ result: swapDetail, amountOut: 0n });
+    vi.mocked(getSwapOriginFee).mockResolvedValue(swapDetail);
 
     const result = await getMinTransferableAmount({ ...createOptions(), api: mockApi });
 
-    expect(getSwapFee).toHaveBeenCalledTimes(1);
+    expect(getSwapOriginFee).toHaveBeenCalledTimes(1);
     expect(result).toBe(31n);
   });
 });

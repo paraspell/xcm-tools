@@ -117,6 +117,8 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
   const originChain = origin?.chain ?? exchange.chain;
   const destChain = destination?.chain ?? exchange.chain;
 
+  const exchangeOriginFee = swapChain.fee + (receivingInfo?.origin.xcmFee.fee ?? 0n);
+
   const exchangeHopEntry: THopTransferInfo | undefined =
     sendingInfo && receivingInfo
       ? {
@@ -124,7 +126,7 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
           result: {
             asset: exchange.assetTo,
             xcmFee: {
-              fee: swapChain.fee + receivingInfo.origin.xcmFee.fee,
+              fee: exchangeOriginFee,
               asset: swapChain.asset,
             },
             isExchange: true,
@@ -140,7 +142,10 @@ export const getSwapInfo = async <TApi, TRes, TSigner, TCustomChain extends stri
 
   const finalOrigin =
     sendingInfo?.origin ??
-    (await buildExchangeOriginInfo(exchange, senderAddress, amount, swapChain));
+    (await buildExchangeOriginInfo(exchange, senderAddress, amount, {
+      ...swapChain,
+      fee: exchangeOriginFee,
+    }));
 
   const finalDestination =
     receivingInfo?.destination ??

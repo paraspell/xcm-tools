@@ -17,7 +17,7 @@ import type {
 } from '../types';
 import { getSwapFee } from './fees';
 import { getSwapOriginFee } from './getSwapOriginFee';
-import { getToExchangeOriginFee } from './utils';
+import { getFromExchangeOriginFee, getToExchangeOriginFee } from './utils';
 
 vi.mock('./fees');
 vi.mock('./utils', { spy: true });
@@ -46,6 +46,11 @@ describe('getSwapOriginFee', () => {
     fee: 10n,
     feeType: 'dryRun',
     asset: { symbol: 'BAR' },
+  } as TXcmFeeDetailWithForwardedXcm<false>;
+  const fromExchangeOriginValue = {
+    fee: 20n,
+    feeType: 'dryRun',
+    asset: { symbol: 'FOO' },
   } as TXcmFeeDetailWithForwardedXcm<false>;
   const executeOriginValue = {
     fee: 100n,
@@ -83,6 +88,7 @@ describe('getSwapOriginFee', () => {
       amountOut: swapAmountOut,
     });
     vi.mocked(getToExchangeOriginFee).mockResolvedValue(toExchangeOriginValue);
+    vi.mocked(getFromExchangeOriginFee).mockResolvedValue(fromExchangeOriginValue);
     vi.mocked(getOriginXcmFee).mockResolvedValue(executeOriginValue);
   });
 
@@ -185,6 +191,7 @@ describe('getSwapOriginFee', () => {
 
       expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
       expect(getToExchangeOriginFee).not.toHaveBeenCalled();
+      expect(getFromExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(swapFee);
     });
 
@@ -198,7 +205,57 @@ describe('getSwapOriginFee', () => {
 
       expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
       expect(getToExchangeOriginFee).not.toHaveBeenCalled();
+      expect(getFromExchangeOriginFee).not.toHaveBeenCalled();
       expect(result).toEqual(swapFee);
+    });
+
+    it('returns only swap fee when destination equals exchange chain', async () => {
+      options.destination = { chain: exchangeChain } as TDestinationInfo;
+
+      const result = await getSwapOriginFee(dex, options, false);
+
+      expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
+      expect(getFromExchangeOriginFee).not.toHaveBeenCalled();
+      expect(result).toEqual(swapFee);
+    });
+
+    it('adds exchange->destination origin fee when destination differs from exchange', async () => {
+      options.destination = { chain: 'Darwinia', address: 'recipient' };
+
+      const result = await getSwapOriginFee(dex, options, false);
+
+      expect(getSwapFee).toHaveBeenCalledWith(dex, options, false);
+      expect(getFromExchangeOriginFee).toHaveBeenCalledWith(
+        {
+          exchange: options.exchange,
+          destination: options.destination,
+          amount: swapAmountOut,
+          sender: options.sender,
+          api: mockApi,
+        },
+        false,
+      );
+      expect(result).toEqual({
+        ...swapFee,
+        fee: 1254n,
+      });
+    });
+
+    it('propagates dryRunError from exchange->destination leg when disableFallback is true', async () => {
+      options.destination = { chain: 'Darwinia', address: 'recipient' };
+      vi.mocked(getFromExchangeOriginFee).mockResolvedValueOnce({
+        dryRunError: { reason: 'InsufficientBalance' },
+        asset: { symbol: 'FOO' } as TAssetInfo,
+      });
+
+      const result = await getSwapOriginFee(dex, options, true);
+
+      expect(getFromExchangeOriginFee).toHaveBeenCalledWith(expect.any(Object), true);
+      expect(result).toEqual({
+        ...swapFee,
+        fee: 1234n,
+        dryRunError: { reason: 'InsufficientBalance' },
+      });
     });
 
     it('forwards disableFallback flag to underlying calls', async () => {

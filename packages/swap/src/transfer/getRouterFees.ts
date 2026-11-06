@@ -73,6 +73,8 @@ export const getRouterFees = async <
         )
       : undefined;
 
+  const exchangeOriginFee = (swapChain.fee ?? 0n) + (receivingChain?.origin.fee ?? 0n);
+
   const mergedHops = [
     // Hops from sending chain (origin -> exchange)
     ...(sendingChain?.hops ?? []),
@@ -84,7 +86,7 @@ export const getRouterFees = async <
             chain: exchange.chain,
             result: {
               ...swapChain,
-              fee: swapChain.fee + (receivingChain?.origin.fee ?? 0n),
+              fee: exchangeOriginFee,
               isExchange: true,
             },
           },
@@ -97,6 +99,7 @@ export const getRouterFees = async <
 
   const finalOrigin = sendingChain?.origin ?? {
     ...swapChain,
+    fee: exchangeOriginFee,
     ...(!origin && { isExchange: true }),
   };
 
