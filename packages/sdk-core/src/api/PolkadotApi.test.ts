@@ -547,7 +547,7 @@ describe('PolkadotApi', () => {
       expect(instance._customCtx.customChainAssets?.MyCustom).toBeDefined()
     })
 
-    it('skips system-property fetching when all native props are already set', async () => {
+    it('fetches system properties even when all native props are set in order to cross-check chain truth', async () => {
       vi.mocked(resolveChainApi).mockResolvedValue({})
       const instance = new ConcreteApi({
         customChains: {
@@ -569,13 +569,75 @@ describe('PolkadotApi', () => {
       instance.fetchPalletList = vi.fn(() =>
         Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
       )
-      const sysProps = vi.fn(() => Promise.resolve({}))
+      const sysProps = vi.fn(() =>
+        Promise.resolve({ ss58Format: 42, tokenSymbol: 'CUS', tokenDecimals: 12 })
+      )
       instance.getSystemProperties = sysProps
       vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
 
       await instance.init('MyCustom')
 
-      expect(sysProps).not.toHaveBeenCalled()
+      expect(sysProps).toHaveBeenCalledOnce()
+    })
+
+    it('throws CustomChainInvalidError when supplied nativeAssetDecimals mismatches chain tokenDecimals', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi({
+        customChains: {
+          MyCustom: {
+            paraId: 4242,
+            ecosystem: 'Polkadot',
+            providers: [{ name: 'rpc', endpoint: 'wss://example' }],
+            ss58Prefix: 42,
+            nativeAssetSymbol: 'MYT',
+            nativeAssetDecimals: 6
+          }
+        }
+      })
+      instance.hasMethod = vi.fn((pallet: string, method: string) =>
+        Promise.resolve(pallet === 'PolkadotXcm' && method === 'send')
+      )
+      instance.hasRuntimeApi = vi.fn(() => Promise.resolve(false))
+      instance.isEvmChain = vi.fn(() => Promise.resolve(false))
+      instance.fetchPalletList = vi.fn(() =>
+        Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
+      )
+      instance.getSystemProperties = vi.fn(() =>
+        Promise.resolve({ ss58Format: 42, tokenSymbol: 'MYT', tokenDecimals: 12 })
+      )
+      vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
+
+      await expect(instance.init('MyCustom')).rejects.toThrow(CustomChainInvalidError)
+    })
+
+    it('throws CustomChainInvalidError when supplied nativeAssetSymbol or ss58Prefix mismatches chain properties', async () => {
+      vi.mocked(resolveChainApi).mockResolvedValue({})
+      const instance = new ConcreteApi({
+        customChains: {
+          MyCustom: {
+            paraId: 4242,
+            ecosystem: 'Polkadot',
+            providers: [{ name: 'rpc', endpoint: 'wss://example' }],
+            ss58Prefix: 999,
+            nativeAssetSymbol: 'WRONG',
+            nativeAssetDecimals: 12
+          }
+        }
+      })
+      instance.hasMethod = vi.fn((pallet: string, method: string) =>
+        Promise.resolve(pallet === 'PolkadotXcm' && method === 'send')
+      )
+      instance.hasRuntimeApi = vi.fn(() => Promise.resolve(false))
+      instance.isEvmChain = vi.fn(() => Promise.resolve(false))
+      instance.fetchPalletList = vi.fn(() =>
+        Promise.resolve([{ name: 'Balances', index: 1, hasExtrinsics: true }])
+      )
+      instance.getSystemProperties = vi.fn(() =>
+        Promise.resolve({ ss58Format: 42, tokenSymbol: 'MYT', tokenDecimals: 12 })
+      )
+      vi.spyOn(instance, 'getConstant').mockResolvedValue(500n)
+
+      await expect(instance.init('MyCustom')).rejects.toThrow(CustomChainInvalidError)
     })
 
     it('returns early in maybeHydrateCustomChain when chain is not a custom chain', async () => {
@@ -637,6 +699,14 @@ describe('PolkadotApi', () => {
 
     it('throws when a declared native asset does not match the chain native symbol', async () => {
       const instance = buildInstanceWithNativeAsset('DOT', 'HDX')
+      await expect(instance.init('MyCustom')).rejects.toThrow(CustomChainInvalidError)
+    })
+
+    it('throws when a declared native asset matches the chain symbol but mismatches tokenDecimals', async () => {
+      const instance = buildInstanceWithNativeAsset('DOT', 'DOT')
+      instance.getSystemProperties = vi.fn(() =>
+        Promise.resolve({ ss58Format: 42, tokenSymbol: 'DOT', tokenDecimals: 12 })
+      )
       await expect(instance.init('MyCustom')).rejects.toThrow(CustomChainInvalidError)
     })
 
