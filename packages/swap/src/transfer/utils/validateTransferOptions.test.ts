@@ -1,9 +1,13 @@
-import { MissingParameterError, ScenarioNotSupportedError } from '@paraspell/sdk-core';
+import { MissingParameterError, ScenarioNotSupportedError, ValidationError } from '@paraspell/sdk-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { TBuildTransactionsOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
-import { validateRoutedFeeAsset, validateTransferOptions } from './validateTransferOptions';
+import {
+  validateRoutedFeeAsset,
+  validateSlippagePct,
+  validateTransferOptions,
+} from './validateTransferOptions';
 
 vi.mock('../../utils/validateDestinationAddress');
 
@@ -126,5 +130,35 @@ describe('validateRoutedFeeAsset', () => {
 
   it('should not throw without a fee asset', () => {
     expect(() => validateRoutedFeeAsset({ feeAsset: undefined })).not.toThrow();
+  });
+});
+
+describe('validateSlippagePct', () => {
+  it.each(['1', '0.5', '50', '0.0001'])(`should accept valid slippage percentage %s`, (pct) => {
+    expect(() => validateSlippagePct(pct)).not.toThrow();
+  });
+
+  it('should accept undefined slippage percentage', () => {
+    expect(() => validateSlippagePct(undefined)).not.toThrow();
+  });
+
+  it.each(['0', '-5', '51', '100', '10000', '', '   ', 'abc', 'NaN', '1e2', 'Infinity', '0x10'])(
+    `should reject invalid slippage percentage %s`,
+    (pct) => {
+      expect(() => validateSlippagePct(pct)).toThrow(ValidationError);
+    },
+  );
+
+  it('should reject slippage percentage inside transfer options', () => {
+    const mockOptions = {
+      evmSenderAddress: undefined,
+      sender: 'someAddress',
+      recipient: 'someRecipient',
+      from: 'Astar',
+      to: 'Polkadot',
+      slippagePct: '10000',
+    } as TBuildTransactionsOptions<unknown, unknown, unknown>;
+
+    expect(() => validateTransferOptions(mockOptions)).toThrow(ValidationError);
   });
 });

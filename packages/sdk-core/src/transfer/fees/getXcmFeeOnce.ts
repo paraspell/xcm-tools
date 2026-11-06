@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TAssetInfo } from '@paraspell/assets'
-import { isAssetEqual } from '@paraspell/assets'
 import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -13,9 +12,8 @@ import type {
   TXcmFeeDetail,
   TXcmFeeHopResult
 } from '../../types'
-import { createAsset, pickCompatibleXcmVersion } from '../../utils'
+import { pickCompatibleXcmVersion } from '../../utils'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { resolveEdDeposit } from '../../utils/transfer/resolveEdDeposit'
 import { addEthereumBridgeFees, getDryRunError, traverseXcmHops } from '../dry-run'
 import { resolveCurrency } from '../utils/resolveCurrency'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -50,7 +48,7 @@ export const getXcmFeeOnce = async <
     ? resolveFeeAsset(api, feeAsset, origin, destination, currency)
     : undefined
 
-  const { asset, assets } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
+  const { asset } = resolveCurrency(api, currency, resolvedFeeAsset, origin, destination)
 
   const resolvedVersion = pickCompatibleXcmVersion(api, origin, destination, version)
 
@@ -151,8 +149,7 @@ export const getXcmFeeOnce = async <
       currentOrigin,
       currentAsset,
       forwardedXcms,
-      hasPassedExchange,
-      isDestination
+      hasPassedExchange
     } = params
 
     const resolvedHopAsset = resolveHopAsset({
@@ -190,26 +187,7 @@ export const getXcmFeeOnce = async <
       skipReverseFeeCalculation
     })
 
-    if (
-      !isDestination ||
-      hopResult.fee === undefined ||
-      hopResult.dryRunError ||
-      isAssetEqual(hopResult.asset, hopApi.findNativeAssetInfoOrThrow(currentChain))
-    )
-      return hopResult
-
-    const edDeposit = await resolveEdDeposit({
-      origin: { api, chain: origin },
-      dest: { api: hopApi, chain: currentChain },
-      assetInfo: asset,
-      overriddenAsset: assets.map(({ amount, location }) =>
-        createAsset(resolvedVersion, amount, location)
-      ),
-      feeAssetLocation: hopResult.asset.location,
-      recipient
-    })
-
-    return { ...hopResult, fee: hopResult.fee + (edDeposit ?? 0n) }
+    return hopResult
   }
 
   const traversalResult = await traverseXcmHops<

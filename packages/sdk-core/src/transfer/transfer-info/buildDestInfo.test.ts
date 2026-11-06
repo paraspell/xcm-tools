@@ -50,7 +50,7 @@ describe('buildDestInfo', () => {
       recipient: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT },
       originFee: 50000000n,
-      isOriginFeeAsset: false,
+      isFeeAssetAh: false,
       paysDestFee: true,
       destFeeDetail: {
         fee: DEFAULT_FEE,
@@ -139,8 +139,8 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.balanceAfter).toBe(DEFAULT_BALANCE + DEFAULT_AMOUNT)
   })
 
-  it('should adjust destAmount if isOriginFeeAsset is true', async () => {
-    const options = { ...baseOptions, api: mockApi, isOriginFeeAsset: true }
+  it('should adjust destAmount if isFeeAssetAh is true', async () => {
+    const options = { ...baseOptions, api: mockApi, isFeeAssetAh: true }
     const expectedDestAmount = options.currency.amount - options.originFee
     const result = await buildDestInfo(options)
     const expectedReceived = expectedDestAmount - (options.destFeeDetail.fee as bigint)
@@ -305,11 +305,11 @@ describe('buildDestInfo', () => {
     expect(getAssetBalanceInternal).toHaveBeenCalledWith(expect.objectContaining({ asset }))
   })
 
-  it('should correctly calculate destXcmFeeBalanceAfter when isOriginFeeAsset is true', async () => {
+  it('should correctly calculate destXcmFeeBalanceAfter when isFeeAssetAh is true', async () => {
     const options = {
       ...baseOptions,
       api: mockApi,
-      isOriginFeeAsset: true,
+      isFeeAssetAh: true,
       destFeeDetail: {
         fee: DEFAULT_FEE,
         asset: { symbol: 'GLMR' }
@@ -324,11 +324,11 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.balanceAfter).toBe(expectedDestBalanceAfter)
   })
 
-  it('should correctly calculate destXcmFeeBalanceAfter when isOriginFeeAsset is false and fee currency differs from asset currency', async () => {
+  it('should correctly calculate destXcmFeeBalanceAfter when isFeeAssetAh is false and fee currency differs from asset currency', async () => {
     const options = {
       ...baseOptions,
       api: mockApi,
-      isOriginFeeAsset: false,
+      isFeeAssetAh: false,
       destFeeDetail: {
         fee: DEFAULT_FEE,
         asset: {

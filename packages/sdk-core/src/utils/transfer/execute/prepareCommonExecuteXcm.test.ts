@@ -140,21 +140,13 @@ describe('prepareCommonExecuteXcm', () => {
     expect(buyExecution.BuyExecution.fees).toBe(mockFeeAsset)
   })
 
-  it('buys a minimal Limited weight with the main asset when the fee asset equals it', () => {
+  it('uses jit_withdraw when there is no separate localized fee asset (e.g. fee asset equals main asset)', () => {
     const result = prepareCommonExecuteXcm({
       ...baseOptions,
       feeAssetInfo: { location: { parents: 1, interior: { Here: null } } }
     } as TCreateTransferXcmOptions<unknown, unknown, unknown>)
 
-    expect(result.prefix).toEqual([
-      { WithdrawAsset: [mockAsset] },
-      {
-        BuyExecution: {
-          fees: mockAsset,
-          weight_limit: { Limited: { ref_time: 1n, proof_size: 1n } }
-        }
-      }
-    ])
+    expect(result.prefix[1]).toEqual({ SetFeesMode: { jit_withdraw: true } })
   })
 
   it('uses jit_withdraw when useJitWithdraw is true even with fee asset', () => {

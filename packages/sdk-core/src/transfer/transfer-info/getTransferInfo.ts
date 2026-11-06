@@ -4,7 +4,7 @@ import { isAssetEqual } from '@paraspell/assets'
 import { MissingParameterError } from '../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../types'
 import { getXcmFee as getXcmFeeInternal } from '../fees'
-import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
 import { aggregateHopFees } from './aggregateHopFees'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -69,14 +69,10 @@ export const getTransferInfo = async <
       disableFallback: false
     })
 
-    const isOriginFeeAsset = usesOriginFeeAsset(
-      api,
-      origin,
-      currency,
-      originAsset,
-      resolvedFeeAsset,
-      originFeeAsset
-    )
+    const isFeeAssetAh =
+      origin === 'AssetHubPolkadot' &&
+      !!resolvedFeeAsset &&
+      isAssetEqual(resolvedFeeAsset, originAsset)
 
     const feeAssetIndex = assets.findIndex(asset => isAssetEqual(asset, originAsset))
 
@@ -92,7 +88,7 @@ export const getTransferInfo = async <
       amount,
       originFee,
       originFeeAsset,
-      isOriginFeeAsset
+      isFeeAssetAh
     })
 
     let builtHops: TTransferInfo['hops'] = []
@@ -128,7 +124,7 @@ export const getTransferInfo = async <
         recipient,
         currency: item,
         originFee,
-        isOriginFeeAsset: isOriginFeeAsset && isFeeElement,
+        isFeeAssetAh: isFeeAssetAh && isFeeElement,
         paysDestFee: isFeeElement,
         destFeeDetail,
         totalHopFee: isFeeElement ? totalHopFee : 0n,

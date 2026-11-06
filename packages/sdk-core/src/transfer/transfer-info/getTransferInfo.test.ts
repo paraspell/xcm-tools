@@ -14,7 +14,7 @@ import type {
   TXcmFeeHopInfo
 } from '../../types'
 import { getXcmFee } from '../fees'
-import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
 import { getTransferInfo } from './getTransferInfo'
@@ -316,7 +316,7 @@ describe('getTransferInfo', () => {
     })
   })
 
-  it('should correctly calculate originBalanceFeeAfter when feeAsset is same as transfer currency on AssetHubPolkadot (isOriginFeeAsset true)', async () => {
+  it('should correctly calculate originBalanceFeeAfter when feeAsset is same as transfer currency on AssetHubPolkadot (isFeeAssetAh true)', async () => {
     const ahOrigin = 'AssetHubPolkadot'
     const sameCurrency = {
       symbol: 'USDT',
@@ -324,7 +324,6 @@ describe('getTransferInfo', () => {
     } as WithAmount<TCurrencyCore>
     apiSpies.isChainEvm.mockReturnValue(false)
     vi.mocked(isAssetEqual).mockReturnValue(true)
-    vi.mocked(usesOriginFeeAsset).mockReturnValueOnce(true)
     mockResolvedAsset({
       symbol: 'USDT',
       assetId: '1984',
@@ -352,17 +351,9 @@ describe('getTransferInfo', () => {
 
     expect(result.origin.xcmFee.balanceAfter).toBe(100000000n - BigInt(sameCurrency.amount))
     expect(result.origin.xcmFee.balanceAfter).toBe(50000000n)
-    expect(usesOriginFeeAsset).toHaveBeenCalledWith(
-      mockApi,
-      ahOrigin,
-      sameCurrency,
-      expect.objectContaining({ symbol: 'USDT' }),
-      sameCurrency,
-      dotAsset
-    )
   })
 
-  it('should correctly calculate originBalanceFeeAfter when feeAsset is different (isOriginFeeAsset false)', async () => {
+  it('should correctly calculate originBalanceFeeAfter when feeAsset is different (isFeeAssetAh false)', async () => {
     vi.mocked(isAssetEqual).mockReturnValue(false)
     const originFeeVal = 100000000n
     const originBalanceFeeVal = 200000000000n
