@@ -99,9 +99,11 @@ export const handleExecuteTransfer = async <
   // We mint 1000 units of feeAsset and use 100
   const FEE_ASSET_AMOUNT = 100
 
-  const feeAssetAmount = resolvedFeeAssetInfo
-    ? parseUnits(FEE_ASSET_AMOUNT.toString(), resolvedFeeAssetInfo.decimals)
+  const feeAssetAmount = feeAssetInfo
+    ? parseUnits(FEE_ASSET_AMOUNT.toString(), feeAssetInfo.decimals)
     : MIN_FEE
+
+  const hopFeeAmount = resolvedFeeAssetInfo ? feeAssetAmount : MIN_FEE
 
   const call = createExecuteCall(
     chain,
@@ -109,8 +111,8 @@ export const handleExecuteTransfer = async <
       ...internalOptions,
       fees: {
         originFee: feeAssetAmount,
-        reserveFee: feeAssetAmount,
-        destFee: feeAssetAmount
+        reserveFee: hopFeeAmount,
+        destFee: hopFeeAmount
       }
     }),
     MAX_WEIGHT

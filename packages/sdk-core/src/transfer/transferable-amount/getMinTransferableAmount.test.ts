@@ -17,7 +17,7 @@ import type {
 import { validateAddress } from '../../utils'
 import { dryRunInternal } from '../dry-run'
 import { getXcmFee } from '../fees'
-import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset } from '../utils'
 import * as mod from './getMinTransferableAmount'
 
 vi.mock('@paraspell/assets')
@@ -100,7 +100,7 @@ describe('getMinTransferableAmountInternal', () => {
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
-    // origin fee (USDT) = 2 is not counted without execute; destination fee (USDT) = 7
+    // origin fee (USDT, paid by the fee asset) = 2; destination fee (USDT) = 7
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
       origin: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
@@ -121,10 +121,10 @@ describe('getMinTransferableAmountInternal', () => {
       ]
     })
 
-    // USDT: 7 (dest) + 10 (ED) + 1 = 18; USDC: 10 (ED) + 1 = 11
-    expect(res).toEqual([18n, 11n])
+    // USDT: 2 (origin) + 7 (dest) + 10 (ED) + 1 = 20; USDC: 10 (ED) + 1 = 11
+    expect(res).toEqual([20n, 11n])
     expect(currencySpy).toHaveBeenCalledWith([
-      { symbol: 'USDT', amount: 18n },
+      { symbol: 'USDT', amount: 20n },
       { symbol: 'USDC', amount: 11n }
     ])
   })
@@ -168,7 +168,7 @@ describe('getMinTransferableAmountInternal', () => {
     expect(res).toEqual([0n, 0n])
   })
 
-  it('adds hops/destination (matching asset), ED (when dest balance is 0), plus 1; native origin fee is not counted', async () => {
+  it('adds origin/hops/destination (matching asset), ED (when dest balance is 0), plus 1', async () => {
     const asset = { symbol: 'ASSET', decimals: 12 } as TAssetInfo
     const destAsset = { symbol: 'ASSET', location: {}, existentialDeposit: '10' } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
@@ -196,8 +196,8 @@ describe('getMinTransferableAmountInternal', () => {
 
     const res = await mod.getMinTransferableAmountInternal(baseOptions)
 
-    // 3 + 7 + 10 + 1 = 21
-    expect(res).toBe(21n)
+    // 2 + 3 + 7 + 10 + 1 = 23
+    expect(res).toBe(23n)
 
     expect(validateAddress).toHaveBeenCalledWith(api, 'SENDER', 'Acala', false)
     expect(cloneSpy).toHaveBeenCalled()
@@ -218,11 +218,11 @@ describe('getMinTransferableAmountInternal', () => {
         currency: expect.objectContaining({ amount: 100n })
       })
     )
-    expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 21n }))
+    expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 23n }))
     expect(buildInternal).toHaveBeenCalled()
     expect(dryRunInternal).toHaveBeenCalledWith(
       expect.objectContaining({
-        currency: expect.objectContaining({ amount: 21n })
+        currency: expect.objectContaining({ amount: 23n })
       })
     )
     expect(isAssetXcEqualSpy).toHaveBeenCalledWith(
@@ -245,7 +245,6 @@ describe('getMinTransferableAmountInternal', () => {
     findAssetOnDestOrThrowSpy.mockReturnValue(destAssetNoLoc)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue(resolvedFee)
-    vi.mocked(usesOriginFeeAsset).mockReturnValueOnce(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
@@ -339,7 +338,7 @@ describe('getMinTransferableAmountInternal', () => {
     } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
     vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 0n, asset: { symbol: 'A' } },
+      origin: undefined,
       hops: [],
       destination: undefined
     } as unknown as TGetXcmFeeResult)
@@ -359,7 +358,7 @@ describe('getMinTransferableAmount', () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1n)
     vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getXcmFee).mockResolvedValue({
-      origin: { fee: 0n, asset: { symbol: 'A' } },
+      origin: undefined,
       hops: [],
       destination: undefined
     } as unknown as TGetXcmFeeResult)

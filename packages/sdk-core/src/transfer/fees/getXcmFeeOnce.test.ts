@@ -1,5 +1,5 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { findAssetOnDestOrThrow, isAssetEqual } from '@paraspell/assets'
+import type { TAssetInfo } from '@paraspell/assets'
+import { findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -11,9 +11,7 @@ import type {
   TXcmFeeHopResult
 } from '../../types'
 import { getMythosOriginFee } from '../../utils/fees/getMythosOriginFee'
-import { resolveEdDeposit } from '../../utils/transfer/resolveEdDeposit'
 import { addEthereumBridgeFees, traverseXcmHops } from '../dry-run'
-import { resolveCurrency } from '../utils/resolveCurrency'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFeeInternal } from './getOriginXcmFeeInternal'
 import { getXcmFeeOnce } from './getXcmFeeOnce'
@@ -32,8 +30,6 @@ vi.mock('./getOriginXcmFeeInternal')
 vi.mock('./getDestXcmFee')
 
 vi.mock('../../utils/fees/getMythosOriginFee')
-vi.mock('../../utils/transfer/resolveEdDeposit')
-vi.mock('../utils/resolveCurrency', { spy: true })
 
 const createApi = () =>
   ({
@@ -1202,110 +1198,5 @@ describe('getXcmFeeOnce', () => {
     await getXcmFeeOnce(createOptions({ destination: 'Ethereum' }))
 
     expect(spy).toHaveBeenCalledWith('Ethereum')
-  })
-
-  describe('destination ED swap', () => {
-    const feeAsset = {
-      symbol: 'USDT',
-      location: { parents: 1, interior: { Here: null } }
-    } as TAssetInfo
-
-    const destHop = {
-      asset: feeAsset,
-      fee: 1000n,
-      feeType: 'dryRun' as const,
-      sufficient: true
-    }
-
-    beforeEach(() => {
-      vi.spyOn(defaultApi, 'findAssetInfoOrThrow').mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
-      vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockReturnValue({
-        symbol: 'GLMR'
-      } as TAssetInfo)
-      vi.mocked(getOriginXcmFeeInternal).mockResolvedValue({
-        ...xcmFeeResultbase,
-        feeType: 'dryRun',
-        forwardedXcms: [null, [{ key: 'value' }]],
-        destParaId: 1000
-      })
-      vi.mocked(getDestXcmFee).mockResolvedValue(destHop)
-      vi.mocked(addEthereumBridgeFees).mockResolvedValue(undefined)
-      vi.mocked(traverseXcmHops).mockImplementation(async ({ processHop }) => {
-        const destination = await processHop({
-          api: defaultApi,
-          currentChain: 'Darwinia',
-          currentOrigin: 'Acala',
-          currentAsset: { symbol: 'ACA' } as TAssetInfo,
-          forwardedXcms: [null, [{ key: 'value' }]],
-          hasPassedExchange: false,
-          isDestination: true
-        })
-        return { hops: [], lastProcessedChain: 'Darwinia', destination }
-      })
-    })
-
-    it('adds the ED swap amount to the destination fee', async () => {
-      vi.mocked(resolveEdDeposit).mockResolvedValue(500n)
-
-      const res = await getXcmFeeOnce(createOptions())
-
-      expect(res.destination.fee).toBe(1500n)
-      expect(resolveEdDeposit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          dest: { api: defaultApi, chain: 'Darwinia' },
-          feeAssetLocation: feeAsset.location,
-          recipient: '5Bob'
-        })
-      )
-    })
-
-    it('passes every transferred asset to the ED check', async () => {
-      const assets: WithAmount<TAssetInfo>[] = [
-        {
-          symbol: 'ACA',
-          decimals: 12,
-          existentialDeposit: '1',
-          amount: 1n,
-          location: { parents: 0, interior: { Here: null } }
-        },
-        {
-          symbol: 'DOT',
-          decimals: 10,
-          existentialDeposit: '1',
-          amount: 2n,
-          location: { parents: 1, interior: { Here: null } }
-        }
-      ]
-      vi.mocked(resolveCurrency).mockReturnValueOnce({ asset: assets[0], assets })
-      vi.mocked(resolveEdDeposit).mockResolvedValue(500n)
-
-      await getXcmFeeOnce(
-        createOptions({
-          currency: [
-            { symbol: 'ACA', amount: 1n },
-            { symbol: 'DOT', amount: 2n }
-          ]
-        })
-      )
-
-      expect(vi.mocked(resolveEdDeposit).mock.calls[0][0].overriddenAsset).toHaveLength(2)
-    })
-
-    it('keeps the destination fee when no ED swap is needed', async () => {
-      vi.mocked(resolveEdDeposit).mockResolvedValue(undefined)
-
-      const res = await getXcmFeeOnce(createOptions())
-
-      expect(res.destination.fee).toBe(1000n)
-    })
-
-    it('does not add the ED swap when the destination fee is paid in the native asset', async () => {
-      vi.mocked(isAssetEqual).mockReturnValue(true)
-
-      const res = await getXcmFeeOnce(createOptions())
-
-      expect(res.destination.fee).toBe(1000n)
-      expect(resolveEdDeposit).not.toHaveBeenCalled()
-    })
   })
 })

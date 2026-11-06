@@ -11,7 +11,7 @@ export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends 
   amount,
   originFee,
   originFeeAsset,
-  isOriginFeeAsset
+  isFeeAssetAh
 }: TBuildOriginInfoOptions<TApi, TRes, TSigner, TCustomChain>): Promise<{
   selectedCurrency: TSelectedCurrencyInfo[]
   xcmFee: TOriginXcmFeeInfo
@@ -46,7 +46,7 @@ export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends 
     asset: originFeeAsset
   })
 
-  const originBalanceFeeAfter = isOriginFeeAsset
+  const originBalanceFeeAfter = isFeeAssetAh
     ? originBalanceFee - amount
     : originBalanceFee - originFee
 

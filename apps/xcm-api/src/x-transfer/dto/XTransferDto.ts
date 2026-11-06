@@ -130,7 +130,14 @@ export const ExchangeSchema = z
 export const SwapOptionsSchema = z.object({
   currencyTo: CurrencyCoreSchema,
   exchange: ExchangeSchema,
-  slippage: z.number().or(z.string()).optional(),
+  slippage: z
+    .number()
+    .or(z.string())
+    .refine((val) => {
+      const n = Number(val);
+      return Number.isFinite(n) && n > 0 && n <= 50;
+    }, { message: 'slippage must be a positive number not greater than 50' })
+    .optional(),
   evmSenderAddress: z.string().min(1).optional(),
 });
 

@@ -30,6 +30,7 @@ import {
   getXcmFees,
   transfer,
 } from '../transfer';
+import { validateSlippagePct } from '../transfer/utils/validateTransferOptions';
 import type {
   TBuildTransactionsBaseOptions,
   TGetBestAmountOutBaseOptions,
@@ -138,6 +139,7 @@ export class SwapBuilderCore<
   slippagePct(
     pct: string,
   ): SwapBuilderCore<TApi, TRes, TSigner, T & { slippagePct: string }, TCustomChain> {
+    validateSlippagePct(pct);
     return new SwapBuilderCore(this._api, { ...this._options, slippagePct: pct });
   }
 
