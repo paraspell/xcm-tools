@@ -3416,6 +3416,31 @@
         }
       },
       {
+        "assetId": "5550",
+        "symbol": "jsHOLLAR",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "erc20": {
+          "balanceSlot": 0
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xb94025f14fdc01f8e3b0c34311bcbae0febd1a4a"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "assetId": "1006",
         "symbol": "atBTC",
         "decimals": 18,
@@ -5157,6 +5182,31 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "5551",
+        "symbol": "jETH",
+        "decimals": 18,
+        "existentialDeposit": "1000",
+        "erc20": {
+          "balanceSlot": 51
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x98db179d65b8abc53946bd89b3433a4fd3bfb60c"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "1043",
