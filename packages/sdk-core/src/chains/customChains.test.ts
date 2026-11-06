@@ -157,6 +157,69 @@ describe('normalizeCustomChains', () => {
     }
     expect(() => normalizeCustomChains(input)).toThrow(CustomChainInvalidError)
   })
+
+  it('throws CustomChainInvalidError on invalid nativeAssetDecimals', () => {
+    for (const nativeAssetDecimals of [0, -6, 1.5, 37, Number.NaN]) {
+      expect(() => normalizeCustomChains({ MyCustom: baseInput({ nativeAssetDecimals }) })).toThrow(
+        CustomChainInvalidError
+      )
+    }
+  })
+
+  it('throws CustomChainInvalidError on invalid declared asset decimals', () => {
+    const loc = { parents: 1, interior: { X1: { Parachain: 1 } } }
+    for (const decimals of [0, -1, 2.5, 37, Number.NaN]) {
+      expect(() =>
+        normalizeCustomChains({
+          MyCustom: baseInput({
+            assets: [{ symbol: 'FOO', decimals, existentialDeposit: '1000', location: loc }]
+          })
+        })
+      ).toThrow(CustomChainInvalidError)
+    }
+  })
+
+  it('throws CustomChainInvalidError when declared native asset decimals mismatch nativeAssetDecimals', () => {
+    const loc = { parents: 1, interior: { X1: { Parachain: 4242 } } }
+    expect(() =>
+      normalizeCustomChains({
+        MyCustom: baseInput({
+          nativeAssetSymbol: 'MYT',
+          nativeAssetDecimals: 12,
+          assets: [
+            {
+              symbol: 'MYT',
+              decimals: 6,
+              existentialDeposit: '1000',
+              location: loc,
+              isNative: true
+            }
+          ]
+        })
+      })
+    ).toThrow(CustomChainInvalidError)
+  })
+
+  it('throws CustomChainInvalidError when declared native asset symbol mismatches nativeAssetSymbol', () => {
+    const loc = { parents: 1, interior: { X1: { Parachain: 4242 } } }
+    expect(() =>
+      normalizeCustomChains({
+        MyCustom: baseInput({
+          nativeAssetSymbol: 'MYT',
+          nativeAssetDecimals: 12,
+          assets: [
+            {
+              symbol: 'OTHER',
+              decimals: 12,
+              existentialDeposit: '1000',
+              location: loc,
+              isNative: true
+            }
+          ]
+        })
+      })
+    ).toThrow(CustomChainInvalidError)
+  })
 })
 
 describe('buildCustomChainConfig', () => {

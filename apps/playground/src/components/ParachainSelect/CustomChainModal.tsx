@@ -85,7 +85,16 @@ export const CustomChainModal: FC<Props> = ({
       },
       assets: {
         symbol: isNotEmpty('Symbol is required'),
-        decimals: isNotEmpty('Decimals required'),
+        decimals: (value) => {
+          if (value === '' || value === undefined || value === null) {
+            return 'Decimals required';
+          }
+          const num = Number(value);
+          if (!Number.isInteger(num) || num <= 0 || num > 36) {
+            return 'Decimals must be an integer between 1 and 36';
+          }
+          return null;
+        },
         existentialDeposit: matches(
           /^\d+(\.\d+)?$/,
           'Existential deposit must be a valid amount',

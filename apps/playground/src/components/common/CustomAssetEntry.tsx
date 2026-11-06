@@ -47,7 +47,7 @@ export const CustomAssetEntry = <T,>({
               label="Decimals"
               placeholder="10"
               hideControls
-              min={0}
+              min={1}
               max={36}
               key={form.key(`${prefix}decimals`)}
               {...form.getInputProps(`${prefix}decimals`)}
