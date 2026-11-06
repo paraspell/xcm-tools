@@ -1938,6 +1938,31 @@
         }
       },
       {
+        "parents": 1,
+        "interior": {
+          "X4": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x7768000000000000000000000000000000000000000000000000000000000000"
+              }
+            },
+            {
+              "GeneralIndex": 15
+            },
+            {
+              "GeneralKey": {
+                "length": 32,
+                "data": "0xb55c490bafb82aeb4b950fa479341c1b5fbfa814f8253b6acdf8426b7cd9d3c0"
+              }
+            }
+          ]
+        }
+      },
+      {
         "parents": 2,
         "interior": {
           "X2": [
