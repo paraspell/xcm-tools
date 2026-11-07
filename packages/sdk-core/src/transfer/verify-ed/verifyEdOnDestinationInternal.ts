@@ -7,7 +7,7 @@ import { DryRunFailedError, ScenarioNotSupportedError, UnableToComputeError } fr
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../types'
 import { abstractDecimals, validateAddress } from '../../utils'
 import { getXcmFeeInternal } from '../fees'
-import { resolveCurrency, resolveFeeAsset } from '../utils'
+import { resolveCurrency, resolveFeeAsset, usesOriginFeeAsset } from '../utils'
 
 export const calculateTotalXcmFee = <TCustomChain extends string = never>(
   asset: TAssetInfo,
@@ -91,7 +91,7 @@ export const verifyEdOnDestinationInternal = async <
   })
 
   const {
-    origin: { dryRunError },
+    origin: { fee: originFee, asset: originFeeAsset, dryRunError },
     hops,
     destination: {
       fee: destFee,
@@ -147,11 +147,26 @@ export const verifyEdOnDestinationInternal = async <
       asset: destAsset
     })
 
-    const feeToSubtract = isTypeAndThenMethod
-      ? calculateTotalXcmFee(destAsset, xcmFeeResult)
-      : paysDestFee
-        ? destFee
-        : 0n
+    const isOriginFeeAsset = usesOriginFeeAsset(
+      api,
+      origin,
+      currency,
+      destAsset,
+      resolvedFeeAsset,
+      originFeeAsset
+    )
+
+    const originFeeToSubtract = isOriginFeeAsset && paysDestFee ? (originFee ?? 0n) : 0n
+
+    const xcmFeeToSubtract = !paysDestFee
+      ? 0n
+      : isTypeAndThenMethod || method === 'execute'
+        ? calculateTotalXcmFee(destAsset, xcmFeeResult)
+        : isAssetEqual(destFeeAsset, destAsset)
+          ? destFee
+          : 0n
+
+    const feeToSubtract = originFeeToSubtract + xcmFeeToSubtract
 
     return amount - feeToSubtract > (balance < ed ? ed : 0)
   }
