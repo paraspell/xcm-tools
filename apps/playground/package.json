@@ -12,6 +12,8 @@
     "lint": "eslint --fix src",
     "format:check": "prettier --check src e2e",
     "format:write": "prettier --write src e2e",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:e2e": "playwright test",
     "install-polkadot-ext": "cd e2e/extensions/polkadot-ext && yarn && yarn build:chrome",
     "init-polkadot-ext": "git clone https://github.com/polkadot-js/extension e2e/extensions/polkadot-ext && pnpm install-polkadot-ext",
