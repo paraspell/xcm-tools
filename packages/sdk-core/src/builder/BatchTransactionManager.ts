@@ -2,10 +2,12 @@ import type { TSubstrateChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import { BatchValidationError } from '../errors'
-import type { TBatchedTransferOptions } from '../types'
+import { BatchValidationError, DryRunFailedError } from '../errors'
+import type { TBatchedTransferOptions, TTransferOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
-import { assertSubstrateOrigin, createTransferOrSwap } from '../utils'
+import { assertSender, assertSubstrateOrigin, createTransferOrSwap } from '../utils'
+import { isConfig } from '../utils/guards/isConfig'
+import { buildDryRun } from './buildDryRun'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string = never> {
@@ -52,7 +54,49 @@ class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string =
       })
     )
 
+    await this.maybePerformXcmFormatChecks(api, normalized, txs)
+
     return api.callBatchMethod(txs, mode)
+  }
+
+  /**
+   * Honors the `xcmFormatCheck` builder option for batched transfers.
+   *
+   * The single-transfer path in `Builder` dry-runs the built transaction before
+   * returning it when `xcmFormatCheck` is enabled. The batch path previously
+   * accepted the option without running any check, so batched calldata was
+   * returned untested. Each batched transaction is now dry-run in the same way,
+   * mirroring the single-transfer behavior.
+   */
+  private async maybePerformXcmFormatChecks(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    normalized: { options: TTransferOptions<TApi, TRes, TSigner, TCustomChain> }[],
+    txs: TRes[]
+  ) {
+    const { config } = api
+
+    if (!isConfig(config) || !config.xcmFormatCheck) return
+
+    await Promise.all(
+      normalized.map(async ({ options }, index) => {
+        const { from, sender } = options
+        assertSubstrateOrigin(from)
+        assertSender(sender)
+
+        const dryRunResult = await buildDryRun(
+          api,
+          txs[index],
+          { ...options, from, sender },
+          {
+            sentAssetMintMode: 'bypass'
+          }
+        )
+
+        if (dryRunResult.dryRunError) {
+          throw new DryRunFailedError(dryRunResult.dryRunError, 'XCM format check failed.')
+        }
+      })
+    )
   }
 }
 

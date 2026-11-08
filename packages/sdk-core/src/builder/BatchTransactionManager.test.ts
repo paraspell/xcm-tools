@@ -1,18 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
+import { DryRunFailedError } from '../errors'
 import type { TBatchedTransferOptions, TTransferBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
+import { buildDryRun } from './buildDryRun'
 import type { GeneralBuilder } from './Builder'
 
 vi.mock('../utils')
+vi.mock('./buildDryRun')
 
 const mockApi = {
   init: vi.fn(),
   getApi: vi.fn(),
   callBatchMethod: vi.fn()
+} as unknown as PolkadotApi<unknown, unknown, unknown>
+
+const mockApiWithFormatCheck = {
+  ...mockApi,
+  config: { xcmFormatCheck: true }
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const createBuilder = () =>
@@ -112,6 +120,83 @@ describe('BatchTransactionManager', () => {
       await expect(
         manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
       ).rejects.toThrow('All transactions must have the same origin.')
+    })
+
+    it('runs the XCM format check for each transaction when xcmFormatCheck is enabled', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions({ sender: 'sender' }))
+      manager.addTransaction(createTransferOptions({ sender: 'sender' }))
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(buildDryRun).mockResolvedValue({
+        success: true,
+        origin: {
+          asset: {
+            symbol: 'ACA',
+            decimals: 12,
+            location: { parents: 0, interior: 'Here' },
+            existentialDeposit: '1000000000000'
+          },
+          success: true,
+          fee: 0n,
+          forwardedXcms: []
+        },
+        hops: []
+      })
+
+      await manager.buildBatch(mockApiWithFormatCheck, 'Acala', { mode: BatchMode.BATCH_ALL })
+
+      expect(buildDryRun).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not run the XCM format check when xcmFormatCheck is disabled', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions({ sender: 'sender' }))
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(buildDryRun).mockResolvedValue({
+        success: true,
+        origin: {
+          asset: {
+            symbol: 'ACA',
+            decimals: 12,
+            location: { parents: 0, interior: 'Here' },
+            existentialDeposit: '1000000000000'
+          },
+          success: true,
+          fee: 0n,
+          forwardedXcms: []
+        },
+        hops: []
+      })
+
+      await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+
+      expect(buildDryRun).not.toHaveBeenCalled()
+    })
+
+    it('throws a DryRunFailedError when a batched transaction fails the XCM format check', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions({ sender: 'sender' }))
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(buildDryRun).mockResolvedValue({
+        success: false,
+        origin: {
+          asset: {
+            symbol: 'ACA',
+            decimals: 12,
+            location: { parents: 0, interior: 'Here' },
+            existentialDeposit: '1000000000000'
+          },
+          success: true,
+          fee: 0n,
+          forwardedXcms: []
+        },
+        hops: [],
+        dryRunError: { reason: 'BadVersion', chainKind: 'origin', chain: 'Acala' }
+      })
+
+      await expect(
+        manager.buildBatch(mockApiWithFormatCheck, 'Acala', { mode: BatchMode.BATCH_ALL })
+      ).rejects.toThrow(DryRunFailedError)
     })
   })
 })
