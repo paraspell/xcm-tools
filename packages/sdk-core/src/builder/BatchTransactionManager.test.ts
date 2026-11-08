@@ -1,13 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
+import { DryRunFailedError } from '../errors'
 import type { TBatchedTransferOptions, TTransferBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { GeneralBuilder } from './Builder'
+import { maybePerformXcmFormatCheck } from './maybePerformXcmFormatCheck'
 
 vi.mock('../utils')
+vi.mock('./maybePerformXcmFormatCheck')
 
 const mockApi = {
   init: vi.fn(),
@@ -33,6 +36,7 @@ const createTransferOptions = (
   to: 'Hydration',
   currency: { symbol: 'ACA', amount: 100 },
   recipient: 'address',
+  sender: 'senderAddress',
   builder: createBuilder(),
   ...overrides
 })
@@ -80,6 +84,7 @@ describe('BatchTransactionManager', () => {
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
       expect(createTransferOrSwap).toHaveBeenCalledTimes(2)
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledTimes(2)
     })
 
     it('uses batch when BATCH mode is selected', async () => {
@@ -91,6 +96,12 @@ describe('BatchTransactionManager', () => {
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH })
 
       expect(spy).toHaveBeenCalled()
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledWith(
+        mockApi,
+        { hash: 'hash' },
+        expect.objectContaining({ from: 'Acala', to: 'Hydration' }),
+        false
+      )
     })
 
     it('uses batchAll when BATCH_ALL mode is selected', async () => {
@@ -101,6 +112,7 @@ describe('BatchTransactionManager', () => {
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
 
       expect(createTransferOrSwap).toHaveBeenCalled()
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalled()
     })
 
     it('should fail if different origins are used', async () => {
@@ -112,6 +124,22 @@ describe('BatchTransactionManager', () => {
       await expect(
         manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
       ).rejects.toThrow('All transactions must have the same origin.')
+    })
+
+    it('should propagate DryRunFailedError when xcm format check fails on a batch transaction', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions())
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(maybePerformXcmFormatCheck).mockRejectedValue(
+        new DryRunFailedError(
+          { reason: 'Bad XCM format', chain: 'Hydration' },
+          'XCM format check failed.'
+        )
+      )
+
+      await expect(
+        manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+      ).rejects.toThrow('XCM format check failed.')
     })
   })
 })

@@ -6,6 +6,7 @@ import { BatchValidationError } from '../errors'
 import type { TBatchedTransferOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
 import { assertSubstrateOrigin, createTransferOrSwap } from '../utils'
+import { maybePerformXcmFormatCheck } from './maybePerformXcmFormatCheck'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string = never> {
@@ -45,10 +46,13 @@ class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string =
     )
 
     const txs = await Promise.all(
-      normalized.map(({ options }) => {
+      normalized.map(async ({ options }) => {
         const { from: origin } = options
         assertSubstrateOrigin(origin)
-        return createTransferOrSwap({ ...options, from: origin })
+        const substrateOptions = { ...options, from: origin }
+        const tx = await createTransferOrSwap(substrateOptions)
+        await maybePerformXcmFormatCheck(api, tx, substrateOptions, false)
+        return tx
       })
     )
 

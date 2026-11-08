@@ -869,6 +869,33 @@ describe('XTransferService', () => {
       );
     });
 
+    it('should pass options including xcmFormatCheck to Builder in batch call', async () => {
+      const from: TChain = 'Acala';
+      const to: TChain = 'Basilisk';
+
+      const batchDto: BatchXTransferDto = {
+        transfers: [
+          {
+            from,
+            to,
+            recipient,
+            currency,
+          },
+        ],
+        options: {
+          mode: paraspellSdk.BatchMode.BATCH_ALL,
+          xcmFormatCheck: true,
+        },
+      };
+
+      const result = await service.generateBatchXcmCall(batchDto);
+
+      expect(result).toBe(txHashBatch);
+      expect(paraspellSdk.Builder).toHaveBeenCalledWith({
+        xcmFormatCheck: true,
+      });
+    });
+
     it('should succeed when pallet and method are provided', async () => {
       const from: TChain = 'Acala';
       const to: TChain = 'Basilisk';
