@@ -21,7 +21,8 @@ const findEthAssetBySymbol = (
       }
     })
   )
-  return findBestMatches(ethCompatibleAssets, symbol)[0]
+  const matches = findBestMatches(ethCompatibleAssets, symbol)
+  return pickOtherOrThrow(symbol, matches)
 }
 
 const findEthMatch = (symbol: string, otherAssets: TAssetInfo[]): TAssetInfo | undefined => {
