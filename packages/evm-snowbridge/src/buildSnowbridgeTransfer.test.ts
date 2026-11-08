@@ -170,7 +170,7 @@ describe('buildSnowbridgeTransfer', () => {
 
     expect(leaseClient).toHaveBeenCalledExactlyOnceWith(ETHEREUM_WS_URLS, DEFAULT_TTL_MS)
     expect(setEthProvider).toHaveBeenCalledWith(1, cachedClient)
-    expect(releaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS)
+    expect(releaseClient).toHaveBeenCalledWith(ETHEREUM_WS_URLS, cachedClient)
     expect(result.tx.chainId).toBe(1)
   })
 

@@ -119,6 +119,32 @@ describe('clientPool', () => {
     expect(cache.peek(key)?.destroyWanted).toBe(false)
   })
 
+  it('releaseClient releases the leased entry, not whatever currently owns the key', async () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const onEviction = vi.fn()
+    const cache = createClientCache<TFakeClient>(10, pingClient, onEviction)
+
+    let created = 0
+    const createClient = vi.fn(() => ({ id: (created += 1) }))
+    const { leaseClient, releaseClient } = createClientPoolHelpers(cache, createClient)
+
+    const ws = 'wss://node'
+    const key = keyFromWs(ws)
+
+    const stale = await leaseClient(ws, 1_000)
+    cache.delete(key) // evicted while the lease is still in flight
+    const fresh = await leaseClient(ws, 1_000)
+    cache.peek(key)!.destroyWanted = true
+
+    releaseClient(ws, stale)
+    expect(cache.peek(key)?.refs).toBe(1)
+    expect(onEviction).toHaveBeenCalledTimes(1)
+
+    releaseClient(ws, fresh)
+    expect(cache.has(key)).toBe(false)
+    expect(onEviction).toHaveBeenCalledTimes(2) // stale eviction, then the real one
+  })
+
   it('releaseClient is a no-op when missing and evicts when destroyWanted && refs hits 0', async () => {
     const pingClient = vi.fn().mockResolvedValue(undefined)
     const cache = createClientCache<TFakeClient>(10, pingClient)

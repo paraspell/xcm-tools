@@ -69,16 +69,22 @@ export const createClientCache = <T>(
         continue
       }
 
+      const idle = w.value.refs === 0
+      const victimIdle = victim.value.refs === 0
+
       const better =
-        (w.extended && !victim.extended) || // Prefer extended over normal
-        (w.extended === victim.extended && w.value.destroyWanted && !victim.value.destroyWanted) ||
-        (w.extended === victim.extended &&
-          w.value.destroyWanted === victim.value.destroyWanted &&
-          timeLeft(w) < timeLeft(victim)) ||
-        (w.extended === victim.extended &&
-          w.value.destroyWanted === victim.value.destroyWanted &&
-          timeLeft(w) === timeLeft(victim) &&
-          w.value.refs < victim.value.refs) // Prefer with less refs
+        // A leased entry loses its client to onEviction, so an idle entry always goes first
+        (idle && !victimIdle) ||
+        (idle === victimIdle &&
+          ((w.extended && !victim.extended) || // Prefer extended over normal
+            (w.extended === victim.extended && w.value.destroyWanted && !victim.value.destroyWanted) ||
+            (w.extended === victim.extended &&
+              w.value.destroyWanted === victim.value.destroyWanted &&
+              timeLeft(w) < timeLeft(victim)) ||
+            (w.extended === victim.extended &&
+              w.value.destroyWanted === victim.value.destroyWanted &&
+              timeLeft(w) === timeLeft(victim) &&
+              w.value.refs < victim.value.refs))) // Prefer with less refs
       if (better) {
         victimKey = k
         victim = w
@@ -127,12 +133,13 @@ export const createClientCache = <T>(
     const remaining = timeLeft(w)
     w.extended = false
 
-    if (ttl < remaining) {
+    // Never truncate the life another, longer lease already bought - a 60s
+    // destination lease must not cut a 1200s origin window down to a minute
+    if (ttl > remaining) {
       w.ttl = ttl
       w.expireAt = now() + ttl
       schedule(k, ttl)
     }
-    // if ttl ≥ remaining - keep current timer
   }
 
   const del = (k: TClientKey) => {

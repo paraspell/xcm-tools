@@ -100,7 +100,21 @@ describe('createClientCache', () => {
     expect(cache.has('y')).toBe(false)
   })
 
-  it('revive() shortens the timer only when ttl < remaining', () => {
+  it('revive() extends a live lease instead of truncating it', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const cache = createClientCache<TFakeClient>(10, pingClient)
+    cache.set('r', entry(), 1_000)
+
+    vi.advanceTimersByTime(800)
+    cache.revive('r', 5_000)
+
+    expect(cache.remainingTtl('r')).toBeGreaterThan(4_000)
+
+    vi.advanceTimersByTime(4_000)
+    expect(cache.has('r')).toBe(true)
+  })
+
+  it('revive() never shortens an entry that still has more life than the new lease', () => {
     const pingClient = vi.fn().mockResolvedValue(undefined)
     const cache = createClientCache<TFakeClient>(10, pingClient)
     cache.set('r', entry(), 1_000)
@@ -108,11 +122,42 @@ describe('createClientCache', () => {
     vi.advanceTimersByTime(200)
     cache.revive('r', 300)
 
-    vi.advanceTimersByTime(299)
-    expect(cache.has('r')).toBe(true)
+    expect(cache.remainingTtl('r')).toBeGreaterThan(700)
 
-    vi.advanceTimersByTime(2)
-    expect(cache.has('r')).toBe(false)
+    vi.advanceTimersByTime(599)
+    expect(cache.has('r')).toBe(true)
+  })
+
+  it('evictIfNeeded never evicts a leased entry while an idle one exists', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const onEviction = vi.fn()
+    const cache = createClientCache<TFakeClient>(2, pingClient, onEviction)
+
+    const live = entry(1)
+    live.destroyWanted = true
+    cache.set('live', live, 1_000) // shortest time left and already marked for destroy
+    cache.set('idle', entry(0), 10_000)
+
+    cache.set('new', entry(0), 10_000)
+
+    expect(cache.has('live')).toBe(true)
+    expect(cache.has('idle')).toBe(false)
+    expect(onEviction).toHaveBeenCalledExactlyOnceWith('idle', expect.any(Object))
+  })
+
+  it('evictIfNeeded still evicts when every entry is leased', () => {
+    const pingClient = vi.fn().mockResolvedValue(undefined)
+    const onEviction = vi.fn()
+    const cache = createClientCache<TFakeClient>(2, pingClient, onEviction)
+
+    cache.set('a', entry(2), 10_000)
+    cache.set('b', entry(1), 5_000) // least bad leased victim: smallest time left
+    cache.set('c', entry(3), 10_000)
+
+    expect(onEviction).toHaveBeenCalledTimes(1)
+    expect(cache.has('b')).toBe(false)
+    expect(cache.has('a')).toBe(true)
+    expect(cache.has('c')).toBe(true)
   })
 
   it('evictIfNeeded respects maxSize and calls onEviction', () => {

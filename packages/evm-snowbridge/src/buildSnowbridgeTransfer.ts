@@ -82,7 +82,7 @@ export const buildSnowbridgeTransfer = async <
     chainId: environment.ethChainId
   }
 
-  if (!client) releaseClient(ETHEREUM_WS_URLS)
+  if (!client) releaseClient(ETHEREUM_WS_URLS, publicClient)
 
   return {
     tx,

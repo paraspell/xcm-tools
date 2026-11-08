@@ -4,11 +4,15 @@ export const keyFromWs = (ws: TUrl): TClientKey => {
   return Array.isArray(ws) ? JSON.stringify(ws) : ws
 }
 
-export const createClientPoolHelpers = <TClient>(
+export const createClientPoolHelpers = <TClient extends object>(
   clientPool: ClientCache<TClient>,
   createClient: (ws: TUrl) => TClient | Promise<TClient>
 ) => {
   const pendingClients = new Map<TClientKey, Promise<TClientEntry<TClient>>>()
+  // Which entry each leased client belongs to. Release must not trust the key alone:
+  // an entry can be evicted and re-leased under the same key while a caller still
+  // holds the old client, and a key-based release would then decrement the new entry.
+  const leasedEntry = new WeakMap<TClient, TClientEntry<TClient>>()
 
   const createEntry = async (
     key: TClientKey,
@@ -51,22 +55,30 @@ export const createClientPoolHelpers = <TClient>(
     entry.refs += 1
     entry.destroyWanted = false
     clientPool.revive(key, ttlMs)
+    leasedEntry.set(entry.client, entry)
 
     return entry.client
   }
 
-  const releaseClient = (ws: TUrl) => {
+  const releaseClient = (ws: TUrl, client?: TClient) => {
     const key = keyFromWs(ws)
-    const entry = clientPool.peek(key)
+    const current = clientPool.peek(key)
 
-    if (!entry) {
+    const entry = (client !== undefined ? leasedEntry.get(client) : undefined) ?? current
+
+    if (!entry || entry.refs === 0) {
       return
     }
 
     entry.refs -= 1
 
-    if (entry.refs === 0 && entry.destroyWanted) {
+    // Only the entry that still owns the key can be destroyed on the way out
+    if (entry.refs === 0 && entry.destroyWanted && entry === current) {
       clientPool.delete(key)
+    }
+
+    if (client !== undefined && entry.refs === 0) {
+      leasedEntry.delete(client)
     }
   }
 

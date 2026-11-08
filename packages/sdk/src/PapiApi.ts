@@ -928,7 +928,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
         this.api.destroy()
       } else {
         const key = api === undefined ? this.getChainProviders(chain) : api
-        releaseClient(key)
+        releaseClient(key, this.api)
       }
     }
 

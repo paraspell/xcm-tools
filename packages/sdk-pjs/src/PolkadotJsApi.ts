@@ -834,7 +834,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         void this.api.disconnect()
       } else {
         const key = api === undefined ? this.getChainProviders(chain) : api
-        releaseClient(key)
+        releaseClient(key, this.api)
       }
     }
 
