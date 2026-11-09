@@ -3489,6 +3489,32 @@
         }
       },
       {
+        "assetId": "1013",
+        "symbol": "aNEAR",
+        "decimals": 24,
+        "existentialDeposit": "2074688796680497925311",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x3a31ff0a1e07da4158677ce861980cdf2e316b78"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000796",
         "symbol": "LDO",
         "decimals": 18,
