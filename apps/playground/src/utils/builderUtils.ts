@@ -6,6 +6,7 @@ import type {
   TPapiTransaction,
   TTransferBaseOptionsWithSender,
 } from '@paraspell/sdk';
+import { isChainEvmImpl } from '@paraspell/sdk';
 import {
   Foreign,
   ForeignAbstract,
@@ -219,12 +220,14 @@ export const setupEvmBuilder = (
     amount: c.amount,
   }));
 
+  const applyAhAddress = isChainEvmImpl(from, { customChainAssets }) && isChainEvmImpl(to, { customChainAssets });
+
   return builder
     .from(from)
     .to(to)
     .currency(currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs)
     .recipient(recipient)
-    .ahAddress(ahAddress)
+    .ahAddress(applyAhAddress ? ahAddress : undefined)
     .sender(walletClient);
 };
 

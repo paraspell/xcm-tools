@@ -85,7 +85,7 @@ export const createCustomXcm = async <TApi, TRes, TSigner, TCustomChain extends 
     if (!sender || isSubBridge) return null
 
     const resolveRefundAddress = () => {
-      if (ahAddress) return ahAddress
+      if (ahAddress && origin.api.isChainEvm(origin.chain)) return ahAddress
       if (!origin.api.isChainEvm(origin.chain)) return sender
       if (!dest.api.isChainEvm(dest.chain)) return recipient
       throw new MissingParameterError('ahAddress')
