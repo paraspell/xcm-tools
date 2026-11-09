@@ -74,10 +74,15 @@ export const createClientCache = <T>(
         (w.extended === victim.extended && w.value.destroyWanted && !victim.value.destroyWanted) ||
         (w.extended === victim.extended &&
           w.value.destroyWanted === victim.value.destroyWanted &&
+          w.value.refs > 0 && victim.value.refs === 0) || // Never evict leased entries
+        (w.extended === victim.extended &&
+          w.value.destroyWanted === victim.value.destroyWanted &&
+          w.value.refs === 0 && victim.value.refs === 0 &&
           timeLeft(w) < timeLeft(victim)) ||
         (w.extended === victim.extended &&
           w.value.destroyWanted === victim.value.destroyWanted &&
           timeLeft(w) === timeLeft(victim) &&
+          w.value.refs === 0 && victim.value.refs === 0 &&
           w.value.refs < victim.value.refs) // Prefer with less refs
       if (better) {
         victimKey = k
