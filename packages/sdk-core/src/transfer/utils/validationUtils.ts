@@ -144,7 +144,7 @@ export const validateTransact = <TApi, TRes, TSigner, TCustomChain extends strin
   }
 
   if (typeof address === 'string' && sender && !compareAddresses(api, address, sender)) {
-    return new ValidationError(
+    throw new ValidationError(
       'Sender address must match the destination address for transact to work.'
     )
   }

@@ -65,7 +65,7 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
     asset
   })
 
-  const transferable = balance - BigInt(asset.existentialDeposit) - fee
+  const transferable = balance - fee
 
   return transferable > 0n ? transferable : 0n
 }
