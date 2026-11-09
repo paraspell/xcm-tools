@@ -45,6 +45,16 @@ export const computeOriginFee = (
     ) {
       assetConversionFee += e.value.value.amount_in;
     }
+    // dedot event shape: { pallet, palletEvent: { name, data } }
+    else if (
+      isFeeAsset &&
+      e.pallet === "AssetConversion" &&
+      e.palletEvent?.name === "SwapCreditExecuted" &&
+      e.palletEvent?.data?.amount_in !== undefined &&
+      e.palletEvent?.data?.amount_in !== null
+    ) {
+      assetConversionFee += e.palletEvent.data.amount_in;
+    }
   }
 
   if (isFeeAsset && assetConversionFee > 0n) {
