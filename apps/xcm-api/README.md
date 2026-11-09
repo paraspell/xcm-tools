@@ -32,10 +32,44 @@ Possible parameters:
 
 - `from`: (required): Represents the Chain from which the assets will be transferred.
 - `to`: (required): Represents the Chain to which the assets will be transferred. This can also be custom location.
-- `currency`: (required): Represents the asset being sent. It should be a string value. This can also be custom location.
+- `currency`: (required): Represents the asset(s) being sent, including the amount. See currency spec options below.
 - `recipient`: (required): Specifies the address of the recipient. This can also be custom location.
-- `sender`: (required): Specifies the address of the sender.
+- `sender`: (required): Specifies the address of the sender. Optional (but strongly recommended) for `x-transfer`.
+- `feeAsset`: (optional): Specifies the asset used to pay fees on origin. Required when multiple assets are provided in `currency`. See fee asset option below.
 - `xcmVersion`: (optional): Specifies manually selected XCM version if pre-selected does not work. Format: Vx - where x = version number eg. V4.
+
+Currency spec options:
+
+```ts
+// Asset selection by location (recommended)
+{location: AssetLocationString, amount: amount}
+{location: AssetLocationJson, amount: amount}
+
+// Asset selection by asset ID (not all chains register assets under IDs)
+{id: currencyID, amount: amount}
+
+// Asset selection by asset symbol
+{symbol: currencySymbol, amount: amount}
+{symbol: {type: 'Native', value: 'currencySymbol'}, amount: amount} // Used when multiple assets under same symbol are registered, this selection will prefer chains native assets
+{symbol: {type: 'Foreign', value: 'currencySymbol'}, amount: amount} // Used when multiple assets under same symbol are registered, this selection will prefer chains foreign assets
+{symbol: {type: 'ForeignAbstract', value: 'currencySymbol'}, amount: amount} // Used when multiple foreign assets under same symbol are registered, this selection will prefer selected abstract asset (They are given as option when error is displayed)
+
+// Asset selection of multiple assets - requires feeAsset parameter
+[{currencySelection, amount: amount}, {currencySelection, amount: amount}, ...] // currencySelection is any selection above without amount, for example symbol: symbol or id: id, or location: location
+
+// amount - positive number or numeric string. Decimals are abstracted by default, so 1 equals 10_000_000_000 if selected asset is DOT (disable with options.abstractDecimals: false)
+```
+
+Fee asset option:
+
+```ts
+// Used when multiple assets are provided (required - must be one of the provided assets) or when (origin === AssetHubPolkadot | Hydration) - This will allow for custom fee asset on origin.
+feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson}
+
+// Example - transfer of multiple assets where DOT pays the fees
+currency: [{symbol: 'USDT', amount: '10'}, {symbol: 'DOT', amount: '1'}],
+feeAsset: {symbol: 'DOT'}
+```
 
 ```ts
 //Construct XCM call from Substrate to Substrate
@@ -47,13 +81,14 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: "sender" //Optional but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
-    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    //pallet: 'RandomXTokens', //Optional parameter - replace RandomXtokens with Camel case name of the pallet
-	  //method: 'random_function' //Optional parameter - replace random_function with snake case name of the method
+    sender: 'Address', // Optional but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
+    //xcmVersion: 'Vx', // Optional parameter - replace "Vx" with V and version number eg. "V4"
+    //pallet: 'RandomXTokens', // Optional parameter - replace RandomXTokens with Camel case name of the pallet
+    //method: 'random_function', // Optional parameter - replace random_function with snake case name of the method
+    //ahAddress: 'Address', // Optional parameter - used when origin is EVM chain and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address)
   }),
 });
 
@@ -66,8 +101,9 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with same parameter as "from" parameter
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
+    //keepAlive: false, // Optional parameter - true by default (keeps the sender account above existential deposit). Set to false to allow draining the account below existential deposit
   }),
 });
 
@@ -79,15 +115,15 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfer', {
   },
   body: JSON.stringify({
     from: 'Chain', // Replace "Chain" with sender Chain, e.g., "Acala"
-    to: 'Chain', // Replace Chain with same parameter as "from" parameter
+    to: 'Chain', // Replace "Chain" with destination Chain, e.g., "Hydration"
     currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
-    sender: 'sender', //Replace "sender" with sender wallet address (In AccountID32 or AccountKey20 Format)
-    transact: {
-      hex: Destination call hex //Function that should execute on destination
-    /*originKind: "SovereignAccount" || "XCM" || "Native" || "SuperUser" - Optional, "SovereignAccount" by default
+    sender: 'Address', // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format)
+    transactOptions: {
+      call: 'Hex', // Replace "Hex" with hex of the call that should execute on destination
+      /*originKind: 'SovereignAccount' | 'Xcm' | 'Native' | 'Superuser' - Optional, 'SovereignAccount' by default
       maxWeight: { proofSize: string, refTime: string } - Optional, autofilled by default (Utilized in V3 and V4 as maxFallbackWeight parameter)*/
-    }
+    },
   }),
 });
 
@@ -99,34 +135,32 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfers', {
   },
   body: JSON.stringify({
     from: 'Chain', // Replace "Chain" with sender Chain, e.g., "Acala"
-    to: 'Chain', // Replace Chain with same parameter as "from" parameter
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    to: 'Chain', // Replace "Chain" with destination Chain, e.g., "Hydration"
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
-    sender: 'sender', //Replace "sender" with sender wallet address (In AccountID32 or AccountKey20 Format)
+    sender: 'Address', // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format)
     swapOptions: {
-      currencyTo: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-      // exchange: ['AssetHubPolkadot'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
+      currencyTo: { currencySelection }, // Currency to receive - Refer to currency spec options above (without amount)
+      // exchange: ['Hydration', 'AssetHubPolkadot'], - Optional parameter - single exchange or array of exchanges - 'AssetHubPolkadot' | 'AssetHubKusama' | 'AssetHubPaseo' | 'AssetHubWestend' | 'Hydration' | 'Acala' | 'Karura' | 'BifrostPolkadot' | 'BifrostKusama'. Selected automatically by best outcome when not provided
       // slippage: 1, - Optional - 1 by default
-      // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+      // evmSenderAddress: '0x000', - Optional parameter when origin chain is EVM based
     },
   }),
 });
 
 //Sending EVM XCM transfer https://paraspell.github.io/docs/xcm-api/xcm-sdk-functionality.html#sending-evm-xcm
-const response = await fetch("https://api.paraspell.xyz/v2/evm-x-transfer", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        from: "TChain", // Replace "TChain" with sender EVM Chain, for example, "Ethereum" or "Moonbeam"
-        to: "TChain",   // Replace "TChain" with destination Chain, for example, "Hydration" or custom Location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-            //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
-        recipient: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
-        sender: "sender" // Sender address
-    })
+const response = await fetch('https://api.paraspell.xyz/v2/evm-x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'TChain', // Replace "TChain" with sender EVM Chain, for example "Ethereum" or "Darwinia"
+    to: 'TChain', // Replace "TChain" with destination Chain, for example "Hydration" or custom Location
+    currency: { currencySpec }, // Refer to currency spec options above
+    recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
+    sender: 'Address', // Replace "Address" with sender EVM address
+  }),
 });
 
 //DryRun your XCM calls to find whether they will execute
@@ -138,10 +172,11 @@ const response = await fetch('https://api.paraspell.xyz/v2/dry-run', {
   body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
+    //swapOptions: { currencyTo: { currencySelection } }, // Optional parameter - Dry run of swap transfer, same as in Swap call
   }),
 });
 
@@ -154,12 +189,16 @@ const response = await fetch('https://api.paraspell.xyz/v2/dry-run-preview', {
   body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
+    //options: { mintFeeAssets: true }, // Optional parameter - false by default - Mints fee assets also, if user does not have enough to cover fees on origin
   }),
 });
+
+//Query Snowbridge (Polkadot <> Ethereum bridge) status
+const response = await fetch('https://api.paraspell.xyz/v2/x-transfer/eth-bridge-status');
 
 //Construct custom batch of XCM Calls
 const response = await fetch('https://api.paraspell.xyz/v2/x-transfer-batch', {
@@ -168,7 +207,8 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfer-batch', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    transfers, // Replace "transfers" with array of XCM transfers
+    transfers, // Replace "transfers" with array of XCM transfers (same body as in x-transfer, without options)
+    //options: { mode: 'BATCH' }, // Optional parameter - 'BATCH' | 'BATCH_ALL' - BATCH_ALL by default
   }),
 });
 
@@ -202,15 +242,15 @@ const response = await fetch("https://api.paraspell.xyz/v2/x-transfer", {
           "ecosystem": "Polkadot",
           "xcmVersion": "V5",
           "providers": [
-            { "name": "Primary", "endpoint": "wss://rpc.mychain.example/ws" }
+            { "name": "Primary", "endpoint": "wss://rpc.mychain.example/ws" } // Only wss:// endpoints are accepted
           ],
           // Everything below is optional — auto-fetched from runtime `system.properties` when omitted
           "nativeAssetSymbol": "MYC",
           "nativeAssetDecimals": 12,
           "ss58Prefix": 42,
-          "pallets”: {
-              "nativeAssets": "Balances”,
-              "otherAssets": "Assets",
+          "pallets": {
+              "nativeAssets": "Balances",
+              "otherAssets": ["Assets"],
           },
           "assets": [
             {
@@ -293,11 +333,11 @@ const response = await fetch("https://api.paraspell.xyz/v2/x-transfer", {
         },
         options: {
           development: true, // Optional: Enforces overrides for all chains used
-          decimalAbstraction: true, // TRUE BY DEFAULT Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          abstractDecimals: true, // TRUE BY DEFAULT Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
           xcmFormatCheck: true, // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
-          apiOverrides: {
+          apiOverrides: { // Only wss:// endpoints are accepted - single endpoint or array of endpoints per chain
             Hydration: "wss://hydration.ibp.network",
-            AssetHubPolkadot: "wss://dot-rpc.stakeworld.io/assethub"
+            AssetHubPolkadot: "wss://dot-rpc.stakeworld.io/assethub",
             BridgeHubPolkadot: "wss://sys.ibp.network/bridgehub-polkadot"
           }
         }
@@ -329,11 +369,11 @@ const response = await fetch("https://api.paraspell.xyz/v2/sign-and-submit", {
         },
         options: {
           development: true, // Optional: Enforces overrides for all chains used
-          decimalAbstraction: true, // TRUE BY DEFAULT Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
+          abstractDecimals: true, // TRUE BY DEFAULT Abstracts decimals, so 1 as input amount equals 10_000_000_000 if selected asset is DOT
           xcmFormatCheck: true, // Dryruns each call under the hood with dryrun bypass to confirm message passes with fictional balance
-          apiOverrides: {
-            Hydration: "ws://127.0.0.1:8000", //Only works with locally launched chains (Eg. chopsticks)
-            Moonbeam: "ws://127.0.0.1:8001" //Only works with locally launched chains (Eg. chopsticks)
+          apiOverrides: { // Only wss:// endpoints are accepted
+            Hydration: "wss://127.0.0.1:8000", //Locally launched chain (Eg. chopsticks) exposed over wss://
+            Moonbeam: "wss://127.0.0.1:8001" //Locally launched chain (Eg. chopsticks) exposed over wss://
           }
         }
     })
@@ -349,9 +389,12 @@ Possible parameters:
 
 - `from`: (required): Represents the Chain from which the assets will be transferred.
 - `to`: (required): Represents the Chain to which the assets will be transferred. This can also be custom location.
-- `currency`: (required): Represents the asset being sent. It should be a string value. This can also be custom location.
+- `currency`: (required): Represents the asset(s) being sent, including the amount. Refer to currency spec options above.
 - `recipient`: (required): Specifies the address of the recipient. This can also be custom location.
 - `sender`: (required): Specifies the address of the sender.
+- `feeAsset`: (optional): Specifies the asset used to pay fees on origin. Refer to fee asset option above.
+- `swapOptions`: (optional): Specifies the swap that should occur during XCM, same as in Swap call. Required for `best-amount-out`.
+- `disableFallback`: (optional): Only for `xcm-fee` - if `true`, disables fallback to payment info if dryrun fails, only returning dryrun error but no fees.
 
 ```ts
 //XCM Fee (Origin & Destination)
@@ -361,13 +404,13 @@ const response = await fetch("https://api.paraspell.xyz/v2/xcm-fee", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+        from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
+        to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
+        currency: { currencySpec }, // Refer to currency spec options above
         recipient: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        sender: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
+        sender: "Address", // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format)
+        //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
+        //disableFallback: true, // Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.
     })
 });
 
@@ -378,90 +421,94 @@ const response = await fetch("https://api.paraspell.xyz/v2/origin-xcm-fee", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-	    from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
-	    to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-        currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-        //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+        from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
+        to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
+        currency: { currencySpec }, // Refer to currency spec options above
         recipient: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-        sender: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
-        /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
+        sender: "Address", // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format)
+        //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
     })
 });
 
 //Perform comprehensive transfer info query that will retrieve all details regarding fees and balances that will be changed by performing selected XCM call
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/transfer-info' , {
+const response = await fetch('https://api.paraspell.xyz/v2/transfer-info', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
   }),
+});
 
 //Query maximal transferable balance for specific currency on specific account
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/transferable-amount' , {
+const response = await fetch('https://api.paraspell.xyz/v2/transferable-amount', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
   }),
+});
 
 //Query minimal transferable balance for specific currency on specific account
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/min-transferable-amount' , {
+const response = await fetch('https://api.paraspell.xyz/v2/min-transferable-amount', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
   }),
+});
 
 //Retrieve the amount of the currency that will be received on destination.
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/receivable-amount' , {
+const response = await fetch('https://api.paraspell.xyz/v2/receivable-amount', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
   }),
+});
 
 //Verify whether the existential deposit will be met when XCM message will be sent to destination chain
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/verify-ed-on-destination' , {
+const response = await fetch('https://api.paraspell.xyz/v2/verify-ed-on-destination', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'TChain', // Replace "TChain" with sender Chain, for example "Polkadot"
     to: 'TChain', // Replace "TChain" with destination Chain, for example "AssetHubPolkadot" or custom location
-    currency: { currencySpec }, //{id: currencyID, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: currencySymbol, amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Native('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: Foreign('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {symbol: ForeignAbstract('currencySymbol'), amount: amount /*Use "ALL" to transfer everything*/} | {location: AssetLocationString, amount: amount /*Use "ALL" to transfer everything*/ | AssetLocationJson, amount: amount /*Use "ALL" to transfer everything*/} | {location: Override('Custom location'), amount: amount /*Use "ALL" to transfer everything*/} | [ {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or location: location*/, amount: amount /*Use "ALL" to transfer everything*/}]
-    //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {location: AssetLocationString | AssetLocationJson} //Optional parameter used when multiasset is provided or when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency
+    currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom location
-    sender: 'Address' //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
   }),
+});
 
 // Retrieve specific asset balance for specific chain
 const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain", {
@@ -470,30 +517,32 @@ const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        recipient: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
-        currency: {currencySpec}, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {location: AssetLocationString} | {location: AssetLocationJson} | {location: "type": "Override","value": "CustomAssetLocationJson"}
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
+        currency: { currencySelection }, // Refer to currency spec options above (without amount) - Optional, native asset of the chain is used when not provided
     })
 });
 
 // Get best amount out
-const response = await fetch(
-  'https://api.paraspell.xyz/v2/best-amount-out' , {
+const response = await fetch('https://api.paraspell.xyz/v2/best-amount-out', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
+  body: JSON.stringify({
     from: 'Chain', // Replace "Chain" with sender Chain or Relay chain, e.g., "Acala"
     to: 'Chain', // Replace "Chain" with destination Chain or Relay chain, e.g., "Moonbeam" or custom Location
     currency: { currencySpec }, // Refer to currency spec options above
     recipient: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Location
-    sender: 'Address', //Replace "Address" with sender address from origin chain
+    sender: 'Address', // Replace "Address" with sender address from origin chain
     swapOptions: {
-      currencyTo: CURRENCY_SPEC, //Reffer to currency spec options above
-      // exchange: ['AssetHubPolkadotDex'], - Optional parameter - 'HydrationDex' | 'AcalaDex' | 'AssetHubPolkadotDex' | ...
+      currencyTo: { currencySelection }, // Currency to receive - Refer to currency spec options above (without amount)
+      // exchange: ['Hydration'], - Optional parameter - 'Hydration' | 'Acala' | 'AssetHubPolkadot' | ...
       // slippage: 1, - Optional - 1 by default
-      // evmsender: '0x000', - Optional parameter when origin CHAIN is EVM based (Required with evmSigner)
+      // evmSenderAddress: '0x000', - Optional parameter when origin chain is EVM based
     },
-}),
+    //feeAsset: { currencySelection }, // Optional parameter - Refer to fee asset option above
+  }),
+});
 
 // Retrieve existential deposit for specific assets on selected chain
 const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain/existential-deposit", {
@@ -502,7 +551,7 @@ const response = await fetch("https://api.paraspell.xyz/v2/balance/:chain/existe
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {location: AssetLocationString} | {location: AssetLocationJson}
+        currency: { currencySelection } // Refer to currency spec options above (without amount) - Optional, native asset of the chain is used when not provided
     })
 });
 
@@ -527,7 +576,7 @@ const response = await fetch('https://api.paraspell.xyz/v2/swap/exchange-chains'
 const response = await fetch('https://api.paraspell.xyz/v2/swap/supported-assets-from?from=:chain&exchange=:exchange');
 
 // Get list of possible assets to exchange to
-const response = await fetch('https://api.paraspell.xyz/v2/swap/supported-assets-from?exchange=:exchange&to=:chain');
+const response = await fetch('https://api.paraspell.xyz/v2/swap/supported-assets-to?exchange=:exchange&to=:chain');
 ```
 
 ### Asset queries
@@ -537,8 +586,9 @@ A complete guide on this section can be found in [official docs](https://paraspe
 Possible parameters:
 
 - `chain`: Specific Chain for example Moonbeam
-- `asset`: Asset symbol eg. DOT
-- `paraID`: Chain ID for example 2090 (Basilisk)
+- `paraId`: Chain ID for example 2090 (Basilisk)
+- `ecosystem`: Ecosystem of the Chain ID - Polkadot | Kusama | Westend | Paseo
+- `currency`: (body parameter): Asset selection without amount - Refer to currency spec options above
 
 ```ts
 
@@ -566,7 +616,7 @@ const response = await fetch('https://api.paraspell.xyz/v2/assets/:chain/all-sym
 const response = await fetch('https://api.paraspell.xyz/v2/chains/:chain/para-id');
 
 // Retrieve Chain name from Chain ID
-const response = await fetch('https://api.paraspell.xyz/v2/chains/:paraID?ecosystem=polkadot');
+const response = await fetch('https://api.paraspell.xyz/v2/chains/:paraId?ecosystem=Polkadot');
 
 // Retrieve a list of implemented Chains
 const response = await fetch('https://api.paraspell.xyz/v2/chains');
@@ -584,7 +634,7 @@ const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/locatio
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+        currency: { currencySelection } // Refer to currency spec options above (without amount)
     })
 });
 
@@ -595,7 +645,7 @@ const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/reserve
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+        currency: { currencySelection } // Refer to currency spec options above (without amount)
     })
 });
 
@@ -606,8 +656,8 @@ const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/asset-i
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
-        destination?: "CHAIN"
+        currency: { currencySelection }, // Refer to currency spec options above (without amount)
+        //destination: "Chain" // Optional parameter - Replace "Chain" with destination Chain (used when Ethereum is chosen as destination)
     })
 });
 
@@ -618,7 +668,7 @@ const response = await fetch("https://api.paraspell.xyz/v2/assets/:chain/support
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+        currency: { currencySelection } // Refer to currency spec options above (without amount)
     })
 });
 ```
@@ -664,8 +714,8 @@ NOTICE: Only one parameter at a time is allowed, either location or xcm.
 
 Possible parameters:
 
-- `location` (Optional): Specific location
-- `xcm` (Optional): Complete XCM call
+- `location` (Optional): Specific location (JSON object)
+- `xcm` (Optional): Complete XCM call (JSON array)
 
 ```ts
 const response = await fetch('https://api.paraspell.xyz/v2/xcm-analyser', {
@@ -674,8 +724,8 @@ const response = await fetch('https://api.paraspell.xyz/v2/xcm-analyser', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    location: 'location', //Replace location with specific location you wish to analyse
-    xcm: 'XCM', //Replace XCM with the specific XCM call you wish to analyse
+    location: Location, //Replace Location with specific location you wish to analyse
+    //xcm: XCM, //Or replace XCM with the specific XCM call you wish to analyse
   }),
 });
 ```
