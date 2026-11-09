@@ -742,9 +742,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       !xcm.type ? transform(xcm) : xcm,
     );
     const okValue = result?.value;
+    if (!okValue) {
+      throw new Error(`xcmPaymentApi.queryXcmWeight returned no value for XCM weight`);
+    }
     return {
-      refTime: BigInt(okValue?.refTime ?? 0),
-      proofSize: BigInt(okValue?.proofSize ?? 0),
+      refTime: BigInt(okValue.refTime ?? 0),
+      proofSize: BigInt(okValue.proofSize ?? 0),
     };
   }
 
