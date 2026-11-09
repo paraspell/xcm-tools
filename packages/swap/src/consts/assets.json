@@ -1366,7 +1366,39 @@
             {
               "AccountKey20": {
                 "network": null,
+                "key": "0xb94025f14fdc01f8e3b0c34311bcbae0febd1a4a"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
                 "key": "0x69003a65189f6ed993d3bd3e2b74f1db39f405ce"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x3a31ff0a1e07da4158677ce861980cdf2e316b78"
               }
             }
           ]
