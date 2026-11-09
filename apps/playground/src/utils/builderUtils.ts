@@ -238,7 +238,6 @@ export const setupBaseBuilder = (
     from,
     to,
     recipient,
-    ahAddress,
     xcmVersion,
     keepAlive,
     pallet,
@@ -258,8 +257,7 @@ export const setupBaseBuilder = (
     .currency(currencyInputs.length === 1 ? currencyInputs[0] : currencyInputs)
     .feeAsset(determineFeeAsset(transformedFeeAsset))
     .sender(sender)
-    .recipient(recipient)
-    .ahAddress(ahAddress);
+    .recipient(recipient);
 
   if (xcmVersion) {
     finalBuilder = finalBuilder.xcmVersion(xcmVersion);
