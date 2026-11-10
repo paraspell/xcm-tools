@@ -415,9 +415,12 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       const execErr = execResult?.value ?? execResult?.err;
 
       if (execErr?.error) {
-        const modErr = execErr.error?.value;
-        if (modErr) {
-          return resolveModuleError(chain, modErr as TModuleError);
+        const { type, value } = execErr.error;
+        if (type === "Module") {
+          return resolveModuleError(chain, value as TModuleError);
+        }
+        if (typeof value === "string") {
+          return { reason: value };
         }
         const otherErr = execErr.error?.Other ?? execErr.error?.other;
         if (otherErr) {
@@ -433,12 +436,13 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
       if (erroredEvent) {
         const eventResult = erroredEvent.palletEvent.data.result;
         const err = eventResult?.err ?? eventResult?.value;
+        if (err?.type === "Module") {
+          return resolveModuleError(chain, err.value as TModuleError);
+        }
         if (err?.type) {
-          const subErr = err.value;
-          if (subErr) {
-            return resolveModuleError(chain, subErr as TModuleError);
-          }
-          return { reason: err.type };
+          return {
+            reason: typeof err.value === "string" ? err.value : err.type,
+          };
         }
       }
 

@@ -27,16 +27,13 @@ export const padFee = <TCustomChain extends string = never>(
   const sysParaDest = isSystemPara(dest)
   const relayToPara = relayOrigin && !relayDest
   const sysParaToPara = sysParaOrigin && !sysParaDest
-  const paraToPara = !relayOrigin && !sysParaOrigin
 
   if (sysParaToPara) return raw * 40n
   if (relayToPara) return side === 'origin' ? mul(raw, 320n, 100n) : mul(raw, 3000n, 100n)
 
-  if (paraToPara && side == 'origin' && origin === 'Mythos' && dest !== 'Ethereum') {
+  if (side === 'origin' && origin === 'Mythos' && dest !== 'Ethereum') {
     return 150000000000000000n
   }
-
-  if (paraToPara) return mul(raw, 130n, 100n)
 
   // apply default 30% padding
   return mul(raw, 130n, 100n)
