@@ -227,6 +227,92 @@ describe('dryRunRouter', () => {
     });
   });
 
+  it('passes exchange asset location and Substrate sender on the exchange leg in 2-transaction routed flows', async () => {
+    const transformedOptions = createOptions({
+      sender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+      evmSenderAddress: '0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac',
+      currencyFrom: { id: 14 },
+      amount: 5000n,
+      origin: {
+        api: {},
+        chain: 'Hydration',
+        assetFrom: {
+          symbol: 'BNC',
+          decimals: 12,
+          existentialDeposit: '1000',
+          location: { parents: 0, interior: 'Here' },
+        },
+      },
+      destination: {
+        chain: 'BifrostPolkadot',
+        address: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+      },
+      exchange: {
+        apiType: 'PAPI' as const,
+        chain: 'BifrostPolkadot',
+        apiPapi: {} as PolkadotClient,
+        api: {} as PolkadotApi<unknown, unknown, unknown>,
+        assetFrom: {
+          symbol: 'BNC',
+          decimals: 12,
+          existentialDeposit: '1000',
+          location: {
+            parents: 1,
+            interior: {
+              X2: [{ Parachain: 2001 }, { GeneralKey: { length: 2, data: '0x0001' } }],
+            },
+          },
+        },
+        assetTo: acaAsset,
+      },
+    });
+
+    resolvePrepareOptions(transformedOptions, 'BifrostPolkadot');
+
+    vi.mocked(buildTransactions).mockResolvedValue([
+      createTransaction('Hydration'),
+      createTransaction('BifrostPolkadot'),
+    ]);
+
+    const firstResult = createDryRunResult({
+      origin: {},
+      destination: {},
+      hops: [{ chain: 'Hydration' }],
+    } as TDryRunResult);
+
+    const secondResult = createDryRunResult({
+      origin: {},
+      destination: {},
+      hops: [{ chain: 'BifrostPolkadot' }],
+    } as TDryRunResult);
+
+    vi.mocked(dryRun).mockResolvedValueOnce(firstResult).mockResolvedValueOnce(secondResult);
+    vi.mocked(getDryRunError).mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
+
+    await dryRunRouter({ ...createInitialOptions(), api: mockApi });
+
+    expect(dryRun).toHaveBeenCalledTimes(2);
+
+    const firstCallArgs = vi.mocked(dryRun).mock.calls[0][0];
+    const secondCallArgs = vi.mocked(dryRun).mock.calls[1][0];
+
+    // First leg executes on Hydration with evmSenderAddress and origin currencyFrom
+    expect(firstCallArgs.origin).toBe('Hydration');
+    expect(firstCallArgs.sender).toBe('0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac');
+    expect(firstCallArgs.currency).toEqual({
+      id: 14,
+      amount: 5000n,
+    });
+
+    // Exchange leg executes on BifrostPolkadot with Substrate sender and exchange.assetFrom location
+    expect(secondCallArgs.origin).toBe('BifrostPolkadot');
+    expect(secondCallArgs.sender).toBe('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY');
+    expect(secondCallArgs.currency).toEqual({
+      location: transformedOptions.exchange.assetFrom.location,
+      amount: 5000n,
+    });
+  });
+
   it('throws when the router plan contains more than two transactions', async () => {
     resolvePrepareOptions(createOptions(), 'Acala');
 
