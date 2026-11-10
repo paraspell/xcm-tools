@@ -6,6 +6,7 @@ import { isAdditionalSubstrateBridgeAsset } from './isAdditionalSubstrateBridgeA
 import { isAssetEqual } from './isAssetEqual'
 import { isDestinationReachableImpl } from './isDestinationReachable'
 import { isSystemAsset } from './isSystemAsset'
+import { findBestMatches } from './search/findBestMatches'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
 export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
@@ -13,9 +14,6 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
   destination: TChain | TCustomChain,
   ctx?: TCustomCtx
 ): TAssetInfo[] => {
-  const isSubBridge = isSubstrateBridge(origin, destination)
-  const isSb = isSnowbridge(origin, destination)
-
   if (!isDestinationReachableImpl(origin, destination, ctx)) return []
 
   const originAssets = getAssetsImpl(origin, ctx)
@@ -25,26 +23,25 @@ export const getSupportedAssetsImpl = <TCustomChain extends string = never>(
     destinationAssets.some(a => isAssetEqual(a, asset))
   )
 
-  if (isSubBridge || isSb) {
-    const systemAssets = originAssets.filter(asset => isSystemAsset(asset))
+  if (isSubstrateBridge(origin, destination)) {
+    const nativeSymbols = [origin, destination].map(chain => getNativeAssetSymbolImpl(chain, ctx))
+    const systemAssets = originAssets.filter(
+      asset => isSystemAsset(asset) && nativeSymbols.includes(asset.symbol)
+    )
+    const stablecoinAssets = findStablecoinAssets(origin)
+    const additionalBridgeAssets = supportedAssets.filter(isAdditionalSubstrateBridgeAsset)
+    return [...systemAssets, ...stablecoinAssets, ...additionalBridgeAssets]
+  }
 
-    if (isSubBridge) {
-      const nativeSymbols = [origin, destination].map(chain => getNativeAssetSymbolImpl(chain, ctx))
-      const filteredSystemAssets = systemAssets.filter(({ symbol }) =>
-        nativeSymbols.includes(symbol)
-      )
-      const stablecoinAssets = findStablecoinAssets(origin)
-      const additionalBridgeAssets = supportedAssets.filter(isAdditionalSubstrateBridgeAsset)
-      return [...filteredSystemAssets, ...stablecoinAssets, ...additionalBridgeAssets]
-    } else {
-      // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
-      // so it isn't matched by isAssetEqual. Include it explicitly.
-      const mythosNative =
-        origin === 'Mythos' && destination === 'Ethereum'
-          ? originAssets.filter(asset => asset.symbol === 'MYTH')
-          : []
-      return [...systemAssets, ...mythosNative, ...supportedAssets]
-    }
+  if (isSnowbridge(origin, destination)) {
+    const systemAssets = originAssets.filter(
+      asset => isSystemAsset(asset) && findBestMatches(destinationAssets, asset.symbol).length > 0
+    )
+    // MYTH has two valid locations (native on Mythos, ERC-20 on Ethereum),
+    // so it isn't matched by isAssetEqual. Include it explicitly.
+    const mythosNative =
+      origin === 'Mythos' ? originAssets.filter(asset => asset.symbol === 'MYTH') : []
+    return [...systemAssets, ...mythosNative, ...supportedAssets]
   }
 
   return supportedAssets
