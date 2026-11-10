@@ -180,6 +180,21 @@ describe('convert', () => {
     ).toBe('./GlobalConsensus(Polkadot)');
   });
 
+  it('should convert Paseo GlobalConsensus network', () => {
+    expect(
+      convertLocationToUrl({
+        parents: 2,
+        interior: { X1: { GlobalConsensus: 'Paseo' } },
+      }),
+    ).toBe('../../GlobalConsensus(Paseo)');
+    expect(
+      convertLocationToUrl({
+        parents: 2,
+        interior: { X1: { GlobalConsensus: { paseo: null } } },
+      }),
+    ).toBe('../../GlobalConsensus(Paseo)');
+  });
+
   it.each([
     [{ ByGenesis: mockHash }, `ByGenesis(${mockHash})`],
     [

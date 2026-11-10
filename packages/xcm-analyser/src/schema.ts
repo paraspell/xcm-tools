@@ -45,6 +45,7 @@ export const GLOBAL_CONSENSUS_NETWORKS = [
   'bitcoinCore',
   'bitcoinCash',
   'polkadotBulletin',
+  'paseo',
 ] as const;
 
 type TGlobalConsensusNetworkKey = (typeof GLOBAL_CONSENSUS_NETWORKS)[number];
