@@ -1,4 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import type { TBuildOriginInfoOptions, TOriginXcmFeeInfo, TSelectedCurrencyInfo } from '../../types'
@@ -46,14 +47,24 @@ export const buildOriginInfo = async <TApi, TRes, TSigner, TCustomChain extends 
     asset: originFeeAsset
   })
 
+  const transferredFeeAsset = isOriginFeeAsset
+    ? undefined
+    : assets.find(asset => isAssetEqual(asset, originFeeAsset))
+
   const originBalanceFeeAfter = isOriginFeeAsset
     ? originBalanceFee - amount
-    : originBalanceFee - originFee
+    : originBalanceFee - originFee - (transferredFeeAsset?.amount ?? 0n)
+
+  const ed = BigInt(originFeeAsset.existentialDeposit)
+  const isNativeFeeAsset = isAssetEqual(originFeeAsset, api.findNativeAssetInfoOrThrow(origin))
+  const remaining = originBalanceFeeAfter + (isNativeFeeAsset ? ed : 0n)
 
   return {
     selectedCurrency,
     xcmFee: {
-      sufficient: originBalanceFee >= originFee,
+      sufficient: transferredFeeAsset
+        ? remaining === 0n || remaining >= ed
+        : originBalanceFee >= originFee,
       fee: originFee,
       balance: originBalanceFee,
       balanceAfter: originBalanceFeeAfter,
