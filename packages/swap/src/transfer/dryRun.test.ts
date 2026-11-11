@@ -219,8 +219,15 @@ describe('dryRunRouter', () => {
 
     expect(firstCallArgs.destination).toBe('Hydration');
     expect(firstCallArgs.bypassOptions).toBeUndefined();
+    expect(firstCallArgs.currency).toEqual({ symbol: 'ACA', amount: 1000n });
+    expect(firstCallArgs.sender).toBe('0xSender');
 
     expect(secondCallArgs.destination).toBe('Darwinia');
+    expect(secondCallArgs.currency).toEqual({
+      location: ausdAsset.location,
+      amount: 1000n,
+    });
+    expect(secondCallArgs.sender).toBe('sender');
     expect(secondCallArgs.bypassOptions).toEqual({
       mintFeeAssets: false,
       sentAssetMintMode: 'preview',
