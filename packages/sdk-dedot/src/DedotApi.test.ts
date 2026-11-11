@@ -752,7 +752,12 @@ describe("DedotApi", () => {
         value: {
           executionResult: {
             isOk: false,
-            value: { error: { value: { type: "VersionedConversionFailed" } } },
+            value: {
+              error: {
+                type: "Module",
+                value: { type: "VersionedConversionFailed" },
+              },
+            },
           },
           forwardedXcms: [],
         },
@@ -885,7 +890,9 @@ describe("DedotApi", () => {
         value: {
           executionResult: {
             isOk: false,
-            value: { error: { value: { type: "SomeError" } } },
+            value: {
+              error: { type: "Module", value: { type: "SomeError" } },
+            },
           },
           forwardedXcms: [],
         },
@@ -1750,6 +1757,10 @@ describe("DedotApi", () => {
       [{ error: { Other: "OtherFailure" } }, "OtherFailure"],
       [{ error: "StringFailure" }, "StringFailure"],
       [{ error: { custom: true } }, '{"custom":true}'],
+      [
+        { error: { type: "Token", value: "FundsUnavailable" } },
+        "FundsUnavailable",
+      ],
     ])("extracts execution error shape %#", async (executionError, reason) => {
       vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
       mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
@@ -1780,6 +1791,8 @@ describe("DedotApi", () => {
     it.each([
       [{ type: "Module", value: { type: "BadModule" } }, "BadModule"],
       [{ type: "EventFailure" }, "EventFailure"],
+      [{ type: "Token", value: "FundsUnavailable" }, "FundsUnavailable"],
+      [{ type: "Arithmetic", value: "Underflow" }, "Underflow"],
     ])("extracts a dispatched-as error %#", async (eventError, reason) => {
       vi.spyOn(dedotApi, "findNativeAssetInfoOrThrow").mockReturnValue(asset);
       mockApiRaw.call.dryRunApi.dryRunCall.mockResolvedValue({
@@ -1825,7 +1838,10 @@ describe("DedotApi", () => {
             executionResult: {
               isOk: false,
               value: {
-                error: { value: { type: "VersionedConversionFailed" } },
+                error: {
+                  type: "Module",
+                  value: { type: "VersionedConversionFailed" },
+                },
               },
             },
             forwardedXcms: [],
