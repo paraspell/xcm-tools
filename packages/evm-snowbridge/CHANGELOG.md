@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.3](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.5.2...evm-snowbridge-v14.5.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **evm-snowbridge:** Fix viem client cache auto-close 🔧 ([b8e831b](https://github.com/paraspell/xcm-tools/commit/b8e831b515fe9e31ddf1e7da6bddfd21fdefe38a))
+
 ## [14.5.2](https://github.com/paraspell/xcm-tools/compare/evm-snowbridge-v14.5.1...evm-snowbridge-v14.5.2) (2026-11-05)
 
 

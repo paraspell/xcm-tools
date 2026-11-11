@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.5.2...sdk-dedot-v14.5.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **sdk-dedot:** Fix dry run error resolver 🛠️ ([587caa5](https://github.com/paraspell/xcm-tools/commit/587caa516ab5d6fbdf8f9b2ed0bf6525d4cdf243))
+
 ## [14.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.5.1...sdk-dedot-v14.5.2) (2026-11-05)
 
 

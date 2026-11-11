@@ -1,5 +1,20 @@
 # Changelog
 
+## [14.5.3](https://github.com/paraspell/xcm-tools/compare/assets-v14.5.2...assets-v14.5.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **assets:** Fix snowbridge transfers destination asset checks 🛠️ ([838d310](https://github.com/paraspell/xcm-tools/commit/838d3102719524646b28af17da81b16dc6bddf6d))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([063681f](https://github.com/paraspell/xcm-tools/commit/063681ff6579c4fb1961fc6259c0ed2cf427625e))
+* **assets:** Update SDK assets 📋 ([5702e55](https://github.com/paraspell/xcm-tools/commit/5702e557e9a88a360b587fae1024cdb93c0f3166))
+* **swap:** Update swap assets 📋 ([063681f](https://github.com/paraspell/xcm-tools/commit/063681ff6579c4fb1961fc6259c0ed2cf427625e))
+* **swap:** Update swap assets 📋 ([5702e55](https://github.com/paraspell/xcm-tools/commit/5702e557e9a88a360b587fae1024cdb93c0f3166))
+
 ## [14.5.2](https://github.com/paraspell/xcm-tools/compare/assets-v14.5.1...assets-v14.5.2) (2026-11-05)
 
 
