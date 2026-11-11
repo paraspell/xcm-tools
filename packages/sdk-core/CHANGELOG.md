@@ -1,5 +1,20 @@
 # Changelog
 
+## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.2...sdk-core-v14.5.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix error swallowed in min transferable amount function ⚙️ ([de5a43d](https://github.com/paraspell/xcm-tools/commit/de5a43d494be9db54b73a59e0a5cc10dd6149e77))
+* **sdk-core:** Fix non dry-run chains sufficiency check 🔧 ([9f2c760](https://github.com/paraspell/xcm-tools/commit/9f2c760b95dfba7560726d80ed4191219f0e1eb3))
+* **sdk-core:** Fix sufficient fields calculations ✏️ ([120e92f](https://github.com/paraspell/xcm-tools/commit/120e92f8854e1eada43419a5f7da37957a90c368))
+* **sdk-dedot:** Fix dry run error resolver 🛠️ ([587caa5](https://github.com/paraspell/xcm-tools/commit/587caa516ab5d6fbdf8f9b2ed0bf6525d4cdf243))
+
+
+### Code Refactoring
+
+* **swap:** Use on-chain double swap paths for AH 🔧 ([7827564](https://github.com/paraspell/xcm-tools/commit/78275645c2d8f60a5955e340b427e5e84ee4e877))
+
 ## [14.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.1...sdk-core-v14.5.2) (2026-11-05)
 
 
