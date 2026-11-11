@@ -99,8 +99,8 @@ export class XTransferController {
   }
 
   @Post('origin-xcm-fee')
-  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderSchema))
-  getOriginXcmFee(@Body() params: XTransferDtoWSender, @Req() req: Request) {
+  @UsePipes(new ZodValidationPipe(GetXcmFeeSchema))
+  getOriginXcmFee(@Body() params: GetXcmFeeDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE, req, params);
     return this.service.getOriginXcmFee(params);
   }
