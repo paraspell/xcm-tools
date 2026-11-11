@@ -41,7 +41,7 @@ describe('getSwapFee', () => {
 
   it('returns fee detail and amountOut on success; passes buildTx factory', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      txs: ['dummyTx'],
+      tx: 'dummyTx',
       amountOut: 100n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
@@ -78,7 +78,7 @@ describe('getSwapFee', () => {
 
   it('buildTx factory applies decimal abstraction on override and rebuilds tx', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      txs: ['tx0'],
+      tx: 'tx0',
       amountOut: 150n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
@@ -112,7 +112,7 @@ describe('getSwapFee', () => {
     await expect(getSwapFee(exchange, options)).rejects.toThrow('create error');
   });
 
-  it('handles AmountTooLowError from createSwapTx by using txs.length = 1 and amountOut = "0"', async () => {
+  it('handles AmountTooLowError from createSwapTx by using amountOut = 0', async () => {
     vi.mocked(createSwapTx).mockRejectedValueOnce(new AmountTooLowError());
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 3n,
@@ -128,13 +128,13 @@ describe('getSwapFee', () => {
         buildTx: expect.any(Function),
       }),
     );
-    expect(result.fee).toBe(3n * 1n);
+    expect(result.fee).toBe(3n);
     expect(amountOut).toBe(0n);
   });
 
   it('propagates errors from getOriginXcmFee', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      txs: ['dummyTx'],
+      tx: 'dummyTx',
       amountOut: 100n,
     });
     const error = new Error('fee error');
@@ -146,7 +146,7 @@ describe('getSwapFee', () => {
   it('includes dryRunError when getOriginXcmFee returns one', async () => {
     const dryError = { reason: 'Dry run error' };
     vi.mocked(createSwapTx).mockResolvedValue({
-      txs: ['dummyTx'],
+      tx: 'dummyTx',
       amountOut: 200n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
@@ -167,7 +167,7 @@ describe('getSwapFee', () => {
 
   it('enters currency as location when assetFrom includes a location', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      txs: ['dummyTx'],
+      tx: 'dummyTx',
       amountOut: 200n,
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({

@@ -19,7 +19,7 @@ import type {
   TDexConfigStored,
   TPjsGetAmountOutOptions,
   TPjsSwapOptions,
-  TSingleSwapResult,
+  TSwapResult,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils';
@@ -30,7 +30,7 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
   async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult<TRes>> {
+  ): Promise<TSwapResult<TRes>> {
     const {
       api,
       apiPjs,

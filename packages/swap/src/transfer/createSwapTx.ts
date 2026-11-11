@@ -47,7 +47,7 @@ export const createSwapTx = async <TApi, TRes, TSigner, TCustomChain extends str
 ) => {
   const toDestTxFee = await calculateFromExchangeFee(options);
 
-  const swapResult = await exchange.handleMultiSwap(
+  const { tx, amountOut } = await exchange.swapCurrency(
     {
       ...options,
       ...pickExchangeApiVariant(options.exchange),
@@ -59,9 +59,5 @@ export const createSwapTx = async <TApi, TRes, TSigner, TCustomChain extends str
     toDestTxFee,
   );
 
-  const txs = await Promise.all(
-    swapResult.txs.map((tx) => convertTxToTarget(tx, options.exchange.api)),
-  );
-
-  return { txs, amountOut: swapResult.amountOut };
+  return { tx: await convertTxToTarget(tx, options.exchange.api), amountOut };
 };

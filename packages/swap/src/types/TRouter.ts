@@ -117,13 +117,8 @@ export type TGenericGetAmountOutOptions<
 
 export type TExtrinsic<TRes> = Extrinsic | TPapiTransaction | TRes;
 
-export type TSingleSwapResult<TRes> = {
+export type TSwapResult<TRes> = {
   tx: TExtrinsic<TRes>;
-  amountOut: bigint;
-};
-
-export type TMultiSwapResult<TRes> = {
-  txs: TExtrinsic<TRes>[];
   amountOut: bigint;
 };
 
@@ -359,7 +354,7 @@ export type TExecuteRouterPlanOptions<TApi, TRes, TSigner, TCustomChain extends 
 
 export type TPreparedExtrinsics<TRes> = {
   toExchangeTx?: TRes;
-  swapTxs: TRes[];
+  swapTx: TRes;
   isExecute?: boolean;
   toDestTx?: TRes;
   amountOut: bigint;

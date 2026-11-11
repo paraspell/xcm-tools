@@ -17,7 +17,7 @@ import type {
   TDexConfigStored,
   TPjsGetAmountOutOptions,
   TPjsSwapOptions,
-  TSingleSwapResult,
+  TSwapResult,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
@@ -29,7 +29,7 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
   async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
-  ): Promise<TSingleSwapResult<TRes>> {
+  ): Promise<TSwapResult<TRes>> {
     const { apiPjs, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
     const chainId = getParaId(this.chain);

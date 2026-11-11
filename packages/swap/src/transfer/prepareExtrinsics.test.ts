@@ -55,7 +55,7 @@ const baseOptions = {
 describe('prepareExtrinsics', () => {
   beforeEach(() => {
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
-      txs: ['swapTx'],
+      tx: 'swapTx',
       amountOut: 1000n,
     });
   });
@@ -69,7 +69,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -89,7 +89,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -109,7 +109,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
@@ -125,7 +125,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
@@ -162,7 +162,7 @@ describe('prepareExtrinsics', () => {
     const res = await prepareExtrinsics(assetHubDexChain, optionsWithAssetHub);
 
     expect(res).toEqual({
-      swapTxs: ['handleSwapExecuteTransferTx'],
+      swapTx: 'handleSwapExecuteTransferTx',
       amountOut: 500n,
       isExecute: true,
     });
@@ -265,7 +265,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });

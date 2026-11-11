@@ -25,7 +25,7 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner, TCustomChain extend
   if (canUseExecuteTransfer(dex, options)) {
     try {
       const { tx, amountOut } = await buildSwapExecuteTx(dex, options);
-      return { swapTxs: [tx], isExecute: true, amountOut };
+      return { swapTx: tx, isExecute: true, amountOut };
     } catch (error) {
       if (!isFilteredError(error)) throw error;
       // Fall through to three-leg path
@@ -41,7 +41,7 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner, TCustomChain extend
       : undefined;
 
   // 2. Create swap in DEX (always)
-  const { txs: swapTxs, amountOut } = await createSwapTx(dex, options);
+  const { tx: swapTx, amountOut } = await createSwapTx(dex, options);
 
   // 3. Create transfer exchange -> destination (optional)
   const toDestTx =
@@ -55,5 +55,5 @@ export const prepareExtrinsics = async <TApi, TRes, TSigner, TCustomChain extend
         })
       : undefined;
 
-  return { toExchangeTx, swapTxs, toDestTx, amountOut: BigInt(amountOut) };
+  return { toExchangeTx, swapTx, toDestTx, amountOut: BigInt(amountOut) };
 };
