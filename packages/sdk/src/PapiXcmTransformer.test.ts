@@ -562,6 +562,31 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should keep a numeric currency_id string as a number in multi-key objects', () => {
+    expect(transform({ currency_id: '5', amount: '100' })).toEqual({
+      currency_id: 5,
+      amount: 100n
+    })
+  })
+
+  it('should keep a numeric currency_id string outside the safe range as a bigint', () => {
+    expect(transform({ currency_id: '9007199254740993', amount: '1' })).toEqual({
+      currency_id: 9007199254740993n,
+      amount: 1n
+    })
+  })
+
+  it('should still use generic string handling for non-numeric currency_id strings', () => {
+    expect(transform({ currency_id: 'DOT', amount: '1' })).toEqual({
+      currency_id: { type: 'DOT' },
+      amount: 1n
+    })
+    expect(transform({ currency_id: '0xdeadbeef', amount: '1' })).toEqual({
+      currency_id: '0xdeadbeef',
+      amount: 1n
+    })
+  })
+
   it('should handle currency_id with a numeric string that throws an error', () => {
     const input = { currency_id: 'invalid_numeric_string' }
     const expected = {

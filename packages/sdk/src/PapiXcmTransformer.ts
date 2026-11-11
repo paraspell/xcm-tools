@@ -160,6 +160,8 @@ export const transform = (obj: any): any => {
         if (k === 'currency_id' && typeof v === 'string') {
           try {
             newObj[k] = checkAndConvertToNumberOrBigInt(v)
+            // Keep the numeric id - otherwise the generic string handling below overwrites it
+            continue
           } catch (_e) {
             newObj[k] = {
               type: v

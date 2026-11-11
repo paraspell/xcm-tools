@@ -5,7 +5,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
+import type { IXTokensTransfer, TMintConfig, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
 
@@ -45,6 +45,11 @@ class Pendulum<TApi, TRes, TSigner, TCustomChain extends string = never>
     asset: TAssetInfo
   ): TXcmAsset {
     return this.getCustomCurrencyId(api, asset)
+  }
+
+  // Currencies pallet on Pendulum expects the CurrencyId enum, not a raw asset id
+  protected getMintConfig(): TMintConfig {
+    return { useCustomCurrencyId: true }
   }
 }
 

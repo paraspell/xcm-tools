@@ -5,7 +5,7 @@ import { Version } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
-import type { TTransferLocalOptions } from '../../types'
+import type { TMintConfig, TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { assertHasId } from '../../utils'
 import SubstrateChain from '../SubstrateChain'
@@ -22,6 +22,11 @@ class Centrifuge<TApi, TRes, TSigner, TCustomChain extends string = never>
     if (asset.symbol === this.getNativeAssetSymbol(api)) return 'Native'
     assertHasId(asset)
     return { ForeignAsset: Number(asset.assetId) }
+  }
+
+  // Tokens pallet on Centrifuge expects the CurrencyId enum, not a raw asset id
+  protected getMintConfig(): TMintConfig {
+    return { useCustomCurrencyId: true }
   }
 
   transferXTokens(input: TXTokensTransferOptions<TApi, TRes, TSigner, TCustomChain>) {

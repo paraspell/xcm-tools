@@ -213,10 +213,26 @@ describe("XcmTransformer", () => {
     });
 
     it("accepts numeric currency IDs", () => {
+      expect(transform({ currency_id: "42", other: true })).toEqual({
+        currencyId: 42,
+        other: true,
+      });
+    });
+
+    it("keeps numeric currency IDs even when they decode as an address", () => {
       vi.mocked(decodeAddress).mockReturnValue(new Uint8Array([1]));
 
       expect(transform({ currency_id: "42", other: true })).toEqual({
-        currencyId: "42",
+        currencyId: 42,
+        other: true,
+      });
+    });
+
+    it("keeps numeric currency IDs outside the safe range as bigint", () => {
+      expect(
+        transform({ currency_id: "9007199254740993", other: true }),
+      ).toEqual({
+        currencyId: 9007199254740993n,
         other: true,
       });
     });
