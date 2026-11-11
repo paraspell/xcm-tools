@@ -1,5 +1,5 @@
 import type { PolkadotApi, TBuildEvmTransferOptions } from '@paraspell/sdk-core'
-import { UnsupportedOperationError } from '@paraspell/sdk-core'
+import { ScenarioNotSupportedError, UnsupportedOperationError } from '@paraspell/sdk-core'
 import { darwinia } from 'viem/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -40,5 +40,28 @@ describe('buildEvmTransfer', () => {
     await expect(buildEvmTransfer({ ...baseOptions, from: 'Acala' })).rejects.toThrow(
       UnsupportedOperationError
     )
+  })
+
+  it('rejects Darwinia EVM transfers to Kusama-ecosystem destinations', async () => {
+    for (const to of ['Karura', 'AssetHubKusama', 'Kusama'] as const) {
+      await expect(buildEvmTransfer({ ...baseOptions, to })).rejects.toThrow(
+        ScenarioNotSupportedError
+      )
+      await expect(buildEvmTransfer({ ...baseOptions, to })).rejects.toThrow(
+        'Origin and destination must share the same relay chain unless using a bridge.'
+      )
+    }
+  })
+
+  it('still builds Darwinia EVM transfers to Polkadot-ecosystem destinations', async () => {
+    for (const to of ['Acala', 'AssetHubPolkadot', 'Polkadot'] as const) {
+      const result = await buildEvmTransfer({ ...baseOptions, to })
+      expect(result).toEqual(evmTx)
+    }
+  })
+
+  it('does not apply the relay-chain check to external destinations', async () => {
+    const result = await buildEvmTransfer({ ...baseOptions, to: 'Ethereum' })
+    expect(result).toEqual(evmTx)
   })
 })
