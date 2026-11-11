@@ -41,9 +41,10 @@ export const isSufficientOrigin = async <TApi, TRes, TSigner, TCustomChain exten
       asset
     })
 
-    const edAsset = BigInt(asset.existentialDeposit)
+    const remainingAsset = balanceAsset - asset.amount
 
-    const isSufficientAsset = balanceAsset - edAsset > 0n
+    const isSufficientAsset =
+      remainingAsset === 0n || remainingAsset >= BigInt(asset.existentialDeposit)
 
     return isSufficientNative && isSufficientAsset
   } else {

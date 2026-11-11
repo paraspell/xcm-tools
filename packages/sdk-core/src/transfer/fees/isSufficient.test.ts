@@ -143,7 +143,7 @@ describe('isSufficientOrigin', () => {
     vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
       return assetSymbol === nativeSymbol
     })
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(30n) // 30 - 50 = -20
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(30n) // 30 < 50
 
     const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
     const result = await isSufficientOrigin(
@@ -157,6 +157,86 @@ describe('isSufficientOrigin', () => {
     )
 
     expect(result).toBe(false)
+  })
+
+  it('returns false when non-native asset balance is above ED but below the sent amount', async () => {
+    vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
+      return assetSymbol === nativeSymbol
+    })
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(200n)
+
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...nonNativeAsset, amount: 500n },
+      undefined
+    )
+
+    expect(result).toBe(false)
+  })
+
+  it('returns true when non-native asset balance equals the sent amount', async () => {
+    vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
+      return assetSymbol === nativeSymbol
+    })
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(500n)
+
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...nonNativeAsset, amount: 500n },
+      undefined
+    )
+
+    expect(result).toBe(true)
+  })
+
+  it('returns false when non-native asset remaining balance would fall below ED', async () => {
+    vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
+      return assetSymbol === nativeSymbol
+    })
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(520n)
+
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...nonNativeAsset, amount: 500n },
+      undefined
+    )
+
+    expect(result).toBe(false)
+  })
+
+  it('returns true when non-native asset remaining balance equals ED', async () => {
+    vi.mocked(isSymbolMatch).mockImplementation((assetSymbol, nativeSymbol) => {
+      return assetSymbol === nativeSymbol
+    })
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(550n)
+
+    const nonNativeAsset = { symbol: 'USDT', existentialDeposit: '50' } as TAssetInfo
+    const result = await isSufficientOrigin(
+      mockApi,
+      origin,
+      destination,
+      sender,
+      feeNative,
+      { ...nonNativeAsset, amount: 500n },
+      undefined
+    )
+
+    expect(result).toBe(true)
   })
 
   it('handles native asset to origin only case', async () => {
