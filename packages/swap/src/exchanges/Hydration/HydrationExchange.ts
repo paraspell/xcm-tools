@@ -19,7 +19,7 @@ import type {
   TDexConfigStored,
   TPapiGetAmountOutOptions,
   TPapiSwapOptions,
-  TSingleSwapResult,
+  TSwapResult,
 } from '../../types';
 import { pow10n } from '../../utils';
 import ExchangeChain from '../ExchangeChain';
@@ -31,7 +31,7 @@ class HydrationExchange extends ExchangeChain<'PAPI'> {
   async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPapiSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult<TRes>> {
+  ): Promise<TSwapResult<TRes>> {
     const { apiPapi, origin, assetFrom, assetTo, sender, slippagePct, amount } = options;
 
     const sdk = await createSdkContext(apiPapi);

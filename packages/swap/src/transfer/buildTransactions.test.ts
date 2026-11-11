@@ -64,7 +64,7 @@ describe('buildTransactions', () => {
   beforeEach(() => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -92,7 +92,7 @@ describe('buildTransactions', () => {
   test('adds transfer-to-exchange when origin differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: 'toExchangeTx',
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -120,7 +120,7 @@ describe('buildTransactions', () => {
   test('adds batched swap+transfer when destination differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
@@ -146,7 +146,7 @@ describe('buildTransactions', () => {
   test('includes all steps when both origin & destination differ', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: 'toExchangeTx',
-      swapTxs: ['swapTx'],
+      swapTx: 'swapTx',
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });

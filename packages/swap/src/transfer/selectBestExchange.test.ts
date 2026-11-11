@@ -22,7 +22,7 @@ const dummyDex = (): ExchangeChain =>
     exchangeChain: 'Acala',
     createApiInstance: vi.fn().mockResolvedValue({}),
     createApiInstancePapi: vi.fn().mockResolvedValue({}),
-    handleMultiSwap: vi.fn().mockResolvedValue({ amountOut: '123' }),
+    swapCurrency: vi.fn().mockResolvedValue({ amountOut: '123' }),
   }) as unknown as ExchangeChain;
 
 const fee = 10n;
@@ -49,7 +49,7 @@ describe('selectBestExchange', () => {
     vi.mocked(calculateFromExchangeFee).mockResolvedValue(fee);
   });
 
-  it('resolves with the “best” exchange and forwards the fee to handleMultiSwap', async () => {
+  it('resolves with the “best” exchange and forwards the fee to swapCurrency', async () => {
     const dex = dummyDex();
 
     vi.mocked(selectBestExchangeCommon).mockImplementation(
@@ -66,7 +66,7 @@ describe('selectBestExchange', () => {
       },
     );
 
-    const spy = vi.spyOn(dex, 'handleMultiSwap');
+    const spy = vi.spyOn(dex, 'swapCurrency');
 
     const originApi = undefined;
 

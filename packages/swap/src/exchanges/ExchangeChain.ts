@@ -10,9 +10,8 @@ import type {
   TExchangeApiType,
   TGetAmountOutOptionsFor,
   TGetDexConfigApi,
-  TMultiSwapResult,
-  TSingleSwapResult,
   TSwapOptionsFor,
+  TSwapResult,
 } from '../types';
 
 abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiType> {
@@ -31,18 +30,7 @@ abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiTyp
   abstract swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
     toDestTransactionFee: bigint,
-  ): Promise<TSingleSwapResult<TRes>>;
-
-  async handleMultiSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
-    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
-    toDestTransactionFee: bigint,
-  ): Promise<TMultiSwapResult<TRes>> {
-    const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
-    return {
-      txs: [singleSwapResult.tx],
-      amountOut: singleSwapResult.amountOut,
-    };
-  }
+  ): Promise<TSwapResult<TRes>>;
 
   abstract getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TGetAmountOutOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,

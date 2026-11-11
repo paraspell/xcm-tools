@@ -37,7 +37,6 @@ describe('createSwapTx', () => {
 
     exchangeChain = {
       swapCurrency: vi.fn(),
-      handleMultiSwap: vi.fn(),
     } as unknown as ExchangeChain;
 
     options = {
@@ -74,9 +73,9 @@ describe('createSwapTx', () => {
 
     vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyTxPapi);
     getPaymentInfoSpy.mockResolvedValue({ partialFee: 10n, weight: 0n });
-    vi.spyOn(exchangeChain, 'handleMultiSwap').mockResolvedValue({
+    vi.spyOn(exchangeChain, 'swapCurrency').mockResolvedValue({
       amountOut: 900n,
-      txs: [dummyExtrinsic],
+      tx: dummyExtrinsic,
     });
 
     vi.mocked(convertTxToTarget).mockResolvedValue(dummyTxPapi);
@@ -84,7 +83,7 @@ describe('createSwapTx', () => {
   });
 
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {
-    const spy = vi.spyOn(exchangeChain, 'handleMultiSwap');
+    const spy = vi.spyOn(exchangeChain, 'swapCurrency');
 
     const result = await createSwapTx(exchangeChain, options);
 
@@ -109,7 +108,7 @@ describe('createSwapTx', () => {
 
     expect(result).toEqual({
       amountOut: 900n,
-      txs: [dummyTxPapi],
+      tx: dummyTxPapi,
     });
   });
 });

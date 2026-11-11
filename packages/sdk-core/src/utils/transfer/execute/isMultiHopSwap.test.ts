@@ -1,53 +1,62 @@
-import { getNativeAssetSymbol, type TAssetInfo } from '@paraspell/assets'
-import { describe, expect, it, vi } from 'vitest'
+import { findNativeAssetInfoOrThrow, type TAssetInfo } from '@paraspell/assets'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { isMultiHopSwap } from './isMultiHopSwap'
 
-vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn()
+vi.mock('@paraspell/assets', async importOriginal => ({
+  ...(await importOriginal()),
+  findNativeAssetInfoOrThrow: vi.fn()
 }))
 
 describe('isMultiHopSwap', () => {
-  const mockAssetFrom = { symbol: 'DOT' } as TAssetInfo
-  const mockAssetTo = { symbol: 'USDT' } as TAssetInfo
+  const nativeAsset: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    existentialDeposit: '1',
+    location: { parents: 1, interior: { Here: null } }
+  }
+
+  const foreignDot: TAssetInfo = {
+    symbol: 'DOT',
+    decimals: 10,
+    existentialDeposit: '1',
+    location: {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 3 }] }
+    }
+  }
+
+  const usdt: TAssetInfo = {
+    symbol: 'USDT',
+    decimals: 6,
+    existentialDeposit: '1',
+    location: {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+    }
+  }
+
+  beforeEach(() => {
+    vi.mocked(findNativeAssetInfoOrThrow).mockReturnValue(nativeAsset)
+  })
 
   it('returns true for AssetHub with non-native assets', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')
-
-    const result = isMultiHopSwap('AssetHubPolkadot', mockAssetFrom, mockAssetTo)
-
-    expect(result).toBe(true)
+    expect(isMultiHopSwap('AssetHubPolkadot', foreignDot, usdt)).toBe(true)
   })
 
   it('returns false for non-AssetHub chains', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-    const result = isMultiHopSwap('Acala', mockAssetFrom, mockAssetTo)
-
-    expect(result).toBe(false)
+    expect(isMultiHopSwap('Acala', foreignDot, usdt)).toBe(false)
   })
 
   it('returns false when assetFrom is native asset', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-    const result = isMultiHopSwap('AssetHubPolkadot', mockAssetFrom, mockAssetTo)
-
-    expect(result).toBe(false)
+    expect(isMultiHopSwap('AssetHubPolkadot', nativeAsset, usdt)).toBe(false)
   })
 
   it('returns false when assetTo is native asset', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('USDT')
-
-    const result = isMultiHopSwap('AssetHubPolkadot', mockAssetFrom, mockAssetTo)
-
-    expect(result).toBe(false)
+    expect(isMultiHopSwap('AssetHubPolkadot', usdt, nativeAsset)).toBe(false)
   })
 
   it('returns false when both assets are native', () => {
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-
-    const result = isMultiHopSwap('AssetHubPolkadot', mockAssetFrom, mockAssetFrom)
-
-    expect(result).toBe(false)
+    expect(isMultiHopSwap('AssetHubPolkadot', nativeAsset, nativeAsset)).toBe(false)
   })
 })
