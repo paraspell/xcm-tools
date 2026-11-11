@@ -754,7 +754,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const destParaId = extractDestParaId(forwardedXcms)
 
-    if (this.hasXcmPaymentApiSupport(chain) && asset) {
+    if (this.hasXcmPaymentApiSupport(chain)) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       return {

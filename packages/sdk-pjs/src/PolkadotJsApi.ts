@@ -704,7 +704,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
-    if (this.hasXcmPaymentApiSupport(chain) && asset) {
+    if (this.hasXcmPaymentApiSupport(chain)) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       if (typeof fee === 'bigint') {
