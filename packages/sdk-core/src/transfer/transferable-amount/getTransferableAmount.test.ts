@@ -48,7 +48,6 @@ describe('getTransferableAmount', () => {
 
   test('subtracts XCM fee for native asset', async () => {
     const balance = 1000n
-    const ed = 100n
     const fee = 200n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
@@ -63,7 +62,7 @@ describe('getTransferableAmount', () => {
 
     const result = await getTransferableAmount(baseOptions)
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(balance - fee)
     expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: mockApi,
       buildTx,
@@ -99,7 +98,9 @@ describe('getTransferableAmount', () => {
   })
 
   test('returns 0 when transferable amount is negative', async () => {
-    const balance = 250n
+    // Native asset: the deposit is already excluded from the spendable balance,
+    // so the fee alone makes this negative and the result clamps to zero.
+    const balance = 150n
     const fee = 200n
 
     findAssetInfoOrThrowSpy.mockReturnValue({
@@ -141,7 +142,6 @@ describe('getTransferableAmount', () => {
 
   test('subtracts the fee for native asset paid in native when a fee asset is selected', async () => {
     const balance = 1000n
-    const ed = 100n
     const fee = 200n
     const doton = { symbol: 'DOTON', decimals: 18, existentialDeposit: '100' } as TAssetInfo
 
@@ -158,7 +158,39 @@ describe('getTransferableAmount', () => {
       feeAsset: { symbol: 'DOT' }
     })
 
-    expect(result).toBe(balance - ed - fee)
+    expect(result).toBe(balance - fee)
+  })
+
+  test('does not subtract existential deposit twice for the native asset', async () => {
+    const balance = 1000n
+    const fee = 200n
+    const dot = { symbol: 'DOT', decimals: 10, existentialDeposit: '100' } as TAssetInfo
+
+    findAssetInfoOrThrowSpy.mockReturnValue(dot)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(dot)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee, asset: dot } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(baseOptions)
+
+    // getAssetBalanceInternal already excludes the deposit for native assets (#1903)
+    expect(result).toBe(balance - fee)
+  })
+
+  test('returns a positive transferable amount in the deposit-plus-fee window', async () => {
+    const dot = { symbol: 'DOT', decimals: 10, existentialDeposit: '100' } as TAssetInfo
+
+    findAssetInfoOrThrowSpy.mockReturnValue(dot)
+    findNativeAssetInfoOrThrowSpy.mockReturnValue(dot)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    // Spendable balance for a native asset: the deposit is already removed once.
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(150n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount(baseOptions)
+
+    expect(result).toBe(50n)
   })
 
   test('throws error when XCM fee is undefined for native asset', async () => {
@@ -206,6 +238,8 @@ describe('getTransferableAmount', () => {
     vi.mocked(resolveFeeAsset).mockReturnValue(usdt)
     vi.mocked(resolveCurrency).mockReturnValue({ assets, asset: usdt })
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a.symbol === b.symbol)
+    // Neither USDT nor USDC is native here, so the deposit is still subtracted once for each.
+    findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'ASTR' } as TAssetInfo)
   }
 
   test('returns per-asset transferable amounts in input order for currency arrays', async () => {
