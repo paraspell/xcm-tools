@@ -1,22 +1,20 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import type { PolkadotApi, TLocation, TQueriedAmount } from '@paraspell/sdk-core';
+import type { PolkadotApi, TAssetInfo, TLocation, TQueriedAmount } from '@paraspell/sdk-core';
 import {
   AmountTooLowError,
-  getNativeAssetSymbol,
+  findNativeAssetInfoOrThrow,
+  isAssetEqual,
   localizeLocation,
   padValueBy,
-  Parents,
   RoutingResolutionError,
 } from '@paraspell/sdk-core';
 
-import { getExchangeAsset } from '../../assets';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER_PCT } from '../../consts';
 import type {
   TDexConfigStored,
   TGenericGetAmountOutOptions,
   TGenericSwapOptions,
-  TMultiSwapResult,
-  TSingleSwapResult,
+  TSwapResult,
 } from '../../types';
 import ExchangeChain from '../ExchangeChain';
 import { getDexConfig } from './utils';
@@ -52,19 +50,57 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     return BigInt(quoted);
   }
 
+  private async quoteSwapOrThrow<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
+    assetFrom: TAssetInfo,
+    assetTo: TAssetInfo,
+    nativeAsset: TAssetInfo,
+    amount: bigint,
+  ): Promise<{ path: TLocation[]; amountOut: bigint }> {
+    if (isAssetEqual(assetFrom, assetTo)) {
+      throw new RoutingResolutionError('Cannot swap asset to itself.');
+    }
+
+    const from = localizeLocation(this.chain, assetFrom.location);
+    const to = localizeLocation(this.chain, assetTo.location);
+
+    if (isAssetEqual(assetFrom, nativeAsset) || isAssetEqual(assetTo, nativeAsset)) {
+      return { path: [from, to], amountOut: await this.quoteOrThrow(api, from, to, amount) };
+    }
+
+    const native = localizeLocation(this.chain, nativeAsset.location);
+    const nativeAmountOut = await this.quoteOrThrow(api, from, native, amount);
+
+    if (nativeAmountOut <= 0n) {
+      throw new AmountTooLowError(
+        `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
+      );
+    }
+
+    return {
+      path: [from, native, to],
+      amountOut: await this.quoteOrThrow(api, native, to, nativeAmountOut),
+    };
+  }
+
   async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
-  ): Promise<TSingleSwapResult<TRes>> {
+  ): Promise<TSwapResult<TRes>> {
     const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
-    const localizedFrom = localizeLocation(this.chain, assetFrom.location);
-    const localizedTo = localizeLocation(this.chain, assetTo.location);
+    const nativeAsset = findNativeAssetInfoOrThrow(this.chain);
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    const amountOut = await this.quoteOrThrow(api, localizedFrom, localizedTo, amountWithoutFee);
+    const { path, amountOut } = await this.quoteSwapOrThrow(
+      api,
+      assetFrom,
+      assetTo,
+      nativeAsset,
+      amountWithoutFee,
+    );
 
     const slippageMultiplier = Number(slippagePct);
     const minAmountOut = padValueBy(amountOut, -slippageMultiplier);
@@ -73,7 +109,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
       module: 'AssetConversion',
       method: 'swap_exact_tokens_for_tokens',
       params: {
-        path: [localizedFrom, localizedTo],
+        path,
         amount_in: amountWithoutFee,
         amount_out_min: minAmountOut,
         send_to: sender,
@@ -82,17 +118,12 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     });
 
     const toDestFeeCurrencyTo =
-      toDestTxFee === 0n || assetTo.symbol == getNativeAssetSymbol(this.chain)
+      toDestTxFee === 0n || isAssetEqual(assetTo, nativeAsset)
         ? toDestTxFee
         : await this.quoteOrThrow(
             api,
-            {
-              parents: Parents.ONE,
-              interior: {
-                Here: null,
-              },
-            },
-            localizedTo,
+            localizeLocation(this.chain, nativeAsset.location),
+            localizeLocation(this.chain, assetTo.location),
             toDestTxFee,
             true,
           );
@@ -107,139 +138,23 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     };
   }
 
-  async handleMultiSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
-    options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
-    toDestTransactionFee: bigint,
-  ): Promise<TMultiSwapResult<TRes>> {
-    const { assetFrom, assetTo } = options;
-
-    const nativeAsset = getExchangeAsset(this.chain, {
-      symbol: getNativeAssetSymbol(this.chain),
-    });
-
-    if (!nativeAsset) {
-      throw new RoutingResolutionError('Native asset not found for this exchange chain.');
-    }
-
-    const isAssetFromNative = assetFrom.symbol === nativeAsset.symbol;
-    const isAssetToNative = assetTo.symbol === nativeAsset.symbol;
-
-    if (isAssetFromNative && isAssetToNative) {
-      throw new RoutingResolutionError('Cannot swap native asset to itself.');
-    }
-
-    if (isAssetFromNative || isAssetToNative) {
-      // Single hop
-      const singleSwapResult = await this.swapCurrency(options, toDestTransactionFee);
-      return {
-        txs: [singleSwapResult.tx],
-        amountOut: singleSwapResult.amountOut,
-      };
-    } else {
-      // Multi-hop: AssetA -> Native -> AssetB
-      const optionsHop1: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain> = {
-        ...options,
-        assetTo: nativeAsset,
-      };
-      const resultHop1 = await this.swapCurrency(optionsHop1, 0n);
-
-      if (resultHop1.amountOut <= 0n) {
-        throw new AmountTooLowError(
-          `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
-        );
-      }
-
-      const hop1Received = resultHop1.amountOut;
-      const assumedInputForHop2 = padValueBy(hop1Received, -2);
-
-      const optionsHop2: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain> = {
-        apiType: 'GENERIC',
-        api: options.api,
-        slippagePct: options.slippagePct,
-        sender: options.sender,
-        origin: undefined,
-        assetFrom: nativeAsset,
-        assetTo: assetTo,
-        amount: assumedInputForHop2,
-        feeCalcAddress: options.feeCalcAddress,
-      };
-
-      const resultHop2 = await this.swapCurrency(optionsHop2, toDestTransactionFee);
-
-      if (resultHop2.amountOut <= 0n) {
-        throw new AmountTooLowError(
-          `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
-        );
-      }
-
-      return {
-        txs: [resultHop1.tx, resultHop2.tx],
-        amountOut: resultHop2.amountOut,
-      };
-    }
-  }
-
   async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TGenericGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
   ) {
     const { api, assetFrom, assetTo, amount, origin } = options;
 
-    const nativeAsset = getExchangeAsset(this.chain, {
-      symbol: getNativeAssetSymbol(this.chain),
-    });
-
-    if (!nativeAsset) {
-      throw new RoutingResolutionError('Native asset not found for this exchange chain.');
-    }
-
-    const isAssetFromNative = assetFrom.symbol === nativeAsset.symbol;
-    const isAssetToNative = assetTo.symbol === nativeAsset.symbol;
-
-    if (isAssetFromNative && isAssetToNative) {
-      throw new RoutingResolutionError('Cannot swap native asset to itself.');
-    }
-
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
 
-    if (isAssetFromNative || isAssetToNative) {
-      return this.quoteOrThrow(
-        api,
-        localizeLocation(this.chain, assetFrom.location),
-        localizeLocation(this.chain, assetTo.location),
-        amountWithoutFee,
-      );
-    } else {
-      const hop1AmountOut = await this.quoteOrThrow(
-        api,
-        localizeLocation(this.chain, assetFrom.location),
-        localizeLocation(this.chain, nativeAsset.location),
-        amountWithoutFee,
-      );
+    const { amountOut } = await this.quoteSwapOrThrow(
+      api,
+      assetFrom,
+      assetTo,
+      findNativeAssetInfoOrThrow(this.chain),
+      amountWithoutFee,
+    );
 
-      if (hop1AmountOut <= 0n) {
-        throw new AmountTooLowError(
-          `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
-        );
-      }
-
-      const assumedInputForHop2 = padValueBy(hop1AmountOut, -2);
-
-      const finalAmountOut = await this.quoteOrThrow(
-        api,
-        localizeLocation(this.chain, nativeAsset.location),
-        localizeLocation(this.chain, assetTo.location),
-        assumedInputForHop2,
-      );
-
-      if (finalAmountOut <= 0n) {
-        throw new AmountTooLowError(
-          `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
-        );
-      }
-
-      return finalAmountOut;
-    }
+    return amountOut;
   }
 
   async getDexConfig(api: TPapiApi): Promise<TDexConfigStored> {

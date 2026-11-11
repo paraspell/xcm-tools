@@ -7,6 +7,7 @@ import {
 import type { PublicClient } from 'viem'
 import { createPublicClient, fallback, webSocket } from 'viem'
 import { mainnet } from 'viem/chains'
+import { socketClientCache } from 'viem/utils'
 
 export const ETHEREUM_WS_URLS: string[] = [
   'wss://ethereum-rpc.publicnode.com',
@@ -16,12 +17,22 @@ export const ETHEREUM_WS_URLS: string[] = [
   'wss://eth-mainnet.public.blastapi.io'
 ]
 
+const keepAlive: { interval?: number; owner: string } = {
+  owner: `paraspell-${Math.random().toString(36).slice(2)}`
+}
+
+const closeOwnSockets = () => {
+  for (const [id, socketClient] of socketClientCache) {
+    if (id.includes(`"${keepAlive.owner}"`)) socketClient.close()
+  }
+}
+
 const cache = createClientCache<PublicClient>(
   MAX_CLIENTS,
   async client => {
     await client.getBlockNumber()
   },
-  undefined,
+  closeOwnSockets,
   EXTENSION_MS
 )
 
@@ -29,6 +40,6 @@ export const { leaseClient, releaseClient } = createClientPoolHelpers<PublicClie
   const list = Array.isArray(urls) ? urls : [urls]
   return createPublicClient({
     chain: mainnet,
-    transport: fallback(list.map(url => webSocket(url)))
+    transport: fallback(list.map(url => webSocket(url, { keepAlive })))
   })
 })

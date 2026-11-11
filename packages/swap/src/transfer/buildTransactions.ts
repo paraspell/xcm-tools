@@ -16,7 +16,7 @@ export const buildTransactions = async <TApi, TRes, TSigner, TCustomChain extend
 ): Promise<TRouterPlan<TApi, TRes>> => {
   const { origin, exchange, destination } = options;
 
-  const { toExchangeTx, swapTxs, toDestTx, amountOut, isExecute } = await prepareExtrinsics(
+  const { toExchangeTx, swapTx, toDestTx, amountOut, isExecute } = await prepareExtrinsics(
     dex,
     options,
   );
@@ -34,7 +34,7 @@ export const buildTransactions = async <TApi, TRes, TSigner, TCustomChain extend
   }
 
   if (toDestTx) {
-    const batchedTx = exchange.api.callBatchMethod([...swapTxs, toDestTx], BatchMode.BATCH_ALL);
+    const batchedTx = exchange.api.callBatchMethod([swapTx, toDestTx], BatchMode.BATCH_ALL);
 
     transactions.push({
       api: exchange.api.api,
@@ -45,25 +45,13 @@ export const buildTransactions = async <TApi, TRes, TSigner, TCustomChain extend
       amountOut,
     });
   } else {
-    if (swapTxs.length === 1) {
-      transactions.push({
-        api: isExecute ? (origin?.api ?? exchange.api.api) : exchange.api.api,
-        chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
-        tx: swapTxs[0],
-        amountOut,
-        type: 'SWAP',
-      });
-    } else {
-      const batchedSwapTx = exchange.api.callBatchMethod(swapTxs, BatchMode.BATCH_ALL);
-
-      transactions.push({
-        api: exchange.api.api,
-        chain: dex.chain,
-        tx: batchedSwapTx,
-        amountOut,
-        type: 'SWAP',
-      });
-    }
+    transactions.push({
+      api: isExecute ? (origin?.api ?? exchange.api.api) : exchange.api.api,
+      chain: isExecute ? (origin?.chain ?? dex.chain) : dex.chain,
+      tx: swapTx,
+      amountOut,
+      type: 'SWAP',
+    });
   }
 
   return transactions;

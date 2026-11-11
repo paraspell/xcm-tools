@@ -27,18 +27,14 @@ export const getSwapFee = async <
     exchange: { assetFrom, api },
     amount,
   } = options;
-  let txs: unknown[];
   let amountOut: bigint;
 
   const isForFeeEstimation = true;
 
   try {
-    const swapResult = await createSwapTx(exchange, options, isForFeeEstimation);
-    txs = swapResult.txs;
-    amountOut = swapResult.amountOut;
+    ({ amountOut } = await createSwapTx(exchange, options, isForFeeEstimation));
   } catch (e: unknown) {
     if (!(e instanceof AmountTooLowError)) throw e;
-    txs = [null];
     amountOut = 0n;
   }
 
@@ -49,8 +45,8 @@ export const getSwapFee = async <
         ? { amount: applyDecimalAbstraction(overrideAmount, assetFrom.decimals, true) }
         : {}),
     };
-    const { txs } = await createSwapTx(exchange, txOptions, isForFeeEstimation);
-    return txs[0];
+    const { tx } = await createSwapTx(exchange, txOptions, isForFeeEstimation);
+    return tx;
   };
 
   const result = await getOriginXcmFee({
@@ -66,12 +62,10 @@ export const getSwapFee = async <
     disableFallback: disableFallback ?? false,
   });
 
-  const finalFee = (result.fee ?? 0n) * BigInt(txs.length);
-
   return {
     result: {
       ...result,
-      fee: finalFee,
+      fee: result.fee ?? 0n,
     },
     amountOut,
   };

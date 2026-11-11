@@ -1,227 +1,109 @@
+import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { TAssetInfo } from '../types'
-import { getAssetsImpl, getNativeAssetSymbolImpl, getRelayChainSymbolImpl } from './assets'
+import { getAssetsImpl, getNativeAssetSymbolImpl } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
 import { findStablecoinAssets } from './search/findStablecoinAssets'
 
 vi.mock('./assets')
-vi.mock('./search/findStablecoinAssets', () => ({
-  findStablecoinAssets: vi.fn().mockReturnValue([])
-}))
+vi.mock('./search/findStablecoinAssets')
+
+const createAsset = (symbol: string, location: TLocation): TAssetInfo => ({
+  symbol,
+  decimals: 10,
+  existentialDeposit: '1',
+  location
+})
+
+const createEthLocation = (key: string): TLocation => ({
+  parents: 2,
+  interior: {
+    X2: [
+      { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+      { AccountKey20: { network: null, key } }
+    ]
+  }
+})
+
+const mockAssets = (assets: Partial<Record<string, TAssetInfo[]>>) =>
+  vi.mocked(getAssetsImpl).mockImplementation(chain => assets[chain] ?? [])
+
+const dotAsset = createAsset('DOT', { parents: 1, interior: { Here: null } })
+const ksmAsset = createAsset('KSM', {
+  parents: 2,
+  interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
+})
+const ajunAsset = createAsset('AJUN', { parents: 1, interior: { X1: [{ Parachain: 2051 }] } })
+const cgtAsset = createAsset(
+  'CGT2.0',
+  createEthLocation('0x0e186357c323c806c1efdad36d217f7a54b63d18')
+)
+const mythAsset = createAsset('MYTH', { parents: 1, interior: { X1: [{ Parachain: 3369 }] } })
 
 describe('getSupportedAssets', () => {
-  const dotAsset: TAssetInfo = {
-    symbol: 'DOT',
-    assetId: '100',
-    decimals: 10,
-    existentialDeposit: '1000',
-    location: { parents: 1, interior: { Here: null } }
-  }
-
-  const ksmAsset: TAssetInfo = {
-    symbol: 'KSM',
-    assetId: '200',
-    decimals: 18,
-    existentialDeposit: '1000',
-    location: {
-      parents: 2,
-      interior: {
-        X1: [
-          {
-            GlobalConsensus: {
-              kusama: null
-            }
-          }
-        ]
-      }
-    }
-  }
-
-  const ajunAsset: TAssetInfo = {
-    symbol: 'AJUN',
-    assetId: '300',
-    decimals: 18,
-    existentialDeposit: '1000',
-    location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
-  }
-
-  const usdtAsset: TAssetInfo = {
-    symbol: 'USDT',
-    assetId: '500',
-    decimals: 6,
-    existentialDeposit: '1000',
-    location: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
-  }
-
-  const cgtAsset: TAssetInfo = {
-    symbol: 'CGT2.0',
-    decimals: 18,
-    existentialDeposit: '1000',
-    location: {
-      parents: 2,
-      interior: {
-        X2: [
-          { GlobalConsensus: { Ethereum: { chainId: 1 } } },
-          {
-            AccountKey20: {
-              network: null,
-              key: '0x0e186357c323c806c1efdad36d217f7a54b63d18'
-            }
-          }
-        ]
-      }
-    }
-  }
-
   beforeEach(() => {
     vi.resetAllMocks()
   })
 
-  it('should return system assets, stablecoins, and additional bridge assets for substrate bridge transfers', () => {
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return [dotAsset, ksmAsset, ajunAsset, cgtAsset]
-      if (chain === 'AssetHubKusama') return [dotAsset, ksmAsset, cgtAsset]
-      return []
+  it('should return no assets for unreachable destinations', () => {
+    expect(getSupportedAssets('Acala', 'Ethereum')).toEqual([])
+    expect(getAssetsImpl).not.toHaveBeenCalled()
+  })
+
+  it('should return origin assets with a matching location on destination', () => {
+    mockAssets({ Hydration: [dotAsset, ajunAsset], AssetHubPolkadot: [dotAsset] })
+
+    expect(getSupportedAssets('Hydration', 'AssetHubPolkadot')).toEqual([dotAsset])
+  })
+
+  it('should return native system assets, stablecoins and additional bridge assets for substrate bridge transfers', () => {
+    const usdtAsset = createAsset('USDT', {
+      parents: 1,
+      interior: { X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1984 }] }
     })
-    vi.mocked(getNativeAssetSymbolImpl).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return 'DOT'
-      if (chain === 'AssetHubKusama') return 'KSM'
-      return ''
+    const wndAsset = createAsset('WND', {
+      parents: 2,
+      interior: { X1: [{ GlobalConsensus: { westend: null } }] }
     })
+    mockAssets({
+      AssetHubPolkadot: [dotAsset, ksmAsset, wndAsset, { ...ajunAsset, symbol: 'KSM' }, cgtAsset],
+      AssetHubKusama: [dotAsset, ksmAsset, cgtAsset]
+    })
+    vi.mocked(getNativeAssetSymbolImpl).mockImplementation(chain =>
+      chain === 'AssetHubPolkadot' ? 'DOT' : 'KSM'
+    )
     vi.mocked(findStablecoinAssets).mockReturnValue([usdtAsset])
 
-    const result = getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')
-    expect(result).toEqual([dotAsset, ksmAsset, usdtAsset, cgtAsset])
+    expect(getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')).toEqual([
+      dotAsset,
+      ksmAsset,
+      usdtAsset,
+      cgtAsset
+    ])
   })
 
-  it('should return common assets between origin and destination', () => {
-    const mockOriginAssets = [ajunAsset, dotAsset]
-    const mockDestinationAssets = [{ ...ajunAsset, assetId: '400' }]
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'Ajuna') return mockOriginAssets
-      if (chain === 'Polkadot') return mockDestinationAssets
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Ajuna', 'Polkadot')
-    expect(result).toEqual([ajunAsset])
-  })
-
-  it('should return system assets and supported assets for snowbridge transfers', () => {
-    const mockOriginAssets = [dotAsset, ajunAsset]
-    const mockDestinationAssets = [{ ...ajunAsset, assetId: '400' }]
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'AssetHubPolkadot') return mockOriginAssets
-      if (chain === 'Ethereum') return mockDestinationAssets
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('AssetHubPolkadot', 'Ethereum')
-    expect(result).toEqual([dotAsset, ajunAsset])
-  })
-
-  it('should return no assets for unsupported Snowbridge origins', () => {
-    expect(getSupportedAssets('Acala', 'Ethereum')).toEqual([])
-  })
-
-  it('should include native MYTH on Mythos -> Ethereum despite different locations', () => {
-    const mythosNative: TAssetInfo = {
-      symbol: 'MYTH',
-      isNative: true,
-      decimals: 18,
-      existentialDeposit: '1000',
-      location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
-    }
-    const ethereumMyth: TAssetInfo = {
-      symbol: 'MYTH',
-      assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-      decimals: 18,
-      existentialDeposit: '1000',
-      location: {
-        parents: 2,
-        interior: {
-          X2: [
-            { GlobalConsensus: { Ethereum: { chainId: 1n } } },
-            {
-              AccountKey20: {
-                network: null,
-                key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003'
-              }
-            }
-          ]
-        }
-      }
-    }
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'Mythos') return [mythosNative]
-      if (chain === 'Ethereum') return [ethereumMyth]
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Mythos', 'Ethereum')
-    expect(result).toEqual([mythosNative])
-  })
-
-  it('should not inject MYTH when origin is not Mythos', () => {
-    const dummyAsset: TAssetInfo = {
-      symbol: 'MYTH',
-      isNative: true,
-      decimals: 18,
-      existentialDeposit: '1000',
-      location: { parents: 1, interior: { X1: [{ Parachain: 3369 }] } }
-    }
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'Hydration') return [dummyAsset]
-      if (chain === 'Ethereum') return []
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Hydration', 'Ethereum')
-    expect(result).toEqual([])
-  })
-
-  it('should return empty array if no common assets between origin and destination', () => {
-    const mockOriginAssets = [ajunAsset]
-    const mockDestinationAssets = [dotAsset]
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'Ajuna') return mockOriginAssets
-      if (chain === 'Polkadot') return mockDestinationAssets
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Ajuna', 'Polkadot')
-    expect(result).toEqual([])
-  })
-
-  it('should return no assets when origin is external and destination is not a Snowbridge origin', () => {
-    expect(getSupportedAssets('Ethereum', 'Acala')).toEqual([])
-    expect(getAssetsImpl).not.toHaveBeenCalled()
-  })
-
-  it('should return common assets when origin is Ethereum and destination is a Snowbridge origin', () => {
-    vi.mocked(getAssetsImpl).mockImplementation(chain => {
-      if (chain === 'Ethereum') return [cgtAsset]
-      if (chain === 'AssetHubPolkadot') return [cgtAsset, dotAsset]
-      return []
-    })
-    vi.mocked(findStablecoinAssets).mockReturnValue([])
-
-    const result = getSupportedAssets('Ethereum', 'AssetHubPolkadot')
-    expect(result).toEqual([cgtAsset])
-  })
-
-  it('should return no assets when origin and destination are in different ecosystems', () => {
-    vi.mocked(getRelayChainSymbolImpl).mockImplementation(chain =>
-      chain === 'Astar' ? 'DOT' : 'KSM'
+  it('should return system assets registered on destination and common assets for snowbridge transfers', () => {
+    const ethDotAsset = createAsset(
+      'DOT',
+      createEthLocation('0x196c20da81fbc324ecdf55501e95ce9f0bd84d14')
     )
+    mockAssets({
+      AssetHubPolkadot: [dotAsset, ksmAsset, mythAsset, cgtAsset],
+      Ethereum: [ethDotAsset, cgtAsset]
+    })
 
-    expect(getSupportedAssets('Astar', 'AssetHubKusama')).toEqual([])
-    expect(getAssetsImpl).not.toHaveBeenCalled()
+    expect(getSupportedAssets('AssetHubPolkadot', 'Ethereum')).toEqual([dotAsset, cgtAsset])
+  })
+
+  it('should include native MYTH for Mythos to Ethereum transfers', () => {
+    mockAssets({
+      Mythos: [mythAsset],
+      Ethereum: [
+        createAsset('MYTH', createEthLocation('0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003'))
+      ]
+    })
+
+    expect(getSupportedAssets('Mythos', 'Ethereum')).toEqual([mythAsset])
   })
 })

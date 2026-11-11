@@ -39,7 +39,7 @@ export const selectBestExchange = async <TApi, TRes, TSigner, TCustomChain exten
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
-      const { amountOut } = await dex.handleMultiSwap(
+      const { amountOut } = await dex.swapCurrency(
         {
           ...modifiedOptions,
           ...pickExchangeApiVariant(modifiedOptions.exchange),

@@ -1,9 +1,7 @@
 import { createChainClient, type TChain } from '@paraspell/sdk-pjs';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TPjsSwapOptions } from '../types';
 import BifrostExchange from './Bifrost/BifrostExchange';
-import ExchangeChain from './ExchangeChain';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
@@ -13,16 +11,6 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   };
 });
 
-class MockExchangeChain extends ExchangeChain<'PJS'> {
-  readonly apiType = 'PJS';
-  swapCurrency = vi.fn().mockResolvedValue({
-    tx: 'mockTxHash',
-    amountOut: 1000n,
-  });
-  getAmountOut = vi.fn();
-  getDexConfig = vi.fn();
-}
-
 describe('ExchangeChain', () => {
   it('should create an Api instance correctly', async () => {
     const mockChain: TChain = 'BifrostPolkadot';
@@ -30,20 +18,5 @@ describe('ExchangeChain', () => {
     const apiInstance = await exchangeChain.createApiInstance();
     expect(createChainClient).toHaveBeenCalledWith(mockChain, undefined);
     expect(apiInstance).toBe('mockApiPromise');
-  });
-
-  it('should return correct multi swap result using swapCurrency', async () => {
-    const mockOptions = {} as TPjsSwapOptions<unknown, unknown, unknown>;
-    const mockFee = 0n;
-
-    const chain = new MockExchangeChain('Acala');
-
-    const result = await chain.handleMultiSwap(mockOptions, mockFee);
-
-    expect(chain.swapCurrency).toHaveBeenCalledWith(mockOptions, mockFee);
-    expect(result).toEqual({
-      txs: ['mockTxHash'],
-      amountOut: 1000n,
-    });
   });
 });
