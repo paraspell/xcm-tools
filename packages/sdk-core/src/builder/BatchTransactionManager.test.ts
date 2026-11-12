@@ -6,8 +6,10 @@ import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { GeneralBuilder } from './Builder'
+import { maybePerformXcmFormatCheck } from './maybePerformXcmFormatCheck'
 
 vi.mock('../utils')
+vi.mock('./maybePerformXcmFormatCheck')
 
 const mockApi = {
   init: vi.fn(),
@@ -112,6 +114,39 @@ describe('BatchTransactionManager', () => {
       await expect(
         manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
       ).rejects.toThrow('All transactions must have the same origin.')
+    })
+
+    it('calls maybePerformXcmFormatCheck for each transaction in the batch', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions())
+      manager.addTransaction(createTransferOptions())
+      const mockTx = { hash: 'hash' }
+      vi.mocked(createTransferOrSwap).mockResolvedValue(mockTx)
+
+      await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledTimes(2)
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledWith(
+        mockApi,
+        mockTx,
+        expect.objectContaining({ from: 'Acala', to: 'Hydration' })
+      )
+    })
+
+    it('propagates error when maybePerformXcmFormatCheck fails', async () => {
+      const spy = vi.spyOn(mockApi, 'callBatchMethod')
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions())
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi.mocked(maybePerformXcmFormatCheck).mockRejectedValueOnce(
+        new Error('XCM format check failed.')
+      )
+
+      await expect(
+        manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+      ).rejects.toThrow('XCM format check failed.')
+
+      expect(spy).not.toHaveBeenCalled()
     })
   })
 })

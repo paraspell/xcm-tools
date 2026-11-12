@@ -1451,6 +1451,72 @@ describe('Builder', () => {
 
       expect(buildDryRun).not.toHaveBeenCalled()
     })
+
+    it('should run dryRun for batched transactions when config has xcmFormatCheck', async () => {
+      vi.mocked(isConfig).mockReturnValue(true)
+      vi.mocked(buildDryRun).mockResolvedValue({} as TDryRunResult)
+      vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
+        abstractDecimals: true,
+        xcmFormatCheck: true
+      })
+
+      await Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER)
+        .addToBatch()
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER)
+        .addToBatch()
+        .buildBatch()
+
+      expect(buildDryRun).toHaveBeenCalledTimes(2)
+      expect(buildDryRun).toHaveBeenCalledWith(
+        mockApi,
+        expect.anything(),
+        expect.objectContaining({
+          from: CHAIN,
+          to: CHAIN_2,
+          currency: CURRENCY,
+          recipient: ADDRESS,
+          sender: SENDER
+        }),
+        {
+          sentAssetMintMode: 'bypass'
+        }
+      )
+    })
+
+    it('should throw DryRunFailedError when dryRun reports a failure during buildBatch', async () => {
+      vi.mocked(isConfig).mockReturnValue(true)
+      vi.mocked(buildDryRun).mockResolvedValue({
+        dryRunError: { reason: 'Bad XCM in batch', chain: CHAIN_2 }
+      } as TDryRunResult)
+      vi.spyOn(mockApi, 'config', 'get').mockReturnValue({
+        abstractDecimals: true,
+        xcmFormatCheck: true
+      })
+
+      const batchPromise = Builder(mockApi)
+        .from(CHAIN)
+        .to(CHAIN_2)
+        .currency(CURRENCY)
+        .recipient(ADDRESS)
+        .sender(SENDER)
+        .addToBatch()
+        .buildBatch()
+
+      await expect(batchPromise).rejects.toBeInstanceOf(DryRunFailedError)
+      await expect(batchPromise).rejects.toMatchObject({
+        dryRunError: { reason: 'Bad XCM in batch' },
+        message: `XCM format check failed. Dry run on ${CHAIN_2} failed: Bad XCM in batch`
+      })
+    })
   })
 
   describe('signAndSubmit', () => {

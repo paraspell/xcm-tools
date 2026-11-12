@@ -17,7 +17,6 @@ import type { TransactionSerializableEIP1559, WalletClient } from 'viem'
 import type { PolkadotApi } from '../api/PolkadotApi'
 import {
   BatchValidationError,
-  DryRunFailedError,
   InvalidAddressError,
   UnableToComputeError,
   UnsupportedOperationError
@@ -60,7 +59,6 @@ import {
   assertAddressIsString,
   assertCurrencyCore,
   assertNotEvmTransfer,
-  assertSender,
   assertSenderSource,
   assertSubstrateOrigin,
   assertSwapSupport,
@@ -69,13 +67,13 @@ import {
   createTransferOrSwapAll,
   createTxOverrideAmount,
   executeWithSwap,
-  isConfig,
   isSenderSigner,
   isViemSigner,
   normalizeExchange
 } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
 import { buildDryRun } from './buildDryRun'
+import { maybePerformXcmFormatCheck } from './maybePerformXcmFormatCheck'
 import { normalizeAmountAll } from './normalizeAmountAll'
 
 /**
@@ -473,27 +471,7 @@ export class GeneralBuilder<
     options: TSubstrateTransferBaseOptions<TApi, TRes, TSigner>,
     isCalledInternally: boolean
   ) {
-    const { sender } = options
-
-    const { config } = this.api
-    if (isConfig(config) && config.xcmFormatCheck && !isCalledInternally) {
-      assertSender(sender)
-      const dryRunResult = await buildDryRun(
-        this.api,
-        tx,
-        {
-          ...options,
-          sender
-        },
-        {
-          sentAssetMintMode: 'bypass'
-        }
-      )
-
-      if (dryRunResult.dryRunError) {
-        throw new DryRunFailedError(dryRunResult.dryRunError, 'XCM format check failed.')
-      }
-    }
+    return maybePerformXcmFormatCheck(this.api, tx, options, isCalledInternally)
   }
 
   async dryRun(
