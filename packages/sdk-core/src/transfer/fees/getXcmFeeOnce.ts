@@ -42,7 +42,8 @@ export const getXcmFeeOnce = async <
   disableFallback,
   swapConfig,
   useRootOrigin,
-  skipReverseFeeCalculation
+  skipReverseFeeCalculation,
+  skipEdDeposit
 }: TGetXcmFeeInternalOptions<TApi, TRes, TSigner, TDisableFallback, TCustomChain>): Promise<
   TGetXcmFeeResult<TDisableFallback, TCustomChain>
 > => {
@@ -191,6 +192,7 @@ export const getXcmFeeOnce = async <
     })
 
     if (
+      skipEdDeposit ||
       !isDestination ||
       hopResult.fee === undefined ||
       hopResult.dryRunError ||

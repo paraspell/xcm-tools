@@ -64,7 +64,8 @@ export const computeAllFees = async <TApi, TRes, TSigner, TCustomChain extends s
     currency,
     feeAsset: feeCurrency,
     disableFallback: false,
-    skipReverseFeeCalculation: true
+    skipReverseFeeCalculation: true,
+    skipEdDeposit: true
   })
 
   const hopFees = sumHopFees(result, context)
