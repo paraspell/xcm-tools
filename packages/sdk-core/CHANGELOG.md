@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.3...sdk-core-v14.5.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix adding ED deposit twice in some scenarios 🔧 ([4ba41bd](https://github.com/paraspell/xcm-tools/commit/4ba41bdbcee05d2630bba1dc6aa5de7a5074d3a7))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.2...sdk-core-v14.5.3) (2026-11-11)
 
 
