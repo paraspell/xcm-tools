@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/evm-snowbridge",
-  "version": "14.5.3",
+  "version": "14.5.4",
   "description": "Optional Snowbridge extension for @paraspell/sdk enabling Ethereum -> Polkadot transfers.",
   "repository": {
     "type": "git",
