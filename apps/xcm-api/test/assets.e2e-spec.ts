@@ -105,6 +105,14 @@ describe('Assets controller (e2e)', () => {
       })
       .expect(201));
 
+  it('Get asset location - ambiguous symbol returns 400', () =>
+    request(app.getHttpServer())
+      .post('/assets/AssetHubPolkadot/location')
+      .send({
+        currency: { symbol: 'DOT' },
+      })
+      .expect(400));
+
   it('Get asset reserve chain - /assets/:chain/reserve-chain (POST)', () => {
     return request(app.getHttpServer())
       .post('/assets/AssetHubPolkadot/reserve-chain')
@@ -128,6 +136,14 @@ describe('Assets controller (e2e)', () => {
         expect(res.body).toBeDefined();
       });
   });
+
+  it('Get asset info - ambiguous symbol returns 400', () =>
+    request(app.getHttpServer())
+      .post('/assets/AssetHubPolkadot/asset-info')
+      .send({
+        currency: { symbol: 'DOT' },
+      })
+      .expect(400));
 
   it('Get supported destinations - /assets/:chain/supported-destinations (POST)', () => {
     return request(app.getHttpServer())

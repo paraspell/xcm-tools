@@ -28,7 +28,11 @@ export class AssetsService {
   }
 
   getAssetLocation(chain: TChain, { currency }: AssetLocationDto) {
-    return JSON.stringify(getAssetLocation(chain, currency));
+    try {
+      return JSON.stringify(getAssetLocation(chain, currency));
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   getAssetReserveChain(chain: TSubstrateChain, { currency }: AssetLocationDto) {
@@ -41,7 +45,11 @@ export class AssetsService {
   }
 
   getAssetInfo(chain: TChain, { currency, destination }: FindAssetDto) {
-    return JSON.stringify(findAssetInfo(chain, currency, destination));
+    try {
+      return JSON.stringify(findAssetInfo(chain, currency, destination));
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   getRelayChainSymbol(chain: TChain) {

@@ -99,6 +99,18 @@ describe('AssetsService', () => {
       expect(result).toEqual(JSON.stringify(assetLocation));
       expect(getAssetLocationSpy).toHaveBeenCalledWith(chain, { symbol });
     });
+
+    it('should call handleXcmApiError when getAssetLocation throws DuplicateAssetError', () => {
+      getAssetLocationSpy.mockImplementation(() => {
+        throw new paraspellSdk.DuplicateAssetError('Multiple assets found');
+      });
+
+      expect(() =>
+        service.getAssetLocation(chain, {
+          currency: { symbol: 'DOT' },
+        }),
+      ).toThrow(BadRequestException);
+    });
   });
 
   describe('getAssetInfo', () => {
@@ -149,6 +161,18 @@ describe('AssetsService', () => {
         { symbol },
         destination,
       );
+    });
+
+    it('should call handleXcmApiError when findAssetInfo throws DuplicateAssetError', () => {
+      getAssetInfoSpy.mockImplementation(() => {
+        throw new paraspellSdk.DuplicateAssetError('Multiple assets found');
+      });
+
+      expect(() =>
+        service.getAssetInfo(chain, {
+          currency: { symbol: 'DOT' },
+        }),
+      ).toThrow(BadRequestException);
     });
   });
 
@@ -273,6 +297,18 @@ describe('AssetsService', () => {
       expect(getSupportedDestinationsSpy).toHaveBeenCalledWith(chain, {
         symbol: 'KSM',
       });
+    });
+
+    it('should call handleXcmApiError when getSupportedDestinations throws', () => {
+      getSupportedDestinationsSpy.mockImplementation(() => {
+        throw new paraspellSdk.DuplicateAssetError('Multiple assets found');
+      });
+
+      expect(() =>
+        service.getSupportedDestinations(chain, {
+          currency: { symbol: 'USDT' },
+        }),
+      ).toThrow(BadRequestException);
     });
   });
 
