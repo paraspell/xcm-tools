@@ -136,7 +136,7 @@ describe('createSwapExecuteXcm', () => {
         ...PREPARED_XCM.prefix,
         expect.objectContaining({
           ExchangeAsset: {
-            maximal: false,
+            maximal: true,
             give: expect.any(Object),
             want: expect.any(Array)
           }
@@ -448,7 +448,7 @@ describe('createSwapExecuteXcm', () => {
       )
 
       const { suffixXcm } = vi.mocked(createBaseExecuteXcm).mock.calls[1][0]
-      expect(suffixXcm?.[0]).toMatchObject({ ExchangeAsset: { maximal: false } })
+      expect(suffixXcm?.[0]).toMatchObject({ ExchangeAsset: { maximal: true } })
     })
     it('deposits the fee asset when its leftover reaches the final chain ED', async () => {
       vi.mocked(isAssetEqual).mockReturnValue(false)
@@ -561,13 +561,13 @@ describe('createSwapExecuteXcm', () => {
       vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
     })
 
-    it('uses maximal: false without a separate fee asset', async () => {
+    it('uses maximal: true without a separate fee asset', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
 
       const result = await createExchangeInstructions(baseOptions, ASSET, ASSET, undefined)
 
       expect(result[0]).toMatchObject({
-        ExchangeAsset: { maximal: false }
+        ExchangeAsset: { maximal: true }
       })
     })
 
@@ -579,6 +579,30 @@ describe('createSwapExecuteXcm', () => {
       expect(result[0]).toMatchObject({
         ExchangeAsset: { maximal: true }
       })
+    })
+
+    it('exchanges the whole given amount in every hop without a separate fee asset', async () => {
+      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
+      vi.mocked(localizeLocation).mockReturnValue(LOCATION)
+      vi.mocked(createAsset).mockReturnValue(ASSET)
+      vi.mocked(isMultiHopSwap).mockReturnValue(false)
+
+      const singleHop = await createExchangeInstructions(baseOptions, ASSET, ASSET, undefined)
+
+      expect(singleHop).toHaveLength(1)
+      expect(singleHop[0]).toMatchObject({ ExchangeAsset: { maximal: true } })
+
+      const options = createOptions({
+        api,
+        calculateMinAmountOut: vi.fn().mockResolvedValue(400n)
+      })
+      vi.mocked(isMultiHopSwap).mockReturnValue(true)
+
+      const hops = await createExchangeInstructions(options, ASSET, ASSET, undefined)
+
+      expect(hops).toHaveLength(2)
+      expect(hops[0]).toMatchObject({ ExchangeAsset: { maximal: true } })
+      expect(hops[1]).toMatchObject({ ExchangeAsset: { maximal: true } })
     })
 
     it('gives only the swapped native amount in the second hop when the fee asset is the native asset', async () => {
@@ -611,7 +635,7 @@ describe('createSwapExecuteXcm', () => {
 
       const [plainFirstHop] = await createExchangeInstructions(options, ASSET, ASSET, undefined)
 
-      expect(plainFirstHop).toMatchObject({ ExchangeAsset: { maximal: false } })
+      expect(plainFirstHop).toMatchObject({ ExchangeAsset: { maximal: true } })
     })
 
     it('does not subtract hop fees from the multi-hop amount when fees are paid separately', async () => {
