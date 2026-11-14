@@ -109,7 +109,7 @@ export const getDestXcmFee = async <
       fee,
       feeType: 'paymentInfo',
       sufficient,
-      asset: currentAsset
+      asset: api.findNativeAssetInfoOrThrow(destination)
     }
   }
 
@@ -143,7 +143,7 @@ export const getDestXcmFee = async <
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.dryRunError,
       sufficient: false,
-      asset: currentAsset
+      asset: api.findNativeAssetInfoOrThrow(destination)
     }
   }
 
