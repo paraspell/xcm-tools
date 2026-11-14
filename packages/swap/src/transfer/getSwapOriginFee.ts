@@ -5,6 +5,7 @@ import type { TBuildTransactionsOptions, TTransformedOptions } from '../types';
 import { getSwapFee } from './fees';
 import {
   canUseExecuteTransfer,
+  getFromExchangeOriginFee,
   getSwapExecuteOriginXcmFee,
   getToExchangeOriginFee,
   isFilteredError,
@@ -28,7 +29,7 @@ export const getSwapOriginFee = async <
   >,
   disableFallback: TDisableFallback,
 ): Promise<TXcmFeeDetailWithForwardedXcm<TDisableFallback>> => {
-  const { origin, exchange } = options;
+  const { api, origin, exchange, destination, sender } = options;
 
   if (canUseExecuteTransfer(dex, options)) {
     try {
@@ -46,7 +47,21 @@ export const getSwapOriginFee = async <
     return getToExchangeOriginFee({ ...options, origin }, disableFallback);
   }
 
-  // Origin chain is the exchange itself — fee is the swap fee
-  const { result } = await getSwapFee(dex, options, disableFallback);
-  return result as TXcmFeeDetailWithForwardedXcm<TDisableFallback>;
+  // Origin chain is the exchange itself: fee is the swap fee (+ outgoing transfer to destination)
+  const { result, amountOut } = await getSwapFee(dex, options, disableFallback);
+
+  if (!destination || destination.chain === exchange.chain) {
+    return result as TXcmFeeDetailWithForwardedXcm<TDisableFallback>;
+  }
+
+  const fromExchangeFee = await getFromExchangeOriginFee(
+    { exchange, destination, amount: amountOut, sender, api },
+    disableFallback,
+  );
+
+  return {
+    ...result,
+    fee: (result.fee ?? 0n) + (fromExchangeFee.fee ?? 0n),
+    dryRunError: result.dryRunError ?? fromExchangeFee.dryRunError,
+  } as TXcmFeeDetailWithForwardedXcm<TDisableFallback>;
 };

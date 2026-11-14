@@ -92,6 +92,17 @@ export const getFromExchangeFee = <
   disableFallback: TDisableFallback,
 ) => createFromExchangeBuilder(options).getXcmFee({ disableFallback });
 
+export const getFromExchangeOriginFee = <
+  TApi,
+  TRes,
+  TSigner,
+  TDisableFallback extends boolean,
+  TCustomChain extends string = never,
+>(
+  options: TBuildFromExchangeTxOptions<TApi, TRes, TSigner, TCustomChain>,
+  disableFallback: TDisableFallback,
+) => createFromExchangeBuilder(options).getOriginXcmFee({ disableFallback });
+
 export const determineFeeCalcAddress = (sender: string, recipient?: string): string => {
   if (!ethers.isAddress(sender)) {
     // Use wallet address for fee calculation
