@@ -12,25 +12,30 @@ const removeSuffix = (symbol: string) => symbol.slice(0, -2)
 
 const findEthAssetBySymbol = (
   symbol: string,
-  otherAssets: TAssetInfo[]
+  otherAssets: TAssetInfo[],
+  chainId = 1
 ): TAssetInfo | undefined => {
   const ethCompatibleAssets = otherAssets.filter(asset =>
     deepEqual(getJunctionValue(asset.location, 'GlobalConsensus'), {
       Ethereum: {
-        chainId: 1
+        chainId
       }
     })
   )
   return findBestMatches(ethCompatibleAssets, symbol)[0]
 }
 
-const findEthMatch = (symbol: string, otherAssets: TAssetInfo[]): TAssetInfo | undefined => {
-  const match = findEthAssetBySymbol(symbol, otherAssets)
+const findEthMatch = (
+  symbol: string,
+  otherAssets: TAssetInfo[],
+  chainId = 1
+): TAssetInfo | undefined => {
+  const match = findEthAssetBySymbol(symbol, otherAssets, chainId)
   if (match) return match
 
   const altSymbol = symbol.toLowerCase().endsWith('.e') ? removeSuffix(symbol) : `${symbol}.e`
 
-  return findEthAssetBySymbol(altSymbol.toLowerCase(), otherAssets)
+  return findEthAssetBySymbol(altSymbol.toLowerCase(), otherAssets, chainId)
 }
 
 const findWithXcVariant = (items: TAssetInfo[], value: string): TAssetInfo[] => {
@@ -67,6 +72,10 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
   destination?: TChain | TCustomChain
 ): TAssetInfo | undefined => {
   const isSpecifier = isSymbolSpecifier(symbol)
+  // Snowbridge assets are located under the destination's GlobalConsensus:
+  // Ethereum mainnet uses chainId 1, EthereumTestnet (Sepolia) uses 11155111.
+  const ethChainId =
+    destination && isExternalChain(destination) && destination === 'EthereumTestnet' ? 11155111 : 1
   let assetsMatches: TAssetInfo[] = []
 
   if (isSpecifier) {
@@ -80,7 +89,11 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
       let otherAssetsMatches: TAssetInfo[]
 
       if (destination && isExternalChain(destination)) {
-        return findEthMatch(value, otherAssets)
+        const ethMatch = findEthMatch(value, otherAssets, ethChainId)
+        if (ethMatch) return ethMatch
+        // No Ethereum-origin asset matches: fall through to the regular
+        // lookup so origin-chain assets supported for the bridge route
+        // (e.g. DOT or KSM for Snowbridge) can still resolve by symbol.
       }
 
       if (lowerSymbol.endsWith('.e')) {
@@ -98,7 +111,7 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
         foundAsset = pickOtherOrThrow(value, otherAssetsMatches)
         if (foundAsset) return foundAsset
 
-        const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets)
+        const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets, ethChainId)
         if (ethAsset) return ethAsset
 
         // If still not found, search normal assets without suffix
@@ -130,7 +143,11 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
     let nativeAssetsMatches: TAssetInfo[]
 
     if (destination && isExternalChain(destination)) {
-      return findEthMatch(symbol, otherAssets)
+      const ethMatch = findEthMatch(symbol, otherAssets, ethChainId)
+      if (ethMatch) return ethMatch
+      // No Ethereum-origin asset matches: fall through to the regular
+      // lookup so origin-chain assets supported for the bridge route
+      // (e.g. DOT or MYTH for Snowbridge) can still resolve by symbol.
     }
 
     if (lowerSymbol.endsWith('.e')) {
@@ -151,7 +168,7 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
       if (foundAsset) return foundAsset
 
       // Search in Ethereum assets without the '.e' suffix
-      const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets)
+      const ethAsset = findEthAssetBySymbol(strippedSymbol, otherAssets, ethChainId)
       if (ethAsset) return ethAsset
 
       // If still not found, search normal assets without suffix

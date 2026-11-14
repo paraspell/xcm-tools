@@ -229,6 +229,53 @@ describe('findAssetInfo', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('Should find origin-chain asset by symbol for Ethereum destination when no Ethereum asset matches', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([dotAsset])
+    const asset = findAssetInfo('Hydration', { symbol: 'DOT' }, 'Ethereum')
+    expect(asset).toBe(dotAsset)
+  })
+
+  it('Should find origin-chain asset using Foreign selector for Ethereum destination when no Ethereum asset matches', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([dotAsset])
+    const asset = findAssetInfo('Hydration', { symbol: Foreign('DOT') }, 'Ethereum')
+    expect(asset).toBe(dotAsset)
+  })
+
+  it('Should find native asset by symbol for Ethereum destination when no Ethereum asset matches', () => {
+    vi.mocked(getNativeAssetsImpl).mockReturnValue([{ ...dotAsset, symbol: 'MYTH' }])
+    const asset = findAssetInfo('Mythos', { symbol: 'MYTH' }, 'Ethereum')
+    expect(asset).toHaveProperty('symbol', 'MYTH')
+  })
+
+  it('Should find Ethereum testnet asset by symbol for EthereumTestnet destination', () => {
+    const wethTestnetAsset: TAssetInfo = {
+      ...wethAsset,
+      location: {
+        parents: 2,
+        interior: {
+          X1: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 11155111
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([wethTestnetAsset])
+    const asset = findAssetInfo('AssetHubPaseo', { symbol: 'WETH' }, 'EthereumTestnet')
+    expect(asset).toBe(wethTestnetAsset)
+  })
+
+  it('Should prefer the Ethereum asset over a same-symbol origin asset for Ethereum destination', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([{ ...dotAsset, symbol: 'WETH' }, wethAsset])
+    const asset = findAssetInfo('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
+    expect(asset).toBe(wethAsset)
+  })
+
   it('Should find asset ending with .e on AssetHubPolkadot with duplicates', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
