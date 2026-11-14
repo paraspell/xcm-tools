@@ -57,7 +57,9 @@ export const createExchangeInstructions = async <
         ExchangeAsset: {
           give: createAssetsFilter(assetFrom, version),
           want: [assetTo],
-          maximal: hasSeparateFeeAsset
+          // ExactOut (maximal: false) leaves the unspent `assetFrom` in Holding, where nothing
+          // deposits or forwards it, so it ends up trapped in `PolkadotXcm.AssetTrap`.
+          maximal: true
         }
       }
     ]
@@ -82,7 +84,7 @@ export const createExchangeInstructions = async <
       ExchangeAsset: {
         give: createAssetsFilter(assetFrom, version),
         want: [assetNative],
-        maximal: hasSeparateFeeAsset
+        maximal: true
       }
     },
     {
