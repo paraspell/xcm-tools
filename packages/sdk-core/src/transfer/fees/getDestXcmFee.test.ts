@@ -16,6 +16,7 @@ const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {}),
     findAssetInfoOrThrow: vi.fn(),
+    findNativeAssetInfoOrThrow: vi.fn(),
     hasDryRunSupport: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -41,6 +42,26 @@ describe('getDestXcmFee', () => {
     }
   }
 
+  const astrAsset: TAssetInfo = {
+    symbol: 'ASTR',
+    decimals: 12,
+    existentialDeposit: '1000',
+    location: {
+      parents: 1,
+      interior: 'Here'
+    }
+  }
+
+  const ethAsset: TAssetInfo = {
+    symbol: 'ETH',
+    decimals: 18,
+    existentialDeposit: '1000',
+    location: {
+      parents: 1,
+      interior: 'Here'
+    }
+  }
+
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(isSufficientDestination).mockResolvedValue(true)
@@ -51,6 +72,7 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
 
     const options = {
       api,
@@ -75,7 +97,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: true
     })
   })
@@ -85,6 +107,7 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
 
     const options = {
       api,
@@ -110,7 +133,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 0n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: true
     })
   })
@@ -120,6 +143,7 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
 
     const options = {
       api,
@@ -144,7 +168,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: true
     })
   })
@@ -155,6 +179,7 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
 
     const options = {
       api,
@@ -179,7 +204,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: true
     })
   })
@@ -227,6 +252,7 @@ describe('getDestXcmFee', () => {
       asset: dotAsset
     })
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(true)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
 
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
@@ -254,7 +280,7 @@ describe('getDestXcmFee', () => {
       fee: 130n,
       feeType: 'paymentInfo',
       dryRunError: { reason: 'fail' },
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: false
     })
   })
@@ -304,6 +330,7 @@ describe('getDestXcmFee', () => {
 
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(astrAsset)
     vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(usdcAsset)
 
     vi.mocked(getReverseTxFee)
@@ -338,7 +365,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 321n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: astrAsset,
       sufficient: true
     })
   })
@@ -346,6 +373,7 @@ describe('getDestXcmFee', () => {
   it('returns 0n when destination is Ethereum', async () => {
     const api = createApi()
     vi.spyOn(api, 'hasDryRunSupport').mockReturnValue(false)
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(ethAsset)
     const options = {
       api,
       forwardedXcms: undefined,
@@ -364,7 +392,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 0n,
       feeType: 'paymentInfo',
-      asset: unitAsset,
+      asset: ethAsset,
       sufficient: true
     })
     expect(getReverseTxFee).not.toHaveBeenCalled()
