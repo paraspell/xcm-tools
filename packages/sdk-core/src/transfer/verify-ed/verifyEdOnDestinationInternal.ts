@@ -134,8 +134,10 @@ export const verifyEdOnDestinationInternal = async <
   const tx = await buildTx()
   const method = api.getMethod(tx)
 
-  const isTypeAndThenMethod =
-    method === 'transfer_assets_using_type_and_then' || method === 'transferAssetsUsingTypeAndThen'
+  const subtractsHopFees =
+    method === 'transfer_assets_using_type_and_then' ||
+    method === 'transferAssetsUsingTypeAndThen' ||
+    method === 'execute'
 
   const verifyAsset = async ({ destAsset, amount, paysDestFee }: (typeof destAssets)[number]) => {
     const ed = BigInt(destAsset.existentialDeposit)
@@ -147,9 +149,9 @@ export const verifyEdOnDestinationInternal = async <
       asset: destAsset
     })
 
-    const feeToSubtract = isTypeAndThenMethod
+    const feeToSubtract = subtractsHopFees
       ? calculateTotalXcmFee(destAsset, xcmFeeResult)
-      : paysDestFee
+      : paysDestFee && isAssetEqual(destFeeAsset, destAsset)
         ? destFee
         : 0n
 

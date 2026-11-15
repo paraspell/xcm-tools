@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.5.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.5.2...xcm-api-v14.5.3) (2026-11-11)
+
+
+### Documentation
+
+* **xcm-api:** Update readmes to latest spec ([f8efff3](https://github.com/paraspell/xcm-tools/commit/f8efff3e97dc06d09c19b3b94c23f058bb83d281))
+
+
+### Tests
+
+* **xcm-api:** Simplify validatePallet unit test 🧪 ([34c486b](https://github.com/paraspell/xcm-tools/commit/34c486bb5912394d6491b0d415f9c5769082b8b8))
+
 ## [14.5.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v14.5.1...xcm-api-v14.5.2) (2026-11-05)
 
 

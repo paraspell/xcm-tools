@@ -35,16 +35,10 @@ describe('validatePallet', () => {
 
   it('should throw BadRequestException with a specific message for an unsupported pallet', () => {
     const invalidPallet = 'DoesNotExist';
-    try {
-      validatePallet(invalidPallet);
-    } catch (error) {
-      expect(error).toBeInstanceOf(BadRequestException);
-      if (error instanceof BadRequestException) {
-        expect(error.message).toBe(
-          `Invalid pallet: ${invalidPallet}. Check docs for valid pallets.`,
-        );
-      }
-    }
+    expect(() => validatePallet(invalidPallet)).toThrow(BadRequestException);
+    expect(() => validatePallet(invalidPallet)).toThrow(
+      `Invalid pallet: ${invalidPallet}. Check docs for valid pallets.`,
+    );
   });
 
   it('should be case-sensitive and throw for incorrect casing if not in SUPPORTED_PALLETS', () => {

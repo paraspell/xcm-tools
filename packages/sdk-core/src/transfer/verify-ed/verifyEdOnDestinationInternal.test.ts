@@ -1,5 +1,5 @@
 import type { TAssetInfo } from '@paraspell/assets'
-import { normalizeSymbol } from '@paraspell/assets'
+import { isAssetEqual, normalizeSymbol } from '@paraspell/assets'
 import type { TChain } from '@paraspell/sdk-common'
 import { type TSubstrateChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -273,6 +273,7 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('returns false when balance >= ED and amount - destFee <= 0', async () => {
+    vi.mocked(isAssetEqual).mockReturnValue(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(15000000000n)
     vi.mocked(getXcmFeeInternal).mockResolvedValue({
       ...xcmFeeRes,
@@ -281,6 +282,42 @@ describe('verifyEdOnDestinationInternal', () => {
 
     const result = await verifyEdOnDestinationInternal(defaultOptions)
     expect(result).toBe(false)
+  })
+
+  it('does not subtract the destination fee when it is paid in a different asset', async () => {
+    const usdc = { symbol: 'USDC', decimals: 6, existentialDeposit: '1000000' } as TAssetInfo
+
+    findAssetOnDestOrThrowSpy.mockReturnValue(usdc)
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFeeInternal).mockResolvedValue({
+      ...xcmFeeRes,
+      hops: [],
+      destination: { fee: 100000000n, feeType: 'dryRun', asset }
+    })
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      currency: { symbol: 'USDC', amount: 2000000n }
+    })
+
+    expect(result).toBe(true)
+  })
+
+  it.each([
+    { method: 'execute', expected: false },
+    { method: 'transferAssets', expected: true }
+  ])('subtracts hop fees only for hop-aware methods ($method)', async ({ method, expected }) => {
+    vi.mocked(isAssetEqual).mockReturnValue(true)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.spyOn(mockApi, 'getMethod').mockReturnValue(method)
+
+    const result = await verifyEdOnDestinationInternal({
+      ...defaultOptions,
+      currency: { ...mockCurrency, amount: 11200000000n }
+    })
+
+    expect(result).toBe(expected)
   })
 
   it('throws if asset symbol and fee currency mismatch (normalizeSymbol)', async () => {

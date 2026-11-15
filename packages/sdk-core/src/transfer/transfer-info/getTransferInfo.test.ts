@@ -66,7 +66,8 @@ describe('getTransferInfo', () => {
       disconnect: vi.fn().mockResolvedValue(undefined),
       findAssetInfoOrThrow: vi.fn(),
       isChainEvm: vi.fn(),
-      getRelayChainSymbol: vi.fn()
+      getRelayChainSymbol: vi.fn(),
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue(dotAsset)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
     apiSpies = mkApiSpies(mockApi)
     mockTx = {}
@@ -223,7 +224,7 @@ describe('getTransferInfo', () => {
 
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
-      origin: { fee: 100000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail,
+      origin: { fee: 100000000n, asset: dotAsset } as TXcmFeeDetail,
       hops: mockHopsFromFee as TXcmFeeHopInfo[],
       destination: { fee: 70000000n, asset: { symbol: 'DOT' } } as TXcmFeeDetail
     })
@@ -289,7 +290,8 @@ describe('getTransferInfo', () => {
     const feeAssetFromFee = {
       symbol: 'FEE',
       assetId: 'FEE',
-      decimals: 12
+      decimals: 12,
+      existentialDeposit: '1000'
     } as TAssetInfo
 
     vi.mocked(getXcmFee).mockResolvedValueOnce({
@@ -372,6 +374,35 @@ describe('getTransferInfo', () => {
 
     expect(result.origin.xcmFee.balanceAfter).toBe(originBalanceFeeVal - originFeeVal)
   })
+
+  it.each([
+    { isNative: false, amount: 199000000000n, balanceAfter: 900000000n, sufficient: false },
+    { isNative: false, amount: 198900000000n, balanceAfter: 1000000000n, sufficient: true },
+    { isNative: false, amount: 199900000000n, balanceAfter: 0n, sufficient: true },
+    { isNative: false, amount: 200000000000n, balanceAfter: -100000000n, sufficient: false },
+    { isNative: true, amount: 199700000000n, balanceAfter: 200000000n, sufficient: true },
+    { isNative: true, amount: 199900000000n, balanceAfter: 0n, sufficient: true },
+    { isNative: true, amount: 200400000000n, balanceAfter: -500000000n, sufficient: false },
+    { isNative: true, amount: 200900000000n, balanceAfter: -1000000000n, sufficient: true },
+    { isNative: true, amount: 201000000000n, balanceAfter: -1100000000n, sufficient: false }
+  ])(
+    'should deduct amount and fee when the transferred asset pays the origin fee (native $isNative, amount $amount)',
+    async ({ isNative, amount, balanceAfter, sufficient }) => {
+      vi.mocked(isAssetEqual).mockImplementation((a, b) => a.assetId === b.assetId)
+      vi.spyOn(mockApi, 'findNativeAssetInfoOrThrow').mockReturnValue(
+        isNative ? dotAsset : { ...dotAsset, assetId: '0' }
+      )
+
+      const result = await getTransferInfo({
+        ...baseOptions,
+        api: mockApi,
+        currency: { ...baseOptions.currency, amount }
+      })
+
+      expect(result.origin.xcmFee.balanceAfter).toBe(balanceAfter)
+      expect(result.origin.xcmFee.sufficient).toBe(sufficient)
+    }
+  )
 
   it('should correctly determine hop chains if origin is Polkadot based', async () => {
     const options: TGetTransferInfoOptions<unknown, unknown, unknown> = {

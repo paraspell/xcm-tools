@@ -48,6 +48,7 @@ export type TGetXcmFeeBaseOptions<
   // Used when there is an asset swap on some hop
   swapConfig?: TXcmFeeSwapConfig
   skipReverseFeeCalculation?: boolean
+  skipEdDeposit?: boolean
 }
 
 export type TGetXcmFeeOptions<
