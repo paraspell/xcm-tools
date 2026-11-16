@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { isAssetEqual, isChainEvm, isSymbolMatch, type TAsset } from '@paraspell/assets'
+import { isAssetEqual, isSymbolMatch, type TAsset } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
@@ -406,7 +406,7 @@ abstract class SubstrateChain<
   ): Promise<TRes> {
     const { api, assetInfo: asset, recipient, isAmountAll, keepAlive } = options
 
-    const dest = isChainEvm(this.chain) ? recipient : { Id: recipient }
+    const dest = api.isChainEvm(this.chain) ? recipient : { Id: recipient }
 
     if (isAmountAll) {
       return Promise.resolve(

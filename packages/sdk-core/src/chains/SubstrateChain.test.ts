@@ -21,6 +21,7 @@ import { createTypeAndThenCall } from '../transfer'
 import type { BaseAssetsPallet, TSerializedExtrinsics, TTransferLocalOptions } from '../types'
 import { type TTransferInternalOptions } from '../types'
 import { getChain, handleExecuteTransfer, isNativeAssetTeleport, resolveDestChain } from '../utils'
+import CustomChain from './CustomChain'
 import SubstrateChain from './SubstrateChain'
 
 vi.mock('../constants/chains')
@@ -107,6 +108,7 @@ describe('Parachain', () => {
     findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'MYTH', location: {} }),
     getParaId: vi.fn().mockReturnValue(1000),
     getNativeAssetSymbol: vi.fn(),
+    isChainEvm: vi.fn(),
     getRelayChainSymbol: vi.fn().mockReturnValue('DOT'),
     hasPallet: vi.fn().mockReturnValue(false),
     localizeLocation: vi.fn()
@@ -705,6 +707,31 @@ describe('Parachain', () => {
           dest: { Id: options.recipient },
           value: BigInt(options.assetInfo.amount)
         }
+      })
+    })
+
+    it('formats the recipient of a custom chain by its EVM status from the api context', async () => {
+      const customChain = new CustomChain<unknown, unknown, unknown, 'MyChain'>(
+        'MyChain',
+        'Polkadot',
+        Version.V5
+      )
+      const customApi = api as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain'>
+      vi.spyOn(customApi, 'isChainEvm').mockImplementation(chain => chain === 'MyChain')
+      const spy = vi.spyOn(customApi, 'deserializeExtrinsics')
+
+      await customChain.transferLocalNativeAsset({
+        api: customApi,
+        assetInfo: { symbol: 'MYC', location: {}, amount: 100n },
+        sender: '0x456',
+        recipient: '0x123',
+        keepAlive: false
+      } as TTransferLocalOptions<unknown, unknown, unknown, 'MyChain'>)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Balances',
+        method: 'transfer_allow_death',
+        params: { dest: '0x123', value: 100n }
       })
     })
   })

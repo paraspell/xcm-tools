@@ -3,10 +3,11 @@ import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
-import { getAssetReserveChain } from './getAssetReserveChain'
-import { getRelayChainOf } from './getRelayChainOf'
+import { getAssetReserveChain, getAssetReserveChainImpl } from './getAssetReserveChain'
+import { getRelayChainOf, getRelayChainOfImpl } from './getRelayChainOf'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
@@ -15,7 +16,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
   Parents: { ONE: 1 }
 }))
 
-vi.mock('../../chains/getTChain')
+vi.mock('../../chains/getTChain', { spy: true })
 vi.mock('./getRelayChainOf')
 
 const mockJunctions = (values: Partial<Record<TJunctionType, unknown>>) => {
@@ -130,5 +131,24 @@ describe('getAssetReserveChain', () => {
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
     expect(result).toBe(mockOrigin)
+  })
+})
+
+describe('getAssetReserveChainImpl', () => {
+  it('resolves the reserve of a custom chain native asset to the custom chain via the api context', () => {
+    const api = {
+      _customCtx: {
+        customChains: { MyChain: { name: 'MyChain', paraId: 4242, ecosystem: 'Polkadot' } }
+      }
+    } as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain'>
+    mockJunctions({ Parachain: 4242 })
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+
+    const result = getAssetReserveChainImpl(api, 'MyChain', {
+      parents: 1,
+      interior: { X1: [{ Parachain: 4242 }] }
+    })
+
+    expect(result).toBe('MyChain')
   })
 })

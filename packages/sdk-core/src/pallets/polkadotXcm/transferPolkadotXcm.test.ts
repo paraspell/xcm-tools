@@ -1,5 +1,4 @@
 import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getXcmPallet } from '@paraspell/pallets'
 import { type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -8,12 +7,11 @@ import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } f
 import { createDestination } from '../../utils'
 import { transferPolkadotXcm } from './transferPolkadotXcm'
 
-vi.mock('@paraspell/pallets')
-
 vi.mock('../../utils/location')
 
 const mockApi = {
-  deserializeExtrinsics: vi.fn()
+  deserializeExtrinsics: vi.fn(),
+  getXcmPallet: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 const mockLocation: TLocation = {
@@ -42,7 +40,7 @@ const mockMethod: TPolkadotXcmMethod = 'limited_teleport_assets'
 
 describe('transferPolkadotXcm', () => {
   beforeEach(() => {
-    vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
+    vi.spyOn(mockApi, 'getXcmPallet').mockReturnValue('PolkadotXcm')
     vi.mocked(createDestination).mockReturnValue(mockLocation)
   })
 
@@ -105,5 +103,23 @@ describe('transferPolkadotXcm', () => {
         weight_limit: { Limited: '1000' }
       }
     })
+  })
+
+  it('takes the XCM pallet of a custom chain from the api context', async () => {
+    const customApi = mockApi as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain'>
+    vi.spyOn(customApi, 'getXcmPallet').mockImplementation(chain =>
+      chain === 'MyChain' ? 'XcmPallet' : 'PolkadotXcm'
+    )
+    const callSpy = vi.spyOn(customApi, 'deserializeExtrinsics')
+
+    await transferPolkadotXcm(
+      { ...baseOptions, api: customApi, chain: 'MyChain' },
+      mockMethod,
+      'Unlimited'
+    )
+
+    expect(callSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ module: 'XcmPallet', method: mockMethod })
+    )
   })
 })

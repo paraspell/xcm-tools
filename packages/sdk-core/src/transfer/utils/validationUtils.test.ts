@@ -1,7 +1,6 @@
 import {
   InvalidCurrencyError,
   isAssetEqual,
-  isChainEvm,
   isSymbolSpecifier,
   type TAssetInfo,
   type TAssetWithFee,
@@ -45,8 +44,7 @@ vi.mock('@paraspell/assets', () => ({
   getNativeAssets: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   isAssetEqual: vi.fn(),
-  isSymbolSpecifier: vi.fn(),
-  isChainEvm: vi.fn()
+  isSymbolSpecifier: vi.fn()
 }))
 
 vi.mock('../../utils')
@@ -370,7 +368,7 @@ describe('validateAssetSpecifiers', () => {
 })
 
 describe('validateTransact', () => {
-  const mockApi = {} as PolkadotApi<unknown, unknown, unknown>
+  const mockApi = { isChainEvm: vi.fn() } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   const baseOptions = {
     api: mockApi,
@@ -427,7 +425,7 @@ describe('validateTransact', () => {
 
   it('throws UnsupportedOperationError if from or to is an EVM chain', () => {
     vi.mocked(isHex).mockReturnValue(true)
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
 
     expect(() =>
       validateTransact({
@@ -446,7 +444,7 @@ describe('validateTransact', () => {
 
   it('returns ValidationError if sender does not match destination', () => {
     vi.mocked(isHex).mockReturnValue(true)
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(compareAddresses).mockReturnValue(false)
 
     const result = validateTransact({
@@ -458,7 +456,7 @@ describe('validateTransact', () => {
 
   it('returns undefined for valid substrate to substrate call', () => {
     vi.mocked(isHex).mockReturnValue(true)
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
     vi.mocked(compareAddresses).mockReturnValue(true)
 
     const result = validateTransact({
@@ -467,5 +465,28 @@ describe('validateTransact', () => {
     })
 
     expect(result).toBeUndefined()
+  })
+
+  it('takes the EVM status of a custom chain from the api context', () => {
+    type TMyChain = 'MyEvmChain' | 'MySubstrateChain'
+    vi.mocked(isHex).mockReturnValue(true)
+    vi.mocked(compareAddresses).mockReturnValue(true)
+
+    const customApi = {
+      isChainEvm: vi.fn((chain: string) => chain === 'MyEvmChain')
+    } as unknown as PolkadotApi<unknown, unknown, unknown, TMyChain>
+
+    const transactFrom = (from: TMyChain) =>
+      ({
+        ...baseOptions,
+        api: customApi,
+        from,
+        to: 'AssetHubPolkadot'
+      }) as unknown as TSubstrateTransferOptions<unknown, unknown, unknown, TMyChain>
+
+    expect(() => validateTransact(transactFrom('MyEvmChain'))).toThrowError(
+      UnsupportedOperationError
+    )
+    expect(validateTransact(transactFrom('MySubstrateChain'))).toBeUndefined()
   })
 })

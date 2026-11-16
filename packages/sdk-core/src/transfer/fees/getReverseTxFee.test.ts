@@ -1,4 +1,3 @@
-import { isChainEvm } from '@paraspell/assets'
 import type { TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -10,7 +9,6 @@ import { padFee } from '../../utils/fees'
 import { getReverseTxFee } from './getReverseTxFee'
 
 vi.mock('@paraspell/assets', () => ({
-  isChainEvm: vi.fn(),
   InvalidCurrencyError: class InvalidCurrencyError extends Error {}
 }))
 
@@ -36,7 +34,8 @@ vi.mock('../../builder', () => ({
 }))
 
 const mockApi = {
-  getPaymentInfo: vi.fn()
+  getPaymentInfo: vi.fn(),
+  isChainEvm: vi.fn()
 } as unknown as PolkadotApi<unknown, unknown, unknown>
 
 describe('getReverseTxFee', () => {
@@ -61,7 +60,7 @@ describe('getReverseTxFee', () => {
   } as TGetReverseTxFeeOptions<unknown, unknown, unknown>
 
   beforeEach(() => {
-    vi.mocked(isChainEvm).mockReturnValue(false)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(false)
 
     vi.mocked(isAddress).mockImplementation((addr: string) => addr.startsWith('0x'))
 
@@ -157,7 +156,7 @@ describe('getReverseTxFee', () => {
   })
 
   it('should use EVM address when origin chain is EVM', async () => {
-    vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.origin)
+    vi.spyOn(mockApi, 'isChainEvm').mockImplementation(chain => chain === defaultOptions.origin)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
@@ -170,7 +169,9 @@ describe('getReverseTxFee', () => {
   })
 
   it('should use EVM address when destination chain is EVM', async () => {
-    vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
+    vi.spyOn(mockApi, 'isChainEvm').mockImplementation(
+      chain => chain === defaultOptions.destination
+    )
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
@@ -183,7 +184,7 @@ describe('getReverseTxFee', () => {
   })
 
   it('should use correct addresses when both chains are EVM', async () => {
-    vi.mocked(isChainEvm).mockReturnValue(true)
+    vi.spyOn(mockApi, 'isChainEvm').mockReturnValue(true)
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
@@ -209,7 +210,9 @@ describe('getReverseTxFee', () => {
   })
 
   it('should handle EVM to Substrate scenario correctly', async () => {
-    vi.mocked(isChainEvm).mockImplementation(chain => chain === defaultOptions.destination)
+    vi.spyOn(mockApi, 'isChainEvm').mockImplementation(
+      chain => chain === defaultOptions.destination
+    )
     const currencyInput = { symbol: 'TOKEN', amount: mockAmount }
 
     const paymentInfoSpy = vi.spyOn(mockApi, 'getPaymentInfo')
@@ -218,6 +221,24 @@ describe('getReverseTxFee', () => {
 
     expect(mockRecipient).toHaveBeenCalledWith(defaultOptions.sender)
     expect(mockSender).toHaveBeenCalledWith(defaultOptions.recipient)
+    expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.recipient)
+  })
+
+  it('should take the EVM status of a custom chain from the api context', async () => {
+    const customApi = mockApi as unknown as PolkadotApi<unknown, unknown, unknown, 'MyEvmChain'>
+    vi.spyOn(customApi, 'isChainEvm').mockImplementation(chain => chain === 'MyEvmChain')
+    const paymentInfoSpy = vi.spyOn(customApi, 'getPaymentInfo')
+
+    await getReverseTxFee(
+      {
+        ...defaultOptions,
+        api: customApi,
+        destination: 'MyEvmChain'
+      } as unknown as TGetReverseTxFeeOptions<unknown, unknown, unknown, 'MyEvmChain'>,
+      { symbol: 'TOKEN', amount: mockAmount }
+    )
+
+    expect(mockSender).toHaveBeenLastCalledWith(defaultOptions.recipient)
     expect(paymentInfoSpy).toHaveBeenCalledWith(mockTxObject, defaultOptions.recipient)
   })
 })

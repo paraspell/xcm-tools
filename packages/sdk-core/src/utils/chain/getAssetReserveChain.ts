@@ -8,14 +8,15 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { getTChain } from '../../chains/getTChain'
+import { getTChain, getTChainImpl } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import { getRelayChainOf, getRelayChainOfImpl } from './getRelayChainOf'
 const getAssetReserveChainInner = <TCustomChain extends string = never>(
   chain: TSubstrateChain | TCustomChain,
   assetLocation: TLocation,
   resolveExternalReserve: boolean,
-  resolveRelay: (chain: TSubstrateChain | TCustomChain) => TRelaychain
+  resolveRelay: (chain: TSubstrateChain | TCustomChain) => TRelaychain,
+  findChain: (paraId: number, relaychain: TRelaychain) => TChain | TCustomChain | null
 ): TChain | TCustomChain => {
   const globalConsensus = getJunctionValue<Record<string, unknown>>(
     assetLocation,
@@ -29,7 +30,7 @@ const getAssetReserveChainInner = <TCustomChain extends string = never>(
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
-    const resolvedChain = getTChain(paraId, resolveRelay(chain))
+    const resolvedChain = findChain(paraId, resolveRelay(chain))
     if (!resolvedChain) {
       throw new RoutingResolutionError(`Chain with paraId ${paraId} not found`)
     }
@@ -62,8 +63,12 @@ export const getAssetReserveChain = (
   assetLocation: TLocation,
   resolveExternalReserve = false
 ): TChain =>
-  getAssetReserveChainInner<never>(chain, assetLocation, resolveExternalReserve, c =>
-    getRelayChainOf(c)
+  getAssetReserveChainInner<never>(
+    chain,
+    assetLocation,
+    resolveExternalReserve,
+    c => getRelayChainOf(c),
+    (paraId, relaychain) => getTChain(paraId, relaychain)
   )
 
 export const getAssetReserveChainImpl = <TApi, TRes, TSigner, TCustomChain extends string = never>(
@@ -72,6 +77,10 @@ export const getAssetReserveChainImpl = <TApi, TRes, TSigner, TCustomChain exten
   assetLocation: TLocation,
   resolveExternalReserve = false
 ): TChain | TCustomChain =>
-  getAssetReserveChainInner<TCustomChain>(chain, assetLocation, resolveExternalReserve, c =>
-    getRelayChainOfImpl(api, c)
+  getAssetReserveChainInner<TCustomChain>(
+    chain,
+    assetLocation,
+    resolveExternalReserve,
+    c => getRelayChainOfImpl(api, c),
+    (paraId, relaychain) => getTChainImpl<TCustomChain>(paraId, relaychain, api._customCtx)
   )

@@ -205,7 +205,7 @@ const createXcmAndCall = async <TApi, TRes, TSigner, TCustomChain extends string
   const hasApiSupport = api.hasXcmPaymentApiSupport(chain ?? exchangeChain)
   const weight = hasApiSupport ? await api.getXcmWeight(xcm) : (dryRunWeight ?? MAX_WEIGHT)
 
-  const call = createExecuteCall(chain ?? exchangeChain, xcm, weight)
+  const call = createExecuteCall(chain ?? exchangeChain, xcm, weight, api)
 
   return { xcm, weight, call }
 }

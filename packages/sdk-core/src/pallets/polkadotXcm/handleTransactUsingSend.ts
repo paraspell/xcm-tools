@@ -1,5 +1,3 @@
-import { getXcmPallet } from '@paraspell/pallets'
-
 import { UnsupportedOperationError } from '../../errors'
 import { validateFeeAssetSupport } from '../../transfer'
 import type { TPolkadotXCMTransferOptions, TSerializedExtrinsics } from '../../types'
@@ -84,7 +82,7 @@ export const handleTransactUsingSend = async <
   ]
 
   return {
-    module: getXcmPallet(chain),
+    module: api.getXcmPallet(chain),
     method: 'send',
     params: {
       dest: addXcmVersionHeader(dest, version),

@@ -113,7 +113,8 @@ export const handleExecuteTransfer = async <
         destFee: feeAssetAmount
       }
     }),
-    MAX_WEIGHT
+    MAX_WEIGHT,
+    api
   )
 
   const dryRunResult = await dryRunInternal({
@@ -158,5 +159,5 @@ export const handleExecuteTransfer = async <
 
   const weight = await api.getXcmWeight(xcm)
 
-  return createExecuteCall(chain, xcm, weight)
+  return createExecuteCall(chain, xcm, weight, api)
 }

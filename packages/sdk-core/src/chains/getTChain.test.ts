@@ -1,9 +1,10 @@
 import { PARACHAINS, RELAYCHAINS } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
+import type { TFullCustomCtx } from '../types'
 import { getChain } from '../utils'
 import { getParaId } from './config'
-import { getTChain, getTSubstrateChain } from './getTChain'
+import { getTChain, getTChainImpl, getTSubstrateChain } from './getTChain'
 
 describe('getTChain', () => {
   it('should return supported assets for all chains', () => {
@@ -32,6 +33,31 @@ describe('getTChain', () => {
   it('should return null for not existing paraId', () => {
     const chain = getTChain(9999, 'Polkadot')
     expect(chain).toBeNull()
+  })
+})
+
+describe('getTChainImpl', () => {
+  const ctx = {
+    customChains: {
+      MyChain: { name: 'MyChain', paraId: 4242, ecosystem: 'Polkadot' },
+      MyClash: { name: 'MyClash', paraId: 2034, ecosystem: 'Polkadot' }
+    }
+  } as unknown as TFullCustomCtx
+
+  it('should return a custom chain registered with the paraId in the ecosystem', () => {
+    expect(getTChainImpl(4242, 'Polkadot', ctx)).toBe('MyChain')
+  })
+
+  it('should not return a custom chain registered in another ecosystem', () => {
+    expect(getTChainImpl(4242, 'Kusama', ctx)).toBeNull()
+  })
+
+  it('should prefer the built-in chain when a custom chain reuses its paraId', () => {
+    expect(getTChainImpl(2034, 'Polkadot', ctx)).toBe('Hydration')
+  })
+
+  it('should return null for an unknown paraId without a context', () => {
+    expect(getTChainImpl(4242, 'Polkadot')).toBeNull()
   })
 })
 
