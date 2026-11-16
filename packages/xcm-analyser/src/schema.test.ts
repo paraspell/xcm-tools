@@ -1,5 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
+import { convertLocationToUrl } from './converter/convert';
 import {
   GLOBAL_CONSENSUS_NETWORKS,
   GlobalConsensusNetworkSchema,
@@ -358,8 +359,17 @@ describe('InteriorSchema', () => {
       {
         name: 'Parachain u32',
         parse: (value: unknown) => JunctionParachain.safeParse({ Parachain: value }),
-        valid: [0, 4_294_967_295],
-        invalid: [-1, '-1', 1.5, '1.5', 4_294_967_296, 4_294_967_295n, '4294967295'],
+        valid: [0, 4_294_967_295, '4,294,967,295', '4294967295', 4_294_967_295n],
+        invalid: [
+          -1,
+          '-1',
+          1.5,
+          '1.5',
+          4_294_967_296,
+          '4,294,967,296',
+          '4294967296',
+          4_294_967_296n,
+        ],
       },
       {
         name: 'AccountIndex64.index u64',
@@ -371,8 +381,8 @@ describe('InteriorSchema', () => {
       {
         name: 'PalletInstance u8',
         parse: (value: unknown) => JunctionPalletInstance.safeParse({ PalletInstance: value }),
-        valid: [0, 255],
-        invalid: [-1, '-1', 1.5, '1.5', 256, 255n, '255'],
+        valid: [0, 255, '255', 255n],
+        invalid: [-1, '-1', 1.5, '1.5', 256, '256', 256n],
       },
       {
         name: 'GeneralIndex u128',
@@ -395,8 +405,8 @@ describe('InteriorSchema', () => {
         name: 'GeneralKey.length u8',
         parse: (value: unknown) =>
           JunctionGeneralKey.safeParse({ GeneralKey: { length: value, data: '0x00' } }),
-        valid: [0, 255],
-        invalid: [-1, '-1', 1.5, '1.5', 256, 255n, '255'],
+        valid: [0, 255, '255', 255n],
+        invalid: [-1, '-1', 1.5, '1.5', 256, '256', 256n],
       },
     ];
 
@@ -539,7 +549,6 @@ describe('InteriorSchema', () => {
       { id: { Moniker: '0x646f74' }, part: null },
       { id: { Moniker: 'dot!' }, part: null },
       { id: { Index: -1 }, part: null },
-      { id: { Index: '42' }, part: null },
       { id: { Unknown: 1 }, part: null },
       { id: null, part: { Members: 3 } },
       { id: null, part: { Members: { count: 4_294_967_296 } } },
@@ -683,11 +692,86 @@ describe('LocationSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it.each([-1, 1.5, 256, '0', '255', 'abc'])(
+  it.each([-1, 1.5, 256, '256', 'abc'])(
     'should fail if parents is not a valid u8: %s',
     (parents) => {
       const result = LocationSchema.safeParse({ parents, interior: 'Here' });
       expect(result.success).toBe(false);
     },
   );
+});
+
+describe('String-form numeric junctions (#2539)', () => {
+  it.each([
+    [{ parents: 1, interior: { X1: { Parachain: '2000' } } }, '../Parachain(2000)'],
+    [{ parents: 1, interior: { X1: { PalletInstance: '50' } } }, '../PalletInstance(50)'],
+    [{ parents: '1', interior: { X1: { Parachain: 2000 } } }, '../Parachain(2000)'],
+    [{ parents: 1, interior: { X1: { Parachain: '2,030' } } }, '../Parachain(2030)'],
+    [{ parents: 1, interior: { X1: { GeneralIndex: '1,984' } } }, '../GeneralIndex(1984)'],
+  ])('convertLocationToUrl accepts string-form input: %j', (input, expected) => {
+    expect(convertLocationToUrl(input)).toBe(expected);
+  });
+
+  it('accepts the repo fixture location with string-form junctions', () => {
+    // packages/assets/src/location/compareLocations.test.ts:24
+    const location = {
+      parents: 1,
+      interior: {
+        X3: [{ Parachain: '1000' }, { PalletInstance: '50' }, { GeneralIndex: '1,984' }],
+      },
+    };
+    expect(convertLocationToUrl(location)).toBe(
+      '../Parachain(1000)/PalletInstance(50)/GeneralIndex(1984)',
+    );
+  });
+
+  it('accepts polkadot-js .toHuman() output', () => {
+    const location = {
+      parents: '1',
+      interior: { X2: [{ Parachain: '2,030' }, { PalletInstance: '50' }] },
+    };
+    expect(convertLocationToUrl(location)).toBe('../Parachain(2030)/PalletInstance(50)');
+  });
+
+  it('normalizes string and bigint inputs to numbers', () => {
+    const location = LocationSchema.parse({
+      parents: '1',
+      interior: { X1: { Parachain: '2000' } },
+    });
+    expect(location).toEqual({ parents: 1, interior: { X1: { Parachain: 2000 } } });
+    expectTypeOf(location.parents).toEqualTypeOf<number>();
+
+    expect(JunctionParachain.parse({ Parachain: 4_294_967_295n })).toEqual({
+      Parachain: 4_294_967_295,
+    });
+    expect(JunctionPalletInstance.parse({ PalletInstance: 255n })).toEqual({
+      PalletInstance: 255,
+    });
+  });
+
+  it('accepts string-form Index in a Plurality body id', () => {
+    const result = JunctionPlurality.safeParse({
+      Plurality: { id: { Index: '42' }, part: null },
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.Plurality.id).toEqual({ Index: 42 });
+    }
+  });
+
+  it('rejects out-of-range u32 values', () => {
+    for (const value of [4_294_967_296, '4,294,967,296', '4294967296', 4_294_967_296n]) {
+      expect(JunctionParachain.safeParse({ Parachain: value }).success).toBe(false);
+    }
+  });
+
+  it('rejects out-of-range u8 values', () => {
+    for (const value of [256, '256', 256n]) {
+      expect(JunctionPalletInstance.safeParse({ PalletInstance: value }).success).toBe(false);
+    }
+  });
+
+  it.each(['1,2,3', 'abc', '1.5', '-1', ''])('rejects malformed numeric strings: %s', (value) => {
+    expect(JunctionPalletInstance.safeParse({ PalletInstance: value }).success).toBe(false);
+  });
 });

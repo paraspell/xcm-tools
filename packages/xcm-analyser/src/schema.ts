@@ -9,11 +9,18 @@ const IntegerAsBigInt = z
     error: 'Expected an integer, bigint or integer string',
   })
   .transform((value) => BigInt(value));
-const createNumberUint = (bits: number) =>
-  z
-    .int()
-    .nonnegative()
-    .max(2 ** bits - 1);
+const createUint = (bits: number) => {
+  const max = 2 ** bits - 1;
+  return z
+    .union([
+      NumericString.transform((value) => Number(value)),
+      z.int(),
+      z.bigint().transform((value) => Number(value)),
+    ])
+    .refine((value) => value >= 0 && value <= max, {
+      error: `Expected an integer in [0, ${max}]`,
+    });
+};
 const createBigIntUint = (bits: bigint) =>
   IntegerAsBigInt.pipe(
     z
@@ -21,8 +28,8 @@ const createBigIntUint = (bits: bigint) =>
       .nonnegative()
       .max((1n << bits) - 1n),
   );
-const Uint8 = createNumberUint(8);
-const Uint32 = createNumberUint(32);
+const Uint8 = createUint(8);
+const Uint32 = createUint(32);
 export const Uint64 = createBigIntUint(64n);
 const Uint128 = createBigIntUint(128n);
 const hexStringError =
