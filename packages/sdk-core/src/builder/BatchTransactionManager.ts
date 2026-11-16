@@ -40,15 +40,19 @@ class BatchTransactionManager<TApi, TRes, TSigner, TCustomChain extends string =
     const normalized = await Promise.all(
       this.transactionOptions.map(async opts => {
         const { builder } = opts
-        return normalizeAmountAll(api, builder, opts)
+        const res = await normalizeAmountAll(api, builder, opts)
+        return { ...res, builder }
       })
     )
 
     const txs = await Promise.all(
-      normalized.map(({ options }) => {
-        const { from: origin } = options
+      normalized.map(async ({ options: txOptions, builder }) => {
+        const { from: origin } = txOptions
         assertSubstrateOrigin(origin)
-        return createTransferOrSwap({ ...options, from: origin })
+        const substrateOptions = { ...txOptions, from: origin }
+        const tx = await createTransferOrSwap(substrateOptions)
+        await builder.maybePerformXcmFormatCheck(tx, substrateOptions, false)
+        return tx
       })
     )
 

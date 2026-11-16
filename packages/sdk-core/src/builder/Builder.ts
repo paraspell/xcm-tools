@@ -468,7 +468,7 @@ export class GeneralBuilder<
     return { txContexts, options: normalizedOptions }
   }
 
-  private async maybePerformXcmFormatCheck(
+  async maybePerformXcmFormatCheck(
     tx: TRes,
     options: TSubstrateTransferBaseOptions<TApi, TRes, TSigner>,
     isCalledInternally: boolean
