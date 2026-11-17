@@ -107,6 +107,31 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
 
+  it('should use the third-currency fee asset balance and never the transferred asset balance', async () => {
+    const feeAsset = { ...glmrAsset, symbol: 'USDT', decimals: 6 } as TAssetInfo
+    const options = {
+      ...baseOptions,
+      api: mockApi,
+      isOriginFeeAsset: true,
+      destFeeDetail: { fee: DEFAULT_FEE, asset: feeAsset } as TXcmFeeDetail
+    }
+
+    vi.mocked(getAssetBalanceInternal)
+      .mockResolvedValueOnce(DEFAULT_BALANCE)
+      .mockResolvedValueOnce(2_000_000n)
+
+    const result = await buildDestInfo(options)
+
+    expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(2, {
+      api: mockClonedApi,
+      address: options.recipient,
+      chain: options.destination,
+      asset: feeAsset
+    })
+    expect(result.xcmFee.balance).toBe(2_000_000n)
+    expect(result.xcmFee.balanceAfter).toBe(2_000_000n - DEFAULT_FEE)
+  })
+
   it('should return UnableToComputeError if fee currency is different and not Ethereum', async () => {
     const options = {
       ...baseOptions,
