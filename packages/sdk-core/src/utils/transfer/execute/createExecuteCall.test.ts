@@ -16,22 +16,7 @@ describe('createExecuteCall', () => {
     proofSize: 456n
   }
 
-  it('should preserve the three-argument call for built-in chains', () => {
-    expect(createExecuteCall('Hydration', fakeXcm, maxWeight)).toEqual({
-      module: 'PolkadotXcm',
-      method: 'execute',
-      params: {
-        message: fakeXcm,
-        max_weight: { ref_time: 123n, proof_size: 456n }
-      }
-    })
-  })
-
   it('should return correct serialized api call with given xcm and maxWeight', () => {
-    const api = {
-      getXcmPallet: vi.fn().mockReturnValue('PolkadotXcm')
-    } as unknown as PolkadotApi<unknown, unknown, unknown>
-
     const expected: TSerializedExtrinsics = {
       module: 'PolkadotXcm',
       method: 'execute',
@@ -44,7 +29,7 @@ describe('createExecuteCall', () => {
       }
     }
 
-    const result = createExecuteCall(mockChain, fakeXcm, maxWeight, api)
+    const result = createExecuteCall(mockChain, fakeXcm, maxWeight)
 
     expect(result).toEqual(expected)
   })
@@ -56,6 +41,13 @@ describe('createExecuteCall', () => {
 
     const result = createExecuteCall<'MyChain'>('MyChain', fakeXcm, maxWeight, api)
 
-    expect(result.module).toBe('XcmPallet')
+    expect(result).toEqual({
+      module: 'XcmPallet',
+      method: 'execute',
+      params: {
+        message: fakeXcm,
+        max_weight: { ref_time: 123n, proof_size: 456n }
+      }
+    })
   })
 })

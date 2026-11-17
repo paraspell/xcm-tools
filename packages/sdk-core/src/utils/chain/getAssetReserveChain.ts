@@ -8,7 +8,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../api'
-import { getTChain, getTChainImpl } from '../../chains/getTChain'
+import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
 import { getRelayChainOf, getRelayChainOfImpl } from './getRelayChainOf'
 const getAssetReserveChainInner = <TCustomChain extends string = never>(
@@ -82,5 +82,13 @@ export const getAssetReserveChainImpl = <TApi, TRes, TSigner, TCustomChain exten
     assetLocation,
     resolveExternalReserve,
     c => getRelayChainOfImpl(api, c),
-    (paraId, relaychain) => getTChainImpl<TCustomChain>(paraId, relaychain, api._customCtx)
+    (paraId, relaychain) => {
+      const builtInChain = getTChain(paraId, relaychain)
+      if (builtInChain) return builtInChain
+
+      const customChain = Object.values(api._customCtx?.customChains ?? {}).find(
+        entry => entry.paraId === paraId && entry.ecosystem === relaychain
+      )
+      return customChain ? (customChain.name as TCustomChain) : null
+    }
   )

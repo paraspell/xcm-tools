@@ -1,7 +1,7 @@
 import type { TJunctionType, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
@@ -135,20 +135,47 @@ describe('getAssetReserveChain', () => {
 })
 
 describe('getAssetReserveChainImpl', () => {
-  it('resolves the reserve of a custom chain native asset to the custom chain via the api context', () => {
-    const api = {
-      _customCtx: {
-        customChains: { MyChain: { name: 'MyChain', paraId: 4242, ecosystem: 'Polkadot' } }
+  const api = {
+    _customCtx: {
+      customChains: {
+        MyChain: { name: 'MyChain', paraId: 4242, ecosystem: 'Polkadot' },
+        MyClash: { name: 'MyClash', paraId: 2034, ecosystem: 'Polkadot' }
       }
-    } as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain'>
+    }
+  } as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain' | 'MyClash'>
+  const location: TLocation = { parents: 1, interior: { X1: [{ Parachain: 4242 }] } }
+
+  beforeEach(async () => {
+    const actual =
+      await vi.importActual<typeof import('../../chains/getTChain')>('../../chains/getTChain')
+    vi.mocked(getTChain).mockImplementation(actual.getTChain)
     mockJunctions({ Parachain: 4242 })
     vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+  })
 
-    const result = getAssetReserveChainImpl(api, 'MyChain', {
-      parents: 1,
-      interior: { X1: [{ Parachain: 4242 }] }
-    })
+  it('resolves the reserve of a custom chain native asset via the api context', () => {
+    expect(getAssetReserveChainImpl(api, 'MyChain', location)).toBe('MyChain')
+  })
 
-    expect(result).toBe('MyChain')
+  it('does not resolve a custom chain registered in another ecosystem', () => {
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Kusama')
+
+    expect(() => getAssetReserveChainImpl(api, 'MyChain', location)).toThrow(
+      new RoutingResolutionError('Chain with paraId 4242 not found')
+    )
+  })
+
+  it('prefers the built-in chain when a custom chain reuses its paraId', () => {
+    mockJunctions({ Parachain: 2034 })
+
+    expect(getAssetReserveChainImpl(api, 'MyChain', location)).toBe('Hydration')
+  })
+
+  it('rejects an unknown paraId without a custom context', () => {
+    const apiWithoutContext = {} as PolkadotApi<unknown, unknown, unknown>
+
+    expect(() => getAssetReserveChainImpl(apiWithoutContext, 'Hydration', location)).toThrow(
+      new RoutingResolutionError('Chain with paraId 4242 not found')
+    )
   })
 })
