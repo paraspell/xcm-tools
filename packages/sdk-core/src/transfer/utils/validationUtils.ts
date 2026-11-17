@@ -1,6 +1,5 @@
 import {
   InvalidCurrencyError,
-  isChainEvm,
   isSymbolSpecifier,
   type TAssetInfo,
   type TAssetWithFee,
@@ -137,7 +136,7 @@ export const validateTransact = <TApi, TRes, TSigner, TCustomChain extends strin
     throw new ValidationError('Transact call hex must be a valid hex string.')
   }
 
-  if (isChainEvm(from) || (typeof to === 'string' && isChainEvm(to))) {
+  if (api.isChainEvm(from) || (typeof to === 'string' && api.isChainEvm(to))) {
     throw new UnsupportedOperationError(
       'Transact option is only supported for Substrate to Substrate scenarios.'
     )

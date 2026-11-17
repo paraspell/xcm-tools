@@ -1,12 +1,13 @@
 import type { TJunctionType, TLocation, TSubstrateChain } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { deepEqual, getJunctionValue } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { PolkadotApi } from '../../api'
 import { getTChain } from '../../chains/getTChain'
 import { RoutingResolutionError } from '../../errors'
-import { getAssetReserveChain } from './getAssetReserveChain'
-import { getRelayChainOf } from './getRelayChainOf'
+import { getAssetReserveChain, getAssetReserveChainImpl } from './getAssetReserveChain'
+import { getRelayChainOf, getRelayChainOfImpl } from './getRelayChainOf'
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
@@ -15,7 +16,7 @@ vi.mock('@paraspell/sdk-common', async importActual => ({
   Parents: { ONE: 1 }
 }))
 
-vi.mock('../../chains/getTChain')
+vi.mock('../../chains/getTChain', { spy: true })
 vi.mock('./getRelayChainOf')
 
 const mockJunctions = (values: Partial<Record<TJunctionType, unknown>>) => {
@@ -130,5 +131,51 @@ describe('getAssetReserveChain', () => {
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
     expect(result).toBe(mockOrigin)
+  })
+})
+
+describe('getAssetReserveChainImpl', () => {
+  const api = {
+    _customCtx: {
+      customChains: {
+        MyChain: { name: 'MyChain', paraId: 4242, ecosystem: 'Polkadot' },
+        MyClash: { name: 'MyClash', paraId: 2034, ecosystem: 'Polkadot' }
+      }
+    }
+  } as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain' | 'MyClash'>
+  const location: TLocation = { parents: 1, interior: { X1: [{ Parachain: 4242 }] } }
+
+  beforeEach(async () => {
+    const actual =
+      await vi.importActual<typeof import('../../chains/getTChain')>('../../chains/getTChain')
+    vi.mocked(getTChain).mockImplementation(actual.getTChain)
+    mockJunctions({ Parachain: 4242 })
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Polkadot')
+  })
+
+  it('resolves the reserve of a custom chain native asset via the api context', () => {
+    expect(getAssetReserveChainImpl(api, 'MyChain', location)).toBe('MyChain')
+  })
+
+  it('does not resolve a custom chain registered in another ecosystem', () => {
+    vi.mocked(getRelayChainOfImpl).mockReturnValue('Kusama')
+
+    expect(() => getAssetReserveChainImpl(api, 'MyChain', location)).toThrow(
+      new RoutingResolutionError('Chain with paraId 4242 not found')
+    )
+  })
+
+  it('prefers the built-in chain when a custom chain reuses its paraId', () => {
+    mockJunctions({ Parachain: 2034 })
+
+    expect(getAssetReserveChainImpl(api, 'MyChain', location)).toBe('Hydration')
+  })
+
+  it('rejects an unknown paraId without a custom context', () => {
+    const apiWithoutContext = {} as PolkadotApi<unknown, unknown, unknown>
+
+    expect(() => getAssetReserveChainImpl(apiWithoutContext, 'Hydration', location)).toThrow(
+      new RoutingResolutionError('Chain with paraId 4242 not found')
+    )
   })
 })

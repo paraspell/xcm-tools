@@ -329,11 +329,14 @@ describe('handleExecuteTransfer', () => {
 
     expect(getXcmWeightSpy).toHaveBeenCalledWith(mockXcm)
     expect(createExecuteCall).toHaveBeenCalledTimes(2)
-    expect(createExecuteCall).toHaveBeenNthCalledWith(1, input.chain, mockXcm, MAX_WEIGHT)
-    expect(createExecuteCall).toHaveBeenNthCalledWith(2, input.chain, mockXcm, {
-      proofSize: 0n,
-      refTime: 12000n
-    })
+    expect(createExecuteCall).toHaveBeenNthCalledWith(1, input.chain, mockXcm, MAX_WEIGHT, mockApi)
+    expect(createExecuteCall).toHaveBeenNthCalledWith(
+      2,
+      input.chain,
+      mockXcm,
+      { proofSize: 0n, refTime: 12000n },
+      mockApi
+    )
   })
 
   it('should use MIN_FEE for reserveFee when no hops', async () => {

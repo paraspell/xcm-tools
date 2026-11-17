@@ -1,4 +1,3 @@
-import { getXcmPallet } from '@paraspell/pallets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -9,8 +8,6 @@ import { addXcmVersionHeader, createBeneficiaryLocation, createDestination } fro
 import { createBuyExecution } from './createBuyExecution'
 import { createTransactInstructions } from './createTransact'
 import { handleTransactUsingSend } from './handleTransactUsingSend'
-
-vi.mock('@paraspell/pallets')
 
 vi.mock('../../utils')
 
@@ -26,8 +23,9 @@ describe('handleTransactUsingSend', () => {
   let api: PolkadotApi<unknown, unknown, unknown>
 
   beforeEach(() => {
-    api = {} as unknown as PolkadotApi<unknown, unknown, unknown>
-    vi.mocked(getXcmPallet).mockReturnValue('PolkadotXcm')
+    api = {
+      getXcmPallet: vi.fn().mockReturnValue('PolkadotXcm')
+    } as unknown as PolkadotApi<unknown, unknown, unknown>
     vi.mocked(addXcmVersionHeader).mockImplementation(obj => obj)
     vi.mocked(createBeneficiaryLocation).mockReturnValue({
       parents: 0,
@@ -124,10 +122,11 @@ describe('handleTransactUsingSend', () => {
   describe('Return value structure', () => {
     it('should return correct extrinsic structure', async () => {
       const options = createMockOptions()
+      const getXcmPalletSpy = vi.spyOn(api, 'getXcmPallet')
 
       const result = await handleTransactUsingSend(options)
 
-      expect(getXcmPallet).toHaveBeenCalledWith(options.chain)
+      expect(getXcmPalletSpy).toHaveBeenCalledWith(options.chain)
       expect(result).toHaveProperty('module')
       expect(result).toHaveProperty('method')
       expect(result).toHaveProperty('params')
@@ -135,6 +134,21 @@ describe('handleTransactUsingSend', () => {
       expect(result.method).toBe('send')
       expect(result.params).toHaveProperty('dest')
       expect(result.params).toHaveProperty('message')
+    })
+
+    it('should take the XCM pallet of a custom chain from the api context', async () => {
+      const customApi = {
+        getXcmPallet: vi.fn((chain: string) => (chain === 'MyChain' ? 'XcmPallet' : 'PolkadotXcm'))
+      } as unknown as PolkadotApi<unknown, unknown, unknown, 'MyChain'>
+      const options = {
+        ...createMockOptions(),
+        api: customApi,
+        chain: 'MyChain'
+      } as TPolkadotXCMTransferOptions<unknown, unknown, unknown, 'MyChain'>
+
+      const result = await handleTransactUsingSend(options)
+
+      expect(result.module).toBe('XcmPallet')
     })
 
     it('should call createDestination with correct parameters', async () => {

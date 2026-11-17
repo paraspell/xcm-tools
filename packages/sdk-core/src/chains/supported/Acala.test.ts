@@ -41,7 +41,8 @@ describe('Acala', () => {
   })
 
   const mockApi = {
-    deserializeExtrinsics: vi.fn()
+    deserializeExtrinsics: vi.fn(),
+    isChainEvm: () => false
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
   it('should use Balances keep alive transfer for native asset', async () => {

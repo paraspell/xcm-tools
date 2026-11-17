@@ -1,4 +1,4 @@
-import { getNativeAssetSymbol, isSymbolMatch } from '@paraspell/assets'
+import { isSymbolMatch } from '@paraspell/assets'
 import { isSubstrateBridge } from '@paraspell/sdk-common'
 
 import { getAssetBalanceInternal, getBalanceInternal } from '../../balance'
@@ -64,7 +64,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
   const isSubBridge = isSubstrateBridge(origin, destination)
 
   if (isSubBridge) {
-    const nativeAssetOfOriginSymbol = getNativeAssetSymbol(origin)
+    const nativeAssetOfOriginSymbol = api.getNativeAssetSymbol(origin)
     let isOriginAssetNative = false
 
     if (destAsset.symbol === nativeAssetOfOriginSymbol) {
@@ -93,7 +93,8 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
   }
 
   let destXcmFeeBalance: bigint
-  const isDestFeeInNativeCurrency = destFeeDetail.asset.symbol === getNativeAssetSymbol(destination)
+  const isDestFeeInNativeCurrency =
+    destFeeDetail.asset.symbol === api.getNativeAssetSymbol(destination)
 
   if (isDestFeeInNativeCurrency) {
     const destRecipientNativeBalance = await getBalanceInternal({
