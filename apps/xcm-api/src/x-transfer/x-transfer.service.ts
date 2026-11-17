@@ -7,6 +7,7 @@ import {
   getBridgeStatus,
   getChainProviders,
   getParaEthTransferFees,
+  TCustomChainsMap,
   TPapiApi,
   TPapiSigner,
   TPapiTransaction,
@@ -106,6 +107,7 @@ export class XTransferService {
   private buildXTransfer(
     builder: ReturnType<typeof Builder>,
     transfer: XTransferDto | EvmXTransferDto,
+    customChains: TCustomChainsMap | undefined = transfer.options?.customChains,
   ) {
     const {
       from,
@@ -121,11 +123,10 @@ export class XTransferService {
       ahAddress,
       transactOptions,
       swapOptions,
-      options,
     } = transfer;
 
-    assertChain(from, options?.customChains);
-    assertDestination(to, options?.customChains);
+    assertChain(from, customChains);
+    assertDestination(to, customChains);
 
     let finalBuilder = builder
       .from(from)
@@ -309,7 +310,13 @@ export class XTransferService {
 
     try {
       for (const transfer of transfers) {
-        const finalBuilder = this.buildXTransfer(builder, transfer);
+        // Batch transfers carry no per-transfer options, so chain validation
+        // must use the batch-level customChains passed to the Builder above.
+        const finalBuilder = this.buildXTransfer(
+          builder,
+          transfer,
+          optionsWithoutMode.customChains,
+        );
         builder = finalBuilder.addToBatch();
       }
 
