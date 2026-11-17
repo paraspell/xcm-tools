@@ -894,6 +894,89 @@ describe('XTransferService', () => {
         'transfer',
       );
     });
+
+    describe('batch-level customChains', () => {
+      const customChains = {
+        MyChain: {
+          paraId: 9999,
+          ecosystem: 'Polkadot' as const,
+          providers: [{ name: 'x', endpoint: 'wss://example.invalid' }],
+          xcmVersion: paraspellSdk.Version.V4,
+        },
+      };
+
+      it('accepts a custom chain defined in batch options as origin', async () => {
+        const batchDto = {
+          transfers: [
+            {
+              from: 'MyChain',
+              to: 'AssetHubPolkadot',
+              recipient,
+              currency,
+            },
+          ],
+          options: { customChains },
+        } as unknown as BatchXTransferDto;
+
+        const result = await service.generateBatchXcmCall(batchDto);
+
+        expect(result).toBe(txHashBatch);
+        expect(paraspellSdk.Builder).toHaveBeenCalledWith({ customChains });
+        expect(builderMock.from).toHaveBeenCalledWith('MyChain');
+        expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
+      });
+
+      it('accepts a custom chain defined in batch options as destination', async () => {
+        const batchDto = {
+          transfers: [
+            {
+              from: 'AssetHubPolkadot',
+              to: 'MyChain',
+              recipient,
+              currency,
+            },
+            {
+              from: 'AssetHubPolkadot',
+              to: 'Hydration',
+              recipient,
+              currency,
+            },
+          ],
+          options: {
+            mode: paraspellSdk.BatchMode.BATCH_ALL,
+            customChains,
+          },
+        } as unknown as BatchXTransferDto;
+
+        const result = await service.generateBatchXcmCall(batchDto);
+
+        expect(result).toBe(txHashBatch);
+        expect(builderMock.to).toHaveBeenCalledWith('MyChain');
+        expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
+        expect(builderMock.buildBatch).toHaveBeenCalledWith({
+          mode: paraspellSdk.BatchMode.BATCH_ALL,
+        });
+      });
+
+      it('still rejects a chain that is not in batch customChains', async () => {
+        const batchDto = {
+          transfers: [
+            {
+              from: 'OtherChain',
+              to: 'AssetHubPolkadot',
+              recipient,
+              currency,
+            },
+          ],
+          options: { customChains },
+        } as unknown as BatchXTransferDto;
+
+        await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
+          "Unknown chain 'OtherChain'",
+        );
+        expect(builderMock.addToBatch).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('getBridgeStatus', () => {
