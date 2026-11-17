@@ -15,6 +15,7 @@ import {
   localizeLocation,
   RELAY_LOCATION,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   type TLocation,
@@ -1228,17 +1229,47 @@ describe("DedotApi", () => {
       expect(result).toEqual({ refTime: 100n, proofSize: 200n });
     });
 
-    it("preserves transformed XCM and defaults missing weight fields to zero", async () => {
+    it("preserves transformed XCM without calling transform", async () => {
+      const xcm = { type: "V5", value: [] };
+      const result = await dedotApi.getXcmWeight(xcm);
+      expect(result).toEqual({ refTime: 100n, proofSize: 200n });
+      expect(transform).not.toHaveBeenCalledWith(xcm);
+    });
+
+    it("throws RuntimeApiError when queryXcmWeight returns isErr", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
+        isOk: false,
+        isErr: true,
+        err: "WeightNotComputable",
+      });
+
+      await expect(dedotApi.getXcmWeight({ some: "xcm" })).rejects.toThrow(
+        new RuntimeApiError(
+          'Failed to get XCM weight for payment fee calculation. Reason: "WeightNotComputable"',
+        ),
+      );
+    });
+
+    it("throws RuntimeApiError with bigint-safe serialization when err contains bigint", async () => {
+      mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
+        isOk: false,
+        isErr: true,
+        err: { type: "Overweight", value: 999n },
+      });
+
+      await expect(dedotApi.getXcmWeight({ some: "xcm" })).rejects.toThrow(
+        RuntimeApiError,
+      );
+    });
+
+    it("throws RuntimeApiError when weight fields are missing instead of fabricating zero weight", async () => {
       mockApiRaw.call.xcmPaymentApi.queryXcmWeight.mockResolvedValueOnce({
         value: {},
       });
 
-      const xcm = { type: "V5", value: [] };
-      await expect(dedotApi.getXcmWeight(xcm)).resolves.toEqual({
-        refTime: 0n,
-        proofSize: 0n,
-      });
-      expect(transform).not.toHaveBeenCalledWith(xcm);
+      await expect(
+        dedotApi.getXcmWeight({ type: "V5", value: [] }),
+      ).rejects.toThrow(RuntimeApiError);
     });
   });
 

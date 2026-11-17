@@ -48,6 +48,7 @@ import {
   RELAY_LOCATION,
   replaceBigInt,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   UnsupportedOperationError,
@@ -745,10 +746,23 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     const result = await this.api.call.xcmPaymentApi.queryXcmWeight(
       !xcm.type ? transform(xcm) : xcm,
     );
-    const okValue = result?.value;
+
+    if (!result || result.isErr) {
+      throw new RuntimeApiError(
+        `Failed to get XCM weight for payment fee calculation. Reason: ${JSON.stringify(result?.err, replaceBigInt)}`,
+      );
+    }
+
+    const okValue = result.value;
+    if (okValue?.refTime === undefined || okValue?.proofSize === undefined) {
+      throw new RuntimeApiError(
+        `Failed to get XCM weight for payment fee calculation. Reason: ${JSON.stringify(result, replaceBigInt)}`,
+      );
+    }
+
     return {
-      refTime: BigInt(okValue?.refTime ?? 0),
-      proofSize: BigInt(okValue?.proofSize ?? 0),
+      refTime: BigInt(okValue.refTime),
+      proofSize: BigInt(okValue.proofSize),
     };
   }
 
