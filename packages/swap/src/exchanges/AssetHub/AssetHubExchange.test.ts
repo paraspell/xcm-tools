@@ -224,7 +224,7 @@ describe('AssetHubExchange', () => {
 
       const amountOut = await instance.getAmountOut(baseOptions);
 
-      expect(amountOut).toBe(2000n);
+      expect(amountOut).toBe(1900n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledExactlyOnceWith(
         quoteCall(assetNative.location, assetB.location, 1000n),
       );
@@ -239,7 +239,7 @@ describe('AssetHubExchange', () => {
         assetTo: assetNative,
       });
 
-      expect(amountOut).toBe(2000n);
+      expect(amountOut).toBe(1900n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledExactlyOnceWith(
         quoteCall(assetA.location, assetNative.location, 1000n),
       );
@@ -253,7 +253,7 @@ describe('AssetHubExchange', () => {
         origin,
       });
 
-      expect(amountOut).toBe(2000n);
+      expect(amountOut).toBe(1900n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledExactlyOnceWith(
         quoteCall(assetNative.location, assetB.location, 990n),
       );
@@ -268,7 +268,7 @@ describe('AssetHubExchange', () => {
         assetTo: assetB,
       });
 
-      expect(amountOut).toBe(950n);
+      expect(amountOut).toBe(902n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenCalledTimes(2);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(
         1,
@@ -290,7 +290,7 @@ describe('AssetHubExchange', () => {
         origin,
       });
 
-      expect(amountOut).toBe(950n);
+      expect(amountOut).toBe(902n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(
         1,
         quoteCall(assetA.location, assetNative.location, 990n),
@@ -314,6 +314,19 @@ describe('AssetHubExchange', () => {
       mockPolkadotApi.queryRuntimeApi.mockResolvedValueOnce(undefined);
 
       await expect(instance.getAmountOut(baseOptions)).rejects.toThrow(RoutingResolutionError);
+    });
+    it('applies slippagePct to the quoted amount', async () => {
+      mockPolkadotApi.queryRuntimeApi.mockResolvedValue(2000n);
+
+      await expect(instance.getAmountOut({ ...baseOptions, slippagePct: '0' })).resolves.toBe(
+        2000n,
+      );
+      await expect(instance.getAmountOut({ ...baseOptions, slippagePct: '5' })).resolves.toBe(
+        1900n,
+      );
+      await expect(instance.getAmountOut({ ...baseOptions, slippagePct: '10' })).resolves.toBe(
+        1800n,
+      );
     });
   });
 });
