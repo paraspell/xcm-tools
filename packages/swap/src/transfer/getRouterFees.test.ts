@@ -167,7 +167,13 @@ describe('getRouterFees', () => {
       });
     });
 
-    it('adds exchange to hops only when origin exists but destination undefined', async () => {
+    it('forwards disableFallback to getSwapFee', async () => {
+      await getRouterFees(dex, options, true);
+
+      expect(getSwapFee).toHaveBeenCalledWith(dex, options, true);
+    });
+
+      it('adds exchange to hops only when origin exists but destination undefined', async () => {
       options.origin = { chain: 'Acala', amount: 1000n } as unknown as TOriginInfo<unknown>;
 
       const result = await getRouterFees(dex, options, false);
