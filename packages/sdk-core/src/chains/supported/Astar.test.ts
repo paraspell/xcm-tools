@@ -38,10 +38,6 @@ describe('Astar', () => {
     expect(astar.resolveMintConfig(api)).toMatchObject({ useBigIntId: true })
   })
 
-  it('should use reserve transfer', () => {
-    expect(astar['shouldUseReserveTransfer']()).toBe(true)
-  })
-
   it('temporarily disables sending the relay asset only', () => {
     const options = {
       assetInfo: { symbol: 'DOT', amount: 100n, location: RELAY_LOCATION }

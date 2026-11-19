@@ -1,5 +1,5 @@
 import type { TAssetInfo, WithAmount } from '@paraspell/assets'
-import { isAssetEqual, isChainEvm, isSymbolMatch, type TAsset } from '@paraspell/assets'
+import { isChainEvm, isSymbolMatch, type TAsset } from '@paraspell/assets'
 import { getNativeAssetsPallet, getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TChain, TRelaychain, TSubstrateChain } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
@@ -136,35 +136,18 @@ abstract class SubstrateChain<
       deepEqual(asset.location, RELAY_LOCATION) &&
       isSymbolMatch(api.getRelayChainSymbol(this.chain), asset.symbol)
 
-    const mythAsset = api.findNativeAssetInfoOrThrow('Mythos')
-    const isMythAsset = isAssetEqual(mythAsset, asset)
-
-    const assetNeedsTypeThen = isRelayAsset || isMythAsset
-    const shouldUseReserveTransfer = isRelayAsset && this.shouldUseReserveTransfer()
-
-    const supportsTypeThen = await api.hasMethod(
-      api.hasPallet(this.chain, 'XcmPallet') ? 'XcmPallet' : 'PolkadotXcm',
-      'transfer_assets_using_type_and_then'
-    )
-
-    const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
-
-    if (assetNeedsTypeThen && !supportsTypeThen && (!shouldUseReserveTransfer || isSubBridge)) {
-      throw new TypeAndThenUnavailableError(
-        'Relaychain assets require the type-and-then method which is not supported by this chain.'
+    if (supportsPolkadotXCM(this) || isRelayAsset) {
+      const supportsTypeAndThen = await api.hasMethod(
+        api.getXcmPallet(this.chain),
+        'transfer_assets_using_type_and_then'
       )
-    }
 
-    const useTypeAndThen =
-      (!shouldUseReserveTransfer &&
-        assetNeedsTypeThen &&
-        supportsTypeThen &&
-        destChain &&
-        !isExternalChain(destChain) &&
-        (!isTrustedChain(this.chain) || !isTrustedChain(destChain))) ||
-      isSubBridge
+      if (!supportsTypeAndThen) {
+        throw new TypeAndThenUnavailableError(
+          `Chain ${this.chain} does not support the type-and-then method required for this transfer.`
+        )
+      }
 
-    if (supportsPolkadotXCM(this) || useTypeAndThen) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain> = {
         api,
         chain: this.chain,
@@ -207,47 +190,31 @@ abstract class SubstrateChain<
         return api.deserializeExtrinsics(await promise)
       }
 
+      const isSubBridge = !isTLocation(destination) && isSubstrateBridge(this.chain, destination)
+
       const isAHOrigin = this.chain.includes('AssetHub')
-      const isAHDest = !isTLocation(destination) && destination.includes('AssetHub')
-
-      // Handle common cases
       const isExternalAsset = asset.location.parents === Parents.TWO
-
       const isEthDest = typeof destination !== 'object' && isExternalChain(destination)
 
-      // External asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
-      const isExternalAssetViaAh = isExternalAsset && !isAHOrigin && !isAHDest && !isEthDest
+      const isExternalAssetViaAh = isExternalAsset && !isAHOrigin && !isEthDest
 
-      // External asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
-      const isExternalAssetToAh = isExternalAsset && isAHDest && !isAHOrigin && !isEthDest
-
-      if (isExternalAssetViaAh || isExternalAssetToAh || useTypeAndThen) {
-        // Validate that the chain-specific transfer wouldn't reject this scenario.
-        if (
-          useTypeAndThen &&
-          supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this) &&
-          !isSubBridge
-        ) {
-          const tx = await this.transferPolkadotXCM(options)
-          if (this.shouldUseExecuteTransfer(options)) return tx
-        }
-
-        const call = await createTypeAndThenCall(options)
-
-        return api.deserializeExtrinsics(call)
+      if (
+        !supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this) ||
+        isSubBridge ||
+        isExternalAssetViaAh
+      ) {
+        return api.deserializeExtrinsics(await createTypeAndThenCall(options))
       }
 
-      if (supportsPolkadotXCM<TApi, TRes, TSigner, TCustomChain>(this)) {
-        if (
-          this.shouldUseNativeAssetTeleport(transferOptions) &&
-          !getFeeAssetInfo(asset, feeAsset) &&
-          !this.shouldUseExecuteTransfer(options)
-        ) {
-          return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')
-        }
-
-        return this.transferPolkadotXCM(options)
+      if (
+        this.shouldUseNativeAssetTeleport(transferOptions) &&
+        !getFeeAssetInfo(asset, feeAsset) &&
+        !this.shouldUseExecuteTransfer(options)
+      ) {
+        return transferPolkadotXcm(options, 'limited_teleport_assets', 'Unlimited')
       }
+
+      return this.transferPolkadotXCM(options)
     } else if (supportsXTokens<TApi, TRes, TSigner, TCustomChain>(this)) {
       validateFeeAssetSupport(asset, feeAsset, overriddenAsset, 'XTokens')
 
@@ -332,10 +299,6 @@ abstract class SubstrateChain<
   shouldUseExecuteTransfer(
     _options: TPolkadotXCMTransferOptions<TApi, TRes, TSigner, TCustomChain>
   ): boolean {
-    return false
-  }
-
-  protected shouldUseReserveTransfer(): boolean {
     return false
   }
 
