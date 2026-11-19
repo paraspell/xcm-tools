@@ -12,7 +12,7 @@ import type {
 import type { TApi, TTransaction } from './importSdk';
 
 export const submitTransactionDedot = async (
-  _api: DedotClient,
+  api: DedotClient,
   tx: SubmittableExtrinsic,
   signer: Signer,
   senderAddress: string,
@@ -22,6 +22,17 @@ export const submitTransactionDedot = async (
     .signAndSend(senderAddress, { signer })
     .untilFinalized();
   if (onSign) onSign();
+  // A finalized transaction can still carry a dispatch error. Surface it the
+  // same way the SDK does, so callers never advance a multi-step route after a
+  // failed dispatch.
+  if (result.dispatchError) {
+    const meta = api.registry.findErrorMeta(result.dispatchError);
+    throw new Error(
+      meta
+        ? `${meta.pallet}.${meta.name}: ${meta.docs.join(' ')}`
+        : JSON.stringify(result.dispatchError),
+    );
+  }
   return result.txHash;
 };
 
