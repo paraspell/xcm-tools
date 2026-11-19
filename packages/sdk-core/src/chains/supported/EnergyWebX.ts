@@ -46,10 +46,6 @@ class EnergyWebX<TApi, TRes, TSigner, TCustomChain extends string = never>
     return false
   }
 
-  protected shouldUseReserveTransfer(): boolean {
-    return true
-  }
-
   protected getMintConfig(): TMintConfig {
     return { useLocationId: true }
   }

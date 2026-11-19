@@ -28,10 +28,6 @@ class Astar<TApi, TRes, TSigner, TCustomChain extends string = never>
     return { useBigIntId: true }
   }
 
-  protected shouldUseReserveTransfer(): boolean {
-    return true
-  }
-
   isSendingTempDisabled(assetInfo: TAssetInfo): boolean {
     return deepEqual(assetInfo.location, RELAY_LOCATION)
   }

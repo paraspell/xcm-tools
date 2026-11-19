@@ -31,10 +31,6 @@ describe('EnergyWebX', () => {
     expect(chain.resolveMintConfig(api)).toMatchObject({ useLocationId: true })
   })
 
-  it('should use reserve transfer', () => {
-    expect(chain['shouldUseReserveTransfer']()).toBe(true)
-  })
-
   it('should handle ParaToPara transfers correctly', async () => {
     const input = {
       scenario: 'ParaToPara',
