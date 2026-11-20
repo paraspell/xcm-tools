@@ -409,7 +409,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         failureErr = failureErr || msg
         return {
           success: false,
-          dryRunError: buildDryRunError(failureErr, resultJson?.ok?.local_xcm),
+          dryRunError: buildDryRunError(failureErr, resultJson?.ok?.localXcm),
           asset: resolvedFeeAsset.asset
         }
       }
@@ -420,7 +420,7 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
         success: false,
         dryRunError: buildDryRunError(
           { ...failureErr, reason: failureErr.reason || 'Unknown error' },
-          resultJson?.ok?.local_xcm
+          resultJson?.ok?.localXcm
         ),
         asset: resolvedFeeAsset.asset
       }
@@ -447,17 +447,17 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
 
     if (
       (this.hasXcmPaymentApiSupport(chain) &&
-        resultJson.ok.local_xcm &&
+        resultJson.ok.localXcm &&
         (feeAsset || (chain.startsWith('AssetHub') && destination === 'Ethereum'))) ||
       resolvedFeeAsset.isCustomAsset
     ) {
-      const overriddenWeight = !resultJson.ok.local_xcm
+      const overriddenWeight = !resultJson.ok.localXcm
         ? (await this.getPaymentInfo(tx, address)).weight
         : undefined
 
       const xcmFee = await this.getXcmPaymentApiFee(
         chain,
-        resultJson.ok.local_xcm,
+        resultJson.ok.localXcm,
         forwardedXcms,
         resolvedFeeAsset.asset,
         version,
