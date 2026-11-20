@@ -65,7 +65,7 @@ export const prepareTransformedOptions = async <
       exchangeConfig?.abstractDecimals !== false,
     ),
     origin:
-      originSpecified && assetFromOrigin && originApi
+      originSpecified && assetFromOrigin
         ? {
             api: originApi.api,
             chain: from,

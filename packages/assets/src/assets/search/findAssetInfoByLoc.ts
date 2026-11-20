@@ -13,7 +13,7 @@ export const findAssetInfoByLoc = (
   }
 
   const normalizedLocation = canonicalizeLocation(location)
-  return foreignAssets.find(
-    asset => asset.location && deepEqual(normalizedLocation, canonicalizeLocation(asset.location))
+  return foreignAssets.find(asset =>
+    deepEqual(normalizedLocation, canonicalizeLocation(asset.location))
   )
 }

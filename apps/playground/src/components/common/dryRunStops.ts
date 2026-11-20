@@ -68,7 +68,7 @@ export const buildDryRunStops = (
     chain: originChain,
     ...normalizeDryRunStop(result.origin),
   },
-  ...(result.hops ?? []).map((hop, i) => ({
+  ...result.hops.map((hop, i) => ({
     key: `hop-${i}`,
     role: 'Hop',
     chain: hop.chain,

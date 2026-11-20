@@ -29,7 +29,7 @@ export const TransferStepper = ({ progressInfo }: Props) => {
   useEffect(() => {
     if (!progressInfo?.routerPlan) return;
 
-    const transactionTypes = progressInfo?.routerPlan.map((t) => t.type);
+    const transactionTypes = progressInfo.routerPlan.map((t) => t.type);
     const uniqueTypes = Array.from(new Set(transactionTypes));
 
     const newSteps = uniqueTypes.map((type) => {

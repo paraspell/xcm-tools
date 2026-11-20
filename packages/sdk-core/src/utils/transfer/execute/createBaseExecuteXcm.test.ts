@@ -5,7 +5,7 @@ import { isTrustedChain, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../../api'
-import { ScenarioNotSupportedError, UnsupportedOperationError } from '../../../errors'
+import { ScenarioNotSupportedError } from '../../../errors'
 import type { TCreateTransferXcmOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
 import { isNativeAssetTeleport } from '../isNativeAssetTeleport'
@@ -556,26 +556,6 @@ describe('createBaseExecuteXcm', () => {
   })
 
   describe('Error handling', () => {
-    it('should throw error for non-AssetHubPolkadot chain without reserve chain', () => {
-      vi.mocked(isTrustedChain).mockReturnValue(false)
-
-      expect(() =>
-        createBaseExecuteXcm({
-          ...mockBaseOptions,
-          chain: 'Acala'
-        })
-      ).toThrow(UnsupportedOperationError)
-
-      expect(() =>
-        createBaseExecuteXcm({
-          ...mockBaseOptions,
-          chain: 'Acala'
-        })
-      ).toThrow(
-        'Sending local reserve assets with custom fee asset is not yet supported for this chain.'
-      )
-    })
-
     it('should not throw error for AssetHubPolkadot without reserve chain', () => {
       vi.mocked(isTrustedChain).mockReturnValue(false)
 

@@ -37,7 +37,7 @@ class BifrostPolkadot<TApi, TRes, TSigner, TCustomChain extends string = never>
     const isVToken = asset.symbol && asset.symbol.startsWith('v')
     const isVSToken = asset.symbol && asset.symbol.startsWith('vs')
 
-    if (asset.isNative || (!asset.isNative && !asset.assetId)) {
+    if (asset.isNative || !asset.assetId) {
       return isVToken ? { VToken: asset.symbol.substring(1) } : { Token: asset.symbol }
     }
 

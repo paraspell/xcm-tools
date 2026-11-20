@@ -34,7 +34,7 @@ const computeExchangeMinAmount = async <TApi, TRes, TSigner, TCustomChain extend
   }
 
   const { result } = await getSwapFee(dex, options);
-  const swapFee = result.fee ?? 0n;
+  const swapFee = result.fee;
 
   return existentialDeposit + swapFee + 1n;
 };

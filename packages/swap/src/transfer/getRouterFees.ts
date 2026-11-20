@@ -84,7 +84,7 @@ export const getRouterFees = async <
             chain: exchange.chain,
             result: {
               ...swapChain,
-              fee: swapChain.fee + (receivingChain?.origin.fee ?? 0n),
+              fee: swapChain.fee + (receivingChain.origin.fee ?? 0n),
               isExchange: true,
             },
           },

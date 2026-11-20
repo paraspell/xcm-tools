@@ -165,7 +165,7 @@ export const dryRunInternal = async <TApi, TRes, TSigner, TCustomChain extends s
   const processedBridgeHub = isMythosToEthereum
     ? bridgeHubHop?.result
     : bridgeHubHop?.result.success
-      ? await addEthereumBridgeFees(api, bridgeHubHop?.result, destination, assetHubChain)
+      ? await addEthereumBridgeFees(api, bridgeHubHop.result, destination, assetHubChain)
       : bridgeHubHop?.result
 
   // Update bridge hub in hops if needed

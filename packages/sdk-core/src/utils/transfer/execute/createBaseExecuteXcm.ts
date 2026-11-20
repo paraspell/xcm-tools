@@ -5,7 +5,7 @@ import { deepEqual, isTrustedChain } from '@paraspell/sdk-common'
 
 import type { PolkadotApi } from '../../../api'
 import { RELAY_LOCATION } from '../../../constants'
-import { ScenarioNotSupportedError, UnsupportedOperationError } from '../../../errors'
+import { ScenarioNotSupportedError } from '../../../errors'
 import { createBuyExecution } from '../../../pallets/polkadotXcm'
 import type { TCreateTransferXcmOptions, TTransactOptions } from '../../../types'
 import { createDestination, getChainLocation } from '../../location'
@@ -128,12 +128,6 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
 
   const destLocation = createDestination(api, version, chain, destChain, paraIdTo)
 
-  if (chain !== 'AssetHubPolkadot' && reserveChain === undefined) {
-    throw new UnsupportedOperationError(
-      'Sending local reserve assets with custom fee asset is not yet supported for this chain.'
-    )
-  }
-
   if (feeReserveChain !== undefined && feeReserveChain !== reserveChain) {
     throw new ScenarioNotSupportedError(
       `Fee asset cannot pay fees on hops and destination because its reserve chain (${feeReserveChain}) differs from the reserve chain of the transferred asset (${reserveChain}).`
@@ -163,7 +157,7 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     }
   }
 
-  const reserveToDestInstruction = isTeleportLeg(api, reserveChain ?? chain, destChain, assetInfo)
+  const reserveToDestInstruction = isTeleportLeg(api, reserveChain, destChain, assetInfo)
     ? 'InitiateTeleport'
     : 'DepositReserveAsset'
 
@@ -171,14 +165,14 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     if (isReserveDest) return suffixXcm
 
     if (reserveToDestInstruction === 'InitiateTeleport') {
-      assertFeeAssetTeleportable(reserveChain ?? chain, destChain)
+      assertFeeAssetTeleportable(reserveChain, destChain)
     }
 
     return [
       {
         [reserveToDestInstruction]: {
           assets: createRoutingFilter(assetLocalizedToReserve),
-          dest: createDestination(api, version, reserveChain ?? chain, destChain, paraIdTo),
+          dest: createDestination(api, version, reserveChain, destChain, paraIdTo),
           xcm: [
             ...createBuyExecution(
               feeAssetLocalizedToDest ??

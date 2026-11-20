@@ -46,7 +46,7 @@ const computeLocalTransferableAmount = async <
 
   if (exchange.assetFrom.symbol === nativeSymbol) {
     const { result } = await getSwapFee(dex, options);
-    swapFee = result.fee ?? 0n;
+    swapFee = result.fee;
   }
 
   const transferable = balance - existentialDeposit - swapFee;

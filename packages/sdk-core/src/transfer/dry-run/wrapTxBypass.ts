@@ -165,7 +165,7 @@ export const wrapTxBypass = async <TApi, TRes, TSigner, TCustomChain extends str
     const bonus = mintBonusForSent(chain, sentAsset, feeAsset, !!mintFeeAssets, api)
 
     let mintAmount: bigint | null
-    if (options?.sentAssetMintMode === 'bypass') {
+    if (options.sentAssetMintMode === 'bypass') {
       mintAmount =
         parseUnits(bypassMintAmount, sentAsset.decimals) +
         sentAsset.amount +

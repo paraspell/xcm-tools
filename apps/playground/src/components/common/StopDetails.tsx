@@ -132,7 +132,7 @@ export const StopDetails: FC<{ stop: TStop }> = ({ stop }) => {
           <Collapse expanded={instructionOpened}>
             <CodeHighlight
               code={JSON.stringify(
-                stop.dryRunError?.instruction,
+                stop.dryRunError.instruction,
                 replaceBigInt,
                 2,
               )}
