@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/sdk-v14.5.3...sdk-v14.5.4) (2026-11-20)
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+* Remove unused fee asset param from computeOriginFee 🧹 ([0000e66](https://github.com/paraspell/xcm-tools/commit/0000e6604074d175a7439a978371d56d7cba659f))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-v14.5.2...sdk-v14.5.3) (2026-11-11)
 
 

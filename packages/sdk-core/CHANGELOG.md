@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.3...sdk-core-v14.5.4) (2026-11-20)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix adding ED deposit twice in some scenarios 🔧 ([4ba41bd](https://github.com/paraspell/xcm-tools/commit/4ba41bdbcee05d2630bba1dc6aa5de7a5074d3a7))
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+* **sdk-core:** Simplify type and then logic in Substrate chain 🧹 ([0edd79a](https://github.com/paraspell/xcm-tools/commit/0edd79a4faa0294e47858bbe48190c467b851d18))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v14.5.2...sdk-core-v14.5.3) (2026-11-11)
 
 

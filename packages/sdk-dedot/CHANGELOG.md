@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.5.3...sdk-dedot-v14.5.4) (2026-11-20)
+
+
+### Code Refactoring
+
+* Remove unused fee asset param from computeOriginFee 🧹 ([0000e66](https://github.com/paraspell/xcm-tools/commit/0000e6604074d175a7439a978371d56d7cba659f))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-dedot-v14.5.2...sdk-dedot-v14.5.3) (2026-11-11)
 
 
