@@ -443,12 +443,12 @@ describe('validateEthereumAsset', () => {
     ).not.toThrow()
   })
 
-  it('should not throw for asset with Kusama GlobalConsensus location', () => {
+  it('should not throw for asset with kusama GlobalConsensus location', () => {
     const asset = {
       symbol: 'KSM',
       location: {
         parents: 2,
-        interior: { X1: [{ GlobalConsensus: { Kusama: null } }] }
+        interior: { X1: [{ GlobalConsensus: { kusama: null } }] }
       }
     } as TAssetInfo
 
