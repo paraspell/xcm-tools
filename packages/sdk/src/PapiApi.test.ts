@@ -1904,12 +1904,7 @@ describe('PapiApi', () => {
       const typeAndThenResult = await papiApi.getDryRunCall(options)
 
       expect(xcmFeeSpy).not.toHaveBeenCalled()
-      expect(computeOriginFee).toHaveBeenCalledWith(
-        successResponse,
-        'AssetHubPolkadot',
-        1000n,
-        false
-      )
+      expect(computeOriginFee).toHaveBeenCalledWith(successResponse, 'AssetHubPolkadot', 1000n)
       expect(typeAndThenResult).toEqual(
         expect.objectContaining({ success: true, fee: 500n, asset: nativeAsset })
       )

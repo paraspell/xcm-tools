@@ -14,11 +14,9 @@ export const computeOriginFee = (
   dryRun: any,
   chain: TSubstrateChain,
   executionFee: bigint,
-  isFeeAsset = false,
 ): bigint => {
   // Extract delivery fees from emitted events
   const deliveryFees: Array<{ plancks: bigint; tokenSymbol: string }> = [];
-  let assetConversionFee = 0n;
 
   for (const e of dryRun.value.emittedEvents) {
     const isXcmEvent = ["XcmPallet", "PolkadotXcm", "CumulusXcm"].includes(
@@ -35,25 +33,11 @@ export const computeOriginFee = (
         deliveryFees.push({ plancks, tokenSymbol });
       }
     }
-    if (
-      isFeeAsset &&
-      e.type === "AssetConversion" &&
-      e.value?.type === "SwapCreditExecuted" &&
-      e.value?.value &&
-      e.value.value.amount_in !== undefined &&
-      e.value.value.amount_in !== null
-    ) {
-      assetConversionFee += e.value.value.amount_in;
-    }
   }
 
-  if (isFeeAsset && assetConversionFee > 0n) {
-    return assetConversionFee;
-  } else {
-    const nativeAssetSymbol = getNativeAssetSymbol(chain);
-    const totalDeliveryFees = deliveryFees
-      .filter((df) => df.tokenSymbol === nativeAssetSymbol)
-      .reduce((acc, df) => acc + df.plancks, 0n);
-    return totalDeliveryFees + executionFee;
-  }
+  const nativeAssetSymbol = getNativeAssetSymbol(chain);
+  const totalDeliveryFees = deliveryFees
+    .filter((df) => df.tokenSymbol === nativeAssetSymbol)
+    .reduce((acc, df) => acc + df.plancks, 0n);
+  return totalDeliveryFees + executionFee;
 };
