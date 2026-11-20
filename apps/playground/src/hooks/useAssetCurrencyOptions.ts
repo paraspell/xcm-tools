@@ -8,7 +8,7 @@ export const useAssetCurrencyOptions = (chain: TChain) => {
   const currencyMap = useMemo(
     () =>
       supportedAssets.reduce((map: Record<string, TAssetInfo>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
+        const key = `${asset.symbol}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),

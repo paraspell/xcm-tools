@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 import { useCustomChains } from './useCustomChains';
 
 const getAssetKey = (asset: TAssetInfo) =>
-  `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? (asset.assetId ?? 'NO-ID') : 'NO_ID'}`;
+  `${asset.symbol}-${!asset.isNative ? (asset.assetId ?? 'NO-ID') : 'NO_ID'}`;
 
 const getLabel = (asset: TAssetInfo) => {
   return `${asset.symbol} - ${'assetId' in asset ? asset.assetId : 'Location'}`;
@@ -92,7 +92,7 @@ export const useSwapCurrencyOptions = (
       if (selectedTo && key !== selectedFrom) {
         const toAsset = currencyToMap[selectedTo];
         if (!toAsset) return [];
-        const toKey = JSON.stringify(toAsset.location ?? {});
+        const toKey = JSON.stringify(toAsset.location);
         if (!adjacency.get(currentKey)?.has(toKey)) return [];
       }
 
@@ -113,7 +113,7 @@ export const useSwapCurrencyOptions = (
       if (selectedFrom && key !== selectedTo) {
         const fromAsset = currencyFromMap[selectedFrom];
         if (!fromAsset) return [];
-        const fromKey = JSON.stringify(fromAsset.location ?? {});
+        const fromKey = JSON.stringify(fromAsset.location);
         if (!adjacency.get(fromKey)?.has(currentKey)) return [];
       }
 
@@ -134,7 +134,7 @@ export const useSwapCurrencyOptions = (
   const feeCurrencyMap = useMemo(
     () =>
       supportedFeeAssets.reduce((map: Record<string, TAssetInfo>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
+        const key = `${asset.symbol}-${!asset.isNative ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),

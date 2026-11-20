@@ -11,7 +11,7 @@ const resolveLocationFromDest = (destination: TDestination, asset: TAssetInfo) =
 
   // If it is a native asset, search by symbol on AssetHub and use the location from there
   const assetHubAsset = getOtherAssets(destination).find(
-    ahAsset => ahAsset.symbol?.toLowerCase() === asset.symbol?.toLowerCase()
+    ahAsset => ahAsset.symbol.toLowerCase() === asset.symbol.toLowerCase()
   )
 
   if (!assetHubAsset) {

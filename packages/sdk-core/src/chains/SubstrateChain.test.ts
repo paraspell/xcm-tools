@@ -1,5 +1,6 @@
 import type { WithAmount } from '@paraspell/assets'
 import { InvalidCurrencyError, type TAssetInfo } from '@paraspell/assets'
+import type { TAssetsPallet } from '@paraspell/pallets'
 import { getOtherAssetsPallets } from '@paraspell/pallets'
 import type { TExternalChain, TParachain } from '@paraspell/sdk-common'
 import { isExternalChain, Version } from '@paraspell/sdk-common'
@@ -18,8 +19,12 @@ import {
 import { getPalletInstance } from '../pallets'
 import { handleTransactUsingSend, transferPolkadotXcm } from '../pallets/polkadotXcm'
 import { createTypeAndThenCall } from '../transfer'
-import type { BaseAssetsPallet, TTransferLocalOptions } from '../types'
-import { type TTransferInternalOptions } from '../types'
+import type {
+  BaseAssetsPallet,
+  TSerializedExtrinsics,
+  TTransferInternalOptions,
+  TTransferLocalOptions
+} from '../types'
 import { getChain, handleExecuteTransfer, isNativeAssetTeleport, resolveDestChain } from '../utils'
 import SubstrateChain from './SubstrateChain'
 
@@ -56,53 +61,71 @@ vi.mock('../transfer', () => ({
   validateFeeAssetSupport: vi.fn()
 }))
 
-class TestParachainBase extends SubstrateChain<unknown, unknown, unknown> {
-  throwIfTempDisabled() {}
+const polkadotXcmTx: TSerializedExtrinsics = {
+  module: 'PolkadotXcm',
+  method: 'limited_reserve_transfer_assets',
+  params: {}
+}
+const xTokensTx: TSerializedExtrinsics = {
+  module: 'XTokens',
+  method: 'transfer_multiasset',
+  params: {}
+}
+const typeAndThenTx: TSerializedExtrinsics = {
+  module: 'PolkadotXcm',
+  method: 'transfer_assets_using_type_and_then',
+  params: {}
+}
+const teleportTx: TSerializedExtrinsics = {
+  module: 'PolkadotXcm',
+  method: 'limited_teleport_assets',
+  params: {}
+}
+const executeTx: TSerializedExtrinsics = { module: 'PolkadotXcm', method: 'execute', params: {} }
+const sendTx: TSerializedExtrinsics = { module: 'PolkadotXcm', method: 'send', params: {} }
+
+class PolkadotXcmChain extends SubstrateChain<unknown, unknown, unknown> {
+  transferPolkadotXCM() {
+    return Promise.resolve(polkadotXcmTx)
+  }
 }
 
-class TestParachain extends TestParachainBase {
+class XTokensChain extends SubstrateChain<unknown, unknown, unknown> {
   transferXTokens() {
-    return 'transferXTokens called'
-  }
-
-  transferPolkadotXCM() {
-    return 'transferPolkadotXCM called'
+    return xTokensTx
   }
 }
 
-class OnlyPolkadotXCMParachain extends TestParachainBase {
-  transferPolkadotXCM() {
-    return 'transferPolkadotXCM called'
-  }
-}
-
-class OnlyXTokensParachain extends TestParachainBase {
+class DualPalletChain extends PolkadotXcmChain {
   transferXTokens() {
-    return 'transferXTokens called'
+    return xTokensTx
   }
 }
 
-class ExecuteTransferParachain extends TestParachainBase {
-  transferPolkadotXCM() {
-    return 'transferPolkadotXCM called'
-  }
-
+class ExecuteTransferChain extends PolkadotXcmChain {
   shouldUseExecuteTransfer() {
     return true
   }
 }
 
-class NoSupportParachain extends TestParachainBase {}
+class NoXcmChain extends SubstrateChain<unknown, unknown, unknown> {}
+
+const mockPallets = (pallets: Partial<Record<TAssetsPallet, Partial<BaseAssetsPallet>>>) =>
+  vi.mocked(getPalletInstance).mockImplementation(type => {
+    const pallet = pallets[type]
+    if (!pallet) throw new Error(`Unexpected pallet ${type}`)
+    return pallet as BaseAssetsPallet
+  })
 
 describe('Parachain', () => {
-  let chain: TestParachain
+  let chain: DualPalletChain
 
   const api = {
     hasMethod: vi.fn(),
     getXcmPallet: vi.fn().mockReturnValue('PolkadotXcm'),
     accountToHex: vi.fn(),
     createApiForChain: vi.fn(),
-    deserializeExtrinsics: vi.fn(),
+    deserializeExtrinsics: vi.fn((call: TSerializedExtrinsics) => call),
     getFromRpc: vi.fn(),
     clone: vi.fn(),
     findAssetInfo: vi.fn(),
@@ -112,28 +135,25 @@ describe('Parachain', () => {
     localizeLocation: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
+  const mockTypeAndThenSupport = (supported: boolean) =>
+    vi
+      .spyOn(api, 'hasMethod')
+      .mockImplementation((pallet, method) =>
+        Promise.resolve(
+          pallet !== 'PolkadotXcm' || method !== 'transfer_assets_using_type_and_then' || supported
+        )
+      )
+
   beforeEach(() => {
-    chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+    chain = new DualPalletChain('Acala', 'TestChain', 'Polkadot', Version.V4)
     vi.spyOn(api, 'getNativeAssetSymbol').mockReturnValue('DOT')
-    vi.spyOn(api, 'hasMethod').mockResolvedValue(true)
+    mockTypeAndThenSupport(true)
     vi.mocked(isNativeAssetTeleport).mockReturnValue(false)
     vi.mocked(getPalletInstance).mockReset()
     vi.mocked(getOtherAssetsPallets).mockReset()
     vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
-    vi.mocked(handleExecuteTransfer).mockResolvedValue({
-      module: 'PolkadotXcm',
-      method: 'execute',
-      params: {}
-    })
-    vi.mocked(handleTransactUsingSend).mockResolvedValue({
-      module: 'PolkadotXcm',
-      method: 'send',
-      params: {}
-    })
-  })
-
-  it('should create an instance', () => {
-    expect(chain).toBeDefined()
+    vi.mocked(handleExecuteTransfer).mockResolvedValue(executeTx)
+    vi.mocked(handleTransactUsingSend).mockResolvedValue(sendTx)
   })
 
   it('should get the name', () => {
@@ -159,15 +179,6 @@ describe('Parachain', () => {
   })
 
   describe('transfer', () => {
-    type TTestChainClass = new (
-      ...args: ConstructorParameters<typeof TestParachainBase>
-    ) => TestParachainBase
-
-    const CHAIN = 'transferPolkadotXCM called'
-    const X_TOKENS = 'transferXTokens called'
-    const TYPE_AND_THEN = 'transfer_assets_using_type_and_then called'
-    const TELEPORT = 'limited_teleport_assets called'
-
     const DOT = { symbol: 'DOT', amount: 100n, location: RELAY_LOCATION }
     const ASTR = {
       symbol: 'ASTR',
@@ -213,152 +224,40 @@ describe('Parachain', () => {
       } as TTransferInternalOptions<unknown, unknown, unknown>
     }
 
-    beforeEach(() => {
+    const mockDestination = ({ canReceive = true, receivingDisabled = false } = {}) =>
       vi.mocked(getChain).mockReturnValue({
-        canReceiveFrom: () => true,
-        isReceivingTempDisabled: () => false
+        canReceiveFrom: () => canReceive,
+        isReceivingTempDisabled: () => receivingDisabled
       } as unknown as ReturnType<typeof getChain>)
-      vi.mocked(createTypeAndThenCall).mockResolvedValue({
-        module: 'PolkadotXcm',
-        method: 'transfer_assets_using_type_and_then',
-        params: {}
-      })
-      vi.mocked(transferPolkadotXcm).mockImplementation((_options, method) =>
-        Promise.resolve(`${method} called`)
-      )
-      vi.spyOn(api, 'deserializeExtrinsics').mockImplementation(({ method }) => `${method} called`)
+
+    beforeEach(() => {
+      mockDestination()
+      vi.mocked(createTypeAndThenCall).mockResolvedValue(typeAndThenTx)
+      vi.mocked(transferPolkadotXcm).mockResolvedValue(teleportTx)
     })
 
-    it.each<{
-      name: string
-      Chain: TTestChainClass
-      from: TParachain
-      to: TParachain | TExternalChain
-      asset: Partial<WithAmount<TAssetInfo>>
-      route: string
-    }>([
-      {
-        name: 'non-relay assets through the chain transfer',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Acala',
-        to: 'Astar',
-        asset: ASTR,
-        route: CHAIN
-      },
-      {
-        name: 'relay assets through the chain transfer',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Astar',
-        to: 'Hydration',
-        asset: DOT,
-        route: CHAIN
-      },
-      {
-        name: 'through PolkadotXcm when both pallets are implemented',
-        Chain: TestParachain,
-        from: 'Acala',
-        to: 'Astar',
-        asset: DOT,
-        route: CHAIN
-      },
-      {
-        name: 'substrate bridge transfers through type-and-then',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'AssetHubPolkadot',
-        to: 'AssetHubKusama',
-        asset: KSM_BRIDGED,
-        route: TYPE_AND_THEN
-      },
-      {
-        name: 'external assets via AssetHub through type-and-then',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Acala',
-        to: 'Darwinia',
-        asset: USDT_EXTERNAL,
-        route: TYPE_AND_THEN
-      },
-      {
-        name: 'external assets to AssetHub through type-and-then',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Acala',
-        to: 'AssetHubPolkadot',
-        asset: USDT_EXTERNAL,
-        route: TYPE_AND_THEN
-      },
-      {
-        name: 'external assets from AssetHub through the chain transfer',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'AssetHubPolkadot',
-        to: 'Hydration',
-        asset: WETH,
-        route: CHAIN
-      },
-      {
-        name: 'external assets to Ethereum through the chain transfer',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Hydration',
-        to: 'Ethereum',
-        asset: WETH,
-        route: CHAIN
-      },
-      {
-        name: 'relay assets on XTokens chains through type-and-then',
-        Chain: OnlyXTokensParachain,
-        from: 'Centrifuge',
-        to: 'Hydration',
-        asset: DOT,
-        route: TYPE_AND_THEN
-      },
-      {
-        name: 'non-relay assets on XTokens chains through XTokens',
-        Chain: OnlyXTokensParachain,
-        from: 'Centrifuge',
-        to: 'Hydration',
-        asset: CFG,
-        route: X_TOKENS
-      }
-    ])('routes $name', async ({ Chain, from, to, asset, route }) => {
-      const chain = new Chain(from, 'TestChain', 'Polkadot', Version.V5)
+    it('uses the chain transfer for relay assets', async () => {
+      const chain = new PolkadotXcmChain('Astar', 'TestChain', 'Polkadot', Version.V5)
 
-      expect(await chain.transfer(createOptions(to, asset))).toBe(route)
+      expect(await chain.transfer(createOptions('Hydration', DOT))).toBe(polkadotXcmTx)
     })
 
-    it.each([
-      {
-        name: 'uses limited_teleport_assets for native asset teleports',
-        Chain: OnlyPolkadotXCMParachain,
-        route: TELEPORT
-      },
-      {
-        name: 'skips the teleport when execute transfer is required',
-        Chain: ExecuteTransferParachain,
-        route: CHAIN
-      }
-    ])('$name', async ({ Chain, route }) => {
-      vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
-      const chain = new Chain('Acala', 'TestChain', 'Polkadot', Version.V5)
+    it('prefers PolkadotXcm when both pallets are implemented', async () => {
+      const chain = new DualPalletChain('Acala', 'TestChain', 'Polkadot', Version.V5)
 
-      expect(await chain.transfer(createOptions('AssetHubPolkadot', ASTR))).toBe(route)
+      expect(await chain.transfer(createOptions('Astar', DOT))).toBe(polkadotXcmTx)
     })
 
-    it.each([
-      { version: Version.V5, expected: 'execute called' },
-      { version: Version.V4, expected: 'send called' }
-    ])('builds transact calls as $expected for $version', async ({ version, expected }) => {
-      const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', version)
-      const options = createOptions('AssetHubPolkadot', DOT, {
-        version,
-        transactOptions: { call: '0x01' }
-      })
+    it('uses type-and-then for substrate bridge transfers', async () => {
+      const chain = new PolkadotXcmChain('AssetHubPolkadot', 'TestChain', 'Polkadot', Version.V5)
 
-      expect(await chain.transfer(options)).toBe(expected)
+      expect(await chain.transfer(createOptions('AssetHubKusama', KSM_BRIDGED))).toBe(typeAndThenTx)
     })
 
-    it('passes the transfer options to createTypeAndThenCall', async () => {
-      const chain = new OnlyPolkadotXCMParachain('Acala', 'TestChain', 'Polkadot', Version.V5)
+    it('uses type-and-then for external assets routed via AssetHub', async () => {
+      const chain = new PolkadotXcmChain('Acala', 'TestChain', 'Polkadot', Version.V5)
 
-      await chain.transfer(createOptions('Darwinia', USDT_EXTERNAL))
-
+      expect(await chain.transfer(createOptions('Darwinia', USDT_EXTERNAL))).toBe(typeAndThenTx)
       expect(createTypeAndThenCall).toHaveBeenCalledWith(
         expect.objectContaining({
           chain: 'Acala',
@@ -368,8 +267,71 @@ describe('Parachain', () => {
       )
     })
 
+    it('uses the chain transfer for external assets sent from AssetHub', async () => {
+      const chain = new PolkadotXcmChain('AssetHubPolkadot', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('Hydration', WETH))).toBe(polkadotXcmTx)
+    })
+
+    it('uses the chain transfer for external assets sent to Ethereum', async () => {
+      const chain = new PolkadotXcmChain('Hydration', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('Ethereum', WETH))).toBe(polkadotXcmTx)
+    })
+
+    it('uses type-and-then for relay assets on XTokens chains', async () => {
+      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('Hydration', DOT))).toBe(typeAndThenTx)
+    })
+
+    it('uses XTokens for non-relay assets on XTokens chains', async () => {
+      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('Hydration', CFG))).toBe(xTokensTx)
+    })
+
+    it('uses limited_teleport_assets for native asset teleports', async () => {
+      vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+      const chain = new PolkadotXcmChain('Acala', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('AssetHubPolkadot', ASTR))).toBe(teleportTx)
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        expect.objectContaining({ assetInfo: ASTR }),
+        'limited_teleport_assets',
+        'Unlimited'
+      )
+    })
+
+    it('skips the teleport when the chain requires an execute transfer', async () => {
+      vi.mocked(isNativeAssetTeleport).mockReturnValue(true)
+      const chain = new ExecuteTransferChain('Acala', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('AssetHubPolkadot', ASTR))).toBe(polkadotXcmTx)
+    })
+
+    it('builds transact calls with execute on V5', async () => {
+      const chain = new DualPalletChain('Acala', 'TestChain', 'Polkadot', Version.V5)
+      const options = createOptions('AssetHubPolkadot', DOT, {
+        version: Version.V5,
+        transactOptions: { call: '0x01' }
+      })
+
+      expect(await chain.transfer(options)).toBe(executeTx)
+    })
+
+    it('builds transact calls with send below V5', async () => {
+      const chain = new DualPalletChain('Acala', 'TestChain', 'Polkadot', Version.V4)
+      const options = createOptions('AssetHubPolkadot', DOT, {
+        version: Version.V4,
+        transactOptions: { call: '0x01' }
+      })
+
+      expect(await chain.transfer(options)).toBe(sendTx)
+    })
+
     it('passes the user fee asset to the chain transfer', async () => {
-      const chain = new OnlyPolkadotXCMParachain('Astar', 'TestChain', 'Polkadot', Version.V5)
+      const chain = new PolkadotXcmChain('Astar', 'TestChain', 'Polkadot', Version.V5)
       const feeAsset = { symbol: 'USDT', decimals: 6, location: RELAY_LOCATION } as TAssetInfo
       const transferPolkadotXCMSpy = vi.spyOn(chain, 'transferPolkadotXCM')
 
@@ -380,52 +342,38 @@ describe('Parachain', () => {
       )
     })
 
-    it.each([
-      {
-        name: 'relay assets on XTokens chains',
-        Chain: OnlyXTokensParachain,
-        from: 'Centrifuge' as const,
-        asset: DOT
-      },
-      {
-        name: 'PolkadotXcm chains',
-        Chain: OnlyPolkadotXCMParachain,
-        from: 'Acala' as const,
-        asset: ASTR
-      }
-    ])(
-      'throws TypeAndThenUnavailableError for $name without type-and-then',
-      async ({ Chain, from, asset }) => {
-        const hasMethodSpy = vi.spyOn(api, 'hasMethod').mockResolvedValue(false)
-        const chain = new Chain(from, 'TestChain', 'Polkadot', Version.V5)
+    it('throws TypeAndThenUnavailableError for relay assets on XTokens chains without type-and-then', async () => {
+      mockTypeAndThenSupport(false)
+      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
 
-        await expect(chain.transfer(createOptions('Hydration', asset))).rejects.toThrow(
-          TypeAndThenUnavailableError
-        )
-        expect(hasMethodSpy).toHaveBeenCalledWith(
-          'PolkadotXcm',
-          'transfer_assets_using_type_and_then'
-        )
-        expect(createTypeAndThenCall).not.toHaveBeenCalled()
-      }
-    )
+      await expect(chain.transfer(createOptions('Hydration', DOT))).rejects.toThrow(
+        TypeAndThenUnavailableError
+      )
+    })
 
-    it('skips the type-and-then check for XTokens transfers', async () => {
-      const hasMethodSpy = vi.spyOn(api, 'hasMethod')
-      const chain = new OnlyXTokensParachain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+    it('throws TypeAndThenUnavailableError for PolkadotXcm chains without type-and-then', async () => {
+      mockTypeAndThenSupport(false)
+      const chain = new PolkadotXcmChain('Acala', 'TestChain', 'Polkadot', Version.V5)
 
-      await chain.transfer(createOptions('Hydration', CFG))
+      await expect(chain.transfer(createOptions('Hydration', ASTR))).rejects.toThrow(
+        TypeAndThenUnavailableError
+      )
+    })
 
-      expect(hasMethodSpy).not.toHaveBeenCalled()
+    it('uses XTokens without requiring type-and-then', async () => {
+      mockTypeAndThenSupport(false)
+      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+
+      expect(await chain.transfer(createOptions('Hydration', CFG))).toBe(xTokensTx)
     })
 
     it('throws when sending is disabled', async () => {
-      class SendDisabledParachain extends SubstrateChain<unknown, unknown, unknown> {
+      class SendDisabledChain extends PolkadotXcmChain {
         isSendingTempDisabled() {
           return true
         }
       }
-      const chain = new SendDisabledParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+      const chain = new SendDisabledChain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
       await expect(chain.transfer(createOptions('Astar', DOT))).rejects.toThrow(
         'Sending DOT from Acala is temporarily disabled'
@@ -433,17 +381,8 @@ describe('Parachain', () => {
     })
 
     it('throws when receiving is disabled', async () => {
-      class ReceiveDisabledParachain extends SubstrateChain<unknown, unknown, unknown> {
-        isReceivingTempDisabled() {
-          return true
-        }
-
-        transferPolkadotXCM() {
-          return Promise.resolve('transferPolkadotXCM called')
-        }
-      }
-      const chain = new ReceiveDisabledParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
-      vi.mocked(getChain).mockReturnValue(chain)
+      mockDestination({ receivingDisabled: true })
+      const chain = new PolkadotXcmChain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
       await expect(chain.transfer(createOptions('Astar', DOT))).rejects.toThrow(
         'Receiving on Astar is temporarily disabled'
@@ -451,11 +390,8 @@ describe('Parachain', () => {
     })
 
     it('throws when the destination cannot receive from the origin', async () => {
-      vi.mocked(getChain).mockReturnValue({
-        canReceiveFrom: () => false,
-        isReceivingTempDisabled: () => false
-      } as unknown as ReturnType<typeof getChain>)
-      const chain = new TestParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+      mockDestination({ canReceive: false })
+      const chain = new PolkadotXcmChain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
       await expect(chain.transfer(createOptions('Astar', DOT))).rejects.toThrow(
         ScenarioNotSupportedError
@@ -463,7 +399,7 @@ describe('Parachain', () => {
     })
 
     it('throws NoXCMSupportImplementedError when no transfer method is implemented', async () => {
-      const chain = new NoSupportParachain('Acala', 'TestChain', 'Polkadot', Version.V4)
+      const chain = new NoXcmChain('Acala', 'TestChain', 'Polkadot', Version.V4)
 
       await expect(chain.transfer(createOptions('Astar', ASTR))).rejects.toThrow(
         NoXCMSupportImplementedError
@@ -516,7 +452,7 @@ describe('Parachain', () => {
       await expect(chain.transferLocal(options)).rejects.toThrow(UnsupportedOperationError)
     })
 
-    it('should call transferLocalNativeAsset when asset is native', async () => {
+    it('builds a Balances transfer for native assets', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'DOT', isNative: true, location: {}, amount: 100n },
@@ -524,16 +460,14 @@ describe('Parachain', () => {
         recipient: '0x123'
       } as TTransferInternalOptions<unknown, unknown, unknown>
 
-      vi.spyOn(api, 'getNativeAssetSymbol').mockReturnValue('DOT')
-
-      const transferLocalNativeSpy = vi.spyOn(chain, 'transferLocalNativeAsset')
-
-      await chain.transferLocal(options)
-
-      expect(transferLocalNativeSpy).toHaveBeenCalled()
+      expect(await chain.transferLocal(options)).toEqual({
+        module: 'Balances',
+        method: 'transfer_allow_death',
+        params: { dest: { Id: '0x123' }, value: 100n }
+      })
     })
 
-    it('should call transferLocalNonNativeAsset when asset is foreign', async () => {
+    it('builds a Tokens transfer for foreign assets', async () => {
       const options = {
         api,
         assetInfo: { symbol: 'WETH', assetId: '123', amount: 100n },
@@ -541,11 +475,11 @@ describe('Parachain', () => {
         recipient: '0x123'
       } as TTransferInternalOptions<unknown, unknown, unknown>
 
-      const transferLocalNonNativeSpy = vi.spyOn(chain, 'transferLocalNonNativeAsset')
-
-      await chain.transferLocal(options)
-
-      expect(transferLocalNonNativeSpy).toHaveBeenCalled()
+      expect(await chain.transferLocal(options)).toEqual({
+        module: 'Tokens',
+        method: 'transfer',
+        params: { dest: { Id: '0x123' }, currency_id: 123n, amount: 100n }
+      })
     })
 
     it('should fetch the sender balance for keepAlive transfers', async () => {
@@ -608,43 +542,7 @@ describe('Parachain', () => {
     })
   })
 
-  describe('transferLocalNativeAsset', () => {
-    it('should create an API call', async () => {
-      const options = {
-        api,
-        assetInfo: { symbol: 'DOT', assetId: '', location: {}, amount: 100n },
-        sender: '0x456',
-        recipient: '0x123',
-        keepAlive: false
-      } as TTransferLocalOptions<unknown, unknown, unknown>
-
-      const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
-
-      await chain.transferLocalNativeAsset(options)
-
-      expect(spy).toHaveBeenCalledWith({
-        module: 'Balances',
-        method: 'transfer_allow_death',
-        params: {
-          dest: { Id: options.recipient },
-          value: BigInt(options.assetInfo.amount)
-        }
-      })
-    })
-  })
-
   describe('transferLocalNonNativeAsset', () => {
-    it('should throw an error if the asset is not foreign', () => {
-      const options = {
-        api,
-        assetInfo: { symbol: 'DOT', amount: 100n },
-        sender: '0x456',
-        recipient: '0x123'
-      } as TTransferLocalOptions<unknown, unknown, unknown>
-
-      expect(() => chain.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
-    })
-
     it('should throw an error if assetId is undefined', () => {
       const options = {
         api,
@@ -654,29 +552,6 @@ describe('Parachain', () => {
       } as TTransferLocalOptions<unknown, unknown, unknown>
 
       expect(() => chain.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
-    })
-
-    it('should create an API call', () => {
-      const options = {
-        api,
-        assetInfo: { symbol: 'WETH', assetId: '10', location: {}, amount: 100n },
-        sender: '0x456',
-        recipient: '0x123'
-      } as TTransferLocalOptions<unknown, unknown, unknown>
-
-      const spy = vi.spyOn(options.api, 'deserializeExtrinsics')
-
-      chain.transferLocalNonNativeAsset(options)
-
-      expect(spy).toHaveBeenCalledWith({
-        module: 'Tokens',
-        method: 'transfer',
-        params: {
-          dest: { Id: options.recipient },
-          currency_id: 10n,
-          amount: BigInt(options.assetInfo.amount)
-        }
-      })
     })
   })
 
@@ -690,19 +565,13 @@ describe('Parachain', () => {
 
   describe('getBalanceNative', () => {
     it('delegates to the System pallet', async () => {
-      const systemPallet = {
-        getBalance: vi.fn().mockResolvedValue(42n)
-      }
-
-      vi.mocked(getPalletInstance).mockReturnValueOnce(systemPallet as unknown as BaseAssetsPallet)
+      const systemPallet = { getBalance: vi.fn().mockResolvedValue(42n) }
+      mockPallets({ System: systemPallet })
 
       const asset = { symbol: 'DOT', amount: 10n } as WithAmount<TAssetInfo>
 
-      const result = await chain.getBalanceNative(api, '5FMock', asset)
-
-      expect(getPalletInstance).toHaveBeenCalledWith('System')
+      expect(await chain.getBalanceNative(api, '5FMock', asset)).toBe(42n)
       expect(systemPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset)
-      expect(result).toBe(42n)
     })
   })
 
@@ -720,40 +589,25 @@ describe('Parachain', () => {
     it('tries pallets sequentially until balance resolves', async () => {
       vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens', 'ForeignAssets'])
 
-      const tokensPallet = {
-        getBalance: vi.fn().mockRejectedValue(new Error('Tokens failed'))
-      }
-      const foreignAssetsPallet = {
-        getBalance: vi.fn().mockResolvedValue(55n)
-      }
-
-      vi.mocked(getPalletInstance).mockImplementation(pallet => {
-        if (pallet === 'Tokens') return tokensPallet as unknown as BaseAssetsPallet
-        if (pallet === 'ForeignAssets') return foreignAssetsPallet as unknown as BaseAssetsPallet
-        throw new Error('Unexpected pallet')
-      })
+      const tokensPallet = { getBalance: vi.fn().mockRejectedValue(new Error('Tokens failed')) }
+      const foreignAssetsPallet = { getBalance: vi.fn().mockResolvedValue(55n) }
+      mockPallets({ Tokens: tokensPallet, ForeignAssets: foreignAssetsPallet })
 
       const customId = Symbol('custom')
       vi.spyOn(chain, 'getCustomCurrencyId').mockReturnValue(customId)
 
       const asset = { symbol: 'USDT' } as TAssetInfo
 
-      const result = await chain.getBalanceForeign(api, '5FMock', asset)
-
-      expect(tokensPallet.getBalance).toHaveBeenCalled()
+      expect(await chain.getBalanceForeign(api, '5FMock', asset)).toBe(55n)
+      expect(tokensPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset, customId)
       expect(foreignAssetsPallet.getBalance).toHaveBeenCalledWith(api, '5FMock', asset, customId)
-      expect(result).toBe(55n)
     })
 
     it('throws the last encountered error when every pallet fails', async () => {
       vi.mocked(getOtherAssetsPallets).mockReturnValueOnce(['Tokens'])
 
       const expectedError = new Error('all failed')
-      const failingPallet = {
-        getBalance: vi.fn().mockRejectedValue(expectedError)
-      }
-
-      vi.mocked(getPalletInstance).mockReturnValueOnce(failingPallet as unknown as BaseAssetsPallet)
+      mockPallets({ Tokens: { getBalance: vi.fn().mockRejectedValue(expectedError) } })
 
       await expect(
         chain.getBalanceForeign(api, '5FMock', {
@@ -768,47 +622,40 @@ describe('Parachain', () => {
       const nativeAsset = { symbol: 'DOT' } as TAssetInfo
 
       const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(11n)
-      const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(0n)
+      vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(0n)
 
-      const result = await chain.getBalance(api, '5FMock', nativeAsset)
-
+      expect(await chain.getBalance(api, '5FMock', nativeAsset)).toBe(11n)
       expect(nativeSpy).toHaveBeenCalledWith(api, '5FMock', nativeAsset)
-      expect(foreignSpy).not.toHaveBeenCalled()
-      expect(result).toBe(11n)
     })
 
     it('routes non-native assets to getBalanceForeign', async () => {
       const foreignAsset = { symbol: 'USDT' } as TAssetInfo
 
-      const nativeSpy = vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(0n)
+      vi.spyOn(chain, 'getBalanceNative').mockResolvedValue(0n)
       const foreignSpy = vi.spyOn(chain, 'getBalanceForeign').mockResolvedValue(22n)
 
-      const result = await chain.getBalance(api, '5FMock', foreignAsset)
-
-      expect(nativeSpy).not.toHaveBeenCalled()
+      expect(await chain.getBalance(api, '5FMock', foreignAsset)).toBe(22n)
       expect(foreignSpy).toHaveBeenCalledWith(api, '5FMock', foreignAsset)
-      expect(result).toBe(22n)
     })
   })
 
   describe('mint', () => {
     it('routes the native asset to the native pallet and forwards the chain instance', async () => {
       const palletMock = { mint: vi.fn().mockResolvedValue({ balanceTx: { module: 'Balances' } }) }
-      vi.mocked(getPalletInstance).mockReturnValue(palletMock as unknown as BaseAssetsPallet)
+      mockPallets({ Balances: palletMock })
 
       const asset = { symbol: 'DOT', isNative: true, amount: 5n } as WithAmount<TAssetInfo>
 
-      const result = await chain.mint(api, '5FMock', asset, 1n)
-
-      expect(getPalletInstance).toHaveBeenCalledWith('Balances')
+      expect(await chain.mint(api, '5FMock', asset, 1n)).toEqual({
+        balanceTx: { module: 'Balances' }
+      })
       expect(palletMock.mint).toHaveBeenCalledWith(api, '5FMock', asset, 1n, chain)
-      expect(result).toEqual({ balanceTx: { module: 'Balances' } })
     })
 
     it('routes non-native assets to an other-assets pallet', async () => {
       vi.mocked(getOtherAssetsPallets).mockReturnValue(['Tokens'])
       const palletMock = { mint: vi.fn().mockResolvedValue({ balanceTx: { module: 'Tokens' } }) }
-      vi.mocked(getPalletInstance).mockReturnValue(palletMock as unknown as BaseAssetsPallet)
+      mockPallets({ Tokens: palletMock })
 
       const asset = {
         symbol: 'USDT',
@@ -817,9 +664,9 @@ describe('Parachain', () => {
         amount: 5n
       } as WithAmount<TAssetInfo>
 
-      await chain.mint(api, '5FMock', asset, 0n)
-
-      expect(getPalletInstance).toHaveBeenCalledWith('Tokens')
+      expect(await chain.mint(api, '5FMock', asset, 0n)).toEqual({
+        balanceTx: { module: 'Tokens' }
+      })
       expect(palletMock.mint).toHaveBeenCalledWith(api, '5FMock', asset, 0n, chain)
     })
   })

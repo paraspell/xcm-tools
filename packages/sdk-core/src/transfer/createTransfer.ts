@@ -128,7 +128,7 @@ export const createTransfer = async <TApi, TRes, TSigner, TCustomChain extends s
   const { resolvedFeeAsset, resolvedVersion, overriddenAsset, normalizedAsset } =
     resolveTransferParams(options)
 
-  const customCtx = api?._customCtx
+  const customCtx = api._customCtx
   const chainInstance = getSubstrateChainImpl<TApi, TRes, TSigner, TCustomChain>(origin, customCtx)
   return chainInstance.transfer({
     api,

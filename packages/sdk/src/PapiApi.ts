@@ -754,7 +754,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const destParaId = extractDestParaId(forwardedXcms)
 
-    if (this.hasXcmPaymentApiSupport(chain) && asset) {
+    if (this.hasXcmPaymentApiSupport(chain)) {
       const fee = await this.getXcmPaymentApiFee(chain, xcm, forwardedXcms, asset, version)
 
       return {
@@ -774,8 +774,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
 
     const palletsWithIssued = ['Balances', 'ForeignAssets', 'Assets']
 
-    const isFeeAsset =
-      origin === 'AssetHubPolkadot' && feeAsset && asset && isAssetEqual(feeAsset, asset)
+    const isFeeAsset = origin === 'AssetHubPolkadot' && feeAsset && isAssetEqual(feeAsset, asset)
 
     const feeAssetFeeEvent =
       (isFeeAsset
@@ -792,7 +791,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
         : undefined)
 
     const processedAssetsAmount =
-      chain === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
+      chain === 'AssetHubPolkadot' && asset.symbol !== 'DOT'
         ? processAssetsDepositedEvents(emitted, amount, 'Assets', 'Deposited', true)
         : (processAssetsDepositedEvents(emitted, amount, 'Balances', 'Minted', false) ??
           processAssetsDepositedEvents(emitted, amount, 'Balances', 'Issued', false))
@@ -811,7 +810,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
             }
           }
         : undefined) ??
-      (origin === 'Mythos' || (chain === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
+      (origin === 'Mythos' || (chain === 'AssetHubPolkadot' && asset.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )
@@ -845,7 +844,7 @@ class PapiApi<TCustomChain extends string = never> extends PolkadotApi<
     }
 
     const processedFee =
-      (isRelayChain(chain) || chain.includes('AssetHub')) && asset?.symbol === 'DOT'
+      (isRelayChain(chain) || chain.includes('AssetHub')) && asset.symbol === 'DOT'
         ? padValueBy(fee, 30)
         : fee
 

@@ -71,8 +71,6 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     origin &&
     ecosystemDiffers &&
     location.parents === Parents.TWO &&
-    originRelay !== undefined &&
-    targetRelay !== undefined &&
     deepEqual(getJunctionValue(location, 'GlobalConsensus'), { [targetRelay]: null }) &&
     junctionCount === 1
   ) {
@@ -142,13 +140,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     }
   }
 
-  if (
-    origin &&
-    ecosystemDiffers &&
-    isOriginRelayHere &&
-    !hasGlobalConsensus &&
-    originRelay !== undefined
-  ) {
+  if (origin && ecosystemDiffers && isOriginRelayHere && !hasGlobalConsensus) {
     return {
       parents: Parents.TWO,
       interior: {
@@ -157,13 +149,7 @@ const localizeLocationInner = <TCustomChain extends string = never>(
     }
   }
 
-  if (
-    origin &&
-    ecosystemDiffers &&
-    newInterior.Here === undefined &&
-    !hasGlobalConsensus &&
-    originRelay !== undefined
-  ) {
+  if (origin && ecosystemDiffers && newInterior.Here === undefined && !hasGlobalConsensus) {
     const junctions = flattenJunctions(newInterior)
 
     const updatedJunctions = [{ GlobalConsensus: { [originRelay]: null } }, ...junctions]

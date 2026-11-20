@@ -97,7 +97,7 @@ export const getTransferInfo = async <
 
     let builtHops: TTransferInfo['hops'] = []
 
-    if (hops && hops.length > 0) {
+    if (hops.length > 0) {
       builtHops = await Promise.all(
         hops.map(async hop => {
           const result = await buildHopInfo({

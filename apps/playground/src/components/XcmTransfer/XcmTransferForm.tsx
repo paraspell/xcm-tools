@@ -535,7 +535,7 @@ const XcmTransferFormContent: FC<Props> = ({
       <EthAssetActions
         key={entry.currencyOptionId + selectedEvmAccount?.address}
         symbol={asset.symbol}
-        decimals={asset.decimals ?? 18}
+        decimals={asset.decimals}
         assetId={asset.assetId}
         amount={entry.amount}
         isMax={entry.isMax}
