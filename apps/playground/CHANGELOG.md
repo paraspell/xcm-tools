@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/playground-v14.5.3...playground-v14.5.4) (2026-11-20)
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/playground-v14.5.2...playground-v14.5.3) (2026-11-11)
 
 
