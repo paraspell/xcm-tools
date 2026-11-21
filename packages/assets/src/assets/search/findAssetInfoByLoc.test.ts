@@ -85,4 +85,41 @@ describe('findAssetInfoByLoc', () => {
     })
     expect(result).toBe(usdc)
   })
+
+  it('canonicalizes string location with V3 X1 object to V5 X1 array', () => {
+    const assetWithV5: TAssetInfo = {
+      symbol: 'ETH',
+      decimals: 18,
+      location: {
+        parents: 1,
+        interior: { X1: [{ Parachain: 2006 }] }
+      }
+    }
+    const result = findAssetInfoByLoc(
+      [assetWithV5],
+      '{"parents":1,"interior":{"X1":{"Parachain":2006}}}'
+    )
+    expect(result).toBe(assetWithV5)
+  })
+
+  it('matches JSON string location regardless of key ordering', () => {
+    const result = findAssetInfoByLoc(
+      assets,
+      JSON.stringify({
+        interior: {
+          X3: [{ Parachain: 1000 }, { PalletInstance: 50 }, { GeneralIndex: 1337 }]
+        },
+        parents: 1
+      })
+    )
+    expect(result).toBe(usdc)
+  })
+
+  it('canonicalizes string location with "Here" shorthand to { Here: null }', () => {
+    const result = findAssetInfoByLoc(
+      assets,
+      '{"parents":1,"interior":"Here"}'
+    )
+    expect(result).toBe(relayNative)
+  })
 })
