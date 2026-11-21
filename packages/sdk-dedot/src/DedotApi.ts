@@ -68,6 +68,7 @@ import {
 import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { findCodecByType } from "./utils";
 import { computeOriginFee } from "./utils/computeOriginFee";
+import { flattenFieldlessEnums } from "./utils/flattenFieldlessEnums";
 import { createKeyringPair } from "./utils/signer";
 import { transform } from "./XcmTransformer";
 
@@ -159,12 +160,22 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
     };
   }
 
+  // Flattens field-less enums in a transformed value using its metadata type
+  private flattenByTypeId(value: unknown, typeId: number | undefined) {
+    return typeId === undefined
+      ? value
+      : flattenFieldlessEnums(this.api.registry, typeId, value);
+  }
+
   deserializeExtrinsics(serialized: TSerializedExtrinsics) {
     const { params } = serialized;
     const transformedParams = transform(params);
-    const values = Object.values(transformedParams);
     const { module, method } = this.convertToDedotCall(serialized);
-    return this.api.tx[module][method](...values);
+    const txMethod = this.api.tx[module][method];
+    const values = Object.values(transformedParams).map((value, i) =>
+      this.flattenByTypeId(value, txMethod.meta?.fields[i]?.typeId),
+    );
+    return txMethod(...values);
   }
 
   txFromHex(hex: string): Promise<TDedotExtrinsic> {
@@ -186,15 +197,28 @@ class DedotApi<TCustomChain extends string = never> extends PolkadotApi<
   queryState<T>(serialized: TSerializedStateQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
-    return this.api.query[module][method](
-      transform(params.length > 1 ? params : params[0]),
+    const queryMethod = this.api.query[module][method];
+    const storageType = queryMethod.meta?.storageType;
+    return queryMethod(
+      this.flattenByTypeId(
+        transform(params.length > 1 ? params : params[0]),
+        storageType?.type === "Map" ? storageType.value.keyTypeId : undefined,
+      ),
     );
   }
 
   queryRuntimeApi<T>(serialized: TSerializedRuntimeApiQuery): Promise<T> {
     const { params } = serialized;
     const { module, method } = this.convertToDedotCall(serialized);
-    return this.api.call[module][method](...params.map(transform));
+    const callMethod = this.api.call[module][method];
+    return callMethod(
+      ...params.map((param, i) =>
+        this.flattenByTypeId(
+          transform(param),
+          callMethod.meta?.params[i]?.typeId,
+        ),
+      ),
+    );
   }
 
   callBatchMethod(calls: TDedotExtrinsic[], mode: BatchMode) {

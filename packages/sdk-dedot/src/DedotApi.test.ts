@@ -28,6 +28,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import DedotApi from "./DedotApi";
 import type { TDedotApi, TDedotExtrinsic, TDedotSigner } from "./types";
 import { computeOriginFee } from "./utils/computeOriginFee";
+import { flattenFieldlessEnums } from "./utils/flattenFieldlessEnums";
 import { transform } from "./XcmTransformer";
 
 vi.mock("dedot", () => ({
@@ -71,6 +72,10 @@ vi.mock("./utils", () => ({
 
 vi.mock("./utils/computeOriginFee", () => ({
   computeOriginFee: vi.fn().mockReturnValue(500n),
+}));
+
+vi.mock("./utils/flattenFieldlessEnums", () => ({
+  flattenFieldlessEnums: vi.fn().mockReturnValue("flattened"),
 }));
 
 vi.mock("./utils/signer", () => ({
@@ -247,6 +252,35 @@ describe("DedotApi", () => {
       expect(mockApiRaw.tx.xcmPallet.methodName).toHaveBeenCalled();
       expect(result).toBe(mockTx);
     });
+
+    it("flattens each param using its field type from the call metadata", () => {
+      vi.mocked(transform).mockReturnValue({ dest: "a", amount: "b" });
+      vi.mocked(flattenFieldlessEnums).mockReturnValue("flattened");
+      Object.assign(mockApiRaw.tx.xcmPallet.methodName, {
+        meta: { fields: [{ typeId: 1 }, { typeId: 2 }] },
+      });
+
+      dedotApi.deserializeExtrinsics({
+        module: "XcmPallet",
+        method: "method_name",
+        params: { dest: "a", amount: "b" },
+      });
+
+      expect(flattenFieldlessEnums).toHaveBeenCalledWith(
+        mockApiRaw.registry,
+        1,
+        "a",
+      );
+      expect(flattenFieldlessEnums).toHaveBeenCalledWith(
+        mockApiRaw.registry,
+        2,
+        "b",
+      );
+      expect(mockApiRaw.tx.xcmPallet.methodName).toHaveBeenCalledWith(
+        "flattened",
+        "flattened",
+      );
+    });
   });
 
   describe("txFromHex", () => {
@@ -306,6 +340,27 @@ describe("DedotApi", () => {
       ]);
       expect(result).toEqual({ data: "result" });
     });
+
+    it("flattens the storage key using the map key type", async () => {
+      vi.mocked(transform).mockReturnValue({ val: "transformed" });
+      vi.mocked(flattenFieldlessEnums).mockReturnValue("flattened");
+      Object.assign(mockApiRaw.query.system.account, {
+        meta: { storageType: { type: "Map", value: { keyTypeId: 7 } } },
+      });
+
+      await dedotApi.queryState({
+        module: "System",
+        method: "account",
+        params: ["addr"],
+      });
+
+      expect(flattenFieldlessEnums).toHaveBeenCalledWith(
+        mockApiRaw.registry,
+        7,
+        { val: "transformed" },
+      );
+      expect(mockApiRaw.query.system.account).toHaveBeenCalledWith("flattened");
+    });
   });
 
   describe("queryRuntimeApi", () => {
@@ -324,6 +379,30 @@ describe("DedotApi", () => {
       const result = await dedotApi.queryRuntimeApi(serialized);
       expect(mockCallMethod).toHaveBeenCalledWith({ val: "transformed" });
       expect(result).toEqual({ weight: 100n });
+    });
+
+    it("flattens each param using its type from the runtime api metadata", async () => {
+      vi.mocked(transform).mockReturnValue({ val: "transformed" });
+      vi.mocked(flattenFieldlessEnums).mockReturnValue("flattened");
+      const mockCallMethod = Object.assign(vi.fn().mockResolvedValue(1n), {
+        meta: { params: [{ typeId: 3 }] },
+      });
+      Object.assign(mockApiRaw.call, {
+        balances: { queryXcmWeight: mockCallMethod },
+      });
+
+      await dedotApi.queryRuntimeApi({
+        module: "Balances",
+        method: "query_xcm_weight",
+        params: ["xcm"],
+      });
+
+      expect(flattenFieldlessEnums).toHaveBeenCalledWith(
+        mockApiRaw.registry,
+        3,
+        { val: "transformed" },
+      );
+      expect(mockCallMethod).toHaveBeenCalledWith("flattened");
     });
   });
 
