@@ -3,6 +3,7 @@
 import type { TLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { DuplicateAssetError } from '../../errors'
 import type { TAssetInfo } from '../../types'
 import { getNativeAssetsImpl, getOtherAssetsImpl } from '../assets'
 import { Foreign, ForeignAbstract, Native } from '../assetSelectors'
@@ -555,5 +556,57 @@ describe('findAssetInfo', () => {
     )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
+  })
+
+  describe('duplicate Ethereum assets', () => {
+    const createEthErc20 = (key: string): TAssetInfo => ({
+      symbol: 'XRT',
+      decimals: 9,
+      existentialDeposit: '1',
+      location: {
+        parents: 2,
+        interior: {
+          X2: [
+            { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+            { AccountKey20: { network: null, key } }
+          ]
+        }
+      }
+    })
+
+    const xrtA = createEthErc20('0x7de91b204c1c737bcee6f000aaa6569cf7061cb7')
+    const xrtB = createEthErc20('0x1f752250f518e419f2f03804e25728c5c6dff73f')
+
+    beforeEach(() => {
+      vi.mocked(getOtherAssetsImpl).mockReturnValue([xrtA, xrtB])
+    })
+
+    it('throws DuplicateAssetError for a .e symbol matching multiple Ethereum assets', () => {
+      expect(() => findAssetInfo('Ethereum', { symbol: 'XRT.e' })).toThrow(DuplicateAssetError)
+      expect(() => findAssetInfo('Ethereum', { symbol: 'XRT.e' }, 'AssetHubPolkadot')).toThrow(
+        DuplicateAssetError
+      )
+    })
+
+    it('throws DuplicateAssetError for a Foreign .e symbol matching multiple Ethereum assets', () => {
+      expect(() =>
+        findAssetInfo('Ethereum', { symbol: Foreign('XRT.e') }, 'AssetHubPolkadot')
+      ).toThrow(DuplicateAssetError)
+    })
+
+    it('throws DuplicateAssetError for an Ethereum destination with multiple matches', () => {
+      expect(() => findAssetInfo('Ethereum', { symbol: 'XRT' }, 'Ethereum')).toThrow(
+        DuplicateAssetError
+      )
+      expect(() => findAssetInfo('Ethereum', { symbol: Foreign('XRT') }, 'Ethereum')).toThrow(
+        DuplicateAssetError
+      )
+    })
+
+    it('still resolves a single Ethereum match for an Ethereum destination', () => {
+      vi.mocked(getOtherAssetsImpl).mockReturnValue([xrtA])
+      expect(findAssetInfo('AssetHubPolkadot', { symbol: 'XRT' }, 'Ethereum')).toBe(xrtA)
+      expect(findAssetInfo('AssetHubPolkadot', { symbol: 'XRT.e' })).toBe(xrtA)
+    })
   })
 })

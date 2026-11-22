@@ -21,7 +21,12 @@ const findEthAssetBySymbol = (
       }
     })
   )
-  return findBestMatches(ethCompatibleAssets, symbol)[0]
+  const matches = findBestMatches(ethCompatibleAssets, symbol)
+  // Several Ethereum contracts can share a symbol (e.g. XRT), so refuse to guess
+  if (matches.length > 1) {
+    throwDuplicateAssetError(symbol, [], matches)
+  }
+  return matches[0]
 }
 
 const findEthMatch = (symbol: string, otherAssets: TAssetInfo[]): TAssetInfo | undefined => {
