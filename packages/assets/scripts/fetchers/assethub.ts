@@ -3,7 +3,7 @@ import { deepEqual, type TLocation, type TSubstrateChain } from '@paraspell/sdk-
 import type { PolkadotClient } from 'polkadot-api'
 
 import { CHAINS, getParaId, Parents } from '../../../sdk-core/src'
-import { getAllAssetsSymbols } from '../../src'
+import { getAllAssetsSymbols, getNativeAssetSymbol } from '../../src'
 import type { TAssetInfoNoLoc } from '../types'
 import { decodeSymbol, normalizeLocation } from '../utils/codecUtils'
 import { edString, isLive } from '../utils'
@@ -78,9 +78,16 @@ export const fetchAssetHubAssets = async (
     })
   )
 
-  const wantedSymbol = chain === 'AssetHubPolkadot' ? 'KSM' : 'DOT'
+  // Trust-backed assets (Assets pallet) are permissionless, so anyone can register one under a
+  // relay chain symbol. Drop regular assets that reuse this chain's own native symbol or the
+  // other relay's symbol (case-insensitive, like symbol lookup). Otherwise they collide with the
+  // native asset and a plain { symbol: 'DOT' } on AssetHubPolkadot throws DuplicateAssetError.
+  const otherRelaySymbol = chain === 'AssetHubPolkadot' ? 'KSM' : 'DOT'
+  const reservedSymbols = new Set(
+    [getNativeAssetSymbol(chain), otherRelaySymbol].map(symbol => symbol.toLowerCase())
+  )
   const filteredRegular = parsedRegular.filter(
-    a => !(a.symbol === wantedSymbol && a.location.parents !== Parents.TWO)
+    a => !(reservedSymbols.has(a.symbol.toLowerCase()) && a.location.parents !== Parents.TWO)
   )
 
   return [...filteredRegular, ...parsedForeign]

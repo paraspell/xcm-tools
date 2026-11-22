@@ -5431,29 +5431,6 @@
         "alias": "WETH1"
       },
       {
-        "assetId": "50000546",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000546
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "DOT6"
-      },
-      {
         "assetId": "50000075",
         "symbol": "BILL",
         "decimals": 12,
@@ -5754,29 +5731,6 @@
         "alias": "GAME2"
       },
       {
-        "assetId": "50000336",
-        "symbol": "dot",
-        "decimals": 8,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000336
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000",
-        "alias": "dot2"
-      },
-      {
         "assetId": "50000069",
         "symbol": "LOTY",
         "decimals": 12,
@@ -5797,29 +5751,6 @@
           }
         },
         "existentialDeposit": "100000000"
-      },
-      {
-        "assetId": "50000538",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000538
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "DOT5"
       },
       {
         "assetId": "50000545",
@@ -5845,29 +5776,6 @@
         "alias": "USDt5"
       },
       {
-        "assetId": "50000534",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000534
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "DOT3"
-      },
-      {
         "assetId": "50000073",
         "symbol": "VDOT",
         "decimals": 10,
@@ -5889,52 +5797,6 @@
         },
         "existentialDeposit": "1",
         "alias": "VDOT1"
-      },
-      {
-        "assetId": "50000537",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000537
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "DOT4"
-      },
-      {
-        "assetId": "50000520",
-        "symbol": "DOT",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000520
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000",
-        "alias": "DOT2"
       },
       {
         "assetId": "40",
@@ -6004,29 +5866,6 @@
         },
         "existentialDeposit": "10000",
         "alias": "USDt2"
-      },
-      {
-        "assetId": "50000547",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000547
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "DOT7"
       },
       {
         "assetId": "7873",
@@ -6166,29 +6005,6 @@
         "alias": "USDt3"
       },
       {
-        "assetId": "2023",
-        "symbol": "dot",
-        "decimals": 0,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 2023
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "6611",
-        "alias": "dot1"
-      },
-      {
         "assetId": "1000",
         "symbol": "BRZ",
         "decimals": 6,
@@ -6278,29 +6094,6 @@
           }
         },
         "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "3",
-        "symbol": "DOT",
-        "decimals": 20,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 3
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000",
-        "alias": "DOT1"
       },
       {
         "assetId": "1337",
@@ -9293,29 +9086,6 @@
         "isFeeAsset": true
       },
       {
-        "assetId": "50000012",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000012
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "KSM3"
-      },
-      {
         "assetId": "10",
         "symbol": "USDC",
         "decimals": 4,
@@ -9541,29 +9311,6 @@
         "existentialDeposit": "1000000"
       },
       {
-        "assetId": "50000013",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000013
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "KSM4"
-      },
-      {
         "assetId": "18",
         "symbol": "HEI",
         "decimals": 10,
@@ -9632,29 +9379,6 @@
         "existentialDeposit": "10000"
       },
       {
-        "assetId": "1234",
-        "symbol": "KSM",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1234
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000",
-        "alias": "KSM1"
-      },
-      {
         "assetId": "223",
         "symbol": "BILL",
         "decimals": 8,
@@ -9676,29 +9400,6 @@
         },
         "existentialDeposit": "10000",
         "isFeeAsset": true
-      },
-      {
-        "assetId": "50000011",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000011
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "KSM2"
       },
       {
         "assetId": "2000",
@@ -9746,29 +9447,6 @@
         "existentialDeposit": "100",
         "isFeeAsset": true,
         "alias": "USDt2"
-      },
-      {
-        "assetId": "50000014",
-        "symbol": "KSM",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 50000014
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1",
-        "alias": "KSM5"
       },
       {
         "symbol": "sUSDe",
@@ -12737,28 +12415,6 @@
         "isFeeAsset": true
       },
       {
-        "assetId": "9999",
-        "symbol": "WND",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 9999
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000"
-      },
-      {
         "assetId": "50000128",
         "symbol": "KAR",
         "decimals": 12,
@@ -13123,28 +12779,6 @@
           }
         },
         "existentialDeposit": "1000000000000"
-      },
-      {
-        "assetId": "2131",
-        "symbol": "Wnd",
-        "decimals": 8,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 2131
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "100000000"
       },
       {
         "assetId": "50000123",
