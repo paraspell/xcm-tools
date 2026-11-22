@@ -14,6 +14,7 @@ import {
   MissingChainApiError,
   RELAY_LOCATION,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   type TLocation,
@@ -2023,6 +2024,20 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
       expect(result).toEqual({ refTime: '1000', proofSize: '2000' })
+    })
+
+    it('should throw RuntimeApiError when the runtime API returns an error', async () => {
+      const mockResponse = {
+        toJSON: () => ({ err: 'WeightNotComputable' })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockResponse)
+
+      await expect(polkadotApi.getXcmWeight([])).rejects.toThrow(
+        new RuntimeApiError(
+          'Failed to get XCM weight for payment fee calculation. Reason: "WeightNotComputable"'
+        )
+      )
     })
   })
 
