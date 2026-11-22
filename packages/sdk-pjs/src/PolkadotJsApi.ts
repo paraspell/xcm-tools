@@ -46,6 +46,7 @@ import {
   PolkadotApi,
   RELAY_LOCATION,
   RoutingResolutionError,
+  RuntimeApiError,
   RuntimeApiUnavailableError,
   SubmitTransactionError,
   UnsupportedOperationError,
@@ -647,6 +648,12 @@ class PolkadotJsApi<TCustomChain extends string = never> extends PolkadotApi<
   async getXcmWeight(xcm: any): Promise<TWeight> {
     const result = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm)
     const resultJson = result.toJSON() as any
+
+    if (resultJson.err !== undefined)
+      throw new RuntimeApiError(
+        `Failed to get XCM weight for payment fee calculation. Reason: ${JSON.stringify(resultJson.err)}`
+      )
+
     return resultJson.ok
   }
 
