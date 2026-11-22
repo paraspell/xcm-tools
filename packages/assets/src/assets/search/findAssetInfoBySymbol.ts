@@ -1,6 +1,5 @@
 import { deepEqual, getJunctionValue, isExternalChain, type TChain } from '@paraspell/sdk-common'
 
-import { InvalidCurrencyError } from '../../errors'
 import { isSymbolSpecifier } from '../../guards'
 import type { TAssetInfo, TCurrencySymbolValue } from '../../types'
 import { findBestMatches } from './findBestMatches'
@@ -116,12 +115,8 @@ export const findAssetInfoBySymbol = <TCustomChain extends string = never>(
         return pickOtherOrThrow(value, otherAssetsMatches)
       }
     } else if (type === 'ForeignAbstract') {
-      assetsMatches = findBestMatches(otherAssets, value, 'alias')
-      if (assetsMatches.length === 0) {
-        throw new InvalidCurrencyError(
-          `No matches found for abstract foreign asset alias ${value}.`
-        )
-      }
+      const otherAssetsMatches = findBestMatches(otherAssets, value, 'alias')
+      return pickOtherOrThrow(value, otherAssetsMatches)
     }
   } else {
     const lowerSymbol = symbol.toLowerCase()

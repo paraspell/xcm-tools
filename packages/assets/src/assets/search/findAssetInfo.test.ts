@@ -393,6 +393,34 @@ describe('findAssetInfo', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('should return null when ForeignAbstract asset is not found', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
+      {
+        ...dotAsset,
+        assetId: '1',
+        alias: 'DOT1'
+      }
+    ])
+    const asset = findAssetInfo('Acala', { symbol: ForeignAbstract('NONEXISTENT') })
+    expect(asset).toBeNull()
+  })
+
+  it('should throw DuplicateAssetError when multiple foreign assets match alias for ForeignAbstract', () => {
+    vi.mocked(getOtherAssetsImpl).mockReturnValue([
+      {
+        ...dotAsset,
+        assetId: '1',
+        alias: 'DOT1'
+      },
+      {
+        ...dotAsset,
+        assetId: '2',
+        alias: 'DOT1'
+      }
+    ])
+    expect(() => findAssetInfo('Acala', { symbol: ForeignAbstract('DOT1') })).toThrow()
+  })
+
   it('should throw error when multiple matches in native and foreign assets', () => {
     vi.mocked(getOtherAssetsImpl).mockReturnValue([
       {
