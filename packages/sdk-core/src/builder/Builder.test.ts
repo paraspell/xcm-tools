@@ -64,26 +64,34 @@ const SWAP_OPTIONS = {
 }
 
 describe('Builder', () => {
-  const mockApi = {
+  const mockClone = {
+    marker: 'api-clone',
     init: vi.fn(),
     setApi: vi.fn(),
-    deserializeExtrinsics: vi.fn(),
-    callBatchMethod: vi.fn(),
-    disconnectAllowed: vi.fn(),
-    disconnect: vi.fn(),
-    config: { abstractDecimals: true },
-    signAndSubmit: vi.fn(),
-    deriveAddress: vi.fn().mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'),
-    clone: vi.fn().mockReturnValue({
+    clone: vi.fn()
+  } as unknown as PolkadotApi<unknown, unknown, unknown>
+
+  const createMockApi = () =>
+    ({
       init: vi.fn(),
       setApi: vi.fn(),
-      clone: vi.fn()
-    })
-  } as unknown as PolkadotApi<unknown, unknown, unknown>
+      deserializeExtrinsics: vi.fn(),
+      callBatchMethod: vi.fn(),
+      disconnectAllowed: vi.fn(),
+      disconnect: vi.fn(),
+      config: { abstractDecimals: true },
+      signAndSubmit: vi.fn(),
+      deriveAddress: vi.fn().mockReturnValue('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'),
+      // the xcm format check dry runs a detached copy so the caller's api keeps its connection
+      clone: vi.fn().mockReturnValue(mockClone)
+    }) as unknown as PolkadotApi<unknown, unknown, unknown>
+
   const mockExtrinsic = {
     method: 'transfer',
     args: []
   }
+
+  const mockApi = createMockApi()
 
   beforeEach(() => {
     vi.mocked(isConfig).mockReturnValue(true)
@@ -1340,6 +1348,8 @@ describe('Builder', () => {
 
     beforeEach(() => {
       vi.resetAllMocks()
+      // resetAllMocks clears the clone implementation, so the detached copy must be restated here
+      vi.spyOn(mockApi, 'clone').mockReturnValue(mockClone)
       vi.mocked(createTransferOrSwap).mockResolvedValue(mockTx)
       vi.mocked(buildDryRun).mockResolvedValue({
         success: true,
@@ -1396,8 +1406,13 @@ describe('Builder', () => {
         .sender(SENDER)
         .build()
 
-      expect(buildDryRun).toHaveBeenCalledExactlyOnceWith(
-        mockApi,
+      // the check dry runs a detached copy so the caller's connection is left intact
+      const cloneSpy = vi.spyOn(mockApi, 'clone')
+      expect(buildDryRun).toHaveBeenCalledTimes(1)
+      expect(cloneSpy).toHaveBeenCalledTimes(1)
+      expect(vi.mocked(buildDryRun).mock.calls[0][0]).toBe(mockClone)
+      expect(buildDryRun).toHaveBeenCalledWith(
+        mockClone,
         { method: 'transfer', args: [] },
         expect.objectContaining({
           from: CHAIN,

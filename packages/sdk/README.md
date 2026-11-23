@@ -318,6 +318,10 @@ const tx = await builder.buildBatch({
 await builder.disconnect()
 ```
 
+When the Builder is constructed with `xcmFormatCheck: true`, every batched transfer is
+dry-run with the bypass mint mode before the batch is assembled, and the whole batch is
+rejected with a `DryRunFailedError` if any single transfer fails its check.
+
 #### Adding chain and/or assets
 SDK features ability to add custom chain and/or custom assets simply by adding its config to the Builder.
 

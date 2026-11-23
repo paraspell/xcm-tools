@@ -209,6 +209,7 @@ const response = await fetch('https://api.paraspell.xyz/v2/x-transfer-batch', {
   body: JSON.stringify({
     transfers, // Replace "transfers" with array of XCM transfers (same body as in x-transfer, without options)
     //options: { mode: 'BATCH' }, // Optional parameter - 'BATCH' | 'BATCH_ALL' - BATCH_ALL by default
+    //options: { xcmFormatCheck: true }, // Optional parameter - dryruns every batched transfer under the hood with dryrun bypass to confirm each message passes with fictional balance; the batch is rejected if any of them fails
   }),
 });
 

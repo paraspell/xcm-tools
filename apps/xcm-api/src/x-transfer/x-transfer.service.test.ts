@@ -713,6 +713,29 @@ describe('XTransferService', () => {
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
 
+    it('should forward xcmFormatCheck from the batch options to the Builder', async () => {
+      const batchDto: BatchXTransferDto = {
+        transfers: [
+          {
+            from: 'Acala',
+            to: 'Basilisk',
+            recipient,
+            currency,
+          },
+        ],
+        options: {
+          mode: paraspellSdk.BatchMode.BATCH_ALL,
+          xcmFormatCheck: true,
+        },
+      };
+
+      await service.generateBatchXcmCall(batchDto);
+
+      expect(paraspellSdk.Builder).toHaveBeenCalledWith(
+        expect.objectContaining({ xcmFormatCheck: true }),
+      );
+    });
+
     it('should throw BadRequestException when transfers array is empty', async () => {
       const batchDto: BatchXTransferDto = {
         transfers: [],

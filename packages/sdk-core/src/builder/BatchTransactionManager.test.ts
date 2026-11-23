@@ -1,13 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../api/PolkadotApi'
+import { DryRunFailedError } from '../errors'
 import type { TBatchedTransferOptions, TTransferBaseOptions } from '../types'
 import { BatchMode } from '../types'
 import { createTransferOrSwap } from '../utils'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { GeneralBuilder } from './Builder'
+import { maybePerformXcmFormatCheck } from './maybePerformXcmFormatCheck'
 
 vi.mock('../utils')
+vi.mock('./maybePerformXcmFormatCheck')
 
 const mockApi = {
   init: vi.fn(),
@@ -112,6 +115,49 @@ describe('BatchTransactionManager', () => {
       await expect(
         manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
       ).rejects.toThrow('All transactions must have the same origin.')
+    })
+  })
+
+  describe('xcmFormatCheck', () => {
+    it('runs the format check once per transaction before the batch is assembled', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions({ sender: 'sender-1' }))
+      manager.addTransaction(createTransferOptions({ sender: 'sender-2' }))
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+
+      await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledTimes(2)
+      expect(maybePerformXcmFormatCheck).toHaveBeenCalledWith(
+        mockApi,
+        { hash: 'hash' },
+        expect.objectContaining({ from: 'Acala', to: 'Hydration' })
+      )
+    })
+
+    it('does not assemble the batch when one transaction fails the format check', async () => {
+      const manager = new BatchTransactionManager()
+      manager.addTransaction(createTransferOptions())
+      manager.addTransaction(createTransferOptions({ to: 'Shiden' }))
+      vi.mocked(createTransferOrSwap).mockResolvedValue({ hash: 'hash' })
+      vi
+        .mocked(maybePerformXcmFormatCheck)
+        .mockResolvedValueOnce(undefined) as unknown as typeof maybePerformXcmFormatCheck
+      vi.mocked(maybePerformXcmFormatCheck).mockRejectedValueOnce(
+        new DryRunFailedError({
+          reason: 'Bad XCM format',
+          chain: 'Shiden',
+          chainKind: 'origin'
+        })
+      )
+
+      const callBatchSpy = vi.spyOn(mockApi, 'callBatchMethod')
+
+      await expect(
+        manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
+      ).rejects.toBeInstanceOf(DryRunFailedError)
+
+      expect(callBatchSpy).not.toHaveBeenCalled()
     })
   })
 })
