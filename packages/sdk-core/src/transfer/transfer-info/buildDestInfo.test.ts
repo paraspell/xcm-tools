@@ -278,6 +278,69 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT)
   })
 
+  it('should query getAssetBalanceInternal for XCM fee balance when fee is neither in native currency nor equal to destAsset', async () => {
+    const feeAsset = {
+      symbol: 'USDT',
+      assetId: 'usdtId',
+      decimals: 6,
+      location: LOCATION,
+      existentialDeposit: DEFAULT_ED
+    } as TAssetInfo
+
+    const transferredAsset = {
+      symbol: 'tBTC',
+      assetId: 'tbtcId',
+      decimals: 18,
+      location: LOCATION,
+      existentialDeposit: DEFAULT_ED
+    } as TAssetInfo
+
+    vi.spyOn(mockApi, 'findAssetOnDestOrThrow').mockReturnValue(transferredAsset)
+
+    const FEE_BALANCE = 139771486083n
+    const TBTC_BALANCE = 1152956997353088n
+    const FEE_AMOUNT = 462n
+
+    vi.mocked(getAssetBalanceInternal).mockImplementation(async ({ asset }) => {
+      if (asset.symbol === 'USDT') return FEE_BALANCE
+      return TBTC_BALANCE
+    })
+
+    const options = {
+      ...baseOptions,
+      api: mockApi,
+      destination: 'Hydration',
+      destFeeDetail: {
+        fee: FEE_AMOUNT,
+        asset: feeAsset
+      } as TXcmFeeDetail,
+      currency: {
+        symbol: 'tBTC',
+        amount: DEFAULT_AMOUNT,
+        asset: transferredAsset
+      } as WithAmount<TCurrencyCore>,
+      isOriginFeeAsset: true
+    }
+
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain => {
+      if (chain === 'Hydration') return 'HDX'
+      return 'NATIVE'
+    })
+
+    const result = await buildDestInfo(options)
+
+    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
+      api: mockClonedApi,
+      address: options.recipient,
+      chain: options.destination,
+      asset: feeAsset
+    })
+    expect(result.xcmFee.asset).toBe(feeAsset)
+    expect(result.xcmFee.balance).toBe(FEE_BALANCE)
+    expect(result.xcmFee.balanceAfter).toBe(FEE_BALANCE - FEE_AMOUNT)
+    expect(result.receivedCurrency.balance).toBe(TBTC_BALANCE)
+  })
+
   it('should handle destBalance < edDestBn correctly in sufficiency check', async () => {
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(DEFAULT_ED) / 2n)
     const options = { ...baseOptions, api: mockApi }

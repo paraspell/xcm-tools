@@ -102,15 +102,23 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
       api: destApi
     })
     destXcmFeeBalance = destRecipientNativeBalance
-  } else {
+  } else if (destFeeAssetEqual) {
     destXcmFeeBalance = destBalance
+  } else {
+    destXcmFeeBalance = await getAssetBalanceInternal({
+      api: destApi,
+      address: recipient,
+      chain: destination,
+      asset: destFeeDetail.asset
+    })
   }
 
-  const destXcmFeeBalanceAfter = isOriginFeeAsset
-    ? destBalanceAfter
-    : destXcmFeeBalance -
-      (destFeeDetail.fee as bigint) +
-      (destFeeAssetEqual ? effectiveAmountForBalance : 0n)
+  const destXcmFeeBalanceAfter =
+    isOriginFeeAsset && destFeeAssetEqual
+      ? destBalanceAfter
+      : destXcmFeeBalance -
+        (destFeeDetail.fee as bigint) +
+        (destFeeAssetEqual ? effectiveAmountForBalance : 0n)
 
   return {
     receivedCurrency: {
