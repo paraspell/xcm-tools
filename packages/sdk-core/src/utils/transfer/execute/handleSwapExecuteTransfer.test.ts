@@ -163,6 +163,72 @@ describe('handleSwapExecuteTransfer', () => {
     expect(baseOptions.calculateMinAmountOut).toHaveBeenCalledWith(1680n)
   })
 
+  it('reserves the onward fee at the post-trade price when AssetHub swaps it from the sold asset', async () => {
+    vi.mocked(isAssetEqual).mockReturnValue(false)
+    const exchangeChain = 'AssetHubPolkadot'
+    const dryRun = mockDryRunResult(true, true)
+    dryRun.hops[1].chain = exchangeChain
+    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRun)
+    const calculateMinAmountOut = vi.fn((amount: bigint, _asset?: TAssetInfo, slippage?: string) =>
+      Promise.resolve(slippage === '0' && amount === 1680n ? 1400n : amount)
+    )
+
+    await handleSwapExecuteTransfer({ ...baseOptions, exchangeChain, calculateMinAmountOut })
+
+    expect(calculateMinAmountOut).toHaveBeenLastCalledWith(1588n)
+  })
+
+  it('builds the transfer when only a chain after the exchange lacks fees in the dummy dry run', async () => {
+    const dryRun = {
+      origin: { success: true, fee: 500n },
+      hops: [
+        { chain: ORIGIN_CHAIN, result: { success: true, fee: 100n } },
+        { chain: EXCHANGE_CHAIN, result: { success: true, fee: 200n } },
+        {
+          chain: DEST_CHAIN,
+          result: { success: false, dryRunError: { reason: 'NotHoldingFees' } }
+        }
+      ],
+      dryRunError: { chainKind: 'hop', chain: DEST_CHAIN, reason: 'NotHoldingFees' }
+    } as unknown as TDryRunResult
+    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRun)
+
+    await expect(handleSwapExecuteTransfer(baseOptions)).resolves.toMatch(/^tx:/)
+  })
+
+  it('throws if the exchange cannot cover its fees in the dummy dry run', async () => {
+    const dryRun = {
+      origin: { success: true, fee: 500n },
+      hops: [
+        { chain: ORIGIN_CHAIN, result: { success: true, fee: 100n } },
+        {
+          chain: EXCHANGE_CHAIN,
+          result: { success: false, dryRunError: { reason: 'TooExpensive' } }
+        }
+      ]
+    } as unknown as TDryRunResult
+    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRun)
+
+    await expect(handleSwapExecuteTransfer(baseOptions)).rejects.toThrow(AmountTooLowError)
+  })
+
+  it('throws if a hop after the exchange cannot cover its fees in the dummy dry run when the origin is the exchange chain', async () => {
+    const dryRun = {
+      origin: { success: true, fee: 500n },
+      hops: [
+        {
+          chain: 'AssetHubPolkadot',
+          result: { success: false, dryRunError: { reason: 'NotHoldingFees' } }
+        }
+      ]
+    } as unknown as TDryRunResult
+    vi.spyOn(dryRunModule, 'dryRunInternal').mockResolvedValue(dryRun)
+
+    await expect(handleSwapExecuteTransfer({ ...baseOptions, chain: undefined })).rejects.toThrow(
+      AmountTooLowError
+    )
+  })
+
   it('handles case when exchange chain is final destination', async () => {
     const optionsNoDestChain = {
       ...baseOptions,

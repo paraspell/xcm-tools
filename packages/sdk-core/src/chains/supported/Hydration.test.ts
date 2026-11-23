@@ -257,7 +257,7 @@ describe('Hydration', () => {
         method: 'transfer_allow_death',
         params: {
           dest: mockInput.recipient,
-          value: BigInt(mockInput.assetInfo.amount)
+          value: mockInput.assetInfo.amount
         }
       })
     })
@@ -391,7 +391,7 @@ describe('Hydration', () => {
         params: {
           dest: mockInput.recipient,
           currency_id: 123,
-          amount: BigInt(mockInput.assetInfo.amount)
+          amount: mockInput.assetInfo.amount
         }
       })
     })

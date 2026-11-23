@@ -69,7 +69,7 @@ describe('Centrifuge', () => {
         params: {
           dest: { Id: mockOptions.recipient },
           currency_id: { ForeignAsset: 1 },
-          amount: BigInt(mockOptions.assetInfo.amount)
+          amount: mockOptions.assetInfo.amount
         }
       })
     })

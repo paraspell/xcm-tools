@@ -213,6 +213,10 @@ describe('AssetHubExchange', () => {
   });
 
   describe('getAmountOut', () => {
+    beforeEach(() => {
+      baseOptions = { ...baseOptions, slippagePct: '0' };
+    });
+
     it('throws when swapping native asset to itself', async () => {
       await expect(instance.getAmountOut({ ...baseOptions, assetTo: assetNative })).rejects.toThrow(
         'Cannot swap asset to itself.',
@@ -295,6 +299,23 @@ describe('AssetHubExchange', () => {
         1,
         quoteCall(assetA.location, assetNative.location, 990n),
       );
+      expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(
+        2,
+        quoteCall(assetNative.location, assetB.location, 500n),
+      );
+    });
+
+    it('applies slippage once to the final quote', async () => {
+      mockPolkadotApi.queryRuntimeApi.mockResolvedValueOnce(500n).mockResolvedValueOnce(1000n);
+
+      const amountOut = await instance.getAmountOut({
+        ...baseOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+        slippagePct: '5',
+      });
+
+      expect(amountOut).toBe(950n);
       expect(mockPolkadotApi.queryRuntimeApi).toHaveBeenNthCalledWith(
         2,
         quoteCall(assetNative.location, assetB.location, 500n),

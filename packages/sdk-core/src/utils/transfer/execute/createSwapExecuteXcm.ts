@@ -1,10 +1,4 @@
-import {
-  getNativeAssetSymbol,
-  isAssetEqual,
-  Native,
-  type TAsset,
-  type TAssetInfo
-} from '@paraspell/assets'
+import { isAssetEqual, type TAsset, type TAssetInfo } from '@paraspell/assets'
 import { isExternalChain, type TSubstrateChain } from '@paraspell/sdk-common'
 
 import { getParaId } from '../../../chains/config'
@@ -22,6 +16,11 @@ import { createBaseExecuteXcm } from './createBaseExecuteXcm'
 import { isMultiHopSwap } from './isMultiHopSwap'
 import { prepareCommonExecuteXcm } from './prepareCommonExecuteXcm'
 
+const createExchangeAsset = (
+  give: { Definite: TAsset[] } | ReturnType<typeof createAssetsFilter>,
+  want: TAsset[]
+) => ({ ExchangeAsset: { give, want, maximal: true } })
+
 export const createExchangeInstructions = async <
   TApi,
   TRes,
@@ -29,8 +28,6 @@ export const createExchangeInstructions = async <
   TCustomChain extends string = never
 >(
   options: TCreateSwapXcmInternalOptions<TApi, TRes, TSigner, TCustomChain>,
-  assetFrom: TAsset,
-  assetTo: TAsset,
   separateFeeAssetInfo?: TAssetInfo
 ) => {
   const {
@@ -46,55 +43,61 @@ export const createExchangeInstructions = async <
 
   const hasSeparateFeeAsset = separateFeeAssetInfo !== undefined
 
-  const nativeSymbol = getNativeAssetSymbol(exchangeChain)
   const needsMultiHop = isMultiHopSwap(exchangeChain, assetInfoFrom, assetInfoTo)
 
-  const nativeAsset = api.findAssetInfoOrThrow(exchangeChain, { symbol: Native(nativeSymbol) })
+  const isDummyRun = exchangeFee === 0n
+
+  const halveOnDummyFees = (amount: bigint) => (chain && isDummyRun ? (amount + 1n) / 2n : amount)
+
+  const createWant = (asset: TAsset) => [isDummyRun ? { ...asset, fun: { Fungible: 1n } } : asset]
+
+  const amountIn =
+    assetInfoFrom.amount - (chain && !hasSeparateFeeAsset ? originReserveFee + exchangeFee : 0n)
+
+  const give = {
+    Definite: [
+      createAsset(
+        version,
+        halveOnDummyFees(amountIn),
+        localizeLocation(exchangeChain, assetInfoFrom.location)
+      )
+    ]
+  }
+
+  const assetTo = createAsset(
+    version,
+    assetInfoTo.amount,
+    localizeLocation(exchangeChain, assetInfoTo.location)
+  )
 
   if (!needsMultiHop) {
-    return [
-      {
-        ExchangeAsset: {
-          give: createAssetsFilter(assetFrom, version),
-          want: [assetTo],
-          maximal: hasSeparateFeeAsset
-        }
-      }
-    ]
+    return [createExchangeAsset(give, createWant(assetTo))]
   }
 
   // Multi-hop through native asset
 
+  const nativeAsset = api.findNativeAssetInfoOrThrow(exchangeChain)
+
+  const isNativeFeeAsset = hasSeparateFeeAsset && isAssetEqual(separateFeeAssetInfo, nativeAsset)
+
   const nativeAmountOut = await calculateMinAmountOut(
-    BigInt(assetInfoFrom.amount) -
-      (chain && !hasSeparateFeeAsset ? originReserveFee + exchangeFee : 0n),
-    nativeAsset
+    amountIn,
+    nativeAsset,
+    isNativeFeeAsset ? '0' : undefined
   )
 
   const assetNative = createAsset(
     version,
-    exchangeFee === 0n ? (nativeAmountOut + 1n) / 2n : nativeAmountOut,
+    halveOnDummyFees(nativeAmountOut),
     localizeLocation(exchangeChain, nativeAsset.location)
   )
 
   return [
-    {
-      ExchangeAsset: {
-        give: createAssetsFilter(assetFrom, version),
-        want: [assetNative],
-        maximal: hasSeparateFeeAsset
-      }
-    },
-    {
-      ExchangeAsset: {
-        give:
-          separateFeeAssetInfo && isAssetEqual(separateFeeAssetInfo, nativeAsset)
-            ? { Definite: [assetNative] }
-            : createAssetsFilter(assetNative, version),
-        want: [assetTo],
-        maximal: true
-      }
-    }
+    createExchangeAsset(give, createWant(assetNative)),
+    createExchangeAsset(
+      isNativeFeeAsset ? { Definite: [assetNative] } : createAssetsFilter(assetNative, version),
+      createWant(assetTo)
+    )
   ]
 }
 
@@ -128,19 +131,7 @@ export const createSwapExecuteXcm = async <
     ? `AssetHub${getRelayChainOf(chain ?? exchangeChain)}`
     : undefined
 
-  const assetFrom = createAsset(
-    version,
-    assetInfoFrom.amount,
-    localizeLocation(exchangeChain, assetInfoFrom.location)
-  )
-
   const amountOut = assetInfoTo.amount
-
-  const assetTo = createAsset(
-    version,
-    amountOut,
-    localizeLocation(exchangeChain, assetInfoTo.location)
-  )
 
   // For Ethereum, localize to AssetHub since that's where instructions execute
   const assetToLocalizedToDest = createAsset(
@@ -219,12 +210,7 @@ export const createSwapExecuteXcm = async <
     isFeeLeftoverAboveEd()
   )
 
-  const exchangeInstructions = await createExchangeInstructions(
-    options,
-    assetFrom,
-    assetTo,
-    resolvedFeeAssetInfo
-  )
+  const exchangeInstructions = await createExchangeInstructions(options, resolvedFeeAssetInfo)
 
   let exchangeToDestXcm: unknown[]
 

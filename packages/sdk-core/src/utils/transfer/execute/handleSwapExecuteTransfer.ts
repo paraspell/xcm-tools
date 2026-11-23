@@ -26,8 +26,11 @@ import { pickRouterCompatibleXcmVersion } from '../../xcm-version'
 import { getFeeAssetInfo } from '../getFeeAssetInfo'
 import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
+import { getExchangeFeeAtPostTradePrice } from './getExchangeFeeAtPostTradePrice'
 
 const FEE_PADDING_PERCENTAGE = 20
+
+const FEE_SHORTFALL_REASONS = ['NotHoldingFees', 'TooExpensive']
 
 const validateAmount = (amount: bigint, requiredFee: bigint): void => {
   if (amount <= requiredFee) {
@@ -35,6 +38,19 @@ const validateAmount = (amount: bigint, requiredFee: bigint): void => {
       `Asset amount is too low, please increase the amount or use a different fee asset.`
     )
   }
+}
+
+const hasRealFeeShortfall = <TCustomChain extends string = never>(
+  { hops, destination }: TDryRunResult<TCustomChain>,
+  exchangeChain: TParachain,
+  destChain?: TChain
+) => {
+  const exchangeIndex = hops.findIndex(hop => hop.chain === exchangeChain)
+  const checkedHops = exchangeIndex === -1 ? hops : hops.slice(0, exchangeIndex + 1)
+  const results = [...checkedHops.map(hop => hop.result), ...(destChain ? [] : [destination])]
+  return results.some(
+    result => result?.success === false && FEE_SHORTFALL_REASONS.includes(result.dryRunError.reason)
+  )
 }
 
 const calculateTotalFees = (chain: TSubstrateChain | undefined, fees: TSwapFeeEstimates): bigint =>
@@ -322,11 +338,13 @@ export const handleSwapExecuteTransfer = async <
     tx: api.deserializeExtrinsics(initialCall)
   })
 
-  if (firstDryRunResult.dryRunError?.reason === 'NotHoldingFees') {
-    if (separateFeeAssetInfo) throw new DryRunFailedError(firstDryRunResult.dryRunError)
+  const { dryRunError } = firstDryRunResult
 
+  if (separateFeeAssetInfo) {
+    if (dryRunError?.reason === 'NotHoldingFees') throw new DryRunFailedError(dryRunError)
+  } else if (hasRealFeeShortfall(firstDryRunResult, exchangeChain, destChain)) {
     throw new AmountTooLowError(
-      `Asset amount is too low to cover the fees, please increase the amount.`
+      'Asset amount is too low to cover the fees, please increase the amount.'
     )
   }
 
@@ -351,6 +369,13 @@ export const handleSwapExecuteTransfer = async <
     // We set the exchange fee to non-zero value to prevent creating dummy tx
     extractedFees.exchangeFee = MIN_FEE
   }
+
+  extractedFees.exchangeFee = await getExchangeFeeAtPostTradePrice(
+    options,
+    extractedFees,
+    hasSeparateFeeAsset
+  )
+
   const totalFees = calculateTotalFees(chain, extractedFees)
 
   if (!hasSeparateFeeAsset) {

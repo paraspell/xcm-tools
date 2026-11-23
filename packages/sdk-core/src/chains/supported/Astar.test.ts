@@ -106,7 +106,7 @@ describe('Astar', () => {
         params: {
           target: { Id: mockOptions.recipient },
           id: 1n,
-          amount: BigInt(mockOptions.assetInfo.amount)
+          amount: mockOptions.assetInfo.amount
         }
       })
     })

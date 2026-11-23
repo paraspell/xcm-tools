@@ -141,7 +141,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
   async getAmountOut<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TGenericGetAmountOutOptions<TApi, TRes, TSigner, TCustomChain>,
   ) {
-    const { api, assetFrom, assetTo, amount, origin } = options;
+    const { api, assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = padValueBy(amount, pctDestFee);
@@ -154,7 +154,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
       amountWithoutFee,
     );
 
-    return amountOut;
+    return padValueBy(amountOut, -Number(slippagePct));
   }
 
   async getDexConfig(api: TPapiApi): Promise<TDexConfigStored> {
