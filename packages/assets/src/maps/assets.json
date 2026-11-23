@@ -13651,7 +13651,8 @@
             ]
           }
         },
-        "existentialDeposit": "100"
+        "existentialDeposit": "100",
+        "alias": "USDT1"
       },
       {
         "assetId": "50000688",
@@ -13697,6 +13698,29 @@
         },
         "existentialDeposit": "1",
         "alias": "USDC2"
+      },
+      {
+        "assetId": "50001050",
+        "symbol": "USDT",
+        "decimals": 6,
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50001050
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "alias": "USDT2"
       },
       {
         "assetId": "50000309",
