@@ -144,6 +144,8 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
     transactOptions
   )
 
+  const hasReserveHop = transferType !== 'DepositAsset'
+
   const createRoutingFilter = (asset: TAsset) =>
     feeAsset ? createAllCountedFilter(2) : createAssetsFilter(asset, version)
 
@@ -178,7 +180,9 @@ export const createBaseExecuteXcm = <TApi, TRes, TSigner, TCustomChain extends s
               feeAssetLocalizedToDest ??
                 updateAsset(
                   assetLocalizedToDest,
-                  reserveFee === 1000n ? amount / 2n : amount - originFeeDeduction - reserveFee
+                  reserveFee === 1000n && hasReserveHop
+                    ? amount / 2n
+                    : amount - originFeeDeduction - reserveFee
                 )
             ),
             ...suffixXcm

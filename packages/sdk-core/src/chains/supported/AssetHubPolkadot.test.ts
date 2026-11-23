@@ -250,7 +250,7 @@ describe('AssetHubPolkadot', () => {
         params: {
           id: 123,
           target: { Id: mockInput.recipient },
-          amount: BigInt(mockInput.assetInfo.amount)
+          amount: mockInput.assetInfo.amount
         }
       })
     })
@@ -296,7 +296,7 @@ describe('AssetHubPolkadot', () => {
         params: {
           id: {},
           target: { Id: mockInput.recipient },
-          amount: BigInt(mockInput.assetInfo.amount)
+          amount: mockInput.assetInfo.amount
         }
       })
     })

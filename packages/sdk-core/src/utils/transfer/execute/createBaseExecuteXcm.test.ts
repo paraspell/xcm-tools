@@ -487,6 +487,23 @@ describe('createBaseExecuteXcm', () => {
       ])
     })
 
+    it('should buy execution with the full amount in the dummy fee dry run', () => {
+      vi.mocked(isTrustedChain).mockReturnValue(false)
+      vi.mocked(prepareExecuteContext).mockReturnValue({
+        ...mockPrepareExecuteContext,
+        reserveChain: 'AssetHubPolkadot'
+      })
+
+      const result: any = createBaseExecuteXcm({
+        ...mockBaseOptions,
+        fees: { ...mockBaseOptions.fees, reserveFee: 1000n }
+      })
+
+      expect(result[0].DepositReserveAsset.xcm[0].BuyExecution.fees.fun).toEqual({
+        Fungible: 8900n
+      })
+    })
+
     it('should create direct deposit when no reserve chain', () => {
       vi.mocked(isTrustedChain).mockReturnValue(false)
 

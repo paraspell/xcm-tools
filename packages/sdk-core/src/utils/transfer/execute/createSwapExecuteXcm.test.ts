@@ -1,5 +1,5 @@
 import type { TAsset, TAssetInfo, WithAmount } from '@paraspell/assets'
-import { getNativeAssetSymbol, isAssetEqual } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 import { isExternalChain, type TLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest'
 
@@ -114,8 +114,6 @@ describe('createSwapExecuteXcm', () => {
 
   it('builds a simple swap XCM when no multi-hop and no destChain', async () => {
     const api = createTestApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(isMultiHopSwap).mockReturnValue(false)
     vi.mocked(createAsset).mockReturnValue(ASSET)
     vi.mocked(localizeLocation).mockReturnValue(LOCATION)
@@ -136,7 +134,7 @@ describe('createSwapExecuteXcm', () => {
         ...PREPARED_XCM.prefix,
         expect.objectContaining({
           ExchangeAsset: {
-            maximal: false,
+            maximal: true,
             give: expect.any(Object),
             want: expect.any(Array)
           }
@@ -148,8 +146,7 @@ describe('createSwapExecuteXcm', () => {
 
   it('builds a multi-hop swap XCM with destChain and chain provided', async () => {
     const api = createTestApi()
-    vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')
+    vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
     vi.mocked(isMultiHopSwap).mockReturnValue(true)
     vi.mocked(localizeLocation).mockImplementation((_chain, location) => location)
     vi.mocked(createAsset).mockReturnValue(ASSET)
@@ -184,7 +181,7 @@ describe('createSwapExecuteXcm', () => {
       options.assetInfoFrom,
       options.assetInfoTo
     )
-    expect(calculateMinAmountOut).toHaveBeenCalledWith(1985n, ASSET_FROM)
+    expect(calculateMinAmountOut).toHaveBeenCalledWith(1985n, ASSET_FROM, undefined)
     expect(createBaseExecuteXcm).toHaveBeenCalledTimes(2)
     expect(createBaseExecuteXcm).toHaveBeenNthCalledWith(
       1,
@@ -275,7 +272,6 @@ describe('createSwapExecuteXcm', () => {
       })
       vi.mocked(generateMessageId).mockResolvedValue('msg-id-1')
       vi.mocked(createEthereumBridgeInstructions).mockReturnValue([{ SetTopic: 'snowbridge' }])
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
       vi.mocked(createAsset).mockReturnValue(ASSET)
       vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
@@ -371,9 +367,7 @@ describe('createSwapExecuteXcm', () => {
     let findAssetInfo: MockInstance<typeof api.findAssetInfo>
 
     beforeEach(() => {
-      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
       findAssetInfo = vi.spyOn(api, 'findAssetInfo').mockReturnValue(FEE_ASSET)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
       vi.mocked(createAsset).mockReturnValue(ASSET)
       vi.mocked(localizeLocation).mockReturnValue(LOCATION)
@@ -448,7 +442,7 @@ describe('createSwapExecuteXcm', () => {
       )
 
       const { suffixXcm } = vi.mocked(createBaseExecuteXcm).mock.calls[1][0]
-      expect(suffixXcm?.[0]).toMatchObject({ ExchangeAsset: { maximal: false } })
+      expect(suffixXcm?.[0]).toMatchObject({ ExchangeAsset: { maximal: true } })
     })
     it('deposits the fee asset when its leftover reaches the final chain ED', async () => {
       vi.mocked(isAssetEqual).mockReturnValue(false)
@@ -556,66 +550,84 @@ describe('createSwapExecuteXcm', () => {
     }
 
     beforeEach(() => {
-      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX')
+      vi.spyOn(api, 'findNativeAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
       vi.mocked(createAssetsFilter).mockReturnValue(ASSETS_FILTER)
     })
 
-    it('uses maximal: false without a separate fee asset', async () => {
+    it('sells exactly the amount left after hop fees for at least the min amount out', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
+      vi.mocked(localizeLocation).mockReturnValue(LOCATION)
+      vi.mocked(createAsset).mockReturnValue(ASSET)
 
-      const result = await createExchangeInstructions(baseOptions, ASSET, ASSET, undefined)
+      const result = await createExchangeInstructions(
+        { ...baseOptions, chain: 'Astar', fees: { ...baseOptions.fees, exchangeFee: 10n } },
+        undefined
+      )
 
-      expect(result[0]).toMatchObject({
-        ExchangeAsset: { maximal: false }
-      })
+      expect(createAsset).toHaveBeenCalledWith(Version.V3, 980n, LOCATION)
+      expect(result).toEqual([
+        { ExchangeAsset: { give: { Definite: [ASSET] }, want: [ASSET], maximal: true } }
+      ])
     })
 
-    it('uses maximal: true with a separate fee asset', async () => {
+    it('sells half of the amount for any amount out in the dummy fee dry run', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(false)
+      vi.mocked(localizeLocation).mockReturnValue(LOCATION)
+      vi.mocked(createAsset).mockReturnValue(ASSET)
 
-      const result = await createExchangeInstructions(baseOptions, ASSET, ASSET, feeAssetInfo)
+      const result = await createExchangeInstructions({ ...baseOptions, chain: 'Astar' }, undefined)
 
-      expect(result[0]).toMatchObject({
-        ExchangeAsset: { maximal: true }
-      })
+      expect(createAsset).toHaveBeenCalledWith(Version.V3, 495n, LOCATION)
+      expect(result).toEqual([
+        {
+          ExchangeAsset: {
+            give: { Definite: [ASSET] },
+            want: [{ ...ASSET, fun: { Fungible: 1n } }],
+            maximal: true
+          }
+        }
+      ])
     })
 
-    it('gives only the swapped native amount in the second hop when the fee asset is the native asset', async () => {
-      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
+    it('sells the full amount in the dummy fee dry run when the origin is the exchange chain', async () => {
+      vi.mocked(isMultiHopSwap).mockReturnValue(false)
+      vi.mocked(localizeLocation).mockReturnValue(LOCATION)
+      vi.mocked(createAsset).mockReturnValue(ASSET)
+
+      await createExchangeInstructions(baseOptions, undefined)
+
+      expect(createAsset).toHaveBeenCalledWith(Version.V3, 1000n, LOCATION)
+    })
+
+    it('quotes the first hop without slippage and gives only the swapped native amount in the second hop when the fee asset is the native asset', async () => {
       vi.mocked(isMultiHopSwap).mockReturnValue(true)
       vi.mocked(localizeLocation).mockReturnValue(LOCATION)
       vi.mocked(createAsset).mockReturnValue(ASSET)
-      const options = createOptions({ api, calculateMinAmountOut: vi.fn().mockResolvedValue(400n) })
+      const calculateMinAmountOut = vi.fn().mockResolvedValue(400n)
+      const options = createOptions({ api, calculateMinAmountOut })
 
       vi.mocked(isAssetEqual).mockReturnValue(true)
-      const [firstHop, nativeFeeHop] = await createExchangeInstructions(
-        options,
-        ASSET,
-        ASSET,
-        ASSET_FROM
-      )
+      const [firstHop, nativeFeeHop] = await createExchangeInstructions(options, ASSET_FROM)
 
       expect(isAssetEqual).toHaveBeenCalledWith(ASSET_FROM, ASSET_FROM)
-      expect(firstHop).toMatchObject({ ExchangeAsset: { maximal: true } })
+      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(2000n, ASSET_FROM, '0')
+      expect(firstHop).toMatchObject({
+        ExchangeAsset: { give: { Definite: [ASSET] }, maximal: true }
+      })
       expect(nativeFeeHop).toMatchObject({
         ExchangeAsset: { give: { Definite: [ASSET] }, maximal: true }
       })
 
       vi.mocked(isAssetEqual).mockReturnValue(false)
-      const [, otherFeeHop] = await createExchangeInstructions(options, ASSET, ASSET, feeAssetInfo)
+      const [, otherFeeHop] = await createExchangeInstructions(options, feeAssetInfo)
 
+      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(2000n, ASSET_FROM, undefined)
       expect(otherFeeHop).toMatchObject({
         ExchangeAsset: { give: ASSETS_FILTER, maximal: true }
       })
-
-      const [plainFirstHop] = await createExchangeInstructions(options, ASSET, ASSET, undefined)
-
-      expect(plainFirstHop).toMatchObject({ ExchangeAsset: { maximal: false } })
     })
 
     it('does not subtract hop fees from the multi-hop amount when fees are paid separately', async () => {
-      vi.spyOn(api, 'findAssetInfoOrThrow').mockReturnValue(ASSET_FROM)
       vi.mocked(isMultiHopSwap).mockReturnValue(true)
       vi.mocked(localizeLocation).mockReturnValue(LOCATION)
       vi.mocked(createAsset).mockReturnValue(ASSET)
@@ -634,11 +646,11 @@ describe('createSwapExecuteXcm', () => {
         }
       })
 
-      await createExchangeInstructions(options, ASSET, ASSET, feeAssetInfo)
-      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(1000n, ASSET_FROM)
+      await createExchangeInstructions(options, feeAssetInfo)
+      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(1000n, ASSET_FROM, undefined)
 
-      await createExchangeInstructions(options, ASSET, ASSET, undefined)
-      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(985n, ASSET_FROM)
+      await createExchangeInstructions(options, undefined)
+      expect(calculateMinAmountOut).toHaveBeenLastCalledWith(985n, ASSET_FROM, undefined)
     })
   })
 })

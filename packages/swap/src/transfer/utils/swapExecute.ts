@@ -69,12 +69,11 @@ export const buildSwapExecuteTx = async <TApi, TRes, TSigner, TCustomChain exten
     feeAssetInfo: origin?.feeAssetInfo ?? exchange.feeAssetInfo,
     sender: evmSenderAddress ?? sender,
     recipient: recipient ?? sender,
-    calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) =>
-      callDexAmountOut(dex, options, {
-        amount: amountIn,
-        assetTo,
-        slippagePct: minAmountOutSlippage,
-      }),
+    calculateMinAmountOut: (
+      amountIn: bigint,
+      assetTo?: TAssetInfo,
+      slippagePct = minAmountOutSlippage,
+    ) => callDexAmountOut(dex, options, { amount: amountIn, assetTo, slippagePct }),
   });
 
   return { tx, amountOut };

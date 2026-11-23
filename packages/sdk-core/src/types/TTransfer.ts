@@ -346,7 +346,11 @@ export type TCreateBaseSwapXcmOptions = {
   feeAssetInfo?: TAssetInfo
   sender: string
   recipient: string
-  calculateMinAmountOut: (amountIn: bigint, assetTo?: TAssetInfo) => Promise<bigint>
+  calculateMinAmountOut: (
+    amountIn: bigint,
+    assetTo?: TAssetInfo,
+    slippagePct?: string
+  ) => Promise<bigint>
 }
 
 export type TCreateSwapXcmOptions<

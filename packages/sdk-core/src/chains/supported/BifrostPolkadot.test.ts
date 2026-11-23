@@ -73,7 +73,7 @@ describe('BifrostPolkadot', () => {
         params: {
           dest: { Id: mockOptions.recipient },
           currency_id: { Token2: 1 },
-          amount: BigInt(mockOptions.assetInfo.amount)
+          amount: mockOptions.assetInfo.amount
         }
       })
     })

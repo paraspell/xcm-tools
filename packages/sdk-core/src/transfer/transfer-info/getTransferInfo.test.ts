@@ -181,7 +181,7 @@ describe('getTransferInfo', () => {
     expect(result.origin.selectedCurrency.asset).toEqual(dotAsset)
     expect(result.origin.selectedCurrency.balance).toBe(200000000000n)
     expect(result.origin.selectedCurrency.balanceAfter).toBe(
-      200000000000n - BigInt(options.currency.amount)
+      200000000000n - options.currency.amount
     )
     expect(result.origin.selectedCurrency.sufficient).toBe(true) // 190 DOT > 0.1 DOT
     expect(result.origin.xcmFee.asset).toEqual(dotAsset)
@@ -352,7 +352,7 @@ describe('getTransferInfo', () => {
 
     const result = await getTransferInfo(options)
 
-    expect(result.origin.xcmFee.balanceAfter).toBe(100000000n - BigInt(sameCurrency.amount))
+    expect(result.origin.xcmFee.balanceAfter).toBe(100000000n - sameCurrency.amount)
     expect(result.origin.xcmFee.balanceAfter).toBe(50000000n)
     expect(usesOriginFeeAsset).toHaveBeenCalledWith(
       mockApi,

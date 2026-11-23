@@ -98,7 +98,7 @@ describe('buildDestInfo', () => {
     const expectedReceived = DEFAULT_AMOUNT - DEFAULT_FEE
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
     expect(result.receivedCurrency.balanceAfter).toBe(
-      DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT)
+      DEFAULT_BALANCE - DEFAULT_FEE + DEFAULT_AMOUNT
     )
 
     expect(result.xcmFee.asset).toBe(glmrAsset)
