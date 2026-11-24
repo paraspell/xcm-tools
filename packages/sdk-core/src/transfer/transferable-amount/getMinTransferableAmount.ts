@@ -75,6 +75,12 @@ export const getMinTransferableAmountInternal = async <
 
       const destEd = BigInt(destAsset.existentialDeposit)
 
+      const originChainAsset = { chain: origin, asset }
+
+      // A local transfer cannot carry an explicit feeAsset, so usesOriginFeeAsset can never
+      // match there even when the whole origin fee is paid in the transferred asset.
+      const isLocalTransfer = origin === destination
+
       const isOriginFeeAsset = usesOriginFeeAsset(
         api,
         origin,
@@ -84,9 +90,14 @@ export const getMinTransferableAmountInternal = async <
         result.origin.asset
       )
 
-      const originFee = isOriginFeeAsset ? result.origin.fee : 0n
+      const originFeeAssetIsTransferredAsset = api.isAssetXcEqual(originChainAsset, {
+        chain: origin,
+        asset: result.origin.asset
+      })
 
-      const originChainAsset = { chain: origin, asset }
+      const originFee = (isLocalTransfer ? originFeeAssetIsTransferredAsset : isOriginFeeAsset)
+        ? result.origin.fee
+        : 0n
 
       const hopFeeTotal = result.hops.reduce(
         (acc, { chain, result: { asset: hopAsset, fee } }) =>

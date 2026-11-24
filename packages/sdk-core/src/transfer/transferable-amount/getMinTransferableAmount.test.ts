@@ -272,6 +272,59 @@ describe('getMinTransferableAmountInternal', () => {
     expect(resolveFeeAsset).toHaveBeenCalled()
   })
 
+  it('counts the origin fee on a local transfer when the fee is paid in the transferred asset', async () => {
+    const asset = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
+    const destAssetNoLoc = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
+
+    mockResolvedAsset(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue(destAssetNoLoc)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
+      origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 500n, feeType: 'dryRun' },
+      destination: { asset: { symbol: 'A' } as TAssetInfo, fee: 0n, feeType: 'dryRun' },
+      hops: []
+    })
+
+    const out = await mod.getMinTransferableAmountInternal({
+      ...baseOptions,
+      destination: 'Acala'
+    })
+
+    // origin(500) + 0 + ED(999) + 1 = 1500
+    expect(out).toBe(1500n)
+
+    expect(isAssetXcEqualSpy).toHaveBeenCalledWith(
+      { chain: 'Acala', asset: expect.objectContaining({ symbol: 'A' }) },
+      { chain: 'Acala', asset: { symbol: 'A' } }
+    )
+  })
+
+  it('does not count the origin fee on a local transfer paid in another asset', async () => {
+    const asset = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
+
+    mockResolvedAsset(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'A',
+      existentialDeposit: '999'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(7n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
+      origin: { asset: { symbol: 'NATIVE' } as TAssetInfo, fee: 500n, feeType: 'dryRun' },
+      destination: { asset: { symbol: 'NATIVE' } as TAssetInfo, fee: 0n, feeType: 'dryRun' },
+      hops: []
+    })
+
+    const out = await mod.getMinTransferableAmountInternal({
+      ...baseOptions,
+      destination: 'Acala'
+    })
+
+    // origin(0) + 0 + ED(0) + 1 = 1
+    expect(out).toBe(1n)
+  })
+
   it('returns 0n when dryRun reports failureReason', async () => {
     mockResolvedAsset({ symbol: 'A' } as TAssetInfo)
     findAssetOnDestOrThrowSpy.mockReturnValue({
@@ -386,7 +439,8 @@ describe('getMinTransferableAmount', () => {
         location: {},
         existentialDeposit: '0'
       }),
-      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A' })
+      findNativeAssetInfoOrThrow: vi.fn().mockReturnValue({ symbol: 'A' }),
+      isAssetXcEqual: vi.fn().mockReturnValue(true)
     } as unknown as PolkadotApi<unknown, unknown, unknown>
 
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
