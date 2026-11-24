@@ -1,4 +1,5 @@
 import type { TCurrencyInputWithAmount, TSingleCurrencyInputWithAmount } from '@paraspell/assets'
+import { isAssetEqual } from '@paraspell/assets'
 
 import { getAssetBalanceInternal } from '../../balance'
 import { AmountTooLowError } from '../../errors'
@@ -84,7 +85,10 @@ export const getMinTransferableAmountInternal = async <
         result.origin.asset
       )
 
-      const originFee = isOriginFeeAsset ? result.origin.fee : 0n
+      const isLocalOriginFeeAsset =
+        origin === destination && isAssetEqual(result.origin.asset, asset)
+
+      const originFee = isOriginFeeAsset || isLocalOriginFeeAsset ? result.origin.fee : 0n
 
       const originChainAsset = { chain: origin, asset }
 
