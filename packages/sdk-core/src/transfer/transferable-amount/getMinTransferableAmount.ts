@@ -143,11 +143,7 @@ export const getMinTransferableAmountInternal = async <
   // would collapse to 0 even though fees and the destination existential deposit are known.
   const hasDryRunSupport = typeof api.hasDryRunSupport === 'function'
 
-  if (
-    !hasDryRunSupport ||
-    !api.hasDryRunSupport(origin) ||
-    !api.hasDryRunSupport(destination)
-  )
+  if (!hasDryRunSupport || !api.hasDryRunSupport(origin) || !api.hasDryRunSupport(destination))
     return toResult(amounts)
 
   const dryRunAmounts = async (txToDryRun: TRes, currentAmounts: bigint[]) =>
