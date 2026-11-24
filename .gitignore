@@ -11,3 +11,4 @@ _PipelineMapping/
 .idea
 .npmrc
 CLAUDE.md
+.aider*

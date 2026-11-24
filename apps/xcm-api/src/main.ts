@@ -18,11 +18,18 @@ export const bootstrap = async () => {
   const dsn = configService.get<string>('SENTRY_DSN');
 
   if (dsn) {
+    const isProduction = configService.get<string>('NODE_ENV') === 'production';
+
+    // Use lower sampling rates in production to avoid excessive data collection.
+    // Disable sampling entirely in non‑production environments.
+    const tracesSampleRate = isProduction ? 0.1 : 0;
+    const profileSessionSampleRate = isProduction ? 0.1 : 0;
+
     sentryInit({
-      dsn: configService.get<string>('SENTRY_DSN'),
+      dsn,
       integrations: [nodeProfilingIntegration()],
-      tracesSampleRate: 1.0,
-      profileSessionSampleRate: 1.0,
+      tracesSampleRate,
+      profileSessionSampleRate,
       profileLifecycle: 'trace',
       environment: configService.get<string>('NODE_ENV') || 'development',
     });
