@@ -1,4 +1,4 @@
-import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+﻿import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -40,6 +40,7 @@ describe('getMinTransferableAmountInternal', () => {
     findAssetInfoOrThrow: vi.fn(),
     findAssetOnDestOrThrow: vi.fn(),
     findNativeAssetInfoOrThrow: vi.fn(),
+    hasDryRunSupport: vi.fn(),
     isAssetXcEqual: vi.fn()
   } as unknown as PolkadotApi<unknown, unknown, unknown>
 
@@ -52,6 +53,7 @@ describe('getMinTransferableAmountInternal', () => {
   const findAssetOnDestOrThrowSpy = vi.spyOn(api, 'findAssetOnDestOrThrow')
   const findNativeAssetInfoOrThrowSpy = vi.spyOn(api, 'findNativeAssetInfoOrThrow')
   const isAssetXcEqualSpy = vi.spyOn(api, 'isAssetXcEqual')
+  const hasDryRunSupportSpy = vi.spyOn(api, 'hasDryRunSupport')
 
   const buildInternal = vi.fn().mockReturnValue({})
   const mockBuilder = {
@@ -81,6 +83,7 @@ describe('getMinTransferableAmountInternal', () => {
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
     vi.mocked(usesOriginFeeAsset).mockReturnValue(false)
     vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
+    hasDryRunSupportSpy.mockReturnValue(true)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     isAssetXcEqualSpy.mockImplementation((a, b) => a.asset?.symbol === b.asset?.symbol)
   })
@@ -378,6 +381,63 @@ describe('getMinTransferableAmountInternal', () => {
     expect(res).toBe(0n)
   })
 
+  it('returns the derived minimum instead of 0n when the destination has no DryRunApi', async () => {
+    mockResolvedAsset({ symbol: 'A' } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'A',
+      location: {},
+      existentialDeposit: '100000'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
+      origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 3n, feeType: 'dryRun' },
+      destination: { asset: { symbol: 'A' } as TAssetInfo, fee: 0n, feeType: 'paymentInfo' },
+      hops: []
+    })
+    // A chain ranked below has no DryRunApi at all, so every verification dry-run fails
+    hasDryRunSupportSpy.mockImplementation(chain => chain !== 'Centrifuge')
+
+    const res = await mod.getMinTransferableAmountInternal({
+      ...baseOptions,
+      destination: 'Centrifuge'
+    })
+
+    // origin(3) + destination(0) + ED(100000) + 1 = 100004
+    expect(res).toBe(100004n)
+    expect(dryRunInternal).not.toHaveBeenCalled()
+  })
+
+  it('returns 0n when the origin has no DryRunApi and the tx cannot be built', async () => {
+    mockResolvedAsset({ symbol: 'A' } as TAssetInfo)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'A',
+      location: {},
+      existentialDeposit: '5'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
+      origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 0n },
+      destination: { asset: { symbol: 'A' } as TAssetInfo, fee: 0n },
+      hops: []
+    } as unknown as TGetXcmFeeResult)
+    hasDryRunSupportSpy.mockReturnValue(false)
+    buildInternal.mockImplementationOnce(() => {
+      throw new AmountTooLowError()
+    })
+    buildInternal.mockImplementationOnce(() => {
+      throw new AmountTooLowError()
+    })
+
+    const res = await mod.getMinTransferableAmountInternal({
+      ...baseOptions,
+      destination: 'Centrifuge'
+    })
+
+    expect(res).toBe(0n)
+  })
+
   it('skips unrelated fees when assets differ; only ED + 1 when dest balance is 0', async () => {
     mockResolvedAsset({ symbol: 'A' } as TAssetInfo)
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'B' } as TAssetInfo)
@@ -492,3 +552,5 @@ describe('getMinTransferableAmount', () => {
     expect(disconnectSpy).toHaveBeenCalled()
   })
 })
+
+

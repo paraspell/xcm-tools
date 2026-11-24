@@ -138,6 +138,18 @@ export const getMinTransferableAmountInternal = async <
     }
   }
 
+  // A chain without the DryRunApi can never confirm the derived amount, so the verification
+  // dry-run must not act as the arbiter of the result: without it every route to such a chain
+  // would collapse to 0 even though fees and the destination existential deposit are known.
+  const hasDryRunSupport = typeof api.hasDryRunSupport === 'function'
+
+  if (
+    !hasDryRunSupport ||
+    !api.hasDryRunSupport(origin) ||
+    !api.hasDryRunSupport(destination)
+  )
+    return toResult(amounts)
+
   const dryRunAmounts = async (txToDryRun: TRes, currentAmounts: bigint[]) =>
     dryRunInternal({
       api,
