@@ -61,6 +61,10 @@ export const resolveTransferParams = <TApi, TRes, TSigner, TCustomChain extends 
     ? 0n
     : abstractDecimals(currency.amount, asset?.decimals, api)
 
+  if (!Array.isArray(currency) && amount <= 0n) {
+    throw new Error(`Transfer amount must be positive, received: ${amount}`)
+  }
+
   // Ensure amount is at least 2 to avoid Rust panic (only for non-array currencies)
   const finalAmount = !Array.isArray(currency) && amount < MIN_AMOUNT ? MIN_AMOUNT : amount
 
