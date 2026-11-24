@@ -5,6 +5,7 @@ import { isTLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { PolkadotApi } from '../../api'
+import { MIN_AMOUNT } from '../../constants'
 import type { TSubstrateTransferOptions } from '../../types'
 import { abstractDecimals, createAsset, sortAssets } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
@@ -96,5 +97,48 @@ describe('resolveOverriddenAsset', () => {
 
     const result = resolveOverriddenAsset(options, false, false, {} as TAssetInfo)
     expect(result).toBeUndefined()
+  })
+
+  it('clamps every multi-asset amount below MIN_AMOUNT so no zero-value Fungible is built', () => {
+    const options = {
+      ...defaultOptions,
+      // amounts floor to 0 and 1 planck, i.e. below MIN_AMOUNT (2)
+      currency: [
+        { symbol: 'ASSET1', amount: '0' },
+        { symbol: 'ASSET2', amount: '1' },
+        { symbol: 'ASSET3', amount: '2' }
+      ],
+      feeAsset: { symbol: 'ASSET1' }
+    } as unknown as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    // first element is the fee asset, the rest are not
+    vi.mocked(isAssetEqual).mockReturnValueOnce(true).mockReturnValue(false).mockReturnValue(false)
+
+    resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAssetInfo)
+
+    const amounts = vi
+      .mocked(createAsset)
+      .mock.calls.map((call: Parameters<typeof createAsset>) => call[1])
+    expect(amounts).toEqual([MIN_AMOUNT, MIN_AMOUNT, 2n])
+  })
+
+  it('leaves multi-asset amounts at or above MIN_AMOUNT untouched', () => {
+    const options = {
+      ...defaultOptions,
+      currency: [
+        { symbol: 'ASSET1', amount: '500' },
+        { symbol: 'ASSET2', amount: '2000' }
+      ],
+      feeAsset: { symbol: 'ASSET1' }
+    } as unknown as TSubstrateTransferOptions<unknown, unknown, unknown>
+
+    vi.mocked(isAssetEqual).mockReturnValueOnce(true).mockReturnValue(false)
+
+    resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAssetInfo)
+
+    const amounts = vi
+      .mocked(createAsset)
+      .mock.calls.map((call: Parameters<typeof createAsset>) => call[1])
+    expect(amounts).toEqual([500n, 2000n])
   })
 })

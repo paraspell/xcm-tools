@@ -1,5 +1,6 @@
 import { InvalidCurrencyError, type TAssetInfo, type TAssetWithFee } from '@paraspell/assets'
 
+import { MIN_AMOUNT } from '../../constants'
 import type { TSubstrateTransferOptions } from '../../types'
 import { createAsset, getChainVersion, sortAssets } from '../../utils'
 import { resolveCurrency } from './resolveCurrency'
@@ -34,7 +35,15 @@ export const resolveOverriddenAsset = <TApi, TRes, TSigner, TCustomChain extends
     return sortAssets(
       assets.map(asset => ({
         isFeeAsset: asset.isFeeAsset,
-        ...createAsset(version, asset.amount, asset.location)
+        // Clamp each multi-asset amount the same way the single-asset path does
+        // (see resolveTransferParams): an amount that floors to 0 plancks builds a
+        // zero-value Fungible, which panics the origin runtime in
+        // DryRunApi_dry_run_call instead of returning a validation error.
+        ...createAsset(
+          version,
+          asset.amount < MIN_AMOUNT ? MIN_AMOUNT : asset.amount,
+          asset.location
+        )
       }))
     )
   }
