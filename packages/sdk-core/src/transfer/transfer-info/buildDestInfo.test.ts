@@ -147,6 +147,40 @@ describe('buildDestInfo', () => {
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
   })
 
+  it('should never report a negative receivedAmount when the amount does not cover the dest fee', async () => {
+    const options = {
+      ...baseOptions,
+      api: mockApi,
+      currency: { symbol: 'GLMR', amount: 1000n },
+      destFeeDetail: {
+        fee: DEFAULT_FEE,
+        asset: glmrAsset
+      } as TXcmFeeDetail
+    }
+    const result = await buildDestInfo(options)
+
+    // amount(1000) + balance - fee is still above balance only by the amount, so the raw
+    // difference would be negative once the fee exceeds the amount
+    expect(result.receivedCurrency.receivedAmount).toBe(0n)
+    expect(result.receivedCurrency.sufficient).toBe(false)
+  })
+
+  it('should never report a negative receivedAmount for a substrate bridge shortfall', async () => {
+    vi.mocked(getNativeAssetSymbol).mockImplementation(chain =>
+      chain === 'AssetHubPolkadot' ? 'GLMR' : 'NATIVE'
+    )
+    const options = {
+      ...baseOptions,
+      api: mockApi,
+      currency: { symbol: 'GLMR', amount: 1000n },
+      originFee: 900n,
+      bridgeFee: 900n
+    }
+    const result = await buildDestInfo(options)
+
+    expect(result.receivedCurrency.receivedAmount).toBe(0n)
+  })
+
   describe('AssetHub to AssetHub routes', () => {
     const ahToAhBase = {
       ...baseOptions,

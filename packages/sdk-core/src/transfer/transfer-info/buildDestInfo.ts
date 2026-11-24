@@ -45,6 +45,15 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
 
   const destBalanceAfter = destBalance - effectiveDestFee + effectiveAmountForBalance
 
+  // A recipient can never receive a negative amount: when the amount does not cover the
+  // destination fee the transfer is simply not feasible, which `sufficient` already reports.
+  // Returning the raw difference leaked negative plancks through `receivable-amount`, where
+  // the sibling endpoints then reject them with "Amount must be a positive number".
+  const receivedDelta = (destBalanceAfter: bigint) =>
+    destBalanceAfter - destBalance > 0n ? destBalanceAfter - destBalance : 0n
+
+  const clampToZero = (amount: bigint) => (amount > 0n ? amount : 0n)
+
   const createUnableToComputeError = () =>
     new UnableToComputeError(
       'Unable to compute if dest balance will be sufficient. Fee currency is not the same'
@@ -77,7 +86,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
           `bridgeFee is required for native asset transfer from ${origin} to ${destination} but was not provided.`
         )
       } else {
-        receivedAmount = currency.amount - originFee - bridgeFee
+        receivedAmount = clampToZero(currency.amount - originFee - bridgeFee)
       }
     } else {
       receivedAmount = new UnableToComputeError(
@@ -88,7 +97,7 @@ export const buildDestInfo = async <TApi, TRes, TSigner, TCustomChain extends st
     if (destbalanceAfterResult instanceof UnableToComputeError) {
       receivedAmount = destbalanceAfterResult
     } else {
-      receivedAmount = destbalanceAfterResult - destBalance
+      receivedAmount = receivedDelta(destbalanceAfterResult)
     }
   }
 
