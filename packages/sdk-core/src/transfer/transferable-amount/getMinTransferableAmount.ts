@@ -77,27 +77,20 @@ export const getMinTransferableAmountInternal = async <
 
       const originChainAsset = { chain: origin, asset }
 
-      // A local transfer cannot carry an explicit feeAsset, so usesOriginFeeAsset can never
-      // match there even when the whole origin fee is paid in the transferred asset.
-      const isLocalTransfer = origin === destination
-
-      const isOriginFeeAsset = usesOriginFeeAsset(
-        api,
-        origin,
-        currency,
-        asset,
-        resolvedFeeAsset,
-        result.origin.asset
-      )
-
+      // The origin fee has to be covered on top of the transferred amount whenever it is
+      // denominated in the transferred asset itself. A local transfer cannot carry an explicit
+      // feeAsset, so usesOriginFeeAsset never matches there and the exact asset comparison is
+      // needed as well.
       const originFeeAssetIsTransferredAsset = api.isAssetXcEqual(originChainAsset, {
         chain: origin,
         asset: result.origin.asset
       })
 
-      const originFee = (isLocalTransfer ? originFeeAssetIsTransferredAsset : isOriginFeeAsset)
-        ? result.origin.fee
-        : 0n
+      const originFee =
+        originFeeAssetIsTransferredAsset ||
+        usesOriginFeeAsset(api, origin, currency, asset, resolvedFeeAsset, result.origin.asset)
+          ? result.origin.fee
+          : 0n
 
       const hopFeeTotal = result.hops.reduce(
         (acc, { chain, result: { asset: hopAsset, fee } }) =>
@@ -145,18 +138,39 @@ export const getMinTransferableAmountInternal = async <
     }
   }
 
-  const dryRunResult = await dryRunInternal({
-    api,
-    tx,
-    origin,
-    destination,
-    sender,
-    version,
-    currency: buildMinCurrency(amounts),
-    feeAsset
-  })
+  const dryRunAmounts = async (txToDryRun: TRes, currentAmounts: bigint[]) =>
+    dryRunInternal({
+      api,
+      tx: txToDryRun,
+      origin,
+      destination,
+      sender,
+      version,
+      currency: buildMinCurrency(currentAmounts),
+      feeAsset
+    })
 
-  if (!dryRunResult.success) {
+  const dryRunResult = await dryRunAmounts(tx, amounts)
+
+  if (dryRunResult.success) {
+    return toResult(amounts)
+  }
+
+  // The quoted destination fee varies slightly with the transferred amount, so a minimum
+  // derived from a quote on a different amount can still end up a few units short. Pad it and
+  // retry once before giving up.
+  amounts = amounts.map(amount => padValueBy(amount, FEE_PADDING))
+
+  let paddedTx
+  try {
+    paddedTx = await createTx(amounts)
+  } catch {
+    return toResult(amounts.map(() => 0n))
+  }
+
+  const paddedDryRunResult = await dryRunAmounts(paddedTx, amounts)
+
+  if (!paddedDryRunResult.success) {
     return toResult(amounts.map(() => 0n))
   }
 

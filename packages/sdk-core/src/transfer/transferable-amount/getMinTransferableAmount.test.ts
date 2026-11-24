@@ -79,6 +79,7 @@ describe('getMinTransferableAmountInternal', () => {
   beforeEach(() => {
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     vi.mocked(resolveFeeAsset).mockReturnValue(undefined)
+    vi.mocked(usesOriginFeeAsset).mockReturnValue(false)
     vi.mocked(dryRunInternal).mockResolvedValue({ success: true } as TDryRunResult)
     vi.mocked(isAssetEqual).mockImplementation((a, b) => a?.symbol === b?.symbol)
     isAssetXcEqualSpy.mockImplementation((a, b) => a.asset?.symbol === b.asset?.symbol)
@@ -100,7 +101,7 @@ describe('getMinTransferableAmountInternal', () => {
     findNativeAssetInfoOrThrowSpy.mockReturnValue({ symbol: 'NATIVE' } as TAssetInfo)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
 
-    // origin fee (USDT) = 2 is not counted without execute; destination fee (USDT) = 7
+    // origin fee (USDT) = 2 is paid in the transferred asset, destination fee (USDT) = 7
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
       origin: { asset: { symbol: 'USDT' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
@@ -121,10 +122,10 @@ describe('getMinTransferableAmountInternal', () => {
       ]
     })
 
-    // USDT: 7 (dest) + 10 (ED) + 1 = 18; USDC: 10 (ED) + 1 = 11
-    expect(res).toEqual([18n, 11n])
+    // USDT: 2 (origin) + 7 (dest) + 10 (ED) + 1 = 20; USDC: 10 (ED) + 1 = 11
+    expect(res).toEqual([20n, 11n])
     expect(currencySpy).toHaveBeenCalledWith([
-      { symbol: 'USDT', amount: 18n },
+      { symbol: 'USDT', amount: 20n },
       { symbol: 'USDC', amount: 11n }
     ])
   })
@@ -168,7 +169,7 @@ describe('getMinTransferableAmountInternal', () => {
     expect(res).toEqual([0n, 0n])
   })
 
-  it('adds hops/destination (matching asset), ED (when dest balance is 0), plus 1; native origin fee is not counted', async () => {
+  it('adds the origin fee, hops/destination (matching asset), ED (when dest balance is 0), plus 1', async () => {
     const asset = { symbol: 'ASSET', decimals: 12 } as TAssetInfo
     const destAsset = { symbol: 'ASSET', location: {}, existentialDeposit: '10' } as TAssetInfo
     const nativeAsset = { symbol: 'ASSET' } as TAssetInfo
@@ -196,8 +197,8 @@ describe('getMinTransferableAmountInternal', () => {
 
     const res = await mod.getMinTransferableAmountInternal(baseOptions)
 
-    // 3 + 7 + 10 + 1 = 21
-    expect(res).toBe(21n)
+    // 2 (origin) + 3 (hop) + 7 (dest) + 10 (ED) + 1 = 23
+    expect(res).toBe(23n)
 
     expect(validateAddress).toHaveBeenCalledWith(api, 'SENDER', 'Acala', false)
     expect(cloneSpy).toHaveBeenCalled()
@@ -218,11 +219,11 @@ describe('getMinTransferableAmountInternal', () => {
         currency: expect.objectContaining({ amount: 100n })
       })
     )
-    expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 21n }))
+    expect(currencySpy).toHaveBeenCalledWith(expect.objectContaining({ amount: 23n }))
     expect(buildInternal).toHaveBeenCalled()
     expect(dryRunInternal).toHaveBeenCalledWith(
       expect.objectContaining({
-        currency: expect.objectContaining({ amount: 21n })
+        currency: expect.objectContaining({ amount: 23n })
       })
     )
     expect(isAssetXcEqualSpy).toHaveBeenCalledWith(
@@ -245,7 +246,6 @@ describe('getMinTransferableAmountInternal', () => {
     findAssetOnDestOrThrowSpy.mockReturnValue(destAssetNoLoc)
     findNativeAssetInfoOrThrowSpy.mockReturnValue(nativeAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue(resolvedFee)
-    vi.mocked(usesOriginFeeAsset).mockReturnValueOnce(true)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(5n)
     vi.mocked(getXcmFee).mockResolvedValue({
       success: true,
@@ -300,7 +300,7 @@ describe('getMinTransferableAmountInternal', () => {
     )
   })
 
-  it('does not count the origin fee on a local transfer paid in another asset', async () => {
+  it('does not count the origin fee when it is paid in another asset', async () => {
     const asset = { symbol: 'A', existentialDeposit: '999' } as TAssetInfo
 
     mockResolvedAsset(asset)
@@ -323,6 +323,31 @@ describe('getMinTransferableAmountInternal', () => {
 
     // origin(0) + 0 + ED(0) + 1 = 1
     expect(out).toBe(1n)
+  })
+
+  it('counts the origin fee paid in the transferred asset on a cross-chain transfer', async () => {
+    const asset = { symbol: 'A', existentialDeposit: '10' } as TAssetInfo
+
+    mockResolvedAsset(asset)
+    findAssetOnDestOrThrowSpy.mockReturnValue({
+      symbol: 'A',
+      existentialDeposit: '10'
+    } as TAssetInfo)
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(0n)
+    vi.mocked(getXcmFee).mockResolvedValue({
+      success: true,
+      origin: { asset: { symbol: 'A' } as TAssetInfo, fee: 2n, feeType: 'dryRun' },
+      destination: { asset: { symbol: 'A' } as TAssetInfo, fee: 7n, feeType: 'dryRun' },
+      hops: []
+    })
+
+    const out = await mod.getMinTransferableAmountInternal({
+      ...baseOptions,
+      destination: 'Hydration'
+    })
+
+    // origin(2) + destination(7) + ED(10) + 1 = 20
+    expect(out).toBe(20n)
   })
 
   it('returns 0n when dryRun reports failureReason', async () => {

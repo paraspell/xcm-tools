@@ -56,7 +56,8 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
   sender: string,
   chain: TSubstrateChain,
   asset: TAssetInfo,
-  fee: bigint
+  fee: bigint,
+  isLocalTransfer: boolean
 ): Promise<bigint> => {
   const balance = await getAssetBalanceInternal({
     api,
@@ -65,7 +66,11 @@ const computeTransferableAmount = async <TApi, TRes, TSigner, TCustomChain exten
     asset
   })
 
-  const transferable = balance - BigInt(asset.existentialDeposit) - fee
+  // A cross-chain transfer is built with keepAlive = false, so the origin account is
+  // allowed to be reaped and the existential deposit does not have to stay behind.
+  const ed = isLocalTransfer ? BigInt(asset.existentialDeposit) : 0n
+
+  const transferable = balance - ed - fee
 
   return transferable > 0n ? transferable : 0n
 }
@@ -85,7 +90,7 @@ const getTransferableAmountForAsset = async <
   >,
   resolvedFeeAsset: WithOptionalAmount<TAssetInfo> | undefined
 ): Promise<bigint> => {
-  const { api, sender, origin: chain, currency } = options
+  const { api, sender, origin: chain, destination, currency } = options
 
   const asset = api.findAssetInfoOrThrow(chain, currency)
 
@@ -103,7 +108,7 @@ const getTransferableAmountForAsset = async <
 
   const fee = originFee && isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
 
-  return computeTransferableAmount(api, sender, chain, asset, fee)
+  return computeTransferableAmount(api, sender, chain, asset, fee, chain === destination)
 }
 
 const getTransferableAmountForAssets = async <
@@ -134,7 +139,8 @@ const getTransferableAmountForAssets = async <
         sender,
         chain,
         asset,
-        isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n
+        isAssetEqual(originFee.asset, asset) ? originFee.fee : 0n,
+        chain === destination
       )
     )
   )
