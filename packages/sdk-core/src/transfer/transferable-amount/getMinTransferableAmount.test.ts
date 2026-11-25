@@ -1,4 +1,4 @@
-﻿import type { TAssetInfo, WithAmount } from '@paraspell/assets'
+import type { TAssetInfo, WithAmount } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -552,5 +552,3 @@ describe('getMinTransferableAmount', () => {
     expect(disconnectSpy).toHaveBeenCalled()
   })
 })
-
-
