@@ -64,10 +64,20 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
       throw new RoutingResolutionError('Extrinsic is null');
     }
 
+    // Use minimumAmountOut with slippage for the destination transfer.
+    // Previously we used trade.outputAmount (the quoted amount), but the DEX
+    // swap applies allowedSlippage, so actual output can be lower. Without
+    // this fix the XCM transfer requests the full quoted amount and fails
+    // when the swap returns less and the sender lacks pre-existing balance.
+    const minimumAmountOut = parseUnits(
+      trade.minimumAmountOut(allowedSlippage).toFixed(tokenTo.decimals),
+      tokenTo.decimals,
+    );
+
     const nativeSymbol = getNativeAssetSymbol(this.chain);
 
     if (tokenTo.symbol === nativeSymbol) {
-      const amountOutWithFee = amountOut - padValueBy(toDestTxFee, FEE_BUFFER_PCT);
+      const amountOutWithFee = minimumAmountOut - padValueBy(toDestTxFee, FEE_BUFFER_PCT);
 
       if (amountOutWithFee <= 0n) throw new AmountTooLowError();
 
@@ -75,11 +85,11 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
       return { tx: extrinsic[0], amountOut: amountOutWithFee };
     }
 
-    Logger.log('Calculated amount out:', amountOut);
+    Logger.log('Calculated amount out (with slippage):', minimumAmountOut);
 
     return {
       tx: extrinsic[0],
-      amountOut,
+      amountOut: minimumAmountOut,
     };
   }
 
