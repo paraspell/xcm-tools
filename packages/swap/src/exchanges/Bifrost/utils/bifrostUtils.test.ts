@@ -1,263 +1,181 @@
+import { Pair } from '@crypto-dex-sdk/amm';
 import { ParachainId } from '@crypto-dex-sdk/chain';
-import type { Currency } from '@crypto-dex-sdk/currency';
-import { Token } from '@crypto-dex-sdk/currency';
-import { DEFULT_TOKEN_LIST_MAP, type TokenList } from '@crypto-dex-sdk/token-lists';
+import { Amount, Token } from '@crypto-dex-sdk/currency';
+import {
+  addressToNodeCurrency,
+  PAIR_ADDRESSES,
+  uniqePairKey,
+} from '@crypto-dex-sdk/parachains-bifrost';
+import { WrappedTokenInfo } from '@crypto-dex-sdk/token-lists';
+import { RoutingResolutionError } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  fetchPairs,
   findToken,
+  getBestTrade,
   getFilteredPairs,
-  getPairs,
   getTokenMap,
-  PairState,
-  tokensToChainTokenMap,
-  uniqePairKey,
+  selectPairs,
 } from './bifrostUtils';
 
-class MockToken extends Token {
-  constructor(address: string, symbol: string, chainId: number) {
-    super({ address, symbol, chainId, decimals: 18 });
-  }
-}
+const CHAIN_ID = ParachainId.BIFROST_POLKADOT;
+const tokenMap = getTokenMap('BifrostPolkadot', CHAIN_ID);
 
-class MockWrappedToken extends MockToken {
-  equals(other: Token) {
-    return this.address === other.address;
-  }
-  sortsBefore(other: Token) {
-    return this.address.toLowerCase() < other.address.toLowerCase();
-  }
-}
+const BNC = new Token(findToken(tokenMap, 'BNC') as WrappedTokenInfo);
+const DOT = new Token(findToken(tokenMap, 'DOT') as WrappedTokenInfo);
+const OTHER = new Token(
+  Object.values(tokenMap).find(
+    (token) => token.symbol !== 'BNC' && token.symbol !== 'DOT',
+  ) as WrappedTokenInfo,
+);
+const POOL = PAIR_ADDRESSES[uniqePairKey(BNC, DOT)];
 
-function createMockCurrency(address: string, symbol: string, chainId: number) {
-  const wrapped = new MockWrappedToken(address, symbol, chainId);
-  return {
-    chainId,
-    wrapped,
-  } as unknown as Currency;
-}
+const nativeReserve = (free: string) => ({ isEmpty: false, data: { free } });
+const tokenReserve = (free: string) => ({ isEmpty: false, free });
 
-const mockApiPromise = {
-  query: {
-    system: {
-      account: vi.fn(),
+const createApi = (reserves: unknown[] | Error) => {
+  const queryMulti =
+    reserves instanceof Error
+      ? vi.fn().mockRejectedValue(reserves)
+      : vi.fn().mockResolvedValue(reserves);
+
+  const api = {
+    query: {
+      system: { account: 'system.account' },
+      tokens: { accounts: 'tokens.accounts' },
     },
-    tokens: {
-      accounts: vi.fn(),
-    },
-  },
-} as unknown as ApiPromise;
+    queryMulti,
+  } as unknown as ApiPromise;
 
-vi.mock('./useCallMulti', () => {
-  return {
-    fetchCallMulti: vi.fn().mockResolvedValue([
-      { free: 100n, isEmpty: false, data: { free: 100n } },
-      { free: 200n, isEmpty: false, data: { free: 200n } },
-    ]),
-  };
-});
-
-describe('getPairs', () => {
-  it('returns sorted tokens and valid PairPrimitivesAssetId list when chain is BIFROST_KUSAMA', () => {
-    const currencyA = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKA',
-      ParachainId.BIFROST_KUSAMA,
-    );
-    const currencyB = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKB',
-      ParachainId.BIFROST_KUSAMA,
-    );
-
-    const result = getPairs(ParachainId.BIFROST_KUSAMA, [[currencyA, currencyB]]);
-
-    expect(result[0]).toHaveLength(0);
-  });
-
-  it('filters out invalid pairs (different chainIds)', () => {
-    const currencyA = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKA',
-      ParachainId.BIFROST_KUSAMA,
-    );
-    const currencyB = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKB',
-      ParachainId.BIFROST_POLKADOT,
-    );
-
-    const result = getPairs(ParachainId.BIFROST_KUSAMA, [[currencyA, currencyB]]);
-    expect(result[0]).toHaveLength(0);
-    expect(result[1]).toHaveLength(0);
-    expect(result[2]).toHaveLength(0);
-  });
-});
-
-describe('uniqePairKey', () => {
-  it('returns a string combining addresses', () => {
-    const tokenA = new MockToken('0x1501C1413e4178c38567Ada8945A80351F7B8496', 'AAA', 1000);
-    const tokenB = new MockToken('0x1501C1413e4178c38567Ada8945A80351F7B8496', 'BBB', 1000);
-
-    const key = uniqePairKey(tokenA, tokenB);
-    expect(key).toBe(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496-0x1501C1413e4178c38567Ada8945A80351F7B8496',
-    );
-  });
-});
-
-describe('fetchPairs', () => {
-  it('returns NOT_EXISTS if no valid pair addresses', async () => {
-    const currencyA = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'UNK',
-      ParachainId.BIFROST_KUSAMA,
-    );
-    const currencyB = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'UNK2',
-      ParachainId.BIFROST_KUSAMA,
-    );
-
-    const result = await fetchPairs(mockApiPromise, ParachainId.BIFROST_KUSAMA, [
-      [currencyA, currencyB],
-    ]);
-
-    expect(result[0][0]).toBe(PairState.NOT_EXISTS);
-    expect(result[0][1]).toBeNull();
-  });
-
-  it('returns a valid Pair if pair address and reserves are found', async () => {
-    const currencyA = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKA',
-      ParachainId.BIFROST_KUSAMA,
-    );
-    const currencyB = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKB',
-      ParachainId.BIFROST_KUSAMA,
-    );
-
-    const result = await fetchPairs(mockApiPromise, ParachainId.BIFROST_KUSAMA, [
-      [currencyA, currencyB],
-    ]);
-
-    expect(result[0][0]).toBe(PairState.NOT_EXISTS);
-    expect(result[0][1]).toBe(null);
-  });
-});
-
-describe('tokensToChainTokenMap', () => {
-  it('transforms TokenList to a ChainTokenMap', () => {
-    const tokenList: TokenList = {
-      name: 'TestList',
-      timestamp: '2021-09-01T00:00:00Z',
-      tokens: [
-        {
-          address: '0xTOKENA',
-          symbol: 'TKA',
-          decimals: 18,
-          networkId: 1000,
-          parachainId: ParachainId.BIFROST_KUSAMA,
-          assetType: 1,
-          assetIndex: 0,
-          name: 'Token A',
-        },
-        {
-          address: '0xTOKENB',
-          symbol: 'TKB',
-          decimals: 18,
-          networkId: 1000,
-          parachainId: ParachainId.BIFROST_KUSAMA,
-          assetType: 1,
-          assetIndex: 0,
-          name: 'Token B',
-        },
-      ],
-    };
-
-    const chainTokenMap = tokensToChainTokenMap(tokenList);
-    expect(Object.keys(chainTokenMap)).toContain('2001');
-  });
-});
+  return { api, queryMulti };
+};
 
 describe('getTokenMap', () => {
-  it('returns a map of address -> Token for a given chain and chainId', () => {
-    DEFULT_TOKEN_LIST_MAP['bifrost-kusama'] = {
-      name: 'Mock Bifrost Kusama List',
-      timestamp: '2021-09-01T00:00:00Z',
-      tokens: [
-        {
-          address: '0xTOKENB',
-          symbol: 'TKB',
-          decimals: 18,
-          networkId: 1000,
-          parachainId: ParachainId.BIFROST_KUSAMA,
-          assetType: 1,
-          assetIndex: 0,
-          name: 'Token B',
-        },
-      ],
-    };
+  it('returns the Bifrost tokens keyed by address', () => {
+    const tokens = Object.values(tokenMap);
 
-    const result = getTokenMap('BifrostKusama', ParachainId.BIFROST_KUSAMA);
-    expect(result).toBeTypeOf('object');
+    expect(tokens.length).toBeGreaterThan(0);
+    tokens.forEach((token) => {
+      expect(token).toBeInstanceOf(WrappedTokenInfo);
+      expect(token.chainId).toBe(CHAIN_ID);
+      expect(tokenMap[token.address]).toBe(token);
+    });
   });
-});
 
-describe('getFilteredPairs', () => {
-  it('filters out invalid pairs and returns only existing pairs', async () => {
-    const currencyA = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKA',
-      ParachainId.BIFROST_KUSAMA,
-    );
-    const currencyB = createMockCurrency(
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      'TKB',
-      ParachainId.BIFROST_KUSAMA,
-    );
+  it('returns an empty map when the chain id does not match the token list', () => {
+    expect(getTokenMap('BifrostPolkadot', ParachainId.BIFROST_KUSAMA)).toEqual({});
+  });
 
-    const result = await getFilteredPairs(mockApiPromise, ParachainId.BIFROST_KUSAMA, [
-      [currencyA, currencyB],
-      [currencyA, currencyA],
-    ]);
-
-    expect(result).toHaveLength(0);
+  it('throws for a chain without a Bifrost token list', () => {
+    expect(() => getTokenMap('Acala', 2000)).toThrow(RoutingResolutionError);
   });
 });
 
 describe('findToken', () => {
   it('returns the token with a matching symbol', () => {
-    const mockTokenMap = {
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496': new MockToken(
-        '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-        'TKA',
-        1000,
-      ),
-      '0x72BA79a153c5e54Cb5A1df29550c1A3C50Bd8fcA': new MockToken(
-        '0x72BA79a153c5e54Cb5A1df29550c1A3C50Bd8fcA',
-        'TKB',
-        1000,
-      ),
-    };
-    const token = findToken(mockTokenMap, 'TKB');
-    expect(token).toBeDefined();
-    expect(token?.address).toBe('0x72BA79a153c5e54Cb5A1df29550c1A3C50Bd8fcA');
+    expect(findToken(tokenMap, 'DOT')?.address).toBe(DOT.address);
   });
 
-  it('returns undefined if token is not found', () => {
-    const mockTokenMap = {
-      '0x1501C1413e4178c38567Ada8945A80351F7B8496': new MockToken(
-        '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-        'TKA',
-        1000,
-      ),
-    };
-    const token = findToken(mockTokenMap, 'NOT_FOUND');
-    expect(token).toBeUndefined();
+  it('returns undefined if the token is not found', () => {
+    expect(findToken(tokenMap, 'NOT_FOUND')).toBeUndefined();
+  });
+});
+
+describe('getFilteredPairs', () => {
+  it('returns no pairs without querying the chain when no pool is known', async () => {
+    const { api, queryMulti } = createApi([]);
+
+    const pairs = await getFilteredPairs(api, CHAIN_ID, [[BNC, BNC]]);
+
+    expect(pairs).toEqual([]);
+    expect(queryMulti).not.toHaveBeenCalled();
+  });
+
+  it('builds pairs from reserves, reading native balances from system.account', async () => {
+    const { api, queryMulti } = createApi([nativeReserve('1000'), tokenReserve('2000')]);
+
+    const pairs = await getFilteredPairs(api, CHAIN_ID, [[BNC, DOT]]);
+
+    expect(queryMulti).toHaveBeenCalledWith([
+      ['system.account', POOL.account],
+      ['tokens.accounts', [POOL.account, addressToNodeCurrency(DOT.address)]],
+    ]);
+    expect(pairs).toHaveLength(1);
+    expect(pairs[0]).toBeInstanceOf(Pair);
+    expect(pairs[0].reserveOf(BNC).quotient.toString()).toBe('1000');
+    expect(pairs[0].reserveOf(DOT).quotient.toString()).toBe('2000');
+  });
+
+  it('queries each pool only once when combinations repeat', async () => {
+    const { api, queryMulti } = createApi([nativeReserve('1000'), tokenReserve('2000')]);
+
+    await getFilteredPairs(api, CHAIN_ID, [
+      [BNC, DOT],
+      [DOT, BNC],
+    ]);
+
+    expect(queryMulti.mock.calls[0][0]).toHaveLength(2);
+  });
+
+  it('skips pools with empty reserves', async () => {
+    const { api } = createApi([nativeReserve('1000'), { isEmpty: true, free: '0' }]);
+
+    expect(await getFilteredPairs(api, CHAIN_ID, [[BNC, DOT]])).toEqual([]);
+  });
+
+  it('propagates RPC errors', async () => {
+    const { api } = createApi(new Error('RPC unavailable'));
+
+    await expect(getFilteredPairs(api, CHAIN_ID, [[BNC, DOT]])).rejects.toThrow('RPC unavailable');
+  });
+});
+
+describe('selectPairs', () => {
+  const pair = new Pair(
+    Amount.fromRawAmount(BNC, '1000'),
+    Amount.fromRawAmount(DOT, '2000'),
+    POOL.address,
+  );
+
+  it('keeps pools that belong to the given combinations', () => {
+    expect(selectPairs([pair], CHAIN_ID, [[DOT, BNC]])).toEqual([pair]);
+  });
+
+  it('drops pools outside the given combinations', () => {
+    expect(selectPairs([pair], CHAIN_ID, [[BNC, OTHER]])).toEqual([]);
+  });
+});
+
+describe('getBestTrade', () => {
+  it('returns the best trade through the available pools', () => {
+    const pair = new Pair(
+      Amount.fromRawAmount(BNC, '1000000000000000'),
+      Amount.fromRawAmount(DOT, '1000000000000000'),
+      POOL.address,
+    );
+
+    const trade = getBestTrade(CHAIN_ID, [pair], Amount.fromRawAmount(BNC, '1000000000'), DOT);
+
+    expect(trade.outputAmount.currency.equals(DOT)).toBe(true);
+    expect(trade.outputAmount.greaterThan(0)).toBe(true);
+  });
+
+  it('throws when there are no pools', () => {
+    expect(() => getBestTrade(CHAIN_ID, [], Amount.fromRawAmount(BNC, '1000'), DOT)).toThrow(
+      'Trade not found',
+    );
+  });
+
+  it('throws when the pools do not connect the tokens', () => {
+    const pair = new Pair(
+      Amount.fromRawAmount(BNC, '1000000000000000'),
+      Amount.fromRawAmount(DOT, '1000000000000000'),
+      POOL.address,
+    );
+
+    expect(() =>
+      getBestTrade(CHAIN_ID, [pair], Amount.fromRawAmount(BNC, '1000000000'), OTHER),
+    ).toThrow('Trade not found');
   });
 });

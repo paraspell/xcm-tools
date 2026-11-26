@@ -6,7 +6,6 @@ overrides:
   "@polkadot/api": 17.0.2
   "@polkadot/types": 17.0.2
   "@polkadot-api/json-rpc-provider": ^0.2.0
-  "@crypto-dex-sdk/chain": 0.1.2
 packageExtensions:
   "@galacticcouncil/sdk-next":
     peerDependencies:
@@ -29,3 +28,5 @@ allowBuilds:
   unix-dgram: true
   utf-8-validate: true
 minimumReleaseAge: 100
+minimumReleaseAgeExclude:
+  - '@crypto-dex-sdk/*'

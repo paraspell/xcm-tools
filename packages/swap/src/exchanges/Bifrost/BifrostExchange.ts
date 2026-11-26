@@ -32,42 +32,20 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
   ): Promise<TSwapResult<TRes>> {
     const { apiPjs, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
 
-    const chainId = getParaId(this.chain);
-
-    const tokenMap = getTokenMap(this.chain, chainId);
-
-    const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
-
-    if (tokenWrappedFrom === undefined) {
-      throw new RoutingResolutionError('Currency from not found');
-    }
-
-    const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
-
-    if (tokenWrappedTo === undefined) {
-      throw new RoutingResolutionError('Currency to not found');
-    }
-
-    const tokenFrom = new Token(tokenWrappedFrom.wrapped);
-    const tokenTo = new Token(tokenWrappedTo.wrapped);
-
-    const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
-
-    const pairs = await getFilteredPairs(apiPjs, chainId, currencyCombinations);
-
     Logger.log('To dest tx fee in native currency:', toDestTxFee);
     Logger.log('Original amount', amount);
 
-    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-
-    const amountWithoutFee = padValueBy(amount, pctDestFee);
+    const amountWithoutFee = padValueBy(amount, origin ? DEST_FEE_BUFFER_PCT : 0);
     Logger.log('Amount modified', amountWithoutFee);
 
     if (amountWithoutFee <= 0n) throw new AmountTooLowError();
 
-    const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
-
-    const trade = getBestTrade(chainId, pairs, amountInFinal, tokenTo);
+    const { trade, tokenTo, amountOut } = await this.findBestTrade(
+      apiPjs,
+      assetFrom.symbol,
+      assetTo.symbol,
+      amountWithoutFee,
+    );
 
     const allowedSlippage = new Percent(Number(slippagePct) * 100, 10_000);
 
@@ -85,8 +63,6 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
     if (extrinsic === null) {
       throw new RoutingResolutionError('Extrinsic is null');
     }
-
-    const amountOut = parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals);
 
     const nativeSymbol = getNativeAssetSymbol(this.chain);
 
@@ -112,41 +88,58 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
   ): Promise<bigint> {
     const { apiPjs, assetFrom, assetTo, amount, origin } = options;
 
-    const chainId = getParaId(this.chain);
+    const amountWithoutFee = padValueBy(amount, origin ? DEST_FEE_BUFFER_PCT : 0);
 
-    const tokenMap = getTokenMap(this.chain, chainId);
+    const { amountOut } = await this.findBestTrade(
+      apiPjs,
+      assetFrom.symbol,
+      assetTo.symbol,
+      amountWithoutFee,
+    );
 
-    const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
-
-    if (tokenWrappedFrom === undefined) {
-      throw new RoutingResolutionError('Currency from not found');
-    }
-
-    const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
-
-    if (tokenWrappedTo === undefined) {
-      throw new RoutingResolutionError('Currency to not found');
-    }
-
-    const tokenFrom = new Token(tokenWrappedFrom.wrapped);
-    const tokenTo = new Token(tokenWrappedTo.wrapped);
-
-    const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
-
-    const pairs = await getFilteredPairs(apiPjs, chainId, currencyCombinations);
-
-    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-
-    const amountWithoutFee = padValueBy(amount, pctDestFee);
-
-    const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
-    const trade = getBestTrade(chainId, pairs, amountIn, tokenTo);
-
-    return parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals);
+    return amountOut;
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfigStored> {
     return getDexConfig(api, this.chain);
+  }
+
+  private async findBestTrade(
+    api: ApiPromise,
+    symbolFrom: string,
+    symbolTo: string,
+    amountIn: bigint,
+  ) {
+    const chainId = getParaId(this.chain);
+    const tokenMap = getTokenMap(this.chain, chainId);
+
+    const tokenInfoFrom = findToken(tokenMap, symbolFrom);
+    if (!tokenInfoFrom) throw new RoutingResolutionError('Currency from not found');
+
+    const tokenInfoTo = findToken(tokenMap, symbolTo);
+    if (!tokenInfoTo) throw new RoutingResolutionError('Currency to not found');
+
+    const tokenFrom = new Token(tokenInfoFrom);
+    const tokenTo = new Token(tokenInfoTo);
+
+    const pairs = await getFilteredPairs(
+      api,
+      chainId,
+      getCurrencyCombinations(chainId, tokenFrom, tokenTo),
+    );
+
+    const trade = getBestTrade(
+      chainId,
+      pairs,
+      Amount.fromRawAmount(tokenFrom, amountIn.toString()),
+      tokenTo,
+    );
+
+    return {
+      trade,
+      tokenTo,
+      amountOut: parseUnits(trade.outputAmount.toFixed(), tokenTo.decimals),
+    };
   }
 }
 

@@ -18,22 +18,19 @@ vi.mock('@paraspell/sdk-core', async (importOriginal) => ({
 vi.mock('./bifrostUtils', () => {
   const getBestTrade = vi.fn();
   const getFilteredPairs = vi.fn();
-  const findToken = vi.fn((map: any, symbol: string) => map[symbol.toUpperCase()]?.wrapped);
+  const selectPairs = vi.fn((pools: Pair[]) => pools);
+  const findToken = vi.fn((map: any, symbol: string) => map[symbol.toUpperCase()]);
   const getTokenMap = vi.fn().mockReturnValue({
     BTC: {
-      wrapped: {
-        symbol: 'BTC',
-        tokenInfo: { parachainId: 2001, assetType: 0, assetIndex: 0 },
-      },
+      symbol: 'BTC',
+      tokenInfo: { parachainId: 2001, assetType: 0, assetIndex: 0 },
     },
     ETH: {
-      wrapped: {
-        symbol: 'ETH',
-        tokenInfo: { parachainId: 2001, assetType: 0, assetIndex: 1 },
-      },
+      symbol: 'ETH',
+      tokenInfo: { parachainId: 2001, assetType: 0, assetIndex: 1 },
     },
   });
-  return { getBestTrade, getFilteredPairs, findToken, getTokenMap };
+  return { getBestTrade, getFilteredPairs, selectPairs, findToken, getTokenMap };
 });
 
 vi.mock('@crypto-dex-sdk/currency', () => {
@@ -159,5 +156,18 @@ describe('getDexConfig', () => {
         },
       ],
     ]);
+  });
+
+  it('fetches pool reserves once for all candidate pairs', async () => {
+    vi.mocked(getAssets).mockReturnValue(makeSdkAssets());
+    vi.mocked(getFilteredPairs).mockClear();
+    vi.mocked(getFilteredPairs).mockResolvedValue([]);
+    vi.mocked(getBestTrade).mockImplementation(() => {
+      throw new Error('no route');
+    });
+
+    await getDexConfig(makeApi([]), 'BifrostPolkadot');
+
+    expect(getFilteredPairs).toHaveBeenCalledTimes(1);
   });
 });

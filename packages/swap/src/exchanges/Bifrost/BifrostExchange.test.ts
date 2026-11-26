@@ -1,6 +1,7 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
+import type { WrappedTokenInfo } from '@crypto-dex-sdk/token-lists';
 import { getBalance } from '@paraspell/sdk';
 import { AmountTooLowError, getParaId } from '@paraspell/sdk-core';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
@@ -82,8 +83,8 @@ describe('BifrostExchange', () => {
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);
       vi.mocked(getTokenMap).mockReturnValue({
-        BNC: { wrapped: { symbol: 'BNC', decimals: 12 } } as Token,
-        KSM: { wrapped: { symbol: 'KSM', decimals: 12 } } as Token,
+        BNC: { symbol: 'BNC', decimals: 12 } as WrappedTokenInfo,
+        KSM: { symbol: 'KSM', decimals: 12 } as WrappedTokenInfo,
       });
       vi.mocked(findToken).mockImplementation((tokenMap, symbol) => tokenMap[symbol]);
       vi.mocked(getFilteredPairs).mockResolvedValue([]);
@@ -210,8 +211,8 @@ describe('BifrostExchange', () => {
     beforeEach(() => {
       vi.mocked(getParaId).mockReturnValue(2001);
       vi.mocked(getTokenMap).mockReturnValue({
-        BNC: { wrapped: { symbol: 'BNC', decimals: 12 } } as Token,
-        KSM: { wrapped: { symbol: 'KSM', decimals: 12 } } as Token,
+        BNC: { symbol: 'BNC', decimals: 12 } as WrappedTokenInfo,
+        KSM: { symbol: 'KSM', decimals: 12 } as WrappedTokenInfo,
       });
       vi.mocked(findToken).mockImplementation((tokenMap, symbol) => {
         return tokenMap[symbol];
