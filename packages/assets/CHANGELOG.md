@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/assets-v14.5.3...assets-v14.5.4) (2026-11-26)
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+
+
+### Continuous Integration
+
+* **assets:** Update SDK assets 📋 ([64c802d](https://github.com/paraspell/xcm-tools/commit/64c802d9c971beea560b03f19d03db2fb3a07c7c))
+* **swap:** Update swap assets 📋 ([64c802d](https://github.com/paraspell/xcm-tools/commit/64c802d9c971beea560b03f19d03db2fb3a07c7c))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/assets-v14.5.2...assets-v14.5.3) (2026-11-11)
 
 
