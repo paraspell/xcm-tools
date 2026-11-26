@@ -1,5 +1,17 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.5.3...sdk-pjs-v14.5.4) (2026-11-26)
+
+
+### Bug Fixes
+
+* Handle xcm weight query errors 🔧 ([70a97fd](https://github.com/paraspell/xcm-tools/commit/70a97fdf7b1c3e69a31118145309af3355a6ddf2))
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v14.5.2...sdk-pjs-v14.5.3) (2026-11-11)
 
 

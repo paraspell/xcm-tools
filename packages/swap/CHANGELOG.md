@@ -1,5 +1,23 @@
 # Changelog
 
+## [14.5.4](https://github.com/paraspell/xcm-tools/compare/swap-v14.5.3...swap-v14.5.4) (2026-11-26)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update Execute ExchangeAsset calculations 🛠️ ([671702f](https://github.com/paraspell/xcm-tools/commit/671702f50a93adc070efe779438fb144107c2b7a))
+* **swap:** Handle recipient field on Exchange correctly 🪄 ([72bf3a5](https://github.com/paraspell/xcm-tools/commit/72bf3a552a1f5957b2e2ff4816ba7ea64e8fb9dc))
+
+
+### Code Refactoring
+
+* Remove redundant && asset check 🧹 ([a5d0219](https://github.com/paraspell/xcm-tools/commit/a5d02194b09f92306a6ab971f375416bef0dbca9))
+
+
+### Build System
+
+* **swap:** Update crypto-dex-sdk packages 📦 ([a7e5d7b](https://github.com/paraspell/xcm-tools/commit/a7e5d7b7a720855d2f25bb0f2b331840c2872d13))
+
 ## [14.5.3](https://github.com/paraspell/xcm-tools/compare/swap-v14.5.2...swap-v14.5.3) (2026-11-11)
 
 
