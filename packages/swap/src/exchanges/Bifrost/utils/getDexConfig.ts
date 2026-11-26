@@ -1,14 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import type { TAssetInfo } from '@paraspell/sdk-core';
 import { getAssets, getParaId, isSymbolMatch, type TParachain } from '@paraspell/sdk-core';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfigStored, TPairs } from '../../../types';
-import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
+import {
+  findToken,
+  getBestTrade,
+  getFilteredPairs,
+  getTokenMap,
+  selectPairs,
+} from './bifrostUtils';
+
+type TZenlinkAssetId = { chainId: number; assetType: number; assetIndex: number };
+
+const pairKey = (symbolA: string, symbolB: string) =>
+  [symbolA, symbolB]
+    .map((s) => s.toLowerCase())
+    .sort()
+    .join('-');
 
 export const getDexConfig = async (
   api: ApiPromise,
@@ -17,38 +27,29 @@ export const getDexConfig = async (
   const chainId = getParaId(chain);
 
   const tokenMap = getTokenMap(chain, chainId);
+  const tokens = Object.values(tokenMap);
   const sdkAssets = getAssets(chain);
 
   const assetsMap = new Map<string, TAssetInfo>();
-
-  Object.values(tokenMap).forEach((wrapped) => {
-    const symbol = wrapped.wrapped.symbol;
-    if (!symbol) return;
-
+  tokens.forEach(({ symbol }) => {
     const sdkAsset = sdkAssets.find((a) => isSymbolMatch(a.symbol, symbol));
-
-    if (!sdkAsset) return;
-
-    assetsMap.set(symbol, sdkAsset);
+    if (sdkAsset) assetsMap.set(symbol, sdkAsset);
   });
 
   const assets = Array.from(assetsMap.values());
 
-  const pairEntries = await api.query.zenlinkProtocol.pairStatuses.entries();
+  const findTokenByAssetId = ({ chainId, assetType, assetIndex }: TZenlinkAssetId) =>
+    tokens.find(
+      ({ tokenInfo }) =>
+        tokenInfo.parachainId === chainId &&
+        tokenInfo.assetType === assetType &&
+        tokenInfo.assetIndex === assetIndex,
+    );
 
-  const tokensList = Object.values(tokenMap);
   const pairs: TPairs = [];
   const seen = new Set<string>();
 
-  const findTokenByDesc = (d: { chainId: number; assetType: number; assetIndex: number }) =>
-    tokensList.find((tok: any) => {
-      const info = tok.wrapped.tokenInfo;
-      return (
-        info.parachainId === d.chainId &&
-        info.assetType === d.assetType &&
-        info.assetIndex === d.assetIndex
-      );
-    });
+  const pairEntries = await api.query.zenlinkProtocol.pairStatuses.entries();
 
   pairEntries.forEach(
     ([
@@ -56,61 +57,73 @@ export const getDexConfig = async (
         args: [keys],
       },
     ]) => {
-      const [assetAData, assetBData] = keys.toJSON() as any[];
+      const [assetIdA, assetIdB] = keys.toJSON() as [TZenlinkAssetId, TZenlinkAssetId];
 
-      const tokA = findTokenByDesc(assetAData);
-      const tokB = findTokenByDesc(assetBData);
-      if (!tokA || !tokB) return;
+      const tokenA = findTokenByAssetId(assetIdA);
+      const tokenB = findTokenByAssetId(assetIdB);
+      if (!tokenA || !tokenB) return;
 
-      const symA = tokA.wrapped.symbol as string;
-      const symB = tokB.wrapped.symbol as string;
-      const raA = assetsMap.get(symA);
-      const raB = assetsMap.get(symB);
-      if (!raA || !raB) return;
+      const assetA = assetsMap.get(tokenA.symbol);
+      const assetB = assetsMap.get(tokenB.symbol);
+      if (!assetA || !assetB) return;
 
-      const dedup = [symA, symB]
-        .map((s) => s.toLowerCase())
-        .sort()
-        .join('-');
-      if (seen.has(dedup)) return;
-      seen.add(dedup);
+      const key = pairKey(tokenA.symbol, tokenB.symbol);
+      if (seen.has(key)) return;
+      seen.add(key);
 
-      pairs.push([raA.location, raB.location]);
+      pairs.push([assetA.location, assetB.location]);
     },
   );
 
-  const syntheticPairs: TPairs = [];
+  const candidates = [];
 
   for (let i = 0; i < assets.length; i++) {
     for (let j = i + 1; j < assets.length; j++) {
       const a = assets[i];
       const b = assets[j];
+      if (seen.has(pairKey(a.symbol, b.symbol))) continue;
 
-      const dedup = [a.symbol, b.symbol]
-        .map((s) => s.toLowerCase())
-        .sort()
-        .join('-');
-      if (seen.has(dedup)) continue;
+      const tokenInfoA = findToken(tokenMap, a.symbol);
+      const tokenInfoB = findToken(tokenMap, b.symbol);
+      if (!tokenInfoA || !tokenInfoB) continue;
 
-      const wrapA = findToken(tokenMap, a.symbol);
-      const wrapB = findToken(tokenMap, b.symbol);
-      if (!wrapA || !wrapB) continue;
+      const tokenA = new Token(tokenInfoA);
+      const tokenB = new Token(tokenInfoB);
 
-      const tokA = new Token(wrapA.wrapped);
-      const tokB = new Token(wrapB.wrapped);
+      candidates.push({
+        a,
+        b,
+        tokenA,
+        tokenB,
+        combos: getCurrencyCombinations(chainId, tokenA, tokenB),
+      });
+    }
+  }
 
-      try {
-        const combos = getCurrencyCombinations(chainId, tokA, tokB);
-        const filtered = await getFilteredPairs(api, chainId, combos);
+  const pools = await getFilteredPairs(
+    api,
+    chainId,
+    candidates.flatMap(({ combos }) => combos),
+  );
 
-        const minUnit = Amount.fromRawAmount(tokA, '1');
-        getBestTrade(chainId, filtered, minUnit, tokB);
+  const syntheticPairs: TPairs = [];
 
-        syntheticPairs.push([a.location, b.location]);
-        seen.add(dedup);
-      } catch {
-        /* no route ⇒ skip */
-      }
+  for (const { a, b, tokenA, tokenB, combos } of candidates) {
+    const key = pairKey(a.symbol, b.symbol);
+    if (seen.has(key)) continue;
+
+    try {
+      getBestTrade(
+        chainId,
+        selectPairs(pools, chainId, combos),
+        Amount.fromRawAmount(tokenA, '1'),
+        tokenB,
+      );
+
+      syntheticPairs.push([a.location, b.location]);
+      seen.add(key);
+    } catch {
+      /* no route ⇒ skip */
     }
   }
 
