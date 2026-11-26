@@ -93,6 +93,9 @@ describe('BifrostExchange', () => {
         outputAmount: {
           toFixed: () => '500000',
         },
+        minimumAmountOut: () => ({
+          toFixed: () => '500000',
+        }),
       } as Trade);
       vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
         extrinsic: [{} as Extrinsic],
@@ -145,6 +148,9 @@ describe('BifrostExchange', () => {
         outputAmount: {
           toFixed: () => '-1000000000000',
         },
+        minimumAmountOut: () => ({
+          toFixed: () => '-1000000000000',
+        }),
       } as Trade);
 
       await expect(
@@ -177,10 +183,12 @@ describe('BifrostExchange', () => {
         .mockReturnValueOnce({
           descriptions: [{ fee: 0.5 }],
           outputAmount: { toFixed: () => '1' },
+          minimumAmountOut: () => ({ toFixed: () => '1' }),
         } as Trade)
         .mockReturnValueOnce({
           descriptions: [{ fee: 0.5 }],
           outputAmount: { toFixed: () => '1' },
+          minimumAmountOut: () => ({ toFixed: () => '1' }),
         } as Trade);
 
       vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
@@ -223,6 +231,9 @@ describe('BifrostExchange', () => {
         outputAmount: {
           toFixed: () => '500000',
         },
+        minimumAmountOut: () => ({
+          toFixed: () => '500000',
+        }),
       } as Trade);
     });
 
