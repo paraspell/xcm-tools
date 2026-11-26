@@ -27,7 +27,7 @@ import { calculateAcalaSwapFee, createAcalaClient, getDexConfig } from './utils'
 class AcalaExchange extends ExchangeChain<'PJS'> {
   readonly apiType = 'PJS';
 
-  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+  protected async buildSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSwapResult<TRes>> {

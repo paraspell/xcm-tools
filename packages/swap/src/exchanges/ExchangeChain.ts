@@ -1,6 +1,7 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import { createChainClient as createChainClientPapi } from '@paraspell/sdk';
 import type { TApiOrUrl, TBuilderOptions, TExchangeChain } from '@paraspell/sdk-core';
+import { UnsupportedOperationError } from '@paraspell/sdk-core';
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { createChainClient } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -27,7 +28,25 @@ abstract class ExchangeChain<TApiType extends TExchangeApiType = TExchangeApiTyp
 
   abstract readonly apiType: TApiType;
 
-  abstract swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+  readonly supportsRecipient: boolean = false;
+
+  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+    options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
+    toDestTransactionFee: bigint,
+  ): Promise<TSwapResult<TRes>> {
+    const { sender, destination } = options;
+    const recipient = destination ? sender : options.recipient;
+
+    if (!this.supportsRecipient && recipient !== sender) {
+      throw new UnsupportedOperationError(
+        `${this.chain} cannot deposit swapped tokens to a different recipient.`,
+      );
+    }
+
+    return this.buildSwap({ ...options, recipient }, toDestTransactionFee);
+  }
+
+  protected abstract buildSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TSwapOptionsFor<TApi, TRes, TSigner, TApiType, TCustomChain>,
     toDestTransactionFee: bigint,
   ): Promise<TSwapResult<TRes>>;

@@ -76,6 +76,7 @@ describe('BifrostExchange', () => {
       assetTo: { symbol: 'KSM' },
       amount: 1000000n,
       sender: '5xxxxxx',
+      recipient: '5yyyyyy',
       slippagePct: '0.5',
     } as TPjsSwapOptions<unknown, unknown, unknown>;
     const mockToDestTransactionFee = 1000n;
@@ -183,7 +184,7 @@ describe('BifrostExchange', () => {
           outputAmount: { toFixed: () => '1' },
         } as Trade);
 
-      vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
+      const swapCallSpy = vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
         extrinsic: [{} as Extrinsic],
       });
 
@@ -195,6 +196,10 @@ describe('BifrostExchange', () => {
         mockToDestTransactionFee,
       );
 
+      expect(swapCallSpy).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ recipient: '5yyyyyy' }),
+      );
       expect(result.tx).toEqual({});
       expect(result.amountOut).toEqual(1000000000000n);
     });

@@ -1139,11 +1139,11 @@ importers:
         specifier: ^0.1.7
         version: 0.1.7(@crypto-dex-sdk/currency@0.1.7(react-dom@19.0.0(react@19.3.1))(react@19.3.1))(@crypto-dex-sdk/format@0.1.7)(@crypto-dex-sdk/math@0.1.7)(@ethersproject/address@5.8.0)
       '@galacticcouncil/descriptors':
-        specifier: ^2.9.0
-        version: 2.9.0
+        specifier: ^2.11.0
+        version: 2.11.0
       '@galacticcouncil/sdk-next':
-        specifier: ^2.5.0
-        version: 2.5.0(@galacticcouncil/common@1.2.0(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2))(@galacticcouncil/descriptors@2.9.0)(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.13(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.6.7))
+        specifier: ^2.7.0
+        version: 2.7.0(@galacticcouncil/common@1.2.0(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2))(@galacticcouncil/descriptors@2.11.0)(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.13(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.6.7))
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../sdk
@@ -2780,8 +2780,8 @@ packages:
       polkadot-api: ^2.1.7
       rxjs: ^7.8.0
 
-  '@galacticcouncil/descriptors@2.9.0':
-    resolution: {integrity: sha512-RH7NZWfMksyWcBwyzMg84H1qPGyG32W6A/feAcGQvt69AmpTHieWyXtmfp/uRdsBgufkUfu/xtgSwnUxNBFUJQ==}
+  '@galacticcouncil/descriptors@2.11.0':
+    resolution: {integrity: sha512-6Rx8fOyXrebIDCCSr8HF4NSKEM2IAOKgcRCAOGp2W8sBfSUUsQGlX8oor9gDxN8rpxb+rmW1DbKq5HlO8PQdZw==}
 
   '@galacticcouncil/math-hsm@1.2.0':
     resolution: {integrity: sha512-SGTYWqWQ6EFFCkJOANLWLx3MkKoJBLNE06BD2tqscuhp7J5kgmfLi1KzRjv4DIjBDFfWz/b6PPMvyu2P07O+4A==}
@@ -2804,11 +2804,11 @@ packages:
   '@galacticcouncil/math-xyk@1.3.0':
     resolution: {integrity: sha512-ZYVSyI5W2pQKCqpkaRM7t1AJqtPyxQ0P04T2+KpBEEABMRjSpQz2x44s1tk6r3DdFR8dICeZJEh5BI7eQYlT6w==}
 
-  '@galacticcouncil/sdk-next@2.5.0':
-    resolution: {integrity: sha512-LIEsmQaSNO8temZhdXB69Hp+unF9nN8t2QI+gKsekx/AlmG4acL43ObrsNtbm1Fu4kh+cew0b2tFh199iv5GhA==}
+  '@galacticcouncil/sdk-next@2.7.0':
+    resolution: {integrity: sha512-zylaeVRl7GAMYe+HKSUG+yhoSRC1VQi7pWN+lXv6EtvQtfPbT0lO4/hUlcupHaoo8WcYVbtGYoHGetunka17BA==}
     peerDependencies:
       '@galacticcouncil/common': '>=1.2.0'
-      '@galacticcouncil/descriptors': '>=2.7.0'
+      '@galacticcouncil/descriptors': '>=2.11.0'
       polkadot-api: ^2.1.7
       rxjs: ^7.8.0
       viem: ^2.38.3
@@ -14402,7 +14402,7 @@ snapshots:
       polkadot-api: 3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10)
       rxjs: 7.8.2
 
-  '@galacticcouncil/descriptors@2.9.0': {}
+  '@galacticcouncil/descriptors@2.11.0': {}
 
   '@galacticcouncil/math-hsm@1.2.0': {}
 
@@ -14418,10 +14418,10 @@ snapshots:
 
   '@galacticcouncil/math-xyk@1.3.0': {}
 
-  '@galacticcouncil/sdk-next@2.5.0(@galacticcouncil/common@1.2.0(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2))(@galacticcouncil/descriptors@2.9.0)(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.13(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.6.7))':
+  '@galacticcouncil/sdk-next@2.7.0(@galacticcouncil/common@1.2.0(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2))(@galacticcouncil/descriptors@2.11.0)(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)(viem@2.57.13(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@5.0.10)(zod@4.6.7))':
     dependencies:
       '@galacticcouncil/common': 1.2.0(polkadot-api@3.3.0(bufferutil@4.1.0)(esbuild@0.28.1)(rxjs@7.8.2)(supports-color@10.2.2)(utf-8-validate@5.0.10))(rxjs@7.8.2)
-      '@galacticcouncil/descriptors': 2.9.0
+      '@galacticcouncil/descriptors': 2.11.0
       '@galacticcouncil/math-hsm': 1.2.0
       '@galacticcouncil/math-lbp': 1.3.0
       '@galacticcouncil/math-liquidity-mining': 1.3.0

@@ -73,6 +73,7 @@ describe('AssetHubExchange', () => {
       assetTo: assetB,
       amount: 1000n,
       sender: 'sender',
+      recipient: 'recipient',
       slippagePct: '5',
       feeCalcAddress: 'sender',
       origin: undefined,
@@ -92,7 +93,7 @@ describe('AssetHubExchange', () => {
           path: [assetNative.location, assetB.location],
           amount_in: 1000n,
           amount_out_min: 1900n,
-          send_to: 'sender',
+          send_to: 'recipient',
           keep_alive: true,
         },
       });
@@ -128,7 +129,7 @@ describe('AssetHubExchange', () => {
           path: [assetA.location, assetNative.location],
           amount_in: 990n,
           amount_out_min: 1900n,
-          send_to: 'sender',
+          send_to: 'recipient',
           keep_alive: false,
         },
       });
@@ -156,7 +157,7 @@ describe('AssetHubExchange', () => {
           path: [assetA.location, assetNative.location, assetB.location],
           amount_in: 1000n,
           amount_out_min: 1900n,
-          send_to: 'sender',
+          send_to: 'recipient',
           keep_alive: false,
         },
       });

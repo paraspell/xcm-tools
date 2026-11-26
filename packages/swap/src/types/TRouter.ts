@@ -36,6 +36,8 @@ type TSwapOptionsCommon<TApi, TRes, TSigner, TCustomChain extends string = never
   amount: bigint;
   slippagePct: string;
   sender: string;
+  recipient: string;
+  destination?: TDestinationInfo;
   feeCalcAddress: string;
   origin?: TOriginInfo<TApi>;
   isForFeeEstimation?: boolean;
@@ -295,6 +297,7 @@ export type TAdditionalTransferOptions<TApi, TRes, TSigner, TCustomChain extends
   origin?: TOriginInfo<TApi>;
   exchange: TExchangeInfo<TApi, TRes, TSigner, TCustomChain>;
   destination?: TDestinationInfo;
+  recipient: string;
   feeCalcAddress: string;
 };
 

@@ -149,6 +149,7 @@ describe('AcalaExchange', () => {
             assetTo: { symbol: 'ACA' },
             amount: -1n,
             sender: '5xxxx',
+            recipient: '5xxxx',
             origin: {},
           } as TPjsSwapOptions<unknown, unknown, unknown>,
           0n,
@@ -164,6 +165,7 @@ describe('AcalaExchange', () => {
         assetTo: { symbol: 'ACA' },
         amount: 1n,
         sender: 'some-address',
+        recipient: 'some-address',
         origin: {},
       } as TPjsSwapOptions<unknown, unknown, unknown>;
 
