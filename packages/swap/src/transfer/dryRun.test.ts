@@ -69,6 +69,7 @@ const createOptions = (
   unknown
 > => ({
   ...createInitialOptions(),
+  recipient: 'sender',
   feeCalcAddress: 'sender',
   origin: undefined,
   destination: undefined,

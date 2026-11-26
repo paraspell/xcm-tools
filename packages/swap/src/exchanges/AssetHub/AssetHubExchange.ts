@@ -22,6 +22,8 @@ import { getDexConfig } from './utils';
 class AssetHubExchange extends ExchangeChain<'GENERIC'> {
   readonly apiType = 'GENERIC';
 
+  readonly supportsRecipient = true;
+
   private async quoteOrThrow<TApi, TRes, TSigner, TCustomChain extends string = never>(
     api: PolkadotApi<TApi, TRes, TSigner, TCustomChain>,
     fromLocation: TLocation,
@@ -83,11 +85,11 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
     };
   }
 
-  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+  protected async buildSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TGenericSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
   ): Promise<TSwapResult<TRes>> {
-    const { api, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
+    const { api, assetFrom, assetTo, amount, recipient, slippagePct, origin } = options;
 
     const nativeAsset = findNativeAssetInfoOrThrow(this.chain);
 
@@ -112,7 +114,7 @@ class AssetHubExchange extends ExchangeChain<'GENERIC'> {
         path,
         amount_in: amountWithoutFee,
         amount_out_min: minAmountOut,
-        send_to: sender,
+        send_to: recipient,
         keep_alive: !!assetFrom.isNative,
       },
     });

@@ -227,7 +227,7 @@ describe('getSwapInfo', () => {
       expect(buildDestInfo).toHaveBeenCalledWith(
         expect.objectContaining({
           destination: 'Hydration',
-          recipient: 'Alice',
+          recipient: 'Bob',
           currency: expect.objectContaining({ amount: 500n, symbol: 'USDT' }),
         }),
       );

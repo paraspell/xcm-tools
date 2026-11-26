@@ -35,6 +35,9 @@ export const selectBestExchange = async <TApi, TRes, TSigner, TCustomChain exten
         ...options,
         amount: BigInt(parsedAmount),
         exchange: exchangeInfo,
+        // Recipient does not affect the quote. Use the sender so swapCurrency does not reject
+        // exchanges without supportsRecipient, which may still swap via execute
+        recipient: options.sender,
         feeCalcAddress: determineFeeCalcAddress(options.sender, options.recipient),
       };
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);

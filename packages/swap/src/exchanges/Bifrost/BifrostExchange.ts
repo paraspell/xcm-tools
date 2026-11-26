@@ -26,11 +26,13 @@ import { getDexConfig } from './utils/getDexConfig';
 class BifrostExchange extends ExchangeChain<'PJS'> {
   readonly apiType = 'PJS';
 
-  async swapCurrency<TApi, TRes, TSigner, TCustomChain extends string = never>(
+  readonly supportsRecipient = true;
+
+  protected async buildSwap<TApi, TRes, TSigner, TCustomChain extends string = never>(
     options: TPjsSwapOptions<TApi, TRes, TSigner, TCustomChain>,
     toDestTxFee: bigint,
   ): Promise<TSwapResult<TRes>> {
-    const { apiPjs, assetFrom, assetTo, amount, sender, slippagePct, origin } = options;
+    const { apiPjs, assetFrom, assetTo, amount, recipient, slippagePct, origin } = options;
 
     Logger.log('To dest tx fee in native currency:', toDestTxFee);
     Logger.log('Original amount', amount);
@@ -56,7 +58,7 @@ class BifrostExchange extends ExchangeChain<'PJS'> {
     const { extrinsic } = SwapRouter.swapCallParameters(trade, {
       api: apiPjs,
       allowedSlippage,
-      recipient: sender,
+      recipient,
       deadline,
     });
 

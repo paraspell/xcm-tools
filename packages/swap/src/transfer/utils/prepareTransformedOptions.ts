@@ -88,6 +88,7 @@ export const prepareTransformedOptions = async <
             address: recipient,
           }
         : undefined,
+    recipient: recipient ?? sender,
     feeCalcAddress: determineFeeCalcAddress(sender, recipient),
   };
 
