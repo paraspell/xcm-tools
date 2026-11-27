@@ -175,13 +175,13 @@ describe('AcalaExchange', () => {
       await expect(chain.swapCurrency(options, 1n)).rejects.toThrow(AmountTooLowError);
     });
 
-    it('should swap successfully and return the tx and modified amountOut', async () => {
+    it('should swap successfully and return the full native amountOut', async () => {
       const result = await chain.swapCurrency(baseSwapOptions, 1n);
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe(41999999999999n);
+      expect(result.amountOut).toBe(42000000000000n);
     });
 
     it('should pass slippagePct as acceptiveSlippage to the dex swap', async () => {

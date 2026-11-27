@@ -111,10 +111,13 @@ class AcalaExchange extends ExchangeChain<'PJS'> {
     const nativeAssetSymbol = getNativeAssetSymbol(this.chain);
 
     if (toToken.symbol === nativeAssetSymbol) {
-      const amountOutWithFee = amountOut - padValueBy(toDestTransactionFee, FEE_BUFFER_PCT);
-      Logger.log('Amount out with fee:', amountOutWithFee);
+      // The destination transaction fee is paid by the sender as part of the
+      // exchange transaction. The destination leg deducts its own execution
+      // fee, so subtracting toDestTransactionFee here charges the recipient
+      // for the same fee a second time.
+      Logger.log('Amount out:', amountOut);
       Logger.log('Amount out decimals', toToken.decimals);
-      return { tx, amountOut: amountOutWithFee };
+      return { tx, amountOut };
     }
 
     Logger.log('Calculated amount out:', amountOut);
