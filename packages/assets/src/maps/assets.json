@@ -1956,445 +1956,6 @@
       }
     ]
   },
-  "Centrifuge": {
-    "relaychainSymbol": "DOT",
-    "nativeAssetSymbol": "CFG",
-    "isEVM": false,
-    "ss58Prefix": 36,
-    "supportsDryRunApi": false,
-    "supportsXcmPaymentApi": false,
-    "assets": [
-      {
-        "symbol": "CFG",
-        "decimals": 18,
-        "existentialDeposit": "1000000000000",
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "isNative": true
-      },
-      {
-        "assetId": "100003",
-        "symbol": "LpArbUSDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 42161
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xaf88d065e77c8cc2239327c5edb3a432268e5831"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "999998",
-        "symbol": "cfgIOU",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xacf3c07bebd65d5f7d86bc0bc716026a0c523069"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "0"
-      },
-      {
-        "assetId": "3",
-        "symbol": "aUSD",
-        "decimals": 12,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "100008",
-        "symbol": "USDS",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xdc035d45d973e3ec169d2276ddab16f1e407384f"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "100005",
-        "symbol": "LpFRAX",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x853d955acef822db058eb8505911ed77f175b99e"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000000"
-      },
-      {
-        "assetId": "1",
-        "symbol": "USD",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "100006",
-        "symbol": "LpCeloUSDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 42220
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xceba9300f2b948710d2653dd7b07f33a8b32118c"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "5",
-        "symbol": "DOT",
-        "decimals": 10,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "100000"
-      },
-      {
-        "assetId": "6",
-        "symbol": "USDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1337
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "100002",
-        "symbol": "LpBaseUSDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 8453
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "1",
-        "symbol": "USDT",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1984
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000"
-      },
-      {
-        "assetId": "100007",
-        "symbol": "DAI",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x6b175474e89094c44da98b954eedeac495271d0f"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "100001",
-        "symbol": "LpEthUSDC",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 1
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      },
-      {
-        "assetId": "4",
-        "symbol": "GLMR",
-        "decimals": 18,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2004
-              },
-              {
-                "PalletInstance": 10
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000000"
-      },
-      {
-        "assetId": "100004",
-        "symbol": "LpCeloWormUSDC ",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X4": [
-              {
-                "Parachain": 2031
-              },
-              {
-                "PalletInstance": 103
-              },
-              {
-                "GlobalConsensus": {
-                  "Ethereum": {
-                    "chainId": 42220
-                  }
-                }
-              },
-              {
-                "AccountKey20": {
-                  "network": null,
-                  "key": "0x37f750b7cc259a2f741af45294f6a16572cf5cad"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
-      }
-    ]
-  },
   "Xode": {
     "relaychainSymbol": "DOT",
     "nativeAssetSymbol": "XON",
@@ -2945,7 +2506,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "HUSDT1"
       },
       {
         "assetId": "4",
@@ -3506,7 +3068,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0x3a31ff0a1e07da4158677ce861980cdf2e316b78"
+                  "key": "0x2405024a3d2ecc0a97818490616bd8763652e1e5"
                 }
               }
             ]
@@ -4179,6 +3741,33 @@
         }
       },
       {
+        "assetId": "1115",
+        "symbol": "HUSDT",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xc92051fa011a1ce83f50a9b1ea8ebbddfa8ca272"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "HUSDT2"
+      },
+      {
         "assetId": "29",
         "symbol": "PLMC",
         "decimals": 10,
@@ -4283,6 +3872,33 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "1114",
+        "symbol": "HUSDC",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x8894940baa4c7c26d8d84247d93c6d2e40a5af4f"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "HUSDC2"
       },
       {
         "assetId": "5",
@@ -4764,7 +4380,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "HUSDC1"
       },
       {
         "assetId": "1000100",
@@ -12872,28 +12489,6 @@
         "existentialDeposit": "100000000",
         "isFeeAsset": true,
         "alias": "BILL2"
-      },
-      {
-        "assetId": "35",
-        "symbol": "usd",
-        "decimals": 6,
-        "location": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 35
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000"
       },
       {
         "assetId": "61337",

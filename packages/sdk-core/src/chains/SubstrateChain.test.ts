@@ -185,10 +185,10 @@ describe('Parachain', () => {
       amount: 100n,
       location: { parents: 1, interior: { X1: { Parachain: 2000 } } }
     }
-    const CFG = {
-      symbol: 'CFG',
+    const PEN = {
+      symbol: 'PEN',
       amount: 100n,
-      location: { parents: 1, interior: { X1: { Parachain: 2031 } } }
+      location: { parents: 1, interior: { X1: { Parachain: 2094 } } }
     }
     const USDT_EXTERNAL = {
       symbol: 'USDT',
@@ -280,15 +280,15 @@ describe('Parachain', () => {
     })
 
     it('uses type-and-then for relay assets on XTokens chains', async () => {
-      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+      const chain = new XTokensChain('Pendulum', 'TestChain', 'Polkadot', Version.V5)
 
       expect(await chain.transfer(createOptions('Hydration', DOT))).toBe(typeAndThenTx)
     })
 
     it('uses XTokens for non-relay assets on XTokens chains', async () => {
-      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+      const chain = new XTokensChain('Pendulum', 'TestChain', 'Polkadot', Version.V5)
 
-      expect(await chain.transfer(createOptions('Hydration', CFG))).toBe(xTokensTx)
+      expect(await chain.transfer(createOptions('Hydration', PEN))).toBe(xTokensTx)
     })
 
     it('uses limited_teleport_assets for native asset teleports', async () => {
@@ -344,7 +344,7 @@ describe('Parachain', () => {
 
     it('throws TypeAndThenUnavailableError for relay assets on XTokens chains without type-and-then', async () => {
       mockTypeAndThenSupport(false)
-      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+      const chain = new XTokensChain('Pendulum', 'TestChain', 'Polkadot', Version.V5)
 
       await expect(chain.transfer(createOptions('Hydration', DOT))).rejects.toThrow(
         TypeAndThenUnavailableError
@@ -362,9 +362,9 @@ describe('Parachain', () => {
 
     it('uses XTokens without requiring type-and-then', async () => {
       mockTypeAndThenSupport(false)
-      const chain = new XTokensChain('Centrifuge', 'TestChain', 'Polkadot', Version.V5)
+      const chain = new XTokensChain('Pendulum', 'TestChain', 'Polkadot', Version.V5)
 
-      expect(await chain.transfer(createOptions('Hydration', CFG))).toBe(xTokensTx)
+      expect(await chain.transfer(createOptions('Hydration', PEN))).toBe(xTokensTx)
     })
 
     it('throws when sending is disabled', async () => {

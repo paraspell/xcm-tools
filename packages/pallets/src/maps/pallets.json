@@ -98,29 +98,6 @@
     "nativeAssets": "Balances",
     "otherAssets": []
   },
-  "Centrifuge": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "Balances",
-        "index": 20
-      },
-      {
-        "name": "Tokens",
-        "index": 98
-      },
-      {
-        "name": "PolkadotXcm",
-        "index": 121
-      },
-      {
-        "name": "XTokens",
-        "index": 124
-      }
-    ],
-    "nativeAssets": "Balances",
-    "otherAssets": ["Tokens", "OrmlTokens"]
-  },
   "Darwinia": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [

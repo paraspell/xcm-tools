@@ -17,10 +17,10 @@ vi.mock('../../maps/configs.json', () => ({
         { name: 'Acala', endpoint: 'https://provider2.com' }
       ]
     },
-    Centrifuge: {
-      name: 'Centrifuge',
-      info: 'centrifuge',
-      paraId: 2031,
+    Pendulum: {
+      name: 'Pendulum',
+      info: 'pendulum',
+      paraId: 2094,
       providers: []
     },
     Astar: {
@@ -52,13 +52,13 @@ describe('getChainConfig', () => {
   })
 
   it('should return the correct config when providers are empty', () => {
-    const chain: TSubstrateChain = 'Centrifuge'
+    const chain: TSubstrateChain = 'Pendulum'
     const result = getChainConfig(chain)
 
     expect(result).toEqual({
-      name: 'Centrifuge',
-      info: 'centrifuge',
-      paraId: 2031,
+      name: 'Pendulum',
+      info: 'pendulum',
+      paraId: 2094,
       providers: []
     })
     expect(result.providers).toHaveLength(0)

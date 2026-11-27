@@ -69,7 +69,7 @@ describe('getChainProviders', () => {
   })
 
   it('should throw an error when no providers are found', () => {
-    const mockChain: TSubstrateChain = 'Centrifuge'
+    const mockChain: TSubstrateChain = 'Pendulum'
     vi.mocked(getChainConfigImpl).mockReturnValue({
       ...chainConfig,
       providers: []

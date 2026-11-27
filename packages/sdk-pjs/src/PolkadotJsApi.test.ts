@@ -1950,7 +1950,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address,
-          chain: 'Centrifuge',
+          chain: 'Pendulum',
           destination: 'Hydration',
           asset: {} as WithAmount<TAssetInfo>,
           version: Version.V5
@@ -2188,7 +2188,7 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunXcm({
           originLocation,
           xcm: dummyXcm,
-          chain: 'Centrifuge',
+          chain: 'Pendulum',
           origin: 'Hydration'
         } as TDryRunXcmBaseOptions<Extrinsic>)
       ).rejects.toThrow(RuntimeApiUnavailableError)

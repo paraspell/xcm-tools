@@ -12,9 +12,7 @@ import type { TChainConfig, TProviderEntry, TSubstrateChain } from '../src'
 const PAPI_CONSOLE_POLKADOT_URL =
   'https://raw.githubusercontent.com/polkadot-api/papi-console/refs/heads/main/src/state/chains/networks/polkadot.json'
 
-const PAPI_CONSOLE_CHAINS: TSubstrateChain[] = ['Hydration', 'Centrifuge']
-
-const EXCLUDED_ENDPOINTS = ['wss://rpc-centrifuge.luckyfriday.io']
+const PAPI_CONSOLE_CHAINS: TSubstrateChain[] = ['Hydration']
 
 const overrides: Partial<Record<TSubstrateChain, TProviderEntry[]>> = {
   Peaq: [
@@ -208,7 +206,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
       obj[chain.chain] = {
         ...config,
         relayChain: undefined,
-        providers: mergedProviders.filter(({ endpoint }) => !EXCLUDED_ENDPOINTS.includes(endpoint))
+        providers: mergedProviders
       }
     }
   })

@@ -197,8 +197,8 @@ describe('getTransferInfo', () => {
         result: { fee: 12345n, asset: { symbol: 'HDX' } }
       },
       {
-        chain: 'Centrifuge',
-        result: { fee: 56789n, asset: { symbol: 'CFG' } }
+        chain: 'Pendulum',
+        result: { fee: 56789n, asset: { symbol: 'PEN' } }
       }
     ]
 
@@ -212,13 +212,13 @@ describe('getTransferInfo', () => {
       }
     }
 
-    const mockCentrifugeHopInfo = {
+    const mockPendulumHopInfo = {
       balance: 200n,
-      asset: { symbol: 'CFG', assetId: 'CFG', decimals: 18 } as TAssetInfo,
+      asset: { symbol: 'PEN', assetId: 'PEN', decimals: 12 } as TAssetInfo,
       xcmFee: {
         fee: 56789n,
         balance: 200n,
-        asset: { symbol: 'CFG', assetId: 'CFG', decimals: 18 } as TAssetInfo
+        asset: { symbol: 'PEN', assetId: 'PEN', decimals: 12 } as TAssetInfo
       }
     }
 
@@ -231,7 +231,7 @@ describe('getTransferInfo', () => {
 
     vi.mocked(buildHopInfo).mockImplementation(({ chain }) => {
       if (chain === 'Hydration') return Promise.resolve(mockHydraHopInfo)
-      if (chain === 'Centrifuge') return Promise.resolve(mockCentrifugeHopInfo)
+      if (chain === 'Pendulum') return Promise.resolve(mockPendulumHopInfo)
       return Promise.resolve({} as THopTransferInfo['result'])
     })
 
@@ -249,7 +249,7 @@ describe('getTransferInfo', () => {
     )
     expect(buildHopInfo).toHaveBeenCalledWith(
       expect.objectContaining({
-        chain: 'Centrifuge',
+        chain: 'Pendulum',
         fee: mockHopsFromFee[1].result.fee
       })
     )
@@ -262,8 +262,8 @@ describe('getTransferInfo', () => {
         result: mockHydraHopInfo
       },
       {
-        chain: 'Centrifuge',
-        result: mockCentrifugeHopInfo
+        chain: 'Pendulum',
+        result: mockPendulumHopInfo
       }
     ])
   })
