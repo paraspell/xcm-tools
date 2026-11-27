@@ -2945,7 +2945,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "HUSDT1"
       },
       {
         "assetId": "4",
@@ -3506,7 +3507,7 @@
               {
                 "AccountKey20": {
                   "network": null,
-                  "key": "0x3a31ff0a1e07da4158677ce861980cdf2e316b78"
+                  "key": "0x2405024a3d2ecc0a97818490616bd8763652e1e5"
                 }
               }
             ]
@@ -4179,6 +4180,33 @@
         }
       },
       {
+        "assetId": "1115",
+        "symbol": "HUSDT",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xc92051fa011a1ce83f50a9b1ea8ebbddfa8ca272"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "HUSDT2"
+      },
+      {
         "assetId": "29",
         "symbol": "PLMC",
         "decimals": 10,
@@ -4283,6 +4311,33 @@
           }
         },
         "isFeeAsset": true
+      },
+      {
+        "assetId": "1114",
+        "symbol": "HUSDC",
+        "decimals": 18,
+        "existentialDeposit": "33000000000000000",
+        "erc20": {
+          "balanceSlot": 52
+        },
+        "location": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x8894940baa4c7c26d8d84247d93c6d2e40a5af4f"
+                }
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true,
+        "alias": "HUSDC2"
       },
       {
         "assetId": "5",
@@ -4764,7 +4819,8 @@
             ]
           }
         },
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "HUSDC1"
       },
       {
         "assetId": "1000100",

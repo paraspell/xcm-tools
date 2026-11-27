@@ -1366,22 +1366,6 @@
             {
               "AccountKey20": {
                 "network": null,
-                "key": "0xb94025f14fdc01f8e3b0c34311bcbae0febd1a4a"
-              }
-            }
-          ]
-        }
-      },
-      {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2034
-            },
-            {
-              "AccountKey20": {
-                "network": null,
                 "key": "0x69003a65189f6ed993d3bd3e2b74f1db39f405ce"
               }
             }
@@ -1398,7 +1382,7 @@
             {
               "AccountKey20": {
                 "network": null,
-                "key": "0x3a31ff0a1e07da4158677ce861980cdf2e316b78"
+                "key": "0x2405024a3d2ecc0a97818490616bd8763652e1e5"
               }
             }
           ]
@@ -1767,6 +1751,22 @@
       {
         "parents": 1,
         "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc92051fa011a1ce83f50a9b1ea8ebbddfa8ca272"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
           "X4": [
             {
               "Parachain": 2034
@@ -1784,6 +1784,22 @@
               "GeneralKey": {
                 "length": 32,
                 "data": "0x26759f460ee5f743ed66d27c8f2a5623bf39d53ed575955320661e6e13e0e3da"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x8894940baa4c7c26d8d84247d93c6d2e40a5af4f"
               }
             }
           ]
