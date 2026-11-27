@@ -9,7 +9,6 @@ export const PARACHAINS = [
   'Astar',
   'BifrostPolkadot',
   'BridgeHubPolkadot',
-  'Centrifuge',
   'Darwinia',
   'EnergyWebX',
   'Hydration',

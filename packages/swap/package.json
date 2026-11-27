@@ -67,14 +67,14 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-env": "^7.29.14",
     "@codecov/rollup-plugin": "^2.0.1",
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.3.1",
-    "@vitest/coverage-v8": "^5.0.5",
-    "dotenv": "^18.0.9",
-    "rollup": "^4.66.0",
+    "@vitest/coverage-v8": "^5.1.2",
+    "dotenv": "^18.0.10",
+    "rollup": "^4.68.8",
     "rollup-plugin-dts": "^6.5.1",
     "tsx": "^4.23.15"
   }

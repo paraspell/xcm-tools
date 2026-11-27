@@ -4,20 +4,20 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.11",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "eslint": "^10.13.0",
-    "eslint-config-prettier": "^10.1.8",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.9",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-tsdoc": "^0.5.4",
-    "globals": "^17.13.0",
-    "netlify-cli": "^27.15.0",
-    "prettier": "^3.9.10",
-    "turbo": "^2.11.10",
+    "globals": "^17.14.0",
+    "netlify-cli": "^27.20.1",
+    "prettier": "^3.10.1",
+    "turbo": "^2.11.13",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.72.1",
-    "vitest": "^5.0.5"
+    "typescript-eslint": "^8.74.0",
+    "vitest": "^5.1.2"
   },
   "engines": {
     "node": ">=26"
@@ -42,5 +42,5 @@
     "run:updateRouterAssets": "pnpm --filter swap updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@12.16.1"
+  "packageManager": "pnpm@12.23.0"
 }

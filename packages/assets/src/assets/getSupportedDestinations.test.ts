@@ -42,7 +42,7 @@ vi.mock('./isAdditionalSubstrateBridgeAsset', () => ({
 
 vi.mock('@paraspell/sdk-common', async importActual => ({
   ...(await importActual()),
-  CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Centrifuge', 'Astar', 'AssetHubPolkadot'],
+  CHAINS: ['Polkadot', 'Kusama', 'Acala', 'Pendulum', 'Astar', 'AssetHubPolkadot'],
   SUBSTRATE_CHAINS: ['Polkadot', 'BifrostPolkadot', 'Acala', 'Astar', 'Karura'],
   isExternalChain: isExternalChainMock,
   isSubstrateBridge: isSubstrateBridgeMock
@@ -86,7 +86,7 @@ describe('getSupportedDestinations', () => {
 
     expect(findAssetInfoOnDest).toHaveBeenCalledTimes(4)
     expect(findAssetInfoOnDest).toHaveBeenCalledWith(origin, 'Kusama', currency, asset)
-    expect(result).toEqual(['Acala', 'Centrifuge'])
+    expect(result).toEqual(['Acala', 'Pendulum'])
   })
 
   it('should exclude the origin chain from results', () => {
@@ -115,7 +115,7 @@ describe('getSupportedDestinations', () => {
         throw new InvalidCurrencyError('Invalid currency for destination')
       })
 
-    expect(getSupportedDestinations(origin, currency)).toEqual(['Acala', 'Centrifuge', 'Astar'])
+    expect(getSupportedDestinations(origin, currency)).toEqual(['Acala', 'Pendulum', 'Astar'])
   })
 
   it('should re-throw non-InvalidCurrencyError errors from findAssetInfoOrThrow', () => {

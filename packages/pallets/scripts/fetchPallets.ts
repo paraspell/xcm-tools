@@ -23,7 +23,6 @@ const JSON_FILE_PATH = './src/maps/pallets.json'
 const defaultPalletsByPriority: TPallet[] = ['XcmPallet', 'PolkadotXcm', 'XTokens']
 
 const defaultPalletOverrides: Partial<Record<TSubstrateChain, TPallet>> = {
-  Centrifuge: 'XTokens',
   Peaq: 'XTokens',
   Pendulum: 'XTokens'
 }

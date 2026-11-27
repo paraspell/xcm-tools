@@ -831,7 +831,7 @@ describe('X-Transfer controller (e2e)', () => {
     return request(app.getHttpServer())
       .post('/dry-run')
       .send({
-        from: 'Centrifuge',
+        from: 'Pendulum',
         to: 'Astar',
         currency: {
           symbol: 'ACA',

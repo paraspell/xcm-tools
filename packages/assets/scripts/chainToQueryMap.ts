@@ -22,7 +22,6 @@ export const chainToQuery: Record<TChain, string | (() => Promise<TChainAssetsIn
   BridgeHubKusama: '',
   BridgeHubPolkadot: '',
   BridgeHubWestend: '',
-  Centrifuge: 'OrmlAssetRegistry.Metadata',
   Collectives: '',
   CollectivesWestend: '',
   CoretimeKusama: '',

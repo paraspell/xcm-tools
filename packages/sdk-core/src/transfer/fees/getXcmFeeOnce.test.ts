@@ -697,7 +697,6 @@ describe('getXcmFeeOnce', () => {
     vi.spyOn(defaultApi, 'findAssetInfoOrThrow').mockReturnValue({ symbol: 'ACA' } as TAssetInfo)
     vi.spyOn(defaultApi, 'findNativeAssetInfoOrThrow').mockImplementation((chain: TChain) => {
       if (chain === 'Acala') return { symbol: 'ACA' } as TAssetInfo
-      if (chain === 'Centrifuge') return { symbol: 'CUSTOM' } as TAssetInfo
       return { symbol: 'GLMR' } as TAssetInfo
     })
 
