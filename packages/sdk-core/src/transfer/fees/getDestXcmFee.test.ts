@@ -16,6 +16,7 @@ const createApi = (dryRunRes?: TDryRunChainResult) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {}),
     findAssetInfoOrThrow: vi.fn(),
+    findNativeAssetInfo: vi.fn().mockReturnValue({ symbol: "NATIVE" }),
     hasDryRunSupport: vi.fn()
   }) as unknown as PolkadotApi<unknown, unknown, unknown>
 
