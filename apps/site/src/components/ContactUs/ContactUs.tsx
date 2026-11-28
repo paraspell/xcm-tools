@@ -3,16 +3,14 @@ import {
   Box,
   Button,
   Group,
-  Paper,
   SimpleGrid,
   Text,
   Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
+import { SOCIALS, WizardCard } from "@paraspell/ui";
 
-import { socials } from "../AppShell/links";
-import { Wizard } from "../Magic/Wizard";
 import { Section } from "../Section/Section";
 import { ContactIconsList } from "./ContactIcons";
 import classes from "./ContactUs.module.css";
@@ -38,7 +36,7 @@ export const ContactUs = () => {
           </Box>
 
           <Group gap="xs" mt="xl">
-            {socials.map((social) => (
+            {SOCIALS.map((social) => (
               <ActionIcon
                 key={social.label}
                 component="a"
@@ -55,56 +53,48 @@ export const ContactUs = () => {
           </Group>
         </div>
 
-        <Box pos="relative" pt="xl">
-          <Wizard aria-hidden className={classes.wizard} />
-          <Paper className={classes.form}>
-            <form name="contact" method="POST" data-netlify="true">
-              <TextInput
-                name="email"
-                label="Email"
-                type="email"
-                placeholder="your@email.com"
-                required
-                withAsterisk={false}
-                classNames={{ input: classes.input, label: classes.label }}
-              />
-              <TextInput
-                name="name"
-                label="Name"
-                placeholder="John Doe"
-                mt="md"
-                classNames={{ input: classes.input, label: classes.label }}
-              />
-              <Textarea
-                required
-                withAsterisk={false}
-                name="message"
-                label="Your message"
-                placeholder="I have a question about ParaSpell"
-                minRows={4}
-                mt="md"
-                classNames={{
-                  input: classes.textarea,
-                  label: classes.label,
-                }}
-              />
+        <WizardCard className={classes.form}>
+          <form name="contact" method="POST" data-netlify="true">
+            <TextInput
+              name="email"
+              label="Email"
+              type="email"
+              placeholder="your@email.com"
+              required
+              classNames={{ input: classes.input }}
+            />
+            <TextInput
+              name="name"
+              label="Name"
+              placeholder="John Doe"
+              mt="md"
+              classNames={{ input: classes.input }}
+            />
+            <Textarea
+              required
+              name="message"
+              label="Your message"
+              placeholder="I have a question about ParaSpell"
+              minRows={4}
+              mt="md"
+              classNames={{ input: classes.textarea }}
+            />
 
-              <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="form-name" value="contact" />
 
-              <Button
-                type="submit"
-                fullWidth
-                size="lg"
-                mt="md"
-                radius="md-lg"
-                fz="md"
-                fw={700}
-              >
-                Submit
-              </Button>
-            </form>
-          </Paper>
-        </Box>
+            <Button
+              type="submit"
+              fullWidth
+              size="lg"
+              mt="md"
+              radius="md-lg"
+              fz="md"
+              fw={700}
+            >
+              Submit
+            </Button>
+          </form>
+        </WizardCard>
       </SimpleGrid>
     </Section>
   );

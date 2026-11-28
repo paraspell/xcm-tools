@@ -101,7 +101,7 @@ export const ToolSection: FC<Props> = ({
       columnGap={72}
     >
       <Box className={classes.body}>
-        <Text variant="script" className={classes.tagline}>
+        <Text variant="tagline" className={classes.tagline}>
           {tagline}
         </Text>
         <Title order={2} className={classes.title}>

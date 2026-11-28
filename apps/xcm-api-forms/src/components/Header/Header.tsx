@@ -1,22 +1,15 @@
+import { Anchor, Button, Group, Image, Text } from '@mantine/core';
 import {
-  ActionIcon,
-  Anchor,
-  Box,
-  Button,
-  Group,
-  Image,
-  Text,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { IconArrowUpRight, IconMoon, IconSun } from '@tabler/icons-react';
+  DOCS_LINKS,
+  paraspellIcon,
+  SITE_URL,
+  ThemeToggle,
+} from '@paraspell/ui';
+import { IconArrowUpRight } from '@tabler/icons-react';
 
-import paraspellIcon from '../../assets/paraspell-icon.png';
-import { DOCS_URL } from '../../constants';
 import classes from './Header.module.css';
 
 export const Header = () => {
-  const { toggleColorScheme } = useMantineColorScheme();
-
   return (
     <Group
       component="header"
@@ -28,7 +21,7 @@ export const Header = () => {
     >
       <Group gap={14} wrap="nowrap">
         <Anchor
-          href="https://paraspell.xyz/"
+          href={SITE_URL}
           target="_blank"
           rel="noopener"
           aria-label="ParaSpell home"
@@ -51,18 +44,10 @@ export const Header = () => {
         </span>
       </Group>
       <Group gap="sm" wrap="nowrap">
-        <ActionIcon
-          size={38}
-          onClick={toggleColorScheme}
-          aria-label="Toggle dark mode"
-          title="Toggle dark mode"
-        >
-          <Box component={IconMoon} size={18} darkHidden />
-          <Box component={IconSun} size={18} lightHidden />
-        </ActionIcon>
+        <ThemeToggle size={38} iconSize={18} />
         <Button
           component="a"
-          href={DOCS_URL}
+          href={DOCS_LINKS.xcmApi}
           target="_blank"
           rel="noopener"
           variant="default"

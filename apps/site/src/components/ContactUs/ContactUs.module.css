@@ -15,51 +15,13 @@
   color: var(--mantine-color-text);
 }
 
-.wizard {
-  position: absolute;
-  top: rem(-6px);
-  right: rem(36px);
-  z-index: 0;
-  display: block;
-  font-size: rem(58px);
-  line-height: 1;
-  rotate: 12deg;
-  transform-origin: 50% 90%;
-}
-
 .form {
-  position: relative;
-  z-index: 1;
   padding: clamp(22px, 3vw, 32px);
-  border: 1px solid var(--ps-line);
-  background-color: var(--ps-surface);
-  box-shadow:
-    var(--mantine-shadow-hairline),
-    0 36px 60px -30px alpha(var(--mantine-color-black), 0.25);
-}
-
-.label {
-  margin-bottom: var(--mantine-spacing-xxs);
-  font-weight: 600;
 }
 
 .input,
 .textarea {
   --input-bd: var(--mantine-color-default-border);
-  --input-bg: var(--mantine-color-body);
-  border-radius: var(--mantine-radius-md-lg);
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-
-  &:focus {
-    box-shadow: 0 0 0 3px alpha(var(--mantine-color-mainColor-6), 0.15);
-  }
-}
-
-.input {
-  height: rem(46px);
-  padding: 0 var(--mantine-spacing-sm);
 }
 
 .textarea {

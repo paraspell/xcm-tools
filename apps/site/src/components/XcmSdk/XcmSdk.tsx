@@ -1,5 +1,6 @@
 import { CodeHighlight } from "@mantine/code-highlight";
 import { Box, Tabs, Text } from "@mantine/core";
+import { DOCS_LINKS } from "@paraspell/ui";
 import {
   IconActivity,
   IconBoxAlignBottomRight,
@@ -173,11 +174,11 @@ export const XcmSdk = () => (
     actions={[
       {
         label: "Get started",
-        href: "https://paraspell.github.io/docs/xcm-sdk/getting-started.html",
+        href: DOCS_LINKS.xcmSdk,
       },
       {
         label: "Starter project",
-        href: "https://paraspell.github.io/docs/paraspell-cli/getting-started.html",
+        href: DOCS_LINKS.cli,
         outline: true,
       },
     ]}

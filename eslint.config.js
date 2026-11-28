@@ -85,7 +85,10 @@ export default defineConfig(
     },
   },
   {
-    files: ["apps/{playground,site,xcm-api-forms}/**/*.{ts,tsx}"],
+    files: [
+      "apps/{playground,site,xcm-api-forms}/**/*.{ts,tsx}",
+      "packages/ui/**/*.{ts,tsx}",
+    ],
     extends: [
       reactPlugin.configs.flat.recommended,
       reactPlugin.configs.flat["jsx-runtime"],

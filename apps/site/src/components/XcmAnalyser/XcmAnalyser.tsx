@@ -1,5 +1,6 @@
 import { CodeHighlight } from "@mantine/code-highlight";
 import { Box, Group, Text, ThemeIcon } from "@mantine/core";
+import { DOCS_LINKS } from "@paraspell/ui";
 import {
   IconArrowRight,
   IconArrowsExchange,
@@ -141,7 +142,7 @@ export const XcmAnalyser = () => (
     actions={[
       {
         label: "Start analysing",
-        href: "https://paraspell.github.io/docs/xcm-analyser/getting-started.html",
+        href: DOCS_LINKS.xcmAnalyser,
       },
     ]}
     features={features}

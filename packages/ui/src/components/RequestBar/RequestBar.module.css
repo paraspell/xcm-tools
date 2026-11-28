@@ -1,0 +1,20 @@
+.root {
+  border: rem(1px) solid var(--ps-api-line);
+  border-radius: var(--mantine-radius-md-lg);
+  background-color: var(--mantine-color-body);
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+  overflow-wrap: anywhere;
+}
+
+.highlight {
+  font-weight: 700;
+  color: var(--mantine-color-mainColor-text);
+}

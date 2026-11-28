@@ -17,6 +17,7 @@
     "@mantine/code-highlight": "^9.8.2",
     "@mantine/core": "^9.8.2",
     "@mantine/hooks": "^9.8.2",
+    "@paraspell/ui": "workspace:*",
     "@tabler/icons-react": "^3.53.0",
     "@tsparticles/engine": "^4.6.0",
     "@tsparticles/preset-links": "^4.6.0",

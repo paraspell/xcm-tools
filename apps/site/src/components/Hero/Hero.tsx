@@ -8,6 +8,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useInterval, useReducedMotion } from "@mantine/hooks";
+import { GlowBackdrop, Wizard } from "@paraspell/ui";
 import { IconArrowDown } from "@tabler/icons-react";
 import type { MouseEvent } from "react";
 import { useEffect, useState } from "react";
@@ -16,7 +17,6 @@ import { Link } from "react-router";
 import { HeroCards } from "../HeroCards/HeroCards";
 import { useBurst } from "../Magic/MagicProvider";
 import { Sparkles } from "../Magic/Sparkles";
-import { Wizard } from "../Magic/Wizard";
 import { ParticlesNetwork } from "../ParticlesNetwork";
 import classes from "./Hero.module.css";
 
@@ -58,8 +58,7 @@ export const Hero = () => {
 
   return (
     <Box component="section" className={classes.hero}>
-      <div className={classes.blobPink} />
-      <div className={classes.blobViolet} />
+      <GlowBackdrop />
       <ParticlesNetwork />
 
       <Container size="lg" p={0} className={classes.inner}>

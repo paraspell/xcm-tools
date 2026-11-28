@@ -14,6 +14,13 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import {
+  DOCS_URL,
+  GITHUB_URL,
+  paraspellIcon,
+  SITE_URL,
+  X_URL,
+} from '@paraspell/ui';
+import {
   IconBoxSeam,
   IconBrandGithubFilled,
   IconBrandXFilled,
@@ -188,12 +195,12 @@ export const AppShell = () => {
         >
           <Group pb="lg" justify={isSidebarCollapsed ? 'center' : 'flex-start'}>
             {isSidebarCollapsed ? (
-              <Anchor href="https://paraspell.xyz/" target="_blank">
-                <Image src="/logo_short.png" w={32} pt="sm" />
+              <Anchor href={SITE_URL} target="_blank">
+                <Image src={paraspellIcon} w={32} pt="sm" />
               </Anchor>
             ) : (
               <Group w={160} flex={1}>
-                <Anchor href="https://paraspell.xyz/" target="_blank">
+                <Anchor href={SITE_URL} target="_blank">
                   <Image src="/logo.png" fit="contain" px={8} pl={16} />
                 </Anchor>
               </Group>
@@ -271,7 +278,7 @@ export const AppShell = () => {
             >
               <ActionIcon
                 component="a"
-                href="https://github.com/paraspell/xcm-tools"
+                href={GITHUB_URL}
                 target="_blank"
                 size="sm"
                 color="gray.6"
@@ -280,7 +287,7 @@ export const AppShell = () => {
               </ActionIcon>
               <ActionIcon
                 component="a"
-                href="https://x.com/paraspell"
+                href={X_URL}
                 target="_blank"
                 size="sm"
                 color="gray.6"
@@ -289,7 +296,7 @@ export const AppShell = () => {
               </ActionIcon>
               <ActionIcon
                 component="a"
-                href="https://paraspell.github.io/"
+                href={DOCS_URL}
                 target="_blank"
                 size="sm"
                 color="gray.6"
@@ -298,7 +305,7 @@ export const AppShell = () => {
               </ActionIcon>
               <ActionIcon
                 component="a"
-                href="https://paraspell.xyz/"
+                href={SITE_URL}
                 target="_blank"
                 size="sm"
                 color="gray.6"

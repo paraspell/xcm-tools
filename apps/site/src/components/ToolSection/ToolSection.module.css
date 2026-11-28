@@ -9,12 +9,8 @@
 }
 
 .tagline {
-  display: inline-block;
   margin-bottom: var(--mantine-spacing-xs);
   font-size: clamp(27px, 2.8vw, 33px);
-  line-height: 1.1;
-  color: var(--ps-accent-2);
-  rotate: -4deg;
   transform-origin: left center;
 }
 

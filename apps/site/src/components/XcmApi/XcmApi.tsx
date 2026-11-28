@@ -1,5 +1,6 @@
 import { CodeHighlight } from "@mantine/code-highlight";
 import { Badge, Box, Button, Group, Text } from "@mantine/core";
+import { DOCS_LINKS, RequestBar, RequestBarHighlight } from "@paraspell/ui";
 import {
   IconApi,
   IconBrandNodejs,
@@ -106,25 +107,30 @@ const ApiDemo = () => {
       </Text>
       <ChipSelect data={CHAINS} value={chain} onChange={selectChain} />
 
-      <Group gap="xs" wrap="nowrap" mt="md" className={classes.request}>
-        <Badge radius="md" className={classes.method}>
-          GET
-        </Badge>
-        <Text className={classes.url}>
-          api.paraspell.xyz/v2/chains/
-          <span className={classes.urlChain}>{chain}</span>/para-id
-        </Text>
-        <Button
-          px="sm"
-          radius="md"
-          fw={700}
-          leftSection={<IconPlayerPlay size={14} />}
-          onClick={send}
-          className={classes.send}
-        >
-          {loading ? "Casting…" : response ? "Send again" : "Send"}
-        </Button>
-      </Group>
+      <RequestBar
+        mt="md"
+        className={classes.request}
+        badge={
+          <Badge variant="get" className={classes.method}>
+            GET
+          </Badge>
+        }
+        rightSection={
+          <Button
+            px="sm"
+            radius="md"
+            fw={700}
+            leftSection={<IconPlayerPlay size={14} />}
+            onClick={send}
+            className={classes.send}
+          >
+            {loading ? "Casting…" : response ? "Send again" : "Send"}
+          </Button>
+        }
+      >
+        api.paraspell.xyz/v2/chains/
+        <RequestBarHighlight>{chain}</RequestBarHighlight>/para-id
+      </RequestBar>
 
       <Box mt="sm" className={classes.response}>
         {loading ? (
@@ -133,7 +139,7 @@ const ApiDemo = () => {
           <>
             <Group gap="xs" mb="xs">
               {response.ok ? (
-                <Badge radius="xl" tt="none" className={classes.ok}>
+                <Badge variant="ok" radius="xl">
                   {response.status}
                 </Badge>
               ) : (
@@ -186,11 +192,11 @@ export const XcmApi = () => (
     actions={[
       {
         label: "Get started",
-        href: "https://paraspell.github.io/docs/xcm-api/getting-started.html",
+        href: DOCS_LINKS.xcmApi,
       },
       {
         label: "Starter project",
-        href: "https://paraspell.github.io/docs/paraspell-cli/getting-started.html",
+        href: DOCS_LINKS.cli,
         outline: true,
       },
     ]}

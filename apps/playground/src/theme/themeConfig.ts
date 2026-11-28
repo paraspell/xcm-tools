@@ -16,6 +16,7 @@ const themePalette: MantineColorsTuple = [
 
 export const theme = createTheme({
   primaryColor: 'mainColor',
+  cursorType: 'pointer',
   colors: {
     mainColor: themePalette,
   },

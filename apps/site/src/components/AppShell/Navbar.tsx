@@ -1,8 +1,9 @@
 import { Anchor, Button, Divider, Group, Stack, Text } from "@mantine/core";
+import { DOCS_URL, GITHUB_URL } from "@paraspell/ui";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { Link } from "react-router";
 
-import { DOCS_URL, GITHUB_URL, links } from "./links";
+import { links } from "./links";
 import classes from "./Navbar.module.css";
 
 export const Navbar = () => {

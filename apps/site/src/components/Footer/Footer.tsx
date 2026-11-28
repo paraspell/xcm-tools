@@ -10,9 +10,10 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
+import { DOCS_URL, SOCIALS } from "@paraspell/ui";
 import { Link } from "react-router";
 
-import { DOCS_URL, links, socials } from "../AppShell/links";
+import { links } from "../AppShell/links";
 import classes from "./Footer.module.css";
 
 const explore = [
@@ -129,7 +130,7 @@ export const Footer = () => {
           </Text>
 
           <Group gap="xxs">
-            {socials.map((social) => (
+            {SOCIALS.map((social) => (
               <ActionIcon
                 key={social.label}
                 component="a"

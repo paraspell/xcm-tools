@@ -4,29 +4,6 @@
   overflow: hidden;
 }
 
-.blobPink,
-.blobViolet {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.blobPink {
-  width: rem(720px);
-  height: rem(720px);
-  left: rem(-260px);
-  top: rem(-220px);
-  background: radial-gradient(closest-side, var(--ps-blob-1), transparent);
-}
-
-.blobViolet {
-  width: rem(780px);
-  height: rem(780px);
-  right: rem(-280px);
-  top: rem(420px);
-  background: radial-gradient(closest-side, var(--ps-blob-2), transparent);
-}
-
 .inner {
   position: relative;
   text-align: center;

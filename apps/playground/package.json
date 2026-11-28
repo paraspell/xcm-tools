@@ -32,6 +32,7 @@
     "@paraspell/sdk-dedot": "workspace:*",
     "@paraspell/sdk-pjs": "workspace:*",
     "@paraspell/swap": "workspace:*",
+    "@paraspell/ui": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
     "@polkadot/api": "^17.0.2",
     "@polkadot/apps-config": "^0.171.2",

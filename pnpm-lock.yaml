@@ -304,6 +304,9 @@ importers:
       '@paraspell/swap':
         specifier: workspace:*
         version: link:../../packages/swap
+      '@paraspell/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@paraspell/xcm-analyser':
         specifier: workspace:*
         version: link:../../packages/xcm-analyser
@@ -416,6 +419,9 @@ importers:
       '@mantine/hooks':
         specifier: ^9.8.2
         version: 9.8.2(react@19.3.1)
+      '@paraspell/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tabler/icons-react':
         specifier: ^3.53.0
         version: 3.53.0(react@19.3.1)
@@ -619,6 +625,9 @@ importers:
       '@mantine/hooks':
         specifier: ^9.8.2
         version: 9.8.2(react@19.3.1)
+      '@paraspell/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tabler/icons-react':
         specifier: ^3.53.0
         version: 3.53.0(react@19.3.1)
@@ -1238,6 +1247,30 @@ importers:
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
+
+  packages/ui:
+    devDependencies:
+      '@mantine/core':
+        specifier: ^9.8.2
+        version: 9.8.2(@mantine/hooks@9.8.2(react@19.3.1))(@types/react@19.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@mantine/hooks':
+        specifier: ^9.8.2
+        version: 9.8.2(react@19.3.1)
+      '@tabler/icons-react':
+        specifier: ^3.53.0
+        version: 3.53.0(react@19.3.1)
+      '@types/react':
+        specifier: ^19.3.3
+        version: 19.3.3
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+      vite:
+        specifier: ^8.4.0
+        version: 8.4.0(@types/node@26.6.11)(esbuild@0.28.2)(jiti@2.7.0)(sugarss@5.0.2(postcss@8.5.34))(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/xcm-analyser:
     dependencies:
