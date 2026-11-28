@@ -531,11 +531,22 @@ describe('XTransferService', () => {
   });
 
   describe('getXcmFee', () => {
-    it('delegates to builder.getXcmFee', async () => {
-      const res = await service.getXcmFee(xTransferDto);
-      expect(res).toBe(feeResult);
-      expect(builderMock.getXcmFee).toHaveBeenCalled();
-    });
+    it.each([true, false, undefined])(
+      'forwards disableFallback=%s to builder.getXcmFee',
+      async (disableFallback) => {
+        const options =
+          disableFallback === undefined
+            ? xTransferDto
+            : { ...xTransferDto, disableFallback };
+
+        const res = await service.getXcmFee(options);
+
+        expect(res).toBe(feeResult);
+        expect(builderMock.getXcmFee).toHaveBeenLastCalledWith({
+          disableFallback: disableFallback ?? false,
+        });
+      },
+    );
   });
 
   describe('getOriginXcmFee', () => {
