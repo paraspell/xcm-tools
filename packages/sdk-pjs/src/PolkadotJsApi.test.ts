@@ -1339,7 +1339,7 @@ describe('PolkadotJsApi', () => {
       })
     })
 
-    it('uses tx.paymentInfo weight override when local_xcm is missing and fee asset is custom', async () => {
+    it('uses tx.paymentInfo weight override when localXcm is missing and fee asset is custom', async () => {
       const resp = makeSuccessResponse({
         weight: { refTime: '1', proofSize: '2' },
         forwarded: []
@@ -1575,7 +1575,7 @@ describe('PolkadotJsApi', () => {
                 actualWeight: { refTime: '555', proofSize: '666' }
               }
             },
-            local_xcm: { instructions: [] },
+            localXcm: { instructions: [] },
             forwardedXcms: forwarded
           }
         })
@@ -1827,7 +1827,7 @@ describe('PolkadotJsApi', () => {
         toJSON: vi.fn().mockReturnValue({
           ok: {
             executionResult: { ok: {} },
-            local_xcm: { instructions: [] },
+            localXcm: { instructions: [] },
             forwardedXcms: []
           }
         })
@@ -1866,7 +1866,7 @@ describe('PolkadotJsApi', () => {
                 actualWeight: { refTime: '10', proofSize: '5' }
               }
             },
-            local_xcm: { instructions: [] },
+            localXcm: { instructions: [] },
             forwardedXcms: []
           }
         })
