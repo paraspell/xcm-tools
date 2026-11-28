@@ -1,4 +1,5 @@
 import { Badge, Button, CopyButton, Divider, Group, Text } from '@mantine/core';
+import { RequestBar, RequestBarHighlight } from '@paraspell/ui';
 import { IconBolt, IconCheck, IconCopy } from '@tabler/icons-react';
 import { Navigate } from 'react-router';
 
@@ -54,12 +55,14 @@ export const ShowApiKey = () => {
       <Text fz={13} lh={1.55} c="dimmed" mt={2}>
         Send it as a header with every request.
       </Text>
-      <Group gap={10} wrap="nowrap" mt="sm" className={classes.header}>
-        <Badge variant="get">Header</Badge>
-        <Text span truncate className={classes.headerValue}>
-          <span className={classes.headerName}>X-API-KEY:</span> {apiKey}
-        </Text>
-      </Group>
+      <RequestBar
+        mt="sm"
+        truncate
+        className={classes.header}
+        badge={<Badge variant="get">Header</Badge>}
+      >
+        <RequestBarHighlight>X-API-KEY:</RequestBarHighlight> {apiKey}
+      </RequestBar>
     </PageLayout>
   );
 };

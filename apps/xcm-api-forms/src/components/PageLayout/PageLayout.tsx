@@ -1,4 +1,5 @@
-import { Paper, Stack, Text, Title } from '@mantine/core';
+import { Stack, Text, Title } from '@mantine/core';
+import { WizardCard } from '@paraspell/ui';
 import type { FC, ReactNode } from 'react';
 
 import classes from './PageLayout.module.css';
@@ -22,21 +23,16 @@ export const PageLayout: FC<Props> = ({
 }) => (
   <>
     <title>{`${documentTitle} | XCM API ⚡️`}</title>
-    <Stack align="center" gap={0} ta="center">
-      <Text span variant="script" className={classes.tagline}>
+    <Stack align="center" gap={0} ta="center" mb={24}>
+      <Text span variant="tagline" className={classes.tagline}>
         {tagline}
       </Text>
       <Title order={1}>{title}</Title>
       <Text className={classes.description}>{description}</Text>
     </Stack>
-    <div className={classes.cardWrap}>
-      <span aria-hidden className={classes.wizard}>
-        🧙‍♂️
-      </span>
-      <Paper p="xl" className={classes.card}>
-        {children}
-      </Paper>
-    </div>
+    <WizardCard animated={false} className={classes.card}>
+      {children}
+    </WizardCard>
     {note}
   </>
 );

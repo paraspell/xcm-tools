@@ -7,6 +7,7 @@ import {
   Menu,
   UnstyledButton,
 } from "@mantine/core";
+import { DOCS_URL, GITHUB_URL, paraspellIcon } from "@paraspell/ui";
 import {
   IconBrandGithub,
   IconChevronDown,
@@ -17,8 +18,8 @@ import type { FC } from "react";
 import { Link } from "react-router";
 
 import classes from "./Header.module.css";
-import { DOCS_URL, GITHUB_URL, links } from "./links";
-import { ThemeToggle } from "./ThemeToggle";
+import { links } from "./links";
+import { MagicThemeToggle } from "./MagicThemeToggle";
 
 type Props = {
   menuOpened: boolean;
@@ -81,13 +82,13 @@ export const Header: FC<Props> = ({ menuOpened, toggleMenu }) => {
         className={classes.logo}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
-        <Image src="/paraspell-icon.png" alt="ParaSpell" h={38} w="auto" />
+        <Image src={paraspellIcon} alt="ParaSpell" h={38} w="auto" />
       </Link>
 
       <Group gap={2} visibleFrom="md" wrap="nowrap">
         {items}
         <Group gap="sm" ml="lg" wrap="nowrap">
-          <ThemeToggle size={38} iconSize={18} />
+          <MagicThemeToggle size={38} iconSize={18} />
           <Button
             component="a"
             href={GITHUB_URL}
@@ -116,7 +117,7 @@ export const Header: FC<Props> = ({ menuOpened, toggleMenu }) => {
       </Group>
 
       <Group gap="xs" hiddenFrom="md" wrap="nowrap">
-        <ThemeToggle size="xl" iconSize={20} />
+        <MagicThemeToggle size="xl" iconSize={20} />
         <ActionIcon
           size="xl"
           onClick={toggleMenu}

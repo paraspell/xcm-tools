@@ -5,35 +5,14 @@
 .request {
   padding: var(--mantine-spacing-xxs) var(--mantine-spacing-xxs)
     var(--mantine-spacing-xxs) var(--mantine-spacing-xs);
-  border: 1px solid var(--ps-api-line);
-  border-radius: var(--mantine-radius-md-lg);
-  background-color: var(--mantine-color-body);
 }
 
 .method {
   flex: none;
   height: auto;
   padding: var(--mantine-spacing-xxs) var(--mantine-spacing-xs);
-  background-color: var(--ps-get-bg);
-  color: var(--ps-get-ink);
-  font-family: var(--mantine-font-family-monospace);
   font-size: var(--mantine-font-size-xs);
   font-weight: 700;
-}
-
-.url {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--mantine-font-family-monospace);
-  font-size: var(--mantine-font-size-xs);
-  font-weight: 500;
-  color: var(--mantine-color-dimmed);
-  overflow-wrap: anywhere;
-}
-
-.urlChain {
-  font-weight: 700;
-  color: var(--mantine-color-mainColor-text);
 }
 
 .send {
@@ -65,11 +44,6 @@
 .loading {
   font-weight: 600;
   color: var(--mantine-color-mainColor-text);
-}
-
-.ok {
-  background-color: var(--ps-ok-bg);
-  color: var(--ps-ok-ink);
 }
 
 .contentType {

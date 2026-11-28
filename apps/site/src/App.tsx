@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
+import "@paraspell/ui/code-highlight.css";
 import "./App.css";
 
 import {

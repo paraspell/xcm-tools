@@ -2,10 +2,17 @@
   "$schema": "https://turbo.build/schema.json",
   "agentGuidance": false,
   "tasks": {
-    "compile": {},
+    "transit": {
+      "dependsOn": ["^transit"]
+    },
+    "compile": {
+      "dependsOn": ["transit"]
+    },
     "format:check": {},
     "format:write": {},
-    "lint:check": {},
+    "lint:check": {
+      "dependsOn": ["transit"]
+    },
     "lint": {},
     "test": {},
     "test:cov": {

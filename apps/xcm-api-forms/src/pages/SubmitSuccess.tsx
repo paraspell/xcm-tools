@@ -7,10 +7,10 @@ import {
   Text,
   ThemeIcon,
 } from '@mantine/core';
+import { DOCS_LINKS } from '@paraspell/ui';
 import { IconArrowUpRight, IconCheck } from '@tabler/icons-react';
 
 import { PageLayout } from '../components/PageLayout/PageLayout';
-import { DOCS_URL } from '../constants';
 import classes from './SubmitSuccess.module.css';
 
 const STEPS = [
@@ -73,7 +73,7 @@ export const SubmitSuccess = () => (
     </List>
     <Button
       component="a"
-      href={DOCS_URL}
+      href={DOCS_LINKS.xcmApi}
       target="_blank"
       rel="noopener"
       variant="default"

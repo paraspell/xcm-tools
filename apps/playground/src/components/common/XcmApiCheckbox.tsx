@@ -1,5 +1,6 @@
 import type { CheckboxProps } from '@mantine/core';
 import { Anchor, Checkbox } from '@mantine/core';
+import { SITE_URL } from '@paraspell/ui';
 import type { FC } from 'react';
 
 export const XcmApiCheckbox: FC<CheckboxProps> = (props) => (
@@ -7,7 +8,7 @@ export const XcmApiCheckbox: FC<CheckboxProps> = (props) => (
     label={
       <>
         Use{' '}
-        <Anchor href="https://paraspell.xyz/" target="_blank" inherit>
+        <Anchor href={SITE_URL} target="_blank" inherit>
           XCM API ⚡️
         </Anchor>
       </>

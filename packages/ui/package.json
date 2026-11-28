@@ -1,0 +1,33 @@
+{
+  "name": "@paraspell/ui",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Shared UI theme and components for ParaSpell web apps",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./code-highlight.css": "./src/styles/code-highlight.css"
+  },
+  "scripts": {
+    "compile": "tsc",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix src",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^9.8.2",
+    "@mantine/hooks": "^9.8.2",
+    "@tabler/icons-react": "^3.53.0",
+    "react": "^19.3.1"
+  },
+  "devDependencies": {
+    "@mantine/core": "^9.8.2",
+    "@mantine/hooks": "^9.8.2",
+    "@tabler/icons-react": "^3.53.0",
+    "@types/react": "^19.3.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vite": "^8.4.0"
+  }
+}

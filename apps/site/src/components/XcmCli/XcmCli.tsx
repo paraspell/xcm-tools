@@ -1,5 +1,6 @@
 import { Button, Group, SegmentedControl, Text } from "@mantine/core";
 import { useIntersection, useReducedMotion } from "@mantine/hooks";
+import { DOCS_LINKS } from "@paraspell/ui";
 import {
   IconBrandGithub,
   IconComponents,
@@ -234,7 +235,7 @@ export const XcmCli = () => (
     actions={[
       {
         label: "Get started",
-        href: "https://paraspell.github.io/docs/paraspell-cli/getting-started.html",
+        href: DOCS_LINKS.cli,
       },
       {
         label: "GitHub",

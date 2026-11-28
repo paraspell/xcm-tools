@@ -14,21 +14,4 @@
 
 .header {
   padding: rem(6px) var(--mantine-spacing-sm) rem(6px) rem(6px);
-  border: rem(1px) solid var(--ps-api-line);
-  border-radius: var(--mantine-radius-md-lg);
-  background-color: var(--mantine-color-body);
-}
-
-.headerValue {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--mantine-font-family-monospace);
-  font-size: var(--mantine-font-size-xs);
-  font-weight: 500;
-  color: var(--mantine-color-dimmed);
-}
-
-.headerName {
-  font-weight: 700;
-  color: var(--mantine-color-mainColor-text);
 }
